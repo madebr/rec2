@@ -626,40 +626,63 @@ int C2_HOOK_FASTCALL CreateDinputEffect(int joystick_index, tJoystick_effect_des
 }
 
 // FUNCTION: CARMA2_HW 0x0045a390
-int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, size_t capacity) {
-    /* Implementation differs */
-
+int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, int capacity) {
     FILE *f;
-    tU32 count;
-    size_t i;
+    int count;
+    int i;
+    int at_eof;
     char buffer[128];
+    char character[2];
 
+    count = 0;
     f = fopen(path, "rb");
     if (f == NULL) {
         return -1;
     }
     rewind(f);
-    fread(buffer, 1, 4, f);
-    if (memcmp(buffer, "ifpr", 4) != 0) {
+    fread(buffer, 1, 5, f);
+    if (strncmp(buffer, "ifpr", 4) != 0) {
         return 0;
     }
-    fread(&count, 1, sizeof(count), f);
-    for (i = 0; i < count && i < capacity && !feof(f); i++) {
-        tU32 chunk_size;
-        size_t len_name = 0;
-        char c;
-        fread(&chunk_size, 1, sizeof(tU32), f);
-
-        while ((c = fgetc(f)) != '\0' && len_name < REC2_ASIZE(buffer) && !feof(f)) {
-            buffer[len_name] = c;
-            len_name += 1;
+    fseek(f, 7, SEEK_CUR);
+    while (!feof(f) && count < capacity) {
+        buffer[0] = '\0';
+        character[1] = '\0';
+        character[0] = (char)fgetc(f);
+        for (i = 0; character[0] != '\0' && i < 128 && !feof(f); i++) {
+            strcat(buffer, character);
+            character[0] = (char)fgetc(f);
         }
-        names[i] = malloc(len_name + 1);
-        strncpy(names[i], buffer, len_name);
-        names[i][len_name] = '\0';
-        fseek(f, chunk_size - len_name - 1 - 4, SEEK_CUR);
+        names[count] = malloc(strlen(buffer) + 1);
+        strcpy(names[count], buffer);
+
+        buffer[0] = '\0';
+        character[1] = '\0';
+        character[0] = (char)fgetc(f);
+        for (i = 0; character[0] != '\0' && i < 128 && !feof(f); i++) {
+            strcat(buffer, character);
+            character[0] = (char)fgetc(f);
+        }
+        fseek(f, 47, SEEK_CUR);
+        do {
+            buffer[0] = '\0';
+            character[1] = '\0';
+            character[0] = (char)fgetc(f);
+            for (i = 0; character[0] != '\0' && i < 128 && !feof(f); i++) {
+                strcat(buffer, character);
+                character[0] = (char)fgetc(f);
+            }
+            at_eof = feof(f);
+        } while (strlen(buffer) != 0 && !at_eof);
+
+        character[0] = (char)fgetc(f);
+        while (ungetc(character[0], f) == 0 && !at_eof) {
+            fseek(f, 1, SEEK_CUR);
+            character[0] = (char)fgetc(f);
+        }
+        count++;
     }
-    return i;
+    return count;
 }
 
 // FUNCTION: CARMA2_HW 0x00458060
