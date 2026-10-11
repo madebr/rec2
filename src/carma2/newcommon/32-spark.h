@@ -7,6 +7,7 @@
 extern int gColumn_flags;
 extern int gColumn_next;
 extern tSmoke_column gSmoke_column[10];
+extern br_material* gBlack_material;
 extern br_model* gLollipop_model;
 extern br_pixelmap* gFlame_map[20];
 extern int gSmoke_on;
@@ -132,7 +133,7 @@ extern void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_c
 
 extern void C2_HOOK_FASTCALL CreateSmokeColumn2(int pType, br_actor* pActor, tCar_spec* pCar, tPhysics_object* pObject, int pColour, int pVertex, tU32 pLifetime);
 
-// CreateSmokeColumn
+extern void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec* pCar, int pColour, int pVertex, tU32 pLifetime);
 
 extern void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 
@@ -162,7 +163,7 @@ extern void C2_HOOK_FASTCALL InitFlame(void);
 
 // PipeInstantUnSmudge
 
-// SmudgeCar
+extern void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int pFire_point);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -174,7 +175,7 @@ extern void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject);
 
-// ConditionalSmokeColumn
+extern void C2_HOOK_FASTCALL ConditionalSmokeColumn(tCar_spec* pCar, int pFire_point, int pColour);
 
 // SingleSplash
 

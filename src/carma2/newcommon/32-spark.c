@@ -69,6 +69,9 @@ int gColumn_next;
 // GLOBAL: CARMA2_HW 0x006a96a8
 tSmoke_column gSmoke_column[10];
 
+// GLOBAL: CARMA2_HW 0x006b7880
+br_material* gBlack_material;
+
 // GLOBAL: CARMA2_HW 0x006aa380
 br_model* gLollipop_model;
 
@@ -771,7 +774,19 @@ void C2_HOOK_FASTCALL CreateSmokeColumn2(int pType, br_actor* pActor, tCar_spec*
     }
 }
 
-// CreateSmokeColumn
+// FUNCTION: CARMA2_HW 0x004fb890
+void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec* pCar, int pColour, int pVertex, tU32 pLifetime) {
+    tSpecial_volume* volume;
+
+    volume = pCar->collision_info->last_special_volume;
+    if (volume == NULL || volume->gravity_multiplier >= 1.0f) {
+        SmudgeCar(pCar, pVertex);
+        if (pCar->knackered) {
+            SmudgeCar(pCar, pCar->fire_vertex[IRandomBetween(0, 11)]);
+        }
+        CreateSmokeColumn2(1, pCar->car_master_actor, pCar, NULL, pColour, pVertex, pLifetime);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004fb910
 void C2_HOOK_FASTCALL GenerateSmokeShades(void) {
@@ -952,7 +967,11 @@ void C2_HOOK_FASTCALL InitFlame(void) {
 
 // PipeInstantUnSmudge
 
-// SmudgeCar
+// FUNCTION: CARMA2_HW 0x004fc9c0
+void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int pFire_point) {
+    (void)pCar;
+    (void)pFire_point;
+}
 
 // FUNCTION: CARMA2_HW 0x004fc9d0
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
@@ -999,7 +1018,42 @@ void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject) {
     }
 }
 
-// ConditionalSmokeColumn
+// FUNCTION: CARMA2_HW 0x004fcab0
+void C2_HOOK_FASTCALL ConditionalSmokeColumn(tCar_spec* pCar, int pFire_point, int pColour) {
+    int flags;
+    int i;
+    int vertex;
+    tSpecial_volume* volume;
+
+    if (pColour == 0 && (pCar == NULL || (int)pCar->driver < 7)) {
+        pColour = 1;
+    }
+    flags = gColumn_flags;
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if ((flags & (1u << i)) && gSmoke_column[i].core.car == pCar) {
+            break;
+        }
+    }
+    if (i < (int)REC2_ASIZE(gSmoke_column)) {
+        for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+            if (gSmoke_column[i].core.car == pCar) {
+                if ((flags & (1u << i)) && gSmoke_column[i].colour <= pColour && gSmoke_column[i].lifetime != 0) {
+                    return;
+                }
+                gSmoke_column[i].lifetime = 2000;
+            }
+        }
+    }
+    vertex = pCar->fire_vertex[pFire_point];
+    volume = pCar->collision_info->last_special_volume;
+    if (volume == NULL || volume->gravity_multiplier >= 1.0f) {
+        SmudgeCar(pCar, vertex);
+        if (pCar->knackered) {
+            SmudgeCar(pCar, pCar->fire_vertex[IRandomBetween(0, 11)]);
+        }
+        CreateSmokeColumn2(1, pCar->car_master_actor, pCar, NULL, pColour, vertex, 10000000);
+    }
+}
 
 // SingleSplash
 
