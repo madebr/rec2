@@ -11,6 +11,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import struct
 import subprocess
 import sys
@@ -75,7 +76,11 @@ static fixture_heap heap;
 static unsigned events[64][9];
 static unsigned char images[64][1024];
 '''
-    driver += source[source.index("// GLOBAL:"):source.index("// FUNCTION:")]
+    global_source = source[source.index("// GLOBAL:"):source.index("// FUNCTION:")]
+    # Cursor-only private state is outside this fixture's selected body closure.
+    for name in ("gCursor_last_call_time", "gCursor_last_required_change", "gCursor_delta_x", "gCursor_required_cursor", "gCursor_zero_count", "gCursor_button_was_down", "gDraw_cursor"):
+        global_source = re.sub(r"\bstatic\b[^;\n]*\b" + re.escape(name) + r"\b[^;\n]*;", "", global_source)
+    driver += global_source
     driver += r'''
 static unsigned norm(unsigned value) {
     unsigned base=(unsigned)(uintptr_t)&heap;

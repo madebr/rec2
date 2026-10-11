@@ -26,6 +26,7 @@ extern int gMouse_in_use;
 extern int gCurrent_cursor_index;
 extern int gMouse_started;
 extern int gNext_transient;
+extern br_pixelmap* gCurrent_splash;
 
 extern void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount);
 
@@ -77,15 +78,15 @@ extern void C2_HOOK_FASTCALL StartMouseCursor(void);
 
 extern void C2_HOOK_FASTCALL EndMouseCursor(void);
 
-// DRDrawLine
+extern void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDest, int pX1, int pY1, int pX2, int pY2, int pColour);
 
 extern void C2_HOOK_FASTCALL ClearEntireScreen(void);
 
-// DistanceFromPlane
+extern double C2_HOOK_FASTCALL DistanceFromPlane(const br_vector3* pPos, br_scalar pA, br_scalar pB, br_scalar pC, br_scalar pD);
 
 extern void C2_HOOK_FASTCALL KillSplashScreen(void);
 
-// SplashScreenWith
+extern void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
 
 extern void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_16 pDest_x, br_int_16 pDest_y, const br_pixelmap* pSource, br_int_16 pSource_x, br_int_16 pSource_y, br_int_16 pWidth, br_int_16 pHeight);
 
