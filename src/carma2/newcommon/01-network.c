@@ -141,13 +141,33 @@ void C2_HOOK_FASTCALL ShutdownNetIfRequired(void) {
     }
 }
 
-// DisableNetService
+// FUNCTION: CARMA2_HW 0x0049d3e0
+void C2_HOOK_FASTCALL DisableNetService(void) {
 
-// ReenableNetService
+    gNet_service_disable = 1;
+}
 
-// PermitNetServiceReentrancy
+// FUNCTION: CARMA2_HW 0x0049d3f0
+void C2_HOOK_FASTCALL ReenableNetService(void) {
 
-// HaltNetServiceReentrancy
+    gNet_service_disable = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0049d400
+int C2_HOOK_FASTCALL PermitNetServiceReentrancy(void) {
+
+    if (gIn_net_service) {
+        gIn_net_service = 0;
+        return 1;
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0049d420
+void C2_HOOK_FASTCALL HaltNetServiceReentrancy(void) {
+
+    gIn_net_service = 1;
+}
 
 // NetSendHeadupToAllPlayers
 
