@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern int gPHIL_mechanics_time_sync;
+extern int gFace_num__car;
 extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
@@ -160,7 +161,7 @@ extern void* gPhysics_other_buffer;
 
 // PrepareObject
 
-// PrepareForCollisions
+extern void C2_HOOK_FASTCALL PrepareForCollisions(tPhysics_object* pObject, tWorld_callbacks* pWorld_callbacks);
 
 // CheckPointVelocities
 

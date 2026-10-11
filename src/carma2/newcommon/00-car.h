@@ -10,6 +10,8 @@ extern float gOffensive_starting_value[100];
 extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
+extern int gFace_count;
+extern tFace_ref gFace_list__car[300];
 
 // DamageUnit
 

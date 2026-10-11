@@ -4,6 +4,12 @@
 #include "34-finteray.h"
 #include "globvars.h"
 
+// GLOBAL: CARMA2_HW 0x006940b0
+int gFace_count;
+
+// GLOBAL: CARMA2_HW 0x00744820
+tFace_ref gFace_list__car[300];
+
 // GLOBAL: CARMA2_HW 0x00763500
 int gCunning_stunt_bonus[3];
 

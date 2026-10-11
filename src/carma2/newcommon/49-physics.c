@@ -1,5 +1,6 @@
 #include "49-physics.h"
 
+#include "00-car.h"
 #include "16-graphics1.h"
 #include "28-world3.h"
 #include "32-spark.h"
@@ -17,6 +18,9 @@
 
 // GLOBAL: CARMA2_HW 0x0074a5e4
 int gPHIL_mechanics_time_sync;
+
+// GLOBAL: CARMA2_HW 0x0065d010
+int gFace_num__car = 1;
 
 // GLOBAL: CARMA2_HW 0x006940c0
 tPhysicsError_cbfn* gPhysics_error_cb;
@@ -184,7 +188,158 @@ void* gPhysics_other_buffer;
 
 // PrepareObject
 
-// PrepareForCollisions
+static int C2_HOOK_FASTCALL PhysicsScalarNaN(const br_scalar* value) {
+    tU32 bits;
+
+    memcpy(&bits, value, sizeof(bits));
+    return (bits & 0x7fffffffu) > 0x7f800000u;
+}
+
+static int C2_HOOK_FASTCALL PhysicsLessOrUnordered(const br_scalar* a, const br_scalar* b) {
+    return *a < *b || PhysicsScalarNaN(a) || PhysicsScalarNaN(b);
+}
+
+static int C2_HOOK_FASTCALL PhysicsGreaterOrdered(const br_scalar* a, const br_scalar* b) {
+    return *a > *b && !PhysicsScalarNaN(a) && !PhysicsScalarNaN(b);
+}
+
+static br_scalar C2_HOOK_FASTCALL PhysicsScalar(double value) {
+    volatile br_scalar rounded = (br_scalar)value;
+
+    return rounded;
+}
+
+static void C2_HOOK_FASTCALL PhysicsScalarStore(br_scalar* output, const br_scalar* input) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, output
+        mov ecx, input
+        fld dword ptr [ecx]
+        fstp dword ptr [eax]
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("flds %1; fstps %0" : "=m" (*output) : "m" (*input) : "st");
+#else
+    volatile double value = *input;
+
+    *output = (br_scalar)value;
+#endif
+}
+
+// FUNCTION: CARMA2_HW 0x004c2060
+void C2_HOOK_FASTCALL PrepareForCollisions(tPhysics_object* pObject, tWorld_callbacks* pWorld_callbacks) {
+    tBounds bounds;
+    br_bounds transformed;
+    br_matrix34 inverse;
+    br_matrix34 delta;
+    br_matrix34 squared;
+    br_matrix34 cubed;
+    br_matrix34* actor_matrix;
+    br_vector3 movement;
+    br_scalar zero = 0.f;
+    double high;
+    int i;
+    int valid_cache;
+    int found;
+
+    if (pObject->flags & 0x40) {
+        pObject->box_face_start = pObject->box_face_end;
+        return;
+    }
+    if ((pObject->flags & 2) && pObject->parent != NULL) {
+        pObject->box_face_start = pObject->parent->box_face_start;
+        pObject->box_face_end = pObject->parent->box_face_end;
+        pObject->box_face_ref = pObject->parent->box_face_ref;
+        return;
+    }
+    valid_cache = (tU32)pObject->box_face_ref == (tU32)gFace_num__car
+        || ((tU32)pObject->box_face_ref == (tU32)gFace_num__car - 1u && (int)pObject->box_face_start > gFace_count);
+    if (pObject->flags & 1) {
+        if (valid_cache
+            && PhysicsGreaterOrdered(&pObject->field_0x10c.min.v[0], &pObject->field_0x124.min.v[0])
+            && PhysicsGreaterOrdered(&pObject->field_0x10c.min.v[1], &pObject->field_0x124.min.v[1])
+            && PhysicsGreaterOrdered(&pObject->field_0x10c.min.v[2], &pObject->field_0x124.min.v[2])
+            && PhysicsLessOrUnordered(&pObject->field_0x10c.max.v[0], &pObject->field_0x124.max.v[0])
+            && PhysicsLessOrUnordered(&pObject->field_0x10c.max.v[1], &pObject->field_0x124.max.v[1])
+            && PhysicsLessOrUnordered(&pObject->field_0x10c.max.v[2], &pObject->field_0x124.max.v[2])) {
+            return;
+        }
+        for (i = 0; i < 3; i++) {
+            movement.v[i] = PhysicsScalar((double)pObject->v.v[i] * 0.12f);
+        }
+        for (i = 0; i < 3; i++) {
+            high = (double)pObject->field_0x10c.max.v[i] - -0.15;
+            bounds.original_bounds.min.v[i] = PhysicsScalar((double)pObject->field_0x10c.min.v[i] - 0.15);
+            bounds.original_bounds.max.v[i] = PhysicsScalar(high);
+            if (PhysicsLessOrUnordered(&movement.v[i], &zero)) {
+                bounds.original_bounds.min.v[i] = PhysicsScalar((double)bounds.original_bounds.min.v[i] + movement.v[i]);
+            } else {
+                bounds.original_bounds.max.v[i] = PhysicsScalar(high + movement.v[i]);
+            }
+            pObject->field_0x124.min.v[i] = PhysicsScalar((double)bounds.original_bounds.min.v[i] - -0.005);
+            pObject->field_0x124.max.v[i] = PhysicsScalar((double)bounds.original_bounds.max.v[i] - 0.005);
+        }
+        BrMatrix34Identity(&inverse);
+        bounds.mat = &inverse;
+    } else {
+        actor_matrix = &pObject->actor->t.t.mat;
+        if (valid_cache) {
+            BrMatrix34Mul(&squared, actor_matrix, &pObject->field_0x144);
+            GetNewBoundingBox(&transformed, &pObject->bb2, &squared);
+            if (PhysicsLessOrUnordered(&transformed.max.v[0], &pObject->field_0x124.max.v[0])
+                && PhysicsLessOrUnordered(&transformed.max.v[1], &pObject->field_0x124.max.v[1])
+                && PhysicsLessOrUnordered(&transformed.max.v[2], &pObject->field_0x124.max.v[2])
+                && PhysicsGreaterOrdered(&transformed.min.v[0], &pObject->field_0x124.min.v[0])
+                && PhysicsGreaterOrdered(&transformed.min.v[1], &pObject->field_0x124.min.v[1])
+                && PhysicsGreaterOrdered(&transformed.min.v[2], &pObject->field_0x124.min.v[2])) {
+                return;
+            }
+        }
+        BrMatrix34LPInverse(&inverse, actor_matrix);
+        BrMatrix34Mul(&delta, &pObject->transform_matrix, &inverse);
+        GetNewBoundingBox(&bounds.original_bounds, &pObject->bb2, &delta);
+        for (i = 0; i < 3; i++) {
+            PhysicsScalarStore(&bounds.original_bounds.min.v[i], PhysicsLessOrUnordered(&bounds.original_bounds.min.v[i], &pObject->bb2.min.v[i]) ? &bounds.original_bounds.min.v[i] : &pObject->bb2.min.v[i]);
+            PhysicsScalarStore(&bounds.original_bounds.max.v[i], PhysicsGreaterOrdered(&bounds.original_bounds.max.v[i], &pObject->bb2.max.v[i]) ? &bounds.original_bounds.max.v[i] : &pObject->bb2.max.v[i]);
+            bounds.original_bounds.min.v[i] = PhysicsScalar((double)bounds.original_bounds.min.v[i] - 0.0025f);
+            bounds.original_bounds.max.v[i] = PhysicsScalar((double)bounds.original_bounds.max.v[i] - -0.0025f);
+        }
+        BrMatrix34Mul(&squared, &delta, &delta);
+        BrMatrix34Mul(&cubed, &squared, &delta);
+        BrMatrix34LPInverse(&squared, &cubed);
+        GetNewBoundingBox(&transformed, &pObject->bb2, &squared);
+        for (i = 0; i < 3; i++) {
+            PhysicsScalarStore(&bounds.original_bounds.min.v[i], PhysicsLessOrUnordered(&bounds.original_bounds.min.v[i], &transformed.min.v[i]) ? &bounds.original_bounds.min.v[i] : &transformed.min.v[i]);
+            PhysicsScalarStore(&bounds.original_bounds.max.v[i], PhysicsGreaterOrdered(&bounds.original_bounds.max.v[i], &transformed.max.v[i]) ? &bounds.original_bounds.max.v[i] : &transformed.max.v[i]);
+            bounds.original_bounds.min.v[i] = PhysicsScalar((double)bounds.original_bounds.min.v[i] - 0.02f);
+            bounds.original_bounds.max.v[i] = PhysicsScalar((double)bounds.original_bounds.max.v[i] - -0.02f);
+        }
+        memcpy(&pObject->field_0x124, &bounds.original_bounds, sizeof(pObject->field_0x124));
+        BrMatrix34Copy(&pObject->field_0x144, &inverse);
+        bounds.mat = actor_matrix;
+    }
+    pObject->box_face_start = (tU16)gFace_count;
+    gPling_face = NULL;
+    gActorBoxPick_StopGroovidelics = ((tU8)~(tU8)pObject->flags) >> 7;
+    if (pWorld_callbacks != NULL && pWorld_callbacks->find_faces_in_box != NULL) {
+        found = pWorld_callbacks->find_faces_in_box(&bounds, &gFace_list__car[gFace_count], (int)(300u - (tU32)gFace_count), pWorld_callbacks);
+        gFace_count = (int)((tU32)gFace_count + (tU32)found);
+        if (gFace_count >= 300) {
+            pObject->box_face_start = 0;
+            gFace_count = pWorld_callbacks->find_faces_in_box(&bounds, gFace_list__car, 300, pWorld_callbacks);
+            gFace_num__car = (int)((tU32)gFace_num__car + 1u);
+        }
+    }
+    pObject->box_face_end = (tU16)gFace_count;
+    pObject->box_face_ref = (tU16)gFace_num__car;
+    gActorBoxPick_StopGroovidelics = 1;
+    if (pWorld_callbacks != NULL && pWorld_callbacks->new_face_list != NULL) {
+        pWorld_callbacks->new_face_list(pObject, (undefined4*)gPling_face);
+    }
+    if (pObject->flags & 0x80) {
+        pObject->box_face_end = pObject->box_face_start;
+    }
+}
 
 // CheckPointVelocities
 
