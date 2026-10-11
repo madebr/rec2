@@ -279,7 +279,15 @@ int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelma
     return 1;
 }
 
-// WaitFor
+// FUNCTION: CARMA2_HW 0x005146c0
+void C2_HOOK_FASTCALL WaitFor(tU32 pDelay) {
+    tU32 end_time;
+
+    end_time = PDGetTotalTime() + pDelay;
+    while (PDGetTotalTime() < end_time && !AnyKeyDown()) {
+        SoundService();
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005146f0
 intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg) {
@@ -357,7 +365,28 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_mat
     return 0;
 }
 
-// DRActorEnumRecurseWithSnart
+// FUNCTION: CARMA2_HW 0x005148c0
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithSnart(br_actor* pActor, br_matrix34* pMatrix, tDRActorEnumRecurseWithSnart_cbfn* pCall_back, void* pArg) {
+    br_matrix34 combined_transform;
+    intptr_t result;
+
+    if (pMatrix != NULL) {
+        BrMatrix34Mul(&combined_transform, &pActor->t.t.mat, pMatrix);
+    } else {
+        BrMatrix34Identity(&combined_transform);
+    }
+    result = pCall_back(pActor, &combined_transform, pArg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurseWithSnart(pActor, &combined_transform, pCall_back, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
 
 // sign
 
@@ -776,7 +805,7 @@ void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, co
 }
 
 // FUNCTION: CARMA2_HW 0x00515690
-void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h) {
+void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h) {
 
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
 }
@@ -1230,7 +1259,24 @@ tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
     }
 }
 
-// Colour24BitTo16Bit
+// FUNCTION: CARMA2_HW 0x00517050
+tU16 C2_HOOK_FASTCALL Colour24BitTo16Bit(br_colour pColour) {
+    tU32 colour;
+
+    switch (gBack_screen->type) {
+    case BR_PMT_RGB_565:
+        colour = ((pColour >> 3) & 0x1f0000) | (pColour & 0xfc00);
+        colour = (colour >> 2) | (pColour & 0xf8);
+        return (tU16)(colour >> 3);
+    case BR_PMT_RGB_555:
+        colour = ((pColour >> 3) & 0x1f0000) | (pColour & 0xf800);
+        colour = (colour >> 3) | (pColour & 0xf8);
+        return (tU16)(colour >> 3);
+    default:
+        BrFailure("Unsupported back buffer type.");
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005170c0
 br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
@@ -1573,15 +1619,10 @@ void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) 
     MungeMetaCharacters(pText, pMeta, text);
 }
 
-void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {
+// FUNCTION: CARMA2_HW 0x005191b0
+void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h) {
 
-    if (gLock_often) {
-        PossibleUnlock(0);
-    }
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
-    if (gLock_often) {
-        PossibleUnlock(0);
-    }
 }
 
 // FUNCTION: CARMA2_HW 0x005191f0
