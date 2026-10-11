@@ -63,7 +63,7 @@ extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor,
 
 extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithSnart(br_actor* pActor, br_matrix34* pMatrix, tDRActorEnumRecurseWithSnart_cbfn* pCall_back, void* pArg);
 
-// sign
+extern int C2_HOOK_FASTCALL sign(int pNumber);
 
 extern FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension);
 
@@ -190,6 +190,10 @@ extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
 
 extern void C2_HOOK_FASTCALL PrintScreen(void);
+
+extern intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
+
+extern void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg);
 
 extern tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp);
 

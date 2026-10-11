@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Compare seven utility entries with original x86 and three native compilers.
+"""Compare utility entries with original x86 and three native compilers.
 
-Time, keyboard, sound, failure, table lookup and rectangle-copy calls are controlled boundaries.
+Time, keyboard, sound, failure, table lookup, stdio and rectangle-copy calls are controlled boundaries.
 Actor traversal executes actual BRender multiply/identity bodies using exact
 dyadic matrices; it tests traversal and matrix order, not general matrix accuracy.
 Complete arena bytes, callback mutations and ordered arguments are compared.
@@ -25,11 +25,13 @@ FUNCTIONS = dict(WaitFor=0x5146c0, Colour24BitTo16Bit=0x517050,
     DRPixelmapRectangleCopy=0x515690, DrPixelmapRectangleCopyPossibleLock=0x5191b0,
     DRActorEnumRecurseWithSnart=0x5148c0,
     FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport=0x518d60,
-    GetBlendificatiousnessOfMaterial=0x518e70)
+    GetBlendificatiousnessOfMaterial=0x518e70, sign=0x514930,
+    DumpVisibleActorsCB=0x518b00, DumpVisibleActors=0x518ac0)
 ADDRESSES = dict(FUNCTIONS, PDGetTotalTime=0x51d410, AnyKeyDown=0x482d70,
     SoundService=0x455a80, BrFailure=0x527c80, BrPixelmapRectangleCopy=0x538590,
     BrMatrix34Mul=0x532620, BrMatrix34Identity=0x5327c0, gBack_screen=0x74d360,
-    gScreen=0x74d3e0, BrTableFind=0x51f140)
+    gScreen=0x74d3e0, BrTableFind=0x51f140, BrActorEnum=0x51ded0,
+    printf=0x577930, fflush=0x577700)
 HEAP, STACK, STOP, CALLBACK, SIZE = 0x1000000, 0x1080000, 0x1081000, 0x1082000, 4096
 
 
@@ -47,6 +49,7 @@ def main():
     parser.add_argument("--msvc-root", type=Path, default=ROOT / "build-tools/msvc-modern")
     parser.add_argument("--msvc5-root", type=Path, default=ROOT / "build-tools/msvc500sp3")
     parser.add_argument("--output", type=Path, default=ROOT / "build-audit/utility-runtime-tests")
+    parser.add_argument("--modes", type=int, nargs="+", choices=range(len(FUNCTIONS)))
     args = parser.parse_args()
     sys.path.insert(0, str(args.dependency_dir.resolve()))
     from unicorn import Uc, UC_ARCH_X86, UC_MODE_32, UC_HOOK_CODE
@@ -72,6 +75,7 @@ def main():
 #include <stdlib.h>
 #include <string.h>
 #include <setjmp.h>
+#include <stdarg.h>
 #include <float.h>
 #include <fcntl.h>
 #include <io.h>
@@ -97,12 +101,17 @@ static unsigned norm(const void* p){
 static void snapshot(void){
     unsigned char copy[4096];unsigned i,j,v;
     memcpy(copy,arena,sizeof(copy));
-    for(i=0;i<6;i++)for(j=0;j<2;j++){
-        unsigned off=0x400+128*i+8*j;
+    for(i=0;i<6;i++)for(j=0;j<7;j++){
+        static const unsigned fields[7]={0,8,12,20,24,28,36};
+        unsigned off=0x400+128*i+fields[j];
         memcpy(&v,copy+off,4);v=norm((void*)(uintptr_t)v);memcpy(copy+off,&v,4);
     }
     for(i=0;i<2;i++){
         unsigned off=i?0xb58:0xb4c;
+        memcpy(&v,copy+off,4);v=norm((void*)(uintptr_t)v);memcpy(copy+off,&v,4);
+    }
+    for(i=0;i<2;i++){
+        unsigned off=i?0xa04:0x804;
         memcpy(&v,copy+off,4);v=norm((void*)(uintptr_t)v);memcpy(copy+off,&v,4);
     }
     fwrite(copy,sizeof(copy),1,stdout);
@@ -159,6 +168,29 @@ static intptr_t C2_HOOK_FASTCALL callback(br_actor*actor,br_matrix34*mat,void*ar
     return i==h[8]?(intptr_t)h[9]:0;
 }
 '''
+    driver += extract((ROOT / "src/brender/core/v1db/actsupt.c").read_text(), "BrActorEnum").replace("BrActorEnum", "NativeBrActorEnum")
+    driver += r'''
+br_uint_32 C2_HOOK_CDECL BrActorEnum(br_actor*actor,br_actor_enum_cbfn*cb,void*arg){
+    emit(12);emit(norm(actor));emit(cb==DumpVisibleActorsCB);emit(norm(arg));snapshot();
+    return NativeBrActorEnum(actor,cb,arg);
+}
+static int C2_HOOK_CDECL FixturePrintf(const char*fmt,...){
+    va_list args;unsigned value;const char*text;
+    emit(11);emit((unsigned)strlen(fmt));fwrite(fmt,strlen(fmt),1,stdout);
+    va_start(args,fmt);
+    if(strstr(fmt,"%s")){
+        text=va_arg(args,const char*);emit((unsigned)strlen(text));fwrite(text,strlen(text),1,stdout);
+    }else if(strstr(fmt,"%08x")){
+        value=va_arg(args,unsigned);emit(norm((void*)(uintptr_t)value));
+    }else if(strstr(fmt,"%i")){
+        value=(unsigned)va_arg(args,int);emit(value);
+    }else if(strchr(fmt,'%')){exit(92);}
+    va_end(args);return 0;
+}
+static int C2_HOOK_CDECL FixtureFlush(FILE*f){if(f!=stdout)exit(93);emit(13);return 0;}
+#define printf FixturePrintf
+#define fflush FixtureFlush
+'''
     driver += "\n".join(extract(source, n) for n in FUNCTIONS)
     driver += r'''
 int C2_HOOK_CDECL main(int argc,char**argv){
@@ -167,13 +199,19 @@ int C2_HOOK_CDECL main(int argc,char**argv){
     f=fopen(argv[1],"rb");if(f==NULL)return 2;
     if(fread(h,sizeof(h),1,f)!=1||fread(arena,sizeof(arena),1,f)!=1)return 3;
     fclose(f);_setmode(_fileno(stdout),_O_BINARY);_controlfp(_PC_53,_MCW_PC);
-    for(i=0;i<6;i++)for(j=0;j<2;j++){
-        unsigned off=0x400+128*i+8*j;
+    for(i=0;i<6;i++)for(j=0;j<7;j++){
+        static const unsigned fields[7]={0,8,12,20,24,28,36};
+        unsigned off=0x400+128*i+fields[j];
         memcpy(&v,arena+off,4);
         if(v>=0x1000000&&v<0x1001000){v=v-0x1000000+(unsigned)(uintptr_t)arena;memcpy(arena+off,&v,4);}
     }
     for(i=0;i<2;i++){
         unsigned off=i?0xb58:0xb4c;
+        memcpy(&v,arena+off,4);
+        if(v>=0x1000000&&v<0x1001000){v=v-0x1000000+(unsigned)(uintptr_t)arena;memcpy(arena+off,&v,4);}
+    }
+    for(i=0;i<2;i++){
+        unsigned off=i?0xa04:0x804;
         memcpy(&v,arena+off,4);
         if(v>=0x1000000&&v<0x1001000){v=v-0x1000000+(unsigned)(uintptr_t)arena;memcpy(arena+off,&v,4);}
     }
@@ -188,6 +226,9 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         case 4:result=(unsigned)DRActorEnumRecurseWithSnart((br_actor*)(arena+0x400),h[6]?(br_matrix34*)(arena+0x300):NULL,callback,arena+0xf00);break;
         case 5:result=FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(gScreen,h[1],h[2],h[3],h[4]);break;
         case 6:result=(unsigned)GetBlendificatiousnessOfMaterial((br_material*)(arena+0xb00));break;
+        case 7:result=(unsigned)sign((int)h[1]);break;
+        case 8:result=DumpVisibleActorsCB((br_actor*)(arena+0x400),arena+0xf00);break;
+        case 9:DumpVisibleActors((br_actor*)(arena+0x400),(char*)(arena+0xe80));break;
         }
     }
     emit(9);emit(result);snapshot();return 0;
@@ -233,6 +274,10 @@ int C2_HOOK_CDECL main(int argc,char**argv){
             return struct.unpack("<I", u.mem_read(p, 4))[0]
         def wr(p, value):
             u.mem_write(p, words([value]))
+        def string(p):
+            s = bytearray()
+            while u.mem_read(p, 1) != b"\0": s.extend(u.mem_read(p, 1)); p += 1
+            return s
         wr(addresses["gBack_screen"], HEAP + 0x80)
         wr(addresses["gScreen"], HEAP + 0x80)
         events = bytearray()
@@ -278,6 +323,19 @@ int C2_HOOK_CDECL main(int argc,char**argv){
                 emit(6); events.extend(u.mem_read(rd(sp + 8), 48)); events.extend(u.mem_read(rd(sp + 12), 48))
             elif ip == addresses["BrMatrix34Identity"]:
                 emit(7)
+            elif ip == addresses["printf"]:
+                fmt = string(rd(sp + 4)); emit(11, len(fmt)); events.extend(fmt)
+                if b"%s" in fmt:
+                    s = string(rd(sp + 8)); emit(len(s)); events.extend(s)
+                elif b"%08x" in fmt or b"%i" in fmt: emit(rd(sp + 8))
+                else: assert b"%" not in fmt
+                ret()
+            elif ip == addresses["fflush"]:
+                if addresses["fflush"] == ADDRESSES["fflush"]: assert rd(sp + 4) == 0x6737f0
+                emit(13); ret()
+            elif ip == addresses["BrActorEnum"]:
+                emit(12, rd(sp + 4), int(rd(sp + 8) == addresses["DumpVisibleActorsCB"]), rd(sp + 12))
+                events.extend(u.mem_read(HEAP, SIZE))
             elif ip == CALLBACK:
                 actor, mat, arg = uc.reg_read(UC_X86_REG_ECX), uc.reg_read(UC_X86_REG_EDX), rd(sp + 4)
                 i = (actor - HEAP - 0x400) // 128
@@ -296,11 +354,13 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         elif mode == 4: ecx, edx, stackargs = HEAP + 0x400, HEAP + 0x300 if h[6] else 0, [CALLBACK, HEAP + 0xf00]
         elif mode == 5: ecx, edx, stackargs = HEAP + 0x80, h[1], h[2:5]
         elif mode == 6: ecx = HEAP + 0xb00
+        elif mode == 8: ecx, edx, stackargs = 0, 0, [HEAP + 0x400, HEAP + 0xf00]
+        elif mode == 9: ecx, edx = HEAP + 0x400, HEAP + 0xe80
         u.mem_write(STACK, words([STOP, *stackargs]))
         u.reg_write(UC_X86_REG_ESP, STACK); u.reg_write(UC_X86_REG_ECX, ecx); u.reg_write(UC_X86_REG_EDX, edx)
         u.emu_start(addresses[list(FUNCTIONS)[mode]], STOP, count=100000)
         assert failed[0] or u.reg_read(UC_X86_REG_EIP) == STOP
-        value = u.reg_read(UC_X86_REG_EAX) if mode in (1, 4, 5, 6) and not failed[0] else 0
+        value = u.reg_read(UC_X86_REG_EAX) if mode in (1, 4, 5, 6, 7, 8) and not failed[0] else 0
         if mode == 1: value &= 65535
         emit(9, value); events.extend(u.mem_read(HEAP, SIZE))
         return bytes(events)
@@ -344,6 +404,13 @@ int C2_HOOK_CDECL main(int argc,char**argv){
             for stage in (0, 1, 2, 3):
                 for new in (0, 0xd00, 0xd20, 0xd40):
                     cases.append(dict(mode=6, kind=3, initial=initial, tables=tables, stage=stage, new=new, screen_mutation=True))
+    for value in (0,1,0xffffffff,0x7fffffff,0x80000000,0x80000001,65535,65536,*[rng.getrandbits(32) for _ in range(32)]):
+        cases.append(dict(mode=7, value=value))
+    for mode in (8, 9):
+        for kind, style in [(k, 4) for k in range(10)] + [(1, s) for s in range(10)] + [(255, 255)]:
+            for flags in (0, 1, 2, 6, 8, 24, 31):
+                cases.append(dict(mode=mode, kind=kind, style=style, flags=flags, depth=0xffff))
+    if args.modes is not None: cases = [case for case in cases if case["mode"] in args.modes]
     results = []
     for index, case in enumerate(cases):
         arena = bytearray(b"\xa5" * SIZE)
@@ -360,6 +427,7 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         struct.pack_into("<12f", arena, 0x300, 1, 0, .5, .25, 2, 0, 0, 0, 1, -2, 3, .5)
         wr(0xf00, 0x12340000)
         wr(0xb4c, 0); wr(0xb58, 0)
+        wr(0x804, 0); wr(0xa04, 0)
         mode = h[0]
         if mode == 0:
             h[1:5] = [case["delay"], len(case["times"]), case["key_after"], 0x80000001]
@@ -376,6 +444,20 @@ int C2_HOOK_CDECL main(int argc,char**argv){
                              (0xc08, case.get("opacity_token", 0xbe)), (0xc0c, case.get("opacity", 0x800000))): wr(off, val)
             h[1:4] = case.get("tables", [0xd00,0xd20,0xd40])
             h[4], h[5], h[10] = case.get("stage", 0), case.get("new", 0), int(case.get("screen_mutation", False))
+        elif mode == 7: h[1] = case["value"]
+        elif mode in (8, 9):
+            flags = case["flags"]
+            for off, text in ((0xe00,b'actor %name'),(0xe20,b'model'),(0xe40,b'material'),(0xe80,b'visible tree')):
+                arena[off:off+len(text)+1] = text+b'\0'
+            wr(0x804, HEAP+0xe20 if flags&4 else 0); wr(0xa04, HEAP+0xe40 if flags&16 else 0)
+            for i in range(6):
+                off = 0x400 + 128*i
+                struct.pack_into('<H', arena, off+16, case['depth']-i)
+                arena[off+18], arena[off+32] = case['kind'], case['style']
+                wr(off+12, HEAP+0x400 if i else 0)
+                wr(off+20, HEAP+0xe00 if flags&1 else 0)
+                wr(off+24, HEAP+0x800 if flags&2 else 0)
+                wr(off+28, HEAP+0xa00 if flags&8 else 0)
         expected = execute(*images[0], h, arena)
         checks = []
         if len(images) > 1: checks.append(("matching PE", execute(*images[1], h, arena)))
@@ -390,6 +472,7 @@ int C2_HOOK_CDECL main(int argc,char**argv){
             results.append(dict(case=index, compiler=compiler, events_sha256=hashlib.sha256(actual).hexdigest()))
     manifest = dict(original_sha256=HASH, source_sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),
         compiler_commands=commands, scenarios=len(cases), comparisons=len(results), cases=results)
+    manifest['modes'] = args.modes
     if len(images) > 1: manifest["recompiled_sha256"] = hashlib.sha256(images[1][0]).hexdigest()
     (out / "verification.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(f"PASS: {len(cases)} utility scenarios, {len(results)} original/native comparisons.")

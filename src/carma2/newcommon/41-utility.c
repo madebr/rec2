@@ -388,7 +388,13 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithSnart(br_actor* pActor, br_matri
     return 0;
 }
 
-// sign
+// FUNCTION: CARMA2_HW 0x00514930
+int C2_HOOK_FASTCALL sign(int pNumber) {
+    if (pNumber > 0) {
+        return 1;
+    }
+    return pNumber < 0 ? -1 : 0;
+}
 
 // FUNCTION: CARMA2_HW 0x005149a0
 FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
@@ -1549,6 +1555,111 @@ void C2_HOOK_FASTCALL PrintScreen(void) {
         }
         PFfclose(f);
     }
+}
+
+// FUNCTION: CARMA2_HW 0x00518b00
+intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
+
+    if (pActor->render_style != BR_RSTYLE_NONE) {
+        const char* str;
+
+        switch (pActor->type) {
+        case BR_ACTOR_NONE:
+            str = "DUMMY ACTOR\n";
+            break;
+        case BR_ACTOR_MODEL:
+            str = "MODEL ACTOR\n";
+            break;
+        case BR_ACTOR_LIGHT:
+            str = "LIGHT ACTOR\n";
+            break;
+        case BR_ACTOR_CAMERA:
+            str = "CAMERA ACTOR\n";
+            break;
+        case BR_ACTOR_BOUNDS:
+            str = "BOUNDS ACTOR\n";
+            break;
+        case BR_ACTOR_BOUNDS_CORRECT:
+            str = "BOUNDS-CORRECT ACTOR\n";
+            break;
+        case BR_ACTOR_CLIP_PLANE:
+            str = "CLIP-PLANE ACTOR\n";
+            break;
+        default:
+            str = "******** UNKNOWN ********\n";
+            break;
+        }
+        printf(str);
+        str = pActor->identifier;
+        if (str == NULL) {
+            str = "No Identifier";
+        }
+        printf("\tName:\t\t\"%s\"\n", str);
+        printf("\tAddress:\t%08x\n", (unsigned int)(uintptr_t)pActor);
+        printf("\tParent:\t\t%08x\n", (unsigned int)(uintptr_t)pActor->parent);
+        printf("\tDepth:\t\t%i\n", pActor->depth);
+        printf("\tModelPtr:\t0x%08x", (unsigned int)(uintptr_t)pActor->model);
+        if (pActor->model == NULL) {
+            printf("\n");
+        } else {
+            str = pActor->model->identifier;
+            if (str == NULL) {
+                str = "No Identifier";
+            }
+            printf(" (\"%s\")\n", str);
+        }
+        printf("\tMaterialPtr:\t0x%08x", (unsigned int)(uintptr_t)pActor->material);
+        if (pActor->material == NULL) {
+            printf("\n");
+        } else {
+            str = pActor->material->identifier;
+            if (str == NULL) {
+                str = "No Identifier";
+            }
+            printf(" (\"%s\")\n", str);
+        }
+        switch (pActor->render_style) {
+        case BR_RSTYLE_DEFAULT:
+            str = "BR_RSTYLE_DEFAULT";
+            break;
+        case BR_RSTYLE_NONE:
+            str = "BR_RSTYLE_NONE";
+            break;
+        case BR_RSTYLE_POINTS:
+            str = "BR_RSTYLE_POINTS";
+            break;
+        case BR_RSTYLE_EDGES:
+            str = "BR_RSTYLE_EDGES";
+            break;
+        case BR_RSTYLE_FACES:
+            str = "BR_RSTYLE_FACES";
+            break;
+        case BR_RSTYLE_BOUNDING_POINTS:
+            str = "BR_RSTYLE_BOUNDING_POINTS";
+            break;
+        case BR_RSTYLE_BOUNDING_EDGES:
+            str = "BR_RSTYLE_BOUNDING_EDGES";
+            break;
+        case BR_RSTYLE_BOUNDING_FACES:
+            str = "BR_RSTYLE_BOUNDING_FACES";
+            break;
+        default:
+            str = "******** UNKNOWN ********";
+            break;
+        }
+        printf("\tRenderStyle:\t%s\n", str);
+        printf("\n");
+    }
+    return BrActorEnum(pActor, DumpVisibleActorsCB, pData);
+}
+
+// FUNCTION: CARMA2_HW 0x00518ac0
+void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg) {
+
+    printf("MSG:\"%s\"\n", pMsg);
+    BrActorEnum(pActor, DumpVisibleActorsCB, NULL);
+    printf("----------------------------------\n\n");
+    fflush(stdout);
 }
 
 // FUNCTION: CARMA2_HW 0x00518d60
