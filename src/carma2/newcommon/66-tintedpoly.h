@@ -6,6 +6,13 @@
 
 extern tTintedPoly gTintedPolys[10];
 extern br_actor* gTintedPolyCamera;
+extern br_colour* gTinted_poly_palette;
+extern br_uint_32 gTintedColourMap_grn;
+extern br_uint_32 gTintedColourMap_blu;
+extern int gTinted_fire_phase;
+extern int gTinted_fire_frame;
+extern int gTinted_fire_save;
+extern int gTinted_fire_cooling;
 extern br_token_value gTinted_poly_tokens[9];
 #define gTintedColourMap_red (gTinted_poly_tokens[6].t)
 #define gDefaultOpacity_TintedPoly (gTinted_poly_tokens[6].v.i32)
@@ -24,9 +31,9 @@ extern void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex);
 
 extern void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void);
 
-// UpdateTintedPolyByMaterial
+extern void C2_HOOK_FASTCALL UpdateTintedPolyByMaterial(int pIndex);
 
-// UpdatePolyVertexColours
+extern void C2_HOOK_FASTCALL UpdatePolyVertexColours(int pIndex);
 
 extern void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex);
 
@@ -40,17 +47,17 @@ extern void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int
 
 extern br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex);
 
-// ClearTheFlame
+// ClearTheFlame is inlined in UpdateFirePoly.
 
-// GetUniqueFileName
+// GetUniqueFileName is inlined in UpdateFirePoly.
 
-// UpdateFirePoly
+extern void C2_HOOK_FASTCALL UpdateFirePoly(int pIndex);
 
-// UpdatePulsePoly
+extern void C2_HOOK_FASTCALL UpdatePulsePoly(int pIndex);
 
-// ProcessTintedPoly
+extern void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex);
 
-// UpdateTintedPolys
+extern void C2_HOOK_FASTCALL UpdateTintedPolys(void);
 
 extern void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height);
 

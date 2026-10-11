@@ -1,11 +1,16 @@
 #include "66-tintedpoly.h"
 
+#include "08-loading1.h"
+#include "18-graphics2.h"
 #include "28-world3.h"
 #include "41-utility.h"
+#include "42-input.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "platform.h"
 #include "rec2_macros.h"
 #include "c2_string.h"
+#include "c2_stdio.h"
 
 // GLOBAL: CARMA2_HW 0x00705c80
 tTintedPoly gTintedPolys[10];
@@ -36,6 +41,21 @@ br_token_value gTinted_poly_tokens[9] = {
 #define gTinted_poly_custom_opacity_tokens (&gTinted_poly_tokens[4])
 
 
+
+// GLOBAL: CARMA2_HW 0x006a0434
+br_colour* gTinted_poly_palette;
+// GLOBAL: CARMA2_HW 0x006a0438
+br_uint_32 gTintedColourMap_grn;
+// GLOBAL: CARMA2_HW 0x006a043c
+br_uint_32 gTintedColourMap_blu;
+// GLOBAL: CARMA2_HW 0x006a0440
+int gTinted_fire_phase;
+// GLOBAL: CARMA2_HW 0x006a0444
+int gTinted_fire_frame;
+// GLOBAL: CARMA2_HW 0x006a0448
+int gTinted_fire_save;
+// GLOBAL: CARMA2_HW 0x006a044c
+int gTinted_fire_cooling;
 
 // FUNCTION: CARMA2_HW 0x004d7040
 void C2_HOOK_FASTCALL InitTintedPolyStuff(void) {
@@ -456,4 +476,343 @@ void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int wi
         }
     }
     BrModelUpdate(tinted->model, BR_MODU_VERTICES);
+}
+
+// FUNCTION: CARMA2_HW 0x004d7d80
+void C2_HOOK_FASTCALL UpdateTintedPolyByMaterial(int pTintedIndex) {
+    br_uint_32 new_grn, new_blu, new_red;
+    br_pixelmap* map;
+    tU32 time;
+    int material_changed;
+    tU32 time_since_last_update_s;
+
+    if (!gTintedPolys[pTintedIndex].visible || gTintedPolys[pTintedIndex].material2 == NULL) {
+        return;
+    }
+
+    map = gTintedPolys[pTintedIndex].material2->colour_map;
+    new_grn = gTintedColourMap_grn;
+    new_blu = gTintedColourMap_blu;
+    new_red = gTintedColourMap_red;
+    if (map != NULL && map->pixels != NULL) {
+        br_uint_32 v_tl, v_tr, v_bl, v_br;
+
+        v_tl = BrPixelmapPixelGet(map, map->width / 4, map->height / 4);
+        v_tr = BrPixelmapPixelGet(map, map->width - map->width / 4, map->height / 4);
+        v_bl = BrPixelmapPixelGet(map, map->width / 4, map->height - map->height / 4);
+        v_br = BrPixelmapPixelGet(map, map->width - map->width / 4, map->height - map->height / 4);
+
+        new_red = (REC2_RGB888_R(v_tl) + REC2_RGB888_R(v_tr) + REC2_RGB888_R(v_bl) + REC2_RGB888_R(v_br)) / 4;
+        new_grn = (REC2_RGB888_G(v_tl) + REC2_RGB888_G(v_tr) + REC2_RGB888_G(v_bl) + REC2_RGB888_G(v_br)) / 4;
+        new_blu = (REC2_RGB888_B(v_tl) + REC2_RGB888_B(v_tr) + REC2_RGB888_B(v_bl) + REC2_RGB888_B(v_br)) / 4;
+    }
+    time = GetTotalTime();
+    if (gTintedPolys[pTintedIndex].color_red + gTintedPolys[pTintedIndex].color_grn + gTintedPolys[pTintedIndex].color_blu == 0) {
+        gTintedPolys[pTintedIndex].color_red = new_red;
+        gTintedPolys[pTintedIndex].color_grn = new_grn;
+        gTintedPolys[pTintedIndex].color_blu = new_blu;
+        gTintedPolys[pTintedIndex].lastTime = time;
+        gTintedPolys[pTintedIndex].material->colour = BR_COLOUR_RGB(new_red, new_grn, new_blu);
+        BrMaterialUpdate(gTintedPolys[pTintedIndex].material, BR_MATU_LIGHTING);
+        return;
+    }
+
+    material_changed = 0;
+    time_since_last_update_s = (time - (tU32)gTintedPolys[pTintedIndex].lastTime) >> 12;
+    if (time_since_last_update_s != 0) {
+        if (gTintedPolys[pTintedIndex].color_red != new_red) {
+            if ((br_int_32)gTintedPolys[pTintedIndex].color_red < (br_int_32)new_red) {
+                gTintedPolys[pTintedIndex].color_red += time_since_last_update_s;
+            } else {
+                gTintedPolys[pTintedIndex].color_red -= time_since_last_update_s;
+            }
+            if ((br_int_32)(new_red - time_since_last_update_s) < (br_int_32)gTintedPolys[pTintedIndex].color_red && (br_int_32)gTintedPolys[pTintedIndex].color_red < (br_int_32)(time_since_last_update_s + new_red)) {
+                gTintedPolys[pTintedIndex].color_red = new_red;
+            }
+            material_changed = 1;
+        }
+        if (gTintedPolys[pTintedIndex].color_grn != new_grn) {
+            if ((br_int_32)gTintedPolys[pTintedIndex].color_grn < (br_int_32)new_grn) {
+                gTintedPolys[pTintedIndex].color_grn += time_since_last_update_s;
+            } else {
+                gTintedPolys[pTintedIndex].color_grn -= time_since_last_update_s;
+            }
+            if ((br_int_32)(new_grn - time_since_last_update_s) < (br_int_32)gTintedPolys[pTintedIndex].color_grn && (br_int_32)gTintedPolys[pTintedIndex].color_grn < (br_int_32)(time_since_last_update_s + new_grn)) {
+                gTintedPolys[pTintedIndex].color_grn = new_grn;
+            }
+            material_changed = 1;
+        }
+        if (gTintedPolys[pTintedIndex].color_blu != new_blu) {
+            if ((br_int_32)gTintedPolys[pTintedIndex].color_blu < (br_int_32)new_blu) {
+                gTintedPolys[pTintedIndex].color_blu += time_since_last_update_s;
+            } else {
+                gTintedPolys[pTintedIndex].color_blu -= time_since_last_update_s;
+            }
+            if ((br_int_32)(new_blu - time_since_last_update_s) < (br_int_32)gTintedPolys[pTintedIndex].color_blu && (br_int_32)gTintedPolys[pTintedIndex].color_blu < (br_int_32)(time_since_last_update_s + new_blu)) {
+                gTintedPolys[pTintedIndex].color_blu = new_blu;
+            }
+            material_changed = 1;
+        }
+        if (material_changed) {
+            gTintedPolys[pTintedIndex].material->colour = BR_COLOUR_RGB(gTintedPolys[pTintedIndex].color_red, gTintedPolys[pTintedIndex].color_grn, gTintedPolys[pTintedIndex].color_blu);
+            BrMaterialUpdate(gTintedPolys[pTintedIndex].material, BR_MATU_LIGHTING);
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d8050
+void C2_HOOK_FASTCALL UpdatePolyVertexColours(int pTintedIndex) {
+    br_uint_32 maximum;
+    double scale;
+    double tint_red;
+    double tint_grn;
+    double tint_blu;
+    int i;
+
+    if (gTinted_poly_palette == NULL || pTintedIndex == -1) {
+        return;
+    }
+    maximum = (br_int_32)gTintedPolys[pTintedIndex].color_red > (br_int_32)gTintedPolys[pTintedIndex].color_grn
+        ? gTintedPolys[pTintedIndex].color_red : gTintedPolys[pTintedIndex].color_grn;
+    if (maximum <= gTintedPolys[pTintedIndex].color_blu) {
+        maximum = gTintedPolys[pTintedIndex].color_blu;
+    }
+    scale = 50.0 / maximum;
+    tint_red = 0.5 - ((br_int_32)gTintedPolys[pTintedIndex].color_red * scale) * -0.01;
+    tint_grn = 0.5 - ((br_int_32)gTintedPolys[pTintedIndex].color_grn * scale) * -0.01;
+    tint_blu = 0.5 - ((br_int_32)gTintedPolys[pTintedIndex].color_blu * scale) * -0.01;
+    for (i = 1; i < 256; i++) {
+        br_colour colour = gTinted_poly_palette[i];
+        br_uint_32 red = REC2_RGB888_R(colour);
+        br_uint_32 grn = REC2_RGB888_G(colour);
+        br_uint_32 blu = REC2_RGB888_B(colour);
+        br_uint_32 half_brightness = ((red + grn + blu) / 3) >> 1;
+
+        if (2 * half_brightness != 0) {
+            double amount = (100.0 / (2 * half_brightness)) * half_brightness * 0.01;
+            br_uint_32 new_grn = (br_uint_32)(br_int_64)((half_brightness + grn) * tint_grn * amount) & 0xff;
+            br_uint_32 new_red = (br_uint_32)(br_int_64)((half_brightness + red) * tint_red * amount) & 0xff;
+            br_uint_32 new_blu = (br_uint_32)(br_int_64)((half_brightness + blu) * tint_blu * amount) & 0xff;
+
+            ((br_colour*)gRender_palette->pixels)[i] = BR_COLOUR_RGB(new_red, new_grn, new_blu);
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d8630
+void C2_HOOK_FASTCALL UpdatePulsePoly(int pIndex) {
+
+    if ((gTintedPolys[pIndex].actor)->render_style == BR_RSTYLE_FACES) {
+        tU32 time;
+        int i;
+        tU8 new_color;
+
+        time = GetTotalTime();
+
+        new_color = (tU8)(time >> (gTintedPolys[pIndex].colour & 31));
+        for (i = 0; i < gTintedPolys[pIndex].model->nvertices; i++) {
+            gTintedPolys[pIndex].model->vertices[i].red = new_color + 128;
+            gTintedPolys[pIndex].model->vertices[i].grn = new_color + 30 * i;
+            gTintedPolys[pIndex].model->vertices[i].blu = new_color;
+        }
+        BrModelUpdate(gTintedPolys[pIndex].model, BR_MODU_VERTICES);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d86e0
+void C2_HOOK_FASTCALL UpdateFirePoly(int pIndex) {
+    int i;
+    int j;
+
+    if (!gTinted_fire_frame) {
+        C2_HOOK_BUG_ON(sizeof(gTintedPolys[pIndex].tints2) != 8192);
+        C2_HOOK_BUG_ON(sizeof(gTintedPolys[pIndex].tints3) != 8192);
+
+        memset(gTintedPolys[pIndex].tints2, 0, sizeof(gTintedPolys[pIndex].tints2));
+        memset(gTintedPolys[pIndex].tints3, 0, sizeof(gTintedPolys[pIndex].tints2));
+    }
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            int heat = 255 - gTinted_fire_cooling;
+            int offset = IRandomBetween(i - 5, 5 - i);
+            int row = IRandomBetween(13, 19);
+
+            gTintedPolys[pIndex].tints2[64 * (offset + row) + i + 64 - 5] = heat;
+        }
+    }
+    if (gTinted_fire_frame > 150) {
+        gTinted_fire_cooling += 1;
+    }
+    gTinted_fire_phase += 1;
+    if (gTinted_fire_phase >= 64) {
+        gTinted_fire_phase = 0;
+    }
+
+    for (i = 0; i < 62; i++) {
+        for (j = 0; j < 30; j++) {
+            int avg =
+                ((gTintedPolys[pIndex].tints2[i + (j + 2) * 64 + 1]
+                + gTintedPolys[pIndex].tints2[i + (j + 0) * 64 + 1]
+                + gTintedPolys[pIndex].tints2[i + (j + 1) * 64 + 2]
+                + gTintedPolys[pIndex].tints2[i + (j + 1) * 64 + 0]) / 4
+                + gTintedPolys[pIndex].tints2[i + (j + 1) * 64 + 1]) / 2
+            - gTintedPolys[pIndex].tints1[i + (j + 1) * 64 + 1]
+            - gTinted_fire_cooling;
+            gTintedPolys[pIndex].tints3[i + (j + 1) * 64] = MAX(0, avg);
+        }
+    }
+
+    if (gTinted_fire_frame < 150 && IRandomBetween(0, 6) > 3) {
+        int idx;
+
+        int row = IRandomBetween(12, 20);
+        int column = IRandomBetween(30, 55);
+
+        idx = row * 64 + column;
+        gTintedPolys[pIndex].tints2[idx] = 0xff;
+        gTintedPolys[pIndex].tints3[idx] = 0xbf;
+    }
+    memcpy(gTintedPolys[pIndex].tints2, gTintedPolys[pIndex].tints3, sizeof(gTintedPolys[pIndex].tints2));
+
+    for (i = 0; i < 64; i++) {
+        for (j = 0; j < 32; j++) {
+            int idx = gTintedPolys[pIndex].tints3[j * 64 + i];
+            BrPixelmapPixelSet(gTintedPolys[pIndex].pixelmap, j, i, gTintedPolys[pIndex].colours[idx]);
+        }
+    }
+    BrMapUpdate(gTintedPolys[pIndex].pixelmap, BR_MAPU_ALL);
+
+    if (gTinted_fire_frame % 10 == 0 && gTinted_fire_save && gTinted_fire_frame > 10) {
+        tPath_name save_path;
+        for (i = 1; i < 10000; i++) {
+            tPath_name path;
+            FILE* f;
+
+            PathCat(path, gApplication_path, "FLM");
+            sprintf(&path[strlen(path)], "%02d.%s", i, "PIX");
+            f = DRfopen(path, "rt");
+            if (f == NULL) {
+                sprintf(save_path, "%s", path);
+                break;
+            }
+            fclose(f);
+        }
+        BrPixelmapSave(save_path, gTintedPolys[pIndex].pixelmap);
+    }
+    gTinted_fire_frame += 1;
+    if (gTinted_fire_frame >= 200) {
+        gTinted_fire_frame = 0;
+        gTinted_fire_save = 0;
+        gTinted_fire_cooling = 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d84a0
+void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex) {
+
+    if (!gTintedPolys[pIndex].used) {
+        return;
+    }
+    switch (gTintedPolys[pIndex].class) {
+    case 2: {
+        tSpecial_volume *volume = gCar_to_view->collision_info->last_special_volume;
+        /* The original x87 below test also accepts unordered gravity. */
+        if ((volume != NULL && !(volume->gravity_multiplier >= 1.0f)) || gAction_replay_mode) {
+            UpdateTintedPolyByMaterial(pIndex);
+        }
+        break;
+    }
+    case 3:
+        UpdatePulsePoly(pIndex);
+        return;
+    case 4:
+        if (PDKeyDown(32) || (gTinted_fire_frame > 0 && gTinted_fire_frame <= 200)) {
+            UpdateFirePoly(pIndex);
+        }
+        if (PDKeyDown(35) || (gTinted_fire_frame > 0 && gTinted_fire_frame <= 200)) {
+            gTinted_fire_save = 1;
+            UpdateFirePoly(pIndex);
+        }
+        break;
+    case 6:
+        if (gTintedPolys[pIndex].visible) {
+            int red, grn, blu;
+
+            if (gTintedPolys[pIndex].subClass == 0) {
+                unsigned int mask;
+                mask = GetTotalTime() >> (gTintedPolys[pIndex].colour & 31);
+                if ((mask & 0x1ff) > 254) {
+                    mask = -2 - (mask & 0x1ff);
+                }
+                mask &= 0xff;
+                red = gTintedPolys[pIndex].color2_red & mask;
+                grn = gTintedPolys[pIndex].color2_grn & mask;
+                blu = gTintedPolys[pIndex].color2_blu & mask;
+            } else {
+                red = grn = blu = pIndex;
+                if (gTintedPolys[pIndex].subClass == 1) {
+                    UpdatePulsePoly(pIndex);
+                }
+            }
+            gTintedPolys[pIndex].material->colour = BR_COLOUR_RGB(red, grn, blu);
+            BrMaterialUpdate(gTintedPolys[pIndex].material, BR_MATU_LIGHTING);
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d8a20
+void C2_HOOK_FASTCALL UpdateTintedPolys(void) {
+    int i;
+    br_uint_32 red = 0;
+    br_uint_32 grn = 0;
+    br_uint_32 blu = 0;
+
+    /* The original inlined pulse path retains these colours between slots. */
+    for (i = 0; i < (int)REC2_ASIZE(gTintedPolys); i++) {
+        if (!gTintedPolys[i].used) {
+            continue;
+        }
+        switch (gTintedPolys[i].class) {
+        case 2: {
+            tSpecial_volume *volume = gCar_to_view->collision_info->last_special_volume;
+            if ((volume != NULL && !(volume->gravity_multiplier >= 1.0f)) || gAction_replay_mode) {
+                UpdateTintedPolyByMaterial(i);
+            }
+            break;
+        }
+        case 3:
+            UpdatePulsePoly(i);
+            break;
+        case 4:
+            if (PDKeyDown(32) || (gTinted_fire_frame > 0 && gTinted_fire_frame <= 200)) {
+                UpdateFirePoly(i);
+            }
+            if (PDKeyDown(35) || (gTinted_fire_frame > 0 && gTinted_fire_frame <= 200)) {
+                gTinted_fire_save = 1;
+                UpdateFirePoly(i);
+            }
+            break;
+        case 6:
+            if (gTintedPolys[i].visible) {
+                if (gTintedPolys[i].subClass == 0) {
+                    unsigned int mask;
+                    mask = GetTotalTime() >> (gTintedPolys[i].colour & 31);
+                    if ((mask & 0x1ff) > 254) {
+                        mask = -2 - (mask & 0x1ff);
+                    }
+                    mask &= 0xff;
+                    red = gTintedPolys[i].color2_red & mask;
+                    grn = gTintedPolys[i].color2_grn & mask;
+                    blu = gTintedPolys[i].color2_blu & mask;
+                } else {
+                    if (gTintedPolys[i].subClass == 1) {
+                        UpdatePulsePoly(i);
+                    }
+                }
+                gTintedPolys[i].material->colour = BR_COLOUR_RGB(red, grn, blu);
+                BrMaterialUpdate(gTintedPolys[i].material, BR_MATU_LIGHTING);
+            }
+        }
+    }
 }
