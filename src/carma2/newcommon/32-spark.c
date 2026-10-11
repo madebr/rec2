@@ -69,6 +69,12 @@ int gColumn_next;
 // GLOBAL: CARMA2_HW 0x006a96a8
 tSmoke_column gSmoke_column[10];
 
+// GLOBAL: CARMA2_HW 0x006aa380
+br_model* gLollipop_model;
+
+// GLOBAL: CARMA2_HW 0x006a8638
+br_pixelmap* gFlame_map[20];
+
 // DrawDot
 
 // SetWorldToScreen
@@ -853,9 +859,90 @@ void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame, br_scalar pScale_x, br
 
 // MungeSmokeColumn
 
-// DisposeFlame
+// FUNCTION: CARMA2_HW 0x004fc2e0
+void C2_HOOK_FASTCALL DisposeFlame(void) {
+    int i;
+    int j;
+    br_actor* child;
 
-// InitFlame
+    for (i = 0; i < (int)REC2_ASIZE(gFlame_map); i++) {
+        BrMapRemove(gFlame_map[i]);
+        BrPixelmapFree(gFlame_map[i]);
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if ((gColumn_flags & (1u << i)) != 0 && gSmoke_column[i].colour == 0) {
+            BrActorRemove(gSmoke_column[i].flame_actor);
+        }
+        child = gSmoke_column[i].flame_actor->children;
+        for (j = 0; j < 3; j++) {
+            BrMaterialRemove(child->material);
+            BrMaterialFree(child->material);
+            child = child->next;
+        }
+        BrActorFree(gSmoke_column[i].flame_actor);
+    }
+    BrModelRemove(gLollipop_model);
+    BrModelFree(gLollipop_model);
+}
+
+// FUNCTION: CARMA2_HW 0x004fc3a0
+void C2_HOOK_FASTCALL InitFlame(void) {
+    int i;
+    int j;
+    int count;
+    char name[256];
+    br_actor* child;
+    br_material* material;
+
+    gColumn_flags = 0;
+    gLollipop_model = BrModelAllocate("Lollipop", 4, 2);
+    strcpy(name, "FLAMES.PIX");
+    strcpy(gCurrent_load_directory, "COMMON");
+    count = LoadTextureTryAllLocations(name, gFlame_map, REC2_ASIZE(gFlame_map));
+    if (count != (int)REC2_ASIZE(gFlame_map)) {
+        FatalError(kFatalError_CantLoadPixelmapFile_S, name);
+    }
+    BrMapAddMany(gFlame_map, count);
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        gSmoke_column[i].flame_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        for (j = 0; j < 3; j++) {
+            child = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            material = BrMaterialAllocate(NULL);
+            BrActorAdd(gSmoke_column[i].flame_actor, child);
+            child->model = gLollipop_model;
+            child->material = material;
+            material->flags &= ~BR_MATF_LIGHT;
+            material->flags |= BR_MATF_ALWAYS_VISIBLE;
+            material->colour_map = gFlame_map[0];
+            GlorifyMaterial(&material, 1, kRendererShadingType_AmbientOnly);
+            BrMaterialAdd(material);
+            gSmoke_column[i].frame_count[j] = 100;
+        }
+    }
+    gLollipop_model->nvertices = 4;
+    BrVector3SetFloat(&gLollipop_model->vertices[0].p, -.5f, 0.f, 0.f);
+    BrVector3SetFloat(&gLollipop_model->vertices[1].p, .5f, 0.f, 0.f);
+    BrVector3SetFloat(&gLollipop_model->vertices[2].p, .5f, 1.f, 0.f);
+    BrVector3SetFloat(&gLollipop_model->vertices[3].p, -.5f, 1.f, 0.f);
+    gLollipop_model->vertices[0].map.v[0] = 0.f;
+    gLollipop_model->vertices[0].map.v[1] = 1.f;
+    gLollipop_model->vertices[1].map.v[0] = 1.f;
+    gLollipop_model->vertices[1].map.v[1] = 1.f;
+    gLollipop_model->vertices[2].map.v[0] = 1.f;
+    gLollipop_model->vertices[2].map.v[1] = 0.f;
+    gLollipop_model->vertices[3].map.v[0] = 0.f;
+    gLollipop_model->vertices[3].map.v[1] = 0.f;
+    gLollipop_model->nfaces = 2;
+    gLollipop_model->faces[0].vertices[0] = 0;
+    gLollipop_model->faces[0].vertices[1] = 1;
+    gLollipop_model->faces[0].vertices[2] = 2;
+    gLollipop_model->faces[1].vertices[0] = 0;
+    gLollipop_model->faces[1].vertices[1] = 2;
+    gLollipop_model->faces[1].vertices[2] = 3;
+    gLollipop_model->faces[0].smoothing = 1;
+    gLollipop_model->faces[1].smoothing = 1;
+    BrModelAdd(gLollipop_model);
+}
 
 // InitSplash
 

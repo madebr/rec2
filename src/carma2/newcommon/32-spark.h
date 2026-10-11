@@ -7,6 +7,8 @@
 extern int gColumn_flags;
 extern int gColumn_next;
 extern tSmoke_column gSmoke_column[10];
+extern br_model* gLollipop_model;
+extern br_pixelmap* gFlame_map[20];
 extern int gSmoke_on;
 extern tSmoke gSmoke[25];
 extern int gSmoke_flags;
@@ -148,9 +150,9 @@ extern void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame, br_scalar pScal
 
 // MungeSmokeColumn
 
-// DisposeFlame
+extern void C2_HOOK_FASTCALL DisposeFlame(void);
 
-// InitFlame
+extern void C2_HOOK_FASTCALL InitFlame(void);
 
 // InitSplash
 
