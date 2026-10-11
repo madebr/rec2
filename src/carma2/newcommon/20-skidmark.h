@@ -2,6 +2,13 @@
 #define GUARD_20_SKIDMARK_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern char* gBoring_material_names[2];
+extern char* gMaterial_names[2];
+extern br_material* gMaterial[2];
+extern tSkid gSkids[100];
+extern int gCurrent_skid;
 
 // StretchMark
 
@@ -15,9 +22,9 @@
 
 extern void C2_HOOK_FASTCALL InitSkids(void);
 
-// HideSkid
+extern void C2_HOOK_FASTCALL HideSkid(int pSkid_num);
 
-// HideSkids
+extern void C2_HOOK_FASTCALL HideSkids(void);
 
 // SkidLen
 
