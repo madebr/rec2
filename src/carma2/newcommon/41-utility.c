@@ -44,6 +44,12 @@ tU32 gLost_time;
 // GLOBAL: CARMA2_HW 0x0079efb0
 tU32 gLast_tick_count;
 
+// GLOBAL: CARMA2_HW 0x00762180
+char gCurrent_load_directory[256];
+
+// GLOBAL: CARMA2_HW 0x00761a80
+char gCurrent_load_name[256];
+
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     br_device *dev;
@@ -162,8 +168,8 @@ br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
 // FUNCTION: CARMA2_HW 0x00513690
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2) {
 
-#ifdef REC2_FIX_BUGS
-    if (pDestn_str != pStr_1) { // Added to avoid strcpy overlap checks
+#if defined(REC2_FIX_BUGS) || !defined(REC2_MATCHING)
+    if (pDestn_str != pStr_1) {
         strcpy(pDestn_str, pStr_1);
     }
 #else
@@ -286,7 +292,57 @@ void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* s
     stemPath[i] = '\0';
 }
 
-// DRLoadMultiplePix
+// FUNCTION: CARMA2_HW 0x00513a30
+int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity) {
+    tPath_name path1;
+    tPath_name path2;
+    tPath_name path3;
+    tPath_name path4;
+    tName_list list;
+    const char* load_path;
+    int i;
+    int error;
+
+    (void)pCapacity;
+    list.size = 0;
+    pName[strlen(pName) - 4] = '\0';
+    PathCat(path1, gApplication_path, gCurrent_load_directory);
+    if (strcmp(gCurrent_load_directory, "COMMON") != 0 && strcmp(gCurrent_load_directory, "INTRFACE") != 0) {
+        PathCat(path1, path1, gCurrent_load_name);
+    }
+    PathCat(path1, path1, gGraf_specs[gGraf_spec_index].data_dir_name);
+    PathCat(path1, path1, pName);
+    PathCat(path3, gApplication_path, gCurrent_load_directory);
+    if (strcmp(gCurrent_load_directory, "COMMON") != 0 && strcmp(gCurrent_load_directory, "INTRFACE") != 0) {
+        PathCat(path3, path3, gCurrent_load_name);
+    }
+    PathCat(path3, path3, pName);
+
+    PathCat(path2, path1, "TIFFX");
+    PFForEveryFile2(path2, (tEnumPathCallback)GetFileName, &list);
+    PathCat(path4, path1, "PIX8");
+    PFForEveryFile2(path4, (tEnumPathCallback)GetAdditionalFileName, &list);
+    PathCat(path2, path1, "TIFFRGB");
+    PFForEveryFile2(path2, (tEnumPathCallback)GetAdditionalFileName, &list);
+    PathCat(path4, path1, "PIX16");
+    PFForEveryFile2(path4, (tEnumPathCallback)GetAdditionalFileName, &list);
+    load_path = path1;
+    if (list.size == 0) {
+        PathCat(path2, path3, "TIFFX");
+        PFForEveryFile2(path2, (tEnumPathCallback)GetFileName, &list);
+        PathCat(path4, path3, "PIX8");
+        PFForEveryFile2(path4, (tEnumPathCallback)GetAdditionalFileName, &list);
+        PathCat(path2, path3, "TIFFRGB");
+        PFForEveryFile2(path2, (tEnumPathCallback)GetAdditionalFileName, &list);
+        PathCat(path4, path3, "PIX16");
+        PFForEveryFile2(path4, (tEnumPathCallback)GetAdditionalFileName, &list);
+        load_path = path3;
+    }
+    for (i = 0; i < list.size; i++) {
+        pMaps[i] = DRLdImg(load_path, list.items[i], gRender_palette, gPixelFlags, &error);
+    }
+    return i;
+}
 
 // FUNCTION: CARMA2_HW 0x00514570
 int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity) {
