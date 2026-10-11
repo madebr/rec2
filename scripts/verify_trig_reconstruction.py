@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import random
+import re
 import struct
 import subprocess
 import sys
@@ -26,7 +27,11 @@ ENTRIES = [
     ('FastScalarSinAngle', 0x511780, 141), ('FastScalarCosAngle', 0x511810, 141),
     ('DRMatrix34RotateX', 0x512030, 305), ('DRMatrix34RotateY', 0x512170, 305),
     ('DRMatrix34RotateZ', 0x5122b0, 305), ('DRMatrix23Rotate', 0x513020, 287),
+    ('DRMatrix34PreRotateX', 0x512620, 399), ('DRMatrix34PostRotateX', 0x5127b0, 399),
+    ('DRMatrix34PreRotateY', 0x512940, 399), ('DRMatrix34PostRotateY', 0x512ad0, 399),
+    ('DRMatrix34PreRotateZ', 0x512c60, 399), ('DRMatrix34PostRotateZ', 0x512df0, 399),
 ]
+DEPENDENCIES=[('_ftol',0x575b80,39),('BrMatrix34Copy',0x5325d0,79),('BrMatrix34Mul',0x532620,404)]
 
 
 def sha(data):
@@ -78,19 +83,19 @@ def main():
                     if offset is not None:
                         result[instruction.address+offset-base]=value
         return sorted(result.items())
-    def address_file(path,addresses,table,data,spans):
+    def address_file(path,addresses,globals_,data,spans):
         patches=relocations(data,spans)
-        path.write_bytes(struct.pack('<12I',*addresses,table,len(patches))+b''.join(struct.pack('<2I',*r) for r in patches))
+        path.write_bytes(struct.pack('<20I',*addresses,*globals_,len(patches))+b''.join(struct.pack('<2I',*r) for r in patches))
         return patches
     original_closure = []
-    for name, address, length in ENTRIES + [('_ftol', 0x575b80, 39)]:
+    for name, address, length in ENTRIES + DEPENDENCIES:
         code = raw(original, address, length)
         calls = []
         for instruction in cs.disasm(code, address):
             if instruction.mnemonic == 'call':
                 assert instruction.operands[0].type == CS_OP_IMM
                 calls.append(instruction.operands[0].imm)
-                assert calls[-1] == 0x575b80
+                assert calls[-1] in {a for _,a,_ in DEPENDENCIES}
         original_closure.append(dict(name=name, address=address, length=length, sha256=sha(code), calls=calls))
 
     common = r'''
@@ -112,17 +117,20 @@ typedef float (TRIG_CALL *scalar_fn)(unsigned);
 typedef void (TRIG_CALL *matrix_fn)(void*, unsigned);
 static unsigned char arena[128];
 static unsigned table_initial[91];
-static unsigned addresses[10];
+static unsigned addresses[16];
 static float* table;
+static br_matrix34* temporary[2];
 static int run(FILE* input) {
-    unsigned h[5],result,i;
+    unsigned h[7],result,i,bits[12],seed;
+    static const float general[12]={1.125f,-0.375f,0.0625f,0.4375f,1.75f,-0.25f,-0.625f,0.15625f,0.75f,2.375f,-4.125f,8.0625f};
+    static const float identity[12]={1,0,0,0,1,0,0,0,1,0,0,0};
     float value;
     void* dest;
     _setmode(_fileno(stdout),_O_BINARY);
     memcpy(table_initial,table,sizeof(table_initial));
     fwrite(table_initial,sizeof(table_initial),1,stdout);
     while(fread(h,sizeof(h),1,input)==1) {
-        if(h[0]>=10 || (h[2]!=0xffffffffu && h[2]>79))return 20;
+        if(h[0]>=16 || (h[2]<0xfffffffdu && h[2]>79))return 20;
         memcpy(table,table_initial,sizeof(table_initial));
         if(h[3]) {
             for(i=0;i<91;i++) {
@@ -131,7 +139,19 @@ static int run(FILE* input) {
             }
         }
         memset(arena,0xa5,sizeof(arena));
-        dest=h[2]==0xffffffffu ? (void*)(arena+32) : (void*)(table+h[2]);
+        memset(temporary[0],0xa6,48);memset(temporary[1],0xa7,48);
+        dest=h[2]==0xffffffffu ? (void*)(arena+32) : h[2]==0xfffffffeu ? (void*)temporary[0] : h[2]==0xfffffffdu ? (void*)temporary[1] : (void*)(table+h[2]);
+        if(h[0]>=10) {
+            memcpy(bits,h[5]==0 ? identity : general,48);
+            seed=h[6];
+            for(i=0;i<12;i++) {
+                if(h[5]==2)bits[i]=h[6];
+                if(h[5]==3){seed=seed*1664525u+1013904223u;bits[i]=seed;}
+            }
+            if(h[5]==4)bits[h[6]%12]=0x7f800001u;
+            if(h[5]==5)bits[h[6]%12]=0xffc12345u;
+            memcpy(dest,bits,48);
+        }
         _controlfp(_PC_53,_MCW_PC);
         result=0x11223344u;
 #ifdef TRIG_ORIGINAL_ABI
@@ -148,13 +168,23 @@ static int run(FILE* input) {
         fwrite(&result,4,1,stdout);
         fwrite(arena,sizeof(arena),1,stdout);
         fwrite(table,sizeof(table_initial),1,stdout);
+        fwrite(temporary[0],48,1,stdout);fwrite(temporary[1],48,1,stdout);
     }
     return ferror(input) ? 21 : 0;
 }
 '''
-    native = common + '\n#include "' + SOURCE.as_posix() + '"\n'
+    from verify_tinted_native_reconstruction import extract
+    source=SOURCE.read_text()
+    table_definition=re.search(r'float gFloat_sine_table\[91\]\s*=\s*\{[^}]*\};',source).group(0)
+    native = common + '\n' + table_definition + '\n'
+    native += 'br_matrix34 mattmp1__trig,mattmp2__trig;\n'
+    native += '\n'.join(extract(source,name) for name,_,_ in ENTRIES)
+    matrix_source=ROOT/'src/brender/core/math/matrix34.c'
+    native += '\n#define A(x,y) A->m[x][y]\n#define B(x,y) B->m[x][y]\n#define C(x,y) C->m[x][y]\n#undef BR_MAC3\n#define BR_MAC3(a,b,c,d,e,f) ((a)*(b)+(c)*(d)+(e)*(f))\n'
+    native += '\n'.join(extract(matrix_source.read_text(),name) for name in ('BrMatrix34Copy','BrMatrix34Mul'))
     native += 'int C2_HOOK_CDECL main(int argc,char**argv){FILE*f;int result;if(argc!=2)return 2;\n'
     native += 'table=gFloat_sine_table;\n'
+    native += 'temporary[0]=&mattmp1__trig;temporary[1]=&mattmp2__trig;\n'
     native += '\n'.join(f'addresses[{i}]=(unsigned)(size_t){name};' for i,(name,_,_) in enumerate(ENTRIES))
     native += '\nf=fopen(argv[1],"rb");if(!f)return 3;result=run(f);fclose(f);return result;}\n'
     (out/'native.c').write_text(native)
@@ -218,11 +248,11 @@ unsigned __declspec(naked) __cdecl InvokeChecked(unsigned address,unsigned x,uns
     }
 }
 int main(int argc,char**argv) {
-    FILE*f;unsigned char*disk,*image;unsigned size,i,table_address,count,*patches,value,delta;int result;
+    FILE*f;unsigned char*disk,*image;unsigned size,i,globals_[3],count,*patches,value,delta;int result;
     IMAGE_NT_HEADERS32*nt;IMAGE_SECTION_HEADER*sections;
     if(argc!=4)return 2;
     f=fopen(argv[3],"rb");if(!f)return 3;
-    if(fread(addresses,sizeof(addresses),1,f)!=1||fread(&table_address,4,1,f)!=1||fread(&count,4,1,f)!=1)return 4;
+    if(fread(addresses,sizeof(addresses),1,f)!=1||fread(globals_,sizeof(globals_),1,f)!=1||fread(&count,4,1,f)!=1)return 4;
     patches=(unsigned*)malloc(count*8);if(!patches||fread(patches,8,count,f)!=count)return 4;fclose(f);
     f=fopen(argv[2],"rb");if(!f)return 5;fseek(f,0,SEEK_END);size=(unsigned)ftell(f);rewind(f);
     disk=(unsigned char*)malloc(size);if(!disk||fread(disk,size,1,f)!=1)return 6;fclose(f);
@@ -239,8 +269,10 @@ int main(int argc,char**argv) {
         memcpy(&value,image+patches[2*i],4);if(value!=patches[2*i+1])return 10;
         value+=delta;memcpy(image+patches[2*i],&value,4);
     }
-    for(i=0;i<10;i++)addresses[i]+=delta;
-    table=(float*)(ULONG_PTR)(table_address+delta);
+    for(i=0;i<16;i++)addresses[i]+=delta;
+    table=(float*)(ULONG_PTR)(globals_[0]+delta);
+    temporary[0]=(br_matrix34*)(ULONG_PTR)(globals_[1]+delta);
+    temporary[1]=(br_matrix34*)(ULONG_PTR)(globals_[2]+delta);
     f=fopen(argv[1],"rb");if(!f)return 8;result=run(f);fclose(f);
     VirtualFree(image,0,MEM_RELEASE);free(disk);free(patches);return result;
 }
@@ -289,15 +321,25 @@ int main(int argc,char**argv) {
                 for offset in (0,1,30,45,60,79):
                     cases.append((mode,angle,offset,0,0))
                     cases.append((mode,angle,offset,2,0x3f800000))
-    packed=b''.join(struct.pack('<5I',*c) for c in cases)
+    cases=[(*c,0,0) for c in cases]
+    for mode in range(10,16):
+        cases.extend((mode,a,0xffffffff,0,0,1,0) for a in range(65536))
+        for angle in (0,1,182,16383,16384,16385,32767,32768,32769,49151,49152,49153,65535,0xabcdef01,0xffffffff):
+            for dest in (0xffffffff,0xfffffffe,0xfffffffd,0,30,79):
+                for pattern in (0,1,4,5):cases.append((mode,angle,dest,0,0,pattern,angle))
+                for bits in patterns:cases.append((mode,angle,dest,0,0,2,bits))
+                for bits in patterns:cases.append((mode,angle,dest,1,bits,1,0))
+        for i in range(96):cases.append((mode,rng.randrange(65536),0xffffffff,0,0,3,rng.getrandbits(32)))
+    packed=b''.join(struct.pack('<7I',*c) for c in cases)
     (out/'fixtures.bin').write_bytes(packed)
-    original_patches=address_file(out/'original-addresses.bin',[a for _,a,_ in ENTRIES],0x661398,original,[(a,n) for _,a,n in ENTRIES]+[(0x575b80,39)])
-    assert {value for _,value in original_patches}=={0x661938,0x6610c8,0x661668,0x661398,0x660f60,0x6617d0,0x661230,0x661500,0x58b218}
+    original_patches=address_file(out/'original-addresses.bin',[a for _,a,_ in ENTRIES],[0x661398,0x6ab980,0x6ab9b0],original,[(a,n) for _,a,n in ENTRIES+DEPENDENCIES])
+    allowed_data={0x661938,0x6610c8,0x661668,0x661398,0x660f60,0x6617d0,0x661230,0x661500,0x58b218}
+    assert all(value in allowed_data or 0x6ab980<=value<=0x6ab9dc for _,value in original_patches)
     with (out/'original.bin').open('wb') as output:
         subprocess.run([str(out/'physical.exe'),str(out/'fixtures.bin'),str(args.original.resolve()),str(out/'original-addresses.bin')],stdout=output,check=True)
     original_output=(out/'original.bin').read_bytes()
     assert original_output[:364]==raw(original,0x661398,364)
-    assert len(original_output)==364+496*len(cases)
+    assert len(original_output)==364+592*len(cases)
     checks=[]
     for compiler in ('msvc','msvc5','mingw'):
         with (out/(compiler+'.bin')).open('wb') as output:
@@ -305,8 +347,8 @@ int main(int argc,char**argv) {
         actual=(out/(compiler+'.bin')).read_bytes()
         if actual!=original_output:
             at=next((i for i,(a,b) in enumerate(zip(actual,original_output)) if a!=b),min(len(actual),len(original_output)))
-            index=(at-364)//496
-            raise AssertionError(f'{compiler} byte {at}: fixture {index} {cases[index] if index>=0 else "initializer"}, byte in record {(at-364)%496}')
+            index=(at-364)//592
+            raise AssertionError(f'{compiler} byte {at}: fixture {index} {cases[index] if index>=0 else "initializer"}, byte in record {(at-364)%592}')
         checks.append(dict(compiler=compiler,comparisons=len(cases),output_sha256=sha(actual)))
     linked=None
     if args.symbols:
@@ -317,8 +359,7 @@ int main(int argc,char**argv) {
         # The matching build may share/in-line scalar helpers. Disassemble each
         # identified entry and reject unreviewed imports or indirect call sites.
         allowed=set(addresses)
-        ftol=symbols.get(0x575b80)
-        if ftol:allowed.add(ftol)
+        allowed.update(symbols[a] for _,a,_ in DEPENDENCIES)
         spans=[]
         for address in sorted(allowed):
             end=min(s['recomp'] for s in exported['symbols'] if s['recomp']>address)
@@ -330,14 +371,14 @@ int main(int argc,char**argv) {
                     assert instruction.operands[0].type==CS_OP_IMM
                     target=instruction.operands[0].imm
                     assert address<=target<end or target in allowed, f'Unreviewed linked branch: {instruction.op_str}'
-        linked_patches=address_file(out/'linked-addresses.bin',addresses,symbols[0x661398],rebuilt,spans)
+        linked_patches=address_file(out/'linked-addresses.bin',addresses,[symbols[a] for a in (0x661398,0x6ab980,0x6ab9b0)],rebuilt,spans)
         with (out/'linked.bin').open('wb') as output:
             subprocess.run([str(out/'physical.exe'),str(out/'fixtures.bin'),str(args.recompiled.resolve()),str(out/'linked-addresses.bin')],stdout=output,check=True)
         actual=(out/'linked.bin').read_bytes()
         assert actual==original_output,'Linked physical PE output differs'
         checks.append(dict(compiler='physical-matching',comparisons=len(cases),output_sha256=sha(actual)))
         linked=dict(recompiled_sha256=sha(rebuilt),symbols_sha256=sha(args.symbols.read_bytes()),absolute_data_relocations=linked_patches)
-    report=dict(scenario_count=len(cases),comparisons=sum(c['comparisons'] for c in checks),checks=checks,original_sha256=HASH,source_sha256=sha(SOURCE.read_bytes()),header_sha256=sha(SOURCE.with_suffix('.h').read_bytes()),verifier_sha256=sha(Path(__file__).read_bytes()),fixtures_sha256=sha(packed),original_closure=original_closure,original_absolute_data_relocations=original_patches,compiler_commands=commands,linked=linked,precision_control=53,scope='Ten actual functions; full table and arena state; every16bit angle. INT_MIN degree lookup is outside original table contract. No output normalization; only audited absolute data operands relocated.')
+    report=dict(scenario_count=len(cases),comparisons=sum(c['comparisons'] for c in checks),checks=checks,original_sha256=HASH,source_sha256=sha(SOURCE.read_bytes()),header_sha256=sha(SOURCE.with_suffix('.h').read_bytes()),matrix_source_sha256=sha(matrix_source.read_bytes()),verifier_sha256=sha(Path(__file__).read_bytes()),fixtures_sha256=sha(packed),original_closure=original_closure,original_absolute_data_relocations=original_patches,compiler_commands=commands,linked=linked,precision_control=53,scope='Sixteen actual functions and original matrix dependencies; full table, arena and temporary-matrix state; every16bit angle. INT_MIN degree lookup is outside original table contract. No output normalization; only audited absolute data operands relocated.')
     (out/'verification.json').write_text(json.dumps(report,indent=2)+'\n')
     print(f'PASS: {len(cases)} cases, {report["comparisons"]} comparisons.')
 

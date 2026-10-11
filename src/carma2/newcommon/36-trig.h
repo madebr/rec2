@@ -5,6 +5,8 @@
 #include "c2_hooks.h"
 
 extern float gFloat_sine_table[91];
+extern br_matrix34 mattmp1__trig;
+extern br_matrix34 mattmp2__trig;
 
 extern float C2_HOOK_FASTCALL FastFloatSin(int pAngle_in_degrees);
 
@@ -32,13 +34,17 @@ extern void C2_HOOK_FASTCALL DRMatrix34RotateY(br_matrix34* mat, br_angle ry);
 
 extern void C2_HOOK_FASTCALL DRMatrix34RotateZ(br_matrix34* mat, br_angle rz);
 
-// DRMatrix34PostRotateX
+extern void C2_HOOK_FASTCALL DRMatrix34PreRotateX(br_matrix34* mat, br_angle rx);
 
-// DRMatrix34PostRotateY
+extern void C2_HOOK_FASTCALL DRMatrix34PostRotateX(br_matrix34* mat, br_angle rx);
 
-// DRMatrix34PreRotateZ
+extern void C2_HOOK_FASTCALL DRMatrix34PreRotateY(br_matrix34* mat, br_angle ry);
 
-// DRMatrix34PostRotateZ
+extern void C2_HOOK_FASTCALL DRMatrix34PostRotateY(br_matrix34* mat, br_angle ry);
+
+extern void C2_HOOK_FASTCALL DRMatrix34PreRotateZ(br_matrix34* mat, br_angle rz);
+
+extern void C2_HOOK_FASTCALL DRMatrix34PostRotateZ(br_matrix34* mat, br_angle rz);
 
 extern void C2_HOOK_FASTCALL DRMatrix23Rotate(br_matrix23* mat, br_angle rz);
 
