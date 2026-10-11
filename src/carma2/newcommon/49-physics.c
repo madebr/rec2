@@ -1,7 +1,12 @@
 #include "49-physics.h"
 
 #include "16-graphics1.h"
+#include "28-world3.h"
+#include "32-spark.h"
+#include "34-finteray.h"
+#include "37-brucetrk.h"
 #include "52-errors.h"
+#include "globvars.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
 
@@ -527,7 +532,41 @@ void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize) {
     gPhysics_other_buffer = pBuffer;
 }
 
-// FindFacesInBox
+// FUNCTION: CARMA2_HW 0x004b57d0
+int C2_HOOK_FASTCALL FindFacesInBox(tBounds* bnds, tFace_ref* face_list, int max_face, tWorld_callbacks* pWorld_callbacks) {
+    tU8 min_x, min_z, max_x, max_z;
+    tU32 dimensions;
+    int x, z;
+    int emitted = 0;
+
+    FillInBounds(bnds);
+    XZToColumnXZ(&min_x, &min_z, bnds->real_bounds.min.v[0], bnds->real_bounds.min.v[2], &gProgram_state.track_spec);
+    XZToColumnXZ(&max_x, &max_z, bnds->real_bounds.max.v[0], bnds->real_bounds.max.v[2], &gProgram_state.track_spec);
+    if (min_x != 0) {
+        min_x--;
+    }
+    if (min_z != 0) {
+        min_z--;
+    }
+    memcpy(&dimensions, &gProgram_state.track_spec, sizeof(dimensions));
+    if (max_x + 1 < (int)(dimensions & 0xff)) {
+        max_x++;
+    }
+    if (max_z + 1 < (int)((dimensions >> 8) & 0xff)) {
+        max_z++;
+    }
+    for (x = min_x; x <= max_x; x++) {
+        for (z = min_z; z <= max_z; z++) {
+            if (gProgram_state.track_spec.columns[z][x].actor_0x0 != NULL) {
+                emitted = max_face - ActorBoxPick(bnds, gProgram_state.track_spec.columns[z][x].actor_0x0, NULL, gBlack_material, &face_list[emitted], max_face - emitted, NULL, pWorld_callbacks);
+            }
+        }
+    }
+    if (gAdditional_actors != NULL) {
+        emitted = max_face - ActorBoxPick(bnds, gAdditional_actors, NULL, gBlack_material, &face_list[emitted], max_face - emitted, NULL, pWorld_callbacks);
+    }
+    return emitted;
+}
 
 // GetFrictionFromFace
 

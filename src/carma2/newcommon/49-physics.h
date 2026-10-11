@@ -386,7 +386,7 @@ extern int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObjec
 
 extern void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize);
 
-// FindFacesInBox
+extern int C2_HOOK_FASTCALL FindFacesInBox(tBounds* bnds, tFace_ref* face_list, int max_face, tWorld_callbacks* pWorld_callbacks);
 
 // GetFrictionFromFace
 
