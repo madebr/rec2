@@ -26,12 +26,13 @@ FUNCTIONS = dict(WaitFor=0x5146c0, Colour24BitTo16Bit=0x517050,
     DRActorEnumRecurseWithSnart=0x5148c0,
     FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport=0x518d60,
     GetBlendificatiousnessOfMaterial=0x518e70, sign=0x514930,
-    DumpVisibleActorsCB=0x518b00, DumpVisibleActors=0x518ac0)
+    DumpVisibleActorsCB=0x518b00, DumpVisibleActors=0x518ac0, DRImageLoad=0x513870)
 ADDRESSES = dict(FUNCTIONS, PDGetTotalTime=0x51d410, AnyKeyDown=0x482d70,
     SoundService=0x455a80, BrFailure=0x527c80, BrPixelmapRectangleCopy=0x538590,
     BrMatrix34Mul=0x532620, BrMatrix34Identity=0x5327c0, gBack_screen=0x74d360,
     gScreen=0x74d3e0, BrTableFind=0x51f140, BrActorEnum=0x51ded0,
-    printf=0x577930, fflush=0x577700)
+    printf=0x577930, fflush=0x577700, DRLdImg=0x48eb80,
+    gPixelFlags=0x74ca18, gRender_palette=0x74a674, gDir_separator=0x761a5c)
 HEAP, STACK, STOP, CALLBACK, SIZE = 0x1000000, 0x1080000, 0x1081000, 0x1082000, 4096
 
 
@@ -81,6 +82,7 @@ def main():
 #include <io.h>
 #include "41-utility.h"
 #include "42-input.h"
+#include "63-loading3.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "platform.h"
@@ -93,6 +95,9 @@ static unsigned char arena[4096];
 static jmp_buf failure;
 br_pixelmap* gBack_screen;
 br_pixelmap* gScreen;
+br_pixelmap* gRender_palette;
+tPixelFlags gPixelFlags;
+const char* gDir_separator;
 static void emit(unsigned v){fwrite(&v,4,1,stdout);}
 static unsigned norm(const void* p){
     unsigned v=(unsigned)(uintptr_t)p,b=(unsigned)(uintptr_t)arena;
@@ -124,6 +129,13 @@ br_pixelmap* C2_HOOK_CDECL BrTableFind(const char* name){
     if(h[4]==index+1)material->index_blend=h[5]?(br_pixelmap*)(arena+h[5]):NULL;
     if(h[10])gScreen->type=BR_PMT_RGB_555;
     return value?(br_pixelmap*)(arena+value):NULL;
+}
+br_pixelmap* C2_HOOK_FASTCALL DRLdImg(const char*dir,const char*name,br_pixelmap*palette,int flags,int*error){
+    emit(14);emit((unsigned)strlen(dir));fwrite(dir,strlen(dir),1,stdout);
+    emit((unsigned)strlen(name));fwrite(name,strlen(name),1,stdout);emit(norm(palette));emit(flags);
+    *error=(int)h[2];
+    if(h[3]){memset(arena+0xe00,'?',32);gPixelFlags=(tPixelFlags)0xaabbccdd;gRender_palette=NULL;}
+    return h[4]?(br_pixelmap*)(arena+h[4]):NULL;
 }
 tU32 C2_HOOK_FASTCALL PDGetTotalTime(void){
     unsigned result;
@@ -217,6 +229,8 @@ int C2_HOOK_CDECL main(int argc,char**argv){
     }
     gBack_screen=(br_pixelmap*)(arena+0x80);
     gScreen=gBack_screen;
+    gRender_palette=h[5]?(br_pixelmap*)(arena+h[5]):NULL;
+    gDir_separator=(char*)(arena+0xd00);gPixelFlags=(tPixelFlags)h[1];
     if(!setjmp(failure)){
         switch(h[0]){
         case 0:WaitFor(h[1]);break;
@@ -229,8 +243,10 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         case 7:result=(unsigned)sign((int)h[1]);break;
         case 8:result=DumpVisibleActorsCB((br_actor*)(arena+0x400),arena+0xf00);break;
         case 9:DumpVisibleActors((br_actor*)(arena+0x400),(char*)(arena+0xe80));break;
+        case 10:result=norm(DRImageLoad((char*)(arena+0xe00)));break;
         }
     }
+    if(h[0]==10){emit(15);emit(gPixelFlags);emit(norm(gRender_palette));}
     emit(9);emit(result);snapshot();return 0;
 }
 '''
@@ -280,6 +296,8 @@ int C2_HOOK_CDECL main(int argc,char**argv){
             return s
         wr(addresses["gBack_screen"], HEAP + 0x80)
         wr(addresses["gScreen"], HEAP + 0x80)
+        wr(addresses["gPixelFlags"], h[1]); wr(addresses["gRender_palette"], HEAP + h[5] if h[5] else 0)
+        wr(addresses["gDir_separator"], HEAP + 0xd00)
         events = bytearray()
         counts = [0, 0, 0, 0]
         failed = [False]
@@ -336,6 +354,13 @@ int C2_HOOK_CDECL main(int argc,char**argv){
             elif ip == addresses["BrActorEnum"]:
                 emit(12, rd(sp + 4), int(rd(sp + 8) == addresses["DumpVisibleActorsCB"]), rd(sp + 12))
                 events.extend(u.mem_read(HEAP, SIZE))
+            elif ip == addresses["DRLdImg"]:
+                directory = string(uc.reg_read(UC_X86_REG_ECX)); name = string(uc.reg_read(UC_X86_REG_EDX))
+                emit(14, len(directory)); events.extend(directory); emit(len(name)); events.extend(name)
+                emit(rd(sp+4), rd(sp+8)); wr(rd(sp+12), h[2])
+                if h[3]:
+                    u.mem_write(HEAP+0xe00, b'?'*32); wr(addresses['gPixelFlags'], 0xaabbccdd); wr(addresses['gRender_palette'], 0)
+                ret(HEAP+h[4] if h[4] else 0, 12)
             elif ip == CALLBACK:
                 actor, mat, arg = uc.reg_read(UC_X86_REG_ECX), uc.reg_read(UC_X86_REG_EDX), rd(sp + 4)
                 i = (actor - HEAP - 0x400) // 128
@@ -356,12 +381,14 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         elif mode == 6: ecx = HEAP + 0xb00
         elif mode == 8: ecx, edx, stackargs = 0, 0, [HEAP + 0x400, HEAP + 0xf00]
         elif mode == 9: ecx, edx = HEAP + 0x400, HEAP + 0xe80
+        elif mode == 10: ecx = HEAP + 0xe00
         u.mem_write(STACK, words([STOP, *stackargs]))
         u.reg_write(UC_X86_REG_ESP, STACK); u.reg_write(UC_X86_REG_ECX, ecx); u.reg_write(UC_X86_REG_EDX, edx)
         u.emu_start(addresses[list(FUNCTIONS)[mode]], STOP, count=100000)
         assert failed[0] or u.reg_read(UC_X86_REG_EIP) == STOP
-        value = u.reg_read(UC_X86_REG_EAX) if mode in (1, 4, 5, 6, 7, 8) and not failed[0] else 0
+        value = u.reg_read(UC_X86_REG_EAX) if mode in (1, 4, 5, 6, 7, 8, 10) and not failed[0] else 0
         if mode == 1: value &= 65535
+        if mode == 10: emit(15, rd(addresses['gPixelFlags']), rd(addresses['gRender_palette']))
         emit(9, value); events.extend(u.mem_read(HEAP, SIZE))
         return bytes(events)
 
@@ -410,6 +437,11 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         for kind, style in [(k, 4) for k in range(10)] + [(1, s) for s in range(10)] + [(255, 255)]:
             for flags in (0, 1, 2, 6, 8, 24, 31):
                 cases.append(dict(mode=mode, kind=kind, style=style, flags=flags, depth=0xffff))
+    for path in ('a', '.', '\\', 'image.tif', 'file.name.tif', '.hidden', 'dir\\image.tif',
+                 '\\root.tif', 'dir\\', 'a.b\\c.d', 'dir/image.TIF', 'a'*255, 'a'*250+'\\b.c', 'x\\.hidden'):
+        for separator in ('\\', '/', ':'):
+            for ret, palette, flags, error, mutate in ((0,0,0,0,0),(0x80,0x180,0xffffffff,1,0),(0x80,0,0x80000000,0xffffffff,1)):
+                cases.append(dict(mode=10, path=path, separator=separator, ret=ret, palette=palette, flags=flags, error=error, mutate=mutate))
     if args.modes is not None: cases = [case for case in cases if case["mode"] in args.modes]
     results = []
     for index, case in enumerate(cases):
@@ -458,6 +490,10 @@ int C2_HOOK_CDECL main(int argc,char**argv){
                 wr(off+20, HEAP+0xe00 if flags&1 else 0)
                 wr(off+24, HEAP+0x800 if flags&2 else 0)
                 wr(off+28, HEAP+0xa00 if flags&8 else 0)
+        elif mode == 10:
+            path=case['path'].encode(); arena[0xe00:0xe00+len(path)+1]=path+b'\0'
+            arena[0xd00:0xd02]=case['separator'].encode()+b'\0'
+            h[1:6]=[case['flags'],case['error'],case['mutate'],case['ret'],case['palette']]
         expected = execute(*images[0], h, arena)
         checks = []
         if len(images) > 1: checks.append(("matching PE", execute(*images[1], h, arena)))
