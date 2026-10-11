@@ -22,7 +22,7 @@ br_matrix34 mattmp2;
 
 // FUNCTION: CARMA2_HW 0x005325d0
 void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, const br_matrix34* B) {
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
     A(0, 0) = B(0, 0);
     A(0, 1) = B(0, 1);
     A(0, 2) = B(0, 2);
@@ -38,6 +38,19 @@ void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, const br_matrix34* B) {
     A(3, 0) = B(3, 0);
     A(3, 1) = B(3, 1);
     A(3, 2) = B(3, 2);
+#else
+    unsigned int value;
+    volatile unsigned int stored_value;
+    int i;
+
+    /* Sequential raw MOV copies retain NaN bits and partial overlap behavior. */
+    for (i = 0; i < 12; i++) {
+        memcpy(&value, (const char*)B + 4 * i, sizeof(value));
+        stored_value = value;
+        value = stored_value;
+        memcpy((char*)A + 4 * i, &value, sizeof(value));
+    }
+#endif
 }
 
 /* MSVC5 otherwise treats the asm block as cheap enough to inline. The original
