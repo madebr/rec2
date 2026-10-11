@@ -1,6 +1,7 @@
 #include "32-spark.h"
 
 #include "08-loading1.h"
+#include "13-crush1.h"
 #include "18-graphics2.h"
 #include "23-piping.h"
 #include "36-trig.h"
@@ -973,11 +974,177 @@ void C2_HOOK_FASTCALL FlameAnimate(int pColumn, const br_vector3* pPos, tU32 pTi
     }
 }
 
-// DoSmokeColumn
+// FUNCTION: CARMA2_HW 0x004fc0e0
+void C2_HOOK_FASTCALL DoSmokeColumn(int pColumn, tU32 pTime, br_vector3* pRet_car_pos) {
+    tSmoke_column* column;
+    br_actor* actor;
+    br_model* volatile* model_slot;
+    br_matrix34* local_matrix;
+    volatile int* vertex_index;
+    const br_vector3* vertex;
+    br_scalar value;
+    tU32 bits;
+    int i;
+
+    (void)pTime;
+    column = &gSmoke_column[pColumn];
+    vertex_index = &column->vertex_index;
+    if (column->core.field_0x0 == 1) {
+        if (column->core.car->car_master_actor->t.t.mat.m[1][1] > .1f) {
+            column->upright = 1;
+        }
+        if (!(column->core.car->car_master_actor->t.t.mat.m[1][1] >= -.1f)) {
+            column->upright = 0;
+        }
+        actor = column->core.car->car_actor;
+        model_slot = &actor->model;
+        local_matrix = &actor->t.t.mat;
+        for (i = 0; i < 3; i++) {
+            vertex = &(*model_slot)->prepared->groups[0].vertices[*vertex_index].p;
+            value = SmokeScalarRound((double)vertex->v[i] + actor->t.t.mat.m[3][i]);
+            bits = SmokeScalarBits(&value);
+            memcpy(&pRet_car_pos->v[i], &bits, sizeof(bits));
+        }
+    } else {
+        column->upright = 1;
+        model_slot = &column->core.car_actor->model;
+        local_matrix = (br_matrix34*)((char*)pRet_car_pos + 0x2c);
+        for (i = 0; i < 3; i++) {
+            vertex = &(*model_slot)->prepared->groups[0].vertices[*vertex_index].p;
+            memcpy(&pRet_car_pos->v[i], &vertex->v[i], sizeof(br_scalar));
+        }
+    }
+    if (column->core.field_0x0 == 1 && gProgram_state.cockpit_on && column->core.car != NULL && column->core.car->driver == 8) {
+        /* MSVC5's inverse branch for a mixed-width > admits unordered values;
+         * the original FCOM/test 0x41 sends them to the subtraction branch. */
+        if ((SmokeScalarBits(&column->core.car->driver_z_offset) & 0x7fffffffu) <= 0x7f800000u
+                && (SmokeScalarBits(&pRet_car_pos->v[2]) & 0x7fffffffu) <= 0x7f800000u
+                && (double)column->core.car->driver_z_offset - (-.2) > pRet_car_pos->v[2]) {
+            vertex = &(*model_slot)->prepared->groups[0].vertices[*vertex_index].p;
+            BrMatrix34ApplyP(pRet_car_pos, vertex, local_matrix);
+        } else {
+            pRet_car_pos->v[1] = SmokeScalarRound((double)pRet_car_pos->v[1] - .07);
+        }
+    }
+    if (column->upright == 0) {
+        pRet_car_pos->v[1] = SmokeScalarRound((double)column->core.car->collision_info->shape->common.bb.min.v[1] * .14492753148078918f);
+    }
+    BrMatrix34ApplyP(&column->pos, pRet_car_pos, &column->core.car_actor->t.t.mat);
+    column->pos.v[1] = SmokeScalarRound((double)column->pos.v[1] - .03f);
+}
 
 // ReplaySmokeColumn
 
-// MungeSmokeColumn
+// FUNCTION: CARMA2_HW 0x004fba40
+void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime) {
+    tSmoke_column* column;
+    tCar_spec* car;
+    tPhysics_object* physics;
+    br_vector3 car_pos;
+    br_vector3 pos;
+    br_vector3 velocity;
+    br_scalar strength;
+    br_scalar linear_x;
+    br_scalar linear_y;
+    double random;
+    tU32 elapsed;
+    tU32 bit;
+    int colour;
+    int i;
+
+    if (gColumn_flags == 0) {
+        return;
+    }
+    if (gAction_replay_mode) {
+        for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+            if (gColumn_flags & (1u << i)) {
+                DoSmokeColumn(i, pTime, &car_pos);
+                if (gSmoke_column[i].colour == 0) {
+                    FlameAnimate(i, &gSmoke_column[i].pos, pTime);
+                }
+            }
+        }
+        return;
+    }
+    gPHIL_mechanics_time_sync = 1;
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        bit = 1u << i;
+        if ((gColumn_flags & bit) == 0) {
+            continue;
+        }
+        column = &gSmoke_column[i];
+        if (column->lifetime < pTime) {
+            if (column->core.field_0x0 != 0) {
+                ARStartPipingSession((tPipe_chunk_type)17);
+                AddSmokeColumnToPipingSession(i, &column->core, column->vertex_index, column->colour);
+                AREndPipingSession();
+            }
+            gColumn_flags &= ~bit;
+            if (column->colour == 0) {
+                BrActorRemove(column->flame_actor);
+            }
+            continue;
+        }
+        column->lifetime -= pTime;
+        car = column->core.car;
+        physics = column->core.collision_info;
+        DoSmokeColumn(i, pTime, &car_pos);
+        if (column->core.field_0x0 == 1 && car->car_crush_spec->field_0x4b8 != 0 && IsOnNonCarHalf(car, &car_pos)) {
+            column->lifetime = 0;
+        }
+        if (column->colour == 0) {
+            FlameAnimate(i, &column->pos, pTime);
+            if (column->core.field_0x0 == 1) {
+                if ((tU32)column->smudge_timer < pTime) {
+                    column->smudge_timer += 2000u;
+                    if (car != NULL) {
+                        SmudgeCar(car, column->vertex_index);
+                        if (car->knackered) {
+                            SmudgeCar(car, car->fire_vertex[IRandomBetween(0, 11)]);
+                        }
+                    }
+                } else {
+                    column->smudge_timer -= pTime;
+                }
+            }
+        }
+        elapsed = (tU32)column->time + pTime;
+        column->time = (tS32)elapsed;
+        if (elapsed <= 200u) {
+            continue;
+        }
+        column->time = (tS32)(elapsed - pTime);
+        column->count = (tS32)((tU32)column->count + 1u);
+        random = SRandomBetween(-.03f, .03f);
+        colour = column->colour;
+        pos.v[0] = SmokeScalarRound(random + column->pos.v[0]);
+        pos.v[1] = SmokeScalarRound((double)column->pos.v[1] - (double)(colour == 0) * -.05f);
+        pos.v[2] = SmokeScalarRound(SRandomBetween(-.03f, .03f) + column->pos.v[2]);
+        if ((column->whiter & 2) != 0 && IRandomBetween(0, 3) == 0) {
+            column->whiter &= 1;
+        } else {
+            column->whiter = column->whiter > 0 ? 2 : -1;
+        }
+        strength = SmokeScalarRound(((double)(column->whiter > 0) - (-1.0f)) * .5f);
+        if (column->lifetime < 4000u) {
+            strength = SmokeScalarRound((double)column->lifetime * strength * .00025f);
+        }
+        if (column->core.collision_info != NULL) {
+            velocity.v[0] = SmokeScalarRound((double)physics->omega.v[1] * car_pos.v[2] - (double)physics->omega.v[2] * car_pos.v[1]);
+            velocity.v[1] = SmokeScalarRound((double)physics->omega.v[2] * car_pos.v[0] - (double)physics->omega.v[0] * car_pos.v[2]);
+            velocity.v[2] = SmokeScalarRound((double)physics->omega.v[0] * car_pos.v[1] - (double)physics->omega.v[1] * car_pos.v[0]);
+            BrMatrix34ApplyV(&car_pos, &velocity, &physics->actor->t.t.mat);
+            linear_x = SmokeScalarRound((double)physics->v.v[0] * 6.9);
+            linear_y = SmokeScalarRound((double)physics->v.v[1] * 6.9);
+            velocity.v[0] = SmokeScalarRound((double)linear_x + car_pos.v[0]);
+            velocity.v[1] = SmokeScalarRound((double)linear_y + car_pos.v[1] - (-2.898550724637681));
+            velocity.v[2] = SmokeScalarRound((double)physics->v.v[2] * 6.9 + car_pos.v[2]);
+        } else {
+            BrVector3SetFloat(&velocity, 0.0f, 2.8985507488250732f, 0.0f);
+        }
+        CreatePuffOfSmoke(&pos, &velocity, strength, strength, (int)((tU32)column->colour + 16u));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004fc2e0
 void C2_HOOK_FASTCALL DisposeFlame(void) {

@@ -516,7 +516,20 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // MakeCarModelsMaterialsSingleSided
 
-// IsOnNonCarHalf
+// FUNCTION: CARMA2_HW 0x0042df70
+int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {
+    tCar_crush_spec* crush;
+    double distance;
+
+    crush = pCar->car_crush_spec;
+    if (crush == NULL || crush->field_0x4b8 == 0) {
+        return 0;
+    }
+    distance = (double)crush->field_0x548.v[1] * pPos->v[1] + (double)pPos->v[2] * crush->field_0x548.v[2];
+    distance += (double)crush->field_0x548.v[0] * pPos->v[0];
+    distance -= crush->field_0x554;
+    return !(distance >= 0.0f);
+}
 
 // SplitCar
 

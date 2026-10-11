@@ -287,7 +287,7 @@ extern void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVerte
 
 // MakeCarModelsMaterialsSingleSided
 
-// IsOnNonCarHalf
+extern int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos);
 
 // SplitCar
 
