@@ -1,5 +1,7 @@
 #include "00-car.h"
 
+#include "41-utility.h"
+
 // GLOBAL: CARMA2_HW 0x00763500
 int gCunning_stunt_bonus[3];
 
@@ -23,11 +25,28 @@ br_vector3 gZero_v__car;  // FIXME: make const?
 
 // DamageUnit
 
-// SwitchCarModel
+// FUNCTION: CARMA2_HW 0x00413f10
+intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData) {
+    if (pActor->user != NULL) {
+        int* index = pData;
+        tUser_crush_data* crush_data = pActor->user;
+        br_model* model = crush_data->models[*index];
 
-// STUB: CARMA2_HW 0x00413f40
+        if (model != NULL) {
+            pActor->model = model;
+            pActor->type = BR_ACTOR_MODEL;
+            return 0;
+        }
+    }
+    pActor->model = NULL;
+    pActor->type = BR_ACTOR_NONE;
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00413f40
 void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
-    NOT_IMPLEMENTED();
+    DRActorEnumRecurse(pCar->car_model_actor, SwitchCarModel, &pIndex);
+    pCar->field_0xe18 = pIndex;
 }
 
 // InitialiseCar2

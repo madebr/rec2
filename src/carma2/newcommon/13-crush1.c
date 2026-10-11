@@ -1,6 +1,7 @@
 #include "13-crush1.h"
 
 #include "08-loading1.h"
+#include "51-smash.h"
 #include "platform.h"
 
 #include "c2_string.h"
@@ -220,9 +221,26 @@ void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_s
     NOT_IMPLEMENTED();
 }
 
-// DisposeCrushData
+// FUNCTION: CARMA2_HW 0x0042c4f0
+void C2_HOOK_FASTCALL DisposeCrushData(tCar_crush_buffer_entry* pCrush_data) {
+    if (pCrush_data != NULL) {
+        if (pCrush_data->flap_data != NULL) {
+            BrMemFree(pCrush_data->flap_data);
+        }
+        if (pCrush_data->detach_data != NULL) {
+            BrMemFree(pCrush_data->detach_data);
+        }
+        DisposeSmashData(pCrush_data);
+        BrMemFree(pCrush_data);
+    }
+}
 
-// DisposeVertexData
+// FUNCTION: CARMA2_HW 0x0042c530
+void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data) {
+    if (pVertex_data != NULL) {
+        BrMemFree(pVertex_data);
+    }
+}
 
 // BuckleTheBugger
 
