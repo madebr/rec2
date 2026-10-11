@@ -40,11 +40,16 @@ void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, const br_matrix34* B) {
     A(3, 2) = B(3, 2);
 }
 
+/* MSVC5 otherwise treats the asm block as cheap enough to inline. The original
+ * matrix wrappers call this multiply out of line. Keep that call boundary. */
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
 // FUNCTION: CARMA2_HW 0x00532620
 void C2_HOOK_CDECL BrMatrix34Mul(br_matrix34* A, const br_matrix34* B, const br_matrix34* C) {
     /* Keep original x87 operand forms where the compiler otherwise changes
      * NaN payload selection or quieting; do not normalize public values. */
-#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+#if defined(_MSC_VER) && defined(_M_IX86)
     __asm {
         mov ecx, B
         mov eax, C
@@ -206,6 +211,170 @@ void C2_HOOK_CDECL BrMatrix34Mul(br_matrix34* A, const br_matrix34* B, const br_
         fadd dword ptr [eax + 0x2c]
         fstp dword ptr [edx + 0x2c]
     }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__(
+        ".intel_syntax noprefix\n\t"
+        "fld dword ptr [ecx + 8]\n\t"
+        "fld dword ptr [eax + 0x18]\n\t"
+        "fld dword ptr [eax + 0xc]\n\t"
+        "fld dword ptr [eax]\n\t"
+        "fxch st(2)\n\t"
+        "fmulp st(3), st(0)\n\t"
+        "fmul dword ptr [ecx + 4]\n\t"
+        "fxch st(1)\n\t"
+        "fmul dword ptr [ecx]\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fld dword ptr [ecx + 4]\n\t"
+        "fld dword ptr [eax + 0x10]\n\t"
+        "fld dword ptr [eax + 0x1c]\n\t"
+        "fxch st(3)\n\t"
+        "fmul dword ptr [ecx]\n\t"
+        "fxch st(1)\n\t"
+        "fmulp st(2), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "fmul dword ptr [ecx + 8]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx + 4]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fld dword ptr [eax + 0x14]\n\t"
+        "fld dword ptr [ecx + 4]\n\t"
+        "fld dword ptr [eax + 0x20]\n\t"
+        "fxch st(3)\n\t"
+        "fmul dword ptr [ecx]\n\t"
+        "fxch st(1)\n\t"
+        "fmulp st(2), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "fmul dword ptr [ecx + 8]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx + 8]\n\t"
+        "fld dword ptr [ecx + 0xc]\n\t"
+        "fld dword ptr [ecx + 0x10]\n\t"
+        "fld dword ptr [eax + 0xc]\n\t"
+        "fld dword ptr [ecx + 0x14]\n\t"
+        "fxch st(3)\n\t"
+        "fmul dword ptr [eax]\n\t"
+        "fxch st(1)\n\t"
+        "fmulp st(2), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "fmul dword ptr [eax + 0x18]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx + 0xc]\n\t"
+        "fld dword ptr [ecx + 0xc]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fld dword ptr [ecx + 0x14]\n\t"
+        "fld dword ptr [eax + 0x1c]\n\t"
+        "fld dword ptr [ecx + 0x10]\n\t"
+        "fxch st(3)\n\t"
+        "fmulp st(4), st(0)\n\t"
+        "fmulp st(1), st(0)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "fmul dword ptr [eax + 0x10]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx + 0x10]\n\t"
+        "fld dword ptr [ecx + 0xc]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fld dword ptr [ecx + 0x10]\n\t"
+        "fld dword ptr [eax + 0x14]\n\t"
+        "fld dword ptr [ecx + 0x14]\n\t"
+        "fxch st(3)\n\t"
+        "fmulp st(4), st(0)\n\t"
+        "fmulp st(1), st(0)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "fmul dword ptr [eax + 0x20]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx + 0x14]\n\t"
+        "fld dword ptr [ecx + 0x18]\n\t"
+        "fld dword ptr [ecx + 0x20]\n\t"
+        "fld dword ptr [eax + 0x18]\n\t"
+        "fld dword ptr [ecx + 0x1c]\n\t"
+        "fxch st(3)\n\t"
+        "fmul dword ptr [eax]\n\t"
+        "fxch st(1)\n\t"
+        "fmulp st(2), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "fmul dword ptr [eax + 0xc]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx + 0x18]\n\t"
+        "fld dword ptr [ecx + 0x1c]\n\t"
+        "fld dword ptr [eax + 0x10]\n\t"
+        "fld dword ptr [ecx + 0x18]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fld dword ptr [ecx + 0x20]\n\t"
+        "fxch st(3)\n\t"
+        "fmulp st(4), st(0)\n\t"
+        "fmulp st(1), st(0)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "fmul dword ptr [eax + 0x1c]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx + 0x1c]\n\t"
+        "fld dword ptr [ecx + 0x1c]\n\t"
+        "fld dword ptr [eax + 0x14]\n\t"
+        "fld dword ptr [ecx + 0x18]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fld dword ptr [ecx + 0x20]\n\t"
+        "fxch st(3)\n\t"
+        "fmulp st(4), st(0)\n\t"
+        "fmulp st(1), st(0)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "fmul dword ptr [eax + 0x20]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [edx + 0x20]\n\t"
+        "fld dword ptr [eax + 0xc]\n\t"
+        "fld dword ptr [ecx + 0x24]\n\t"
+        "fld dword ptr [ecx + 0x28]\n\t"
+        "fld dword ptr [ecx + 0x2c]\n\t"
+        "fxch st(2)\n\t"
+        "fmul dword ptr [eax]\n\t"
+        "fxch st(3)\n\t"
+        "fmulp st(1), st(0)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "fmul dword ptr [eax + 0x18]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fadd dword ptr [eax + 0x24]\n\t"
+        "fstp dword ptr [edx + 0x24]\n\t"
+        "fld dword ptr [ecx + 0x28]\n\t"
+        "fld dword ptr [eax + 0x10]\n\t"
+        "fld dword ptr [ecx + 0x24]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fld dword ptr [ecx + 0x2c]\n\t"
+        "fxch st(3)\n\t"
+        "fmulp st(4), st(0)\n\t"
+        "fmulp st(1), st(0)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "fmul dword ptr [eax + 0x1c]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fadd dword ptr [eax + 0x28]\n\t"
+        "fstp dword ptr [edx + 0x28]\n\t"
+        "fld dword ptr [ecx + 0x24]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fld dword ptr [ecx + 0x28]\n\t"
+        "fld dword ptr [eax + 0x14]\n\t"
+        "fld dword ptr [ecx + 0x2c]\n\t"
+        "fxch st(3)\n\t"
+        "fmulp st(4), st(0)\n\t"
+        "fmulp st(1), st(0)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "fmul dword ptr [eax + 0x20]\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fadd dword ptr [eax + 0x2c]\n\t"
+        "fstp dword ptr [edx + 0x2c]\n\t"
+        ".att_syntax prefix\n\t"
+        :
+        : "c" (B), "a" (C), "d" (A)
+        : "memory", "st", "st(1)", "st(2)", "st(3)", "st(4)", "st(5)", "st(6)", "st(7)"
+    );
 #else
     volatile br_matrix34* output = A;
     const volatile br_matrix34* left = B;
@@ -227,6 +396,10 @@ void C2_HOOK_CDECL BrMatrix34Mul(br_matrix34* A, const br_matrix34* B, const br_
     output->m[3][2] = (float)((((double)left->m[3][0] * right->m[0][2] + (double)left->m[3][1] * right->m[1][2]) + (double)left->m[3][2] * right->m[2][2]) + right->m[3][2]);
 #endif
 }
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x005327c0
 void C2_HOOK_CDECL BrMatrix34Identity(br_matrix34* mat) {

@@ -143,6 +143,10 @@ int main(int argc,char**argv){
   case(mode,'distinct-qnan-pair',patch=[(128,0x7fc00011),(256,0xffc12345)])
   case(mode,'qnan-snan-pair',patch=[(128,0x7fc00011),(256,0xff812345)])
   case(mode,'snan-qnan-pair',patch=[(128,0x7f800011),(256,0xffc12345)])
+ # Sine-table alias in PostRotateY supplies an sNaN input and opposite-sign
+ # qNaNs in the rotation matrix. Original x87 chooses the negative payload.
+ case(0,'rotation-snan-and-opposite-qnan-signs',mat=[1,0,0,0,1,0,0,0,1,0,0,0],
+      mat2=general,patch=[(128,0x7f800001),(264,0xffc00001),(280,0x7fc00001)])
  rebuilt=None;rebuilt_map=None;linked_leaves=[];emulation_gaps=[]
  if args.recompiled:
   from unicorn import Uc,UC_ARCH_X86,UC_MODE_32
