@@ -341,6 +341,9 @@ int C2_HOOK_CDECL main(int argc,char**argv){FILE*f;unsigned i,j,v,value=0;if(arg
         for i in range(20):
             arena[0x1a000+256*i:0x1a000+256*i+256]=bytes(256)
             struct.pack_into('<HH',arena,0x1a000+256*i+52,case.get('dimensions',20+i),case.get('dimensions',30+i))
+        # Nonzero/raw initial translation distinguishes reading aliased pPos
+        # before versus after the real parent rotation resets translation.
+        for i,bits in enumerate([0x7f800001,0xff801234,0x3f999999]):put(arena,0x600+0x400*h[1]+80+4*i,bits)
         put(arena,0x1c00,HEAP+0x1d00);put(arena,0x1d00,0)
         put(arena,0x16068,case.get('velocity',0));put(arena,0x1606c,0);put(arena,0x16070,0)
         for i in range(3):put(arena,0x1e000+4*i,case.get('scalar',0x3f123456+0x100*i))

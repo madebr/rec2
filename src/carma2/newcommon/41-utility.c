@@ -186,23 +186,35 @@ static double C2_HOOK_FASTCALL UtilityRandomScalar(const float* pA, const float*
 
 // FUNCTION: CARMA2_HW 0x005135b0
 double C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    /* MSVC5 retains this arithmetic on x87 without a scalar return spill. */
+    return (float)rand() * (pB - pA) / 32768.f + pA;
+#else
     int number = rand();
 
     return UtilityRandomScalar(&pA, &pB, number);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005135e0
 double C2_HOOK_STDCALL FRandomPosNeg(float pN) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    return FRandomBetween(-pN, pN);
+#else
     float negative;
     int number;
 
     UtilityRandomNegative(&negative, &pN);
     number = rand();
     return UtilityRandomScalar(&negative, &pN, number);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00513620
 double C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    return FRandomBetween(pA, pB);
+#else
     int number = rand();
 
 #if defined(__GNUC__) && defined(__i386__)
@@ -210,16 +222,21 @@ double C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
     __asm__ volatile("" : : : "memory");
 #endif
     return UtilityRandomScalar(&pA, &pB, number);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00513650
 double C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    return SRandomBetween(-pN, pN);
+#else
     br_scalar negative;
     int number;
 
     UtilityRandomNegative(&negative, &pN);
     number = rand();
     return UtilityRandomScalar(&negative, &pN, number);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00513690
@@ -934,19 +951,144 @@ void C2_HOOK_FASTCALL PossibleService(void) {
     }
 }
 
+/* Original PC53 grouping, NaN operands and sequential writes require x87 here. */
 // FUNCTION: CARMA2_HW 0x00515610
 void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, const br_matrix34* pC) {
-    br_scalar t1;
-    br_scalar t2;
-    br_scalar t3;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov ecx, pA
+        mov edx, pB
+        mov eax, pC
+        fld dword ptr [edx + 4]
+        fld dword ptr [edx + 8]
+        fld dword ptr [edx]
+        fxch st(2)
+        fsub dword ptr [eax + 0x28]
+        fxch st(1)
+        fsub dword ptr [eax + 0x2c]
+        fxch st(2)
+        fsub dword ptr [eax + 0x24]
+        fld dword ptr [eax + 8]
+        fld dword ptr [eax + 4]
+        fmul st(0), st(3)
+        fxch st(1)
+        fmul st(0), st(4)
+        fld st(2)
+        fmul dword ptr [eax]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [ecx]
+        fld dword ptr [eax + 0xc]
+        fld dword ptr [eax + 0x10]
+        fld dword ptr [eax + 0x14]
+        fxch st(2)
+        fmul st(0), st(3)
+        fxch st(1)
+        fmul st(0), st(4)
+        fxch st(2)
+        fmul st(0), st(5)
+        fxch st(2)
+        faddp st(1), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fstp dword ptr [ecx + 4]
+        fld dword ptr [eax + 0x18]
+        fld dword ptr [eax + 0x1c]
+        fld dword ptr [eax + 0x20]
+        fxch st(2)
+        fmul st(0), st(3)
+        fxch st(1)
+        fmul st(0), st(4)
+        fxch st(2)
+        fmul st(0), st(5)
+        fxch st(2)
+        faddp st(1), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fstp dword ptr [ecx + 8]
+        fstp st(0)
+        fxch st(1)
+        fstp st(0)
+        fstp st(0)
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile(
+        ".intel_syntax noprefix\n\t"
+        "fld dword ptr [edx + 4]\n\t"
+        "fld dword ptr [edx + 8]\n\t"
+        "fld dword ptr [edx]\n\t"
+        "fxch st(2)\n\t"
+        "fsub dword ptr [eax + 0x28]\n\t"
+        "fxch st(1)\n\t"
+        "fsub dword ptr [eax + 0x2c]\n\t"
+        "fxch st(2)\n\t"
+        "fsub dword ptr [eax + 0x24]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fmul st(0), st(3)\n\t"
+        "fxch st(1)\n\t"
+        "fmul st(0), st(4)\n\t"
+        "fld st(2)\n\t"
+        "fmul dword ptr [eax]\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [ecx]\n\t"
+        "fld dword ptr [eax + 0xc]\n\t"
+        "fld dword ptr [eax + 0x10]\n\t"
+        "fld dword ptr [eax + 0x14]\n\t"
+        "fxch st(2)\n\t"
+        "fmul st(0), st(3)\n\t"
+        "fxch st(1)\n\t"
+        "fmul st(0), st(4)\n\t"
+        "fxch st(2)\n\t"
+        "fmul st(0), st(5)\n\t"
+        "fxch st(2)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [ecx + 4]\n\t"
+        "fld dword ptr [eax + 0x18]\n\t"
+        "fld dword ptr [eax + 0x1c]\n\t"
+        "fld dword ptr [eax + 0x20]\n\t"
+        "fxch st(2)\n\t"
+        "fmul st(0), st(3)\n\t"
+        "fxch st(1)\n\t"
+        "fmul st(0), st(4)\n\t"
+        "fxch st(2)\n\t"
+        "fmul st(0), st(5)\n\t"
+        "fxch st(2)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [ecx + 8]\n\t"
+        "fstp st(0)\n\t"
+        "fxch st(1)\n\t"
+        "fstp st(0)\n\t"
+        "fstp st(0)\n\t"
+        ".att_syntax prefix"
+        :
+        : "a" (pC), "c" (pA), "d" (pB)
+        : "memory", "st", "st(1)", "st(2)", "st(3)", "st(4)", "st(5)");
+#else
+    double x = (double)pB->v[0] - pC->m[3][0];
+    double y = (double)pB->v[1] - pC->m[3][1];
+    double z = (double)pB->v[2] - pC->m[3][2];
+    volatile double term_x;
+    volatile double term_y;
+    volatile double term_z;
+    volatile double first_sum;
+    int i;
 
-    t1 = pB->v[0] - pC->m[3][0];
-    t2 = pB->v[1] - pC->m[3][1];
-    t3 = pB->v[2] - pC->m[3][2];
-
-    pA->v[0] = pC->m[0][2] * t3 + pC->m[0][0] * t1 + pC->m[0][1] * t2;
-    pA->v[1] = pC->m[1][2] * t3 + pC->m[1][0] * t1 + pC->m[1][1] * t2;
-    pA->v[2] = pC->m[2][2] * t3 + pC->m[2][0] * t1 + pC->m[2][1] * t2;
+    for (i = 0; i < 3; i++) {
+        term_x = (double)pC->m[i][0] * x;
+        term_y = (double)pC->m[i][1] * y;
+        term_z = (double)pC->m[i][2] * z;
+        first_sum = i == 0 ? term_y + term_z : term_x + term_y;
+        pA->v[i] = (br_scalar)(first_sum + (i == 0 ? term_x : term_z));
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00515690
