@@ -2,7 +2,20 @@
 #define GUARD_23_PIPING_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 #include <s3/s3.h>
+
+extern tU8* gPipe_buffer_start;
+extern int gReentrancy_count;
+extern tPipe_chunk_type gReentrancy_array[5];
+extern tU8* gLocal_buffer;
+extern tU32 gLocal_buffer_size;
+extern tU8* gMr_chunky;
+extern const tReplay_callback* gPipe_callbacks;
+extern tU8* gPipe_buffer_phys_end;
+extern tU8* gPipe_buffer_working_end;
+extern tU8* gPipe_buffer_oldest;
+extern tU8* gPipe_record_ptr;
 
 // ARReplayForwards
 
@@ -26,7 +39,7 @@ extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
 // LengthOfChunk
 
-// LengthOfSession
+extern tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession);
 
 // ARAdvanceChunkPtr
 
@@ -44,15 +57,15 @@ extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
 // StartPipingSession2
 
-// ARStartPipingSession
+extern void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
 
-// EndPipingSession2
+extern void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
-// AREndPipingSession
+extern void C2_HOOK_FASTCALL AREndPipingSession(void);
 
-// ARAddDataToSession
+extern void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize);
 
-// ARAddVariedDataToSession
+extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
 
 // ARDoSingleSession
 
@@ -148,7 +161,7 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 // AddNonCarToPipingSession
 
-// AddSmokeToPipingSession
+extern void C2_HOOK_FASTCALL AddSmokeToPipingSession(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength);
 
 // AddSmokeColumnToPipingSession
 
