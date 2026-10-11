@@ -152,6 +152,31 @@ static int C2_HOOK_FASTCALL InitDirectInput(void) {
     return 0;
 }
 
+/* The original GetInfo creation path leaves the enumeration flag unchanged. */
+static int C2_HOOK_FASTCALL InitDirectInputForInfo(void) {
+    int i;
+
+    if (gDirectInputJoystickHandle == NULL) {
+        memset(gDirectInputJoystickDevices, 0, sizeof(gDirectInputJoystickDevices));
+        for (i = 0; i < MAX_COUNT_JOYSTICKS; i++) {
+            gDirectInputJoystickInfos[i].buttonMask = 0;
+            gDirectInputJoystickInfos[i].axisMask = 0;
+            gDirectInputJoystickInfos[i].devSubType = 0;
+            gDirectInputJoystickInfos[i].productName[0] = '\0';
+            gDirectInputJoystickInfos[i].sizeData = 0;
+            gDirectInputJoystickInfos[i].data = NULL;
+        }
+        memset(gDirectInputEffects, 0, sizeof(gDirectInputEffects));
+        gJoystickFFB = 0;
+        gCountEnumeratedJoystickDinputDevices = 0;
+        DirectInputCreateA(GetModuleHandleA(NULL), 0x0500, &gDirectInputJoystickHandle, NULL);
+        if (gDirectInputJoystickHandle == NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 void C2_HOOK_FASTCALL CloseDirectInput(void) {
 
     if (gDirectInputDevice != NULL) {
@@ -199,6 +224,7 @@ static int C2_HOOK_FASTCALL AcquireDInputJoystickDevice(int pIndex) {
 tDirectInputJoystickInfo* C2_HOOK_FASTCALL JoystickDInputGetInfo(int pJoystickIndex, tU32* pButtonMask, tU32* pAxisMask) {
     IDirectInputDevice2A* device;
     tDirectInputJoystickInfo* info;
+    tU32 axis_offsets[8] = { 0, 4, 8, 12, 24, 28, 0, 0 };
 
     if (pButtonMask != NULL) {
         *pButtonMask = 0;
@@ -206,7 +232,7 @@ tDirectInputJoystickInfo* C2_HOOK_FASTCALL JoystickDInputGetInfo(int pJoystickIn
     if (pAxisMask != NULL) {
         *pAxisMask = 0;
     }
-    if (InitDirectInput()) {
+    if (InitDirectInputForInfo()) {
         return NULL;
     }
     device = gDirectInputJoystickDevices[pJoystickIndex];
@@ -220,37 +246,42 @@ tDirectInputJoystickInfo* C2_HOOK_FASTCALL JoystickDInputGetInfo(int pJoystickIn
         HRESULT hRes;
         DIDEVICEOBJECTINSTANCE device_obj_descr;
         tU32 i;
+        tU32 count;
 
         caps.dwSize = sizeof(caps);
-        hRes = IDirectInputDevice2_GetCapabilities(device, &caps);
+        hRes = IDirectInputDevice2_GetCapabilities(gDirectInputJoystickDevices[pJoystickIndex], &caps);
         if (hRes != DI_OK) {
             return NULL;
         }
         if (caps.dwFlags & DIDC_FORCEFEEDBACK) {
             gJoystickFFB |= 1 << pJoystickIndex;
         }
-        info->count_buttons = caps.dwButtons; // unsure
+        info->count_buttons = caps.dwButtons;
         device_obj_descr.dwSize = sizeof(device_obj_descr);
 
-        for (i = 0; i < caps.dwButtons && i < REC2_ASIZE(((tJoystickInputState*)NULL)->buttons); i++) {
-            hRes = IDirectInputDevice2_GetObjectInfo(device, &device_obj_descr,
+        count = 0;
+        for (i = 0; count < caps.dwButtons && i < REC2_ASIZE(((tJoystickInputState*)NULL)->buttons); i++) {
+            hRes = IDirectInputDevice2_GetObjectInfo(gDirectInputJoystickDevices[pJoystickIndex], &device_obj_descr,
                                                      offsetof(tJoystickInputState, buttons) + i, DIPH_BYOFFSET);
             if (hRes == DI_OK) {
                 info->buttonMask |= 1 << i;
                 if (pButtonMask != NULL) {
-                    *pButtonMask = info->buttonMask; // unsure
+                    *pButtonMask = info->buttonMask;
                 }
+                count++;
             }
         }
 
-        for (i = 0; i < caps.dwAxes && i < 8; i++) {
-            hRes = IDirectInputDevice2_GetObjectInfo(device, &device_obj_descr,
-                                                     sizeof(tU32) * i, DIPH_BYOFFSET);
+        count = 0;
+        for (i = 0; count < caps.dwAxes && i < REC2_ASIZE(axis_offsets); i++) {
+            hRes = IDirectInputDevice2_GetObjectInfo(gDirectInputJoystickDevices[pJoystickIndex], &device_obj_descr,
+                                                     axis_offsets[i], DIPH_BYOFFSET);
             if (hRes == DI_OK) {
                 info->axisMask |= 1 << i;
                 if (pAxisMask != NULL) {
-                    *pAxisMask = info->axisMask; // unsure
+                    *pAxisMask = info->axisMask;
                 }
+                count++;
             }
         }
     } else {
@@ -271,8 +302,10 @@ BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, 
     IDirectInputDevice2A *device2;
     int nb;
     IDirectInputA* pDirectInput = pContext;
-    DIPROPRANGE diphRange;
-    DIPROPDWORD zoneProp;
+    union {
+        DIPROPRANGE range;
+        DIPROPDWORD zone;
+    } property;
 
     C2_HOOK_ASSERT(sizeof(tJoystickInputState) == 0x50);
 
@@ -286,15 +319,15 @@ BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, 
 #pragma GCC diagnostic pop
 #endif
     gDirectInputJoystickInfos[nb].productName[sizeof(gDirectInputJoystickInfos[nb].productName) - 1] = '\0';
-    switch (pDeviceInstance->dwDevType) {
+    switch (GET_DIDEVICE_SUBTYPE(pDeviceInstance->dwDevType)) {
     case DIDEVTYPEJOYSTICK_GAMEPAD:
-        gDirectInputJoystickInfos[nb].count_buttons = 4;
+        gDirectInputJoystickInfos[nb].devSubType = 4;
         break;
     case DIDEVTYPEJOYSTICK_WHEEL:
-        gDirectInputJoystickInfos[nb].count_buttons = 2;
+        gDirectInputJoystickInfos[nb].devSubType = 2;
         break;
     default:
-        gDirectInputJoystickInfos[nb].count_buttons = 1;
+        gDirectInputJoystickInfos[nb].devSubType = 1;
         break;
     }
     hResult = IDirectInput_CreateDevice(pDirectInput, &pDeviceInstance->guidInstance, &device, NULL);
@@ -309,13 +342,13 @@ BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, 
         return DIENUM_CONTINUE;
     }
     hResult = IDirectInputDevice_QueryInterface(device, &IID_IDirectInputDevice2A,
-                                                (void **)&gDirectInputJoystickDevices[nb]);
-    IDirectInputDevice2_Release(device);
+                                                (void **)&gDirectInputJoystickDevices[gCountEnumeratedJoystickDinputDevices]);
     if (hResult != DI_OK) {
         dr_dprintf("QueryInterface did not return DI_OK\n");
+        IDirectInputDevice_Release(device);
         return DIENUM_CONTINUE;
     }
-    device2 = gDirectInputJoystickDevices[nb];
+    device2 = gDirectInputJoystickDevices[gCountEnumeratedJoystickDinputDevices];
     if (device2 == NULL) {
         dr_dprintf("Could not set dinput coop level\n");
         return DIENUM_STOP;
@@ -325,29 +358,36 @@ BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, 
         dr_dprintf("Could not set dinput coop level\n");
         return DIENUM_STOP;
     }
-    diphRange.diph.dwSize = sizeof(diphRange);
-    diphRange.diph.dwHeaderSize = sizeof(diphRange.diph);
-    diphRange.diph.dwObj = offsetof(tJoystickInputState, xaxis);
-    diphRange.diph.dwHow = DIPH_BYOFFSET;
-    diphRange.lMin = 0;
-    diphRange.lMax = 0xffff;
-    hResult = IDirectInputDevice2_SetProperty(device2, DIPROP_RANGE, (DIPROPHEADER*)&diphRange);
+    property.range.diph.dwSize = sizeof(property.range);
+    property.range.diph.dwHeaderSize = sizeof(property.range.diph);
+    property.range.diph.dwObj = offsetof(tJoystickInputState, xaxis);
+    property.range.diph.dwHow = DIPH_BYOFFSET;
+    property.range.lMin = 0;
+    property.range.lMax = 0xffff;
+    hResult = IDirectInputDevice_SetProperty(device, DIPROP_RANGE, &property.range.diph);
+    if (hResult == DI_OK) {
+        property.range.diph.dwObj = offsetof(tJoystickInputState, yaxis);
+        hResult = IDirectInputDevice_SetProperty(device, DIPROP_RANGE, &property.range.diph);
+    }
     if (hResult != DI_OK) {
         dr_dprintf("IDirectInputDevice::SetProperty(DIPH_RANGE)  FAILED\n");
-        IDirectInputDevice2_Release(device2);
-        return DIENUM_CONTINUE;
+        IDirectInputDevice_Release(device);
     }
-    zoneProp.diph.dwSize = sizeof(zoneProp);
-    zoneProp.diph.dwHeaderSize = sizeof(zoneProp.diph);
-    diphRange.diph.dwObj = offsetof(tJoystickInputState, xaxis);
-    zoneProp.diph.dwHow = DIPH_BYOFFSET;
-    zoneProp.dwData = 1000;
-    hResult = IDirectInputDevice2_SetProperty(device2, DIPROP_DEADZONE, (DIPROPHEADER*)&diphRange);
+    property.zone.diph.dwSize = sizeof(property.zone);
+    property.zone.diph.dwHeaderSize = sizeof(property.zone.diph);
+    property.zone.diph.dwObj = offsetof(tJoystickInputState, xaxis);
+    property.zone.diph.dwHow = DIPH_BYOFFSET;
+    property.zone.dwData = 1000;
+    hResult = IDirectInputDevice_SetProperty(device, DIPROP_DEADZONE, &property.zone.diph);
+    if (hResult == DI_OK) {
+        property.zone.diph.dwObj = offsetof(tJoystickInputState, yaxis);
+        hResult = IDirectInputDevice_SetProperty(device, DIPROP_DEADZONE, &property.zone.diph);
+    }
     if (hResult != DI_OK) {
         dr_dprintf("IDirectInputDevice:: SetProperty(DIPH_DEADZONE) FAILED\n");
-        IDirectInputDevice2_Release(device2);
-        return DIENUM_CONTINUE;
+        IDirectInputDevice_Release(device);
     }
+    IDirectInputDevice_Release(device);
     gCountEnumeratedJoystickDinputDevices++;
     return DIENUM_CONTINUE;
 }
