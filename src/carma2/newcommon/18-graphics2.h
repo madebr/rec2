@@ -14,6 +14,18 @@ extern br_pixelmap* gRender_palette;
 extern int gDim_amount;
 extern int gPalette_changed;
 extern br_pixelmap* gCurrent_palette;
+extern int gCursor_tinted_top;
+extern int gCursor_tinted_left;
+extern int gCursor_tinted_bottom;
+extern int gCursor_tinted_right;
+extern int gCursor_tinted_center;
+extern int gCursor_line_width;
+extern int gTransient_bitmap_index;
+extern tMouse_coord gMouse_last_pos;
+extern int gMouse_in_use;
+extern int gCurrent_cursor_index;
+extern int gMouse_started;
+extern int gNext_transient;
 
 extern void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount);
 
@@ -47,9 +59,9 @@ extern void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
 extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 
-// DeallocateTransientBitmap
+// DeallocateTransientBitmap is inlined in EndMouseCursor.
 
-// DeallocateAllTransientBitmaps
+// DeallocateAllTransientBitmaps is inlined in EndMouseCursor.
 
 extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them);
 
@@ -57,7 +69,7 @@ extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them
 
 extern int C2_HOOK_FASTCALL DoMouseCursor(void);
 
-// AllocateCursorTransient
+extern void C2_HOOK_FASTCALL AllocateCursorActors(void);
 
 // InitMouseTargetLines
 
