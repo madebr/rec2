@@ -2,10 +2,17 @@
 #define GUARD_66_TINTEDPOLY_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern tTintedPoly gTintedPolys[10];
+extern br_actor* gTintedPolyCamera;
+extern br_token_value gTinted_poly_tokens[9];
+#define gTintedColourMap_red (gTinted_poly_tokens[6].t)
+#define gDefaultOpacity_TintedPoly (gTinted_poly_tokens[6].v.i32)
 
 extern void C2_HOOK_FASTCALL InitTintedPolyStuff(void);
 
-// BuildTintedPolyModel
+extern br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int height, int nbX, int nbY);
 
 // BuildTintedPolyMaterial
 
@@ -23,7 +30,7 @@ extern int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int heig
 
 // RenderTintedPolys
 
-// SetTintedPolyColour
+extern void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue);
 
 // SetTintedPolyRefMaterial
 
