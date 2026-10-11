@@ -47,6 +47,30 @@ int gRender_indent;
 // GLOBAL: CARMA2_HW 0x006baa40
 tU8 gTemporary_physics_render_buffer[300000];
 
+// GLOBAL: CARMA2_HW 0x006a2448
+tClip_details gShadow_clip_planes[8];
+
+// GLOBAL: CARMA2_HW 0x006a23d8
+int gFancy_shadow;
+
+// GLOBAL: CARMA2_HW 0x006a27e0
+br_material* gShadow_material;
+
+// GLOBAL: CARMA2_HW 0x006a27d0
+br_vector3 gShadow_light_ray;
+
+// GLOBAL: CARMA2_HW 0x006a27c0
+br_vector3 gShadow_light_z;
+
+// GLOBAL: CARMA2_HW 0x006a27b0
+br_vector3 gShadow_light_x;
+
+// GLOBAL: CARMA2_HW 0x006a27e4
+br_model* gShadow_model;
+
+// GLOBAL: CARMA2_HW 0x006a2444
+br_actor* gShadow_actor;
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -68,9 +92,29 @@ tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void) {
 
 // ToggleShadow
 
-// STUB: CARMA2_HW 0x004e99d0
+// FUNCTION: CARMA2_HW 0x004e99d0
 void C2_HOOK_FASTCALL InitShadow(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(gShadow_clip_planes[0]) != 8);
+
+    for (i = 0; i < (int)REC2_ASIZE(gShadow_clip_planes); i++) {
+        gShadow_clip_planes[i].clip = BrActorAllocate(BR_ACTOR_CLIP_PLANE, NULL);
+        BrActorAdd(gUniverse_actor, gShadow_clip_planes[i].clip);
+        BrClipPlaneDisable(gShadow_clip_planes[i].clip);
+        BrMatrix34Identity(&gShadow_clip_planes[i].clip->t.t.mat);
+    }
+    gFancy_shadow = 1;
+    gShadow_material = BrMaterialFind("SHADOW.MAT");
+    BrVector3Set(&gShadow_light_ray, 0.f, -1.f, 0.f);
+    BrVector3Set(&gShadow_light_z, 0.f, 0.f, -1.f);
+    BrVector3Set(&gShadow_light_x, 1.f, 0.f, 0.f);
+
+    gShadow_model = BrModelAllocate("", 0, 0);
+    gShadow_model->flags = BR_MODF_GENERATE_TAGS | BR_MODF_KEEP_ORIGINAL;
+    gShadow_actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    gShadow_actor->model = gShadow_model;
+    BrActorAdd(gUniverse_actor, gShadow_actor);
 }
 
 // SaveShadeTable
