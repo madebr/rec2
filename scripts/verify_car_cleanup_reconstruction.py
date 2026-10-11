@@ -57,6 +57,7 @@ driver = r'''
 #include <string.h>
 #include <stddef.h>
 #include "rec2_types.h"
+#include "rec2_macros.h"
 #include "00-car.h"
 #include "08-loading1.h"
 #include "13-crush1.h"
@@ -68,6 +69,8 @@ typedef char check_model_offsets[offsetof(br_model,user)==0x28 ? 1 : -1];
 typedef char check_car_offsets[offsetof(tCar_spec,car_model_actor)==0xe0c && offsetof(tCar_spec,count_detail_levels)==0xe14 && offsetof(tCar_spec,field_0xe18)==0xe18 ? 1 : -1];
 typedef char check_crush_offsets[offsetof(tCar_crush_buffer_entry,flap_data)==0x30 && offsetof(tCar_crush_buffer_entry,detach_data)==0x34 && offsetof(tCar_crush_buffer_entry,count_smashables)==0x38 && offsetof(tCar_crush_buffer_entry,smashables)==0x3c ? 1 : -1];
 typedef char check_smash_offsets[sizeof(tCar_crush_smashable_part)==0x7c && offsetof(tCar_crush_smashable_part,levels)==0x50 && offsetof(tCar_crush_smashable_part,field_0x70)==0x70 && offsetof(tCar_crush_smashable_part,field_0x78)==0x78 ? 1 : -1];
+typedef char check_master_offsets[offsetof(tCar_crush_spec,actor)==0x4cc && offsetof(tCar_crush_spec,model_actor)==0x4d0 && offsetof(tCar_crush_spec,field_0x1cc)==0x1cc && offsetof(tCar_crush_spec,network_stuff)==0x20 && offsetof(tCar_crush_spec,field_0x564)==0x564 ? 1 : -1];
+typedef char check_shape_record[sizeof(tCar_crush_shape_info)==0x1c && offsetof(tCar_crush_shape_info,field_0x18)==0x18 && offsetof(tPhysics_object,shape)==0x20 ? 1 : -1];
 static br_actor actors[3];
 static br_model models[2];
 static tUser_crush_data users[3];
@@ -79,6 +82,11 @@ static tCar_crush_flap_data flap;
 static tCar_crush_detach_data detach;
 static tCar_crush_smashable_part smashes[2];
 static unsigned char buffers[6][128];
+static tCar_crush_spec master;
+static tCar_crush_shape_info shape_infos[2];
+static unsigned char master_buffers[12][128];
+static tPhysics_shape original_shape, replacement_shape;
+static tPhysics_object collision;
 static void* registry[100];
 static int trace[100], trace_count;
 static int id(void* pointer) {
@@ -91,10 +99,14 @@ static int id(void* pointer) {
 void C2_HOOK_CDECL BrMemFree(void* pointer) {
     trace[trace_count++] = id(pointer);
 }
+void C2_HOOK_CDECL BrActorFree(br_actor* actor) {
+    trace[trace_count++] = -id(actor);
+}
 '''
 for file, name in [("41-utility.c", "DRActorEnumRecurse"), ("00-car.c", "SwitchCarModel"),
                    ("00-car.c", "SwitchCarModels"), ("51-smash.c", "DisposeSmashData"),
                    ("13-crush1.c", "DisposeCrushData"), ("13-crush1.c", "DisposeVertexData"),
+                   ("13-crush1.c", "DisposeMasterCrushData"),
                    ("08-loading1.c", "DisposeCarActModDataCB")]:
     driver += "\n" + extract(file, name) + "\n"
 driver += r'''
@@ -118,7 +130,7 @@ int main(int argc,char**argv) {
         else SwitchCarModels(&car,index);
         printf("{\"result\":%d,\"state\":[%d",result,car.field_0xe18);
         for(i=0;i<3;i++)printf(",%d,%d",actors[i].type,id(actors[i].model));
-    } else {
+    } else if(mode==1) {
         users[0].crush_data=&crush;crush.flap_data=&flap;crush.detach_data=&detach;crush.smashables=smashes;crush.count_smashables=2;
         for(i=0;i<2;i++){smashes[i].field_0x70=(tU16*)buffers[3*i];smashes[i].field_0x78=(tCar_crush_vertex_data*)buffers[3*i+1];smashes[i].levels=(tSmashable_level*)buffers[3*i+2];}
         if(scenario==0)actors[0].user=NULL;
@@ -131,6 +143,23 @@ int main(int argc,char**argv) {
         if(scenario==8)users[0].models[1]=&models[0];
         result=(int)DisposeCarActModDataCB(&actors[0],&car.index);
         printf("{\"result\":%d,\"state\":[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",result,id(actors[0].user),id(actors[0].model),id(models[0].user),id(models[1].user),id(details[0].field_0x4),id(details[1].field_0x4),id(users[0].crush_data),id(crush.flap_data),id(crush.detach_data),id(crush.smashables),id(users[0].models[0]),id(users[0].models[1]));
+    } else {
+        registry[79]=&actors[2];registry[80]=&actors[1];registry[81]=&master;registry[82]=shape_infos;
+        for(i=0;i<12;i++)registry[83+i]=master_buffers[i];
+        registry[95]=&original_shape;registry[96]=&collision;registry[97]=&replacement_shape;
+        car.collision_info=&collision;collision.shape=&replacement_shape;
+        master.count_shapes=2;master.field_0x4=shape_infos;master.field_0xc=&original_shape;
+        master.field_0x1cc=(tCar_crush_vertex_data*)master_buffers[0];
+        master.actor=&actors[1];master.model_actor=&actors[2];master.network_stuff=(tCar_crush_network_shapes*)master_buffers[7];
+        for(i=0;i<2;i++){shape_infos[i].field_0x0=(tCollision_shape_polyhedron*)master_buffers[1+3*i];shape_infos[i].field_0x4=(tCollision_shape_polyhedron*)master_buffers[2+3*i];shape_infos[i].field_0x18=(tCar_crush_reordered_shape_info*)master_buffers[3+3*i];}
+        for(i=0;i<4;i++)master.field_0x564[i]=(tCollision_shape_wireframe*)master_buffers[8+i];
+        if(scenario==1){master.count_shapes=0;master.field_0x4=NULL;master.field_0x1cc=NULL;master.network_stuff=NULL;for(i=0;i<4;i++)master.field_0x564[i]=NULL;}
+        if(scenario==3){master.field_0x1cc=NULL;master.network_stuff=NULL;shape_infos[0].field_0x0=NULL;shape_infos[1].field_0x18=NULL;master.field_0x564[2]=NULL;}
+        if(scenario==4)master.count_shapes=-1;
+        if(scenario==5){master.count_shapes=1;master.field_0xc=NULL;}
+        DisposeMasterCrushData(scenario==0?NULL:&master,scenario==0?NULL:&car);
+        printf("{\"result\":0,\"state\":[%d,%d,%d,%d,%d,%d,%d",id(collision.shape),id(master.actor),id(master.model_actor),id(master.field_0x4),id(master.field_0xc),id(master.field_0x1cc),id(master.network_stuff));
+        for(i=0;i<4;i++)printf(",%d",id(master.field_0x564[i]));
     }
     printf("],\"frees\":[");
     for(i=0;i<trace_count;i++)printf("%s%d",i?",":"",trace[i]);
@@ -149,7 +178,10 @@ section_table = pe + 24 + struct.unpack_from("<H", binary, pe + 20)[0]
 addresses = {10: 0x1005000, 11: 0x1005100, 20: 0x1006000, 21: 0x1006100, 22: 0x1006200,
              30: 0x1007000, 31: 0x1007100, 40: 0x1007200, 41: 0x1007300,
              50: 0x1008000, 51: 0x1008100, 52: 0x1008200, 60: 0x1009000,
-             **{70 + i: 0x100a000 + i * 0x100 for i in range(6)}}
+             **{70 + i: 0x100a000 + i * 0x100 for i in range(6)},
+             79: 0x1004200, 80: 0x1004100, 81: 0x100b000, 82: 0x100c000,
+             **{83 + i: 0x100c200 + i * 0x100 for i in range(12)},
+             95: 0x100e000, 96: 0x100e200, 97: 0x100e800}
 ids = {value: key for key, value in addresses.items()}
 ids[0] = 0
 
@@ -186,7 +218,7 @@ def original(mode, scenario):
         if scenario == 5:
             wr(actors[1] + 8, 0); wr(actors[1], actors[2]); wr(actors[2] + 0x60, 0)
         if scenario == 6: wr(actors[0] + 0x60, 0)
-    else:
+    elif mode == 1:
         wr(addresses[20] + 8, addresses[50]); wr(addresses[50] + 0x30, addresses[51]); wr(addresses[50] + 0x34, addresses[52])
         wr(addresses[50] + 0x3c, addresses[60]); u.mem_write(addresses[50] + 0x38, struct.pack("<H", 2))
         for i in range(2):
@@ -200,11 +232,26 @@ def original(mode, scenario):
         if scenario == 6: wr(car + 0xe14, 0); u.mem_write(addresses[50] + 0x38, b"\0\0")
         if scenario == 7: wr(car + 0xe14, 0); wr(addresses[50] + 0x3c, 0)
         if scenario == 8: wr(addresses[20] + 4, addresses[10])
+    else:
+        master = addresses[81]
+        wr(car + 8, addresses[96]); wr(addresses[96] + 0x20, addresses[97])
+        wr(master, 2); wr(master + 4, addresses[82]); wr(master + 0xc, addresses[95])
+        wr(master + 0x1cc, addresses[83]); wr(master + 0x4cc, addresses[80]); wr(master + 0x4d0, addresses[79]); wr(master + 0x20, addresses[90])
+        for i in range(2):
+            for offset, label in [(0, 84), (4, 85), (0x18, 86)]: wr(addresses[82] + i * 0x1c + offset, addresses[label + 3 * i])
+        for i in range(4): wr(master + 0x564 + 4 * i, addresses[91 + i])
+        if scenario == 1:
+            wr(master, 0); wr(master + 4, 0); wr(master + 0x1cc, 0); wr(master + 0x20, 0)
+            for i in range(4): wr(master + 0x564 + i * 4, 0)
+        if scenario == 3:
+            wr(master + 0x1cc, 0); wr(master + 0x20, 0); wr(addresses[82], 0); wr(addresses[82] + 0x1c + 0x18, 0); wr(master + 0x56c, 0)
+        if scenario == 4: wr(master, -1)
+        if scenario == 5: wr(master, 1); wr(master + 0xc, 0)
     frees = []
     def hook(uc, address, size, context):
-        if address == 0x5275f0:
+        if address in (0x5275f0, 0x51e2c0):
             sp = uc.reg_read(UC_X86_REG_ESP)
-            frees.append(ids[rd(sp + 4)])
+            frees.append(ids[rd(sp + 4)] * (-1 if address == 0x51e2c0 else 1))
             uc.reg_write(UC_X86_REG_EAX, 0)
             uc.reg_write(UC_X86_REG_EIP, rd(sp))
             uc.reg_write(UC_X86_REG_ESP, sp + 4)
@@ -212,32 +259,39 @@ def original(mode, scenario):
     sp = 0x101f000
     wr(sp, 0x1020000)
     u.reg_write(UC_X86_REG_ESP, sp)
-    if mode == 0 and scenario != 6:
+    if mode == 2:
+        u.reg_write(UC_X86_REG_ECX, 0 if scenario == 0 else addresses[81]); u.reg_write(UC_X86_REG_EDX, 0 if scenario == 0 else car)
+        entry = 0x42c420
+    elif mode == 0 and scenario != 6:
         u.reg_write(UC_X86_REG_ECX, car); u.reg_write(UC_X86_REG_EDX, index)
         entry = 0x413f40
     else:
         wr(sp + 4, actors[0]); wr(sp + 8, car if mode else 0)
         entry = 0x44be80 if mode else 0x413f10
     u.emu_start(entry, 0x1020000, count=10000)
-    result = u.reg_read(UC_X86_REG_EAX) if mode or scenario == 6 else 0
+    result = u.reg_read(UC_X86_REG_EAX) if mode == 1 or (mode == 0 and scenario == 6) else 0
     if mode == 0:
         state = [rd(car + 0xe18)]
         for actor in actors: state.extend([u.mem_read(actor + 0x12, 1)[0], pid(actor + 0x18)])
-    else:
+    elif mode == 1:
         state = [pid(actors[0] + 0x60), pid(actors[0] + 0x18), pid(addresses[10] + 0x28), pid(addresses[11] + 0x28),
                  pid(addresses[30] + 4), pid(addresses[31] + 4), pid(addresses[20] + 8), pid(addresses[50] + 0x30),
                  pid(addresses[50] + 0x34), pid(addresses[50] + 0x3c), pid(addresses[20]), pid(addresses[20] + 4)]
+    else:
+        master = addresses[81]
+        state = [pid(addresses[96] + 0x20), pid(master + 0x4cc), pid(master + 0x4d0), pid(master + 4), pid(master + 0xc), pid(master + 0x1cc), pid(master + 0x20)]
+        state.extend(pid(master + 0x564 + 4 * i) for i in range(4))
     return {"result": result, "state": state, "frees": frees}
 
 
 results = []
-for mode, count in [(0, 7), (1, 9)]:
+for mode, count in [(0, 7), (1, 9), (2, 6)]:
     for scenario in range(count):
         native = json.loads(subprocess.check_output([str(out / "harness.exe"), str(mode), str(scenario)], text=True))
         expected = original(mode, scenario)
         if native != expected:
             raise AssertionError(f"mode={mode} case={scenario}: C={native}, original={expected}")
-        results.append({"mode": "model_switch" if mode == 0 else "cleanup", "case": scenario, "result": native})
+        results.append({"mode": ["model_switch", "cleanup", "master_teardown"][mode], "case": scenario, "result": native})
 (out / "results.json").write_text(json.dumps(results, indent=2) + "\n")
 inputs = ["src/carma2/newcommon/" + file + suffix for file in ("00-car", "08-loading1", "13-crush1", "51-smash", "41-utility") for suffix in (".c", ".h")]
 inputs.extend(["src/carma2/include/rec2_types.h", "src/brender/include/brender/br_types.h", "src/carma2/hooks/c2_hooks.h"])
@@ -248,7 +302,7 @@ manifest = {
     "harness_sha256": hashlib.sha256(driver.encode()).hexdigest(),
     "source_sha256": {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in inputs},
     "case_count": len(results), "all_cases_passed": True,
-    "scope": "Actual current function bodies and actual 32-bit repository types against original x86; BrMemFree records addresses without releasing memory.",
+    "scope": "Actual current function bodies and actual 32-bit repository types against original x86; BrMemFree/BrActorFree record addresses without releasing memory. Negative trace IDs denote actor releases.",
 }
 (out / "verification.json").write_text(json.dumps(manifest, indent=2) + "\n")
-print(f"Passed {len(results)} differential cases: null/missing LODs, nested/sibling actor traversal, signed detail counts, aliased models, exact free order and pointer retention")
+print(f"Passed {len(results)} differential cases: null/missing LODs, actor traversal, signed detail/shape counts, aliasing, exact free order, master actor ownership and original-shape restoration")

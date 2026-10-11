@@ -3,6 +3,7 @@
 #include "08-loading1.h"
 #include "51-smash.h"
 #include "platform.h"
+#include "rec2_macros.h"
 
 #include "c2_string.h"
 
@@ -216,9 +217,30 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // InitPhysModCrushData
 
-// STUB: CARMA2_HW 0x0042c420
+// FUNCTION: CARMA2_HW 0x0042c420
 void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_spec* pCar) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    if (pCar_crush != NULL) {
+        BrActorFree(pCar_crush->actor);
+        if (pCar_crush->field_0x1cc != NULL) {
+            BrMemFree(pCar_crush->field_0x1cc);
+        }
+        for (i = 0; i < pCar_crush->count_shapes; i++) {
+            BrMemFree(pCar_crush->field_0x4[i].field_0x18);
+            BrMemFree(pCar_crush->field_0x4[i].field_0x0);
+            BrMemFree(pCar_crush->field_0x4[i].field_0x4);
+        }
+        BrMemFree(pCar_crush->field_0x4);
+        pCar->collision_info->shape = pCar_crush->field_0xc;
+        if (pCar_crush->network_stuff != NULL) {
+            BrMemFree(pCar_crush->network_stuff);
+        }
+        for (i = 0; i < (int)REC2_ASIZE(pCar_crush->field_0x564); i++) {
+            BrMemFree(pCar_crush->field_0x564[i]);
+        }
+        BrMemFree(pCar_crush);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x0042c4f0
