@@ -155,6 +155,7 @@ extern int C2_HOOK_FASTCALL PDGetJoy2X(void);
 extern int C2_HOOK_FASTCALL PDGetJoy2Y(void);
 
 extern tButtonJoystickInfo* C2_HOOK_FASTCALL PDGetCurrentJoystickData(void);
+extern int C2_HOOK_FASTCALL PDIsJoystickAvailable(int pIndex);
 extern const char* C2_HOOK_FASTCALL GetCurrentJoystickName(void);
 extern void C2_HOOK_FASTCALL PDSetJoystickFFBGain(int pGain);
 extern int C2_HOOK_FASTCALL PDEnableJoysticks(void);

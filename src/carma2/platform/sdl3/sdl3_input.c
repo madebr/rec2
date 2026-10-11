@@ -558,15 +558,22 @@ int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void) {
 }
 
 tButtonJoystickInfo* C2_HOOK_FASTCALL PDGetCurrentJoystickData(void) {
-    tJoystick_info* info = SDL3GetGamepad(gJoystick_index);
-
-    return info != NULL ? &info->preferences : NULL;
+    if (!PDIsJoystickAvailable(gJoystick_index)) {
+        return NULL;
+    }
+    return &g_Joystick_infos[gJoystick_index].preferences;
 }
 
 const char* C2_HOOK_FASTCALL GetCurrentJoystickName(void) {
-    tButtonJoystickInfo* info = PDGetCurrentJoystickData();
+    if (!PDIsJoystickAvailable(gJoystick_index)) {
+        return NULL;
+    }
+    return SDL_GetJoystickName(SDL_GetGamepadJoystick(g_Joystick_infos[gJoystick_index].gamepad));
+}
 
-    return info != NULL ? info->productName : NULL;
+int C2_HOOK_FASTCALL PDIsJoystickAvailable(int pIndex) {
+    return pIndex >= 0 && pIndex < g_Count_Joystick_infos
+        && SDL_GamepadConnected(g_Joystick_infos[pIndex].gamepad);
 }
 
 int C2_HOOK_FASTCALL PDEnableJoysticks(void) {

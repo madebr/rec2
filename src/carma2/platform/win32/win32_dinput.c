@@ -392,6 +392,11 @@ tButtonJoystickInfo* C2_HOOK_FASTCALL PDGetCurrentJoystickData(void) {
     return gDirectInputJoystickInfos[gJoystick_index].data;
 }
 
+// FUNCTION: CARMA2_HW 0x00459fd0
+int C2_HOOK_FASTCALL PDIsJoystickAvailable(int pIndex) {
+    return gDirectInputJoystickDevices[pIndex] != NULL;
+}
+
 // FUNCTION: CARMA2_HW 0x0045c370
 void C2_HOOK_FASTCALL CollectJoystickButtonInfo(tButtonJoystickInfo* pInfo) {
     unsigned int i;

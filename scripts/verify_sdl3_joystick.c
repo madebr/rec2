@@ -153,6 +153,24 @@ int main(void) {
     CHECK(PDGetCurrentJoystickData() == NULL);
     CHECK(GetCurrentJoystickName() == NULL);
     CHECK(PDGetJoy1X() == -1 && PDGetJoy2Y() == -1);
+    /* SaveJoystickPreferences temporarily selects each connected index even
+     * while input stays disabled; metadata must remain accessible. */
+    CHECK(PDIsJoystickAvailable(-1) == 0);
+    CHECK(PDIsJoystickAvailable(0) == 1);
+    CHECK(PDIsJoystickAvailable(1) == 1);
+    CHECK(PDIsJoystickAvailable(2) == 0);
+    for (i = 0; i < 16; i++) {
+        if (PDIsJoystickAvailable(i)) {
+            gJoystick_index = i;
+            CHECK(PDGetCurrentJoystickData() == &g_Joystick_infos[i].preferences);
+            CHECK(PDGetJoy1X() == -1);
+            CHECK(PDGetJoystickButtonStates() == 0);
+        }
+    }
+    gJoystick_index = 1;
+    SDL_strlcpy(g_Joystick_infos[1].preferences.productName, "loaded preference alias", sizeof(g_Joystick_infos[1].preferences.productName));
+    CHECK(SDL_strcmp(GetCurrentJoystickName(), "rec2 virtual second") == 0);
+    gJoystick_index = -1;
     PDSetKeysFromJoystick(keys);
     CHECK(keys[107] == 0);
     CHECK(SDL_DetachVirtualJoystick(first));
