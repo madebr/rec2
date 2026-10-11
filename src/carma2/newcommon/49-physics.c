@@ -16,11 +16,21 @@
 #define PHYSICS_BUFFER_PART_SIZE 40000
 #define PHYSICS_BUFFER_OTHER_SIZE 50000
 
+static int C2_HOOK_FASTCALL PhysicsScalarNaN(const br_scalar* value);
+static int C2_HOOK_FASTCALL PhysicsLessOrUnordered(const br_scalar* a, const br_scalar* b);
+static int C2_HOOK_FASTCALL PhysicsGreaterOrdered(const br_scalar* a, const br_scalar* b);
+
 // GLOBAL: CARMA2_HW 0x0074a5e4
 int gPHIL_mechanics_time_sync;
 
 // GLOBAL: CARMA2_HW 0x0065d010
 int gFace_num__car = 1;
+
+// GLOBAL: CARMA2_HW 0x00692dd0
+br_scalar gPhysics_bounds_max_x;
+
+// GLOBAL: CARMA2_HW 0x00692dd4
+br_scalar gPhysics_bounds_min_x;
 
 // GLOBAL: CARMA2_HW 0x006940c0
 tPhysicsError_cbfn* gPhysics_error_cb;
@@ -120,7 +130,98 @@ void* gPhysics_other_buffer;
 
 // TestForObjectInSensiblePlace
 
-// HierarchyCalcEnergy
+/* Original x87 operand order preserves the tested distinct NaN payloads. */
+static br_scalar C2_HOOK_FASTCALL PhysicsObjectEnergy(tPhysics_object* object) {
+    br_scalar energy;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    br_scalar omega;
+    __asm {
+        mov esi, object
+        lea eax, [esi + 8]
+        mov ecx, 3
+        fldz
+    energy_component:
+        fld dword ptr [eax + 60h]
+        fld dword ptr [eax + 6ch]
+        fst omega
+        fld st(1)
+        fmul st(0), st(2)
+        fld dword ptr [esi + 4]
+        fxch st(2)
+        fmul omega
+        fld dword ptr [eax]
+        fxch st(3)
+        fmulp st(2), st(0)
+        fxch st(2)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        add eax, 4
+        dec ecx
+        faddp st(2), st(0)
+        fstp st(0)
+        jnz energy_component
+        fstp energy
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    br_scalar omega;
+    br_scalar* component = object->I.v;
+    int count = 3;
+    __asm__ volatile(
+        "fldz; 1: flds 0x60(%[p]); flds 0x6c(%[p]); fsts %[omega]; "
+        "fld %%st(1); fmul %%st(2),%%st; flds 4(%[object]); fxch %%st(2); "
+        "fmuls %[omega]; flds (%[p]); fxch %%st(3); fmulp %%st,%%st(2); "
+        "fxch %%st(2); fmulp %%st,%%st(2); fxch %%st(1); faddp %%st,%%st(1); "
+        "add $4,%[p]; dec %[n]; faddp %%st,%%st(2); fstp %%st(0); jnz 1b; fstps %[energy]"
+        : [energy] "=m" (energy), [omega] "=m" (omega), [p] "+&a" (component), [n] "+&c" (count)
+        : [object] "r" (object)
+        : "memory", "cc", "st", "st(1)", "st(2)", "st(3)", "st(4)", "st(5)");
+#else
+    double total = 0.;
+    int i;
+    for (i = 0; i < 3; i++) {
+        double velocity_squared = (double)object->v.v[i] * object->v.v[i];
+        double omega_squared = (double)object->omega.v[i] * object->omega.v[i];
+        total += (double)object->M * velocity_squared + (double)object->I.v[i] * omega_squared;
+    }
+    energy = (br_scalar)total;
+#endif
+    return energy;
+}
+
+static br_scalar C2_HOOK_FASTCALL PhysicsAccumulateEnergy(br_scalar total, br_scalar energy, br_scalar children) {
+    br_scalar result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld children
+        fld energy
+        fadd total
+        faddp st(1), st(0)
+        fstp result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("flds %1; flds %2; fadds %3; faddp %%st,%%st(1); fstps %0"
+        : "=m" (result) : "m" (children), "m" (energy), "m" (total) : "st", "st(1)");
+#else
+    volatile double subtotal = (double)energy + total;
+
+    result = (br_scalar)(subtotal + children);
+#endif
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004b7290
+br_scalar C2_HOOK_FASTCALL HierarchyCalcEnergy(tPhysics_object* pObject) {
+    br_scalar total = 0.f;
+
+    while (pObject != NULL) {
+        br_scalar energy = PhysicsObjectEnergy(pObject);
+        br_scalar children = HierarchyCalcEnergy(pObject->child);
+        total = PhysicsAccumulateEnergy(total, energy, children);
+        pObject = pObject->next;
+    }
+    return total;
+}
 
 // CheckCollisionList
 
@@ -180,7 +281,48 @@ void* gPhysics_other_buffer;
 
 // GetWorldBoundingBoxForObjects
 
-// GetWorldBoundingBoxForObject
+// FUNCTION: CARMA2_HW 0x004b9ce0
+void C2_HOOK_FASTCALL GetWorldBoundingBoxForObject(tPhysics_object* pObject, br_bounds* pBounds) {
+    br_bounds old_bounds;
+    tPhysics_object* child;
+    int i;
+
+    GetNewBoundingBox(&pObject->field_0xf4, &pObject->bb1, &pObject->transform_matrix);
+    GetNewBoundingBox(&old_bounds, &pObject->bb1, &pObject->actor->t.t.mat);
+    for (i = 0; i < 3; i++) {
+        if (PhysicsGreaterOrdered(&pObject->field_0xf4.min.v[i], &old_bounds.min.v[i])) {
+            memcpy(&pObject->field_0xf4.min.v[i], &old_bounds.min.v[i], sizeof(br_scalar));
+        }
+        if (PhysicsLessOrUnordered(&pObject->field_0xf4.max.v[i], &old_bounds.max.v[i])) {
+            memcpy(&pObject->field_0xf4.max.v[i], &old_bounds.max.v[i], sizeof(br_scalar));
+        }
+        pObject->field_0xf4.min.v[i] = (br_scalar)((double)pObject->field_0xf4.min.v[i] - .0025);
+        pObject->field_0xf4.max.v[i] = (br_scalar)((double)pObject->field_0xf4.max.v[i] - -.0025);
+    }
+    memcpy(&pObject->field_0x10c, &pObject->field_0xf4, sizeof(br_bounds));
+    for (child = pObject->child; child != NULL; child = child->next) {
+        GetWorldBoundingBoxForObject(child, &pObject->field_0x10c);
+    }
+    if (pBounds != NULL) {
+        for (i = 0; i < 3; i++) {
+            if (PhysicsLessOrUnordered(&pObject->field_0x10c.min.v[i], &pBounds->min.v[i])) {
+                memcpy(&pBounds->min.v[i], &pObject->field_0x10c.min.v[i], sizeof(br_scalar));
+            }
+            if (PhysicsGreaterOrdered(&pObject->field_0x10c.max.v[i], &pBounds->max.v[i])) {
+                memcpy(&pBounds->max.v[i], &pObject->field_0x10c.max.v[i], sizeof(br_scalar));
+            }
+        }
+    } else {
+        double extent = (double)pObject->field_0x10c.max.v[0] - pObject->transform_matrix.m[3][0];
+        if (!(gPhysics_bounds_max_x > extent)) {
+            gPhysics_bounds_max_x = (br_scalar)extent;
+        }
+        extent = (double)pObject->field_0x10c.min.v[0] - pObject->transform_matrix.m[3][0];
+        if (gPhysics_bounds_min_x >= extent) {
+            gPhysics_bounds_min_x = (br_scalar)extent;
+        }
+    }
+}
 
 // MatricesAreIdentical
 
@@ -345,11 +487,43 @@ void C2_HOOK_FASTCALL PrepareForCollisions(tPhysics_object* pObject, tWorld_call
 
 // WriteNewPositions
 
-// SetListDoingNothingFlag
+// FUNCTION: CARMA2_HW 0x004b9eb0
+void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, tU8 pFlag) {
+    while (pObject != NULL) {
+        pObject->disable_move_rotate = pFlag;
+        pObject->field_0x1df = 0;
+        if (pObject->child != NULL) {
+            SetListDoingNothingFlag(pObject->child, pFlag);
+        }
+        pObject = pObject->next;
+    }
+}
 
-// SetGroupDoingNothingFlag
+// FUNCTION: CARMA2_HW 0x004b9e40
+void C2_HOOK_FASTCALL SetGroupDoingNothingFlag(tPhysics_object* pObject, tU8 pFlag) {
+    tPhysics_object* item = pObject;
 
-// SetHierarchyDoingNothingFlag
+    pObject->disable_move_rotate = pFlag;
+    do {
+        SetHierarchyDoingNothingFlag(item, pFlag);
+        memcpy(&item, &item->field183_0x1d8, sizeof(item));
+    } while (item != NULL && item != pObject);
+}
+
+// FUNCTION: CARMA2_HW 0x004b9ef0
+void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, tU8 pFlag) {
+    tPhysics_object* child;
+
+    pObject->disable_move_rotate = pFlag;
+    pObject->field_0x1df = 0;
+    for (child = pObject->child; child != NULL; child = child->next) {
+        child->disable_move_rotate = pFlag;
+        child->field_0x1df = 0;
+        if (child->child != NULL) {
+            SetListDoingNothingFlag(child->child, pFlag);
+        }
+    }
+}
 
 // CheckDoingNothingFlag
 
@@ -359,7 +533,19 @@ void C2_HOOK_FASTCALL PrepareForCollisions(tPhysics_object* pObject, tWorld_call
 
 // GetPreCalculatedJointForces
 
-// MakeObjectListDoSomething
+// FUNCTION: CARMA2_HW 0x004b9f40
+void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
+    while (pObject != NULL) {
+        if (pObject->disable_move_rotate) {
+            pObject->disable_move_rotate = 0;
+            pObject->box_face_ref = (tU16)((tU32)gFace_num__car - 2u);
+        }
+        if (pObject->child != NULL) {
+            MakeObjectListDoSomething(pObject->child);
+        }
+        pObject = pObject->next;
+    }
+}
 
 // CheckForObjectTouchingAnotherObject
 

@@ -6,6 +6,8 @@
 
 extern int gPHIL_mechanics_time_sync;
 extern int gFace_num__car;
+extern br_scalar gPhysics_bounds_max_x;
+extern br_scalar gPhysics_bounds_min_x;
 extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
@@ -93,7 +95,7 @@ extern void* gPhysics_other_buffer;
 
 // TestForObjectInSensiblePlace
 
-// HierarchyCalcEnergy
+br_scalar C2_HOOK_FASTCALL HierarchyCalcEnergy(tPhysics_object* pObject);
 
 // CheckCollisionList
 
@@ -153,7 +155,7 @@ extern void* gPhysics_other_buffer;
 
 // GetWorldBoundingBoxForObjects
 
-// GetWorldBoundingBoxForObject
+void C2_HOOK_FASTCALL GetWorldBoundingBoxForObject(tPhysics_object* pObject, br_bounds* pBounds);
 
 // MatricesAreIdentical
 
@@ -167,11 +169,11 @@ extern void C2_HOOK_FASTCALL PrepareForCollisions(tPhysics_object* pObject, tWor
 
 // WriteNewPositions
 
-// SetListDoingNothingFlag
+void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, tU8 pFlag);
 
-// SetGroupDoingNothingFlag
+void C2_HOOK_FASTCALL SetGroupDoingNothingFlag(tPhysics_object* pObject, tU8 pFlag);
 
-// SetHierarchyDoingNothingFlag
+void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, tU8 pFlag);
 
 // CheckDoingNothingFlag
 
@@ -181,7 +183,7 @@ extern void C2_HOOK_FASTCALL PrepareForCollisions(tPhysics_object* pObject, tWor
 
 // GetPreCalculatedJointForces
 
-// MakeObjectListDoSomething
+void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject);
 
 // CheckForObjectTouchingAnotherObject
 
