@@ -191,7 +191,7 @@ static void C2_HOOK_CDECL test_srand(unsigned seed){event("s");printf(",%u",seed
 #define rand test_rand
 #define srand test_srand
 tU32 C2_HOOK_FASTCALL GetTotalTime(void){event("t");end();return 123456;}
-br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar a,br_scalar b){unsigned ab,bb;float result;memcpy(&ab,&a,4);memcpy(&bb,&b,4);event("f");printf(",%u,%u",ab,bb);end();if(random_calls++==0&&(h[11]&1))gShade_list[7]=0x112233;memcpy(&result,&h[18],4);return result;}
+double C2_HOOK_STDCALL SRandomBetween(br_scalar a,br_scalar b){unsigned ab,bb;float result;memcpy(&ab,&a,4);memcpy(&bb,&b,4);event("f");printf(",%u,%u",ab,bb);end();if(random_calls++==0&&(h[11]&1))gShade_list[7]=0x112233;memcpy(&result,&h[18],4);return result;}
 void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3*dest,const br_vector3*src,const br_matrix34*mat){event("x");printf(",%u,%d,\"",norm((unsigned)(uintptr_t)dest),mat==&gRearview_camera_to_world);hex(src,12);printf("\"");end();if(h[20]){dest->v[0]=1.f;dest->v[1]=2.f;dest->v[2]=3.f;}else memcpy(dest,src,12);if(transform_calls++==0&&(h[11]&2)){gN_BR_smoke_structs=3;gRendering_mirror=1-gRendering_mirror;}}
 br_actor* C2_HOOK_CDECL BrActorAdd(br_actor*parent,br_actor*actor){event("a");printf(",%u,%u",norm((unsigned)(uintptr_t)parent),norm((unsigned)(uintptr_t)actor));end();actor->parent=parent;return actor;}
 br_actor* C2_HOOK_CDECL BrActorRemove(br_actor*actor){event("d");printf(",%u",norm((unsigned)(uintptr_t)actor));end();actor->parent=NULL;if(remove_calls++==0&&(h[11]&4))gBlend_actor=(br_actor*)((char*)arena+0x400);return actor;}

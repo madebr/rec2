@@ -3,6 +3,7 @@
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "23-piping.h"
+#include "36-trig.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
@@ -74,6 +75,14 @@ br_material* gBlack_material;
 
 // GLOBAL: CARMA2_HW 0x006aa380
 br_model* gLollipop_model;
+
+// GLOBAL: CARMA2_HW 0x00660118
+static tU8 gFlame_frame_size[20][2] = {
+    { 20, 25 }, { 24, 32 }, { 24, 34 }, { 28, 44 }, { 28, 49 },
+    { 32, 53 }, { 28, 61 }, { 28, 69 }, { 24, 61 }, { 28, 64 },
+    { 24, 70 }, { 20, 65 }, { 20, 64 }, { 20, 74 }, { 28, 55 },
+    { 24, 62 }, { 28, 47 }, { 20, 51 }, { 20, 45 }, { 20, 45 },
+};
 
 // GLOBAL: CARMA2_HW 0x006a8638
 br_pixelmap* gFlame_map[20];
@@ -374,7 +383,7 @@ static void C2_HOOK_CDECL DrawTheGlow(br_pixelmap* pScreen, br_pixelmap* pDepth,
             pos.v[1] = SmokeScalarRound((double)gSmoke_column[i].pos.v[1] + .02);
             memcpy(&pos.v[2], &gSmoke_column[i].pos.v[2], sizeof(br_scalar));
             shade = gShade_list[7];
-            aspect = SRandomBetween(.5f, .99f);
+            aspect = SmokeScalarRound(SRandomBetween(.5f, .99f));
             SmokeCircle3D(&pos, 0x3d8f5c29, SmokeScalarBits(&strength), SmokeScalarBits(&aspect), pScreen, pDepth, shade, pCamera);
         }
     }
@@ -866,7 +875,103 @@ void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame, br_scalar pScale_x, br
 
 // ReplayFlame
 
-// FlameAnimate
+// FUNCTION: CARMA2_HW 0x004fbdd0
+void C2_HOOK_FASTCALL FlameAnimate(int pColumn, const br_vector3* pPos, tU32 pTime) {
+    tSmoke_column* column;
+    br_actor* actor;
+    br_actor* flame;
+    br_pixelmap* map;
+    tPhysics_object* physics;
+    tU32 bits;
+    int i;
+    int width;
+    int height;
+    int direction;
+    br_scalar scale;
+    br_scalar sx;
+    br_scalar sy;
+    double speed_squared;
+    int can_start;
+    typedef void (C2_HOOK_FASTCALL* raw_flame_fn)(int, int, tU32, tU32, tU32, tU32);
+    volatile uintptr_t record_address;
+
+    column = &gSmoke_column[pColumn];
+    actor = column->flame_actor;
+    DRMatrix34RotateY(&actor->t.t.mat, FastScalarArcTan2Angle(gCamera_to_world.m[2][0], gCamera_to_world.m[2][2]));
+    memcpy(&actor->t.t.mat.m[3][0], &pPos->v[0], sizeof(br_scalar));
+    memcpy(&actor->t.t.mat.m[3][1], &pPos->v[1], sizeof(br_scalar));
+    bits = SmokeScalarBits(&pPos->v[2]);
+    flame = actor->children;
+    memcpy(&actor->t.t.mat.m[3][2], &bits, sizeof(bits));
+    if (gAction_replay_mode) {
+        for (i = 0; i < 3; i++) {
+            column->frame_count[i] = (tS32)(tU32)(br_int_64)((double)ARGetReplayRate() + column->frame_count[i]);
+            if (column->frame_count[i] >= 0 && column->frame_count[i] < 20) {
+                flame->type = 1;
+                flame->material->colour_map = gFlame_map[column->frame_count[i]];
+                BrMaterialUpdate(flame->material, 0x7fff);
+                map = gFlame_map[column->frame_count[i]];
+                height = (tU16)map->height;
+                width = (tU16)map->width;
+                sy = SmokeScalarRound((double)height * column->scale_y[i]);
+                sx = SmokeScalarRound((double)width * column->scale_x[i]);
+                BrMatrix34Scale(&flame->t.t.mat, sx, sy, 1.0f);
+                memcpy(&flame->t.t.mat.m[3][0], &column->offset_x[i], sizeof(br_scalar));
+                memcpy(&flame->t.t.mat.m[3][2], &column->offset_z[i], sizeof(br_scalar));
+            } else {
+                flame->type = 0;
+            }
+            flame = flame->next;
+        }
+        return;
+    }
+    record_address = (uintptr_t)AddFlameToPipingSession;
+    for (i = 0; i < 3; i++) {
+        column->frame_count[i] = (tS32)((tU32)column->frame_count[i] + 1u);
+        if (column->frame_count[i] >= 20) {
+            ARStartPipingSession((tPipe_chunk_type)18);
+            ((raw_flame_fn)record_address)((pColumn << 4) + i, (tS32)((tU32)column->frame_count[i] + 1u), SmokeScalarBits(&column->scale_x[i]), SmokeScalarBits(&column->scale_y[i]), SmokeScalarBits(&column->offset_x[i]), SmokeScalarBits(&column->offset_z[i]));
+            AREndPipingSession();
+            column->frame_count[i] = IRandomBetween(-5, -1);
+            scale = SmokeScalarRound(SRandomBetween(1.0f, 1.5f) * .003000000026077032f);
+            direction = IRandomBetween(0, 1) * 2 - 1;
+            column->scale_x[i] = SmokeScalarRound((double)direction * scale);
+            column->scale_y[i] = SmokeScalarRound(SRandomBetween(.5f, 1.0f) * .003000000026077032f);
+            column->offset_x[i] = SmokeScalarRound(SRandomPosNeg(.03f));
+            column->offset_z[i] = SmokeScalarRound(SRandomBetween(-.03f, 0.0f));
+            flame->type = 0;
+        }
+        if (column->frame_count[i] == 0) {
+            can_start = 1;
+            if (column->core.car != NULL) {
+                physics = column->core.car->collision_info;
+                speed_squared = (double)physics->v.v[0] * physics->v.v[0] + (double)physics->v.v[1] * physics->v.v[1];
+                speed_squared += (double)physics->v.v[2] * physics->v.v[2];
+                can_start = !(speed_squared >= 11.594202898550725);
+            }
+            if (can_start && pTime * 30u < column->lifetime) {
+                flame->type = 1;
+                ARStartPipingSession((tPipe_chunk_type)18);
+                ((raw_flame_fn)record_address)((pColumn << 4) + i, (tS32)((tU32)column->frame_count[i] - 1u), SmokeScalarBits(&column->scale_x[i]), SmokeScalarBits(&column->scale_y[i]), SmokeScalarBits(&column->offset_x[i]), SmokeScalarBits(&column->offset_z[i]));
+                AREndPipingSession();
+            } else {
+                column->frame_count[i] = -5;
+            }
+        }
+        if (column->frame_count[i] >= 0) {
+            flame->material->colour_map = gFlame_map[column->frame_count[i]];
+            BrMaterialUpdate(flame->material, 0x7fff);
+            height = gFlame_frame_size[column->frame_count[i]][1];
+            width = gFlame_frame_size[column->frame_count[i]][0];
+            sy = SmokeScalarRound((double)height * column->scale_y[i]);
+            sx = SmokeScalarRound((double)width * column->scale_x[i]);
+            BrMatrix34Scale(&flame->t.t.mat, sx, sy, 1.0f);
+            memcpy(&flame->t.t.mat.m[3][0], &column->offset_x[i], sizeof(br_scalar));
+            memcpy(&flame->t.t.mat.m[3][2], &column->offset_z[i], sizeof(br_scalar));
+        }
+        flame = flame->next;
+    }
+}
 
 // DoSmokeColumn
 

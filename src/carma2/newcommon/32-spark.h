@@ -143,7 +143,7 @@ extern void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame, br_scalar pScal
 
 // ReplayFlame
 
-// FlameAnimate
+extern void C2_HOOK_FASTCALL FlameAnimate(int pColumn, const br_vector3* pPos, tU32 pTime);
 
 // DoSmokeColumn
 

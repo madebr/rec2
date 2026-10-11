@@ -21,13 +21,13 @@ extern int C2_HOOK_FASTCALL PercentageChance(int pC);
 
 extern int C2_HOOK_FASTCALL IRandomPosNeg(int pN);
 
-extern float C2_HOOK_STDCALL FRandomBetween(float pA, float pB);
+extern double C2_HOOK_STDCALL FRandomBetween(float pA, float pB);
 
-extern float C2_HOOK_STDCALL FRandomPosNeg(float pN);
+extern double C2_HOOK_STDCALL FRandomPosNeg(float pN);
 
-extern br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB);
+extern double C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB);
 
-extern br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
+extern double C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
 
 extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
 

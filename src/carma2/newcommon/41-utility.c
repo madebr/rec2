@@ -137,32 +137,89 @@ int C2_HOOK_FASTCALL IRandomPosNeg(int pN) {
     return IRandomBetween(-pN, pN);
 }
 
-// FUNCTION: CARMA2_HW 0x005135b0
-float C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
-
-#if RAND_MAX == 0x7fff
-    return (float)rand() * (pB - pA) / (float)RAND_MAX + pA;
+/* Preserve x87 load order, NaN selection and the PosNeg store before rand. */
+static void C2_HOOK_FASTCALL UtilityRandomNegative(float* output, const float* input) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, output
+        mov ecx, input
+        fld dword ptr [ecx]
+        fchs
+        fstp dword ptr [eax]
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("flds %1; fchs; fstps %0" : "=m" (*output) : "m" (*input) : "memory", "st");
 #else
-    return (float)(rand() % 0x10000) * (pB - pA) / (float)(0x7fff + 1) + pA;
+    volatile double value = *input;
+
+    *output = (float)-value;
 #endif
 }
 
-// FUNCTION: CARMA2_HW 0x005135e0
-float C2_HOOK_STDCALL FRandomPosNeg(float pN) {
+static double C2_HOOK_FASTCALL UtilityRandomScalar(const float* pA, const float* pB, int number) {
+#if (defined(_MSC_VER) && defined(_M_IX86)) || (defined(__GNUC__) && defined(__i386__))
+    double result;
+    const float negative_inverse = -1.f / 32768.f;
 
-    return FRandomBetween(-pN, pN);
+#if defined(_MSC_VER)
+    __asm {
+        mov ecx, pA
+        mov edx, pB
+        fld dword ptr [edx]
+        fsub dword ptr [ecx]
+        fild number
+        fxch st(1)
+        fmulp st(1), st(0)
+        fmul negative_inverse
+        fsubr dword ptr [ecx]
+        fstp result
+    }
+#else
+    __asm__ volatile("flds (%2); fsubs (%1); fildl %3; fxch %%st(1); fmulp %%st, %%st(1); fmuls %4; fsubrs (%1); fstpl %0"
+        : "=m" (result) : "r" (pA), "r" (pB), "m" (number), "m" (negative_inverse) : "memory", "st", "st(1)");
+#endif
+    return result;
+#else
+    return *pA - (((double)*pB - *pA) * number) * (-1.0 / 32768.0);
+#endif
+}
+
+// FUNCTION: CARMA2_HW 0x005135b0
+double C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
+    int number = rand();
+
+    return UtilityRandomScalar(&pA, &pB, number);
+}
+
+// FUNCTION: CARMA2_HW 0x005135e0
+double C2_HOOK_STDCALL FRandomPosNeg(float pN) {
+    float negative;
+    int number;
+
+    UtilityRandomNegative(&negative, &pN);
+    number = rand();
+    return UtilityRandomScalar(&negative, &pN, number);
 }
 
 // FUNCTION: CARMA2_HW 0x00513620
-br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
+double C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
+    int number = rand();
 
-    return FRandomBetween(pA, pB);
+#if defined(__GNUC__) && defined(__i386__)
+    /* Prevent identical-function folding from reloading float arguments before rand. */
+    __asm__ volatile("" : : : "memory");
+#endif
+    return UtilityRandomScalar(&pA, &pB, number);
 }
 
 // FUNCTION: CARMA2_HW 0x00513650
-br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
+double C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
+    br_scalar negative;
+    int number;
 
-    return SRandomBetween(-pN, pN);
+    UtilityRandomNegative(&negative, &pN);
+    number = rand();
+    return UtilityRandomScalar(&negative, &pN, number);
 }
 
 // FUNCTION: CARMA2_HW 0x00513690
