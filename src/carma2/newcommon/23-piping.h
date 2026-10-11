@@ -21,6 +21,7 @@ extern int gPlay_direction;
 extern int gReplay_pause_state;
 extern float gReplay_rate;
 extern int gDisable_advance;
+extern tU8* gPipe_chunk_end;
 
 extern int C2_HOOK_FASTCALL ARReplayForwards(void);
 
@@ -46,11 +47,11 @@ extern void C2_HOOK_FASTCALL ARResetPiping(void);
 
 extern tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession);
 
-// ARAdvanceChunkPtr
+extern void C2_HOOK_FASTCALL ARAdvanceChunkPtr(tU8** pChunk, int pType);
 
 // PipingFrameReset
 
-// ARPipeSearchForwards
+extern int C2_HOOK_FASTCALL ARPipeSearchForwards(void);
 
 extern int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
 
@@ -72,9 +73,9 @@ extern void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, voi
 
 extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
 
-// ARDoSingleSession
+extern void C2_HOOK_FASTCALL ARDoSingleSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize);
 
-// ARDoSingleVariedSession
+extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
 
 // ARResetPipePlayToEnd
 
@@ -100,7 +101,7 @@ extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // ScanAndPlaySoundsToBe
 
-// ARGetStartTime
+extern tU32 C2_HOOK_FASTCALL ARGetStartTime(void);
 
 extern void C2_HOOK_FASTCALL ARDisableAdvance(void);
 
