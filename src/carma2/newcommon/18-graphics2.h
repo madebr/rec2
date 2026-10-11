@@ -27,23 +27,23 @@ extern void C2_HOOK_FASTCALL InitializePalettes(void);
 
 extern void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
-// RevertPalette
+extern void C2_HOOK_FASTCALL RevertPalette(void);
 
-// MungePalette
+extern void C2_HOOK_FASTCALL MungePalette(void);
 
-// ResetPalette
+extern void C2_HOOK_FASTCALL ResetPalette(void);
 
-// Darken
+// Darken is inlined in SetFadedPalette.
 
-// SetFadedPalette
+extern void C2_HOOK_FASTCALL SetFadedPalette(int pDegree);
 
-// FadePaletteDown
+extern void C2_HOOK_FASTCALL FadePaletteDown(void);
 
-// FadePaletteUp
+extern void C2_HOOK_FASTCALL FadePaletteUp(void);
 
-// EnsurePaletteUp
+extern void C2_HOOK_FASTCALL EnsurePaletteUp(void);
 
-// EnsureRenderPalette
+extern void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
 extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 

@@ -162,23 +162,79 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
     gPalette_index = 0;
 }
 
-// RevertPalette
+// FUNCTION: CARMA2_HW 0x004b52b0
+void C2_HOOK_FASTCALL RevertPalette(void) {
 
-// MungePalette
+    memcpy(gRender_palette->pixels, gOrig_render_palette->pixels, 256 * sizeof(br_colour));
+    DRSetPalette3(gRender_palette, 1);
+}
 
-// ResetPalette
+// FUNCTION: CARMA2_HW 0x004b5320
+void C2_HOOK_FASTCALL MungePalette(void) {
+}
 
-// Darken
+// FUNCTION: CARMA2_HW 0x004b5330
+void C2_HOOK_FASTCALL ResetPalette(void) {
 
-// SetFadedPalette
+    InitPaletteAnimate();
+    DRSetPalette(gRender_palette);
+}
 
-// FadePaletteDown
+// Darken is inlined in SetFadedPalette.
 
-// FadePaletteUp
+// FUNCTION: CARMA2_HW 0x004b5390
+void C2_HOOK_FASTCALL SetFadedPalette(int pDegree) {
+    int i;
+    unsigned char* bytes;
 
-// EnsurePaletteUp
+    memcpy(gScratch_pixels, gCurrent_palette->pixels, 256 * sizeof(br_colour));
+    bytes = (unsigned char*)gScratch_pixels;
+    for (i = 0; i < 256 * (int)sizeof(br_colour); i++) {
+        bytes[i] = ((br_uint_32)bytes[i] * (br_uint_32)pDegree) >> 8;
+    }
+    DRSetPalette2(gScratch_palette, 0);
+}
 
-// EnsureRenderPalette
+// FUNCTION: CARMA2_HW 0x004b5460
+void C2_HOOK_FASTCALL FadePaletteDown(void) {
+}
+
+// FUNCTION: CARMA2_HW 0x004b5470
+void C2_HOOK_FASTCALL FadePaletteUp(void) {
+
+    if (gFaded_palette) {
+        tU32 start_time;
+        int elapsed;
+
+        gFaded_palette = 0;
+        start_time = PDGetTotalTime();
+        elapsed = (br_int_32)(PDGetTotalTime() - start_time);
+        while (elapsed < 500) {
+            int degree = (br_int_32)((br_uint_32)elapsed << 8) / 500;
+
+            SetFadedPalette(degree);
+            elapsed = (br_int_32)(PDGetTotalTime() - start_time);
+        }
+        DRSetPalette(gCurrent_palette);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004b55f0
+void C2_HOOK_FASTCALL EnsurePaletteUp(void) {
+
+    if (gFaded_palette) {
+        FadePaletteUp();
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004b5770
+void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
+
+    if (gPalette_munged) {
+        ResetPalette();
+        gPalette_munged = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0043dff0
 void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
