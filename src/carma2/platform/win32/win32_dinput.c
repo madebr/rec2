@@ -118,6 +118,9 @@ int gINT_00595f98 = 1;
 // GLOBAL: CARMA2_HW 0x00595f9c
 int gINT_00595f9c = 1;
 
+// GLOBAL: CARMA2_HW 0x00595f8c
+int gLast_joystick_index = -1;
+
 // GLOBAL: CARMA2_HW 0x006ad094
 tU32 gUINT_006ad094;
 
@@ -417,6 +420,51 @@ void C2_HOOK_FASTCALL CollectJoystickButtonInfo(tButtonJoystickInfo* pInfo) {
 void C2_HOOK_FASTCALL CollectJoystickButtonInfos(void) {
     C2_HOOK_BUG_ON(sizeof(tButtonJoystickInfo) != 0xec);
     AttachJoystickButtonInfos(sizeof(tButtonJoystickInfo), (void(C2_HOOK_FASTCALL*)(void*))CollectJoystickButtonInfo);
+}
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth(0)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00457b70
+void C2_HOOK_FASTCALL PDSetJoystickFFBGain(int pGain) {
+    DIPROPDWORD property;
+    int i;
+
+    property.diph.dwSize = sizeof(property);
+    property.diph.dwHeaderSize = sizeof(property.diph);
+    property.diph.dwObj = 0;
+    property.diph.dwHow = DIPH_DEVICE;
+    if (gForceFeedbackAvailable == 0 || gJoystick_index == -1) {
+        return;
+    }
+    if (pGain > 100) {
+        property.dwData = 10000;
+    } else if (pGain < 0) {
+        property.dwData = 0;
+    } else {
+        property.dwData = 100 * pGain;
+    }
+    for (i = 0; i < gCount_joystick_effects; i++) {
+        UnloadDinputFFBEffectAtIndex(i);
+    }
+    IDirectInputDevice_SetProperty(gDirectInputJoystickDevices[gJoystick_index], DIPROP_FFGAIN, &property.diph);
+    for (i = 0; i < gCount_joystick_effects; i++) {
+        DownloadDinputFFBEffectAtIndex(i);
+    }
+}
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth()
+#endif
+
+// FUNCTION: CARMA2_HW 0x00458020
+void C2_HOOK_FASTCALL DownloadDinputFFBEffectAtIndex(int index) {
+    IDirectInputEffect* effect = gDirectInputEffects[index];
+
+    if (effect != NULL) {
+        IDirectInputEffect_Download(effect);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00458040
@@ -1347,6 +1395,30 @@ void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index) {
         IDirectInputEffect_Start(effect, 1, DIES_NODOWNLOAD);
     }
     return;
+}
+
+// FUNCTION: CARMA2_HW 0x0045a070
+int C2_HOOK_FASTCALL PDEnableJoysticks(void) {
+    int count;
+
+    count = gCountEnumeratedJoystickDinputDevices;
+    if (count != 0) {
+        gJoystick_index = gLast_joystick_index != -1 ? gLast_joystick_index : 0;
+    }
+    if (gDirectInputJoystickDevices[gJoystick_index] != NULL
+            && (gJoystickFFB & (1 << gJoystick_index))) {
+        gForceFeedbackAvailable = 1;
+    }
+    return count;
+}
+
+// FUNCTION: CARMA2_HW 0x0045a0c0
+int C2_HOOK_FASTCALL PDDisableJoysticks(void) {
+
+    gLast_joystick_index = gJoystick_index;
+    gJoystick_index = -1;
+    gForceFeedbackAvailable = 0;
+    return gCountEnumeratedJoystickDinputDevices;
 }
 
 // FUNCTION: CARMA2_HW 0x004580e0
