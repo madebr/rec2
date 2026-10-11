@@ -17,21 +17,25 @@ extern br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width
 
 extern int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
 
+// static void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex);
+
+extern void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void);
+
 // UpdateTintedPolyByMaterial
 
 // UpdatePolyVertexColours
 
-// TurnTintedPolyOn
+extern void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex);
 
-// TurnTintedPolyOff
+extern void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex);
 
-// RenderTintedPolys
+extern void C2_HOOK_FASTCALL RenderTintedPolys(void);
 
 extern void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue);
 
 // SetTintedPolyRefMaterial
 
-// InWater
+extern br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex);
 
 // ClearTheFlame
 
@@ -45,8 +49,8 @@ extern void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int
 
 // UpdateTintedPolys
 
-// SetTintedPolySize
+extern void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height);
 
-// TintedPolyIsOn
+extern int C2_HOOK_FASTCALL TintedPolyIsOn(int pIndex);
 
 #endif // GUARD_66_TINTEDPOLY_H
