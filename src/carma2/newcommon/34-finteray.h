@@ -5,6 +5,8 @@
 #include "rec2_types.h"
 
 extern int gPling_materials;
+extern int gActorBoxPick_StopGroovidelics;
+extern tFace_ref* gPling_face;
 
 // BadDiv
 
@@ -60,9 +62,9 @@ extern void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_
 
 extern void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds);
 
-// ActorBoxPick
+extern int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, br_material* material, tFace_ref* face_list, int max_face, br_matrix34* pMat, tWorld_callbacks* pWorld_callbacks);
 
-// ModelPickBox
+extern int C2_HOOK_FASTCALL ModelPickBox(br_actor* actor, tBounds* bnds, br_model* model, br_material* model_material, tFace_ref* face_list, int max_face, br_matrix34* pMat);
 
 // ClipToPlaneGE
 

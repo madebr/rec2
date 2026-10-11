@@ -8,6 +8,12 @@
 // GLOBAL: CARMA2_HW 0x005964c0
 int gPling_materials = 1;
 
+// GLOBAL: CARMA2_HW 0x005964c4
+int gActorBoxPick_StopGroovidelics = 1;
+
+// GLOBAL: CARMA2_HW 0x0079d858
+tFace_ref* gPling_face;
+
 // GLOBAL: CARMA2_HW 0x006861c8
 int gTemp_group;
 
@@ -652,9 +658,330 @@ void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
     }
 }
 
-// ActorBoxPick
+static int C2_HOOK_FASTCALL FinterayBoxNaN(double value) {
+    union {
+        double value;
+        tU32 words[2];
+    } bits;
 
-// ModelPickBox
+    bits.value = value;
+    return (bits.words[1] & 0x7ff00000u) == 0x7ff00000u
+        && ((bits.words[1] & 0xfffffu) != 0 || bits.words[0] != 0);
+}
+
+static void C2_HOOK_FASTCALL FinterayBoxCopyScalar(br_scalar* output, const br_scalar* input) {
+    tU32 value;
+
+    memcpy(&value, input, sizeof(value));
+    memcpy(output, &value, sizeof(value));
+}
+
+/* Unlike raw vector copies, the original equation-D load/store quiets sNaNs. */
+static void C2_HOOK_FASTCALL FinterayBoxStoreScalar(br_scalar* output, const br_scalar* input) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, output
+        mov ecx, input
+        fld dword ptr [ecx]
+        fstp dword ptr [eax]
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("flds %1; fstps %0" : "=m" (*output) : "m" (*input) : "st");
+#else
+    volatile double value = *input;
+
+    *output = (br_scalar)value;
+#endif
+}
+
+/* The original six clipping passes are inlined inside ModelPickBox. */
+static int C2_HOOK_FASTCALL FinterayBoxClip(br_vector3* polygon, int count, int axis, br_scalar limit, int upper) {
+    br_vector3 clipped[12];
+    int previous = count - 1;
+    int vertex, component;
+    int result = 0;
+
+    for (vertex = 0; vertex < count; vertex++) {
+        if ((polygon[vertex].v[axis] > limit) != (polygon[previous].v[axis] > limit)) {
+            for (component = 0; component < 3; component++) {
+                if (component != axis) {
+                    clipped[result].v[component] = FinterayScalar((((double)polygon[vertex].v[component] - polygon[previous].v[component])
+                        * ((double)limit - polygon[previous].v[axis]))
+                        / ((double)polygon[vertex].v[axis] - polygon[previous].v[axis]) + polygon[previous].v[component]);
+                }
+            }
+            FinterayBoxCopyScalar(&clipped[result].v[axis], &limit);
+            result++;
+        }
+        if ((!upper && polygon[vertex].v[axis] >= limit)
+            || (upper && (polygon[vertex].v[axis] <= limit || FinterayBoxNaN(polygon[vertex].v[axis]) || FinterayBoxNaN(limit)))) {
+            for (component = 0; component < 3; component++) {
+                FinterayBoxCopyScalar(&clipped[result].v[component], &polygon[vertex].v[component]);
+            }
+            result++;
+        }
+        previous = vertex;
+    }
+    for (vertex = 0; vertex < result; vertex++) {
+        for (component = 0; component < 3; component++) {
+            FinterayBoxCopyScalar(&polygon[vertex].v[component], &clipped[vertex].v[component]);
+        }
+    }
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x0045ff90
+int C2_HOOK_FASTCALL ModelPickBox(br_actor* actor, tBounds* bnds, br_model* model, br_material* model_material, tFace_ref* face_list, int max_face, br_matrix34* pMat) {
+    v11model* prepared = ((volatile br_model*)model)->prepared;
+    v11group* prepared_group;
+    v11face* face;
+    br_vector3 polygon[12];
+    br_vector3 normal;
+    int group, f, vertex, component, axis, count;
+    int indices[3];
+    double distance;
+    br_scalar limit;
+    int rejected;
+    br_uint_16 original_face;
+
+    if (max_face <= 0) {
+        return 0;
+    }
+    for (group = 0; group < model->prepared->ngroups; group++) {
+        prepared_group = &model->prepared->groups[group];
+        face = prepared_group->faces;
+        for (f = 0; f < model->prepared->groups[group].nfaces; f++, face++) {
+            indices[0] = face->vertices[0];
+            distance = ((((double)prepared_group->vertices[indices[0]].p.v[1] - bnds->box_centre.v[1]) * face->eqn.v[1]
+                + ((double)prepared_group->vertices[indices[0]].p.v[2] - bnds->box_centre.v[2]) * face->eqn.v[2])
+                + ((double)prepared_group->vertices[indices[0]].p.v[0] - bnds->box_centre.v[0]) * face->eqn.v[0]);
+            if (fabs(distance) > bnds->radius && !FinterayBoxNaN(distance) && !FinterayBoxNaN(bnds->radius)) {
+                continue;
+            }
+            indices[1] = face->vertices[1];
+            indices[2] = face->vertices[2];
+            rejected = 0;
+            for (axis = 0; axis < 3; axis++) {
+                limit = bnds->real_bounds.min.v[axis];
+                if (!(prepared_group->vertices[indices[0]].p.v[axis] >= limit)
+                    && !(prepared_group->vertices[indices[1]].p.v[axis] >= limit)
+                    && !(prepared_group->vertices[indices[2]].p.v[axis] >= limit)) {
+                    rejected = 1;
+                    break;
+                }
+                limit = bnds->real_bounds.max.v[axis];
+                if (prepared_group->vertices[indices[0]].p.v[axis] > limit
+                    && prepared_group->vertices[indices[1]].p.v[axis] > limit
+                    && prepared_group->vertices[indices[2]].p.v[axis] > limit) {
+                    rejected = 1;
+                    break;
+                }
+            }
+            if (rejected) {
+                continue;
+            }
+            for (vertex = 0; vertex < 3; vertex++) {
+                for (component = 0; component < 3; component++) {
+                    polygon[vertex + 1].v[component] = FinterayScalar((double)model->prepared->groups[group].vertices[indices[vertex]].p.v[component] - bnds->mat->m[3][component]);
+                }
+            }
+            BrMatrix34TApplyV(&polygon[0], &polygon[1], bnds->mat);
+            BrMatrix34TApplyV(&polygon[1], &polygon[2], bnds->mat);
+            BrMatrix34TApplyV(&polygon[2], &polygon[3], bnds->mat);
+            count = 3;
+            for (axis = 0; axis < 3; axis++) {
+                count = FinterayBoxClip(polygon, count, axis, bnds->original_bounds.min.v[axis], 0);
+                if (count < 3) {
+                    break;
+                }
+                count = FinterayBoxClip(polygon, count, axis, bnds->original_bounds.max.v[axis], 1);
+                if (count < 3) {
+                    break;
+                }
+            }
+            if (count < 3) {
+                continue;
+            }
+            for (vertex = 0; vertex < 3; vertex++) {
+                if (pMat != NULL) {
+                    BrMatrix34ApplyP(&face_list->v[vertex], &model->prepared->groups[group].vertices[indices[vertex]].p, pMat);
+                } else {
+                    for (component = 0; component < 3; component++) {
+                        FinterayBoxCopyScalar(&face_list->v[vertex].v[component], &model->prepared->groups[group].vertices[indices[vertex]].p.v[component]);
+                    }
+                }
+            }
+            for (component = 0; component < 3; component++) {
+                if (pMat != NULL) {
+                    FinterayBoxCopyScalar(&normal.v[component], &face->eqn.v[component]);
+                } else {
+                    FinterayBoxCopyScalar(&face_list->normal.v[component], &face->eqn.v[component]);
+                }
+            }
+            if (pMat != NULL) {
+                BrMatrix34ApplyV(&face_list->normal, &normal, pMat);
+            }
+            face_list->material = *model->prepared->groups[group].face_colours.materials;
+            if (face_list->material == NULL) {
+                face_list->material = model_material;
+            }
+            if (pMat != NULL) {
+                face_list->d = FinterayScalar(((double)face_list->normal.v[2] * face_list->v[0].v[2] + (double)face_list->normal.v[1] * face_list->v[0].v[1]) + (double)face_list->v[0].v[0] * face_list->normal.v[0]);
+            } else {
+                FinterayBoxStoreScalar(&face_list->d, &face->eqn.v[3]);
+            }
+            face_list->a = actor;
+            if (model->flags & BR_MODF_UPDATEABLE) {
+                face_list->g = -1;
+                original_face = model->prepared->groups[group].face_user[f];
+                face_list->f = original_face;
+                face_list->flags = model->faces[original_face].flags;
+                for (vertex = 0; vertex < 3; vertex++) {
+                    face_list->map[vertex] = &model->vertices[model->faces[original_face].vertices[vertex]].map;
+                }
+            } else {
+                face_list->g = (tS16)group;
+                face_list->f = (tS16)f;
+                face_list->flags = 0;
+                for (vertex = 0; vertex < 3; vertex++) {
+                    if (prepared->groups[group].faces[f].edges[vertex] == 0) {
+                        face_list->flags |= 1 << vertex;
+                    }
+                }
+                for (vertex = 0; vertex < 3; vertex++) {
+                    face_list->map[vertex] = &model->prepared->groups[group].vertices[indices[vertex]].map;
+                }
+            }
+            if (face_list->material != NULL && face_list->material->identifier != NULL && face_list->material->identifier[0] == '!') {
+                gPling_face = face_list;
+            }
+            face_list++;
+            max_face--;
+            if (max_face == 0) {
+                break;
+            }
+        }
+        if (max_face == 0) {
+            return 0;
+        }
+    }
+    return max_face;
+}
+
+/* Original fast actor rejection is inlined, with X/Z/Y evaluation order. */
+static int C2_HOOK_FASTCALL FinterayBoxBoundsTransform(br_bounds* input, br_bounds* target, br_matrix34* matrix) {
+    br_vector3 width;
+    int order[3] = { 0, 2, 1 };
+    int i, axis;
+    double base, x, y, z, total;
+
+    for (i = 0; i < 3; i++) {
+        width.v[i] = FinterayScalar((double)input->max.v[i] - input->min.v[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        axis = order[i];
+        base = (((double)input->min.v[1] * matrix->m[1][axis] + (double)input->min.v[2] * matrix->m[2][axis])
+            + (double)input->min.v[0] * matrix->m[0][axis]) + matrix->m[3][axis];
+        x = matrix->m[0][axis] > 0.f ? (double)width.v[0] * matrix->m[0][axis] : 0.0;
+        y = matrix->m[1][axis] > 0.f ? (double)matrix->m[1][axis] * width.v[1] : 0.0;
+        z = matrix->m[2][axis] > 0.f ? (double)matrix->m[2][axis] * width.v[2] : 0.0;
+        total = ((base + z) + y) + x;
+        if (total < target->min.v[axis] || FinterayBoxNaN(total) || FinterayBoxNaN(target->min.v[axis])) {
+            return 0;
+        }
+        x = !(matrix->m[0][axis] >= 0.f) ? (double)width.v[0] * matrix->m[0][axis] : 0.0;
+        y = !(matrix->m[1][axis] >= 0.f) ? (double)matrix->m[1][axis] * width.v[1] : 0.0;
+        z = !(matrix->m[2][axis] >= 0.f) ? (double)matrix->m[2][axis] * width.v[2] : 0.0;
+        if (((base + z) + y) + x > target->max.v[axis]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0045f8c0
+int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, br_material* material, tFace_ref* face_list, int max_face, br_matrix34* pMat, tWorld_callbacks* pWorld_callbacks) {
+    br_model* this_model = ap->model != NULL ? ap->model : model;
+    br_material* this_material = ap->material != NULL ? ap->material : material;
+    int emitted = 0;
+    int test_children = 1;
+    int remaining;
+    br_actor* child;
+    br_actor* next;
+    br_matrix34 combined, inverse, box_matrix, actor_matrix;
+    tBounds new_bounds;
+    br_bounds actor_bounds;
+    int i;
+
+    if (ap->render_style == BR_RSTYLE_NONE) {
+        return max_face;
+    }
+    if (ap->identifier != NULL && ap->identifier[0] == '&') {
+        if (this_model == NULL) {
+            return max_face;
+        }
+        if (ap->children == NULL) {
+            if (ap->type != BR_ACTOR_MODEL || !FinterayBoxBoundsTransform(&this_model->bounds, &bnds->real_bounds, &ap->t.t.mat)) {
+                return max_face;
+            }
+        }
+        if (pMat != NULL) {
+            BrMatrix34Mul(&combined, &ap->t.t.mat, pMat);
+            pMat = &combined;
+        } else {
+            pMat = &ap->t.t.mat;
+        }
+        BrMatrix34LPInverse(&inverse, &ap->t.t.mat);
+        BrMatrix34Mul(&box_matrix, bnds->mat, &inverse);
+        new_bounds.mat = &box_matrix;
+        for (i = 0; i < 3; i++) {
+            FinterayBoxCopyScalar(&new_bounds.original_bounds.min.v[i], &bnds->original_bounds.min.v[i]);
+            FinterayBoxCopyScalar(&new_bounds.original_bounds.max.v[i], &bnds->original_bounds.max.v[i]);
+        }
+        BrMatrix34ApplyP(&new_bounds.box_centre, &bnds->box_centre, &inverse);
+        FinterayBoxCopyScalar(&new_bounds.radius, &bnds->radius);
+        GetNewBoundingBox(&new_bounds.real_bounds, &new_bounds.original_bounds, new_bounds.mat);
+        if (ap->identifier[1] >= '0' && ap->identifier[1] <= '9') {
+            if (!BoundsOverlapTest__finteray(&new_bounds.real_bounds, &this_model->bounds)) {
+                return max_face;
+            }
+            BrMatrix34LPInverse(&inverse, bnds->mat);
+            BrMatrix34Mul(&actor_matrix, &ap->t.t.mat, &inverse);
+            GetNewBoundingBox(&actor_bounds, &ap->model->bounds, &actor_matrix);
+            if (!BoundsOverlapTest__finteray(&actor_bounds, &bnds->original_bounds)) {
+                return max_face;
+            }
+            if (pWorld_callbacks != NULL && pWorld_callbacks->pull_actor_from_world != NULL && pWorld_callbacks->pull_actor_from_world(ap) != NULL) {
+                return max_face;
+            }
+        }
+        bnds = &new_bounds;
+    }
+    if (ap->type == BR_ACTOR_MODEL) {
+        if (this_model == NULL) {
+            return max_face;
+        }
+        if (gActorBoxPick_StopGroovidelics && BoundsOverlapTest__finteray(&bnds->real_bounds, &this_model->bounds)) {
+            remaining = ModelPickBox(ap, bnds, this_model, this_material, face_list, max_face, pMat);
+            if (pMat != NULL && max_face != remaining && pWorld_callbacks != NULL && pWorld_callbacks->stop_groovidelic != NULL) {
+                pWorld_callbacks->stop_groovidelic(ap);
+            }
+            emitted = max_face - remaining;
+            max_face = remaining;
+        }
+    } else if (ap->type == BR_ACTOR_BOUNDS || ap->type == BR_ACTOR_BOUNDS_CORRECT) {
+        test_children = BoundsOverlapTest__finteray(&bnds->real_bounds, (br_bounds*)ap->type_data);
+    }
+    if (test_children) {
+        for (child = ap->children; child != NULL; child = next) {
+            next = child->next;
+            remaining = ActorBoxPick(bnds, child, this_model, this_material, face_list + emitted, max_face, pMat, pWorld_callbacks);
+            emitted += max_face - remaining;
+            max_face = remaining;
+        }
+    }
+    return max_face;
+}
 
 // ClipToPlaneGE
 
