@@ -1,8 +1,10 @@
 #include "66-tintedpoly.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "28-world3.h"
+#include "34-finteray.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "globvars.h"
@@ -429,6 +431,38 @@ br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex) {
         return NULL;
     }
     return gTintedPolys[pTintedIndex].material2;
+}
+
+// FUNCTION: CARMA2_HW 0x004d8350
+void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPosition) {
+    tSpecial_volume* volume;
+    br_vector3 dir;
+    br_vector3 nor;
+    br_scalar t;
+    br_material* mat;
+
+    volume = gCar_to_view->collision_info->last_special_volume;
+    /* The original x87 below tests also accept unordered values. */
+    if ((volume != NULL && !(volume->gravity_multiplier >= 1.0f)) || gAction_replay_mode) {
+        BrVector3Set(&dir, 0.0f, 200.0f, 0.0f);
+        DisablePlingMaterials();
+        FindFace(pPosition, &dir, &nor, &t, &mat);
+        EnablePlingMaterials();
+        if (!(t >= 100.0f) && mat != NULL && mat->identifier != NULL && strlen(mat->identifier) != 0) {
+            if (mat->identifier[0] == '!' || mat->identifier[0] == '#') {
+                gTintedPolys[pTintedIndex].field_0x28 = '#';
+                gTintedPolys[pTintedIndex].material2 = mat;
+                return;
+            }
+            if (mat->identifier[0] == '@') {
+                gTintedPolys[pTintedIndex].field_0x28 = '@';
+                gTintedPolys[pTintedIndex].material2 = mat;
+                return;
+            }
+        }
+    }
+    gTintedPolys[pTintedIndex].field_0x28 = 0;
+    gTintedPolys[pTintedIndex].material2 = NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x004d8cf0

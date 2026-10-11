@@ -43,7 +43,7 @@ extern void C2_HOOK_FASTCALL RenderTintedPolys(void);
 
 extern void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue);
 
-// SetTintedPolyRefMaterial
+extern void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPosition);
 
 extern br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex);
 
