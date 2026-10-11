@@ -9,6 +9,15 @@ extern int gWidth;
 extern int gHeight;
 extern tU8 gTemporary_physics_render_buffer[300000];
 
+extern tClip_details gShadow_clip_planes[8];
+extern int gFancy_shadow;
+extern br_material* gShadow_material;
+extern br_vector3 gShadow_light_ray;
+extern br_vector3 gShadow_light_z;
+extern br_vector3 gShadow_light_x;
+extern br_model* gShadow_model;
+extern br_actor* gShadow_actor;
+
 // MungeClipPlane
 
 // TryThisEdge
