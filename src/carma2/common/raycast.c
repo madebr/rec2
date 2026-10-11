@@ -51,15 +51,15 @@ void C2_HOOK_FASTCALL InitRayCasting(void) {
     camera_ptr->hither_z = 0.001f;
     camera_ptr->yon_z = 1000.0f;
     camera_ptr->aspect = 1.0f;
-    gY_picking_camera->t.t.mat.m[0][0] =  1.f;
-    gY_picking_camera->t.t.mat.m[0][1] =  0.f;
-    gY_picking_camera->t.t.mat.m[0][2] =  0.f;
-    gY_picking_camera->t.t.mat.m[1][0] =  0.f;
-    gY_picking_camera->t.t.mat.m[1][1] =  0.f;
-    gY_picking_camera->t.t.mat.m[1][2] = -1.f;
-    gY_picking_camera->t.t.mat.m[2][0] =  0.f;
-    gY_picking_camera->t.t.mat.m[2][1] =  1.f;
-    gY_picking_camera->t.t.mat.m[2][2] =  0.f;
+    gY_picking_camera->t.t.mat.m[0][0] =  1.0f;
+    gY_picking_camera->t.t.mat.m[0][1] =  0.0f;
+    gY_picking_camera->t.t.mat.m[0][2] =  0.0f;
+    gY_picking_camera->t.t.mat.m[1][0] =  0.0f;
+    gY_picking_camera->t.t.mat.m[1][1] =  0.0f;
+    gY_picking_camera->t.t.mat.m[1][2] = -1.0f;
+    gY_picking_camera->t.t.mat.m[2][0] =  0.0f;
+    gY_picking_camera->t.t.mat.m[2][1] =  1.0f;
+    gY_picking_camera->t.t.mat.m[2][2] =  0.0f;
 }
 
 // FUNCTION: CARMA2_HW 0x004e3a30
