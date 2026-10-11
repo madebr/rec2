@@ -6,8 +6,9 @@
 extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
+extern int gNumber_of_cops_before_faffage;
 
-// DoNotDprintf
+extern void C2_HOOK_CDECL DoNotDprintf_opponent(const char* pMessage, ...);
 
 // ProcessCurrentObjective
 
@@ -43,7 +44,7 @@ extern int gMaxTimeOpponentRepair;
 
 // AllowForDecel
 
-// ShiftOpponentsProjectedRoute
+extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces);
 
 // NewCalcGetNearPlayerRoute
 
@@ -51,7 +52,7 @@ extern int gMaxTimeOpponentRepair;
 
 // ClearOpponentsProjectedRoute
 
-// AddToOpponentsProjectedRoute
+extern int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection);
 
 // StunTheBugger
 
@@ -159,25 +160,25 @@ extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pInde
 
 // GetDriverName
 
-// GetOpponentSpecFromCarSpec
+extern tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec);
 
-// GetCarSpecFromGlobalOppoIndex
+extern tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex);
 
-// GetOpponentsRealSection
+extern int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no);
 
-// GetOpponentsFirstSection
+extern int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec);
 
-// GetOpponentsNextSection
+extern int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spec, tS16 pCurrent_section);
 
-// GetOpponentsSectionStartNodePoint
+extern const br_vector3* C2_HOOK_FASTCALL GetOpponentsSectionStartNodePoint(const tOpponent_spec* pOpponent_spec, tS16 pSection);
 
-// GetOpponentsSectionFinishNodePoint
+extern const br_vector3* C2_HOOK_FASTCALL GetOpponentsSectionFinishNodePoint(const tOpponent_spec* pOpponent_spec, tS16 pSection);
 
-// GetOpponentsSectionWidth
+extern double C2_HOOK_FASTCALL GetOpponentsSectionWidth(const tOpponent_spec* pOpponent_spec, tS16 pSection);
 
-// GetOpponentsSectionMinSpeed
+extern tS16 C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
 
-// GetOpponentsSectionMaxSpeed
+extern tS16 C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
 
 // InitOpponentPsyche
 

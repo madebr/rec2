@@ -4,6 +4,12 @@
 #include "34-finteray.h"
 #include "globvars.h"
 
+// GLOBAL: CARMA2_HW 0x0079eda0
+tNon_car_spec* gActive_non_car_list[99];
+
+// GLOBAL: CARMA2_HW 0x006793dc
+int gNum_active_non_cars;
+
 // GLOBAL: CARMA2_HW 0x006940b0
 int gFace_count;
 

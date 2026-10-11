@@ -3,6 +3,9 @@
 
 #include "rec2_types.h"
 
+extern tNon_car_spec* gActive_non_car_list[99];
+extern int gNum_active_non_cars;
+
 extern int gCunning_stunt_bonus[3];
 extern float gArmour_starting_value[100];
 extern float gPower_starting_value[100];
