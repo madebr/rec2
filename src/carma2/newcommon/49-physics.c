@@ -1,5 +1,9 @@
 #include "49-physics.h"
 
+#include "c2_string.h"
+
+#include <stddef.h>
+
 // count
 
 // DrMatrix34ApplyLPInverse
@@ -328,19 +332,80 @@
 
 // ClearPhysicsScratchSpace
 
-// AllocateShapeSphere
+// FUNCTION: CARMA2_HW 0x004c5d10
+tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(int pType) {
+    tCollision_shape_sphere* result;
 
-// AllocateShapePolyhedron
+    result = BrMemAllocate(sizeof(tCollision_shape_sphere), (br_uint_8)pType);
+    result->common.type = kCollisionShapeType_Sphere;
+    return result;
+}
 
-// AllocateShapeWireFrame
+// FUNCTION: CARMA2_HW 0x004c5d70
+tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocateShapePolyhedron(int pCount_points, int pType) {
+    tCollision_shape_polyhedron* result;
+    tU8* raw_memory;
+    int count_edges;
 
-// AllocateShapeBox
+    count_edges = (pCount_points - 2) * 3;
+    result = BrMemAllocate(sizeof(tCollision_shape_polyhedron) + pCount_points * sizeof(br_vector3)
+        + count_edges * sizeof(tPolyhedron_edge_indexes) + (pCount_points - 2) * 2 * sizeof(br_vector4), (br_uint_8)pType);
+    raw_memory = (tU8*)result + sizeof(tCollision_shape_polyhedron);
+    result->polyhedron.points = (br_vector3*)raw_memory;
+    raw_memory += pCount_points * sizeof(br_vector3);
+    result->polyhedron.edges = (tPolyhedron_edge_indexes*)raw_memory;
+    raw_memory += count_edges * sizeof(tPolyhedron_edge_indexes);
+    result->polyhedron.planes = (br_vector4*)raw_memory;
+    result->polyhedron.count_points = 0;
+    result->polyhedron.count_edges = 0;
+    result->polyhedron.count_planes = 0;
+    result->common.type = kCollisionShapeType_Polyhedron;
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004c5dc0
+tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateShapeWireFrame(int pCount_points, int pCount_lines, int pType) {
+    tCollision_shape_wireframe* result;
+    tU8* raw_memory;
+
+    result = BrMemAllocate(sizeof(tCollision_shape_wireframe) + pCount_points * sizeof(br_vector3)
+        + pCount_lines * sizeof(tPolyhedron_edge_indexes), (br_uint_8)pType);
+    raw_memory = (tU8*)result + sizeof(tCollision_shape_wireframe);
+    result->wireframe.points = (br_vector3*)raw_memory;
+    raw_memory += pCount_points * sizeof(br_vector3);
+    result->wireframe.count_lines = pCount_lines;
+    result->wireframe.lines = (tPolyhedron_edge_indexes*)raw_memory;
+    result->wireframe.count_points = pCount_points;
+    result->common.type = kCollisionShapeType_Wireframe;
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004c5e00
+tCollision_shape_box* C2_HOOK_FASTCALL AllocateShapeBox(int pType) {
+    tCollision_shape_box* result;
+
+    result = BrMemAllocate(sizeof(tCollision_shape_box), (br_uint_8)pType);
+    result->common.type = kCollisionShapeType_Box;
+    return result;
+}
 
 // GetJointSize
 
-// AllocatePhysicsJoint
+// FUNCTION: CARMA2_HW 0x004c5e20
+tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType) {
+    return BrMemAllocate(offsetof(tPhysics_joint, limits) + pCount_limits * sizeof(tPhysics_joint_limit), (br_uint_8)pType);
+}
 
-// ClonePhysicsJoint
+// FUNCTION: CARMA2_HW 0x004c5e40
+tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint, int pType) {
+    size_t size;
+    tPhysics_joint* clone;
+
+    size = offsetof(tPhysics_joint, limits) + pJoint->count_limits * sizeof(tPhysics_joint_limit);
+    clone = BrMemAllocate(size, (br_uint_8)pType);
+    memcpy(clone, pJoint, size);
+    return clone;
+}
 
 // FreeShape
 
@@ -379,9 +444,38 @@ void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint) {
 
 // PhysicsRemoveObject
 
-// PhysicsObjectRecurse
+// FUNCTION: CARMA2_HW 0x004c6470
+int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext) {
+    int result;
+    tPhysics_object* child;
 
-// PhysicsObjectRecurseChildren
+    result = pCallback(pObject, pContext);
+    if (result != 0) {
+        return result;
+    }
+    for (child = pObject->child; child != NULL; child = child->next) {
+        result = PhysicsObjectRecurse(child, pCallback, pContext);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004c64b0
+int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext) {
+    tPhysics_object* child;
+
+    for (child = pObject->child; child != NULL; child = child->next) {
+        int result;
+
+        result = PhysicsObjectRecurse(child, pCallback, pContext);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
 
 // InitPhysicsWorkspace
 
