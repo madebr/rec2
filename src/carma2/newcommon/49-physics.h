@@ -332,19 +332,19 @@
 
 // ClearPhysicsScratchSpace
 
-// AllocateShapeSphere
+extern tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(int pType);
 
-// AllocateShapePolyhedron
+extern tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocateShapePolyhedron(int pCount_points, int pType);
 
-// AllocateShapeWireFrame
+extern tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateShapeWireFrame(int pCount_points, int pCount_lines, int pType);
 
-// AllocateShapeBox
+extern tCollision_shape_box* C2_HOOK_FASTCALL AllocateShapeBox(int pType);
 
 // GetJointSize
 
-// AllocatePhysicsJoint
+extern tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType);
 
-// ClonePhysicsJoint
+extern tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint, int pType);
 
 // FreeShape
 
@@ -372,9 +372,9 @@ extern void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint);
 
 // PhysicsRemoveObject
 
-// PhysicsObjectRecurse
+extern int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext);
 
-// PhysicsObjectRecurseChildren
+extern int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext);
 
 // InitPhysicsWorkspace
 
