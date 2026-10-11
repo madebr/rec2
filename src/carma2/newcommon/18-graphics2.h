@@ -3,6 +3,11 @@
 
 #include "c2_hooks.h"
 #include "brender/brender.h"
+#include "rec2_types.h"
+
+extern tTransient_bm gTransient_bitmaps[50];
+extern tU32 gLast_palette_change;
+extern int gPalette_index;
 
 extern int gNoTransients;
 extern br_pixelmap* gRender_palette;
