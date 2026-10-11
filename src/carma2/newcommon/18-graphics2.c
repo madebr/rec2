@@ -1,12 +1,14 @@
 #include "18-graphics2.h"
 
 #include "25-grafdata.h"
+#include "33-depth.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "globvars.h"
+#include "globvrbm.h"
 #include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
@@ -629,13 +631,115 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
 
 // SwitchToLoresMode
 
-// PoshDrawLine
+// FUNCTION: CARMA2_HW 0x0047c740
+void C2_HOOK_FASTCALL PoshDrawLine(br_pixelmap* pDest, int pX1, br_scalar pAngle, int pY1, int pX2, int pY2, int pColour) {
 
-// DeviouslyDimRectangle
+    if (pColour < 0) {
+        /* NEG and coordinate offsets wrap as original 32-bit integer operations. */
+        if (pAngle >= 0.785 && pAngle <= 5.498 && (pAngle <= 2.356 || pAngle >= 3.926)) {
+            if ((pAngle <= 0.785 || pAngle >= 1.57) && (pAngle <= 3.926 || pAngle >= 4.712)) {
+                DRDrawLine(pDest, (int)((tU32)pX1 - 1u), pY1, (int)((tU32)pX2 - 1u), pY2, (int)(0u - (tU32)pColour - 1u));
+                DRDrawLine(pDest, (int)((tU32)pX1 + 1u), pY1, (int)((tU32)pX2 + 1u), pY2, (int)(1u - (tU32)pColour));
+            } else {
+                DRDrawLine(pDest, (int)((tU32)pX1 - 1u), pY1, (int)((tU32)pX2 - 1u), pY2, (int)(1u - (tU32)pColour));
+                DRDrawLine(pDest, (int)((tU32)pX1 + 1u), pY1, (int)((tU32)pX2 + 1u), pY2, (int)(0u - (tU32)pColour - 1u));
+            }
+        } else {
+            DRDrawLine(pDest, pX1, (int)((tU32)pY1 + 1u), pX2, (int)((tU32)pY2 + 1u), (int)(0u - (tU32)pColour - 1u));
+            DRDrawLine(pDest, pX1, (int)((tU32)pY1 - 1u), pX2, (int)((tU32)pY2 - 1u), (int)(1u - (tU32)pColour));
+        }
+        DRDrawLine(pDest, pX1, pY1, pX2, pY2, (int)(0u - (tU32)pColour));
+    } else {
+        DRDrawLine(pDest, pX1, pY1, pX2, pY2, pColour);
+    }
+}
 
-// DimRectangle
+// FUNCTION: CARMA2_HW 0x0047cad0
+void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
 
-// DimRectangleClipped
+    (void)pPixelmap;
+    (void)pKnock_out_corners;
+    gDim_model->vertices[1].p.v[0] = (br_scalar)pLeft;
+    gDim_model->vertices[0].p.v[0] = gDim_model->vertices[1].p.v[0];
+    gDim_model->vertices[3].p.v[0] = (br_scalar)pRight;
+    gDim_model->vertices[2].p.v[0] = gDim_model->vertices[3].p.v[0];
+    gDim_model->vertices[3].p.v[1] = -(br_scalar)pTop;
+    gDim_model->vertices[0].p.v[1] = gDim_model->vertices[3].p.v[1];
+    gDim_model->vertices[2].p.v[1] = -(br_scalar)pBottom;
+    gDim_model->vertices[1].p.v[1] = gDim_model->vertices[2].p.v[1];
+    BrModelUpdate(gDim_model, BR_MODU_VERTEX_POSITIONS);
+    gDim_actor->render_style = BR_RSTYLE_FACES;
+    if (gDim_actor->prev == NULL) {
+        BrActorAdd(g2d_camera, gDim_actor);
+    }
+    BrZbsSceneRender(g2d_camera, g2d_camera, gBack_screen, gDepth_buffer);
+    if (gDim_actor->parent != NULL) {
+        BrActorRemove(gDim_actor);
+    }
+    gDim_actor->render_style = BR_RSTYLE_NONE;
+}
+
+// FUNCTION: CARMA2_HW 0x0047cbd0
+void C2_HOOK_CDECL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
+    tU8* ptr;
+    tU8* depth_table_ptr;
+    tU8* right_ptr;
+    int y;
+    int line_skip;
+    int width;
+
+    if (gDevious_2d) {
+        DeviouslyDimRectangle(pPixelmap, pLeft, pTop, pRight, pBottom, pKnock_out_corners);
+        return;
+    }
+    ptr = (tU8*)pPixelmap->pixels + pLeft + pPixelmap->row_bytes * pTop;
+    line_skip = pPixelmap->row_bytes - pRight + pLeft;
+    depth_table_ptr = (tU8*)gDepth_shade_table->pixels + gDepth_shade_table->row_bytes * gDim_amount;
+    width = pRight - pLeft;
+    if (pKnock_out_corners) {
+        ptr++;
+        for (right_ptr = ptr + width - 2; ptr < right_ptr; ptr++) {
+            *ptr = depth_table_ptr[*ptr];
+        }
+        ptr += line_skip + 1;
+        for (y = pTop + 1; y < pBottom - 1; y++, ptr += line_skip) {
+            for (right_ptr = ptr + width; ptr < right_ptr; ptr++) {
+                *ptr = depth_table_ptr[*ptr];
+            }
+        }
+        ptr++;
+        for (right_ptr = ptr + width - 2; ptr < right_ptr; ptr++) {
+            *ptr = depth_table_ptr[*ptr];
+        }
+    } else {
+        for (y = pTop; y < pBottom; y++) {
+            for (right_ptr = ptr + width; ptr < right_ptr; ptr++) {
+                *ptr = depth_table_ptr[*ptr];
+            }
+            ptr += line_skip;
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0047cce0
+void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
+
+    if (pLeft < 0) {
+        pLeft = 0;
+    }
+    if (pTop < 0) {
+        pTop = 0;
+    }
+    if (pRight > pPixelmap->width) {
+        pRight = pPixelmap->width;
+    }
+    if (pBottom > pPixelmap->height) {
+        pBottom = pPixelmap->height;
+    }
+    if (pLeft < pRight && pTop < pBottom) {
+        DimRectangle(pPixelmap, pLeft, pTop, pRight, pBottom, pKnock_out_corners);
+    }
+}
 
 // DR8BitPixelmapRotatedAndFeatheredCopy
 
@@ -653,7 +757,14 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
 
 // DRPixelmapCopyMapBlack
 
-// DisableLights
+// FUNCTION: CARMA2_HW 0x0047d6a0
+void C2_HOOK_FASTCALL DisableLights(void) {
+    int i;
+
+    for (i = 0; i < gNumber_of_lights; i++) {
+        BrLightDisable(gLight_array[i]);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047d6d0
 void C2_HOOK_FASTCALL EnableLights(void) {
