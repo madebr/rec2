@@ -3,6 +3,7 @@
 #include <brender/brender.h>
 #include "rec2_macros.h"
 #include "c2_math.h"
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x005964c0
 int gPling_materials = 1;
@@ -379,9 +380,74 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // MultiRayCheckSingleFace
 
-// GetNewBoundingBox
+// FUNCTION: CARMA2_HW 0x0045f5b0
+void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m) {
+    br_vector3 a;
+    br_vector3 c[3];
+    int i;
+    int j;
 
-// FillInBounds
+    BrMatrix34ApplyP(&b2->min, &b1->min, m);
+    b2->max = b2->min;
+    for (i = 0; i < 3; i++) {
+        a.v[i] = FinterayScalar((double)b1->max.v[i] - b1->min.v[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            c[i].v[j] = FinterayScalar((double)a.v[i] * m->m[i][j]);
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            if (!(c[j].v[i] >= 0.f)) {
+                b2->min.v[i] = FinterayScalar((double)b2->min.v[i] + c[j].v[i]);
+            } else {
+                b2->max.v[i] = FinterayScalar((double)b2->max.v[i] + c[j].v[i]);
+            }
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0045f690
+void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
+    br_vector3 a;
+    br_vector3 b;
+    br_vector3 c[3];
+    double x;
+    double y;
+    double z;
+    int i;
+    int j;
+    int negative[3];
+    int positive[3];
+
+    for (i = 0; i < 3; i++) {
+        a.v[i] = FinterayScalar(((double)bnds->original_bounds.min.v[i] + bnds->original_bounds.max.v[i]) * 0.5);
+    }
+    BrMatrix34ApplyP(&bnds->box_centre, &a, bnds->mat);
+    x = (double)bnds->original_bounds.max.v[0] - bnds->original_bounds.min.v[0];
+    y = (double)bnds->original_bounds.max.v[1] - bnds->original_bounds.min.v[1];
+    z = (double)bnds->original_bounds.max.v[2] - bnds->original_bounds.min.v[2];
+    b.v[0] = FinterayScalar(x);
+    b.v[1] = FinterayScalar(y);
+    b.v[2] = FinterayScalar(z);
+    bnds->radius = FinterayScalar(sqrt((x * b.v[0] + y * b.v[1]) + z * b.v[2]) * 0.5);
+    BrMatrix34ApplyP(&bnds->real_bounds.min, &bnds->original_bounds.min, bnds->mat);
+    bnds->real_bounds.max = bnds->real_bounds.min;
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            c[i].v[j] = FinterayScalar((double)b.v[i] * bnds->mat->m[i][j]);
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            negative[j] = !(c[j].v[i] >= 0.f);
+            positive[j] = c[j].v[i] > 0.f;
+        }
+        bnds->real_bounds.min.v[i] = FinterayScalar(((double)negative[0] * c[0].v[i] + (double)negative[2] * c[2].v[i]) + (double)negative[1] * c[1].v[i] + bnds->real_bounds.min.v[i]);
+        bnds->real_bounds.max.v[i] = FinterayScalar(((double)positive[0] * c[0].v[i] + (double)positive[1] * c[1].v[i]) + (double)positive[2] * c[2].v[i] + bnds->real_bounds.max.v[i]);
+    }
+}
 
 // ActorBoxPick
 
@@ -391,7 +457,36 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // ClipToPlaneLE
 
-// BoundsOverlapTest
+// FUNCTION: CARMA2_HW 0x00425ba0
+int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2) {
+    int i;
+    unsigned int value;
+
+    if (b1->min.v[2] > b2->max.v[2] || b2->min.v[2] > b1->max.v[2]
+        || b1->min.v[1] > b2->max.v[1] || b2->min.v[1] > b1->max.v[1]
+        || b1->min.v[0] > b2->max.v[0] || b2->min.v[0] > b1->max.v[0]) {
+        return 0;
+    }
+    for (i = 0; i < 3; i++) {
+        memcpy(&value, &b1->min.v[i], sizeof(value));
+        if ((value & 0x7f800000u) == 0x7f800000u) {
+            return 0;
+        }
+        memcpy(&value, &b1->max.v[i], sizeof(value));
+        if ((value & 0x7f800000u) == 0x7f800000u) {
+            return 0;
+        }
+        memcpy(&value, &b2->min.v[i], sizeof(value));
+        if ((value & 0x7f800000u) == 0x7f800000u) {
+            return 0;
+        }
+        memcpy(&value, &b2->max.v[i], sizeof(value));
+        if ((value & 0x7f800000u) == 0x7f800000u) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 // BoundsTransformTest
 

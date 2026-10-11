@@ -56,9 +56,9 @@ extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // MultiRayCheckSingleFace
 
-// GetNewBoundingBox
+extern void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m);
 
-// FillInBounds
+extern void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds);
 
 // ActorBoxPick
 
@@ -68,7 +68,7 @@ extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // ClipToPlaneLE
 
-// BoundsOverlapTest
+extern int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2);
 
 // BoundsTransformTest
 

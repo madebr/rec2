@@ -484,10 +484,16 @@ void C2_HOOK_CDECL BrMatrix34Apply(br_vector3* A, const br_vector4* B, const br_
 
 // FUNCTION: CARMA2_HW 0x005334a0
 void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
+    volatile br_vector3* output = A;
+    const volatile br_vector3* input = B;
+    const volatile br_matrix34* matrix = C;
 
-    A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0)) + C(3, 0);
-    A->v[1] = BR_MAC3(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1)) + C(3, 1);
-    A->v[2] = BR_MAC3(B->v[0], C(0, 2), B->v[1], C(1, 2), B->v[2], C(2, 2)) + C(3, 2);
+    /* Original x87 stores each coordinate before reloading input and matrix
+     * values for the next. Retain that order for overlapping operands, and
+     * retain the original PC53 product/sum precision before each scalar store. */
+    output->v[0] = (float)((((double)input->v[1] * matrix->m[1][0] + (double)input->v[2] * matrix->m[2][0]) + (double)input->v[0] * matrix->m[0][0]) + matrix->m[3][0]);
+    output->v[1] = (float)((((double)input->v[2] * matrix->m[2][1] + (double)input->v[1] * matrix->m[1][1]) + (double)input->v[0] * matrix->m[0][1]) + matrix->m[3][1]);
+    output->v[2] = (float)((((double)input->v[2] * matrix->m[2][2] + (double)input->v[1] * matrix->m[1][2]) + (double)input->v[0] * matrix->m[0][2]) + matrix->m[3][2]);
 }
 
 // FUNCTION: CARMA2_HW 0x00533520
