@@ -827,9 +827,36 @@ void C2_HOOK_FASTCALL DisposePhysicsObject(tPhysics_object* pObject) {
     BrMemFree(pObject);
 }
 
-// STUB: CARMA2_HW 0x0044be80
+// FUNCTION: CARMA2_HW 0x0044be80
 intptr_t C2_HOOK_CDECL DisposeCarActModDataCB(br_actor* pActor, void* pContext) {
-    NOT_IMPLEMENTED();
+    tUser_crush_data* crush_data = pActor->user;
+    tCar_spec* car = pContext;
+    int i;
+
+    if (crush_data == NULL) {
+        return 0;
+    }
+    for (i = 0; i < car->count_detail_levels; i++) {
+        br_model* model = crush_data->models[i];
+
+        if (model != NULL && model->user != NULL) {
+            tUser_detail_level_model* model_data = model->user;
+
+            if (model_data->field_0x4 != NULL) {
+                DisposeVertexData(model_data->field_0x4);
+                model_data->field_0x4 = NULL;
+            }
+            BrMemFree(model_data);
+            model->user = NULL;
+        }
+    }
+    if (crush_data->crush_data != NULL) {
+        DisposeCrushData(crush_data->crush_data);
+        crush_data->crush_data = NULL;
+    }
+    BrMemFree(crush_data);
+    pActor->user = NULL;
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0044bbe0

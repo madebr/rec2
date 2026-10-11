@@ -92,9 +92,9 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 extern void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_spec* pCar);
 
-// DisposeCrushData
+extern void C2_HOOK_FASTCALL DisposeCrushData(tCar_crush_buffer_entry* pCrush_data);
 
-// DisposeVertexData
+extern void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data);
 
 // BuckleTheBugger
 
