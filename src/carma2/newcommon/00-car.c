@@ -1,6 +1,8 @@
 #include "00-car.h"
 
 #include "41-utility.h"
+#include "34-finteray.h"
+#include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x00763500
 int gCunning_stunt_bonus[3];
@@ -177,7 +179,11 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // MultiFindFloorInBoxBU
 
-// FindFace
+// FUNCTION: CARMA2_HW 0x0041e340
+void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vector3* nor, br_scalar* t, br_material** material) {
+
+    ActorFindFace(pPosition, pDir, gTrack_actor, nor, t, material, NULL);
+}
 
 // findfloor
 
