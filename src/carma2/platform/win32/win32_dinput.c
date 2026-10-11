@@ -527,7 +527,7 @@ void C2_HOOK_FASTCALL UnloadDinputFFBEffectAtIndex(int index) {
 // FUNCTION: CARMA2_HW 0x00457c20
 int C2_HOOK_FASTCALL CreateDinputEffect(int joystick_index, tJoystick_effect_description* description, const char *name) {
     int effect_id = gCount_joystick_effects;
-    IDirectInputDevice2A *device = gDirectInputJoystickDevices[joystick_index];
+    IDirectInputDevice2A *device;
     // GLOBAL: CARMA2_HW 0x00684620
     static DWORD axis[2];
 
@@ -540,14 +540,15 @@ int C2_HOOK_FASTCALL CreateDinputEffect(int joystick_index, tJoystick_effect_des
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, field_0x48, 0x48);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, field_0x4c, 0x4c);
 
-    if (effect_id >= REC2_ASIZE(gJoystick_effects)) {
+    if (effect_id >= (int)REC2_ASIZE(gJoystick_effects)) {
         dr_dprintf("Reached hardcoded limit for # of effects.");
         return -1;
     }
+    device = gDirectInputJoystickDevices[joystick_index];
     if (device == NULL || !(gJoystickFFB & (1 << joystick_index))) {
         return -1;
     }
-    gJoystick_effects[effect_id].di_effect.dwDuration = description->time_ms != -1 ? 1000 * description->time_ms : -1;
+    gJoystick_effects[effect_id].di_effect.dwDuration = description->time_ms != 0xffffff ? 1000 * description->time_ms : -1;
     gJoystick_effects[effect_id].di_effect.dwGain = description->field_0x3c;
     // FIXME: dwTriggerButton contains offset
     gJoystick_effects[effect_id].di_effect.dwTriggerButton = description->field_0x44 != -1 ? description->field_0x44 + 0x30 : -1;
@@ -590,12 +591,15 @@ int C2_HOOK_FASTCALL CreateDinputEffect(int joystick_index, tJoystick_effect_des
         gJoystick_effects[effect_id].di_effect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
         break;
     case eJoystick_effect_RampForce:
+        gJoystick_effects[effect_id].di_effect.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
+        break;
     case eJoystick_effect_CustomForce:
     case eJoystick_effect_Square:
     case eJoystick_effect_Sine:
     case eJoystick_effect_Triangle:
     case eJoystick_effect_SawtoothUp:
-        gJoystick_effects[effect_id].di_effect.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
+    case eJoystick_effect_SawtoothDown:
+        gJoystick_effects[effect_id].di_effect.cbTypeSpecificParams = sizeof(DIPERIODIC);
         break;
     case eJoystick_effect_Spring_8:
     case eJoystick_effect_Damper:
@@ -618,7 +622,7 @@ int C2_HOOK_FASTCALL CreateDinputEffect(int joystick_index, tJoystick_effect_des
         NULL);
     strcpy(gJoystick_effects[gCount_joystick_effects].name, name);
     gCount_joystick_effects += 1;
-    return effect_id;
+    return gCount_joystick_effects - 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0045a390
@@ -699,8 +703,14 @@ int C2_HOOK_FASTCALL InitForceFeedback(void) {
         JoystickDInputBegin();
     }
 
-    if (ResetForceFeedback()) {
-        gForceFeedbackAvailable = 1;
+    if (gJoystickFFB != 0) {
+        for (i = 0; i < MAX_COUNT_JOYSTICKS; i++) {
+            IDirectInputDevice2A* device = gDirectInputJoystickDevices[i];
+            if (device != NULL && (gJoystickFFB & (1 << i))) {
+                IDirectInputDevice2_SendForceFeedbackCommand(device, DISFFC_RESET);
+                gForceFeedbackAvailable = 1;
+            }
+        }
     }
     if (!gForceFeedbackAvailable) {
         return 0;
@@ -713,12 +723,11 @@ int C2_HOOK_FASTCALL InitForceFeedback(void) {
     count_effects = ReadIforceEffectsNames(path, effect_names, REC2_ASIZE(effect_names));
     for (i = 0; i < count_effects; i++) {
         int count;
-        DIEFFECT di_effect;
         IFR_Effect **effects;
 
         effects = IFCreateEffectStructs(gIfr_project, effect_names[i], &count);
-        di_effect = *effects[0]->di_effect;
-        IDirectInputDevice2_CreateEffect(gDirectInputJoystickDevices[gJoystick_index], &effects[0]->guid, &di_effect, &gDirectInputEffects[gCount_joystick_effects], NULL);
+        gJoystick_effects[gCount_joystick_effects].di_effect = *effects[0]->di_effect;
+        IDirectInputDevice2_CreateEffect(gDirectInputJoystickDevices[gJoystick_index], &effects[0]->guid, &gJoystick_effects[gCount_joystick_effects].di_effect, &gDirectInputEffects[gCount_joystick_effects], NULL);
         strcpy(gJoystick_effects[gCount_joystick_effects].name, effect_names[i]);
         gCount_joystick_effects += 1;
         UnloadDinputFFBEfectwithName(effect_names[i]);
@@ -1443,12 +1452,13 @@ void C2_HOOK_FASTCALL PDInitJoysticks(void) {
     ResetForceFeedback();
 }
 
+// FUNCTION: CARMA2_HW 0x00457eb0
 void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index) {
     IDirectInputEffect* effect;
 
     effect = gDirectInputEffects[index];
     if (effect != NULL) {
-        IDirectInputEffect_Start(effect, 1, DIES_NODOWNLOAD);
+        IDirectInputEffect_Start(effect, 1, 0);
     }
     return;
 }
