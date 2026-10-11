@@ -1,10 +1,14 @@
 #include "42-input.h"
 
 #include "41-utility.h"
+#include "25-grafdata.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
+#include "c2_string.h"
+
 #define NBR_ROLLING_LETTERS 500
+#define ROLLING_LETTER_LOOP_RANDOM 96
 
 // GLOBAL: CARMA2_HW 0x0074b5e0
 int gKey_mapping[77];
@@ -47,6 +51,12 @@ int gLetter_y_coords[15];
 
 // GLOBAL: CARMA2_HW 0x0068be84
 int gThe_length;
+
+// GLOBAL: CARMA2_HW 0x0068c150
+char gCurrent_typing[110];
+
+// GLOBAL: CARMA2_HW 0x0068c1c0
+int gCurrent_position;
 
 // GLOBAL: CARMA2_HW 0x0068c1c8
 tU32 gLast_poll_keys;
@@ -464,13 +474,112 @@ void C2_HOOK_FASTCALL EndRollingLetters(void) {
     BrMemFree(gRolling_letters);
 }
 
-// AddRollingLetter
+// FUNCTION: CARMA2_HW 0x00483cf0
+int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type rolling_type) {
+    tRolling_letter* let;
+    int i;
 
-// ChangeCharTo
+    for (let = gRolling_letters, i = 0; i < NBR_ROLLING_LETTERS; i++, let++) {
+        if (let->number_of_letters < 0) {
+            goto letter_found;
+        }
+    }
+    return -1;
 
-// STUB: CARMA2_HW 0x00484120
+letter_found:
+    let->rolling_type = rolling_type;
+    let->x_coord = pX;
+    let->y_coord = pY;
+    if (rolling_type == eRT_looping_random) {
+        let->number_of_letters = 9;
+    } else if (rolling_type == eRT_looping_single) {
+        let->number_of_letters = 2;
+    } else {
+        let->number_of_letters = IRandomBetween(3, 9);
+    }
+    let->current_offset = (float)(let->number_of_letters * gCurrent_graf_data->save_slot_letter_height);
+    for (i = let->number_of_letters - 1; i > (rolling_type != eRT_looping_random ? 0 : -1); i--) {
+        if (rolling_type != eRT_numeric) {
+            let->letters[i] = IRandomBetween('A', 'Z' + 1);
+        } else {
+            let->letters[i] = (tS8)pChar;
+        }
+    }
+    if (rolling_type != eRT_looping_random) {
+        let->letters[0] = (tS8)pChar;
+    }
+    return i;
+}
+
+// FUNCTION: CARMA2_HW 0x00483fd0
+void C2_HOOK_FASTCALL BlankSlot(int pIndex, int pName_length, int pVisible_length) {
+    int i;
+
+    gVisible_length = pVisible_length;
+    for (i = 0; i < pName_length; i++) {
+        ChangeCharTo(pIndex, i, ' ');
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00484000
+int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_char) {
+    int x_coord;
+    int y_coord;
+    int i;
+    tRolling_letter* let;
+    tRolling_type new_type;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, save_slot_letter_height, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, rolling_letter_x_pitch, 0x10);
+
+    if (pChar_index >= gVisible_length || pChar_index < 0) {
+        return -1;
+    }
+    y_coord = gLetter_y_coords[pSlot_index];
+    x_coord = gLetter_x_coords[pSlot_index] + pChar_index * gCurrent_graf_data->rolling_letter_x_pitch;
+    if (pNew_char == ROLLING_LETTER_LOOP_RANDOM) {
+        new_type = eRT_looping_random;
+    } else if (pNew_char >= '0' && pNew_char <= '9') {
+        new_type = eRT_numeric;
+    } else {
+        new_type = eRT_alpha;
+    }
+    for (let = gRolling_letters, i = 0; i < NBR_ROLLING_LETTERS; i++, let++) {
+        if (let->number_of_letters >= 0 && x_coord == let->x_coord && y_coord == let->y_coord) {
+            goto letter_found;
+        }
+    }
+    return AddRollingLetter(pNew_char, x_coord, y_coord, new_type);
+
+letter_found:
+    if (pNew_char != ROLLING_LETTER_LOOP_RANDOM) {
+        let->letters[0] = (tS8)pNew_char;
+    }
+    if (pNew_char == ' ') {
+        let->letters[0] = ' ';
+    }
+    let->current_offset = (float)(gCurrent_graf_data->save_slot_letter_height * let->number_of_letters);
+    let->rolling_type = new_type;
+    return i;
+}
+
+// FUNCTION: CARMA2_HW 0x00484120
 void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < gThe_length; i++) {
+        ChangeCharTo(pSlot_index, i, (char)((size_t)i < strlen(pRevert_str) ? pRevert_str[i] : ' '));
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00484170
+void C2_HOOK_FASTCALL StartTyping(int pSlot_index, char* pText, int pVisible_length) {
+
+    gThe_length = pVisible_length;
+    strcpy(gCurrent_typing, pText);
+    gCurrent_position = (int)strlen(gCurrent_typing);
+    gVisible_length = pVisible_length;
+    gCurrent_cursor = ChangeCharTo(pSlot_index, gCurrent_position, ROLLING_LETTER_LOOP_RANDOM);
 }
 
 // FUNCTION: CARMA2_HW 0x00484600

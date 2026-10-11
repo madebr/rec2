@@ -5,6 +5,8 @@ Dependencies: Python 3.10+, unicorn==2.1.4; export-map additionally needs reccmp
 The verified original is never executed natively. Both x86 images run under Unicorn
 with identical deterministic dependency fixtures. Tests compare full input arrays,
 key repeat state, mouse coordinates, results, and dependency call order.
+Rolling/typing fixtures also compare every pool byte, signed characters, descending
+random fills, full-pool failures, visible bounds, typing buffers, and cursor state.
 
 Example from the repository root:
   python scripts/verify_input_reconstruction.py export-map --build-directory build-input-matching --output build-audit/input/symbols.json
@@ -66,6 +68,36 @@ except ImportError:
     parser.error('Install the verifier dependency: python -m pip install unicorn==2.1.4')
 STOP, STACK, BUFFER, HEAP = 0x1000000, 0x1010000, 0x1020000, 0x1030000
 
+rolling_cases = {
+    'AddRollingLetter': [
+        dict(pool=p, rolling_type=t, char=c, letter_count=n)
+        for p in ('first','last','full') for t in range(4)
+        for c in (65,128,255) for n in ((3,9) if t<2 else (3,))
+    ] + [dict(pool='first',rolling_type=4,char=255,letter_count=6)],
+    'ChangeCharTo': [
+        dict(pool=p,char=c,index=1,slot=14,visible=4,letter_count=6)
+        for p in ('first','existing','last_existing','full','duplicates')
+        for c in (65,48,57,32,96,128,255)
+    ] + [dict(pool='first',char=96,index=i,slot=0,visible=v,letter_count=3)
+         for i,v in ((-1,4),(0,0),(4,4),(3,4),(0,-1))],
+    'RevertTyping': [
+        dict(pool=p,text=t,total=n,visible=4,slot=0,letter_count=5)
+        for p in ('first','existing','full')
+        for t,n in ((b'',0),(b'',4),(b'A9',4),(b'\x80\xff`',4),(b'A9ZQXY',6),(b'A',-1))
+    ],
+    'BlankSlot': [
+        dict(pool=p,name_length=n,visible=v,slot=0,letter_count=3)
+        for p in ('first','existing','full')
+        for n,v in ((-1,4),(0,4),(1,4),(6,4),(4,0),(4,-1))
+    ],
+    'StartTyping': [
+        dict(pool=p,text=t,visible=v,slot=14,letter_count=5)
+        for p in ('first','existing','full')
+        for t,v in ((b'',4),(b'A9',4),(b'ABCD',4),(b'ABCDE',4),
+                    (b'\x80\xff',4),(b'A',0),(b'A',-1),(b'A'*109,110))
+    ],
+}
+
 def execute(side, name, scenario):
     path = cli.original if side == 'orig' else cli.recompiled
     binary = path.read_bytes()
@@ -108,6 +140,8 @@ def execute(side, name, scenario):
     trace, ticks = [], [0]
     now = 1000
     args = [42,0]
+    random_letter_count = 5
+    random_letter_index = [0]
     px,py,click,left,right = 5,6,0,0,0
     cx,cy = 5,6
     axes = [10000,40000,60000,-1]
@@ -189,21 +223,65 @@ def execute(side, name, scenario):
             setglobal('gLast_poll_keys',0xffffff00)
     elif name=='WaitForNoKeys':
         write(address('gKey_array')+42*4,1)
+    elif name in rolling_cases:
+        fixture=rolling_cases[name][scenario]
+        graf=BUFFER+0x1000
+        setglobal('gCurrent_graf_data',graf)
+        write(graf+0x10,9)
+        write(graf+0x24,23)
+        setarray('gLetter_x_coords',[100+i*10 for i in range(15)])
+        setarray('gLetter_y_coords',[200+i*20 for i in range(15)])
+        setglobal('gVisible_length',fixture.get('visible',4))
+        setglobal('gThe_length',fixture.get('total',4))
+        setglobal('gCurrent_position',2)
+        setglobal('gCurrent_cursor',77)
+        u.mem_write(address('gCurrent_typing'),b'old text\0'+b'\x33'*101)
+        random_letter_count=fixture['letter_count']
+        pool=fixture['pool']
+        for i in range(500):write(HEAP+i*56+44,3 if pool in ('last','full') else -1)
+        if pool=='last':write(HEAP+499*56+44,-1)
+        slot=fixture.get('slot',0)
+        target_index=fixture.get('index',len(fixture.get('text',b'')) if name=='StartTyping' else 0)
+        if pool in ('existing','last_existing','duplicates'):
+            indices=(499,) if pool=='last_existing' else (0,499) if pool=='duplicates' else range(6)
+            for j in indices:
+                char_index=target_index if name=='ChangeCharTo' or name=='StartTyping' else j
+                record=HEAP+56*j
+                write(record,70+j)
+                write(record+36,100+slot*10+char_index*9)
+                write(record+40,200+slot*20)
+                write(record+44,7)
+                write(record+48,1)
+        if name=='AddRollingLetter':args=[fixture['char'],13,-20,fixture['rolling_type']]
+        elif name=='ChangeCharTo':args=[slot,fixture['index'],fixture['char']]
+        elif name=='BlankSlot':args=[slot,fixture['name_length'],fixture['visible']]
+        else:
+            text_pointer=BUFFER+0x2000
+            u.mem_write(text_pointer,fixture['text']+b'\0')
+            args=[slot,text_pointer]
+            if name=='StartTyping':args.append(fixture['visible'])
     hooks=['PDGetTotalTime','PDSetKeyArray','PDSetKeysFromJoystick','PDReadJoysticks',
            'PDGetJoy1Button1','PDGetJoy1Button2','PDGetJoy1Button3','PDGetJoy1Button4',
            'PDGetJoy2Button1','PDGetJoy2Button2','PDGetJoy2Button3','PDGetJoy2Button4',
            'PDGetJoy1X','PDGetJoy1Y','PDGetJoy2X','PDGetJoy2Y',
-           'PDGetMousePosition','PDGetMouseClickPosition','PDMouseButtons','CheckQuit','BrMemAllocate','BrMemFree']
+           'PDGetMousePosition','PDGetMouseClickPosition','PDMouseButtons','CheckQuit','BrMemAllocate','BrMemFree','IRandomBetween']
     hooknames={address(n):n for n in hooks}
     def hook(uc,at,size,user):
         if at==STOP:uc.emu_stop();return
         if at not in hooknames:return
         n=hooknames[at]
-        trace.append(n)
         sp=uc.reg_read(UC_X86_REG_ESP)
         ecx,edx=uc.reg_read(UC_X86_REG_ECX),uc.reg_read(UC_X86_REG_EDX)
+        if n!='IRandomBetween':trace.append(n)
         value=0
         if n=='PDGetTotalTime':value=now
+        elif n=='IRandomBetween':
+            if (ecx,edx)==(3,9):value=random_letter_count
+            elif (ecx,edx)==(65,91):
+                value=[65,90,91,66,89,70,80,88,77][random_letter_index[0]%9]
+                random_letter_index[0]+=1
+            else:raise AssertionError((side,name,scenario,'unexpected random bounds',ecx,edx))
+            trace.append(f'IRandomBetween({ecx},{edx})->{value}')
         elif n=='PDSetKeyArray':write(ecx+42*4,edx)
         elif n=='PDSetKeysFromJoystick':write(ecx+43*4,9)
         elif n in ['PDGetJoy1X','PDGetJoy1Y','PDGetJoy2X','PDGetJoy2Y']:
@@ -228,6 +306,7 @@ def execute(side, name, scenario):
         uc.reg_write(UC_X86_REG_ESP,sp+4)
     u.hook_add(UC_HOOK_CODE,hook)
     write(STACK-4,STOP)
+    for i,arg in enumerate(args[2:]):write(STACK+i*4,arg)
     u.reg_write(UC_X86_REG_ESP,STACK-4)
     u.reg_write(UC_X86_REG_ECX,args[0]&0xffffffff)
     u.reg_write(UC_X86_REG_EDX,args[1]&0xffffffff)
@@ -241,6 +320,12 @@ def execute(side, name, scenario):
     if name in ['PDAnyKeyDown','AnyKeyDown','PDKeyDown','EdgeTriggeryKey','KeyIsDown','KeyIsDownNoMouldiness','EitherMouseButtonDown']:
         result['return']=u.reg_read(UC_X86_REG_EAX)
     if name=='InitRollingLetters':result['letters']=[read(HEAP+56*i+44) for i in range(500)]
+    if name in rolling_cases:
+        result['rolling_pool_sha256']=hashlib.sha256(u.mem_read(HEAP,28000)).hexdigest()
+        result['typing_buffer']=bytes(u.mem_read(address('gCurrent_typing'),110)).hex()
+        result['typing_state']={n:read(address(n)) for n in ['gThe_length','gVisible_length','gCurrent_position','gCurrent_cursor']}
+        result['rolling_records']=[list(struct.unpack('<14i',u.mem_read(HEAP+56*j,56))) for j in (0,1,499)]
+        if name in ['AddRollingLetter','ChangeCharTo']:result['return']=u.reg_read(UC_X86_REG_EAX)
     return result
 
 cases={'EitherMouseButtonDown':range(6),'GetMousePosition':range(4),'InitRollingLetters':range(1),
@@ -249,6 +334,7 @@ cases={'EitherMouseButtonDown':range(6),'GetMousePosition':range(4),'InitRolling
        'KeyIsDown':[*range(5),*range(40,43)],'KeyIsDownNoMouldiness':range(2,4),'PollKeys':[*range(4),*range(16,32)],
        'SetJoystickArrays':[*range(4),*range(16,32)],
        'CheckKeysForMouldiness':[*range(4),*range(16,32),*range(40,43)],'WaitForNoKeys':range(1)}
+cases.update({name:range(len(fixtures)) for name,fixtures in rolling_cases.items()})
 records=[]
 for name,scenarios in cases.items():
     for scenario in scenarios:
@@ -263,12 +349,17 @@ for name,scenarios in cases.items():
             record['timestamp_wrap']=scenario>=13
             record['return']=actual['return']
             record['last_key_down_time']=actual['state']['gLast_key_down_time']&0xffffffff
-        elif scenario>=40:
+        elif name in ['KeyIsDown','CheckKeysForMouldiness'] and scenario>=40:
             record['elapsed_ms']=499+scenario-40
             record['timestamp_wrap']=True
             record['repoll']='PDSetKeyArray' in actual['trace']
             if record['repoll']!=(record['elapsed_ms']>500):
                 raise AssertionError((name,scenario,'unexpected reference freshness boundary'))
+        if name in rolling_cases:
+            record['fixture']={k:v.hex() if isinstance(v,bytes) else v for k,v in rolling_cases[name][scenario].items()}
+            record['rolling_pool_sha256']=actual['rolling_pool_sha256']
+            record['typing_state']=actual['typing_state']
+            if 'return' in actual:record['return']=actual['return']
         records.append(record)
 cli.output.parent.mkdir(parents=True, exist_ok=True)
 cli.output.write_text(json.dumps({'format': 1, 'original_sha256': ORIGINAL_SHA256, 'recompiled_sha256': mapping['recompiled_sha256'], 'scenarios': records}, indent=2))
