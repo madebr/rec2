@@ -809,7 +809,11 @@ void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
 // ReallySetSoundDetailLevel
 
-// GetSoundDetailLevel
+// FUNCTION: CARMA2_HW 0x004569e0
+int C2_HOOK_FASTCALL GetSoundDetailLevel(void) {
+
+    return gSound_detail_level;
+}
 
 // FUNCTION: CARMA2_HW 0x004569f0
 void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
