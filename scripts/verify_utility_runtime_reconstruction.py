@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Compare five utility entries with original x86 and three native compilers.
+"""Compare seven utility entries with original x86 and three native compilers.
 
-Time, keyboard, sound, failure and rectangle-copy calls are controlled boundaries.
+Time, keyboard, sound, failure, table lookup and rectangle-copy calls are controlled boundaries.
 Actor traversal executes actual BRender multiply/identity bodies using exact
 dyadic matrices; it tests traversal and matrix order, not general matrix accuracy.
 Complete arena bytes, callback mutations and ordered arguments are compared.
@@ -23,10 +23,13 @@ SOURCE = ROOT / "src/carma2/newcommon/41-utility.c"
 HASH = "9b896c2cbb170c01b3e9f904ce5e1808db29fe5b51184a5d55a6d19b1799b58d"
 FUNCTIONS = dict(WaitFor=0x5146c0, Colour24BitTo16Bit=0x517050,
     DRPixelmapRectangleCopy=0x515690, DrPixelmapRectangleCopyPossibleLock=0x5191b0,
-    DRActorEnumRecurseWithSnart=0x5148c0)
+    DRActorEnumRecurseWithSnart=0x5148c0,
+    FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport=0x518d60,
+    GetBlendificatiousnessOfMaterial=0x518e70)
 ADDRESSES = dict(FUNCTIONS, PDGetTotalTime=0x51d410, AnyKeyDown=0x482d70,
     SoundService=0x455a80, BrFailure=0x527c80, BrPixelmapRectangleCopy=0x538590,
-    BrMatrix34Mul=0x532620, BrMatrix34Identity=0x5327c0, gBack_screen=0x74d360)
+    BrMatrix34Mul=0x532620, BrMatrix34Identity=0x5327c0, gBack_screen=0x74d360,
+    gScreen=0x74d3e0, BrTableFind=0x51f140)
 HEAP, STACK, STOP, CALLBACK, SIZE = 0x1000000, 0x1080000, 0x1081000, 0x1082000, 4096
 
 
@@ -79,11 +82,13 @@ def main():
 #include "platform.h"
 #include "rec2_macros.h"
 typedef char layouts[sizeof(void*)==4 && sizeof(br_actor)==100 &&
-    offsetof(br_actor,t)==40 && offsetof(br_pixelmap,type)==44 ? 1:-1];
-static unsigned h[16], ticks, keys, sounds;
+    offsetof(br_actor,t)==40 && offsetof(br_pixelmap,type)==44 &&
+    offsetof(br_material,index_blend)==76 && offsetof(br_material,extra_prim)==88 ? 1:-1];
+static unsigned h[16], ticks, keys, sounds, tables;
 static unsigned char arena[4096];
 static jmp_buf failure;
 br_pixelmap* gBack_screen;
+br_pixelmap* gScreen;
 static void emit(unsigned v){fwrite(&v,4,1,stdout);}
 static unsigned norm(const void* p){
     unsigned v=(unsigned)(uintptr_t)p,b=(unsigned)(uintptr_t)arena;
@@ -96,7 +101,20 @@ static void snapshot(void){
         unsigned off=0x400+128*i+8*j;
         memcpy(&v,copy+off,4);v=norm((void*)(uintptr_t)v);memcpy(copy+off,&v,4);
     }
+    for(i=0;i<2;i++){
+        unsigned off=i?0xb58:0xb4c;
+        memcpy(&v,copy+off,4);v=norm((void*)(uintptr_t)v);memcpy(copy+off,&v,4);
+    }
     fwrite(copy,sizeof(copy),1,stdout);
+}
+br_pixelmap* C2_HOOK_CDECL BrTableFind(const char* name){
+    unsigned index=tables++,value=h[1+index];
+    br_material* material=(br_material*)(arena+0xb00);
+    if(index>=3)exit(91);
+    emit(10);emit(index);emit((unsigned)strlen(name));fwrite(name,strlen(name),1,stdout);snapshot();
+    if(h[4]==index+1)material->index_blend=h[5]?(br_pixelmap*)(arena+h[5]):NULL;
+    if(h[10])gScreen->type=BR_PMT_RGB_555;
+    return value?(br_pixelmap*)(arena+value):NULL;
 }
 tU32 C2_HOOK_FASTCALL PDGetTotalTime(void){
     unsigned result;
@@ -154,7 +172,13 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         memcpy(&v,arena+off,4);
         if(v>=0x1000000&&v<0x1001000){v=v-0x1000000+(unsigned)(uintptr_t)arena;memcpy(arena+off,&v,4);}
     }
+    for(i=0;i<2;i++){
+        unsigned off=i?0xb58:0xb4c;
+        memcpy(&v,arena+off,4);
+        if(v>=0x1000000&&v<0x1001000){v=v-0x1000000+(unsigned)(uintptr_t)arena;memcpy(arena+off,&v,4);}
+    }
     gBack_screen=(br_pixelmap*)(arena+0x80);
+    gScreen=gBack_screen;
     if(!setjmp(failure)){
         switch(h[0]){
         case 0:WaitFor(h[1]);break;
@@ -162,6 +186,8 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         case 2:DRPixelmapRectangleCopy(gBack_screen,(br_int_16)h[1],(br_int_16)h[2],(br_pixelmap*)(arena+0x180),(br_int_16)h[3],(br_int_16)h[4],(br_uint_16)h[5],(br_uint_16)h[6]);break;
         case 3:DrPixelmapRectangleCopyPossibleLock(gBack_screen,(br_int_16)h[1],(br_int_16)h[2],(br_pixelmap*)(arena+0x180),(br_int_16)h[3],(br_int_16)h[4],(br_int_16)h[5],(br_int_16)h[6]);break;
         case 4:result=(unsigned)DRActorEnumRecurseWithSnart((br_actor*)(arena+0x400),h[6]?(br_matrix34*)(arena+0x300):NULL,callback,arena+0xf00);break;
+        case 5:result=FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(gScreen,h[1],h[2],h[3],h[4]);break;
+        case 6:result=(unsigned)GetBlendificatiousnessOfMaterial((br_material*)(arena+0xb00));break;
         }
     }
     emit(9);emit(result);snapshot();return 0;
@@ -208,8 +234,9 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         def wr(p, value):
             u.mem_write(p, words([value]))
         wr(addresses["gBack_screen"], HEAP + 0x80)
+        wr(addresses["gScreen"], HEAP + 0x80)
         events = bytearray()
-        counts = [0, 0, 0]
+        counts = [0, 0, 0, 0]
         failed = [False]
         def emit(*values):
             events.extend(words(values))
@@ -237,6 +264,16 @@ int C2_HOOK_CDECL main(int argc,char**argv){
                 emit(5, len(s)); events.extend(s); failed[0] = True; u.emu_stop()
             elif ip == addresses["BrPixelmapRectangleCopy"]:
                 emit(4, *[rd(sp + 4 + 4 * i) for i in range(8)]); ret()
+            elif ip == addresses["BrTableFind"]:
+                i = counts[3]; counts[3] += 1
+                assert i < 3
+                p = rd(sp + 4); s = bytearray()
+                while u.mem_read(p, 1) != b"\0":
+                    s.extend(u.mem_read(p, 1)); p += 1
+                emit(10, i, len(s)); events.extend(s); events.extend(u.mem_read(HEAP, SIZE))
+                if h[4] == i + 1: wr(HEAP + 0xb4c, HEAP + h[5] if h[5] else 0)
+                if h[10]: u.mem_write(HEAP + 0xac, b"\x04")
+                ret(HEAP + h[1 + i] if h[1 + i] else 0)
             elif ip == addresses["BrMatrix34Mul"]:
                 emit(6); events.extend(u.mem_read(rd(sp + 8), 48)); events.extend(u.mem_read(rd(sp + 12), 48))
             elif ip == addresses["BrMatrix34Identity"]:
@@ -257,11 +294,13 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         ecx, edx, stackargs = h[1], 0, []
         if mode in (2, 3): ecx, edx, stackargs = HEAP + 0x80, h[1], [h[2], HEAP + 0x180, *h[3:7]]
         elif mode == 4: ecx, edx, stackargs = HEAP + 0x400, HEAP + 0x300 if h[6] else 0, [CALLBACK, HEAP + 0xf00]
+        elif mode == 5: ecx, edx, stackargs = HEAP + 0x80, h[1], h[2:5]
+        elif mode == 6: ecx = HEAP + 0xb00
         u.mem_write(STACK, words([STOP, *stackargs]))
         u.reg_write(UC_X86_REG_ESP, STACK); u.reg_write(UC_X86_REG_ECX, ecx); u.reg_write(UC_X86_REG_EDX, edx)
         u.emu_start(addresses[list(FUNCTIONS)[mode]], STOP, count=100000)
         assert failed[0] or u.reg_read(UC_X86_REG_EIP) == STOP
-        value = u.reg_read(UC_X86_REG_EAX) if mode in (1, 4) and not failed[0] else 0
+        value = u.reg_read(UC_X86_REG_EAX) if mode in (1, 4, 5, 6) and not failed[0] else 0
         if mode == 1: value &= 65535
         emit(9, value); events.extend(u.mem_read(HEAP, SIZE))
         return bytes(events)
@@ -286,6 +325,25 @@ int C2_HOOK_CDECL main(int argc,char**argv){
         for stop in (0, 1, 2, 3, 4, 5, 99):
             for mutate in (0, 1, 2, 4, 8, 15):
                 cases.append(dict(mode=4, parent=parent, stop=stop, mutate=mutate))
+    channels = [[0, 0, 0, 0], [255, 255, 255, 255], [0x12, 0x34, 0x56, 0x78],
+                [0xffffffff] * 4, [0x12345678, 0x87654321, 0xabcdef01, 0x80000180]]
+    for slot in range(4):
+        for value in (1, 7, 8, 15, 16, 127, 128, 255, 256, 0x80000000, 0xffffffff):
+            values = [0x12, 0x34, 0x56, 0x78]; values[slot] = value; channels.append(values)
+    channels += [[rng.getrandbits(32) for _ in range(4)] for _ in range(50)]
+    for kind in (0, 3, 4, 5, 6, 7, 8, 18, 23, 30, 31, 32, 255):
+        for values in channels: cases.append(dict(mode=5, kind=kind, channels=values))
+    for kind in (0, 4, 5, 255):
+        for value in (0, 1, 0xffff, 0x10000, 0x1000000, 0x7fffffff, 0xffffffff, 0xffff0000, 0xff800000, 0x80000000):
+            cases.append(dict(mode=6, kind=kind, opacity=value))
+        for token, boolean, opacity_token, null in ((0,1,0xbe,False),(0x85,0,0xbe,False),
+                (0x85,2,0xbe,False),(0x85,0xffffffff,0xbe,False),(0x85,1,0,False),(0x85,1,0xbe,True)):
+            cases.append(dict(mode=6, kind=kind, token=token, boolean=boolean, opacity_token=opacity_token, null=null))
+    for initial in (0, 0xd00, 0xd20, 0xd40, 0xd60):
+        for tables in ([0xd00,0xd20,0xd40], [0,0,0], [0xd20]*3):
+            for stage in (0, 1, 2, 3):
+                for new in (0, 0xd00, 0xd20, 0xd40):
+                    cases.append(dict(mode=6, kind=3, initial=initial, tables=tables, stage=stage, new=new, screen_mutation=True))
     results = []
     for index, case in enumerate(cases):
         arena = bytearray(b"\xa5" * SIZE)
@@ -301,13 +359,23 @@ int C2_HOOK_CDECL main(int argc,char**argv){
             wr(off, HEAP + target)
         struct.pack_into("<12f", arena, 0x300, 1, 0, .5, .25, 2, 0, 0, 0, 1, -2, 3, .5)
         wr(0xf00, 0x12340000)
+        wr(0xb4c, 0); wr(0xb58, 0)
         mode = h[0]
         if mode == 0:
             h[1:5] = [case["delay"], len(case["times"]), case["key_after"], 0x80000001]
             arena[0x200:0x200 + 4 * h[2]] = words(case["times"])
         elif mode == 1: h[1] = case["colour"]; arena[0xac] = case["kind"]
         elif mode in (2, 3): h[1:7] = case["dims"]
-        else: h[6:10] = [case["parent"], case["mutate"], case["stop"], 0x90000001]
+        elif mode == 4: h[6:10] = [case["parent"], case["mutate"], case["stop"], 0x90000001]
+        elif mode == 5: h[1:5] = case["channels"]; arena[0xac] = case["kind"]
+        elif mode == 6:
+            arena[0xac] = case["kind"]
+            initial = case.get("initial", 0); wr(0xb4c, HEAP + initial if initial else 0)
+            wr(0xb58, 0 if case.get("null") else HEAP + 0xc00)
+            for off, val in ((0xc00, case.get("token", 0x85)), (0xc04, case.get("boolean", 1)),
+                             (0xc08, case.get("opacity_token", 0xbe)), (0xc0c, case.get("opacity", 0x800000))): wr(off, val)
+            h[1:4] = case.get("tables", [0xd00,0xd20,0xd40])
+            h[4], h[5], h[10] = case.get("stage", 0), case.get("new", 0), int(case.get("screen_mutation", False))
         expected = execute(*images[0], h, arena)
         checks = []
         if len(images) > 1: checks.append(("matching PE", execute(*images[1], h, arena)))

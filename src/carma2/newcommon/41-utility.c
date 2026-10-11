@@ -1551,13 +1551,61 @@ void C2_HOOK_FASTCALL PrintScreen(void) {
     }
 }
 
-// FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
+// FUNCTION: CARMA2_HW 0x00518d60
+tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp) {
+    tU32 colour;
+
+    switch (pm->type) {
+    case BR_PMT_RGB_555:
+        colour = red & 0xf8;
+        break;
+    case BR_PMT_RGB_565:
+        return ((((red & 0xf8) << 5) | (grn & 0xfc)) << 3) | ((blu >> 3) & 0x1f);
+    case BR_PMT_RGBA_8888:
+        return (((((alp << 8) | red) << 8) | grn) << 8) | blu;
+    case BR_PMT_RGBA_4444:
+        /* The original masks AL only, retaining the upper alpha bits. */
+        return ((((alp & 0xfffffff0u) << 4) | (red & 0xfffffff0u)) << 4) | (blu >> 4) | (grn & 0xfffffff0u);
+    case BR_PMT_ARGB_1555:
+        colour = ((alp & 0xffffff80u) << 1) | (red & 0xf8);
+        break;
+    default:
+        return (((red << 8) | grn) << 8) | blu;
+    }
+    return (((colour << 5) | (grn & 0xf8)) << 2) | ((blu >> 3) & 0x1f);
+}
 
 // GetBlenficatiousnessOfMaterialTablishly
 
 // GetBlenficatiousnessOfMaterialPrimitively
 
-// GetBlenficatiousnessOfMaterial
+// FUNCTION: CARMA2_HW 0x00518e70
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material* pMaterial) {
+    br_token_value* prims;
+    br_pixelmap* table;
+
+    if (gScreen->type == BR_PMT_INDEX_8) {
+        table = BrTableFind("BLEND75.TAB");
+        if (pMaterial->index_blend == table) {
+            return 25;
+        }
+        table = BrTableFind("BLEND50.TAB");
+        if (pMaterial->index_blend == table) {
+            return 50;
+        }
+        table = BrTableFind("BLEND25.TAB");
+        if (pMaterial->index_blend == table) {
+            return 75;
+        }
+    } else {
+        prims = pMaterial->extra_prim;
+        if (prims != NULL && prims[0].t == BRT_BLEND_B && prims[0].v.b == 1 && prims[1].t == BRT_OPACITY_X) {
+            /* Integer division preserves truncation toward zero for negatives. */
+            return (100 * (prims[1].v.x >> 16)) / 256;
+        }
+    }
+    return 100;
+}
 
 // FUNCTION: CARMA2_HW 0x00518f20
 char* C2_HOOK_FASTCALL MungeCommas(int pValue) {

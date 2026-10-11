@@ -191,13 +191,13 @@ extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
 
 extern void C2_HOOK_FASTCALL PrintScreen(void);
 
-// FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
+extern tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp);
 
 // GetBlenficatiousnessOfMaterialTablishly
 
 // GetBlenficatiousnessOfMaterialPrimitively
 
-// GetBlenficatiousnessOfMaterial
+extern int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material* pMaterial);
 
 extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
