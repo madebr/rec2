@@ -300,8 +300,9 @@ br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int h
             vertex->p.v[0] = (br_scalar)(x0 + dx);
             vertex->p.v[1] = (br_scalar)(-(y0 + dy));
             vertex->p.v[2] = -1.02f;
-            vertex->map.v[0] = (br_scalar)dx / width;
-            vertex->map.v[1] = (br_scalar)dy / height;
+            /* Keep integer operands exact through the floating divide, as in the original x87 code. */
+            vertex->map.v[0] = (br_scalar)((double)dx / width);
+            vertex->map.v[1] = (br_scalar)((double)dy / height);
             vertex++;
         }
     }
@@ -344,4 +345,115 @@ void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen
         (gTintedPolys[pTintedIndex].material)->colour = BR_COLOUR_RGB(gTintedPolys[pTintedIndex].color_red, gTintedPolys[pTintedIndex].color_grn, gTintedPolys[pTintedIndex].color_blu);
         BrMaterialUpdate(gTintedPolys[pTintedIndex].material ,BR_MATU_LIGHTING);
     }
+}
+
+// FUNCTION: CARMA2_HW 0x004d7c80
+void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
+    if (!gTintedPolys[pTintedIndex].used) {
+        return;
+    }
+    if (gTintedPolys[pTintedIndex].material != NULL) {
+        BrMaterialFree(gTintedPolys[pTintedIndex].material);
+    }
+    if (gTintedPolys[pTintedIndex].model != NULL) {
+        BrModelFree(gTintedPolys[pTintedIndex].model);
+    }
+    if (gTintedPolys[pTintedIndex].actor != NULL) {
+        BrActorRemove(gTintedPolys[pTintedIndex].actor);
+        BrActorFree(gTintedPolys[pTintedIndex].actor);
+        gTintedPolys[pTintedIndex].actor = NULL;
+    }
+    gTintedPolys[pTintedIndex].class = 0;
+    gTintedPolys[pTintedIndex].material2 = NULL;
+    gTintedPolys[pTintedIndex].visible = 0;
+    gTintedPolys[pTintedIndex].used = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004d7d10
+void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gTintedPolys); i++) {
+        FreeTintedPolyActor(i);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d8220
+void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex) {
+    if (gTintedPolys[pTintedIndex].used) {
+        gTintedPolys[pTintedIndex].actor->render_style = BR_RSTYLE_FACES;
+        gTintedPolys[pTintedIndex].visible = 1;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d8250
+void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
+    if (gTintedPolys[pTintedIndex].used) {
+        (gTintedPolys[pTintedIndex].actor)->render_style = BR_RSTYLE_NONE;
+        gTintedPolys[pTintedIndex].color_red = 0;
+        gTintedPolys[pTintedIndex].color_grn = 0;
+        gTintedPolys[pTintedIndex].color_blu = 0;
+        gTintedPolys[pTintedIndex].visible = 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d8290
+void C2_HOOK_FASTCALL RenderTintedPolys(void) {
+    BrZbsSceneRender(gTintedPolyCamera, gTintedPolyCamera, gBack_screen, gDepth_buffer);
+}
+
+// FUNCTION: CARMA2_HW 0x004d8470
+br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex) {
+
+    if (gTintedPolys[pTintedIndex].field_0x28 != '#') {
+        return NULL;
+    }
+    return gTintedPolys[pTintedIndex].material2;
+}
+
+// FUNCTION: CARMA2_HW 0x004d8cf0
+int C2_HOOK_FASTCALL TintedPolyIsOn(int pIndex) {
+
+    return gTintedPolys[pIndex].visible;
+}
+
+// FUNCTION: CARMA2_HW 0x004d8bb0
+void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height) {
+    tTintedPoly* tinted;
+    int nb_x;
+    int nb_y;
+    int step_x;
+    int step_y;
+    int i;
+    int j;
+    br_vertex* vertex;
+
+    if (pTintedIndex == -1) {
+        return;
+    }
+    tinted = &gTintedPolys[pTintedIndex];
+    if (tinted->class == 3) {
+        nb_x = 4;
+        nb_y = 4;
+    } else {
+        nb_x = 1;
+        nb_y = 1;
+    }
+    if (tinted->model == NULL) {
+        return;
+    }
+    step_x = width / nb_x;
+    step_y = height / nb_y;
+    vertex = tinted->model->vertices;
+    for (i = 0; i <= nb_y; i++) {
+        int dy = i * step_y;
+        for (j = 0; j <= nb_x; j++) {
+            int dx = j * step_x;
+
+            BrVector3Set(&vertex->p, (br_scalar)(x0 + dx), (br_scalar)(-(y0 + dy)), -1.02f);
+            BrVector2Set(&vertex->map, (br_scalar)((double)dx / width), (br_scalar)((double)dy / height));
+            vertex++;
+        }
+    }
+    BrModelUpdate(tinted->model, BR_MODU_VERTICES);
 }

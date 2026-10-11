@@ -12,13 +12,29 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import struct
 import subprocess
 
+from inventory_reconstruction_backlog import mask_c
 import verify_tinted_startup_reconstruction as x86
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "src/carma2/newcommon/66-tintedpoly.c"
+
+
+def extract(source, name):
+    """Require exactly one definition; ignore calls, comments and string braces."""
+    clean = mask_c(source)
+    definitions = list(re.finditer(r"^[^\n;{}]*\bC2_HOOK_\w+\s+" + re.escape(name) + r"\([^;{}\n]*\)\s*\{", clean, re.M))
+    if len(definitions) != 1:
+        raise ValueError(f"Expected one production definition of {name}, found {len(definitions)}")
+    start, end = definitions[0].start(), definitions[0].end()
+    depth = 1
+    while depth:
+        depth += (clean[end] == "{") - (clean[end] == "}")
+        end += 1
+    return source[start:end]
 
 
 def main():
@@ -44,6 +60,7 @@ def main():
 #include "41-utility.h"
 #include "globvars.h"
 #include "platform.h"
+#include "rec2_macros.h"
 typedef char check_layout[sizeof(void*)==4&&sizeof(tTintedPoly)==0x6450&&sizeof(br_material)==0x9c&&sizeof(br_model)==0x5c&&sizeof(br_vertex)==40&&sizeof(br_face)==40&&sizeof(br_actor)==100&&sizeof(br_camera)==36?1:-1];
 br_pixelmap* gScreen;
 tPath_name gApplication_path="C:/DATA/";
@@ -98,7 +115,9 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* storage,const c
 }
 void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* message) {(void)message;abort();}
 '''
-    driver += '#include "' + SOURCE.as_posix() + '"\n'
+    source = SOURCE.read_text()
+    driver += source[source.index("// GLOBAL:"):source.index("// FUNCTION:")]
+    driver += "\n".join(extract(source, name) for name in ("InitTintedPolyStuff", "BuildTintedPolyMaterial", "GetRangeOfValuesFromPixelmap", "CreateTintedPoly", "BuildTintedPolyModel", "SetTintedPolyColour"))
     driver += r'''
 static unsigned norm(unsigned value) {
     unsigned base=(unsigned)(uintptr_t)arena;
@@ -188,7 +207,8 @@ int main(int argc,char**argv) {
             cases.append(dict(mode="create",args=(3,7,641,479,4,n,0,0),lowest=low,range=range_value,map_size=(32,64)))
     for size in ((0,64),(32,0),(0,0)):
         cases.append(dict(mode="create",args=(0,0,32,64,4,9,0,0),lowest=7,range=5,map_size=size))
-    for dims in ((0,0,640,480,1,1),(-7,13,641,479,4,4),(3,-5,-123,79,3,2),(0,0,0,480,1,1),(0,0,640,0,1,1),(0,0,0,0,1,1),(0,0,640,480,0,1),(0,0,640,480,1,-1)):
+    for dims in ((0,0,640,480,1,1),(-7,13,641,479,4,4),(3,-5,-123,79,3,2),(0,0,0,480,1,1),(0,0,640,0,1,1),(0,0,0,0,1,1),(0,0,640,480,0,1),(0,0,640,480,1,-1),
+                 (3,-5,16777217,16777219,4,4),(-7,13,16777219,33554433,3,2)):
         cases.append(dict(mode="model",args=dims,lowest=0,range=31,map_size=(32,64)))
     results = []
     for index, case in enumerate(cases):
