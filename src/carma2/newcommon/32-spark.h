@@ -4,6 +4,11 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gSmoke_on;
+extern tSmoke gSmoke[25];
+extern int gSmoke_flags;
+extern int gSmoke_next;
+extern int gDust_rotate;
 extern int gShade_list[16];
 extern int* gShade_table;
 extern int gNum_dust_tables;
@@ -106,15 +111,15 @@ extern void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
 
 // ReplaySmoke
 
-// GenerateContinuousSmoke
+extern void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 pTime);
 
 // RenderSmoke
 
-// CreatePuffOfSmoke
+extern void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
 
-// ResetSmoke
+extern void C2_HOOK_FASTCALL ResetSmoke(void);
 
-// AdjustSmoke
+extern void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength);
 
 // ActorError
 

@@ -3,12 +3,16 @@
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "52-errors.h"
 #include "63-loading3.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+
+#include <math.h>
 
 // GLOBAL: CARMA2_HW 0x00660110
 int gSmoke_on = 1;
@@ -40,6 +44,18 @@ static br_token_value gSmoke_material_tokens[3] = {
     { BRT_OPACITY_X, { BR_FIXED_INT(75) } },
     { BR_NULL_TOKEN, { 0 } },
 };
+
+// GLOBAL: CARMA2_HW 0x006a8ce0
+tSmoke gSmoke[25];
+
+// GLOBAL: CARMA2_HW 0x006aa590
+int gSmoke_flags;
+
+// GLOBAL: CARMA2_HW 0x006aa594
+int gSmoke_next;
+
+// GLOBAL: CARMA2_HW 0x006aa568
+int gDust_rotate;
 
 // DrawDot
 
@@ -276,15 +292,169 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
 
 // ReplaySmoke
 
-// GenerateContinuousSmoke
+/* Force the original float spills even with MSVC5's x87 value reuse. */
+static br_scalar C2_HOOK_CDECL SmokeScalarRound(double pValue) {
+    volatile union { br_scalar scalar; tU32 bits; } stored;
+    union { br_scalar scalar; tU32 bits; } result;
+
+    stored.scalar = (br_scalar)pValue;
+    result.bits = stored.bits;
+    return result.scalar;
+}
+
+// FUNCTION: CARMA2_HW 0x004fa5b0
+void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 pTime) {
+    br_vector3 pos;
+    br_vector3 v;
+    volatile br_vector3 vcs;
+    volatile br_vector3 tv;
+    volatile br_scalar decay_factor;
+    br_scalar alpha;
+    double beta;
+    double speed_squared;
+    int colour;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, dust_time, 0x1284);
+    if (pTime < (tU32)pCar->dust_time[pWheel]) {
+        pCar->dust_time[pWheel] -= pTime;
+        return;
+    }
+    pCar->dust_time[pWheel] += IRandomBetween(200, 400) - pTime;
+    if (pCar->dust_time[pWheel] < 0) {
+        pCar->dust_time[pWheel] = 0;
+    }
+    tv.v[0] = SmokeScalarRound((double)pCar->collision_info->omega.v[1] * pCar->wpos[pWheel].v[2] - (double)pCar->collision_info->omega.v[2] * pCar->wpos[pWheel].v[1]);
+    tv.v[1] = SmokeScalarRound((double)pCar->collision_info->omega.v[2] * pCar->wpos[pWheel].v[0] - (double)pCar->collision_info->omega.v[0] * pCar->wpos[pWheel].v[2]);
+    tv.v[2] = SmokeScalarRound((double)pCar->collision_info->omega.v[0] * pCar->wpos[pWheel].v[1] - (double)pCar->collision_info->omega.v[1] * pCar->wpos[pWheel].v[0]);
+    vcs.v[0] = SmokeScalarRound((double)pCar->collision_info->velocity_car_space.v[0] * WORLD_SCALE);
+    vcs.v[1] = SmokeScalarRound((double)pCar->collision_info->velocity_car_space.v[1] * WORLD_SCALE);
+    vcs.v[0] = SmokeScalarRound((double)vcs.v[0] + tv.v[0]);
+    vcs.v[1] = SmokeScalarRound((double)vcs.v[1] + tv.v[1]);
+    vcs.v[2] = SmokeScalarRound((double)pCar->collision_info->velocity_car_space.v[2] * WORLD_SCALE + tv.v[2]);
+    speed_squared = (double)vcs.v[0] * vcs.v[0] + (double)vcs.v[1] * vcs.v[1] + (double)vcs.v[2] * vcs.v[2];
+    if (!(speed_squared >= 25.f)) {
+        return;
+    }
+    decay_factor = SmokeScalarRound(sqrt(speed_squared) * (double).04f);
+    if (decay_factor > 1.f) {
+        decay_factor = 1.f;
+    }
+    tv.v[0] = SmokeScalarRound((double)pCar->wpos[pWheel].v[0] * .14492753148078918f);
+    tv.v[1] = SmokeScalarRound((double)pCar->wpos[pWheel].v[1] * .14492753148078918f - (double)pCar->oldd[pWheel] * .14492753623188406);
+    tv.v[2] = SmokeScalarRound((double)pCar->wpos[pWheel].v[2] * .14492753148078918f);
+    alpha = -1000.f;
+    if (!(vcs.v[2] >= 0.f)) {
+        alpha = SmokeScalarRound(((double)pCar->collision_info->bb2.max.v[2] - tv.v[2]) / vcs.v[2]);
+    } else if (vcs.v[2] > 0.f) {
+        alpha = SmokeScalarRound(((double)pCar->collision_info->bb2.min.v[2] - tv.v[2]) / vcs.v[2]);
+    }
+    beta = -1000.f;
+    if (!(vcs.v[0] >= 0.f)) {
+        beta = ((double)pCar->collision_info->bb2.max.v[0] - tv.v[0]) / vcs.v[0];
+    } else if (vcs.v[0] > 0.f) {
+        beta = ((double)pCar->collision_info->bb2.min.v[0] - tv.v[0]) / vcs.v[0];
+    }
+    if (alpha > beta) {
+        beta = alpha;
+    }
+    pos.v[0] = SmokeScalarRound(vcs.v[0] * beta);
+    pos.v[1] = SmokeScalarRound(vcs.v[1] * beta);
+    pos.v[2] = SmokeScalarRound(vcs.v[2] * beta);
+    BrVector3Accumulate(&tv, &pos);
+    BrMatrix34ApplyP(&pos, (const br_vector3*)&tv, &pCar->car_master_actor->t.t.mat);
+    BrMatrix34ApplyV(&v, (const br_vector3*)&vcs, &pCar->car_master_actor->t.t.mat);
+    colour = gDust_rotate + gCurrent_race.material_modifiers[pCar->material_index[pWheel]].smoke_type - 2;
+    while (colour >= gNum_dust_tables) {
+        colour -= gNum_dust_tables;
+    }
+    CreatePuffOfSmoke(&pos, &v, decay_factor, decay_factor + decay_factor, colour + 8);
+}
 
 // RenderSmoke
 
-// CreatePuffOfSmoke
+// FUNCTION: CARMA2_HW 0x004fb330
+void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType) {
+    double x;
+    double y;
+    double z;
+    br_scalar rounded_x;
+    br_scalar rounded_y;
+    volatile tSmoke* smoke;
+    tU32 strength_bits;
 
-// ResetSmoke
+    memcpy(&strength_bits, &pStrength, sizeof(strength_bits));
 
-// AdjustSmoke
+    C2_HOOK_BUG_ON(sizeof(tSmoke) != 44);
+    if (!gSmoke_on) {
+        return;
+    }
+    x = (double)pPos->v[0] - gProgram_state.current_car.pos.v[0];
+    y = (double)pPos->v[1] - gProgram_state.current_car.pos.v[1];
+    z = (double)pPos->v[2] - gProgram_state.current_car.pos.v[2];
+    rounded_x = SmokeScalarRound(x);
+    rounded_y = SmokeScalarRound(y);
+    if (x * rounded_x + y * rounded_y + z * z > 625.f) {
+        if (gCar_to_view == &gProgram_state.current_car) {
+            return;
+        }
+        x = (double)pPos->v[0] - gCar_to_view->pos.v[0];
+        y = (double)pPos->v[1] - gCar_to_view->pos.v[1];
+        z = (double)pPos->v[2] - gCar_to_view->pos.v[2];
+        rounded_x = SmokeScalarRound(x);
+        rounded_y = SmokeScalarRound(y);
+        if (x * rounded_x + y * rounded_y + z * z > 625.f) {
+            return;
+        }
+    }
+    smoke = &gSmoke[gSmoke_next];
+    smoke->v.v[0] = SmokeScalarRound((double)pV->v[0] * .14492753148078918f);
+    smoke->v.v[1] = SmokeScalarRound((double)pV->v[1] * .14492753148078918f);
+    smoke->v.v[2] = SmokeScalarRound((double)pV->v[2] * .14492753148078918f);
+    smoke->v.v[1] = SmokeScalarRound((double)smoke->v.v[1] + .14492753623188406);
+    memcpy((void*)&smoke->pos.v[0], &pPos->v[0], sizeof(br_scalar));
+    memcpy((void*)&smoke->pos.v[1], &pPos->v[1], sizeof(br_scalar));
+    memcpy((void*)&smoke->pos.v[2], &pPos->v[2], sizeof(br_scalar));
+    smoke->radius = .05f;
+    if ((pType & 0xf) == 7) {
+        smoke->radius = .1f;
+    } else {
+        smoke->pos.v[1] = SmokeScalarRound((double)smoke->pos.v[1] + .04f);
+    }
+    smoke->pos.v[1] = SmokeScalarRound((double)smoke->pos.v[1] + .04f);
+    if (pStrength > 1.f) {
+        strength_bits = 0x3f800000;
+    }
+    /* The original x87 load/store quiets signaling NaNs, retaining sign/payload. */
+    if ((strength_bits & 0x7fc00000) == 0x7f800000 && (strength_bits & 0x003fffff) != 0) {
+        strength_bits |= 0x00400000;
+    }
+    memcpy((void*)&smoke->strength, &strength_bits, sizeof(strength_bits));
+    gSmoke_flags |= 1u << gSmoke_next;
+    smoke->time_sync = gPHIL_mechanics_time_sync;
+    smoke->type = (tU8)pType;
+    memcpy((void*)&smoke->decay_factor, &pDecay_factor, sizeof(pDecay_factor));
+    smoke->pipe_me = 1;
+    gSmoke_next++;
+    if (gSmoke_next >= (int)REC2_ASIZE(gSmoke)) {
+        gSmoke_next = 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004fb510
+void C2_HOOK_FASTCALL ResetSmoke(void) {
+    gSmoke_flags = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004fb520
+void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength) {
+    gSmoke[pIndex].type = pType;
+    memcpy(&gSmoke[pIndex].radius, &pRadius, sizeof(pRadius));
+    memcpy(&gSmoke[pIndex].strength, &pStrength, sizeof(pStrength));
+    memcpy(&gSmoke[pIndex].pos.v[0], &pPos->v[0], sizeof(br_scalar));
+    memcpy(&gSmoke[pIndex].pos.v[1], &pPos->v[1], sizeof(br_scalar));
+    memcpy(&gSmoke[pIndex].pos.v[2], &pPos->v[2], sizeof(br_scalar));
+    gSmoke_flags |= 1u << pIndex;
+}
 
 // ActorError
 
@@ -473,4 +643,3 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
 // AdjustSplashReplay
 
 // InitReplaySplashes
-

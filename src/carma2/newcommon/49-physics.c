@@ -10,6 +10,9 @@
 #define PHYSICS_BUFFER_PART_SIZE 40000
 #define PHYSICS_BUFFER_OTHER_SIZE 50000
 
+// GLOBAL: CARMA2_HW 0x0074a5e4
+int gPHIL_mechanics_time_sync;
+
 // GLOBAL: CARMA2_HW 0x006940c0
 tPhysicsError_cbfn* gPhysics_error_cb;
 

@@ -4,6 +4,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gPHIL_mechanics_time_sync;
 extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
