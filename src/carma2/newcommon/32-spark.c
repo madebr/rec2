@@ -2,15 +2,18 @@
 
 #include "08-loading1.h"
 #include "18-graphics2.h"
+#include "23-piping.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
 #include "63-loading3.h"
 #include "globvars.h"
 #include "globvrkm.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+#include "c2_stdlib.h"
 
 #include <math.h>
 
@@ -56,6 +59,12 @@ int gSmoke_next;
 
 // GLOBAL: CARMA2_HW 0x006aa568
 int gDust_rotate;
+
+// GLOBAL: CARMA2_HW 0x006aa59c
+int gColumn_flags;
+
+// GLOBAL: CARMA2_HW 0x006a96a8
+tSmoke_column gSmoke_column[10];
 
 // DrawDot
 
@@ -265,7 +274,8 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
     for (i = gN_BR_smoke_structs - 1; i >= 0; i--) {
         smoke = gBR_smoke_pointers[i];
         BrVector3Copy(&gBlend_actor->t.t.translate.t, &smoke->pos);
-        gBlend_actor->t.t.mat.m[0][0] = smoke->r;
+        /* The original copies this radius with MOV before dividing it. */
+        memcpy(&gBlend_actor->t.t.mat.m[0][0], &smoke->r, sizeof(br_scalar));
         gBlend_actor->t.t.mat.m[1][1] = smoke->r / smoke->aspect;
         gBlend_actor->material = smoke->material;
         /* Preserve extended multiplication and __ftol's low 32 result bits. */
@@ -286,12 +296,6 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
     }
 }
 
-// RecordSmokeCircle
-
-// SmokeCircle3D
-
-// ReplaySmoke
-
 /* Force the original float spills even with MSVC5's x87 value reuse. */
 static br_scalar C2_HOOK_CDECL SmokeScalarRound(double pValue) {
     volatile union { br_scalar scalar; tU32 bits; } stored;
@@ -300,6 +304,89 @@ static br_scalar C2_HOOK_CDECL SmokeScalarRound(double pValue) {
     stored.scalar = (br_scalar)pValue;
     result.bits = stored.bits;
     return result.scalar;
+}
+
+/* Preserve raw copied scalar bits across the originally inlined helper calls. */
+static tU32 C2_HOOK_CDECL SmokeScalarBits(const br_scalar* pValue) {
+    tU32 bits;
+
+    memcpy(&bits, pValue, sizeof(bits));
+    return bits;
+}
+
+/* These smoke drawing helpers were inlined in the original hardware build. */
+static void C2_HOOK_CDECL RecordSmokeCircle(br_vector3* pCent, tU32 pRadius_bits, tU32 pStrength_bits, br_colour pShade, tU32 pAspect_bits) {
+    tBRender_smoke* smoke;
+
+    DRMatrix34TApplyP(&gBR_smoke_structs[gN_BR_smoke_structs].pos, pCent,
+        gRendering_mirror ? &gRearview_camera_to_world : &gCamera_to_world);
+    smoke = &gBR_smoke_structs[gN_BR_smoke_structs];
+    memcpy(&smoke->r, &pRadius_bits, sizeof(pRadius_bits));
+    memcpy(&smoke->strength, &pStrength_bits, sizeof(pStrength_bits));
+    smoke->col = pShade;
+    memcpy(&smoke->aspect, &pAspect_bits, sizeof(pAspect_bits));
+    gBR_smoke_pointers[gN_BR_smoke_structs] = smoke;
+    smoke->model = pShade == (br_colour)gShade_list[7] ? gBlend_model2 : gBlend_model;
+    gN_BR_smoke_structs++;
+}
+
+static void C2_HOOK_CDECL SmokeCircle3D(br_vector3* pCent, tU32 pRadius_bits, tU32 pStrength_bits, tU32 pAspect_bits, br_pixelmap* pScreen, br_pixelmap* pDepth, br_colour pShade, br_actor* pCamera) {
+    (void)pScreen;
+    (void)pDepth;
+    (void)pCamera;
+    if (gNo_2d_effects) {
+        RecordSmokeCircle(pCent, pRadius_bits, pStrength_bits, pShade, pAspect_bits);
+    }
+}
+
+static void C2_HOOK_CDECL DrawTheGlow(br_pixelmap* pScreen, br_pixelmap* pDepth, br_actor* pCamera) {
+    int i;
+    tU32 seed;
+    br_scalar strength;
+    br_scalar aspect;
+    br_colour shade;
+    br_vector3 pos;
+
+    if (gColumn_flags == 0) {
+        return;
+    }
+    seed = rand();
+    srand(GetTotalTime());
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if ((gColumn_flags & (1u << i)) != 0 && gSmoke_column[i].colour <= 1) {
+            strength = .5f;
+            if (gSmoke_column[i].lifetime < 4000) {
+                strength = SmokeScalarRound((double)gSmoke_column[i].lifetime * .5f * .00025f);
+            }
+            memcpy(&pos.v[0], &gSmoke_column[i].pos.v[0], sizeof(br_scalar));
+            pos.v[1] = SmokeScalarRound((double)gSmoke_column[i].pos.v[1] + .02);
+            memcpy(&pos.v[2], &gSmoke_column[i].pos.v[2], sizeof(br_scalar));
+            shade = gShade_list[7];
+            aspect = SRandomBetween(.5f, .99f);
+            SmokeCircle3D(&pos, 0x3d8f5c29, SmokeScalarBits(&strength), SmokeScalarBits(&aspect), pScreen, pDepth, shade, pCamera);
+        }
+    }
+    srand(seed);
+}
+
+static void C2_HOOK_CDECL ReplaySmoke(br_pixelmap* pScreen, br_pixelmap* pDepth, br_actor* pCamera) {
+    int i;
+    br_scalar aspect;
+    br_scalar radius;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke); i++) {
+        if ((gSmoke_flags & (1u << i)) != 0) {
+            aspect = SmokeScalarRound(1.0 - ((double)gSmoke[i].radius - .05f) * 4.f * -.5);
+            if ((gSmoke[i].type & 0x10) != 0) {
+                radius = SmokeScalarRound((double)gSmoke[i].radius / aspect);
+                SmokeCircle3D(&gSmoke[i].pos, SmokeScalarBits(&radius),
+                    SmokeScalarBits(&gSmoke[i].strength), 0x3f800000, pScreen, pDepth, gShade_list[gSmoke[i].type & 0xf], pCamera);
+            } else {
+                SmokeCircle3D(&gSmoke[i].pos, SmokeScalarBits(&gSmoke[i].radius), SmokeScalarBits(&gSmoke[i].strength),
+                    SmokeScalarBits(&aspect), pScreen, pDepth, gShade_list[gSmoke[i].type & 0xf], pCamera);
+            }
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004fa5b0
@@ -370,7 +457,131 @@ void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 
     CreatePuffOfSmoke(&pos, &v, decay_factor, decay_factor + decay_factor, colour + 8);
 }
 
-// RenderSmoke
+// FUNCTION: CARMA2_HW 0x004fa910
+void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime) {
+    int i;
+    int j;
+    int component;
+    tU32 seed;
+    tU32 not_lonely;
+    double time_scale;
+    double radius_sum;
+    union { double scalar; tU32 words[2]; } radius_squared;
+    double damping;
+    br_scalar aspect;
+    br_scalar radius;
+
+    (void)pCamera_to_world;
+    not_lonely = 0;
+    if (gNo_2d_effects) {
+        gBlend_actor->render_style = BR_RSTYLE_FACES;
+        if (gBlend_actor->parent != NULL) {
+            BrActorRemove(gBlend_actor);
+        }
+        BrActorAdd(pCamera, gBlend_actor);
+        gN_BR_smoke_structs = 0;
+    }
+    DrawTheGlow(pRender_screen, pDepth_buffer, pCamera);
+    if (gSmoke_flags == 0) {
+        if (gNo_2d_effects) {
+            if (gBlend_actor->parent != NULL) {
+                BrActorRemove(gBlend_actor);
+            }
+            BrActorAdd(gDont_render_actor, gBlend_actor);
+        }
+        return;
+    }
+    seed = rand();
+    if (!gAction_replay_mode) {
+        ARStartPipingSession(ePipe_chunk_smoke);
+        for (i = 0; i < (int)REC2_ASIZE(gSmoke); i++) {
+            if ((gSmoke_flags & (1u << i)) != 0) {
+                if (gSmoke[i].strength > 0.f) {
+                    time_scale = (double)(gSmoke[i].time_sync != 0 ? gSmoke[i].time_sync : pTime) * .001f;
+                    if (gSmoke[i].time_sync != 0) {
+                        gSmoke[i].time_sync = 0;
+                    }
+                    for (component = 0; component < 3; component++) {
+                        gSmoke[i].pos.v[component] = SmokeScalarRound((double)gSmoke[i].v.v[component] * time_scale + gSmoke[i].pos.v[component]);
+                    }
+                } else {
+                    gSmoke_flags &= ~(1u << i);
+                }
+            }
+        }
+        for (i = 0; i < (int)REC2_ASIZE(gSmoke); i++) {
+            if ((gSmoke_flags & (1u << i)) != 0) {
+                if ((gSmoke[i].type & 0xf) == 7) {
+                    not_lonely |= 1u << i;
+                } else if ((not_lonely & (1u << i)) == 0) {
+                    /* The original optimized the self-position subtraction to zero. */
+                    for (j = i + 1; j < (int)REC2_ASIZE(gSmoke); j++) {
+                        if ((gSmoke_flags & (1u << j)) != 0) {
+                            radius_sum = (double)gSmoke[i].radius + gSmoke[j].radius;
+                            radius_squared.scalar = radius_sum * radius_sum;
+                            /* MSVC5 otherwise folds !<= into ordered > for NaNs. */
+                            if (((radius_squared.words[1] & 0x7ff00000) == 0x7ff00000
+                                    && ((radius_squared.words[1] & 0x000fffff) != 0 || radius_squared.words[0] != 0))
+                                || radius_squared.scalar > 0.f) {
+                                not_lonely |= (1u << i) | (1u << j);
+                                break;
+                            }
+                        }
+                    }
+                }
+                if ((not_lonely & (1u << i)) == 0) {
+                    gSmoke[i].strength = SmokeScalarRound((double)gSmoke[i].strength * .5f);
+                }
+                aspect = SmokeScalarRound(1.0 - ((double)gSmoke[i].radius - .05f) * 4.f * -.5);
+                if ((gSmoke[i].type & 0x10) != 0) {
+                    radius = SmokeScalarRound((double)gSmoke[i].radius / aspect);
+                    SmokeCircle3D(&gSmoke[i].pos, SmokeScalarBits(&radius),
+                        SmokeScalarBits(&gSmoke[i].strength), 0x3f800000, pRender_screen, pDepth_buffer, gShade_list[gSmoke[i].type & 0xf], pCamera);
+                } else {
+                    SmokeCircle3D(&gSmoke[i].pos, SmokeScalarBits(&gSmoke[i].radius), SmokeScalarBits(&gSmoke[i].strength),
+                        SmokeScalarBits(&aspect), pRender_screen, pDepth_buffer, gShade_list[gSmoke[i].type & 0xf], pCamera);
+                }
+                if (gSmoke[i].pipe_me) {
+                    AddSmokeToPipingSession(i, gSmoke[i].type, &gSmoke[i].pos, gSmoke[i].radius, gSmoke[i].strength);
+                }
+                gSmoke[i].radius = SmokeScalarRound((double)pTime * .001f * gSmoke[i].strength * .5000000000000001 + gSmoke[i].radius);
+                gSmoke[i].strength = SmokeScalarRound((double)gSmoke[i].strength - (double)gSmoke[i].decay_factor * pTime * .001f);
+                if (gSmoke[i].radius > .3f) {
+                    gSmoke[i].radius = .3f;
+                }
+                if (gSmoke[i].strength > 0.f) {
+                    damping = 1.0 - (double)pTime * .002f;
+                    if (!(damping >= .5f)) {
+                        damping = .5f;
+                    }
+                    for (component = 0; component < 3; component++) {
+                        gSmoke[i].v.v[component] = SmokeScalarRound((double)gSmoke[i].v.v[component] * damping);
+                    }
+                    if (!(fabs(gSmoke[i].v.v[1]) >= .43478259444236755f) && (gSmoke[i].type & 0xf) < 7) {
+                        if (gSmoke[i].v.v[1] >= 0.f) {
+                            gSmoke[i].v.v[1] = .43478259444236755f;
+                        } else {
+                            gSmoke[i].v.v[1] = SmokeScalarRound((double)gSmoke[i].v.v[1] + .43478259444236755f);
+                        }
+                    }
+                } else {
+                    gSmoke_flags &= ~(1u << i);
+                }
+            }
+        }
+        AREndPipingSession();
+    } else {
+        ReplaySmoke(pRender_screen, pDepth_buffer, pCamera);
+    }
+    srand(seed);
+    if (gNo_2d_effects) {
+        RenderRecordedSmokeCircles();
+        if (gBlend_actor->parent != NULL) {
+            BrActorRemove(gBlend_actor);
+        }
+        BrActorAdd(gDont_render_actor, gBlend_actor);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004fb330
 void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType) {
