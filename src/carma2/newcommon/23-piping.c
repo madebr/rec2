@@ -39,6 +39,21 @@ tU8* gPipe_buffer_oldest;
 // GLOBAL: CARMA2_HW 0x006768bc
 tU8* gPipe_record_ptr;
 
+// GLOBAL: CARMA2_HW 0x006768b8
+tU8* gPipe_play_ptr;
+
+// GLOBAL: CARMA2_HW 0x006768c0
+int gPlay_direction;
+
+// GLOBAL: CARMA2_HW 0x006768fc
+int gReplay_pause_state;
+
+// GLOBAL: CARMA2_HW 0x00676900
+float gReplay_rate;
+
+// GLOBAL: CARMA2_HW 0x0067690c
+int gDisable_advance;
+
 // GLOBAL: CARMA2_HW 0x0069410c
 tU32 gUNK_0069410c;
 
@@ -63,24 +78,80 @@ static void C2_HOOK_CDECL ReplayCopyForward(void* pDest, const void* pSource, tU
     }
 }
 
-// ARReplayForwards
+// FUNCTION: CARMA2_HW 0x00402300
+int C2_HOOK_FASTCALL ARReplayForwards(void) {
+    tU32 rate_bits;
 
-// ARReplayIsReallyPaused
-
-// ARReplayPauseState
-
-// STUB: CARMA2_HW 0x00402390
-float C2_HOOK_FASTCALL ARGetReplayRate(void) {
-    NOT_IMPLEMENTED();
+    if (gPipe_play_ptr == gPipe_record_ptr) {
+        return 0;
+    }
+    if (gPipe_play_ptr == gPipe_buffer_oldest) {
+        return 1;
+    }
+    memcpy(&rate_bits, &gReplay_rate, sizeof(rate_bits));
+    /* The original tests x87 C3, which is set for zero and unordered. */
+    if (gReplay_rate == 0.0f || (rate_bits & 0x7fffffffu) > 0x7f800000u) {
+        return gPlay_direction > 0;
+    }
+    return gReplay_rate > 0.0f;
 }
 
-// ARSetReplayRate
+// FUNCTION: CARMA2_HW 0x00402360
+int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
+    tU32 rate_bits;
 
-// ARGetReplayDirection
+    memcpy(&rate_bits, &gReplay_rate, sizeof(rate_bits));
+    return gReplay_rate == 0.0f || (rate_bits & 0x7fffffffu) > 0x7f800000u;
+}
 
-// ARSetReplayDirection
+// FUNCTION: CARMA2_HW 0x00402380
+int C2_HOOK_FASTCALL ARReplayPauseState(void) {
+    return gReplay_pause_state;
+}
 
-// ARResetPiping
+// FUNCTION: CARMA2_HW 0x00402390
+float C2_HOOK_FASTCALL ARGetReplayRate(void) {
+    return gReplay_rate;
+}
+
+// FUNCTION: CARMA2_HW 0x004023a0
+void C2_HOOK_FASTCALL ARSetReplayRate(float pRate) {
+    tU32 bits;
+    volatile tU32 stored_bits;
+
+    /* MOV copies preserve signaling NaNs in the stored replay rate. */
+    memcpy(&bits, &pRate, sizeof(bits));
+    stored_bits = bits;
+    bits = stored_bits;
+    memcpy(&gReplay_rate, &bits, sizeof(bits));
+}
+
+// FUNCTION: CARMA2_HW 0x004023b0
+int C2_HOOK_FASTCALL ARGetReplayDirection(void) {
+    return gPlay_direction;
+}
+
+// FUNCTION: CARMA2_HW 0x004023c0
+void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection) {
+    tU32 bits;
+
+    memcpy(&bits, &pDirection, sizeof(bits));
+    /* _ftol stores a signed 64-bit integer and this caller keeps EAX. Its
+     * indefinite result for NaN, infinity or overflow has a zero low word. */
+    if ((bits & 0x7fffffffu) >= 0x5f000000u) {
+        gPlay_direction = 0;
+    } else {
+        gPlay_direction = (int)(tU32)(int64_t)pDirection;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004023e0
+void C2_HOOK_FASTCALL ARResetPiping(void) {
+    gPipe_record_ptr = gPipe_buffer_start;
+    gPipe_buffer_working_end = gPipe_buffer_phys_end;
+    gPipe_buffer_oldest = NULL;
+    gReentrancy_count = 0;
+}
 
 // ARInitialise
 
@@ -122,9 +193,16 @@ tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession) {
 
 // ARPipeSearchForwards
 
-// ARIsActionReplayAvailable
+// FUNCTION: CARMA2_HW 0x004025a0
+int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void) {
+    return gPipe_buffer_start != NULL;
+}
 
-// ARSomeReplayLeft
+// FUNCTION: CARMA2_HW 0x004025b0
+int C2_HOOK_FASTCALL ARSomeReplayLeft(void) {
+    return (gPlay_direction > 0 && gPipe_play_ptr != gPipe_record_ptr)
+        || (gPlay_direction < 0 && gPipe_play_ptr != gPipe_buffer_oldest);
+}
 
 // DisablePipedSounds
 
@@ -273,9 +351,15 @@ void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCo
 
 // ARResetPipePlayToEnd
 
-// ARGetPipePlayPtr
+// FUNCTION: CARMA2_HW 0x00402df0
+tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void) {
+    return gPipe_play_ptr;
+}
 
-// ARSetPipePlayPtr
+// FUNCTION: CARMA2_HW 0x00402e00
+void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
+    gPipe_play_ptr = pPtr;
+}
 
 // ApplyPipedSession
 
@@ -297,9 +381,15 @@ void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCo
 
 // ARGetStartTime
 
-// ARDisableAdvance
+// FUNCTION: CARMA2_HW 0x004030d0
+void C2_HOOK_FASTCALL ARDisableAdvance(void) {
+    gDisable_advance = 1;
+}
 
-// AREnableAdvance
+// FUNCTION: CARMA2_HW 0x004030e0
+void C2_HOOK_FASTCALL AREnableAdvance(void) {
+    gDisable_advance = 0;
+}
 
 // FindNextChunk
 
@@ -317,7 +407,9 @@ void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCo
 
 // ARGoForwards
 
-// ARService
+// FUNCTION: CARMA2_HW 0x00403d30
+void C2_HOOK_FASTCALL ARService(void) {
+}
 
 // ARMainLoopStart
 

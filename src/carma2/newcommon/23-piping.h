@@ -16,22 +16,27 @@ extern tU8* gPipe_buffer_phys_end;
 extern tU8* gPipe_buffer_working_end;
 extern tU8* gPipe_buffer_oldest;
 extern tU8* gPipe_record_ptr;
+extern tU8* gPipe_play_ptr;
+extern int gPlay_direction;
+extern int gReplay_pause_state;
+extern float gReplay_rate;
+extern int gDisable_advance;
 
-// ARReplayForwards
+extern int C2_HOOK_FASTCALL ARReplayForwards(void);
 
-// ARReplayIsReallyPaused
+extern int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void);
 
-// ARReplayPauseState
+extern int C2_HOOK_FASTCALL ARReplayPauseState(void);
 
 extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
-// ARSetReplayRate
+extern void C2_HOOK_FASTCALL ARSetReplayRate(float pRate);
 
-// ARGetReplayDirection
+extern int C2_HOOK_FASTCALL ARGetReplayDirection(void);
 
-// ARSetReplayDirection
+extern void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection);
 
-// ARResetPiping
+extern void C2_HOOK_FASTCALL ARResetPiping(void);
 
 // ARInitialise
 
@@ -47,9 +52,9 @@ extern tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession);
 
 // ARPipeSearchForwards
 
-// ARIsActionReplayAvailable
+extern int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
 
-// ARSomeReplayLeft
+extern int C2_HOOK_FASTCALL ARSomeReplayLeft(void);
 
 // DisablePipedSounds
 
@@ -73,9 +78,9 @@ extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, 
 
 // ARResetPipePlayToEnd
 
-// ARGetPipePlayPtr
+extern tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void);
 
-// ARSetPipePlayPtr
+extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // ApplyPipedSession
 
@@ -97,9 +102,9 @@ extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, 
 
 // ARGetStartTime
 
-// ARDisableAdvance
+extern void C2_HOOK_FASTCALL ARDisableAdvance(void);
 
-// AREnableAdvance
+extern void C2_HOOK_FASTCALL AREnableAdvance(void);
 
 // FindNextChunk
 
@@ -117,7 +122,7 @@ extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, 
 
 // ARGoForwards
 
-// ARService
+extern void C2_HOOK_FASTCALL ARService(void);
 
 // ARMainLoopStart
 
