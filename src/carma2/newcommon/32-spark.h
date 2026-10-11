@@ -9,6 +9,8 @@ extern int* gShade_table;
 extern int gNum_dust_tables;
 extern int gSpark_flags;
 extern br_pixelmap* gIt_shade_table;
+extern tBRender_smoke* gBR_smoke_pointers[35];
+extern int gN_BR_smoke_structs;
 
 // DrawDot
 
@@ -92,11 +94,11 @@ extern void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar);
 
 // DrMatrix34Rotate
 
-// CmpSmokeZ
+extern int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
 
 extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
-// RenderRecordedSmokeCircles
+extern void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
 
 // RecordSmokeCircle
 

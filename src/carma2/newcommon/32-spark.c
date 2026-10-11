@@ -3,6 +3,12 @@
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "52-errors.h"
+#include "63-loading3.h"
+#include "globvars.h"
+#include "rec2_macros.h"
+
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00660110
 int gSmoke_on = 1;
@@ -21,6 +27,19 @@ int gSpark_flags;
 
 // GLOBAL: CARMA2_HW 0x006aa5ac
 br_pixelmap* gIt_shade_table;
+
+// GLOBAL: CARMA2_HW 0x006a8760
+tBRender_smoke* gBR_smoke_pointers[35];
+
+// GLOBAL: CARMA2_HW 0x006aa56c
+int gN_BR_smoke_structs;
+
+// GLOBAL: CARMA2_HW 0x00660148
+static br_token_value gSmoke_material_tokens[3] = {
+    { BRT_BLEND_B, { 1 } },
+    { BRT_OPACITY_X, { BR_FIXED_INT(75) } },
+    { BR_NULL_TOKEN, { 0 } },
+};
 
 // DrawDot
 
@@ -119,14 +138,137 @@ void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
 
 // DrMatrix34Rotate
 
-// CmpSmokeZ
+// FUNCTION: CARMA2_HW 0x004fb2f0
+int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2) {
+    const tBRender_smoke* a;
+    const tBRender_smoke* b;
 
-// STUB: CARMA2_HW 0x004f9fc0
-void C2_HOOK_FASTCALL InitSmokeStuff(void) {
-    NOT_IMPLEMENTED();
+    a = *(tBRender_smoke* const*)p1;
+    b = *(tBRender_smoke* const*)p2;
+    /* The original x87 comparison also orders unordered values first. */
+    if (!(a->pos.v[2] >= b->pos.v[2])) {
+        return -1;
+    }
+    if (a->pos.v[2] > b->pos.v[2]) {
+        return 1;
+    }
+    return 0;
 }
 
-// RenderRecordedSmokeCircles
+// FUNCTION: CARMA2_HW 0x004f9fc0
+void C2_HOOK_FASTCALL InitSmokeStuff(void) {
+    int i;
+    char name[256];
+    br_pixelmap* map;
+
+    C2_HOOK_BUG_ON(sizeof(tBRender_smoke) != 36);
+    gBlend_model = BrModelAllocate("gBlend_model", 4, 2);
+    gBlend_model2 = BrModelAllocate("gBlend_model2", 6, 4);
+    gBlend_actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    for (i = 0; i < (int)REC2_ASIZE(gBR_smoke_structs); i++) {
+        gBR_smoke_structs[i].material = BrMaterialAllocate("some smoke");
+        if (gBR_smoke_structs[i].material == NULL) {
+            break;
+        }
+    }
+    if (gBlend_model == NULL || i != REC2_ASIZE(gBR_smoke_structs) || gBlend_actor == NULL) {
+        FatalError(kFatalError_OOM_S);
+    }
+    gBlend_actor->identifier = "gBlend_actor";
+    gBlend_actor->model = gBlend_model;
+    gBlend_model->faces[0].vertices[0] = 0;
+    gBlend_model->faces[0].vertices[1] = 1;
+    gBlend_model->faces[0].vertices[2] = 2;
+    gBlend_model->faces[1].vertices[0] = 2;
+    gBlend_model->faces[1].vertices[1] = 3;
+    gBlend_model->faces[1].vertices[2] = 0;
+    gBlend_model2->faces[0].vertices[0] = 0;
+    gBlend_model2->faces[0].vertices[1] = 1;
+    gBlend_model2->faces[0].vertices[2] = 2;
+    gBlend_model2->faces[1].vertices[0] = 2;
+    gBlend_model2->faces[1].vertices[1] = 3;
+    gBlend_model2->faces[1].vertices[2] = 0;
+    gBlend_model2->faces[2].vertices[0] = 1;
+    gBlend_model2->faces[2].vertices[1] = 5;
+    gBlend_model2->faces[2].vertices[2] = 2;
+    gBlend_model2->faces[3].vertices[0] = 1;
+    gBlend_model2->faces[3].vertices[1] = 4;
+    gBlend_model2->faces[3].vertices[2] = 5;
+    BrVector3Set(&gBlend_model->vertices[0].p, -1.f, 1.f, 0.f);
+    BrVector3Set(&gBlend_model->vertices[1].p, -1.f, -1.f, 0.f);
+    BrVector3Set(&gBlend_model->vertices[2].p, 1.f, -1.f, 0.f);
+    BrVector3Set(&gBlend_model->vertices[3].p, 1.f, 1.f, 0.f);
+    BrVector3Set(&gBlend_model2->vertices[0].p, -1.f, 1.f, 0.f);
+    BrVector3Set(&gBlend_model2->vertices[1].p, -1.f, 0.f, 0.f);
+    BrVector3Set(&gBlend_model2->vertices[2].p, 1.f, 0.f, 0.f);
+    BrVector3Set(&gBlend_model2->vertices[3].p, 1.f, 1.f, 0.f);
+    BrVector3Set(&gBlend_model2->vertices[4].p, -1.f, -.25f, 0.f);
+    BrVector3Set(&gBlend_model2->vertices[5].p, 1.f, -.25f, 0.f);
+    gBlend_model->flags |= BR_MODF_KEEP_ORIGINAL;
+    gBlend_model2->flags |= BR_MODF_KEEP_ORIGINAL;
+    strcpy(name, "SMOKE.PIX");
+    map = LoadPixelmap(name);
+    if (map == NULL) {
+        FatalError(kFatalError_CantLoadPixelmapFile_S, name);
+    }
+    map->map = gRender_palette;
+    BrMapAdd(map);
+    for (i = 0; i < (int)REC2_ASIZE(gBR_smoke_structs); i++) {
+        gBR_smoke_structs[i].material->flags = BR_MATF_LIGHT | BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_PERSPECTIVE;
+        gBR_smoke_structs[i].material->extra_prim = gSmoke_material_tokens;
+        gBR_smoke_structs[i].material->colour_map = map;
+        BrMaterialAdd(gBR_smoke_structs[i].material);
+    }
+    /* Round once after the original x87 division and subtraction. */
+    BrVector2Set(&gBlend_model->vertices[0].map, 0.f, (br_scalar)(1.0 - 1.0 / map->height));
+    BrVector2Set(&gBlend_model->vertices[1].map, 0.f, 0.f);
+    BrVector2Set(&gBlend_model->vertices[2].map, (br_scalar)(1.0 - 1.0 / map->width), 0.f);
+    BrVector2Set(&gBlend_model->vertices[3].map, (br_scalar)(1.0 - 1.0 / map->width), (br_scalar)(1.0 - 1.0 / map->height));
+    BrVector2Set(&gBlend_model2->vertices[0].map, 0.f, (br_scalar)(1.0 - 1.0 / map->height));
+    BrVector2Set(&gBlend_model2->vertices[1].map, 0.f, .5f);
+    BrVector2Set(&gBlend_model2->vertices[2].map, (br_scalar)(1.0 - 1.0 / map->width), .5f);
+    BrVector2Set(&gBlend_model2->vertices[3].map, (br_scalar)(1.0 - 1.0 / map->width), (br_scalar)(1.0 - 1.0 / map->height));
+    BrVector2Set(&gBlend_model2->vertices[4].map, 0.f, 0.f);
+    BrVector2Set(&gBlend_model2->vertices[5].map, (br_scalar)(1.0 - 1.0 / map->width), 0.f);
+    BrModelAdd(gBlend_model);
+    BrModelAdd(gBlend_model2);
+    BrActorAdd(gDont_render_actor, gBlend_actor);
+}
+
+// FUNCTION: CARMA2_HW 0x004fb1b0
+void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
+    int i;
+    int j;
+    tBRender_smoke* smoke;
+    br_model* model;
+    tU8 red;
+    tU8 green;
+    tU8 blue;
+
+    BrQsort(gBR_smoke_pointers, gN_BR_smoke_structs, sizeof(gBR_smoke_pointers[0]), CmpSmokeZ);
+    for (i = gN_BR_smoke_structs - 1; i >= 0; i--) {
+        smoke = gBR_smoke_pointers[i];
+        BrVector3Copy(&gBlend_actor->t.t.translate.t, &smoke->pos);
+        gBlend_actor->t.t.mat.m[0][0] = smoke->r;
+        gBlend_actor->t.t.mat.m[1][1] = smoke->r / smoke->aspect;
+        gBlend_actor->material = smoke->material;
+        /* Preserve extended multiplication and __ftol's low 32 result bits. */
+        smoke->material->extra_prim[1].v.x = (br_fixed_ls)(br_int_64)((double)smoke->strength * 150.0 * 65536.0);
+        BrMaterialUpdate(smoke->material, BR_MATU_EXTRA_PRIM);
+        red = BR_RED(smoke->col);
+        green = BR_GRN(smoke->col);
+        blue = BR_BLU(smoke->col);
+        model = gBR_smoke_pointers[i]->model;
+        for (j = 0; j < model->nvertices; j++) {
+            model->vertices[j].red = red;
+            model->vertices[j].grn = green;
+            model->vertices[j].blu = blue;
+        }
+        BrModelUpdate(model, BR_MODU_VERTEX_COLOURS);
+        gBlend_actor->model = model;
+        BrZbsSceneRenderAdd(gBlend_actor);
+    }
+}
 
 // RecordSmokeCircle
 
