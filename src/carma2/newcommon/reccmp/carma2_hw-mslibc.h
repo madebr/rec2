@@ -289,10 +289,10 @@
 // _fputs
 
 // LIBRARY: CARMA2_HW 0x005772c0
-// fgetpos
+// _fgetpos
 
 // LIBRARY: CARMA2_HW 0x005772a0
-// fsetpos
+// _fsetpos
 
 // LIBRARY: CARMA2_HW 0x00577930
 // _printf
