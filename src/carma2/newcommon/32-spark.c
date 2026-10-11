@@ -63,6 +63,9 @@ int gDust_rotate;
 // GLOBAL: CARMA2_HW 0x006aa59c
 int gColumn_flags;
 
+// GLOBAL: CARMA2_HW 0x006aa5a0
+int gColumn_next;
+
 // GLOBAL: CARMA2_HW 0x006a96a8
 tSmoke_column gSmoke_column[10];
 
@@ -669,9 +672,98 @@ void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_sc
 
 // ActorError
 
-// AdjustSmokeColumn
+// FUNCTION: CARMA2_HW 0x004fb580
+void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour) {
+    tSmoke_column* column;
+    tU32 bit;
 
-// CreateSmokeColumn2
+    bit = 1u << (pIndex & 31);
+    gColumn_flags ^= bit;
+    column = &gSmoke_column[pIndex];
+    /* Four separate MOVs preserve the original forward overlap ordering. */
+    column->core.field_0x0 = pCore->field_0x0;
+    column->core.car = pCore->car;
+    column->core.collision_info = pCore->collision_info;
+    column->core.car_actor = pCore->car_actor;
+    column->vertex_index = pVertex;
+    column->colour = pColour;
+    column->frame_count[0] = 100;
+    column->frame_count[1] = 100;
+    column->frame_count[2] = 100;
+    if (pColour == 0) {
+        if ((gColumn_flags & bit) != 0) {
+            BrActorAdd(gNon_track_actor, column->flame_actor);
+        } else if (column->flame_actor->depth != 0) {
+            BrActorRemove(column->flame_actor);
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004fb630
+void C2_HOOK_FASTCALL CreateSmokeColumn2(int pType, br_actor* pActor, tCar_spec* pCar, tPhysics_object* pObject, int pColour, int pVertex, tU32 pLifetime) {
+    tSmoke_column* old_column;
+    tSmoke_column* column;
+    tSmoke_column_core core;
+    br_actor* flame;
+    int i;
+
+    old_column = &gSmoke_column[gColumn_next];
+    if (pObject == NULL) {
+        pObject = pCar == NULL ? NULL : pCar->collision_info;
+    }
+    core.field_0x0 = pType;
+    core.car = pCar;
+    core.collision_info = pObject;
+    core.car_actor = pActor;
+    if (!gSmoke_on) {
+        return;
+    }
+    if ((gColumn_flags & (1u << (gColumn_next & 31))) != 0) {
+        ARStartPipingSession((tPipe_chunk_type)17);
+        column = &gSmoke_column[gColumn_next];
+        AddSmokeColumnToPipingSession(gColumn_next, &column->core, column->vertex_index, column->colour);
+        AREndPipingSession();
+        if (gSmoke_column[gColumn_next].colour == 0) {
+            ARStartPipingSession((tPipe_chunk_type)18);
+            flame = old_column->flame_actor->children;
+            for (i = 0; i < 3; i++) {
+                if (flame->type == 1) {
+                    AddFlameToPipingSession((gColumn_next << 4) + i, old_column->frame_count[i],
+                        old_column->scale_x[i], old_column->scale_y[i], old_column->offset_x[i], old_column->offset_z[i]);
+                }
+                flame->type = 0;
+                flame = flame->next;
+            }
+            AREndPipingSession();
+        }
+    }
+    if (pColour == 0) {
+        if ((gColumn_flags & (1u << (gColumn_next & 31))) == 0 || gSmoke_column[gColumn_next].colour != 0) {
+            BrActorAdd(gNon_track_actor, gSmoke_column[gColumn_next].flame_actor);
+        }
+    } else if ((gColumn_flags & (1u << (gColumn_next & 31))) != 0 && gSmoke_column[gColumn_next].colour == 0) {
+        BrActorRemove(gSmoke_column[gColumn_next].flame_actor);
+    }
+    ARStartPipingSession((tPipe_chunk_type)17);
+    AddSmokeColumnToPipingSession(gColumn_next, &core, pVertex, pColour);
+    AREndPipingSession();
+    column = &gSmoke_column[gColumn_next];
+    column->core = core;
+    column->colour = pColour;
+    column->lifetime = pLifetime;
+    column->time = 0;
+    column->smudge_timer = 1000;
+    column->vertex_index = pVertex;
+    column->upright = 1;
+    gColumn_flags |= 1u << (gColumn_next & 31);
+    column->frame_count[0] = 100;
+    column->frame_count[1] = 100;
+    column->frame_count[2] = 100;
+    gColumn_next++;
+    if (gColumn_next >= 10) {
+        gColumn_next = 0;
+    }
+}
 
 // CreateSmokeColumn
 
@@ -723,7 +815,33 @@ void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
     }
 }
 
-// AdjustFlame
+// FUNCTION: CARMA2_HW 0x004fba00
+void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z) {
+    tSmoke_column* column;
+    int flame;
+    int i;
+    tU32 bits[4];
+    br_scalar* dest[4];
+
+    column = &gSmoke_column[pIndex >> 4];
+    flame = pIndex & 15;
+    column->frame_count[flame] = pFrame;
+    memcpy(&bits[0], &pScale_x, 4);
+    memcpy(&bits[1], &pScale_y, 4);
+    memcpy(&bits[2], &pOffset_x, 4);
+    memcpy(&bits[3], &pOffset_z, 4);
+    dest[0] = &column->scale_x[flame];
+    dest[1] = &column->scale_y[flame];
+    dest[2] = &column->offset_x[flame];
+    dest[3] = &column->offset_z[flame];
+    for (i = 0; i < 4; i++) {
+        /* Original FLD/FSTP stores quiet sNaNs, preserving sign and payload. */
+        if ((bits[i] & 0x7fc00000u) == 0x7f800000u && (bits[i] & 0x003fffffu) != 0) {
+            bits[i] |= 0x00400000u;
+        }
+        memcpy(dest[i], &bits[i], 4);
+    }
+}
 
 // ReplayFlame
 
@@ -761,11 +879,38 @@ int C2_HOOK_FASTCALL GetSmokeOn(void) {
     return gSmoke_on;
 }
 
-// StopCarSmoking
+// FUNCTION: CARMA2_HW 0x004fca40
+void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar) {
+    int i;
 
-// StopCarSmokingInstantly
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.car == pCar && gSmoke_column[i].lifetime > 2000u) {
+            gSmoke_column[i].lifetime = 2000;
+        }
+    }
+}
 
-// StopObjectSmokingInstantly
+// FUNCTION: CARMA2_HW 0x004fca70
+void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.car == pCar) {
+            gSmoke_column[i].lifetime = 0;
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004fca90
+void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.collision_info == pObject) {
+            gSmoke_column[i].lifetime = 0;
+        }
+    }
+}
 
 // ConditionalSmokeColumn
 
@@ -843,7 +988,17 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
 
-// IsCarSmoking
+// FUNCTION: CARMA2_HW 0x004fed90
+int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if ((gColumn_flags & (1u << i)) != 0 && gSmoke_column[i].core.car == pCar) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // ClearSplashReplay
 

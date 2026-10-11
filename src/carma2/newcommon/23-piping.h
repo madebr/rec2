@@ -163,9 +163,11 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 extern void C2_HOOK_FASTCALL AddSmokeToPipingSession(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength);
 
-// AddSmokeColumnToPipingSession
+extern tU32 gUNK_0069410c;
 
-// AddFlameToPipingSession
+extern void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour);
+
+extern void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z);
 
 // AddSplashToPipingSession
 

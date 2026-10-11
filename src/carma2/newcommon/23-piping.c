@@ -39,6 +39,9 @@ tU8* gPipe_buffer_oldest;
 // GLOBAL: CARMA2_HW 0x006768bc
 tU8* gPipe_record_ptr;
 
+// GLOBAL: CARMA2_HW 0x0069410c
+tU32 gUNK_0069410c;
+
 /* The original inline memcpy copies forward in four-byte groups, then bytes. */
 static void C2_HOOK_CDECL ReplayCopyForward(void* pDest, const void* pSource, tU32 pSize) {
     tU8* dest;
@@ -391,9 +394,25 @@ void C2_HOOK_FASTCALL AddSmokeToPipingSession(int pIndex, tU8 pType, br_vector3*
         1, 9, (int)pType);
 }
 
-// AddSmokeColumnToPipingSession
+// FUNCTION: CARMA2_HW 0x004c70c0
+void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour) {
+    ARAddVariedDataToSession((tPipe_chunk_type)17, ((tU32)pColour << 14) + pIndex, 2,
+        16, 0, pCore, 2, 16, pVertex);
+}
 
-// AddFlameToPipingSession
+// FUNCTION: CARMA2_HW 0x004c70f0
+void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z) {
+    tU32 bits;
+
+    (void)pScale_y;
+    (void)pOffset_x;
+    (void)pOffset_z;
+    memcpy(&bits, &pScale_x, sizeof(bits));
+    gUNK_0069410c = bits;
+    /* The original MOV sequence reuses scale_x for all four scalar fields. */
+    ARAddVariedDataToSession((tPipe_chunk_type)18, pIndex, 5,
+        2, 0, pFrame, 4, 4, bits, 4, 8, bits, 4, 12, bits, 4, 16, bits);
+}
 
 // AddSplashToPipingSession
 
