@@ -1,5 +1,7 @@
 #include "36-trig.h"
 
+#include <string.h>
+
 // GLOBAL: CARMA2_HW 0x00661398
 float gFloat_sine_table[91] = {
     0.0f,
@@ -166,13 +168,93 @@ br_scalar C2_HOOK_FASTCALL FastScalarCosAngle(br_angle pBR_angle) {
     return FastScalarCos((int)((double)pBR_angle * (360.0 / 65536.0)));
 }
 
-// FastFloatArcTan2
+static int C2_HOOK_FASTCALL TrigArcTanIsNaN(float value) {
+    br_uint_32 bits;
 
-// FastScalarArcTan2
+    memcpy(&bits, &value, sizeof(bits));
+    return (bits & 0x7f800000u) == 0x7f800000u && (bits & 0x7fffffu) != 0;
+}
 
-// FastFloatArcTan2Angle
+static float C2_HOOK_FASTCALL TrigArcTanAbs(float value) {
+    br_uint_32 bits;
 
-// FastScalarArcTan2Angle
+    memcpy(&bits, &value, sizeof(bits));
+    bits &= 0x7fffffffu;
+    /* The original FABS/FST32 sequence also quiets signaling NaNs. */
+    if ((bits & 0x7f800000u) == 0x7f800000u && (bits & 0x7fffffu) != 0) {
+        bits |= 0x400000u;
+    }
+    memcpy(&value, &bits, sizeof(value));
+    return value;
+}
+
+static double C2_HOOK_FASTCALL TrigArcTanRatio(float y, float x, float abs_y, float abs_x) {
+    int x_less_y = abs_x < abs_y || TrigArcTanIsNaN(abs_x) || TrigArcTanIsNaN(abs_y);
+    int negative_y = y < 0.f || TrigArcTanIsNaN(y);
+
+    if (x < 0.f) {
+        if (negative_y) {
+            return x_less_y ? 6.0 - (double)abs_x / abs_y : (double)abs_y / abs_x - (-4.0);
+        }
+        return x_less_y ? (double)abs_x / abs_y - (-2.0) : 4.0 - (double)abs_y / abs_x;
+    }
+    if (negative_y) {
+        return x_less_y ? (double)abs_x / abs_y - (-6.0) : 8.0 - (double)abs_y / abs_x;
+    }
+    return x_less_y ? 2.0 - (double)abs_x / abs_y : (double)abs_y / abs_x;
+}
+
+/* Preserve the original out-of-line calls from the scalar wrappers in MSVC5. */
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+// FUNCTION: CARMA2_HW 0x00511ce0
+double C2_HOOK_STDCALL FastFloatArcTan2(float pY, float pX) {
+    float abs_x = TrigArcTanAbs(pX);
+    float abs_y = TrigArcTanAbs(pY);
+
+    if (pX == 0.f || TrigArcTanIsNaN(pX)) {
+        if (pY < 0.f || TrigArcTanIsNaN(pY)) {
+            return 270.0;
+        }
+        return pY > 0.f ? 90.0 : 0.0;
+    }
+    /* Callers use the unspilled x87 PC53 result before rounding to a scalar. */
+    return TrigArcTanRatio(pY, pX, abs_y, abs_x) * 45.0;
+}
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00511e50
+double C2_HOOK_STDCALL FastScalarArcTan2(br_scalar pY, br_scalar pX) {
+    return FastFloatArcTan2(pY, pX);
+}
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+// FUNCTION: CARMA2_HW 0x00511e70
+br_angle C2_HOOK_STDCALL FastFloatArcTan2Angle(float pY, float pX) {
+    float abs_x = TrigArcTanAbs(pX);
+    float abs_y = TrigArcTanAbs(pY);
+
+    if (pX == 0.f || TrigArcTanIsNaN(pX)) {
+        if (pY < 0.f || TrigArcTanIsNaN(pY)) {
+            return (br_angle)0xbff4;
+        }
+        return pY > 0.f ? (br_angle)0x3ffc : 0;
+    }
+    return (br_angle)(br_int_64)(TrigArcTanRatio(pY, pX, abs_y, abs_x) * 8192.0);
+}
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00512010
+br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX) {
+    return FastFloatArcTan2Angle(pY, pX);
+}
 
 // FUNCTION: CARMA2_HW 0x00512030
 void C2_HOOK_FASTCALL DRMatrix34RotateX(br_matrix34* mat, br_angle rx) {

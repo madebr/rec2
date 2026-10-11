@@ -20,13 +20,13 @@ extern br_scalar C2_HOOK_FASTCALL FastScalarSinAngle(br_angle pBR_angle);
 
 extern br_scalar C2_HOOK_FASTCALL FastScalarCosAngle(br_angle pBR_angle);
 
-// FastFloatArcTan2
+extern double C2_HOOK_STDCALL FastFloatArcTan2(float pY, float pX);
 
-// FastScalarArcTan2
+extern double C2_HOOK_STDCALL FastScalarArcTan2(br_scalar pY, br_scalar pX);
 
-// FastFloatArcTan2Angle
+extern br_angle C2_HOOK_STDCALL FastFloatArcTan2Angle(float pY, float pX);
 
-// FastScalarArcTan2Angle
+extern br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX);
 
 extern void C2_HOOK_FASTCALL DRMatrix34RotateX(br_matrix34* mat, br_angle rx);
 
