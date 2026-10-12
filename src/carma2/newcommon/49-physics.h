@@ -350,6 +350,12 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject);
 
 // RQIterativeImprovement
 
+extern int gPhysics_rq_mode_6940b8;
+
+int C2_HOOK_FASTCALL FUN_004c3b60(br_scalar* original, br_scalar* rhs, br_scalar* result, int size, int unused1, unsigned char* excluded, int* excluded_count, int unconstrained, int unused2, const void* const* cached_groups, int group_count);
+
+void C2_HOOK_FASTCALL FUN_004c61e0(const char* ignored);
+
 void C2_HOOK_FASTCALL RQExpand(br_scalar* matrix, const br_scalar* original, int old_size, int size, br_scalar* orthogonal, const unsigned char* indices);
 
 void C2_HOOK_FASTCALL RQSingleExpand(br_scalar* matrix, const br_scalar* original, int size, br_scalar* orthogonal, const unsigned char* indices);

@@ -14,6 +14,11 @@
 
 #include <stddef.h>
 
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+void* _AddressOfReturnAddress(void);
+#pragma intrinsic(_AddressOfReturnAddress)
+#endif
+
 #define PHYSICS_BUFFER_PART_SIZE 40000
 #define PHYSICS_BUFFER_OTHER_SIZE 50000
 
@@ -43,6 +48,9 @@ char gPhysics_empty_message;
 
 // GLOBAL: CARMA2_HW 0x006940c0
 tPhysicsError_cbfn* gPhysics_error_cb;
+
+// GLOBAL: CARMA2_HW 0x006940b8
+int gPhysics_rq_mode_6940b8;
 
 // GLOBAL: CARMA2_HW 0x00744818
 void* gPhysics_buffer1_ptr;
@@ -4267,6 +4275,300 @@ static br_scalar C2_HOOK_CDECL RQMultiplyScalars(const br_scalar* left, const vo
 #error RQMultiplyScalars requires x86
 #endif
     return result;
+}
+
+/* The original diagnostic entry is a single RET. */
+// FUNCTION: CARMA2_HW 0x004c61e0
+void C2_HOOK_FASTCALL FUN_004c61e0(const char* ignored) {
+    (void)ignored;
+}
+
+static int C2_HOOK_CDECL RQSolveSeen(const tU32 history[][2], int count, const tU32* mask) {
+    int i;
+    for (i = 0; i < count; i++) {
+        if (history[i][0] == mask[0] && history[i][1] == mask[1]) return 1;
+    }
+    return 0;
+}
+
+static void C2_HOOK_CDECL RQSolveToggle(tU32* result, const tU32* mask, int index) {
+    result[0] = mask[0];
+    result[1] = mask[1];
+    if (index >= 0) result[index >> 5] ^= (tU32)1 << (index & 31);
+}
+
+// FUNCTION: CARMA2_HW 0x004c3b60
+int C2_HOOK_FASTCALL FUN_004c3b60(br_scalar* original, br_scalar* rhs, br_scalar* result, int size, int unused1, unsigned char* excluded, int* excluded_count, int unconstrained, int unused2, const void* const* cached_groups, int group_count) {
+    unsigned char indices[100];
+    br_scalar forward[100], active_rhs[100], temporary[100], forces[100];
+    tU32 history[60][2], mask[2], test_mask[2];
+    br_scalar* matrix;
+    br_scalar* orthogonal;
+    br_scalar maximum, scaled, tail_limit;
+    double sum, value, residual, best;
+    int active, rebuilt, iteration, removed, negative;
+    int i, j, k, last, chosen, boundary, bit, repeated, refine;
+    unsigned char selected;
+
+    /* Original entry S reserves 0x8e4 and saves four registers.
+     * Its negative slot at final ESP+0x2c is S-0x8c8, while &result
+     * is S+4. Capture before C locals/dependency calls can reuse it.
+     * Its first nonsingular pass initializes the slot. Earlier singular
+     * passes can reach the iteration limit using the incoming stack value.
+     * In CDECL builds two register arguments become stack arguments; the
+     * original slot is therefore 0x8c0 below the incoming return address.
+     */
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+    void* entry_return_slot = _AddressOfReturnAddress();
+    __asm {
+        mov eax, entry_return_slot
+#if defined(REC2_MATCHING)
+        mov eax, dword ptr [eax - 08c8h]
+#else
+        mov eax, dword ptr [eax - 08c0h]
+#endif
+        mov negative, eax
+    }
+#elif defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        lea eax, result
+        mov eax, dword ptr [eax - 08cch]
+        mov negative, eax
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("movl -2252(%1), %0"
+        : "=r" (negative) : "r" (&result) : "memory");
+#else
+    /* Other architectures have no original x86 stack-history contract. */
+    negative = -1;
+#endif
+
+    (void)unused1;
+    (void)unused2;
+    removed = -1;
+    *excluded_count = 0;
+    if (size == 1) {
+        if (!PhysicsWallNaN(original[0]) && original[0] > 0.0001) {
+            result[0] = RQDivideScalars(&rhs[0], &original[0]);
+        } else {
+            result[0] = 0.0f;
+        }
+        return 0;
+    }
+    for (i = 0; i < size; i++) indices[i] = (unsigned char)i;
+    active = unconstrained + 1;
+    rebuilt = active;
+    *excluded_count = size - unconstrained - 1;
+    for (i = 0; i < *(volatile int*)excluded_count; i++) excluded[i] = (unsigned char)(i + unconstrained + 1);
+    RQFromCachedGroups(gPhysics_buffer1_ptr, gPhysics_buffer2_ptr, original,
+        active_rhs, rhs, indices, active, cached_groups, group_count);
+    mask[0] = 1;
+    mask[1] = 0;
+    iteration = 0;
+    /* Keep captured history until the first nonsingular pass. */
+    for (;;) {
+        if (iteration >= 50 && negative == -1) {
+            FUN_004c61e0("Matrix solve loop overflow");
+            return -1;
+        }
+        history[iteration][0] = mask[0];
+        history[iteration][1] = mask[1];
+        matrix = (br_scalar*)gPhysics_buffer1_ptr;
+        forward[0] = RQDivideScalars(&active_rhs[0], &matrix[0]);
+        for (i = 1; i < active; i++) {
+            sum = 0.0;
+            for (j = 0; j < i; j++) sum = RQAccumulate(sum, &forward[j], &matrix[i * 100 + j]);
+            forward[i] = RQScalar(PartnerSubtractWide((double)active_rhs[i], sum) / matrix[i * 101]);
+        }
+        last = active - 1;
+        matrix = (br_scalar*)gPhysics_buffer1_ptr;
+        tail_limit = RQScalar(fabs((double)matrix[last * 101] * 100000.0f));
+        for (j = 0; j < last; j++) {
+            value = fabs((double)matrix[last * 100 + j]);
+            if (!PhysicsWallNaN(value) && !PhysicsWallNaN(tail_limit) && value > tail_limit) break;
+        }
+        if (j != last) {
+            orthogonal = (br_scalar*)gPhysics_buffer2_ptr;
+            chosen = last;
+            maximum = 0.0f;
+            for (i = unconstrained; i < last; i++) {
+                value = fabs((double)orthogonal[last * 100 + i]);
+                if (!PhysicsWallNaN(value) && value > maximum) {
+                    maximum = RQScalar(value);
+                    chosen = i;
+                }
+            }
+            removed = unconstrained;
+            if (chosen != last) {
+                RQSolveToggle(test_mask, history[iteration], indices[chosen] - unconstrained);
+                if (RQSolveSeen(history, iteration, test_mask)) {
+                    best = 0.0;
+                    for (i = unconstrained; i < last; i++) {
+                        value = fabs((double)((br_scalar*)gPhysics_buffer2_ptr)[last * 100 + i]);
+                        if (!PhysicsWallNaN(value) && value > best) {
+                            RQSolveToggle(test_mask, history[iteration], indices[i] - unconstrained);
+                            if (!RQSolveSeen(history, iteration, test_mask)) {
+                                best = RQScalar(value);
+                                chosen = i;
+                            }
+                        }
+                    }
+                }
+                if (chosen != last) removed = chosen;
+            }
+            excluded[*excluded_count] = indices[removed];
+            bit = indices[removed] - unconstrained;
+            mask[bit >> 5] &= ~((tU32)1 << (bit & 31));
+            *excluded_count = *excluded_count + 1;
+            for (i = removed; i < last; i++) indices[i] = indices[i + 1];
+            active = last;
+            rebuilt = last;
+            RQFromCachedGroups(gPhysics_buffer1_ptr, gPhysics_buffer2_ptr, original,
+                active_rhs, rhs, indices, active, cached_groups, group_count);
+        } else {
+            orthogonal = (br_scalar*)gPhysics_buffer2_ptr;
+            for (i = 0; i < active; i++) {
+                forces[i] = 0.0f;
+                sum = forces[i];
+                for (j = 0; j < active; j++) sum = RQAccumulate(sum, &orthogonal[j * 100 + i], &forward[j]);
+                forces[i] = RQScalar(sum);
+            }
+            negative = -1;
+            if (removed >= 0) {
+                removed = -1;
+                selected = excluded[*excluded_count - 1];
+                if (PhysicsWallNaN(rhs[selected]) || rhs[selected] == 0.0f) rhs[selected] = -10000.0f;
+            }
+            best = -0.0001f;
+            for (i = unconstrained; i < active; i++) {
+                if (!PhysicsWallNaN(forces[i]) && forces[i] < best) {
+                    best = forces[i];
+                    negative = i;
+                }
+            }
+            if (negative >= 0) {
+                if (PhysicsWallNaN(forces[last]) || forces[last] < 0.0f) boundary = 0;
+                else {
+                    boundary = last;
+                    for (; boundary >= rebuilt; boundary--) {
+                        if (!PhysicsWallNaN(forces[boundary]) && forces[boundary] > 0.0f) {
+                            boundary--;
+                            break;
+                        }
+                    }
+                    boundary++;
+                }
+                if (negative >= boundary) {
+                    maximum = 0.0f;
+                    negative = unconstrained;
+                    for (i = unconstrained; i < active; i++) {
+                        matrix = (br_scalar*)gPhysics_buffer1_ptr;
+                        orthogonal = (br_scalar*)gPhysics_buffer2_ptr;
+                        for (j = last; j >= i; j--) {
+                            sum = 0.0;
+                            for (k = last; k > j; k--) sum = RQAccumulate(sum, &temporary[k], &matrix[k * 100 + j]);
+                            temporary[j] = RQScalar(PartnerSubtractWide((double)orthogonal[j * 100 + i], sum) / matrix[j * 101]);
+                        }
+                        memcpy(&forward[i], &temporary[i], 4);
+                    }
+                    for (i = unconstrained; i < active; i++) {
+                        value = (double)forces[i] / forward[i];
+                        if ((PhysicsWallNaN(value) || value < 0.0f) && !PhysicsWallNaN(forward[i]) && fabs((double)forward[i]) > maximum) {
+                            maximum = RQScalar(fabs((double)forward[i]));
+                            negative = i;
+                        }
+                    }
+                }
+                excluded[*excluded_count] = indices[negative];
+                bit = indices[negative] - unconstrained;
+                indices[negative] = 255;
+                mask[bit >> 5] &= ~((tU32)1 << (bit & 31));
+                *excluded_count = *excluded_count + 1;
+                rebuilt = 0;
+                for (i = 0; i < active; i++) {
+                    if (indices[i] != 255) {
+                        indices[rebuilt] = indices[i];
+                        memcpy(&active_rhs[rebuilt], &active_rhs[i], 4);
+                        rebuilt++;
+                    }
+                }
+                active = rebuilt;
+                RQFromCachedGroups(gPhysics_buffer1_ptr, gPhysics_buffer2_ptr, original,
+                    active_rhs, rhs, indices, active, cached_groups, group_count);
+            } else {
+                for (i = 0; i < size; i++) result[i] = 0.0f;
+                for (i = 0; i < active; i++) memcpy(&result[indices[i]], &forces[i], 4);
+                repeated = RQSolveSeen(history, iteration, history[iteration]);
+                chosen = -1;
+                maximum = 0.0f;
+                for (i = 0; i < *(volatile int*)excluded_count; i++) {
+                    sum = 0.0;
+                    selected = excluded[i];
+                    for (j = 0; j < size; j++) sum = RQAccumulate(sum, &original[selected * 100 + j], &result[j]);
+                    selected = excluded[i];
+                    residual = sum - rhs[selected];
+                    scaled = RQScalar(residual / original[selected * 101]);
+                    if ((PhysicsWallNaN(residual) || residual < -0.001) && (PhysicsWallNaN(scaled) || PhysicsWallNaN(maximum) || scaled < maximum)) {
+                        RQSolveToggle(test_mask, history[iteration], selected - unconstrained);
+                        if (repeated && RQSolveSeen(history, iteration, test_mask)) {
+                            if (chosen == -1) chosen = i;
+                        } else {
+                            maximum = scaled;
+                            chosen = i;
+                        }
+                    }
+                }
+                if (chosen < 0) {
+                    refine = 0;
+                    for (i = 0; i < size; i++) {
+                        temporary[i] = 0.0f;
+                        sum = temporary[i];
+                        for (j = 0; j < size; j++) sum = RQAccumulate(sum, &original[i * 100 + j], &result[j]);
+                        temporary[i] = RQScalar(sum);
+                        residual = (double)temporary[i] - rhs[i];
+                        if ((!PhysicsWallNaN(result[i]) && result[i] != 0.0f && !PhysicsWallNaN(residual) && fabs(residual) > 0.01) || PhysicsWallNaN(residual) || residual < -0.01) refine = 1;
+                    }
+                    if (refine) {
+                        for (i = 0; i < active; i++) {
+                            sum = -(double)active_rhs[i];
+                            for (j = 0; j < active; j++) sum = RQAccumulate(sum, &original[indices[i] * 100 + indices[j]], &forces[j]);
+                            temporary[i] = RQScalar(sum);
+                        }
+                        matrix = (br_scalar*)gPhysics_buffer1_ptr;
+                        forward[0] = RQDivideScalars(&temporary[0], &matrix[0]);
+                        for (i = 1; i < active; i++) {
+                            sum = 0.0;
+                            for (j = 0; j < i; j++) sum = RQAccumulate(sum, &forward[j], &matrix[i * 100 + j]);
+                            forward[i] = RQScalar(PartnerSubtractWide((double)temporary[i], sum) / matrix[i * 101]);
+                        }
+                        orthogonal = (br_scalar*)gPhysics_buffer2_ptr;
+                        for (i = 0; i < active; i++) {
+                            for (j = 0; j < active; j++) {
+                                forces[i] = RQScalar((double)orthogonal[j * 100 + i] * forward[j] + forces[i]);
+                            }
+                        }
+                    }
+                    /* Original refinement changes only private forces. */
+                    return 0;
+                }
+                selected = excluded[chosen];
+                for (i = chosen + 1; i < *(volatile int*)excluded_count; i++) excluded[i - 1] = excluded[i];
+                *excluded_count = *excluded_count - 1;
+                excluded[*excluded_count] = selected;
+                selected = excluded[*excluded_count];
+                indices[active] = selected;
+                bit = selected - unconstrained;
+                mask[bit >> 5] |= (tU32)1 << (bit & 31);
+                matrix = (br_scalar*)gPhysics_buffer1_ptr;
+                orthogonal = (br_scalar*)gPhysics_buffer2_ptr;
+                if (gPhysics_rq_mode_6940b8 == 0) RQSingleExpand(matrix, original, active, orthogonal, indices);
+                else RQExpand(matrix, original, active, active + 1, orthogonal, indices);
+                memcpy(&active_rhs[active], &rhs[indices[active]], 4);
+                active++;
+            }
+        }
+        iteration++;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004c4850
