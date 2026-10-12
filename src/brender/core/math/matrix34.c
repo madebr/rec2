@@ -1012,6 +1012,58 @@ void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, const br_vector3* B, const br
         fadd dword ptr [eax + 0x2c]
         fstp dword ptr [edx + 8]
     }
+#elif defined(__GNUC__) && defined(__i386__)
+    /* Scalar C can reverse x87 NaN operands even with explicit double casts.
+     * Match each original load, arithmetic operand and sequential output. */
+    __asm__ __volatile__(
+        ".intel_syntax noprefix\n\t"
+        "fld dword ptr [eax + 0xc]\n\t"
+        "fld dword ptr [eax + 0x18]\n\t"
+        "fld dword ptr [ecx + 4]\n\t"
+        "fld dword ptr [ecx + 8]\n\t"
+        "fld dword ptr [eax]\n\t"
+        "fxch st(2)\n\t"
+        "fmulp st(4), st(0)\n\t"
+        "fmulp st(2), st(0)\n\t"
+        "fmul dword ptr [ecx]\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fadd dword ptr [eax + 0x24]\n\t"
+        "fstp dword ptr [edx]\n\t"
+        "fld dword ptr [eax + 0x1c]\n\t"
+        "fld dword ptr [ecx + 8]\n\t"
+        "fld dword ptr [eax + 0x10]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fxch st(2)\n\t"
+        "fmulp st(3), st(0)\n\t"
+        "fmul dword ptr [ecx + 4]\n\t"
+        "fxch st(1)\n\t"
+        "fmul dword ptr [ecx]\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fadd dword ptr [eax + 0x28]\n\t"
+        "fstp dword ptr [edx + 4]\n\t"
+        "fld dword ptr [eax + 0x20]\n\t"
+        "fld dword ptr [ecx + 8]\n\t"
+        "fld dword ptr [eax + 0x14]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fxch st(2)\n\t"
+        "fmulp st(3), st(0)\n\t"
+        "fmul dword ptr [ecx + 4]\n\t"
+        "fxch st(1)\n\t"
+        "fmul dword ptr [ecx]\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fadd dword ptr [eax + 0x2c]\n\t"
+        "fstp dword ptr [edx + 8]\n\t"
+        ".att_syntax prefix\n\t"
+        :
+        : "a" (C), "c" (B), "d" (A)
+        : "memory", "st", "st(1)", "st(2)", "st(3)", "st(4)", "st(5)", "st(6)", "st(7)"
+    );
 #else
     volatile br_vector3* output = A;
     const volatile br_vector3* input = B;

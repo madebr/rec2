@@ -147,6 +147,35 @@ int main(int argc,char**argv){
  # qNaNs in the rotation matrix. Original x87 chooses the negative payload.
  case(0,'rotation-snan-and-opposite-qnan-signs',mat=[1,0,0,0,1,0,0,0,1,0,0,0],
       mat2=general,patch=[(128,0x7f800001),(264,0xffc00001),(280,0x7fc00001)])
+ # PositionChildren exposed a GCC-only ApplyP payload-sign difference even
+ # without the preceding matrix multiply. Retain the exact raw counterexample
+ # and rotate its output channels through full/partial overlapping records.
+ point_bits=[0xff800000,0,1]
+ matrix_bits=[0xff800000,0xff800001,0xff800000,0x7f800000,0,0x7f800001,
+              0x7f7fffff,0x80000001,0xff800000,1,0x7f800001,0x80000000]
+ for rotation in range(3):
+  rotated=[matrix_bits[3*r+(c+rotation)%3] for r in range(4) for c in range(3)]
+  for output in (0,128,124,132,256,252,260):
+   case(2,f'position-child-payload-{rotation}-alias-{output}',output=output,
+        patch=[(128+4*i,v) for i,v in enumerate(point_bits)]+[(256+4*i,v) for i,v in enumerate(rotated)])
+ # A pair of arithmetic NaNs can have equal payload magnitudes but opposite
+ # signs; operand form/order then matters even when finite algebra agrees.
+ operand_slots=[128+4*i for i in range(3)]+[256+4*i for i in range(12)]
+ pairs=[(0x7f800001,0xff800001),(0x7fc00011,0xffc00011),
+        (0x7fc00011,0xff812345),(0xff800011,0x7fc12345)]
+ for left in range(len(operand_slots)):
+  for right in range(left+1,len(operand_slots)):
+   for kind,(a,b) in enumerate(pairs):
+    case(2,f'applyp-paired-nan-{left}-{right}-{kind}',patch=[(operand_slots[left],a),(operand_slots[right],b)])
+ special=[0,0x80000000,1,0x80000001,0x7f7fffff,0xff7fffff,
+          0x7f800000,0xff800000,0x7f800001,0xff800001,0x7fc12345,0xffc12345]
+ for i in range(64):
+  case(2,f'applyp-raw-mix-{i}',output=(0,128,132,256)[i%4],
+       patch=[(offset,rng.choice(special)) for offset in operand_slots])
+ for i in range(64):
+  # Broad finite exponents retain overflow/underflow and cancellation results.
+  case(2,f'applyp-finite-exponents-{i}',
+       patch=[(offset,(rng.getrandbits(1)<<31)|(rng.randrange(1,255)<<23)|rng.getrandbits(23)) for offset in operand_slots])
  rebuilt=None;rebuilt_map=None;linked_leaves=[];emulation_gaps=[]
  if args.recompiled:
   from unicorn import Uc,UC_ARCH_X86,UC_MODE_32
@@ -205,7 +234,7 @@ int main(int argc,char**argv){
    results.append(row)
    if differing:
     failures.append(row);(OUT/f'case-{i:03d}.{compiler}.bin').write_bytes(actual)
- manifest=dict(original_sha256=HASH,source_sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),harness_sha256=hashlib.sha256(driver.encode()).hexdigest(),physical_probe_sha256=hashlib.sha256(probe.encode()).hexdigest(),functions=leaves,commands=commands,cases=len(cases),comparisons=len(results),failures=len(failures),results=results)
+ manifest=dict(original_sha256=HASH,source_sha256=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),verifier_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),harness_sha256=hashlib.sha256(driver.encode()).hexdigest(),physical_probe_sha256=hashlib.sha256(probe.encode()).hexdigest(),functions=leaves,commands=commands,cases=len(cases),comparisons=len(results),failures=len(failures),results=results,limitations=__doc__)
  if rebuilt:manifest.update(recompiled_sha256=hashlib.sha256(rebuilt).hexdigest(),symbols_sha256=hashlib.sha256(args.symbols.read_bytes()).hexdigest(),linked_leaves=linked_leaves,physical_linked_command=linked_command,physical_linked_probe_sha256=hashlib.sha256(linked_probe.encode()).hexdigest(),unicorn_diagnostics=emulation_gaps,matching_oracle='Actual linked leaf instructions executed physically at PC53; Unicorn differences retained independently, never normalized')
  (OUT/'verification.json').write_text(json.dumps(manifest,indent=2)+'\n')
  for name,_,_ in LEAVES:
