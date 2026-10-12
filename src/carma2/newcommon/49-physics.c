@@ -808,9 +808,95 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 
 // TrialPositionChildren
 
-// InternalPositionChildren
+/* The original stores all three differences before adding child translation. */
+static void C2_HOOK_CDECL PhysicsPositionChildrenAdjust(br_vector3* pParent_point, const br_vector3* pChild_point, br_vector3* pTranslation) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, pParent_point
+        mov ecx, pChild_point
+        mov edx, pTranslation
+        fld dword ptr [eax]
+        fsub dword ptr [ecx]
+        fstp dword ptr [eax]
+        fld dword ptr [eax + 4]
+        fsub dword ptr [ecx + 4]
+        fstp dword ptr [eax + 4]
+        fld dword ptr [eax + 8]
+        fsub dword ptr [ecx + 8]
+        fstp dword ptr [eax + 8]
+        fld dword ptr [eax]
+        fadd dword ptr [edx]
+        fstp dword ptr [edx]
+        fld dword ptr [eax + 4]
+        fadd dword ptr [edx + 4]
+        fstp dword ptr [edx + 4]
+        fld dword ptr [eax + 8]
+        fadd dword ptr [edx + 8]
+        fstp dword ptr [edx + 8]
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile(
+        ".intel_syntax noprefix\n\t"
+        "fld dword ptr [eax]\n\t"
+        "fsub dword ptr [ecx]\n\t"
+        "fstp dword ptr [eax]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fsub dword ptr [ecx + 4]\n\t"
+        "fstp dword ptr [eax + 4]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fsub dword ptr [ecx + 8]\n\t"
+        "fstp dword ptr [eax + 8]\n\t"
+        "fld dword ptr [eax]\n\t"
+        "fadd dword ptr [edx]\n\t"
+        "fstp dword ptr [edx]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fadd dword ptr [edx + 4]\n\t"
+        "fstp dword ptr [edx + 4]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fadd dword ptr [edx + 8]\n\t"
+        "fstp dword ptr [edx + 8]\n\t"
+        ".att_syntax prefix\n\t"
+        :
+        : "a"(pParent_point), "c"(pChild_point), "d"(pTranslation)
+        : "memory", "st");
+#else
+    int i;
 
-// PositionChildren
+    for (i = 0; i < 3; i++) {
+        pParent_point->v[i] = PhysicsScalar((double)pParent_point->v[i] - pChild_point->v[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        pTranslation->v[i] = PhysicsScalar((double)pParent_point->v[i] + pTranslation->v[i]);
+    }
+#endif
+}
+
+// FUNCTION: CARMA2_HW 0x004c2b20
+void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysics_object* pRoot) {
+    tPhysics_object* child;
+    br_vector3 parent_point;
+    br_vector3 child_point;
+
+    child = pParent->child;
+    if (!(pParent->flags & 0x400)) {
+        pRoot = pParent;
+    }
+    for (; child != NULL; child = child->next) {
+        if (!(pParent->flags & 0x400)) {
+            BrMatrix34ApplyP(&parent_point, &child->physics_joint1->field_0x14, &pParent->transform_matrix);
+            BrMatrix34ApplyP(&child_point, &child->physics_joint1->field_0x08, &child->transform_matrix);
+            PhysicsPositionChildrenAdjust(&parent_point, &child_point, (br_vector3*)child->transform_matrix.m[3]);
+        } else {
+            BrMatrix34Mul(&pParent->transform_matrix, &pParent->field_0x1e8, &pRoot->transform_matrix);
+        }
+        InternalPositionChildren(child, pRoot);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c2b10
+void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject) {
+    InternalPositionChildren(pObject, pObject);
+}
 
 // ApplyTorque
 

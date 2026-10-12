@@ -2,9 +2,11 @@
 
 #include "49-physics.h"
 #include "55-volume.h"
+#include "00-car.h"
 
 #include <string.h>
 #include <stddef.h>
+#include <stdarg.h>
 
 // GLOBAL: CARMA2_HW 0x006923e0
 tPHIL_registry_storage gPHIL_registry;
@@ -270,7 +272,75 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const
 
 // PHILAddActiveObjectImmediately
 
-// PHILSetObjectProperty
+// FUNCTION: CARMA2_HW 0x004b63b0
+int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) {
+    tPHIL_queued_header* info;
+    va_list args;
+    int value;
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    info = pObject->field_0x240;
+    if (info == NULL) {
+        return 3;
+    }
+    if (pProperty < 0 || pProperty >= 9) {
+        return 5;
+    }
+    va_start(args, pProperty);
+    switch (pProperty) {
+    case 0:
+        info->field_0x10 = (br_scalar)va_arg(args, double);
+        break;
+    case 1:
+        if (va_arg(args, int)) {
+            *(tU8*)&info->field_0x4 |= 1;
+            PositionChildren(pObject);
+        } else {
+            info->field_0x4 &= 1;
+        }
+        break;
+    case 2:
+        info->field_0xc = (br_scalar)va_arg(args, double);
+        break;
+    case 3:
+        value = va_arg(args, int) != 0;
+        pObject->flags = (pObject->flags & ~0x40) | (value << 6);
+        if (!(pObject->flags & 0x40)) {
+            pObject->box_face_ref = (tU16)((tU32)gFace_num__car - 2u);
+        }
+        break;
+    case 4:
+        value = va_arg(args, int) != 0;
+        pObject->flags = (pObject->flags & ~8) | (value << 3);
+        break;
+    case 5:
+        value = va_arg(args, int) != 0;
+        pObject->flags = (pObject->flags & ~0x10) | (value << 4);
+        break;
+    case 6:
+        if (va_arg(args, int)) {
+            *(tU8*)&info->field_0x4 |= 4;
+        } else {
+            info->field_0x4 &= 4;
+        }
+        break;
+    case 7:
+        if (va_arg(args, int)) {
+            *(tU8*)&info->field_0x4 |= 8;
+            pObject->water_d = 10000.f;
+        } else {
+            info->field_0x4 &= 8;
+        }
+        break;
+    case 8:
+        info->field_0x14 = (br_scalar)va_arg(args, double);
+        break;
+    }
+    va_end(args);
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004b6530
 double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pProperty) {

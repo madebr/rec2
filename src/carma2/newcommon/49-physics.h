@@ -303,9 +303,9 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject);
 
 // TrialPositionChildren
 
-// InternalPositionChildren
+void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysics_object* pRoot);
 
-// PositionChildren
+void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject);
 
 // ApplyTorque
 
