@@ -70,7 +70,7 @@ def native_harness(candidate_physics,candidate_geometry=None):
     code+=geo[start:end]+'\n'
     for n in ['FinterayScalar','FinterayFaceProjection','FinterayFacePoint','CheckSingleFace']:code+=extract(geo,n)+'\n'
     for n in ['PhysicsCopyWord','PhysicsSubtractScalar','PhysicsScalar','PhysicsScalarStore','PhysicsWallNaN','AddObjectWallForce','RayCastThruFaceList']:code+=extract(body,n)+'\n'
-    for n in ['BrMatrix34ApplyP','BrMatrix34TApplyV']:code+=extract(matrix,n)+'\n'
+    for n in ['Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34ApplyP','BrMatrix34TApplyV']:code+=extract(matrix,n)+'\n'
     if candidate_physics:
         end=candidate.index('} tPhysics_wall_workspace;')+len('} tPhysics_wall_workspace;');start=candidate.rfind('typedef struct {',0,end)
         code+=candidate[start:end]+'\n'

@@ -443,7 +443,6 @@ double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pPro
 
 // SetStandardGravity
 
-// LevelOutOnSurface
 
 // PHILMungeObjects
 
@@ -754,4 +753,149 @@ void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* header, tPhysics_object*
         DragForward(ProcessDrag2, header, child, &drag, flags, volume);
         child = (tPhysics_object*)FrictionPointer(child, 0x220);
     }
+}
+
+static void C2_HOOK_CDECL FrictionWrite(void* base, unsigned offset, double value) {
+    *(volatile br_scalar*)((tU8*)base + offset) = FrictionScalar(value);
+}
+
+static double C2_HOOK_CDECL FrictionAddScalar(double left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov edx, right
+        fld qword ptr left
+        fadd dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fadds %2; fstpl %0" : "=m"(result) : "m"(left), "m"(*right) : "st");
+#else
+    result = left + (double)*right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL FrictionSubtractScalar(double left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov edx, right
+        fld qword ptr left
+        fsub dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fsubs %2; fstpl %0" : "=m"(result) : "m"(left), "m"(*right) : "st");
+#else
+    result = left - (double)*right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL PartnerSubtractWide(double a, double b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ fld qword ptr a
+ fsub qword ptr b
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fsubl %2; fstpl %0" : "=m"(result) : "m"(a),"m"(b) : "st");
+#else
+ result=a-b;
+#endif
+ return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004b6fb0
+void C2_HOOK_FASTCALL LevelOutOnSurface(tPhysics_object* object) {
+    const br_scalar negative_one = -1.0f; /* original58a758 */
+    double first, second;
+    unsigned axis_row = 2;
+    br_matrix34* actor_matrix;
+    br_vector3 axis, correction, local_correction;
+    double axis_x, axis_y, axis_z;
+    double normal_x, normal_y, normal_z;
+    double dot, cross_x, cross_y, cross_z;
+    double product_x, product_y, product_z, error, denominator;
+    double correction_x, correction_y;
+    br_scalar rounded_dot, rounded_y, rounded_z, rounded_error;
+    br_scalar rounded_y_product, rounded_z_product, rounded_x_product;
+
+    /* Comparisons and their loads follow the original ordered > tests.
+     * Ties and unordered values choose the final Z axis. */
+    first = FrictionRead(object, 8);
+    second = FrictionRead(object, 12);
+    if (FrictionGreater(first, second)) {
+        first = FrictionRead(object, 8);
+        second = FrictionRead(object, 16);
+        if (FrictionGreater(first, second)) axis_row = 0;
+    }
+    if (axis_row != 0) {
+        first = FrictionRead(object, 12);
+        second = FrictionRead(object, 16);
+        if (FrictionGreater(first, second)) {
+            first = FrictionRead(object, 12);
+            second = FrictionRead(object, 8);
+            if (FrictionGreater(first, second)) axis_row = 1;
+        }
+    }
+    actor_matrix = (br_matrix34*)((tU8*)FrictionPointer(object, 0) + 0x2c);
+    axis_x = FrictionRead(actor_matrix, axis_row * 12);
+    axis_y = FrictionRead(actor_matrix, axis_row * 12 + 4);
+    axis_z = FrictionRead(actor_matrix, axis_row * 12 + 8);
+    axis.v[0] = FrictionScalar(PartnerMultiplyRawScalar(axis_x, &negative_one));
+    axis.v[1] = FrictionScalar(PartnerMultiplyRawScalar(axis_y, &negative_one));
+    axis.v[2] = FrictionScalar(PartnerMultiplyRawScalar(axis_z, &negative_one));
+
+    normal_z = FrictionRead(object, 0x24c);
+    normal_x = FrictionRead(object, 0x244);
+    normal_y = FrictionRead(object, 0x248);
+    product_z = PartnerMultiplyRawScalar(normal_z, &axis.v[2]);
+    product_x = PartnerMultiplyRawScalar(normal_x, &axis.v[0]);
+    product_y = PartnerMultiplyRawScalar(normal_y, &axis.v[1]);
+    dot = PhysicsJointSum(PhysicsJointSum(product_z, product_x), product_y);
+    rounded_dot = FrictionScalar(dot);
+    if (!FrictionGreater(dot, -0.99)) return; /* original58a760 */
+
+    /* Six original normal loads precede the cross products. */
+    normal_x = FrictionRead(object, 0x244);
+    normal_y = FrictionRead(object, 0x248);
+    first = FrictionRead(object, 0x248);
+    normal_z = FrictionRead(object, 0x24c);
+    second = FrictionRead(object, 0x24c);
+    axis_x = FrictionRead(object, 0x244);
+    cross_x = PartnerSubtractWide(PartnerMultiplyRawScalar(first, &axis.v[2]), PartnerMultiplyRawScalar(normal_z, &axis.v[1]));
+    product_x = PartnerMultiplyWide(cross_x, cross_x);
+    cross_y = PartnerSubtractWide(PartnerMultiplyRawScalar(second, &axis.v[0]), PartnerMultiplyRawScalar(axis_x, &axis.v[2]));
+    rounded_y = FrictionScalar(cross_y);
+    product_y = PartnerMultiplyRawScalar(cross_y, &rounded_y);
+    cross_z = PartnerSubtractWide(PartnerMultiplyRawScalar(normal_x, &axis.v[1]), PartnerMultiplyRawScalar(normal_y, &axis.v[0]));
+    rounded_z = FrictionScalar(cross_z);
+    error = FrictionSubtractScalar((double)rounded_dot, &negative_one);
+    rounded_error = FrictionScalar(error);
+    rounded_y_product = FrictionScalar(product_y);
+    product_z = PartnerMultiplyRawScalar(cross_z, &rounded_z);
+    rounded_z_product = FrictionScalar(product_z);
+
+    /* The original successively recomputes each denominator after changing
+     * the preceding component. These three unequal normalizations are real. */
+    denominator = sqrt(FrictionAddScalar(FrictionAddScalar(product_x, &rounded_z_product), &rounded_y_product));
+    correction_x = PartnerMultiplyWide(error / denominator, cross_x);
+    correction.v[0] = FrictionScalar(correction_x);
+    product_x = PartnerMultiplyRawScalar(correction_x, &correction.v[0]);
+    rounded_x_product = FrictionScalar(product_x);
+    denominator = sqrt(FrictionAddScalar((double)rounded_z_product + (double)rounded_y_product, &rounded_x_product));
+    correction_y = PartnerMultiplyScalarWide(&rounded_y, (double)rounded_error / denominator);
+    correction.v[1] = FrictionScalar(correction_y);
+    product_y = PartnerMultiplyRawScalar(correction_y, &correction.v[1]);
+    denominator = sqrt(FrictionAddScalar(FrictionAddScalar(product_y, &rounded_z_product), &rounded_x_product));
+    correction.v[2] = FrictionScalar(PartnerMultiplyRawScalar((double)rounded_error / denominator, &rounded_z));
+
+    BrMatrix34TApplyV(&local_correction, &correction, actor_matrix);
+    FrictionWrite(object, 0x74, FrictionAddScalar(FrictionRead(&local_correction, 0), FrictionAt(object, 0x74)));
+    FrictionWrite(object, 0x78, FrictionAddScalar(FrictionRead(&local_correction, 4), FrictionAt(object, 0x78)));
+    FrictionWrite(object, 0x7c, FrictionAddScalar(FrictionRead(&local_correction, 8), FrictionAt(object, 0x7c)));
 }

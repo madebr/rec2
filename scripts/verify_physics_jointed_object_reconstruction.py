@@ -83,7 +83,7 @@ body+=workspace_block(before[str(physics)].decode())+'\n'
 applications=['ApplicationScaleAdd','ApplicationWorldAdd','ApplicationDirect','ApplicationHinged','ApplicationJoint','ApplicationInlineTorque','ApplicationSecondary']
 rq=['RQScalar','RQNaN','RQAccumulate','RQSubtractProduct','RQDivideScalars','RQMultiplyScalars']
 body+='\n'.join(extract(before[str(physics)].decode(),name)for name in applications+rq)+'\n'
-body+=extract(before[str(matrix)].decode(),'BrMatrix34Translate')+'\n'
+body+='\n'.join(extract(before[str(matrix)].decode(),n) for n in ['Matrix34ApplyProductLoaded', 'Matrix34ApplyProductMemory', 'Matrix34ApplyAdd', 'BrMatrix34Translate'])+ '\n'
 body+=extract((ROOT/'src/brender/core/math/vector.c').read_text(),'BrVector3SetFloat')+'\n'
 
 def lower_capsule(text,name,helper):

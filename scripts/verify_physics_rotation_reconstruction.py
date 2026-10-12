@@ -67,7 +67,7 @@ COMMON=COMMON.replace('_controlfp(_PC_53,_MCW_PC);_clearfp();if(h[0]', 'gNet_mod
 caller,physical,template=registry.literals();old=' cmp builder_mode,8\n jne notwide\n fstp qword ptr builder_wide\n xor eax,eax\n notwide:\n cmp builder_mode,1\n je zeroreturn\n cmp builder_mode,10\n jne resultready\n zeroreturn:\n xor eax,eax\n resultready:';assert old in caller;caller=caller.replace(old,' xor eax,eax')
 old='image[hdr[12]]=0xe9;relative=(unsigned)RayBoundary-((unsigned)image+hdr[12]+5);memcpy(image+hdr[12]+1,&relative,4);';assert old in physical;physical=physical.replace(old,'').replace('relative,','').replace('hdr[14]','hdr[3]').replace('n=hdr[13]','n=hdr[2]').replace('i<12;i++)addresses','i<2;i++)addresses')
 body='\n'.join(extract(before[str(physics)].decode(),name)for name in ('PhysicsJointScalar','PhysicsWallNaN'))+'\n'
-body+=extract(before[str(matrix)].decode(),'BrMatrix34Translate')+'\n'
+body+='\n'.join(extract(before[str(matrix)].decode(),n) for n in ['Matrix34ApplyProductLoaded', 'Matrix34ApplyProductMemory', 'Matrix34ApplyAdd', 'BrMatrix34Translate'])+ '\n'
 
 def lower_capsule(text,name,helper):
  clean=mask_c(text);body=extract(text,name);start=text.index(body)

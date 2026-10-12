@@ -28,7 +28,7 @@ SPEC={
  'pipe':['ARGetReplayRate','ReplayCopyForward','ReplaySearchSessionLength','LengthOfSession','ARStartPipingSession','EndPipingSession2','AREndPipingSession','ARAddDataToSession','ARAddVariedDataToSession','AddSmokeColumnToPipingSession','AddFlameToPipingSession','FindNextChunk','AddShrapnelToPipingSession','CalcShrapnelLength'],
  'utility':['UtilityRandomNegative','UtilityRandomScalar','IRandomBetween','FRandomBetween','SRandomBetween','SRandomPosNeg','GetTotalTime'],
  'trig':['TrigArcTanIsNaN','TrigArcTanAbs','TrigArcTanRatio','FastFloatArcTan2Angle','FastScalarArcTan2Angle','FastFloatSin','FastFloatCos','FastScalarSin','FastScalarCos','FastScalarSinAngle','FastScalarCosAngle','DRMatrix34RotateY','DRMatrix34RotateZ','DRMatrix34PreRotateZ'],
- 'matrix':['BrMatrix34Copy','BrMatrix34RawShearX','BrMatrix34ShearX','BrMatrix34Mul','BrMatrix34Scale','BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV','BrMatrix34PreShearX'],
+ 'matrix':['BrMatrix34Copy','BrMatrix34RawShearX','BrMatrix34ShearX','BrMatrix34Mul','BrMatrix34Scale','BrMatrix34ApplyP','BrMatrix34ApplyV','Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34TApplyV','BrMatrix34PreShearX'],
  'quat':['BrQuatMul','BrQuatInvert','BrMatrix34ToQuat'],
  'vector':['BrVector3SetFloat'], 'crush':['IsOnNonCarHalf'],
  'ped':['GetCharacterActorPtr'], 'phil':['PHILGetFirstObject','PHILGetNextObject'],

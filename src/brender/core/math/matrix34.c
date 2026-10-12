@@ -1557,6 +1557,43 @@ void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, const br_vector3* B, const b
         faddp st(1), st(0)
         fstp dword ptr [edx + 8]
     }
+#elif defined(__GNUC__) && defined(__i386__)
+    /* Retained physical paired-NaN probes reject early promotion of the raw
+     * memory operand. Keep full original read order and sequential stores;
+     * scalar temporaries preserve every source float's exact representation. */
+    volatile br_vector3* output = A;
+    const volatile br_vector3* input = B;
+    const volatile br_matrix34* matrix = C;
+    br_scalar matrix_x, matrix_y, matrix_z, input_y, input_z;
+    double x, y, z;
+
+    matrix_z = matrix->m[0][2];
+    matrix_y = matrix->m[0][1];
+    input_z = input->v[2];
+    input_y = input->v[1];
+    matrix_x = matrix->m[0][0];
+    z = Matrix34ApplyProductLoaded(&matrix_z, &input_z);
+    y = Matrix34ApplyProductLoaded(&matrix_y, &input_y);
+    x = Matrix34ApplyProductMemory(&matrix_x, (const br_scalar*)&input->v[0]);
+    output->v[0] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(z, y), x);
+
+    matrix_y = matrix->m[1][1];
+    input_y = input->v[1];
+    matrix_z = matrix->m[1][2];
+    matrix_x = matrix->m[1][0];
+    y = Matrix34ApplyProductLoaded(&matrix_y, &input_y);
+    z = Matrix34ApplyProductMemory(&matrix_z, (const br_scalar*)&input->v[2]);
+    x = Matrix34ApplyProductMemory(&matrix_x, (const br_scalar*)&input->v[0]);
+    output->v[1] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(y, z), x);
+
+    matrix_y = matrix->m[2][1];
+    input_y = input->v[1];
+    matrix_z = matrix->m[2][2];
+    matrix_x = matrix->m[2][0];
+    y = Matrix34ApplyProductLoaded(&matrix_y, &input_y);
+    z = Matrix34ApplyProductMemory(&matrix_z, (const br_scalar*)&input->v[2]);
+    x = Matrix34ApplyProductMemory(&matrix_x, (const br_scalar*)&input->v[0]);
+    output->v[2] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(y, z), x);
 #else
     volatile br_vector3* output = A;
     const volatile br_vector3* input = B;

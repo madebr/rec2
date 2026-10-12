@@ -61,7 +61,7 @@ static unsigned char arena[512];
 #undef BR_MAC3
 #define BR_MAC3(a,b,c,d,e,f) ((a)*(b)+(c)*(d)+(e)*(f))
 '''
- driver+='\n'.join(extract(SOURCE.read_text(),n) for n,a,s in LEAVES)
+ driver+='\n'.join(extract(SOURCE.read_text(),n) for n in ['Matrix34ApplyProductLoaded', 'Matrix34ApplyProductMemory', 'Matrix34ApplyAdd']+[n for n,a,s in LEAVES])
  call=r'''
 static int run(FILE* file) {
  void *a,*b,*c;

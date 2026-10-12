@@ -116,7 +116,7 @@ def main():
   value=u.reg_read(UC_X86_REG_EAX) if h[0] in [1,2] else 0
   return dict(calls=calls,state=delta(),value=value)
  bodies=[]
- for path,names in [(MAT,['BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV']),(MAT4,['BrMatrix4Perspective','BrMatrix4Scale','BrMatrix4Mul','BrMatrix4ApplyP']),(VECTOR,['BrVector3SetFloat']),(UTIL,['UtilityRandomScalar','FRandomBetween']),(PIPE,['ReplayCopyForward','LengthOfSession','ARStartPipingSession','EndPipingSession2','AREndPipingSession','ARAddDataToSession','ARAddVariedDataToSession','AddSparkToPipingSession']),(SOURCE,['SmokeScalarRound','SmokeScalarBits','SparkFtol','SparkClipInteger','SparkClipDepth','DrawLine2D','DrawLine3D','SetLineModelCols','RenderSparks'])]:
+ for path,names in [(MAT,['BrMatrix34ApplyP','BrMatrix34ApplyV','Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34TApplyV']),(MAT4,['BrMatrix4Perspective','BrMatrix4Scale','BrMatrix4Mul','BrMatrix4ApplyP']),(VECTOR,['BrVector3SetFloat']),(UTIL,['UtilityRandomScalar','FRandomBetween']),(PIPE,['ReplayCopyForward','LengthOfSession','ARStartPipingSession','EndPipingSession2','AREndPipingSession','ARAddDataToSession','ARAddVariedDataToSession','AddSparkToPipingSession']),(SOURCE,['SmokeScalarRound','SmokeScalarBits','SparkFtol','SparkClipInteger','SparkClipDepth','DrawLine2D','DrawLine3D','SetLineModelCols','RenderSparks'])]:
   bodies.extend(extract(path.read_text(),n) for n in names)
  driver=r'''
 #include <stdio.h>

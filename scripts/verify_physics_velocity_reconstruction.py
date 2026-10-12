@@ -55,7 +55,7 @@ for name,address,n in spec:
     at=ins.address-0x400000+ins.disp_offset;struct.pack_into('<I',image,at,op.mem.disp-0x400000+0x50000000);patches.append(dict(site=ins.address+ins.disp_offset,original=op.mem.disp,mapped=op.mem.disp-0x400000+0x50000000))
 (OUT/'physical-image.bin').write_bytes(image)
 math_source=(ROOT/'src/brender/core/math/matrix34.c').read_text();vector_source=(ROOT/'src/brender/core/math/vector.c').read_text()
-math_bodies='\n'.join(extract(math_source,n) for n in ['BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV'])
+math_bodies='\n'.join(extract(math_source,n) for n in ['Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV'])
 prefix=r'''
 #include <windows.h>
 #include <stdio.h>
@@ -249,6 +249,6 @@ for index,c in enumerate(cases[:args.case_limit]):
 source_after={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in source_paths}
 assert leaf_text=='\n'.join(extract(leaves.read_text(),n) for n in leaf_names),'Verified lower49 bodies changed during proof'
 assert candidate_text==extract_candidate(source.read_text()),'Verified candidate bodies changed during proof'
-assert math_bodies=='\n'.join(extract((ROOT/'src/brender/core/math/matrix34.c').read_text(),n) for n in ['BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV']),'Verified math bodies changed during proof'
+assert math_bodies=='\n'.join(extract((ROOT/'src/brender/core/math/matrix34.c').read_text(),n) for n in ['Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV']),'Verified math bodies changed during proof'
 v=dict(matching=linked_meta,generated_files_sha256={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in OUT.iterdir() if p.suffix in ('.c','.obj','.exe')},fixture_sha256=hashlib.sha256(b''.join(struct.pack('<16I',*c['header'])+c['data'] for c in cases[args.case_start:args.case_limit])).hexdigest(),case_start=args.case_start,source_before=source_before,source_after=source_after,whole_sources_unchanged=source_before==source_after,verified_extractions_unchanged=True,source_sha256=hashlib.sha256(candidate_file_text.encode()).hexdigest(),candidate_sha256=hashlib.sha256(candidate_text.encode()).hexdigest(),leaf_source_sha256=hashlib.sha256(leaf_text.encode()).hexdigest(),original_sha256=original_hash,entries=entries,patches=patches,scenario_count=len(cases),executed_scenarios=len(results)//(4 if args.recompiled else 3),comparisons=len(results),results=results,failures=failures,compiler_commands=commands,scope='Complete structured C proof of3 missing velocity closure entries plus actual published MakeJointVelocitiesVector. Original full instructions and matrix dependencies execute physically atPC53; strict EAX0/1 result and65536byte arena. No masks/normalization; direct caller checks ESP, EBX/ESI/EDI/EBP and x87 TOP for every scene. Void EAX is excluded; consumer EAX is exact0/1.')
 (OUT/'verification.json').write_text(json.dumps(v,indent=2)+'\n');print('complete',index+1,len(results),'failures',len(failures))

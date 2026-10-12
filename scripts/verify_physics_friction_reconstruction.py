@@ -64,7 +64,7 @@ assert authentic_original.hex()=='8b018b48040fbe0183e82f780583f80b7c0233c08d1480
 authentic_callback=dict(address=0x4b5970,body_bytes=31,original_sha256=hashlib.sha256(authentic_original).hexdigest(),relocated_operand=0x4b598a,original_table=0x7632a8,fixture_table=0x52000000,contract='FASTCALL ECX cookie, RET0, FLD float32 surface value returns ST0. Native CDECL fixture bridge only adapts cookie; arithmetic/branches are original bytes.')
 (OUT/'physical-image.bin').write_bytes(image)
 math_source=(ROOT/'src/brender/core/math/matrix34.c').read_text();vector_source=(ROOT/'src/brender/core/math/vector.c').read_text()
-math_names=['BrMatrix34ApplyV','BrMatrix34TApplyV'];math_bodies='\n'.join(extract(math_source,n) for n in math_names)+'\n'+extract(vector_source,'BrVector3SetFloat')
+math_names=['Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34ApplyV','BrMatrix34TApplyV'];math_bodies='\n'.join(extract(math_source,n) for n in math_names)+'\n'+extract(vector_source,'BrVector3SetFloat')
 prefix=r'''
 #include <windows.h>
 #include <stdio.h>

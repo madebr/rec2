@@ -107,7 +107,7 @@ extern double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, i
 
 // SetStandardGravity
 
-// LevelOutOnSurface
+void C2_HOOK_FASTCALL LevelOutOnSurface(tPhysics_object* object);
 
 // PHILMungeObjects
 

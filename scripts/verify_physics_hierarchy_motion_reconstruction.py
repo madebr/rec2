@@ -75,7 +75,7 @@ caller,physical,template=registry.literals();old=' cmp builder_mode,8\n jne notw
 old='image[hdr[12]]=0xe9;relative=(unsigned)RayBoundary-((unsigned)image+hdr[12]+5);memcpy(image+hdr[12]+1,&relative,4);';assert old in physical;physical=physical.replace(old,'image[hdr[3]]=0xe9;relative=(unsigned)HierarchyExit-((unsigned)image+hdr[3]+5);memcpy(image+hdr[3]+1,&relative,4);').replace('hdr[14]','hdr[4]').replace('n=hdr[13]','n=hdr[2]').replace('i<12;i++)addresses','i<2;i++)addresses')
 caller=caller.replace('builder_poison;','builder_poison,builder_cdecl;').replace(' mov builder_result,eax\n mov ecx,esp',' mov builder_result,eax\n cmp builder_cdecl,0\n je hierarchy_stackready\n mov ecx,builder_stack_count\n lea esp,[esp+ecx*4]\n hierarchy_stackready:\n mov ecx,esp')
 body='\n'.join(extract(before[str(physics)].decode(),name)for name in ('PhysicsJointScalar','PhysicsWallNaN','PhysicsJointSum','PhysicsJointProductMemory','PartnerReverseSubtractScalar','PartnerMultiplyRawScalar','PhysicsJointAddScalar','PartnerDifferenceScalars','VelocityScalar','VelocitySubtractScalar','RotationArgument'))+'\n'
-body+=extract(before[str(matrix)].decode(),'BrMatrix34Translate')+'\n'
+body+='\n'.join(extract(before[str(matrix)].decode(),n) for n in ['Matrix34ApplyProductLoaded', 'Matrix34ApplyProductMemory', 'Matrix34ApplyAdd', 'BrMatrix34Translate'])+ '\n'
 
 def lower_capsule(text,name,helper):
  clean=mask_c(text);body=extract(text,name);start=text.index(body)

@@ -123,7 +123,7 @@ def native_harness(candidate_physics,candidate_geometry):
     code+=extract(geo,'FinterayScalar')+'\n'
     for n in ['FinterayBoundsAdd','GetNewBoundingBox']:code+=extract(chosen_geometry,n)+'\n'
     for n in ['PhysicsCopyWord','PhysicsScalar','PhysicsScalarNaN','PhysicsSubtractScalar','PhysicsScalarStore','AddObjectWallForce']:code+=extract(physics,n)+'\n'
-    for n in ['BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV']:code+=extract(matrix,n)+'\n'
+    for n in ['Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV']:code+=extract(matrix,n)+'\n'
     first=geo.index('/* VC5 crashes');last=geo.index('// FUNCTION:',first);code+=geo[first:last]+'\n'
     for n in ['FinterayBoxNaN','FinterayBoxCopyScalar','FinterayShapeLoadScalar','StationarySphereEdgeCollide','PointSphereCollision','SphereEdgeCollide']:code+=extract(geo,n)+'\n'
     for n in ['PhysicsWallNaN','PhysicsWallAddScalar','EliminateFaces','CheckSingleEdgeWithSphere','GetSphereToEdgePoints']:code+=extract(chosen_physics,n)+'\n'

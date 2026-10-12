@@ -46,7 +46,7 @@ candidate_text=a.candidate.read_text().replace('extern tU32 gPhysics_group_limit
 
 if a.candidate.resolve()==source.resolve():candidate_text='\n'.join(extract(src,n)for n in ['LimitScalarAt','LimitWord','LimitCopyWord','LimitActorMatrix','LimitRow','LimitRecord','LimitDot','LimitCross','FUN_004bd4f0','FUN_004bca10','FUN_004bd6d0'])
 
-body='#if defined(_MSC_VER) && _MSC_VER < 1300\n#pragma auto_inline(off)\n#endif\n'+'\n'.join(extract(src,n)for n in helpers)+'\n'+'\n'.join(extract(mat,n)for n in ['BrMatrix34ApplyV','BrMatrix34TApplyV'])+'\n'+extract(vec,'BrVector3SetFloat')+'\n#define exit LimitExit\n'+extract(src,'PhysicsError')+'\n#undef exit\n#if defined(_MSC_VER) && _MSC_VER < 1300\n#pragma auto_inline(on)\n#endif\n'+candidate_text
+body='#if defined(_MSC_VER) && _MSC_VER < 1300\n#pragma auto_inline(off)\n#endif\n'+'\n'.join(extract(src,n)for n in helpers)+'\n'+'\n'.join(extract(mat,n)for n in ['Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34ApplyV','BrMatrix34TApplyV'])+'\n'+extract(vec,'BrVector3SetFloat')+'\n#define exit LimitExit\n'+extract(src,'PhysicsError')+'\n#undef exit\n#if defined(_MSC_VER) && _MSC_VER < 1300\n#pragma auto_inline(on)\n#endif\n'+candidate_text
 
 spec=[('FUN_004bca10',0x4bca10,2770),('FUN_004bd4f0',0x4bd4f0,477),('FUN_004bd6d0',0x4bd6d0,74),('BrMatrix34ApplyV',0x533520,107),('BrMatrix34TApplyV',0x533690,107),('BrVector3SetFloat',0x534590,25),('PhysicsError',0x4c61c0,25)]
 

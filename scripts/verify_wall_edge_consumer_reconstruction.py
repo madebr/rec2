@@ -51,7 +51,7 @@ def native_harness(candidate_physics,candidate_geometry=None):
     assert candidate_geometry is None
     b=PHYSICS.read_text();g=GEOMETRY.read_text();m=MATRIX.read_text();chosen=candidate_physics.read_text()if candidate_physics else b;s=PREFIX
     for n in ['PhysicsCopyWord','PhysicsSubtractScalar','PhysicsScalar','PhysicsScalarStore','PhysicsWallNaN','AddObjectWallForce']:s+=extract(b,n)+'\n'
-    for n in ['BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV']:s+=extract(m,n)+'\n'
+    for n in ['Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34ApplyP','BrMatrix34ApplyV','BrMatrix34TApplyV']:s+=extract(m,n)+'\n'
     for n in ['FinterayScalar','FinterayBoxNaN','FinterayBoxCopyScalar','FinterayBoxStoreScalar','FinterayShapeLoadScalar','FinterayShapePlanes','FinterayShapePlaneCount','LineBoxColl','SphereBoxIntersection','LineBoxCollWithSphere','LineSphereColl','LineSphereCollWithSphere','LinePolyColl','LinePolyCollWithSphere','ShapeRayCast','ShapeRayCastWithSphere']:s+=extract(g,n)+'\n'
     s+=extract(VECTOR.read_text(),'BrVector3SetFloat')+'\n'+extract(b,'PhysicsError')+'\n'
     for n in ['FUN_00425630','FUN_00424990']:s+=extract(b,n)+'\n'

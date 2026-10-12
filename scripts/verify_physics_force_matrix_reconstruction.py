@@ -39,7 +39,7 @@ for name,address,n in spec:
     at=ins.address-0x400000+ins.disp_offset;struct.pack_into('<I',image,at,op.mem.disp-0x400000+0x50000000);patches.append(dict(site=ins.address+ins.disp_offset,original=op.mem.disp,mapped=op.mem.disp-0x400000+0x50000000))
 (OUT/'physical-image.bin').write_bytes(image)
 math_source=(ROOT/'src/brender/core/math/matrix34.c').read_text();vector_source=(ROOT/'src/brender/core/math/vector.c').read_text()
-math_bodies='\n'.join(extract(math_source,n) for n in ['BrMatrix34ApplyV','BrMatrix34TApplyV'])+'\n'+extract(vector_source,'BrVector3SetFloat')
+math_bodies='\n'.join(extract(math_source,n) for n in ['Matrix34ApplyProductLoaded','Matrix34ApplyProductMemory','Matrix34ApplyAdd','BrMatrix34ApplyV','BrMatrix34TApplyV'])+'\n'+extract(vector_source,'BrVector3SetFloat')
 prefix=r'''
 #include <windows.h>
 #include <stdio.h>

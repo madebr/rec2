@@ -125,6 +125,7 @@ def main():
     if operand.type==CS_OP_MEM and not operand.mem.base and not operand.mem.index:
      address=operand.mem.disp;assert address in (0x589fac,0x5964c4,0x79d858),(name,hex(address));patches.append((i,ins.address-a+ins.disp_offset,0,[0x589fac,0x5964c4,0x79d858].index(address)))
  native=SCAFFOLD
+ for name in ['Matrix34ApplyProductLoaded', 'Matrix34ApplyProductMemory', 'Matrix34ApplyAdd']:native+='\n'+extract(MATRIX.read_text(),name)
  for name,a,n in FUNCTIONS[4:]:native+='\n'+extract(MATRIX.read_text(),name).replace(name,'Native'+name)
  native+='\n'
  probe=SCAFFOLD+r'''
