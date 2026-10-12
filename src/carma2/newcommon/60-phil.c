@@ -1,4 +1,8 @@
 #include "60-phil.h"
+#include <math.h>
+#include <stdint.h>
+#include "globvars.h"
+#include "41-utility.h"
 
 #include "49-physics.h"
 #include "55-volume.h"
@@ -433,15 +437,11 @@ double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pPro
 
 // ChangedObjectsCallbacks
 
-// ProcessDrag2
-
 // ProcessDrag
 
 // MarkObjectAndChildrenAsPassive
 
 // SetStandardGravity
-
-// ProcessGravity
 
 // LevelOutOnSurface
 
@@ -455,3 +455,303 @@ double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pPro
 
 // PHILApplyPHILObject
 
+
+static tU32 C2_HOOK_CDECL GravityWord(const void* base, tU32 offset) {
+    return *(volatile const tU32*)((tU32)(uintptr_t)base + offset);
+}
+
+static double C2_HOOK_CDECL GravityRead(const void* base, tU32 offset) {
+    return *(volatile const br_scalar*)((tU32)(uintptr_t)base + offset);
+}
+
+static br_scalar C2_HOOK_CDECL GravityRound(double value) {
+    volatile br_scalar result = (br_scalar)value;
+    return result;
+}
+
+static int C2_HOOK_CDECL GravityNaN(double value) {
+    tU32 words[2];
+    memcpy(words, &value, sizeof(words));
+    return (words[1] & 0x7ff00000u) == 0x7ff00000u
+        && ((words[1] & 0xfffffu) != 0 || words[0] != 0);
+}
+
+static double C2_HOOK_CDECL GravityMultiplyScalar(double left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov ecx, right
+        fld qword ptr left
+        fmul dword ptr [ecx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fmuls %2; fstpl %0" : "=m"(result) : "m"(left), "m"(*right) : "st");
+#else
+    result = left * (double)*right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL PhysicsJointSum(double pA, double pB) {
+    double result;
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld pA
+        fld pB
+        faddp st(1), st(0)
+        fstp result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; fldl %2; faddp; fstpl %0"
+        : "=m" (result) : "m" (pA), "m" (pB) : "st", "st(1)");
+#else
+    result = pA + pB;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL GravitySubtractPopWide(double left, double right) {
+    if (GravityNaN(left) && GravityNaN(right)) {
+        return PhysicsJointSum(left, right);
+    }
+    return left - right;
+}
+
+static volatile const br_scalar* C2_HOOK_CDECL GravityScalarPointer(const void* base, tU32 offset) {
+    return (volatile const br_scalar*)((tU32)(uintptr_t)base + offset);
+}
+
+// FUNCTION: CARMA2_HW 0x004b6ec0
+void C2_HOOK_FASTCALL ProcessGravity(tPHIL_queued_header* header, tPhysics_object* object, br_scalar gravity) {
+    const tSpecial_volume* volume = NULL;
+    br_vector3 vector;
+    double value;
+    if ((*(volatile const tU8*)((tU32)(uintptr_t)header + 4) & 8) != 0) {
+        volume = (const tSpecial_volume*)(uintptr_t)GravityWord(object, 0x258);
+    }
+    if (volume != NULL) {
+        double magnitude = GravityRead(header, 0x14);
+        double viscosity;
+        if (!GravityNaN(magnitude) && magnitude != 0.0) {
+            viscosity = GravityRead(volume, 0x8c);
+            if (!GravityNaN(viscosity) && viscosity > 2.0) {
+                double buoyancy = 1.0 - GravityRead(volume, 0x88);
+                double standard = (double)gravity;
+                buoyancy = GravityMultiplyScalar(buoyancy, GravityScalarPointer(object, 0x254));
+                standard = GravityMultiplyScalar(standard, (volatile const br_scalar*)&gGravity_multiplier);
+                buoyancy = GravityMultiplyScalar(buoyancy, GravityScalarPointer(header, 0x14));
+                standard = standard * 1.4202898550724639;
+                value = GravitySubtractPopWide(buoyancy, standard) * 0.04;
+            } else {
+                value = GravityRead(volume, 0x88);
+                value = GravityMultiplyScalar(value, GravityScalarPointer(object, 0x254));
+                value = GravityMultiplyScalar(value, &gravity);
+                value = GravityMultiplyScalar(value, (volatile const br_scalar*)&gGravity_multiplier);
+                value = value * -0.05681159420289855;
+            }
+        } else {
+            value = GravityRead(volume, 0x88);
+            value = GravityMultiplyScalar(value, GravityScalarPointer(object, 0x254));
+            value = GravityMultiplyScalar(value, &gravity);
+            value = GravityMultiplyScalar(value, (volatile const br_scalar*)&gGravity_multiplier);
+            value = value * -0.05681159420289855;
+        }
+    } else {
+        value = GravityMultiplyScalar((double)gravity, (volatile const br_scalar*)&gGravity_multiplier);
+        value = value * -0.05681159420289855;
+    }
+    vector.v[0] = 0.0f;
+    vector.v[2] = 0.0f;
+    vector.v[1] = GravityRound(value);
+    FUN_004c29d0(object, &vector);
+    FUN_004c2910(object);
+}
+
+static tU8* ForceBytes(const void* pBase, unsigned pOffset) {
+    return (tU8*)(uintptr_t)pBase + pOffset;
+}
+
+static double C2_HOOK_CDECL FrictionRead(const void* base, unsigned offset) {
+    return *(volatile const br_scalar*)((const tU8*)base + offset);
+}
+
+static tU32 C2_HOOK_CDECL FrictionWord(const void* base, unsigned offset) {
+    return *(volatile const tU32*)((const tU8*)base + offset);
+}
+
+static void* C2_HOOK_CDECL FrictionPointer(const void* base, unsigned offset) {
+    return (void*)(uintptr_t)FrictionWord(base, offset);
+}
+
+static br_scalar C2_HOOK_CDECL FrictionScalar(double value) {
+    volatile union { br_scalar scalar; tU32 bits; } stored;
+    union { br_scalar scalar; tU32 bits; } result;
+    stored.scalar = (br_scalar)value;
+    result.bits = stored.bits;
+    return result.scalar;
+}
+
+static volatile const br_scalar* C2_HOOK_CDECL FrictionAt(const void* base, unsigned offset) {
+    return (volatile const br_scalar*)((const tU8*)base + offset);
+}
+
+static double C2_HOOK_CDECL FrictionProductScalars(volatile const br_scalar* left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, left
+        mov edx, right
+        fld dword ptr [eax]
+        fmul dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fmuls %2; fstpl %0" : "=m"(result) : "m"(*left), "m"(*right) : "st");
+#else
+    result = (double)*left * (double)*right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL PartnerMultiplyWide(double a, double b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ fld qword ptr a
+ fmul qword ptr b
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fmull %2; fstpl %0" : "=m"(result) : "m"(a),"m"(b) : "st");
+#else
+ result=(double)a * b;
+#endif
+ return result;
+}
+
+static double C2_HOOK_CDECL PartnerMultiplyRawScalar(double a,const br_scalar* b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ fld qword ptr a
+ mov ecx,b
+ fmul dword ptr [ecx]
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fmuls %2; fstpl %0" : "=m"(result) : "m"(a),"m"(*b) : "st");
+#else
+ result=(double)a * *b;
+#endif
+ return result;
+}
+
+static double C2_HOOK_CDECL PartnerMultiplyScalarWide(const br_scalar* a,double b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ mov eax,a
+ fld dword ptr [eax]
+ fmul qword ptr b
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("flds %1; fmull %2; fstpl %0" : "=m"(result) : "m"(*a),"m"(b) : "st");
+#else
+ result=(double)*a * b;
+#endif
+ return result;
+}
+
+static const br_scalar* PartnerScalarPtr(const void* base,unsigned offset) {
+ return (const br_scalar*)ForceBytes(base,offset);
+}
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+static unsigned C2_HOOK_CDECL FrictionStatus(double left, double right) {
+    unsigned short status;
+    __asm {
+        fld qword ptr left
+        fcomp qword ptr right
+        fnstsw ax
+        mov status, ax
+    }
+    return status;
+}
+#endif
+
+static int C2_HOOK_CDECL FrictionGreater(double left, double right) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    return (FrictionStatus(left, right) & 0x4100) == 0;
+#else
+    return left > right;
+#endif
+}
+
+typedef void (C2_HOOK_FASTCALL* tDragFunction)(tPHIL_queued_header*, tPhysics_object*, br_scalar, int, tSpecial_volume*);
+
+typedef void (C2_HOOK_FASTCALL* tDragWordsFunction)(tPHIL_queued_header*, tPhysics_object*, tU32, int, tSpecial_volume*);
+
+static void C2_HOOK_CDECL DragForward(tDragFunction target, tPHIL_queued_header* header, tPhysics_object* object, const br_scalar* drag, int flags, tSpecial_volume* volume) {
+    tDragWordsFunction words_target;
+    tU32 bits;
+    /* The original recursion MOV/PUSH forwards the unmodified stack DWORD.
+     * Same-width ABI view is intentional for the supported32-bit x86 builds. */
+    memcpy(&words_target, &target, sizeof(words_target));
+    memcpy(&bits, drag, sizeof(bits));
+    words_target(header, object, bits, flags, volume);
+}
+
+static double C2_HOOK_CDECL DragLength(const void* object, unsigned offset) {
+    double x = FrictionRead(object, offset);
+    double y = FrictionRead(object, offset + 4);
+    double z = FrictionRead(object, offset + 8);
+    br_scalar rounded_x = FrictionScalar(x);
+    br_scalar rounded_z = FrictionScalar(z);
+    double xx = PartnerMultiplyRawScalar(x, &rounded_x);
+    double yy = PartnerMultiplyWide(y, y);
+    double zz = PartnerMultiplyRawScalar(z, &rounded_z);
+    return sqrt(PhysicsJointSum(PhysicsJointSum(xx, yy), zz));
+}
+
+// FUNCTION: CARMA2_HW 0x004b6ce0
+void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* header, tPhysics_object* object, br_scalar drag, int flags, tSpecial_volume* volume) {
+    br_scalar effective_drag = FrictionScalar((double)drag * 2e-05); /* original58a728 */
+    double length, scale;
+    br_vector3 damping;
+    tPhysics_object* child;
+
+    if ((flags & 8) != 0 && volume != NULL) {
+        double queued_gravity = FrictionRead(header, 0x14);
+        double viscosity = FrictionRead(volume, 0x8c);
+        if (queued_gravity != 0.0 && queued_gravity == queued_gravity && FrictionGreater(viscosity, 2.0)) {
+            scale = FrictionProductScalars(FrictionAt(object, 0x254), FrictionAt(volume, 0x8c));
+            scale = PartnerMultiplyRawScalar(scale, &effective_drag);
+            effective_drag = FrictionScalar(scale * 0.5);
+        } else {
+            scale = FrictionProductScalars(FrictionAt(volume, 0x8c), FrictionAt(object, 0x254));
+            effective_drag = FrictionScalar(PartnerMultiplyRawScalar(scale, &effective_drag));
+        }
+    }
+    length = DragLength(object, 0x68);
+    scale = PartnerMultiplyRawScalar(length, &effective_drag);
+    scale = scale * 6.9 / FrictionRead(object, 4); /* original58a738 */
+    damping.v[0] = FrictionScalar(PartnerMultiplyScalarWide(PartnerScalarPtr(object, 0x68), scale));
+    damping.v[1] = FrictionScalar(PartnerMultiplyScalarWide(PartnerScalarPtr(object, 0x6c), scale));
+    damping.v[2] = FrictionScalar(PartnerMultiplyScalarWide(PartnerScalarPtr(object, 0x70), scale));
+    DRVector3Diminish((br_vector3*)((tU8*)object + 0x68), &damping);
+
+    length = DragLength(object, 0x74);
+    scale = PartnerMultiplyRawScalar(length, &effective_drag);
+    damping.v[0] = FrictionScalar(PartnerMultiplyScalarWide(PartnerScalarPtr(object, 0x74), scale));
+    damping.v[1] = FrictionScalar(PartnerMultiplyScalarWide(PartnerScalarPtr(object, 0x78), scale));
+    damping.v[2] = FrictionScalar(PartnerMultiplyScalarWide(PartnerScalarPtr(object, 0x7c), scale));
+    FUN_004c2c90(object, &damping);
+    child = (tPhysics_object*)FrictionPointer(object, 0x224);
+    while (child != NULL) {
+        DragForward(ProcessDrag2, header, child, &drag, flags, volume);
+        child = (tPhysics_object*)FrictionPointer(child, 0x220);
+    }
+}

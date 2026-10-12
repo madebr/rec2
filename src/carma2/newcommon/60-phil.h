@@ -101,15 +101,11 @@ extern double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, i
 
 // ChangedObjectsCallbacks
 
-// ProcessDrag2
-
 // ProcessDrag
 
 // MarkObjectAndChildrenAsPassive
 
 // SetStandardGravity
-
-// ProcessGravity
 
 // LevelOutOnSurface
 
@@ -122,5 +118,8 @@ extern double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, i
 // PHILDoPhysics
 
 // PHILApplyPHILObject
+
+void C2_HOOK_FASTCALL ProcessGravity(tPHIL_queued_header* header, tPhysics_object* object, br_scalar gravity);
+void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* header, tPhysics_object* object, br_scalar drag, int flags, tSpecial_volume* volume);
 
 #endif // GUARD_60_PHIL_H

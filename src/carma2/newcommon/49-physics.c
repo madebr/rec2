@@ -7896,3 +7896,172 @@ void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* object) {
     *(volatile br_scalar*)((tU8*)object + 0x140) = (br_scalar)PhysicsJointScalar(squared);
     *(volatile br_scalar*)((tU8*)object + 0x13c) = (br_scalar)PhysicsJointScalar(radius);
 }
+
+static tU32 C2_HOOK_CDECL GravityWord(const void* base, tU32 offset) {
+    return *(volatile const tU32*)((tU32)(uintptr_t)base + offset);
+}
+
+static void C2_HOOK_CDECL GravityStoreWord(void* base, tU32 offset, tU32 value) {
+    *(volatile tU32*)((tU32)(uintptr_t)base + offset) = value;
+}
+
+static tPhysics_object* C2_HOOK_CDECL GravityPointer(const void* base, tU32 offset) {
+    return (tPhysics_object*)(uintptr_t)GravityWord(base, offset);
+}
+
+static double C2_HOOK_CDECL GravityRead(const void* base, tU32 offset) {
+    return *(volatile const br_scalar*)((tU32)(uintptr_t)base + offset);
+}
+
+static br_scalar C2_HOOK_CDECL GravityRound(double value) {
+    volatile br_scalar result = (br_scalar)value;
+    return result;
+}
+
+static double C2_HOOK_CDECL GravityAddScalar(double left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov edx, right
+        fld qword ptr left
+        fadd dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fadds %2; fstpl %0" : "=m"(result) : "m"(left), "m"(*right) : "st");
+#else
+    result = left + (double)*right;
+#endif
+    return result;
+}
+
+static volatile const br_scalar* C2_HOOK_CDECL GravityScalarPointer(const void* base, tU32 offset) {
+    return (volatile const br_scalar*)((tU32)(uintptr_t)base + offset);
+}
+
+// FUNCTION: CARMA2_HW 0x004c29d0
+void C2_HOOK_FASTCALL FUN_004c29d0(tPhysics_object* object, const br_vector3* vector) {
+    tPhysics_object* child;
+    GravityStoreWord(object, 0x54, GravityWord(vector, 0));
+    GravityStoreWord(object, 0x58, GravityWord(vector, 4));
+    child = GravityPointer(object, 0x224);
+    GravityStoreWord(object, 0x5c, GravityWord(vector, 8));
+    while (child != NULL) {
+        FUN_004c29d0(child, vector);
+        child = GravityPointer(child, 0x220);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c2910
+void C2_HOOK_FASTCALL FUN_004c2910(tPhysics_object* object) {
+    tPhysics_object* child;
+    if (*(volatile const tU8*)((tU32)(uintptr_t)object + 0xec) == 0) {
+        double x = GravityRead(object, 0x54);
+        double y = GravityRead(object, 0x58);
+        double z = GravityRead(object, 0x5c);
+        x = GravityAddScalar(x, GravityScalarPointer(object, 0x68));
+        y = GravityAddScalar(y, GravityScalarPointer(object, 0x6c));
+        z = GravityAddScalar(z, GravityScalarPointer(object, 0x70));
+        *(volatile br_scalar*)((tU32)(uintptr_t)object + 0x68) = GravityRound(x);
+        *(volatile br_scalar*)((tU32)(uintptr_t)object + 0x6c) = GravityRound(y);
+        *(volatile br_scalar*)((tU32)(uintptr_t)object + 0x70) = GravityRound(z);
+    }
+    child = GravityPointer(object, 0x224);
+    while (child != NULL) {
+        FUN_004c2910(child);
+        child = GravityPointer(child, 0x220);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c2c90
+void C2_HOOK_FASTCALL FUN_004c2c90(tPhysics_object* object, const br_vector3* damping) {
+    const br_scalar factor = 0.02100399136543274f; /* original58a8b0 */
+    double scaled_x = PartnerMultiplyRawScalar(FrictionRead(damping, 0), &factor);
+    double inertia_x = FrictionRead(object, 8);
+    double input_y = FrictionRead(damping, 4);
+    double input_z = FrictionRead(damping, 8);
+    double decrement_x = scaled_x / inertia_x;
+    br_scalar old_omega[3];
+    tU32 old_bits[3];
+    double scaled_y, scaled_z, inertia_y, inertia_z, decrement_y, decrement_z;
+    double new_y, new_z, sign_x;
+    br_scalar numerator_y, rounded_z;
+
+    /* Original raw MOV snapshots are ordered before any public omega store.
+     * The retained modern-MSVC page-fault probes reject memcpy load order. */
+    old_bits[0] = FrictionWord(object, 0x74);
+    old_bits[1] = FrictionWord(object, 0x78);
+    old_bits[2] = FrictionWord(object, 0x7c);
+    memcpy(old_omega, old_bits, sizeof(old_omega));
+    scaled_y = PartnerMultiplyRawScalar(input_y, &factor);
+    inertia_y = FrictionRead(object, 12);
+    scaled_z = PartnerMultiplyRawScalar(input_z, &factor);
+    inertia_z = FrictionRead(object, 16);
+    numerator_y = FrictionScalar(scaled_y);
+    decrement_y = FrictionReverseDivideScalar(inertia_y, &numerator_y);
+    decrement_z = scaled_z / inertia_z;
+
+    scaled_x = FrictionReverseSubtractScalar(decrement_x, FrictionAt(object, 0x74));
+    new_y = FrictionReverseSubtractScalar(decrement_y, FrictionAt(object, 0x78));
+    FrictionWrite(object, 0x74, scaled_x);
+    sign_x = FrictionProductScalars(&old_omega[0], FrictionAt(object, 0x74));
+    new_z = FrictionReverseSubtractScalar(decrement_z, FrictionAt(object, 0x7c));
+    rounded_z = FrictionScalar(new_z);
+    FrictionWrite(object, 0x78, new_y);
+    FrictionWrite(object, 0x7c, new_z);
+    if (!FrictionGreater(sign_x, 0.0)) *(volatile tU32*)((tU8*)object + 0x74) = 0;
+    if (!FrictionGreater(PartnerMultiplyScalarWide(&old_omega[1], new_y), 0.0)) *(volatile tU32*)((tU8*)object + 0x78) = 0;
+    if (!FrictionGreater(FrictionProductScalars(&old_omega[2], &rounded_z), 0.0)) *(volatile tU32*)((tU8*)object + 0x7c) = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004c2970
+void C2_HOOK_FASTCALL FUN_004c2970(tPhysics_object* list) {
+    tPhysics_object* child;
+    double x, y, z;
+
+    while (list != NULL) {
+        if (((volatile const tPhysics_object*)list)->disable_move_rotate == 0) {
+            x = FrictionRead(list, 0x54);
+            y = FrictionRead(list, 0x58);
+            z = FrictionRead(list, 0x5c);
+            x = FrictionAddScalar(x, (const br_scalar*)((const tU8*)list + 0x68));
+            y = FrictionAddScalar(y, (const br_scalar*)((const tU8*)list + 0x6c));
+            z = FrictionAddScalar(z, (const br_scalar*)((const tU8*)list + 0x70));
+            *(volatile br_scalar*)((tU8*)list + 0x68) = (br_scalar)PhysicsJointScalar(x);
+            *(volatile br_scalar*)((tU8*)list + 0x6c) = (br_scalar)PhysicsJointScalar(y);
+            *(volatile br_scalar*)((tU8*)list + 0x70) = (br_scalar)PhysicsJointScalar(z);
+        }
+        child = WakePointer(list, 0x224);
+        if (child != NULL) FUN_004c2970(child);
+        list = WakePointer(list, 0x220);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c2c30
+void C2_HOOK_FASTCALL FUN_004c2c30(tPhysics_object* object, const br_vector3* delta) {
+    const br_scalar scale = 0.02100399136543274f; /* Original 0x3cac1090. */
+    double y = FrictionRead(delta, 4);
+    double z = FrictionRead(delta, 8);
+    double x = FrictionRead(delta, 0);
+    double ix, iy, iz;
+    br_scalar y_scalar;
+
+    x = PartnerMultiplyRawScalar(x, &scale);
+    y = PartnerMultiplyRawScalar(y, &scale);
+    z = PartnerMultiplyRawScalar(z, &scale);
+    ix = FrictionRead(object, 8);
+    iy = FrictionRead(object, 12);
+    iz = FrictionRead(object, 16);
+    y_scalar = (br_scalar)PhysicsJointScalar(y);
+    y = FrictionReverseDivideScalar(iy, &y_scalar);
+    /* Both operands have passed through FLD. The original register division
+     * selects the same quiet NaN as the existing x87 sum helper. */
+    z = PhysicsWallNaN(z) && PhysicsWallNaN(iz) ? PhysicsJointSum(z, iz) : z / iz;
+    x = PhysicsWallNaN(x) && PhysicsWallNaN(ix) ? PhysicsJointSum(x, ix) : x / ix;
+    y = FrictionAddScalar(y, (const br_scalar*)((const tU8*)object + 0x78));
+    z = FrictionAddScalar(z, (const br_scalar*)((const tU8*)object + 0x7c));
+    x = FrictionAddScalar(x, (const br_scalar*)((const tU8*)object + 0x74));
+    *(volatile br_scalar*)((tU8*)object + 0x78) = (br_scalar)PhysicsJointScalar(y);
+    *(volatile br_scalar*)((tU8*)object + 0x7c) = (br_scalar)PhysicsJointScalar(z);
+    *(volatile br_scalar*)((tU8*)object + 0x74) = (br_scalar)PhysicsJointScalar(x);
+}

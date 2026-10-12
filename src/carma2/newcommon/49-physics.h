@@ -532,4 +532,10 @@ void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* list);
 void C2_HOOK_FASTCALL FUN_004c62e0(tPhysics_object* object, const br_matrix34* matrix);
 void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* object);
 
+void C2_HOOK_FASTCALL FUN_004c29d0(tPhysics_object* object, const br_vector3* vector);
+void C2_HOOK_FASTCALL FUN_004c2910(tPhysics_object* object);
+void C2_HOOK_FASTCALL FUN_004c2c90(tPhysics_object* object, const br_vector3* damping);
+void C2_HOOK_FASTCALL FUN_004c2970(tPhysics_object* list);
+void C2_HOOK_FASTCALL FUN_004c2c30(tPhysics_object* object, const br_vector3* delta);
+
 #endif // GUARD_49_PHYSICS_H
