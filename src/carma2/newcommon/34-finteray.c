@@ -1020,15 +1020,284 @@ int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2) {
 
 // BoundsTransformTest
 
-// LineBoxColl
+// FUNCTION: CARMA2_HW 0x00460bd0
+int C2_HOOK_FASTCALL LineBoxColl(br_vector3* pStart, br_vector3* pEnd, br_bounds* pBounds, br_vector3* pPoint, br_scalar* pT) {
+    br_vector3 direction;
+    br_vector3 plane;
+    br_vector3 candidate;
+    int quadrant[3];
+    int inside = 1;
+    int axis;
+    int selected = 0;
+    double coordinate;
 
-// SphereBoxIntersection
+    for (axis = 0; axis < 3; axis++) {
+        direction.v[axis] = FinterayScalar((double)pEnd->v[axis] - pStart->v[axis]);
+    }
+    for (axis = 0; axis < 3; axis++) {
+        if (!(pStart->v[axis] >= pBounds->min.v[axis])) {
+            quadrant[axis] = 1;
+            FinterayBoxCopyScalar(&plane.v[axis], &pBounds->min.v[axis]);
+            inside = 0;
+        } else if (pStart->v[axis] > pBounds->max.v[axis]) {
+            quadrant[axis] = 0;
+            FinterayBoxCopyScalar(&plane.v[axis], &pBounds->max.v[axis]);
+            inside = 0;
+        } else {
+            quadrant[axis] = 2;
+        }
+    }
+    if (inside) {
+        for (axis = 0; axis < 3; axis++) {
+            FinterayBoxCopyScalar(&pPoint->v[axis], &pStart->v[axis]);
+        }
+        return -1;
+    }
+    for (axis = 0; axis < 3; axis++) {
+        if (quadrant[axis] == 2 || direction.v[axis] == 0.0f || FinterayBoxNaN(direction.v[axis])) {
+            candidate.v[axis] = -1.0f;
+        } else {
+            candidate.v[axis] = FinterayScalar(((double)plane.v[axis] - pStart->v[axis]) / direction.v[axis]);
+        }
+    }
+    for (axis = 1; axis < 3; axis++) {
+        if (candidate.v[axis] > candidate.v[selected]) {
+            selected = axis;
+        }
+    }
+    if (!(candidate.v[selected] >= 0.0f) || candidate.v[selected] > 1.0f) {
+        return 0;
+    }
+    for (axis = 0; axis < 3; axis++) {
+        if (axis == selected) {
+            FinterayBoxCopyScalar(&pPoint->v[axis], &plane.v[axis]);
+        } else {
+            coordinate = (double)direction.v[axis] * candidate.v[selected] + pStart->v[axis];
+            pPoint->v[axis] = FinterayScalar(coordinate);
+            if (!(coordinate >= pBounds->min.v[axis]) || coordinate > pBounds->max.v[axis]) {
+                return 0;
+            }
+        }
+    }
+    FinterayBoxCopyScalar(pT, &candidate.v[selected]);
+    return selected + 1 + 4 * quadrant[selected];
+}
 
-// LineBoxCollWithSphere
+// FUNCTION: CARMA2_HW 0x00460da0
+int C2_HOOK_FASTCALL SphereBoxIntersection(br_bounds* pBounds, br_vector3* pPoint, br_scalar pRadius_squared, br_vector3* pClosest) {
+    int axis;
+    double closest;
+    double difference;
+    double distance = 0.0;
 
-// LineSphereColl
+    for (axis = 0; axis < 3; axis++) {
+        if (!(pPoint->v[axis] > pBounds->min.v[axis])) {
+            closest = pBounds->min.v[axis];
+        } else if (!(pPoint->v[axis] >= pBounds->max.v[axis])) {
+            closest = pPoint->v[axis];
+        } else {
+            closest = pBounds->max.v[axis];
+        }
+        pClosest->v[axis] = FinterayScalar(closest);
+        difference = (double)pPoint->v[axis] - closest;
+        distance = distance + difference * difference;
+    }
+    return !(distance > pRadius_squared);
+}
 
-// LineSphereCollWithSphere
+// FUNCTION: CARMA2_HW 0x00460e10
+int C2_HOOK_FASTCALL LineBoxCollWithSphere(br_vector3* pStart, br_vector3* pEnd, br_bounds* pBounds, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    int result;
+    int axis;
+    double length;
+    double scale;
+    double x;
+    double y;
+    double z;
+
+    result = LineBoxColl(pStart, pEnd, pBounds, pPoint, pT);
+    if (result != 0) {
+        pNormal->v[0] = 0.0f;
+        pNormal->v[1] = 0.0f;
+        pNormal->v[2] = 0.0f;
+        pNormal->v[(result - 1) & 3] = (result & 4) ? 1.0f : -1.0f;
+        return result;
+    }
+    if (!SphereBoxIntersection(pBounds, pEnd, 2.5e-5f, pPoint)) {
+        return 0;
+    }
+    *pT = 1.0f;
+    pNormal->v[0] = 0.0f;
+    pNormal->v[1] = 0.0f;
+    pNormal->v[2] = 0.0f;
+    for (axis = 0; axis < 3; axis++) {
+        if (pPoint->v[axis] == pBounds->max.v[axis] || FinterayBoxNaN(pPoint->v[axis]) || FinterayBoxNaN(pBounds->max.v[axis])) {
+            pNormal->v[axis] = -1.0f;
+        } else if (pPoint->v[axis] == pBounds->min.v[axis] || FinterayBoxNaN(pPoint->v[axis]) || FinterayBoxNaN(pBounds->min.v[axis])) {
+            pNormal->v[axis] = 1.0f;
+        }
+    }
+    x = pNormal->v[0];
+    y = pNormal->v[1];
+    z = pNormal->v[2];
+    length = sqrt((y * y + z * z) + x * x);
+    if (length > 2.3841858e-7f) {
+        scale = 1.0 / length;
+        pNormal->v[0] = FinterayScalar(scale * pNormal->v[0]);
+        pNormal->v[1] = FinterayScalar(y * scale);
+        pNormal->v[2] = FinterayScalar(z * scale);
+    } else {
+        pNormal->v[0] = 1.0f;
+        pNormal->v[1] = 0.0f;
+        pNormal->v[2] = 0.0f;
+    }
+    return 0x40;
+}
+
+/* Shape data can overlap the intersection/normal outputs. Reload each scalar
+ * at the original arithmetic read boundary rather than retaining a member. */
+static double C2_HOOK_FASTCALL FinterayShapeLoadScalar(const br_scalar* input) {
+    return *(const volatile br_scalar*)input;
+}
+
+// FUNCTION: CARMA2_HW 0x00460f60
+int C2_HOOK_FASTCALL LineSphereColl(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_sphere_data* pSphere, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    br_vector3 offset;
+    br_vector3 direction;
+    double x;
+    double y;
+    double z;
+    double squared;
+    float offset_squared;
+    float direction_squared;
+    double projection;
+    double perpendicular;
+    float t;
+    double point_x;
+    double point_y;
+    double point_z;
+    double length;
+    double scale;
+
+    x = (double)pSphere->center.v[0] - pStart->v[0];
+    y = (double)pSphere->center.v[1] - pStart->v[1];
+    z = (double)pSphere->center.v[2] - pStart->v[2];
+    offset.v[0] = FinterayScalar(x);
+    offset.v[1] = FinterayScalar(y);
+    offset.v[2] = FinterayScalar(z);
+    squared = (x * FinterayShapeLoadScalar(&offset.v[0]) + y * FinterayShapeLoadScalar(&offset.v[1])) + FinterayShapeLoadScalar(&offset.v[2]) * FinterayShapeLoadScalar(&offset.v[2]);
+    offset_squared = FinterayScalar(squared);
+    if (!(squared >= pSphere->radius_squared)) {
+        return -1;
+    }
+    x = (double)pEnd->v[0] - pStart->v[0];
+    y = (double)pEnd->v[1] - pStart->v[1];
+    z = (double)pEnd->v[2] - pStart->v[2];
+    direction.v[0] = FinterayScalar(x);
+    direction.v[1] = FinterayScalar(y);
+    direction.v[2] = FinterayScalar(z);
+    squared = (x * FinterayShapeLoadScalar(&direction.v[0]) + y * FinterayShapeLoadScalar(&direction.v[1])) + FinterayShapeLoadScalar(&direction.v[2]) * FinterayShapeLoadScalar(&direction.v[2]);
+    direction_squared = FinterayScalar(squared);
+    if (!(squared >= 1e-6)) {
+        return 0;
+    }
+    projection = ((FinterayShapeLoadScalar(&offset.v[0]) * FinterayShapeLoadScalar(&direction.v[0]) + FinterayShapeLoadScalar(&offset.v[1]) * FinterayShapeLoadScalar(&direction.v[1])) + FinterayShapeLoadScalar(&offset.v[2]) * FinterayShapeLoadScalar(&direction.v[2])) / FinterayShapeLoadScalar(&direction_squared);
+    perpendicular = FinterayShapeLoadScalar(&offset_squared) - projection * projection * FinterayShapeLoadScalar(&direction_squared);
+    if (perpendicular > pSphere->radius_squared) {
+        return 0;
+    }
+    t = FinterayScalar(projection - sqrt(((double)pSphere->radius_squared - perpendicular) / FinterayShapeLoadScalar(&direction_squared)));
+    FinterayBoxStoreScalar(pT, &t);
+    if (!(t >= 0.0f) || t > 1.0f) {
+        return 0;
+    }
+    point_x = FinterayShapeLoadScalar(&direction.v[0]) * t + pStart->v[0];
+    point_y = FinterayShapeLoadScalar(&direction.v[1]) * t;
+    point_z = FinterayShapeLoadScalar(&direction.v[2]) * t;
+    pPoint->v[0] = FinterayScalar(point_x);
+    pPoint->v[1] = FinterayScalar(point_y + pStart->v[1]);
+    pPoint->v[2] = FinterayScalar(point_z + pStart->v[2]);
+    if (pNormal != NULL) {
+        pNormal->v[0] = FinterayScalar(FinterayShapeLoadScalar(&pSphere->center.v[0]) - FinterayShapeLoadScalar(&pPoint->v[0]));
+        pNormal->v[1] = FinterayScalar(FinterayShapeLoadScalar(&pSphere->center.v[1]) - FinterayShapeLoadScalar(&pPoint->v[1]));
+        z = FinterayShapeLoadScalar(&pSphere->center.v[2]) - FinterayShapeLoadScalar(&pPoint->v[2]);
+        x = FinterayShapeLoadScalar(&pNormal->v[0]);
+        y = FinterayShapeLoadScalar(&pNormal->v[1]);
+        length = sqrt((x * x + y * y) + z * FinterayScalar(z));
+        pNormal->v[2] = FinterayScalar(z);
+        if (length > 2.3841858e-7f) {
+            scale = 1.0 / length;
+            y = FinterayShapeLoadScalar(&pNormal->v[1]);
+            z = FinterayShapeLoadScalar(&pNormal->v[2]);
+            pNormal->v[0] = FinterayScalar(scale * FinterayShapeLoadScalar(&pNormal->v[0]));
+            pNormal->v[1] = FinterayScalar(y * scale);
+            pNormal->v[2] = FinterayScalar(z * scale);
+        } else {
+            pNormal->v[0] = 1.0f;
+            pNormal->v[1] = 0.0f;
+            pNormal->v[2] = 0.0f;
+        }
+    }
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x004611b0
+int C2_HOOK_FASTCALL LineSphereCollWithSphere(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_sphere_data* pSphere, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    int result;
+    double z;
+    double squared;
+    float squared_scalar;
+    double length;
+    double scale;
+    double y;
+    double normal_z;
+    double point_y;
+    double point_z;
+    float point_x;
+
+    result = LineSphereColl(pStart, pEnd, pSphere, pPoint, pNormal, pT);
+    if (result != 0) {
+        return result;
+    }
+    pNormal->v[0] = FinterayScalar(FinterayShapeLoadScalar(&pSphere->center.v[0]) - pEnd->v[0]);
+    pNormal->v[1] = FinterayScalar(FinterayShapeLoadScalar(&pSphere->center.v[1]) - pEnd->v[1]);
+    z = FinterayShapeLoadScalar(&pSphere->center.v[2]) - pEnd->v[2];
+    squared = ((double)FinterayShapeLoadScalar(&pNormal->v[0]) * FinterayShapeLoadScalar(&pNormal->v[0]) + (double)FinterayShapeLoadScalar(&pNormal->v[1]) * FinterayShapeLoadScalar(&pNormal->v[1])) + z * FinterayScalar(z);
+    pNormal->v[2] = FinterayScalar(z);
+    squared_scalar = FinterayScalar(squared);
+    if (squared > FinterayShapeLoadScalar(&pSphere->radius_squared) - (FinterayShapeLoadScalar(&pSphere->radius_squared) * 0.002f) * -2.0f) {
+        return 0;
+    }
+    if (!(squared >= FinterayShapeLoadScalar(&pSphere->radius_squared))) {
+        return 0;
+    }
+    length = sqrt((double)squared_scalar);
+    if (length > 2.3841858e-7f) {
+        scale = 1.0 / length;
+        y = FinterayShapeLoadScalar(&pNormal->v[1]);
+        normal_z = FinterayShapeLoadScalar(&pNormal->v[2]);
+        pNormal->v[0] = FinterayScalar(scale * FinterayShapeLoadScalar(&pNormal->v[0]));
+        pNormal->v[1] = FinterayScalar(y * scale);
+        pNormal->v[2] = FinterayScalar(normal_z * scale);
+    } else {
+        pNormal->v[0] = 1.0f;
+        pNormal->v[1] = 0.0f;
+        pNormal->v[2] = 0.0f;
+    }
+    pPoint->v[0] = FinterayScalar(FinterayShapeLoadScalar(&pSphere->radius) * FinterayShapeLoadScalar(&pNormal->v[0]));
+    point_x = (br_scalar)FinterayShapeLoadScalar(&pPoint->v[0]);
+    point_y = (double)FinterayShapeLoadScalar(&pNormal->v[1]) * FinterayShapeLoadScalar(&pSphere->radius);
+    pPoint->v[1] = FinterayScalar(point_y);
+    point_y = FinterayShapeLoadScalar(&pPoint->v[1]);
+    point_z = (double)FinterayShapeLoadScalar(&pNormal->v[2]) * FinterayShapeLoadScalar(&pSphere->radius);
+    pPoint->v[2] = FinterayScalar(point_z);
+    point_z = FinterayShapeLoadScalar(&pPoint->v[2]);
+    pPoint->v[0] = FinterayScalar((double)point_x + FinterayShapeLoadScalar(&pSphere->center.v[0]));
+    pPoint->v[1] = FinterayScalar(point_y + FinterayShapeLoadScalar(&pSphere->center.v[1]));
+    pPoint->v[2] = FinterayScalar(point_z + FinterayShapeLoadScalar(&pSphere->center.v[2]));
+    *pT = 1.0f;
+    return 2;
+}
 
 // LinePolyColl
 
