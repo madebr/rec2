@@ -339,11 +339,11 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject);
 
 // RQSingleExpand
 
-// RQDcmpV
+int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal);
 
 // MakeIdentity
 
-// SparseRQDcmpV
+void C2_HOOK_FASTCALL SparseRQDcmpV(br_scalar* matrix, br_scalar* orthogonal, const br_scalar* rhs, br_scalar* result, int size);
 
 // MakeMatrixFromIndices
 
@@ -361,9 +361,9 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject);
 
 // RQMatrixSolveWithNegatives
 
-// MatrixProcess
+int C2_HOOK_FASTCALL MatrixProcess(br_scalar* matrix, br_scalar* orthogonal, int size);
 
-// RqBackSub
+void C2_HOOK_FASTCALL RqBackSub(br_scalar* matrix, br_scalar* orthogonal, const br_scalar* rhs, br_scalar* result, int size);
 
 extern void* gPhysics_scratch_ptr;
 

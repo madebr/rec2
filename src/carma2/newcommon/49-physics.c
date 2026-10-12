@@ -2493,11 +2493,277 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject) {
 
 // RQSingleExpand
 
-// RQDcmpV
+/* RQ arithmetic preserves the original scalar spills and NaN operand order. */
+static br_scalar C2_HOOK_CDECL RQScalar(double x) {
+    volatile br_scalar result = (br_scalar)x;
+    return result;
+}
+
+static int C2_HOOK_CDECL RQNaN(double x) {
+    return x != x;
+}
+
+/* The retained NaN191/192 probes first diverge at the x87 dot accumulation.
+ * Head, denominator and all preceding public writes match; SSE accumulation
+ * chooses a different sign when equal NaN payloads have opposite signs. */
+static double C2_HOOK_CDECL RQAccumulate(double sum, const volatile br_scalar* left, const volatile br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld qword ptr sum
+        mov eax, left
+        fld dword ptr [eax]
+        mov eax, right
+        fmul dword ptr [eax]
+        faddp st(1), st(0)
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; flds %2; fmuls %3; faddp; fstpl %0"
+        : "=m"(result) : "m"(sum), "m"(*left), "m"(*right) : "st", "st(1)");
+#else
+#error RQAccumulate requires x86
+#endif
+    return result;
+}
+
+/* With dot order fixed, retained first-coefficient snapshots match. The
+ * next public update still differs under SSE when multiplier NaN signs tie. */
+static br_scalar C2_HOOK_CDECL RQSubtractProduct(br_scalar coefficient, const br_scalar* factor, const br_scalar* value) {
+    br_scalar result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld dword ptr coefficient
+        mov eax, factor
+        fmul dword ptr [eax]
+        mov eax, value
+        fsubr dword ptr [eax]
+        fstp dword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fmuls %2; fsubrs %3; fstps %0"
+        : "=m"(result) : "m"(coefficient), "m"(*factor), "m"(*value) : "st");
+#else
+#error RQSubtractProduct requires x86
+#endif
+    return result;
+}
+
+/* Paired raw NaNs in the retained solve cases require memory-operand
+ * division and multiplication before the scalar spill. */
+static br_scalar C2_HOOK_CDECL RQDivideScalars(const br_scalar* numerator, const br_scalar* denominator) {
+    br_scalar result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, numerator
+        fld dword ptr [eax]
+        mov eax, denominator
+        fdiv dword ptr [eax]
+        fstp dword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fdivs %2; fstps %0"
+        : "=m"(result) : "m"(*numerator), "m"(*denominator) : "st");
+#else
+#error RQDivideScalars requires x86
+#endif
+    return result;
+}
+
+static br_scalar C2_HOOK_CDECL RQMultiplyScalars(const br_scalar* left, const volatile br_scalar* right) {
+    br_scalar result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, left
+        fld dword ptr [eax]
+        mov eax, right
+        fmul dword ptr [eax]
+        fstp dword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fmuls %2; fstps %0"
+        : "=m"(result) : "m"(*left), "m"(*right) : "st");
+#else
+#error RQMultiplyScalars requires x86
+#endif
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004c5830
+int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal) {
+    int i, j, k;
+    int singular = 0;
+    br_scalar maximum, denominator, coefficient, other_coefficient;
+    double value, sum, length, head;
+    for (i = 0; i < size; i++) {
+        for (j = 0; j < size; j++) {
+            orthogonal[i * size + j] = 0.0f;
+        }
+        orthogonal[i * size + i] = 1.0f;
+    }
+    for (i = 0; i < size; i++) {
+        maximum = 0.0f;
+        for (k = i; k < size; k++) {
+            value = fabs(matrix[i * size + k]);
+            if (!(maximum > value)) {
+                maximum = RQScalar(value);
+            }
+        }
+        if (maximum == 0.0f || RQNaN(maximum)) {
+            singular = 1;
+            continue;
+        }
+        for (k = i; k < size; k++) {
+            matrix[i * size + k] = RQDivideScalars(&matrix[i * size + k], &maximum);
+        }
+        sum = 0.0;
+        for (k = i; k < size; k++) {
+            sum = RQAccumulate(sum, &matrix[i * size + k], &matrix[i * size + k]);
+        }
+        length = fabs(sqrt(sum));
+        if (!(matrix[i * size + i] > 0.0f)) {
+            length = -length;
+        }
+        head = length + matrix[i * size + i];
+        matrix[i * size + i] = RQScalar(head);
+        denominator = RQScalar(length * head);
+        for (j = 0; j <= i; j++) {
+            sum = 0.0;
+            for (k = i; k < size; k++) {
+                sum = RQAccumulate(sum, &matrix[i * size + k], &orthogonal[k * size + j]);
+            }
+            coefficient = RQScalar(sum / denominator);
+            for (k = i; k < size; k++) {
+                orthogonal[k * size + j] = RQSubtractProduct(coefficient, &matrix[i * size + k], &orthogonal[k * size + j]);
+            }
+        }
+        for (j = i + 1; j < size; j++) {
+            sum = 0.0;
+            for (k = i; k < size; k++) {
+                sum = RQAccumulate(sum, &matrix[i * size + k], &matrix[j * size + k]);
+            }
+            coefficient = RQScalar(sum / denominator);
+            sum = 0.0;
+            for (k = i; k < size; k++) {
+                sum = RQAccumulate(sum, &orthogonal[k * size + j], &matrix[i * size + k]);
+            }
+            other_coefficient = RQScalar(sum / denominator);
+            for (k = i; k < size; k++) {
+                matrix[j * size + k] = RQSubtractProduct(coefficient, &matrix[i * size + k], &matrix[j * size + k]);
+                orthogonal[k * size + j] = RQSubtractProduct(other_coefficient, &matrix[i * size + k], &orthogonal[k * size + j]);
+            }
+        }
+        matrix[i * size + i] = RQScalar(-(length * maximum));
+        for (j = i + 1; j < size; j++) {
+            matrix[i * size + j] = 0.0f;
+        }
+    }
+    return singular;
+}
 
 // MakeIdentity
 
-// SparseRQDcmpV
+// FUNCTION: CARMA2_HW 0x004c53b0
+void C2_HOOK_FASTCALL SparseRQDcmpV(br_scalar* matrix, br_scalar* orthogonal, const br_scalar* rhs, br_scalar* result, int size) {
+    br_scalar values[40];
+    unsigned char columns[40];
+    unsigned short rows[40];
+    volatile br_scalar intermediate[100];
+    int i, j, k, count;
+    br_scalar maximum, denominator, coefficient, other_coefficient;
+    double value, sum, length, head;
+    if (size < 10) {
+        RQDcmpV(matrix, size, orthogonal);
+    } else {
+        for (i = 0; i < size; i++) {
+            for (j = 0; j < size; j++) {
+                orthogonal[i * size + j] = 0.0f;
+            }
+            orthogonal[i * size + i] = 1.0f;
+        }
+        for (i = 0; i < size; i++) {
+            values[0] = RQScalar(matrix[i * size + i]);
+            maximum = RQScalar(fabs(matrix[i * size + i]));
+            rows[0] = (unsigned short)(size * i);
+            columns[0] = (unsigned char)i;
+            count = 1;
+            for (j = i + 1; j < size; j++) {
+                value = matrix[i * size + j];
+                if (value != 0.0 && !RQNaN(value)) {
+                    value = fabs(value);
+                    if (!(maximum > value)) {
+                        maximum = RQScalar(value);
+                    }
+                    columns[count] = (unsigned char)j;
+                    rows[count] = (unsigned short)(j * size);
+                    memcpy(&values[count], &matrix[i * size + j], 4);
+                    count++;
+                    matrix[i * size + j] = 0.0f;
+                }
+            }
+            if (maximum == 0.0f || RQNaN(maximum)) {
+                continue;
+            }
+            for (k = 0; k < count; k++) {
+                values[k] = RQDivideScalars(&values[k], &maximum);
+            }
+            sum = 0.0;
+            for (k = 0; k < count; k++) {
+                sum = RQAccumulate(sum, &values[k], &values[k]);
+            }
+            length = fabs(sqrt(sum));
+            if (!(values[0] > 0.0f)) {
+                length = -length;
+            }
+            head = values[0] + length;
+            values[0] = RQScalar(head);
+            denominator = RQScalar(head * length);
+            for (j = 0; j <= i; j++) {
+                sum = 0.0;
+                for (k = 0; k < count; k++) {
+                    sum = RQAccumulate(sum, &orthogonal[rows[k] + j], &values[k]);
+                }
+                coefficient = RQScalar(sum / denominator);
+                for (k = 0; k < count; k++) {
+                    orthogonal[rows[k] + j] = RQSubtractProduct(coefficient, &values[k], &orthogonal[rows[k] + j]);
+                }
+            }
+            for (j = i + 1; j < size; j++) {
+                sum = 0.0;
+                for (k = 0; k < count; k++) {
+                    sum = RQAccumulate(sum, &matrix[j * size + columns[k]], &values[k]);
+                }
+                coefficient = RQScalar(sum / denominator);
+                sum = 0.0;
+                for (k = 0; k < count; k++) {
+                    sum = RQAccumulate(sum, &orthogonal[rows[k] + j], &values[k]);
+                }
+                other_coefficient = RQScalar(sum / denominator);
+                for (k = 0; k < count; k++) {
+                    matrix[j * size + columns[k]] = RQSubtractProduct(coefficient, &values[k], &matrix[j * size + columns[k]]);
+                    orthogonal[rows[k] + j] = RQSubtractProduct(other_coefficient, &values[k], &orthogonal[rows[k] + j]);
+                }
+            }
+            matrix[i * size + i] = RQScalar(-(length * maximum));
+        }
+    }
+    if (rhs != NULL && result != NULL) {
+        intermediate[0] = RQDivideScalars(&rhs[0], &matrix[0]);
+        for (i = 1; i < size; i++) {
+            sum = 0.0;
+            for (j = 0; j < i; j++) {
+                sum = RQAccumulate(sum, &matrix[i * size + j], &intermediate[j]);
+            }
+            intermediate[i] = RQScalar(((double)rhs[i] - sum) / matrix[i * size + i]);
+        }
+        for (i = 0; i < size; i++) {
+            result[i] = RQMultiplyScalars(&orthogonal[i], &intermediate[0]);
+            for (j = 1; j < size; j++) {
+                result[i] = RQScalar(RQAccumulate(result[i], &orthogonal[j * size + i], &intermediate[j]));
+            }
+        }
+    }
+}
 
 // MakeMatrixFromIndices
 
@@ -2515,9 +2781,31 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject) {
 
 // RQMatrixSolveWithNegatives
 
-// MatrixProcess
+// FUNCTION: CARMA2_HW 0x004c5b50
+int C2_HOOK_FASTCALL MatrixProcess(br_scalar* matrix, br_scalar* orthogonal, int size) {
+    return RQDcmpV(matrix, size, orthogonal);
+}
 
-// RqBackSub
+// FUNCTION: CARMA2_HW 0x004c5b60
+void C2_HOOK_FASTCALL RqBackSub(br_scalar* matrix, br_scalar* orthogonal, const br_scalar* rhs, br_scalar* result, int size) {
+    volatile br_scalar intermediate[100];
+    int i, j;
+    double sum;
+    intermediate[0] = RQDivideScalars(&rhs[0], &matrix[0]);
+    for (i = 1; i < size; i++) {
+        sum = 0.0;
+        for (j = 0; j < i; j++) {
+            sum = RQAccumulate(sum, &intermediate[j], &matrix[i * size + j]);
+        }
+        intermediate[i] = RQScalar(((double)rhs[i] - sum) / matrix[i * size + i]);
+    }
+    for (i = 0; i < size; i++) {
+        result[i] = RQMultiplyScalars(&orthogonal[i], &intermediate[0]);
+        for (j = 1; j < size; j++) {
+            result[i] = RQScalar(RQAccumulate(result[i], &intermediate[j], &orthogonal[j * size + i]));
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004c5c70
 void* C2_HOOK_FASTCALL GetPhysicsScratchPointer(int pSize) {
