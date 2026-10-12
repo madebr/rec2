@@ -8,6 +8,9 @@
 // GLOBAL: CARMA2_HW 0x006a0414
 const char* gPedsFolder;
 
+// GLOBAL: CARMA2_HW 0x00744808
+tPedestrian* gPedestrian_array;
+
 // GLOBAL: CARMA2_HW 0x0065d7d4
 int gGoreLevel = 1;
 
@@ -479,7 +482,16 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // GetBoneMatrixPtr
 
-// GetCharacterActorPtr
+// FUNCTION: CARMA2_HW 0x00407b10
+br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter) {
+    int index;
+
+    index = pCharacter->field_0x4;
+    if (index < 0) {
+        return NULL;
+    }
+    return pCharacter->personality->form->actor_sets[index].actors[0];
+}
 
 // SetCharacterBonePositions
 

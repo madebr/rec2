@@ -1075,7 +1075,18 @@ void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3
         12, 12, pV);
 }
 
-// AddShrapnelToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6f40
+void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial) {
+    if (pShrapnel_index & 0x8000) {
+        ARAddVariedDataToSession(ePipe_chunk_shrapnel, pShrapnel_index, 3,
+            12, 0, pPos,
+            2, 12, (int)pAge,
+            4, 16, pMaterial);
+    } else {
+        ARAddVariedDataToSession(ePipe_chunk_shrapnel, pShrapnel_index, 1,
+            12, 0, pPos);
+    }
+}
 
 // AddNonCarToPipingSession
 
@@ -1466,7 +1477,13 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
 
 // CalcCrushLength
 
-// CalcShrapnelLength
+// FUNCTION: CARMA2_HW 0x004ca400
+int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
+    tU32 owner;
+
+    memcpy(&owner, pChunk, sizeof(owner));
+    return (owner & 0x8000) ? 20 : 12;
+}
 
 // CalcSmudgeLength
 

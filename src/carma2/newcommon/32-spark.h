@@ -30,6 +30,12 @@ extern int gSpark_flags;
 extern tSpark gSpark[32];
 extern br_camera* gSpark_cam;
 extern br_matrix4 gCameraToScreen;
+extern tReplay_splash gReplay_splashes[10];
+extern int gReplay_splash_flags;
+extern int gSplash_next;
+extern int gSpark_next;
+extern tU32 gNext_AFE_color_cycle;
+extern int gAFE_color_cycle;
 extern br_pixelmap* gIt_shade_table;
 extern tBRender_smoke* gBR_smoke_pointers[35];
 extern int gN_BR_smoke_structs;
@@ -112,9 +118,9 @@ extern void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar);
 
-// MungeShrapnel
+extern void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime);
 
-// DrMatrix34Rotate
+extern void C2_HOOK_FASTCALL DrMatrix34Rotate(br_matrix34* pMat, br_angle pAngle, const br_vector3* pAxis);
 
 extern int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
 
@@ -188,13 +194,13 @@ extern void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject
 
 extern void C2_HOOK_FASTCALL ConditionalSmokeColumn(tCar_spec* pCar, int pFire_point, int pColour);
 
-// SingleSplash
+extern void C2_HOOK_FASTCALL SingleSplash(tPhysics_object* pObject, const br_matrix34* pMatrix, const br_vector3* pVelocity, const br_vector3* pNormal_velocity, const br_vector3* pOmega, const br_vector3* pPoint, const br_vector3* pNormal, tU32 pTime);
 
-// GeneralCreateSplash
+extern void C2_HOOK_FASTCALL GeneralCreateSplash(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, const br_vector3* pNormal, br_scalar pWater_distance, const br_bounds3* pBounds, const br_matrix34* pMatrix, tU32 pTime);
 
-// CreateSplash
+extern void C2_HOOK_FASTCALL CreateSplash(tPhysics_object* pObject, tU32 pTime);
 
-// GetVelocitiesFromMatrices
+extern void C2_HOOK_FASTCALL GetVelocitiesFromMatrices(br_vector3* pVelocity, br_vector3* pOmega, const br_matrix34* pMatrix, const br_matrix34* pNext_matrix, tU32 pTime);
 
 // MungeSplash
 

@@ -4,11 +4,14 @@
 #include "13-crush1.h"
 #include "18-graphics2.h"
 #include "23-piping.h"
+#include "30-opponent.h"
 #include "33-depth.h"
 #include "36-trig.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
+#include "60-phil.h"
+#include "61-pedestrn.h"
 #include "63-loading3.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -122,8 +125,36 @@ br_camera* gSpark_cam;
 // GLOBAL: CARMA2_HW 0x006a8718
 br_matrix4 gCameraToScreen;
 
+// GLOBAL: CARMA2_HW 0x006aa388
+tReplay_splash gReplay_splashes[10];
+
+// GLOBAL: CARMA2_HW 0x006aa574
+int gReplay_splash_flags;
+
+// GLOBAL: CARMA2_HW 0x006a82ac
+int gSplash_next;
+
+// GLOBAL: CARMA2_HW 0x006aa578
+int gSpark_next;
+
+// GLOBAL: CARMA2_HW 0x006b7884
+tU32 gNext_AFE_color_cycle;
+
+// GLOBAL: CARMA2_HW 0x006aa5b0
+int gAFE_color_cycle;
+
 static br_scalar C2_HOOK_CDECL SmokeScalarRound(double pValue);
 static tU32 C2_HOOK_CDECL SmokeScalarBits(const br_scalar* pValue);
+
+static int C2_HOOK_CDECL SplashReplayMoving(void) {
+    br_scalar rate;
+    tU32 bits;
+
+    rate = ARGetReplayRate();
+    bits = SmokeScalarBits(&rate) & 0x7fffffffu;
+    /* Original FCOMP/TEST AH,40 treats unordered rates as paused. */
+    return bits != 0 && bits <= 0x7f800000u;
+}
 
 /* These callers consume only the original _ftol result's low DWORD. */
 static tS32 C2_HOOK_CDECL SparkFtol(double pValue) {
@@ -639,9 +670,411 @@ void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
 
-// MungeShrapnel
+// FUNCTION: CARMA2_HW 0x004f9790
+void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
+    tPhysics_object* object;
+    tCar_spec* car;
+    tPedestrian* ped;
+    tReplay_splash* replay_splash;
+    tShrapnel* shrapnel;
+    tSplash* splash;
+    tPipe_chunk_data* chunk;
+    br_actor* actor;
+    br_matrix34* matrix;
+    br_vector3 velocity;
+    br_vector3 omega;
+    const char* identifier;
+    double interval;
+    double scale;
+    double damping;
+    br_scalar length;
+    tU32 time;
+    tU32 bit;
+    tU32 owner;
+    int type;
+    int i;
+    int j;
 
-// DrMatrix34Rotate
+    MungeSmokeColumn(pTime);
+    if (gNum_splash_types != 0) {
+        if (gAction_replay_mode && SplashReplayMoving()) {
+            for (type = 1; type <= 3; type++) {
+                for (i = 0; ; i++) {
+                    if (i >= (type == 0 ? 1 : GetCarCount((tVehicle_type)type))) {
+                        break;
+                    }
+                    car = type == 0 ? &gProgram_state.current_car : GetCarSpec((tVehicle_type)type, i);
+                    object = car->collision_info;
+                    if (SmokeScalarBits(&object->water_d) != 0x461c4000u
+                        && (car == NULL || car->driver != eDriver_local_human)) {
+                        GeneralCreateSplash(object, &object->v, &object->omega, &object->water_normal,
+                            object->water_d, &object->bb1, &object->actor->t.t.mat, pTime);
+                    }
+                }
+            }
+            object = gProgram_state.current_car.collision_info;
+            if (SmokeScalarBits(&object->water_d) != 0x461c4000u) {
+                CreateSplash(object, pTime);
+            }
+            for (i = 0; i < 10; i++) {
+                if (!((tU32)gReplay_splash_flags & (1u << i))) {
+                    continue;
+                }
+                replay_splash = &gReplay_splashes[i];
+                matrix = NULL;
+                chunk = NULL;
+                if (replay_splash->type == 1) {
+                    actor = replay_splash->object.actor;
+                    identifier = actor->identifier;
+                    owner = (tU32)((((tS8)identifier[4] * 10 + (tS8)identifier[5]) * 10
+                        + (tS8)identifier[6]) * 10 + (tS8)identifier[7] - 53328);
+                    chunk = FindNextChunk(ePipe_chunk_non_car, owner);
+                    if (chunk != NULL) {
+                        matrix = &actor->t.t.mat;
+                        GetVelocitiesFromMatrices(&velocity, &omega, matrix, &chunk->data.non_car.matrix, pTime);
+                    }
+                } else if (replay_splash->type == 2) {
+                    ped = replay_splash->object.character->ped;
+                    actor = GetCharacterActorPtr(replay_splash->object.character);
+                    matrix = &actor->t.t.mat;
+                    owner = (tU32)((tS32)((tU32)(uintptr_t)ped - (tU32)(uintptr_t)gPedestrian_array) / 84)
+                        | ((tU32)(tS16)ped->field_0x06 << 16);
+                    chunk = FindNextChunk(ePipe_chunk_ped_physics, owner);
+                    if (chunk != NULL) {
+                        GetVelocitiesFromMatrices(&velocity, &omega, matrix, &chunk->data.ped_physics.matrix, pTime);
+                    }
+                } else if (replay_splash->type == 255) {
+                    actor = replay_splash->object.phil_object->actor;
+                    chunk = FindNextChunk(ePipe_chunk_phil_object, (uintptr_t)replay_splash->object.phil_object);
+                    if (chunk != NULL) {
+                        matrix = &actor->t.t.mat;
+                        GetVelocitiesFromMatrices(&velocity, &omega, matrix, &chunk->data.phil_object.matrix, pTime);
+                    }
+                }
+                if (chunk != NULL) {
+                    GeneralCreateSplash(NULL, &velocity, &omega, &replay_splash->normal,
+                        replay_splash->water_density, &replay_splash->bb, matrix, pTime);
+                }
+            }
+        } else if (!gAction_replay_mode) {
+            for (object = PHILGetFirstObject(); object != NULL; object = PHILGetNextObject(object)) {
+                if (SmokeScalarBits(&object->water_d) != 0x461c4000u && object->last_special_volume != NULL
+                    && !(object->last_special_volume->gravity_multiplier >= 1.f)) {
+                    time = pTime;
+                    if (object->owner != NULL && object->flags_0x238 == 1
+                        && ((tCar_spec*)object->owner)->driver == eDriver_local_human) {
+                        time = 100;
+                    }
+                    CreateSplash(object, time);
+                }
+            }
+        }
+        if (gSplash_flags != 0) {
+            for (i = 0; i < 32; i++) {
+                bit = 1u << i;
+                if (!((tU32)gSplash_flags & bit)) {
+                    continue;
+                }
+                splash = &gSplash[i];
+                if (splash->just_done == 0 && (!gAction_replay_mode || SplashReplayMoving())) {
+                    gSplash_flags = (int)((tU32)gSplash_flags & ~bit);
+                    if (splash->actor->parent != NULL) {
+                        BrActorRemove(splash->actor);
+                    }
+                } else {
+                    scale = (double)splash->scale_x * splash->size;
+                    for (j = 0; j < 3; j++) {
+                        splash->actor->t.t.mat.m[0][j] = SmokeScalarRound(scale * gCamera_to_world.m[0][j]);
+                    }
+                    for (j = 0; j < 3; j++) {
+                        splash->actor->t.t.mat.m[1][j] = SmokeScalarRound((double)splash->size * gCamera_to_world.m[1][j]);
+                    }
+                    for (j = 0; j < 3; j++) {
+                        splash->actor->t.t.mat.m[2][j] = SmokeScalarRound((double)splash->size * gCamera_to_world.m[2][j]);
+                    }
+                    if (gProgram_state.cockpit_on) {
+                        length = SmokeScalarRound(sqrt((double)gCamera_to_world.m[0][0] * gCamera_to_world.m[0][0]
+                            + (double)gCamera_to_world.m[0][2] * gCamera_to_world.m[0][2]));
+                        DRMatrix34PreRotateZ(&splash->actor->t.t.mat,
+                            (br_angle)(0u - FastScalarArcTan2Angle(gCamera_to_world.m[0][1], length)));
+                    }
+                    splash->just_done = 0;
+                }
+            }
+        }
+    }
+    if (gAFE) {
+        time = GetTotalTime();
+        if (time - gNext_AFE_color_cycle <= 100u) {
+            gAFE_color_cycle = 0;
+        } else {
+            gAFE_color_cycle = 1;
+            gNext_AFE_color_cycle = time;
+        }
+    }
+    if (gAction_replay_mode) {
+        for (i = 0; i < 30; i++) {
+            actor = gShrapnel[i].actor;
+            matrix = &actor->t.t.mat;
+            if ((tU32)gShrapnel_flags & (1u << i)) {
+                gShrapnel[i].age = (tU32)SparkFtol((double)ARGetReplayRate() * (tS32)pTime + (tS32)gShrapnel[i].age);
+                DrMatrix34Rotate(matrix, (br_angle)((tU16)gShrapnel[i].age * 182), &gShrapnel[i].axis);
+                BrMatrix34PreShearX(matrix, gShrapnel[i].shear1, gShrapnel[i].shear2);
+            }
+        }
+        return;
+    }
+    ARStartPipingSession(ePipe_chunk_shrapnel);
+    for (i = 0; i < 30; i++) {
+        shrapnel = &gShrapnel[i];
+        actor = shrapnel->actor;
+        matrix = &actor->t.t.mat;
+        bit = 1u << i;
+        if (!((tU32)gShrapnel_flags & bit)) {
+            continue;
+        }
+        if (shrapnel->age == 0xffffffffu) {
+            if (actor->parent != NULL) {
+                BrActorRemove(actor);
+            }
+            gShrapnel_flags = (int)((tU32)gShrapnel_flags & ~bit);
+            continue;
+        }
+        if (shrapnel->time_sync != 0) {
+            interval = (double)shrapnel->time_sync * .001f;
+            shrapnel->time_sync = 0;
+        } else {
+            interval = (double)pTime * .001f;
+            shrapnel->age += pTime;
+        }
+        for (j = 0; j < 3; j++) {
+            matrix->m[3][j] = SmokeScalarRound((double)shrapnel->v.v[j] * interval + matrix->m[3][j]);
+        }
+        shrapnel->v.v[1] = SmokeScalarRound((double)shrapnel->v.v[1]
+            - (double)(pTime * 10u) * .00014492752961814404f);
+        DrMatrix34Rotate(matrix, (br_angle)((tU16)shrapnel->age * 182), &shrapnel->axis);
+        BrMatrix34PreShearX(matrix, shrapnel->shear1, shrapnel->shear2);
+        damping = 1.0 - sqrt(((double)shrapnel->v.v[0] * shrapnel->v.v[0]
+            + (double)shrapnel->v.v[1] * shrapnel->v.v[1]) + (double)shrapnel->v.v[2] * shrapnel->v.v[2])
+            * .7142857313156128f * (double)pTime * .001f;
+        if (!(damping >= .1f)) {
+            damping = .1f;
+        }
+        for (j = 0; j < 3; j++) {
+            shrapnel->v.v[j] = SmokeScalarRound((double)shrapnel->v.v[j] * damping);
+        }
+        owner = (tU32)i + ((shrapnel->age > 1000u || shrapnel->age < pTime) ? 0x8000u : 0u);
+        AddShrapnelToPipingSession((int)owner, (const br_vector3*)matrix->m[3],
+            (tU16)(shrapnel->age - pTime), shrapnel->actor->material);
+        if (shrapnel->age > 1000u) {
+            shrapnel->age = 0xffffffffu;
+        }
+    }
+    AREndPipingSession();
+}
+
+
+// FUNCTION: CARMA2_HW 0x004f9e80
+void C2_HOOK_FASTCALL DrMatrix34Rotate(br_matrix34* pMat, br_angle pAngle, const br_vector3* pAxis) {
+    br_scalar scratch[9];
+    const br_scalar one = 1.f;
+
+    scratch[4] = SmokeScalarRound(FastScalarSinAngle(pAngle));
+    scratch[3] = SmokeScalarRound(FastScalarCosAngle(pAngle));
+    /* Retain original intermediate spills, live operands and source reloads
+     * while writing only the nine rotation components. */
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov esi, pMat
+        mov eax, pAxis
+        lea ecx, scratch
+        fld one
+        fsub dword ptr [ecx + 0xc]
+        fld dword ptr [eax]
+        fld dword ptr [eax + 8]
+        fxch st(2)
+        fst dword ptr [ecx + 0x8]
+        fmul dword ptr [eax]
+        fld dword ptr [eax + 4]
+        fld dword ptr [eax + 8]
+        fxch st(3)
+        fst dword ptr [ecx + 0x20]
+        fmul dword ptr [ecx + 0x20]
+        fld dword ptr [eax + 4]
+        fxch st(3)
+        fstp dword ptr [ecx + 0x20]
+        fxch st(4)
+        fmul dword ptr [ecx + 0x20]
+        fxch st(1)
+        fmul dword ptr [ecx + 0x20]
+        fxch st(3)
+        fmul dword ptr [ecx + 0x10]
+        fxch st(2)
+        fmul dword ptr [ecx + 0x10]
+        fxch st(4)
+        fmul dword ptr [ecx + 0x8]
+        fxch st(1)
+        fst dword ptr [ecx + 0x18]
+        fxch st(3)
+        fst dword ptr [ecx + 0x20]
+        fxch st(2)
+        fst dword ptr [ecx + 0x14]
+        fadd dword ptr [ecx + 0x20]
+        fxch st(2)
+        fsub dword ptr [ecx + 0x14]
+        fxch st(4)
+        fstp dword ptr [ecx + 0x14]
+        fxch st(2)
+        fsub dword ptr [ecx + 0x14]
+        fld dword ptr [ecx + 0x10]
+        fxch st(3)
+        fadd dword ptr [ecx + 0xc]
+        fld dword ptr [eax + 8]
+        fmul dword ptr [eax + 4]
+        fmul dword ptr [ecx + 0x8]
+        fstp dword ptr [ecx + 0x10]
+        fxch st(3)
+        fmul dword ptr [eax]
+        fxch st(3)
+        fstp dword ptr [esi]
+        fxch st(1)
+        fstp dword ptr [esi + 4]
+        fstp dword ptr [esi + 8]
+        fxch st(1)
+        fstp dword ptr [esi + 0xc]
+        fld dword ptr [eax + 4]
+        fst dword ptr [ecx + 0x20]
+        fmul dword ptr [ecx + 0x20]
+        fxch st(1)
+        fstp dword ptr [ecx + 0x20]
+        fmul dword ptr [ecx + 0x8]
+        fadd dword ptr [ecx + 0xc]
+        fstp dword ptr [esi + 0x10]
+        fld dword ptr [ecx + 0x20]
+        fld dword ptr [ecx + 0x14]
+        fld dword ptr [ecx + 0x10]
+        fxch st(2)
+        fadd dword ptr [ecx + 0x10]
+        fxch st(1)
+        fadd dword ptr [ecx + 0x18]
+        fxch st(2)
+        fsub dword ptr [ecx + 0x20]
+        fxch st(1)
+        fstp dword ptr [esi + 0x14]
+        fxch st(1)
+        fstp dword ptr [esi + 0x18]
+        fstp dword ptr [esi + 0x1c]
+        fld dword ptr [eax + 8]
+        fld st(0)
+        fmul st(0), st(1)
+        fmul dword ptr [ecx + 0x8]
+        fadd dword ptr [ecx + 0xc]
+        fstp dword ptr [esi + 0x20]
+        fstp st(0)
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    {
+        br_scalar* scratch_ptr = scratch;
+        const br_scalar* one_ptr = &one;
+        __asm__ volatile (
+            "movl %[matrix], %%esi\n\t"
+            "movl %[axis], %%eax\n\t"
+            "movl %[scratch], %%ecx\n\t"
+            "movl %[one], %%edx\n\t"
+            ".intel_syntax noprefix\n\t"
+            "fld dword ptr [edx]\n\t"
+            "fsub dword ptr [ecx + 0xc]\n\t"
+            "fld dword ptr [eax]\n\t"
+            "fld dword ptr [eax + 8]\n\t"
+            "fxch st(2)\n\t"
+            "fst dword ptr [ecx + 0x8]\n\t"
+            "fmul dword ptr [eax]\n\t"
+            "fld dword ptr [eax + 4]\n\t"
+            "fld dword ptr [eax + 8]\n\t"
+            "fxch st(3)\n\t"
+            "fst dword ptr [ecx + 0x20]\n\t"
+            "fmul dword ptr [ecx + 0x20]\n\t"
+            "fld dword ptr [eax + 4]\n\t"
+            "fxch st(3)\n\t"
+            "fstp dword ptr [ecx + 0x20]\n\t"
+            "fxch st(4)\n\t"
+            "fmul dword ptr [ecx + 0x20]\n\t"
+            "fxch st(1)\n\t"
+            "fmul dword ptr [ecx + 0x20]\n\t"
+            "fxch st(3)\n\t"
+            "fmul dword ptr [ecx + 0x10]\n\t"
+            "fxch st(2)\n\t"
+            "fmul dword ptr [ecx + 0x10]\n\t"
+            "fxch st(4)\n\t"
+            "fmul dword ptr [ecx + 0x8]\n\t"
+            "fxch st(1)\n\t"
+            "fst dword ptr [ecx + 0x18]\n\t"
+            "fxch st(3)\n\t"
+            "fst dword ptr [ecx + 0x20]\n\t"
+            "fxch st(2)\n\t"
+            "fst dword ptr [ecx + 0x14]\n\t"
+            "fadd dword ptr [ecx + 0x20]\n\t"
+            "fxch st(2)\n\t"
+            "fsub dword ptr [ecx + 0x14]\n\t"
+            "fxch st(4)\n\t"
+            "fstp dword ptr [ecx + 0x14]\n\t"
+            "fxch st(2)\n\t"
+            "fsub dword ptr [ecx + 0x14]\n\t"
+            "fld dword ptr [ecx + 0x10]\n\t"
+            "fxch st(3)\n\t"
+            "fadd dword ptr [ecx + 0xc]\n\t"
+            "fld dword ptr [eax + 8]\n\t"
+            "fmul dword ptr [eax + 4]\n\t"
+            "fmul dword ptr [ecx + 0x8]\n\t"
+            "fstp dword ptr [ecx + 0x10]\n\t"
+            "fxch st(3)\n\t"
+            "fmul dword ptr [eax]\n\t"
+            "fxch st(3)\n\t"
+            "fstp dword ptr [esi]\n\t"
+            "fxch st(1)\n\t"
+            "fstp dword ptr [esi + 4]\n\t"
+            "fstp dword ptr [esi + 8]\n\t"
+            "fxch st(1)\n\t"
+            "fstp dword ptr [esi + 0xc]\n\t"
+            "fld dword ptr [eax + 4]\n\t"
+            "fst dword ptr [ecx + 0x20]\n\t"
+            "fmul dword ptr [ecx + 0x20]\n\t"
+            "fxch st(1)\n\t"
+            "fstp dword ptr [ecx + 0x20]\n\t"
+            "fmul dword ptr [ecx + 0x8]\n\t"
+            "fadd dword ptr [ecx + 0xc]\n\t"
+            "fstp dword ptr [esi + 0x10]\n\t"
+            "fld dword ptr [ecx + 0x20]\n\t"
+            "fld dword ptr [ecx + 0x14]\n\t"
+            "fld dword ptr [ecx + 0x10]\n\t"
+            "fxch st(2)\n\t"
+            "fadd dword ptr [ecx + 0x10]\n\t"
+            "fxch st(1)\n\t"
+            "fadd dword ptr [ecx + 0x18]\n\t"
+            "fxch st(2)\n\t"
+            "fsub dword ptr [ecx + 0x20]\n\t"
+            "fxch st(1)\n\t"
+            "fstp dword ptr [esi + 0x14]\n\t"
+            "fxch st(1)\n\t"
+            "fstp dword ptr [esi + 0x18]\n\t"
+            "fstp dword ptr [esi + 0x1c]\n\t"
+            "fld dword ptr [eax + 8]\n\t"
+            "fld st(0)\n\t"
+            "fmul st(0), st(1)\n\t"
+            "fmul dword ptr [ecx + 0x8]\n\t"
+            "fadd dword ptr [ecx + 0xc]\n\t"
+            "fstp dword ptr [esi + 0x20]\n\t"
+            "fstp st(0)\n\t"
+            ".att_syntax prefix\n\t"
+            :
+            : [matrix] "m" (pMat), [axis] "m" (pAxis), [scratch] "m" (scratch_ptr), [one] "m" (one_ptr)
+            : "eax", "ecx", "edx", "esi", "memory", "st", "st(1)", "st(2)", "st(3)", "st(4)", "st(5)", "st(6)", "st(7)");
+    }
+#else
+#error DrMatrix34Rotate requires the original x86 floating-point behavior
+#endif
+}
+
 
 // FUNCTION: CARMA2_HW 0x004fb2f0
 int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2) {
@@ -1860,13 +2293,376 @@ void C2_HOOK_FASTCALL ConditionalSmokeColumn(tCar_spec* pCar, int pFire_point, i
     }
 }
 
-// SingleSplash
+/* FSUBR selects its live x87 NaN operand before the scalar speed operand. */
+static double C2_HOOK_CDECL SplashSubtractFromScalar(double pValue, const br_scalar* pScalar) {
+    double result;
 
-// GeneralCreateSplash
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov ecx, pScalar
+        fld pValue
+        fsubr dword ptr [ecx]
+        fstp result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile (
+        "fldl %[value]\n\t"
+        "fsubrs %[scalar]\n\t"
+        "fstpl %[result]\n\t"
+        : [result] "=m" (result)
+        : [value] "m" (pValue), [scalar] "m" (*pScalar)
+        : "st", "memory");
+#else
+#error SplashSubtractFromScalar requires the original x86 floating-point behavior
+#endif
+    return result;
+}
 
-// CreateSplash
+// FUNCTION: CARMA2_HW 0x004fd530
+void C2_HOOK_FASTCALL SingleSplash(tPhysics_object* pObject, const br_matrix34* pMatrix, const br_vector3* pVelocity, const br_vector3* pNormal_velocity, const br_vector3* pOmega, const br_vector3* pPoint, const br_vector3* pNormal, tU32 pTime) {
+    br_vector3 cross;
+    br_vector3 velocity;
+    br_vector3 recoil;
+    br_scalar scaled;
+    br_scalar speed;
+    br_scalar size;
+    br_scalar range;
+    double dot;
+    double random;
+    double wide;
+    tCar_spec* car;
+    int index;
+    int i;
 
-// GetVelocitiesFromMatrices
+    BrMatrix34ApplyP((br_vector3*)gSplash[gSplash_next].actor->t.t.mat.m[3], pPoint, pMatrix);
+    cross.v[0] = SmokeScalarRound((double)pOmega->v[1] * pPoint->v[2] - (double)pOmega->v[2] * pPoint->v[1]);
+    cross.v[1] = SmokeScalarRound((double)pOmega->v[2] * pPoint->v[0] - (double)pOmega->v[0] * pPoint->v[2]);
+    cross.v[2] = SmokeScalarRound((double)pOmega->v[0] * pPoint->v[1] - (double)pOmega->v[1] * pPoint->v[0]);
+    BrMatrix34ApplyV(&velocity, &cross, pMatrix);
+    for (i = 0; i < 3; i++) {
+        scaled = SmokeScalarRound((double)pVelocity->v[i] * 6.9);
+        velocity.v[i] = SmokeScalarRound((double)velocity.v[i] + scaled);
+    }
+    speed = SmokeScalarRound(sqrt(((double)velocity.v[0] * velocity.v[0]
+        + (double)velocity.v[1] * velocity.v[1]) + (double)velocity.v[2] * velocity.v[2]));
+    dot = ((double)pNormal->v[1] * velocity.v[1] + (double)pNormal->v[2] * velocity.v[2])
+        + (double)pNormal->v[0] * velocity.v[0];
+    wide = SplashSubtractFromScalar(fabs(dot) * -5.f, &speed) * .006666666828095913f - -.04782608523964882f;
+    size = SmokeScalarRound(wide);
+    if (wide > .5f) {
+        size = .5f;
+    }
+    dot = ((double)pNormal_velocity->v[2] * pPoint->v[2] + (double)pNormal_velocity->v[1] * pPoint->v[1])
+        + (double)pNormal_velocity->v[0] * pPoint->v[0];
+    if (!(dot >= 0.0)) {
+        size = SmokeScalarRound((double)size * .5f);
+    }
+    index = gSplash_next;
+    gSplash[index].size = SmokeScalarRound(SRandomBetween(SmokeScalarRound((double)size * .5f), size));
+    if (!((tU32)gSplash_flags & (1u << (gSplash_next & 31)))) {
+        BrActorAdd(gNon_track_actor, gSplash[index].actor);
+    }
+    gSplash_flags = (int)((tU32)gSplash_flags | (1u << (gSplash_next & 31)));
+    gSplash[gSplash_next].just_done = 1;
+    if (pObject != NULL && !gAction_replay_mode) {
+        car = pObject->flags_0x238 == 1 ? (tCar_spec*)pObject->owner : NULL;
+        if (car != NULL) {
+            random = SRandomBetween(0.f, 1.f);
+            if (random < (double)pTime * .003f) {
+                range = SmokeScalarRound(sqrt((double)speed * .014285714365541935f) * 15.f);
+                for (i = 0; i < 3; i++) {
+                    wide = (double)velocity.v[i] * .14492753148078918f;
+                    velocity.v[i] = SmokeScalarRound(wide);
+                    recoil.v[i] = SmokeScalarRound(wide * -.1f);
+                }
+                if (range > 15.f) {
+                    range = 15.f;
+                }
+                random = SRandomBetween(5.f, range);
+                recoil.v[1] = SmokeScalarRound((double)recoil.v[1] - random * -.14492753623188406);
+                BrMatrix34TApplyV(&velocity, &recoil, &pObject->actor->t.t.mat);
+                cross.v[0] = SmokeScalarRound(((double)pObject->water_normal.v[2] * velocity.v[1]
+                    - (double)pObject->water_normal.v[1] * velocity.v[2]) * .5f);
+                cross.v[1] = SmokeScalarRound(((double)pObject->water_normal.v[0] * velocity.v[2]
+                    - (double)pObject->water_normal.v[2] * velocity.v[0]) * .5f);
+                cross.v[2] = SmokeScalarRound(((double)pObject->water_normal.v[1] * velocity.v[0]
+                    - (double)pObject->water_normal.v[0] * velocity.v[1]) * .5f);
+                dot = ((double)pPoint->v[1] * cross.v[1] + (double)pPoint->v[2] * cross.v[2])
+                    + (double)pPoint->v[0] * cross.v[0];
+                for (i = 0; i < 3; i++) {
+                    velocity.v[i] = SmokeScalarRound(dot > 0.0 ? (double)velocity.v[i] + cross.v[i]
+                        : (double)velocity.v[i] - cross.v[i]);
+                }
+                index = gSpark_next;
+                for (i = 0; i < 3; i++) {
+                    memcpy(&gSpark[index].pos.v[i], &pPoint->v[i], 4);
+                }
+                BrVector3SetFloat(&gSpark[index].normal, 0.f, 0.f, 0.f);
+                index = gSpark_next;
+                memcpy(&gSpark[index].v, &velocity, sizeof(velocity));
+                gSpark[index].count = 500;
+                gSpark[index].car = car;
+                gSpark[index].time_sync = 1;
+                gSpark[index].colour = 1;
+                gSpark_flags = (int)((tU32)gSpark_flags | (1u << (index & 31)));
+                gSpark_next = (int)((tU32)index + 1u);
+                if (gSpark_next >= 32) {
+                    gSpark_next = 0;
+                }
+            }
+        }
+    }
+    gSplash_next = (int)((tU32)gSplash_next + 1u);
+    if ((tU32)gSplash_next >= 32u) {
+        gSplash_next = 0;
+    }
+}
+
+
+#if defined(_MSC_VER)
+#if _MSC_VER >= 1300
+#pragma warning(push)
+#endif
+/* The original copies the unwritten private minimum point before assigning
+ * its first candidate. Keep that stack-history copy; do not initialize it. */
+#pragma warning(disable: 4700)
+#endif
+// FUNCTION: CARMA2_HW 0x004fcbb0
+void C2_HOOK_FASTCALL GeneralCreateSplash(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, const br_vector3* pNormal, br_scalar pWater_distance, const br_bounds3* pBounds, const br_matrix34* pMatrix, tU32 pTime) {
+    br_vector3 local_normal;
+    br_vector3 world_min;
+    br_vector3 local_velocity;
+    /* Original spills this projection, but passes local_velocity below. */
+    volatile br_vector3 normal_velocity;
+    br_vector3 point;
+    br_vector3 minimum_point;
+    br_vector3 maximum_point;
+    br_vector3 span;
+    br_vector3 side;
+    br_vector3 offset;
+    br_bounds3 bounds;
+    tCar_spec* car;
+    br_scalar plane_distance;
+    br_scalar minimum_projection;
+    br_scalar maximum_projection;
+    br_scalar projection;
+    br_scalar length;
+    br_scalar near_distance;
+    br_scalar far_distance;
+    br_scalar height;
+    double side_wide[3];
+    double wide_height;
+    double wide_near;
+    double coordinate;
+    double wide_projection;
+    double lower;
+    double upper;
+    double dot;
+    double value;
+    double random;
+    double second_random;
+    double multiplier;
+    int start;
+    int axis;
+    int a;
+    int b;
+    int corner;
+    int pattern;
+    int i;
+
+    value = ((double)pVelocity->v[1] * pVelocity->v[1] + (double)pVelocity->v[2] * pVelocity->v[2])
+        + (double)pVelocity->v[0] * pVelocity->v[0];
+    if (!(value * 47.61000000000001 >= 1.0)) {
+        return;
+    }
+    BrMatrix34TApplyV(&local_normal, pNormal, pMatrix);
+    BrMatrix34ApplyP(&world_min, &pBounds->min, pMatrix);
+    lower = ((double)pNormal->v[1] * world_min.v[1] + (double)pNormal->v[2] * world_min.v[2])
+        + (double)pNormal->v[0] * world_min.v[0] - pWater_distance;
+    upper = lower;
+    for (i = 0; i < 3; i++) {
+        value = ((double)pBounds->max.v[i] - pBounds->min.v[i]) * local_normal.v[i];
+        if (local_normal.v[i] > 0.f) {
+            upper += value;
+        } else {
+            lower += value;
+        }
+    }
+    if (lower * upper > 0.0) {
+        return;
+    }
+    dot = ((double)pVelocity->v[1] * pNormal->v[1] + (double)pVelocity->v[2] * pNormal->v[2])
+        + (double)pVelocity->v[0] * pNormal->v[0];
+    for (i = 0; i < 3; i++) {
+        normal_velocity.v[i] = SmokeScalarRound(dot * local_normal.v[i]);
+    }
+    (void)&normal_velocity;
+    memcpy(&bounds, pBounds, sizeof(bounds));
+    bounds.min.v[1] = .01f;
+    BrMatrix34TApplyV(&local_velocity, pVelocity, pMatrix);
+    plane_distance = SmokeScalarRound((double)pWater_distance
+        - (((double)pMatrix->m[3][2] * pNormal->v[2] + (double)pMatrix->m[3][1] * pNormal->v[1])
+            + (double)pMatrix->m[3][0] * pNormal->v[0]));
+    minimum_projection = 0.f;
+    maximum_projection = 0.f;
+    start = IRandomBetween(0, 3);
+    for (axis = 0; axis < 3; axis++) {
+        a = (axis + 1) % 3;
+        b = (axis + 2) % 3;
+        for (corner = 0; corner < 4; corner++) {
+            pattern = start ^ corner;
+            point.v[a] = SmokeScalarRound((pattern & 1) ? bounds.min.v[a] : bounds.max.v[a]);
+            point.v[b] = SmokeScalarRound((pattern & 2) ? bounds.min.v[b] : bounds.max.v[b]);
+            coordinate = (((double)plane_distance - (double)point.v[a] * local_normal.v[a])
+                - (double)point.v[b] * local_normal.v[b]) / local_normal.v[axis];
+            value = SmokeScalarRound(coordinate);
+            if (!(coordinate >= bounds.min.v[axis]) || value > bounds.max.v[axis]) {
+                continue;
+            }
+            point.v[axis] = SmokeScalarRound(value);
+            wide_projection = ((double)local_velocity.v[0] * point.v[0] + (double)local_velocity.v[1] * point.v[1])
+                + (double)local_velocity.v[2] * point.v[2];
+            projection = SmokeScalarRound(wide_projection);
+            if (!(wide_projection >= minimum_projection)) {
+                if (!(maximum_projection >= 0.f)) {
+                    SingleSplash(pObject, pMatrix, pVelocity, &local_velocity, pOmega, &maximum_point, &local_normal, pTime);
+                }
+                maximum_projection = minimum_projection;
+                minimum_projection = projection;
+                memcpy(&maximum_point, &minimum_point, sizeof(maximum_point));
+                memcpy(&minimum_point, &point, sizeof(minimum_point));
+            } else if (!(projection >= maximum_projection)) {
+                if (!(maximum_projection >= 0.f)) {
+                    SingleSplash(pObject, pMatrix, pVelocity, &local_velocity, pOmega, &maximum_point, &local_normal, pTime);
+                }
+                maximum_projection = projection;
+                memcpy(&maximum_point, &point, sizeof(maximum_point));
+            } else {
+                SingleSplash(pObject, pMatrix, pVelocity, &local_velocity, pOmega, &point, &local_normal, pTime);
+            }
+        }
+    }
+    if (!(maximum_projection >= 0.f)) {
+        for (i = 0; i < 3; i++) {
+            span.v[i] = SmokeScalarRound((double)maximum_point.v[i] - minimum_point.v[i]);
+        }
+        random = SRandomBetween(.4f, .6f);
+        point.v[0] = SmokeScalarRound((double)minimum_point.v[0] + random * span.v[0]);
+        point.v[1] = SmokeScalarRound((double)minimum_point.v[1] + SmokeScalarRound(random * span.v[1]));
+        point.v[2] = SmokeScalarRound((double)minimum_point.v[2] + SmokeScalarRound(random * span.v[2]));
+        random = SRandomBetween(.2f, .3f);
+        for (i = 0; i < 3; i++) {
+            minimum_point.v[i] = SmokeScalarRound(random * span.v[i] + minimum_point.v[i]);
+        }
+        second_random = SRandomBetween(.2f, .3f);
+        random = SmokeScalarRound(-second_random);
+        dot = -(((double)local_velocity.v[2] * local_normal.v[2] + (double)local_velocity.v[1] * local_normal.v[1])
+            + (double)local_velocity.v[0] * local_normal.v[0]);
+        for (i = 0; i < 3; i++) {
+            side_wide[i] = (double)local_velocity.v[i] + SmokeScalarRound((double)local_normal.v[i] * dot);
+            side.v[i] = SmokeScalarRound(side_wide[i]);
+        }
+        length = SmokeScalarRound(sqrt((side_wide[0] * side.v[0] + side_wide[1] * side.v[1])
+            + (double)side.v[2] * side.v[2]));
+        if (!(length > 2.384185791015625e-7f)) {
+            side.v[0] = 1.f;
+            side.v[1] = 0.f;
+            side.v[2] = 0.f;
+            side_wide[0] = 1.0;
+            side_wide[1] = 0.0;
+            side_wide[2] = 0.0;
+        } else {
+            multiplier = 1.0 / length;
+            for (i = 0; i < 3; i++) {
+                side_wide[i] = multiplier * side.v[i];
+                side.v[i] = SmokeScalarRound(side_wide[i]);
+                if (i == 2) {
+                    side_wide[i] = side.v[i];
+                }
+            }
+        }
+        for (i = 0; i < 3; i++) {
+            value = side_wide[i] * -.028985507786273956f;
+            offset.v[i] = SmokeScalarRound(value * .5f);
+            point.v[i] = SmokeScalarRound((double)point.v[i] + SmokeScalarRound(value));
+            minimum_point.v[i] = SmokeScalarRound((double)minimum_point.v[i] + offset.v[i]);
+            maximum_point.v[i] = SmokeScalarRound((double)maximum_point.v[i]
+                + (i == 0 ? -second_random : random) * span.v[i]);
+            maximum_point.v[i] = SmokeScalarRound((double)maximum_point.v[i] + offset.v[i]);
+        }
+        SingleSplash(pObject, pMatrix, pVelocity, &local_velocity, pOmega, &point, &local_normal, pTime);
+        SingleSplash(pObject, pMatrix, pVelocity, &local_velocity, pOmega, &minimum_point, &local_normal, pTime);
+        SingleSplash(pObject, pMatrix, pVelocity, &local_velocity, pOmega, &maximum_point, &local_normal, pTime);
+    } else if (!(minimum_projection >= 0.f)) {
+        SingleSplash(pObject, pMatrix, pVelocity, &local_velocity, pOmega, &minimum_point, &local_normal, pTime);
+    }
+    plane_distance = SmokeScalarRound((double)plane_distance * 6.900000095367432f);
+    if (pObject != NULL && pObject->flags_0x238 == 1 && pObject->owner != NULL) {
+        car = pObject->owner;
+        if (car->driver > 5) {
+            for (i = 0; i < 4; i++) {
+                value = (i & 1) ? pObject->shape->common.bb.max.v[0] : pObject->shape->common.bb.min.v[0];
+                wide_height = (double)pObject->shape->common.bb.max.v[1] * 6.9;
+                height = SmokeScalarRound(wide_height);
+                wide_near = (double)plane_distance
+                    - (((double)car->wpos[i].v[2] * local_normal.v[2] + wide_height * local_normal.v[1])
+                        + value * 6.9 * local_normal.v[0]);
+                near_distance = SmokeScalarRound(wide_near);
+                far_distance = SmokeScalarRound(((double)pObject->shape->common.bb.max.v[1] - .01f)
+                    * local_normal.v[1] * 6.900000095367432f + near_distance);
+                if ((wide_near > 0.f) != (far_distance > 0.f)) {
+                    point.v[0] = SmokeScalarRound(value * 6.9 * .14492753148078918f);
+                    point.v[1] = SmokeScalarRound(((double)height - (wide_height - .01)
+                        * ((double)near_distance / ((double)near_distance - far_distance))) * .14492753148078918f);
+                    point.v[2] = SmokeScalarRound((double)car->wpos[i].v[2] * .14492753148078918f);
+                    SingleSplash(pObject, pMatrix, pVelocity, &local_velocity, pOmega, &point, &local_normal, pTime);
+                }
+            }
+        }
+    }
+}
+
+
+#if defined(_MSC_VER)
+#if _MSC_VER >= 1300
+#pragma warning(pop)
+#else
+#pragma warning(default: 4700)
+#endif
+#endif
+
+// FUNCTION: CARMA2_HW 0x004fda40
+void C2_HOOK_FASTCALL CreateSplash(tPhysics_object* pObject, tU32 pTime) {
+    GeneralCreateSplash(pObject, &pObject->v, &pObject->omega, &pObject->water_normal,
+        pObject->water_d, &pObject->bb1, &pObject->actor->t.t.mat, pTime);
+}
+
+
+// FUNCTION: CARMA2_HW 0x004fda70
+void C2_HOOK_FASTCALL GetVelocitiesFromMatrices(br_vector3* pVelocity, br_vector3* pOmega, const br_matrix34* pMatrix, const br_matrix34* pNext_matrix, tU32 pTime) {
+    br_quat current;
+    br_quat next;
+    br_quat difference;
+    br_scalar interval;
+    int i;
+
+    pVelocity->v[0] = SmokeScalarRound((double)pNext_matrix->m[3][0] - pMatrix->m[3][0]);
+    pVelocity->v[1] = SmokeScalarRound((double)pNext_matrix->m[3][1] - pMatrix->m[3][1]);
+    interval = SmokeScalarRound((double)pTime * .001);
+    pVelocity->v[2] = SmokeScalarRound((double)pNext_matrix->m[3][2] - pMatrix->m[3][2]);
+    for (i = 0; i < 3; i++) {
+        pVelocity->v[i] = SmokeScalarRound((double)pVelocity->v[i] / interval);
+    }
+    /* Both original calls deliberately read the current matrix. */
+    BrMatrix34ToQuat(&current, pMatrix);
+    BrMatrix34ToQuat(&next, pMatrix);
+    BrQuatInvert(&current, &current);
+    BrQuatMul(&difference, &current, &next);
+    pOmega->v[0] = SmokeScalarRound(((double)difference.x + difference.x) / interval);
+    pOmega->v[1] = SmokeScalarRound(((double)difference.y + difference.y) / interval);
+    pOmega->v[2] = SmokeScalarRound(((double)difference.z + difference.z) / interval);
+}
+
 
 // MungeSplash
 

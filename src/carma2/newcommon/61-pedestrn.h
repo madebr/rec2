@@ -2,6 +2,9 @@
 #define GUARD_61_PEDESTRN_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern tPedestrian* gPedestrian_array;
 
 // OrientationChanged
 
@@ -423,7 +426,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // GetBoneMatrixPtr
 
-// GetCharacterActorPtr
+extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
 
 // SetCharacterBonePositions
 

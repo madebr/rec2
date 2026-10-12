@@ -173,7 +173,7 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 extern void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV);
 
-// AddShrapnelToPipingSession
+extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
 // AddNonCarToPipingSession
 
@@ -519,7 +519,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // CalcCrushLength
 
-// CalcShrapnelLength
+extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 
 // CalcSmudgeLength
 
