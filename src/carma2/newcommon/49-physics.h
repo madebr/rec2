@@ -517,4 +517,11 @@ void C2_HOOK_FASTCALL FUN_004c25a0(tPhysics_object* pObject);
 
 void C2_HOOK_FASTCALL FUN_004bc190(tPhysics_joint_force* const* pForces, br_scalar* pImpulses, int pCount, tWorld_callbacks* pCallbacks);
 
+extern tU32 gPhysics_group_counter_6940a0;
+
+void C2_HOOK_FASTCALL FUN_004bae80(tPhysics_object* object, tU32 label);
+void C2_HOOK_FASTCALL FUN_004bddd0(tPhysics_object* object, tPhysics_object* other);
+void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tPhysics_object* object, tPhysics_object* list, tPhysics_object* original_list);
+void C2_HOOK_FASTCALL FUN_004be0e0(tPhysics_object* object, tPhysics_object* original_list);
+
 #endif // GUARD_49_PHYSICS_H

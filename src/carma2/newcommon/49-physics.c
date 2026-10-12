@@ -7055,3 +7055,253 @@ void C2_HOOK_FASTCALL FUN_004bc190(tPhysics_joint_force* const* pForces, br_scal
         outer = AngularForceNextIndex(forces[outer], outer);
     }
 }
+
+// GLOBAL: CARMA2_HW 0x006940a0
+tU32 gPhysics_group_counter_6940a0 = 0;
+
+static tPhysics_object* C2_HOOK_CDECL WakePointer(const void* base, unsigned offset) { return (tPhysics_object*)(uintptr_t)*(volatile const tU32*)((const tU8*)base+offset); }
+#define WakeParent(p) WakePointer((p),0x228)
+#define WakeChild(p) WakePointer((p),0x224)
+#define WakeNext(p) WakePointer((p),0x220)
+#define WakeJoint(p) ((tPhysics_joint*)WakePointer((p),0x188))
+#define WAKE_LABEL(p) (*(volatile tU8*)((tU8*)(p)+0x1dc))
+#define WAKE_RING(p) (*(volatile tU32*)((tU8*)(p)+0x1d8))
+#define WAKE_COUNTER (*(volatile tU32*)&gPhysics_group_counter_6940a0)
+#define WAKE_DISABLED(p) (*(volatile tU8*)((tU8*)(p)+0xec))
+#define WAKE_FACE(p) (*(volatile tU16*)((tU8*)(p)+0x178))
+
+// FUNCTION: CARMA2_HW 0x004bae80
+void C2_HOOK_FASTCALL FUN_004bae80(tPhysics_object* object, tU32 label) {
+    tPhysics_object* child=WakeChild(object);
+    tPhysics_joint* joint;
+    WAKE_LABEL(object)=(tU8)label;
+    while(child!=NULL) {
+        joint=WakeJoint(child);
+        if(joint!=NULL && *(volatile int*)joint!=0)FUN_004bae80(child,label);
+        child=WakeNext(child);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004bddd0
+void C2_HOOK_FASTCALL FUN_004bddd0(tPhysics_object* object, tPhysics_object* other) {
+    tPhysics_object* parent;
+    tPhysics_object* child;
+    tPhysics_object* current;
+    tU32 state;
+
+    parent = WakeParent(object);
+    while (parent != NULL && WakeJoint(object) != NULL
+            && *(volatile int*)WakeJoint(object) != 0) {
+        object = parent;
+        parent = WakeParent(object);
+    }
+    parent = WakeParent(other);
+    while (parent != NULL && WakeJoint(other) != NULL
+            && *(volatile int*)WakeJoint(other) != 0) {
+        other = parent;
+        parent = WakeParent(other);
+    }
+    if (object == other) {
+        return;
+    }
+    if (other == NULL) {
+        if (WAKE_LABEL(object) == 0) {
+            child = WakeChild(object);
+            state = WAKE_COUNTER;
+            WAKE_LABEL(object) = (tU8)state;
+            while (child != NULL) {
+                if (WakeJoint(child) != NULL && *(volatile int*)WakeJoint(child) != 0) {
+                    FUN_004bae80(child, state);
+                }
+                child = WakeNext(child);
+            }
+            WAKE_RING(object) = (tU32)(uintptr_t)object;
+            WAKE_COUNTER++;
+        }
+        return;
+    }
+    if (WAKE_LABEL(object) == 0) {
+        if (WAKE_LABEL(other) == 0) {
+            child = WakeChild(object);
+            state = WAKE_COUNTER;
+            WAKE_LABEL(object) = (tU8)state;
+            while (child != NULL) {
+                if (WakeJoint(child) != NULL && *(volatile int*)WakeJoint(child) != 0) {
+                    FUN_004bae80(child, state);
+                }
+                child = WakeNext(child);
+            }
+            child = WakeChild(other);
+            state = WAKE_COUNTER;
+            WAKE_LABEL(other) = (tU8)state;
+            while (child != NULL) {
+                if (WakeJoint(child) != NULL && *(volatile int*)WakeJoint(child) != 0) {
+                    FUN_004bae80(child, state);
+                }
+                child = WakeNext(child);
+            }
+            WAKE_RING(object) = (tU32)(uintptr_t)other;
+            WAKE_RING(other) = (tU32)(uintptr_t)object;
+            WAKE_COUNTER++;
+        } else {
+            child = WakeChild(object);
+            state = (tU32)(tS32)(tS8)WAKE_LABEL(other);
+            WAKE_LABEL(object) = (tU8)state;
+            while (child != NULL) {
+                if (WakeJoint(child) != NULL && *(volatile int*)WakeJoint(child) != 0) {
+                    FUN_004bae80(child, state);
+                }
+                child = WakeNext(child);
+            }
+            WAKE_RING(object) = WAKE_RING(other);
+            WAKE_RING(other) = (tU32)(uintptr_t)object;
+        }
+        return;
+    }
+    if (WAKE_LABEL(other) == 0) {
+        child = WakeChild(other);
+        state = (tU32)(tS32)(tS8)WAKE_LABEL(object);
+        WAKE_LABEL(other) = (tU8)state;
+        while (child != NULL) {
+            if (WakeJoint(child) != NULL && *(volatile int*)WakeJoint(child) != 0) {
+                FUN_004bae80(child, state);
+            }
+            child = WakeNext(child);
+        }
+        WAKE_RING(other) = WAKE_RING(object);
+        WAKE_RING(object) = (tU32)(uintptr_t)other;
+        return;
+    }
+    if (WAKE_LABEL(object) != WAKE_LABEL(other)) {
+        current = other;
+        while ((tPhysics_object*)WAKE_RING(current) != other) {
+            state = (tU32)(tS32)(tS8)WAKE_LABEL(object);
+            child = WakeChild(current);
+            WAKE_LABEL(current) = (tU8)state;
+            while (child != NULL) {
+                if (WakeJoint(child) != NULL && *(volatile int*)WakeJoint(child) != 0) {
+                    FUN_004bae80(child, state);
+                }
+                child = WakeNext(child);
+            }
+            current = (tPhysics_object*)WAKE_RING(current);
+        }
+        state = (tU32)(tS32)(tS8)WAKE_LABEL(object);
+        child = WakeChild(current);
+        WAKE_LABEL(current) = (tU8)state;
+        while (child != NULL) {
+            if (WakeJoint(child) != NULL && *(volatile int*)WakeJoint(child) != 0) {
+                FUN_004bae80(child, state);
+            }
+            child = WakeNext(child);
+        }
+        WAKE_RING(current) = WAKE_RING(object);
+        WAKE_RING(object) = (tU32)(uintptr_t)other;
+    }
+}
+
+/* Exact qword epsilon58a798=0.01. Reject only ordered greater; unordered
+ * differences pass, exactly original TEST AH,41 / JE reject. */
+static int C2_HOOK_CDECL WakeBounds(const tPhysics_object* a, const tPhysics_object* b) {
+    unsigned i;
+    for(i=0;i<3;i++)if(FrictionSubtractScalar(FrictionRead(a,0xf4+4*i),(volatile const br_scalar*)((const tU8*)b+0x100+4*i))>0.01)return 0;
+    for(i=0;i<3;i++)if(FrictionSubtractScalar(FrictionRead(b,0xf4+4*i),(volatile const br_scalar*)((const tU8*)a+0x100+4*i))>0.01)return 0;
+    return 1;
+}
+static tPhysics_object* C2_HOOK_CDECL WakeAncestor(tPhysics_object* object) {
+    tPhysics_object* parent=WakeParent(object);
+    tPhysics_joint* joint;
+    while(parent!=NULL) {
+        joint=WakeJoint(object);
+        if(joint==NULL || *(volatile int*)joint==0)break;
+        object=parent;
+        parent=WakeParent(object);
+    }
+    return object;
+}
+/* Only call sites with a genuine child/joint enter this routine. Motion and
+ * descendant wake execute their actual published bodies; no substitute. */
+static void C2_HOOK_CDECL WakeDescendants(tPhysics_object* object) {
+    tPhysics_object* child;
+    if(WakePointer(object,0x218)==NULL)MoveJointedObject(object,0,0.f);
+    child=WakeChild(object);
+    while(child!=NULL) {
+        if(WAKE_DISABLED(child)!=0) {
+            tU32 face=(tU32)*(volatile int*)&gFace_num__car;
+            WAKE_DISABLED(child)=0;
+            WAKE_FACE(child)=(tU16)(face-2u);
+        }
+        if(WakeChild(child)!=NULL)MakeObjectListDoSomething(WakeChild(child));
+        child=WakeNext(child);
+    }
+}
+// FUNCTION: CARMA2_HW 0x004ba190
+void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tPhysics_object* object, tPhysics_object* list, tPhysics_object* original_list) {
+    tPhysics_object* root;
+    tPhysics_object* child;
+    tPhysics_object* captured_child;
+    tU32 face;
+    while(list!=NULL) {
+        if(WAKE_DISABLED(list)!=0) {
+            if(WakeBounds(object,list)) {
+                root=WakeAncestor(list);
+                face=(tU32)*(volatile int*)&gFace_num__car;
+                WAKE_DISABLED(root)=0;
+                WAKE_FACE(root)=(tU16)(face-2u);
+                if(WakeChild(root)!=NULL || WakeJoint(root)!=NULL || WakePointer(root,0x18c)!=NULL)WakeDescendants(root);
+                CheckForObjectHierachyTouchingObjectList(root,original_list,original_list);
+            }
+            child=WakeChild(object);
+            if(child!=NULL && WAKE_DISABLED(list)!=0) {
+                while(child!=NULL) {
+                    if(WakeBounds(child,list)) {
+                        root=WakeAncestor(list);
+                        face=(tU32)*(volatile int*)&gFace_num__car;
+                        captured_child=WakeChild(root);
+                        WAKE_FACE(root)=(tU16)(face-2u);
+                        WAKE_DISABLED(root)=0;
+                        if(captured_child!=NULL || WakeJoint(root)!=NULL || WakePointer(root,0x18c)!=NULL)WakeDescendants(root);
+                        CheckForObjectHierachyTouchingObjectList(root,original_list,original_list);
+                        break;
+                    }
+                    child=WakeNext(child);
+                }
+            }
+            child=WakeChild(list);
+            if(child!=NULL)CheckForObjectHierachyTouchingObjectList(object,child,original_list);
+        }
+        list=WakeNext(list);
+    }
+}
+// FUNCTION: CARMA2_HW 0x004be0e0
+void C2_HOOK_FASTCALL FUN_004be0e0(tPhysics_object* object, tPhysics_object* original_list) {
+    tPhysics_object* root;
+    tPhysics_object* current;
+    tPhysics_object* child;
+    tU32 face;
+    if(WAKE_DISABLED(object)==0)return;
+    root=WakeAncestor(object);
+    face=(tU32)*(volatile int*)&gFace_num__car;
+    WAKE_DISABLED(root)=0;
+    WAKE_FACE(root)=(tU16)(face-2u);
+    if(WakeChild(root)!=NULL || WakeJoint(root)!=NULL || WakePointer(root,0x18c)!=NULL)WakeDescendants(root);
+    current=original_list;
+    while(current!=NULL) {
+        if(WAKE_DISABLED(current)!=0) {
+            if(WakeBounds(root,current))FUN_004be0e0(current,original_list);
+            child=WakeChild(root);
+            if(child!=NULL && WAKE_DISABLED(current)!=0) {
+                while(child!=NULL) {
+                    if(WakeBounds(child,current)) {
+                        FUN_004be0e0(current,original_list);
+                        break;
+                    }
+                    child=WakeNext(child);
+                }
+            }
+            child=WakeChild(current);
+            if(child!=NULL)CheckForObjectHierachyTouchingObjectList(root,child,original_list);
+        }
+        current=WakeNext(current);
+    }
+}
