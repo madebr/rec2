@@ -99,11 +99,11 @@ extern double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, i
 
 // FlushQueuedAddsAndRemoves
 
-// ChangedObjectsCallbacks
+extern void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tPhysics_object* objects, tPhysics_callbacks* callbacks, tU32 period);
 
 // ProcessDrag
 
-// MarkObjectAndChildrenAsPassive
+extern void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tPhysics_object* object);
 
 // SetStandardGravity
 

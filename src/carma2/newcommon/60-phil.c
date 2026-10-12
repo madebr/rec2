@@ -1,4 +1,5 @@
 #include "60-phil.h"
+#include "23-piping.h"
 #include <math.h>
 #include <stdint.h>
 #include "globvars.h"
@@ -640,11 +641,115 @@ double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pPro
 
 // FlushQueuedAddsAndRemoves
 
-// ChangedObjectsCallbacks
+#if defined(__GNUC__)
+typedef tU32 tCompletion_word __attribute__((__may_alias__));
+#else
+typedef tU32 tCompletion_word;
+#endif
+
+static tU32 C2_HOOK_CDECL CompletionWord(const void* base, tU32 offset) {
+    return *(volatile const tCompletion_word*)((tU32)(uintptr_t)base + offset);
+}
+
+static void* C2_HOOK_CDECL CompletionPointer(const void* base, tU32 offset) {
+    return (void*)(uintptr_t)CompletionWord(base, offset);
+}
+
+static tU8 C2_HOOK_CDECL CompletionByte(const void* base, tU32 offset) {
+    return *(volatile const tU8*)((tU32)(uintptr_t)base + offset);
+}
+
+static void C2_HOOK_CDECL CompletionStore(void* base, tU32 offset, tU32 value) {
+    *(volatile tCompletion_word*)((tU32)(uintptr_t)base + offset) = value;
+}
+
+static tU32 C2_HOOK_CDECL CompletionStatus(tPhysics_object* object) {
+    tU8 type;
+    void* header;
+
+    if (CompletionWord(&gPHIL_disabled, 0) != 0) {
+        return 0;
+    }
+    type = CompletionByte(object, 0x239);
+    header = CompletionPointer(object, 0x240);
+    if (type == 2) {
+        return CompletionWord(header, 8);
+    }
+    return header != NULL ? CompletionWord(header, 8) : 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004b6be0
+void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tPhysics_object* objects, tPhysics_callbacks* callbacks, tU32 period) {
+    typedef int (C2_HOOK_FASTCALL *halted_fn)(tPhysics_object*);
+    typedef void (C2_HOOK_FASTCALL *changed_fn)(tPhysics_object*, tU32);
+    halted_fn halted;
+    changed_fn changed;
+    tU32 address;
+    void* header;
+    tPhysics_object* pipe_object;
+
+    while (objects != NULL) {
+        if (CompletionStatus(objects) == 2) {
+            if (CompletionByte(objects, 0xec) != 0) {
+                header = CompletionPointer(objects, 0x240);
+                if (header != NULL && (CompletionByte(header, 4) & 2) != 0) {
+                    address = CompletionWord(callbacks, 0x10);
+                    if (address != 0) {
+                        memcpy(&halted, &address, 4);
+                        if (halted(objects) == 0) {
+                            objects = CompletionPointer(objects, 0x220);
+                            continue;
+                        }
+                    }
+                    /* Complete original inline passive transition, after the
+                     * callback's mutations and a fresh disabled/type/header. */
+                    if (CompletionWord(&gPHIL_disabled, 0) == 0) {
+                        if (CompletionByte(objects, 0x239) == 2) {
+                            header = CompletionPointer(objects, 0x240);
+                            CompletionStore(header, 8, 1);
+                        } else {
+                            header = CompletionPointer(objects, 0x240);
+                            if (header != NULL) {
+                                CompletionStore(header, 8, 1);
+                                CompletionStore(objects, 0x19c, CompletionWord(objects, 0x19c) | 0x20u);
+                            }
+                        }
+                    }
+                }
+            } else {
+                address = CompletionWord(callbacks, 0xc);
+                if (address != 0) {
+                    memcpy(&changed, &address, 4);
+                    changed(objects, period);
+                }
+                header = CompletionPointer(objects, 0x240);
+                if (header != NULL && (CompletionByte(header, 4) & 4) != 0) {
+                    /* Raw original follows the child chain only. Siblings
+                     * here are not traversed or recursively enumerated. */
+                    pipe_object = objects;
+                    do {
+                        PipeSinglePHILObject(pipe_object);
+                        pipe_object = CompletionPointer(pipe_object, 0x224);
+                    } while (pipe_object != NULL);
+                }
+            }
+        }
+        objects = CompletionPointer(objects, 0x220);
+    }
+}
 
 // ProcessDrag
 
-// MarkObjectAndChildrenAsPassive
+// FUNCTION: CARMA2_HW 0x004b6e90
+void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tPhysics_object* object) {
+    tPhysics_object* child = CompletionPointer(object, 0x224);
+
+    CompletionStore(object, 0xf0, 2);
+    while (child != NULL) {
+        MarkObjectAndChildrenAsPassive(child);
+        child = CompletionPointer(child, 0x220);
+    }
+}
 
 // SetStandardGravity
 

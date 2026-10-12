@@ -267,7 +267,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // PipeSinglePedModelChange
 
-// PipeSinglePHILObject
+extern void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* object);
 
 // PipeSingleGibShower
 
