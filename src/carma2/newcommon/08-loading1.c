@@ -26,6 +26,9 @@
 #include "rec2_macros.h"
 
 #include <ctype.h>
+
+// GLOBAL: CARMA2_HW 0x0079efb8
+tU32 gTime_stamp_for_this_munging;
 #include <stdarg.h>
 #include "c2_string.h"
 

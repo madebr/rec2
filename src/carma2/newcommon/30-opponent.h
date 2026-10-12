@@ -7,6 +7,14 @@ extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
 extern int gNumber_of_cops_before_faffage;
+extern float gShortest_route_length;
+extern int gRoute_search_target_count;
+extern int gRoute_search_last_target_count;
+extern tU8* gBit_per_node;
+extern int gRoute_search_calls;
+extern int gRoute_search_attempts;
+extern int gRoute_search_total_calls;
+extern int gRoute_search_max_calls;
 
 extern void C2_HOOK_CDECL DoNotDprintf_opponent(const char* pMessage, ...);
 
@@ -20,7 +28,7 @@ extern void C2_HOOK_CDECL DoNotDprintf_opponent(const char* pMessage, ...);
 
 // WeightedFindNearestNodeAndSection
 
-// FindNearestGeneralSection
+extern tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, const br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance);
 
 // FindNearestPathSection
 
@@ -34,11 +42,11 @@ extern void C2_HOOK_CDECL DoNotDprintf_opponent(const char* pMessage, ...);
 
 // NewObjective
 
-// CalcRaceRoute
+extern void C2_HOOK_FASTCALL CalcRaceRoute(tOpponent_spec* pOpponent_spec);
 
-// TopUpRandomRoute
+extern void C2_HOOK_FASTCALL TopUpRandomRoute(tOpponent_spec* pOpponent_spec, int pSections_to_add);
 
-// SearchForSection
+extern int C2_HOOK_FASTCALL SearchForSection(tRoute_section* pRoute, tRoute_section* pBest_route, int* pBest_count, tS16 pTarget, int pDepth, br_scalar pLength, tOpponent_spec* pOpponent_spec);
 
 // UpdatePlayersSection
 
@@ -46,9 +54,9 @@ extern void C2_HOOK_CDECL DoNotDprintf_opponent(const char* pMessage, ...);
 
 extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces);
 
-// NewCalcGetNearPlayerRoute
+extern void C2_HOOK_FASTCALL NewCalcGetNearPlayerRoute(tOpponent_spec* pOpponent_spec, tCar_spec* pPursuee, int pForce);
 
-// CalcReturnToStartPointRoute
+extern void C2_HOOK_FASTCALL CalcReturnToStartPointRoute(tOpponent_spec* pOpponent_spec);
 
 // ClearOpponentsProjectedRoute
 
