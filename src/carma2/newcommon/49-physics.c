@@ -6902,3 +6902,156 @@ void C2_HOOK_FASTCALL FUN_004b9750(tPhysics_object* object) {
 #endif
     gPhysics_joints_changed_692dc8 = 1;
 }
+
+// FUNCTION: CARMA2_HW 0x004c25a0
+void C2_HOOK_FASTCALL FUN_004c25a0(tPhysics_object* pObject) {
+    volatile tPhysics_object* object = pObject;
+    tPhysics_object* child;
+
+    if (object->field_0xf0 == 1) {
+        BrMatrix34Copy(&object->actor->t.t.mat, (const br_matrix34*)pObject->field_0xbc);
+    } else {
+        BrMatrix34LPNormalise(&object->actor->t.t.mat, &pObject->transform_matrix);
+    }
+    child = object->child;
+    while (child != NULL) {
+        FUN_004c25a0(child);
+        child = ((volatile tPhysics_object*)child)->next;
+    }
+}
+
+/* Original __ftol truncates with FISTP qword. An invalid conversion writes
+ * integer-indefinite, whose low 16 bits (the BRender angle) are zero. */
+static br_angle C2_HOOK_CDECL AngularForceAngle(double pValue) {
+    if (pValue >= -9223372036854775808.0 && pValue < 9223372036854775808.0) {
+        return (br_angle)(br_int_64)pValue;
+    }
+    return 0;
+}
+
+static int C2_HOOK_CDECL AngularForceNextIndex(const tPhysics_joint_force* pRecord, int pIndex) {
+    const volatile tPhysics_joint_force* record = pRecord;
+    const volatile tPhysics_object* object;
+    const volatile tPhysics_joint* joint;
+    tU32 index = (tU32)pIndex;
+
+    object = record->object_a;
+    joint = object->physics_joint1;
+    if (joint != NULL) {
+        switch ((tU32)joint->type) {
+        case 1: index += 5; break;
+        case 2: index += 4; break;
+        case 3: index += 3; break;
+        case 4: index += 2; break;
+        default: PhysicsError((tPhysicsError)5, &gPhysics_empty_message); break;
+        }
+    }
+    object = record->object_a;
+    joint = object->physics_joint2;
+    if (joint != NULL) {
+        switch ((tU32)joint->type) {
+        case 1: index += 5; break;
+        case 2: index += 4; break;
+        case 3: index += 3; break;
+        case 5: index += 2; break;
+        default: PhysicsError((tPhysicsError)5, &gPhysics_empty_message); break;
+        }
+    }
+    return (int)index;
+}
+
+/* ECX record pointer array, EDX impulses, count/callbacks on the stack; RET8. */
+// FUNCTION: CARMA2_HW 0x004bc190
+void C2_HOOK_FASTCALL FUN_004bc190(tPhysics_joint_force* const* pForces, br_scalar* pImpulses, int pCount, tWorld_callbacks* pCallbacks) {
+    tPhysics_joint_force* const volatile* forces = pForces;
+    const volatile br_scalar* impulses = pImpulses;
+    int outer = 0;
+    (void)pCallbacks;
+
+    while (outer < pCount) {
+        tPhysics_object* object = forces[outer]->object_a;
+        volatile tPhysics_object* live = object;
+        int inner = outer;
+        if (live->child != NULL) {
+            while (inner < pCount) {
+                const volatile tPhysics_joint_force* record = forces[inner];
+                if (record->object_b == object) {
+                    double x = live->rotate_omega.v[0];
+                    double y = live->rotate_omega.v[1];
+                    double z = live->rotate_omega.v[2];
+                    double old_norm = (x * x + y * y) + z * z;
+                    double new_norm;
+                    x = live->omega.v[0];
+                    y = live->omega.v[1];
+                    z = live->omega.v[2];
+                    new_norm = (x * x + y * y) + z * z;
+                    if (FrictionGreater(new_norm, old_norm)) {
+                        const volatile tPhysics_object* other = record->object_a;
+                        const volatile tPhysics_joint_force* second;
+                        const volatile tPhysics_joint_force* third;
+                        br_vector3 axis, omega_axis, rotated;
+                        br_matrix34 rotation;
+                        br_scalar length_scalar, force_z;
+                        double length, cutoff, dot, dot_a, dot_b, dot_c;
+                        double force_x, force_y, inverse, cross_a, cross_b, cross_c;
+                        br_angle angle;
+
+                        axis.v[0] = (br_scalar)PhysicsJointScalar((double)live->physics_joint1->field_0x08.v[0] - other->physics_joint1->field_0x14.v[0]);
+                        axis.v[1] = (br_scalar)PhysicsJointScalar((double)live->physics_joint1->field_0x08.v[1] - other->physics_joint1->field_0x14.v[1]);
+                        axis.v[2] = (br_scalar)PhysicsJointScalar((double)live->physics_joint1->field_0x08.v[2] - other->physics_joint1->field_0x14.v[2]);
+                        length_scalar = (br_scalar)PhysicsJointScalar(sqrt(((double)axis.v[0] * axis.v[0] + (double)axis.v[1] * axis.v[1]) + (double)axis.v[2] * axis.v[2]));
+                        axis.v[0] = (br_scalar)PhysicsJointScalar((double)axis.v[0] / length_scalar);
+                        axis.v[1] = (br_scalar)PhysicsJointScalar((double)axis.v[1] / length_scalar);
+                        axis.v[2] = (br_scalar)PhysicsJointScalar((double)axis.v[2] / length_scalar);
+                        cutoff = (double)live->M * 0.5;
+                        dot = ((double)impulses[outer] * axis.v[0] + (double)impulses[outer + 1] * axis.v[1]) + (double)impulses[outer + 2] * axis.v[2];
+                        if (!FrictionLessOrUnordered(dot, cutoff)) {
+                            second = forces[(tU32)inner + 1];
+                            third = forces[(tU32)inner + 2];
+                            dot_a = ((double)record->direction_b.v[2] * axis.v[2] + (double)record->direction_b.v[0] * axis.v[0]) + (double)record->direction_b.v[1] * axis.v[1];
+                            dot_b = ((double)second->direction_b.v[1] * axis.v[1] + (double)second->direction_b.v[0] * axis.v[0]) + (double)second->direction_b.v[2] * axis.v[2];
+                            dot_c = ((double)third->direction_b.v[1] * axis.v[1] + (double)third->direction_b.v[0] * axis.v[0]) + (double)third->direction_b.v[2] * axis.v[2];
+                            dot = (dot_a * impulses[inner] + dot_b * impulses[(tU32)inner + 1]) + dot_c * impulses[(tU32)inner + 2];
+                            if (!FrictionLessOrUnordered(dot, cutoff)) {
+                                x = live->omega.v[0]; y = live->omega.v[1]; z = live->omega.v[2];
+                                length = sqrt((x * x + y * y) + z * z);
+                                omega_axis.v[0] = (br_scalar)PhysicsJointScalar((double)live->omega.v[0] / length);
+                                omega_axis.v[1] = (br_scalar)PhysicsJointScalar((double)live->omega.v[1] / length);
+                                omega_axis.v[2] = (br_scalar)PhysicsJointScalar((double)live->omega.v[2] / length);
+                                angle = AngularForceAngle((length * (double)0.03999999910593033f) * 10430.378350470453);
+                                BrMatrix34Rotate(&rotation, angle, &omega_axis);
+                                BrMatrix34ApplyV(&rotated, &axis, &rotation);
+                                x = impulses[outer]; y = impulses[outer + 1]; z = impulses[outer + 2];
+                                length = sqrt((x * x + y * y) + z * z);
+                                if (FrictionGreater(length, 2.384185791015625e-7)) {
+                                    inverse = 1.0 / length;
+                                    force_x = inverse * x;
+                                    force_y = inverse * y;
+                                    force_z = (br_scalar)PhysicsJointScalar(inverse * z);
+                                } else {
+                                    force_x = 1.0; force_y = 0.0; force_z = 0.0f;
+                                }
+                                cross_a = ((double)axis.v[1] * force_z - (double)axis.v[2] * force_y) * ((double)force_z * rotated.v[1] - force_y * rotated.v[2]);
+                                cross_b = ((double)axis.v[2] * force_x - (double)axis.v[0] * force_z) * (force_x * rotated.v[2] - (double)force_z * rotated.v[0]);
+                                cross_c = ((double)axis.v[0] * force_y - (double)axis.v[1] * force_x) * (force_y * rotated.v[0] - force_x * rotated.v[1]);
+                                dot = (cross_a + cross_b) + cross_c;
+                                if (FrictionLessOrUnordered(dot, 0.0)) {
+                                    br_scalar scale = 0.10000000149011612f;
+                                    x = FrictionProductScalars(&live->omega.v[0], &scale);
+                                    y = FrictionProductScalars(&live->omega.v[1], &scale);
+                                    z = FrictionProductScalars(&live->omega.v[2], &scale);
+                                    live->omega.v[0] = (br_scalar)PhysicsJointScalar(x);
+                                    live->omega.v[1] = (br_scalar)PhysicsJointScalar(y);
+                                    live->omega.v[2] = (br_scalar)PhysicsJointScalar(z);
+                                    FUN_004bc8e0(object, 0, 25.0f);
+                                }
+                            }
+                        }
+                    }
+                }
+                inner = AngularForceNextIndex(forces[inner], inner);
+            }
+        }
+        outer = AngularForceNextIndex(forces[outer], outer);
+    }
+}

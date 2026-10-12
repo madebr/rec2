@@ -513,4 +513,8 @@ void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, undefined
 
 void C2_HOOK_FASTCALL FUN_004b9750(tPhysics_object* object);
 
+void C2_HOOK_FASTCALL FUN_004c25a0(tPhysics_object* pObject);
+
+void C2_HOOK_FASTCALL FUN_004bc190(tPhysics_joint_force* const* pForces, br_scalar* pImpulses, int pCount, tWorld_callbacks* pCallbacks);
+
 #endif // GUARD_49_PHYSICS_H

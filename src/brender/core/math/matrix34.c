@@ -933,17 +933,157 @@ void C2_HOOK_CDECL BrMatrix34LPInverse(br_matrix34* A, const br_matrix34* B) {
 #endif
 }
 
+static double C2_HOOK_CDECL LPRead(const br_matrix34* matrix, unsigned word) {
+    union { br_scalar scalar; br_uint_32 bits; } value;
+    value.bits = ((const volatile br_uint_32*)(const void*)matrix)[word];
+    return (double)value.scalar;
+}
+
+static void C2_HOOK_CDECL LPWrite(br_matrix34* matrix, unsigned word, double value) {
+    ((volatile br_scalar*)(void*)matrix)[word] = (br_scalar)value;
+}
+
+/* Force a scalar memory value through integer bits before its double reload.
+ * A plain scalar-return helper may retain unrounded ST0 under MSVC5. */
+static double C2_HOOK_CDECL LPScalar(double wide) {
+    volatile union { br_scalar scalar; br_uint_32 bits; } stored;
+    union { br_scalar scalar; br_uint_32 bits; } loaded;
+    stored.scalar = (br_scalar)wide;
+    loaded.bits = stored.bits;
+    return (double)loaded.scalar;
+}
+
+static int C2_HOOK_CDECL LPNaN(double value) {
+    union { double scalar; br_uint_32 words[2]; } bits;
+    bits.scalar = value;
+    return (bits.words[1] & 0x7ff00000u) == 0x7ff00000u
+        && ((bits.words[1] & 0xfffffu) != 0 || bits.words[0] != 0);
+}
+
+static void C2_HOOK_CDECL LPCopyWord(br_matrix34* A, const br_matrix34* B, unsigned word) {
+    br_uint_32 bits = ((const volatile br_uint_32*)(const void*)B)[word];
+    ((volatile br_uint_32*)(void*)A)[word] = bits;
+}
+
 // FUNCTION: CARMA2_HW 0x00532f60
 void C2_HOOK_CDECL BrMatrix34LPNormalise(br_matrix34* A, const br_matrix34* B) {
+    double x, y, z, x_scalar, z_scalar, sum, length, scale;
+    double first, second, next_z, cached_y;
+    double row0z, row2y, row0y, row2z, row2z_copy, row0z_copy, row2x;
 
-    BrVector3Normalise((br_vector3*)A->m[2], (br_vector3*)B->m[2]);
-    BrVector3Cross((br_vector3*)A->m[0], (br_vector3*)B->m[1], (br_vector3*)A->m[2]);
-    BrVector3Normalise((br_vector3*)A->m[0], (br_vector3*)A->m[0]);
-    BrVector3Cross((br_vector3*)A->m[1], (br_vector3*)A->m[2], (br_vector3*)A->m[0]);
+    /* 532f68..532f99: length stays in ST0; x/z also pass through FST32. */
+    x = LPRead(B, 6);
+    y = LPRead(B, 7);
+    z = LPRead(B, 8);
+    x_scalar = LPScalar(x);
+    first = x * x_scalar;
+    second = y * y;
+    z_scalar = LPScalar(z);
+    z = z * z_scalar;
+    sum = first + second;
+    sum = sum + z;
+    length = sqrt(sum);
+    if (!LPNaN(length) && length > 2.384185791015625e-7) {
+        scale = 1.0 / length;
+        /* Raw output stores reload the source after each previous store. */
+        x = LPRead(B, 6);
+        LPWrite(A, 6, x * scale);
+        y = LPRead(B, 7);
+        LPWrite(A, 7, y * scale);
+        z = LPRead(B, 8);
+        LPWrite(A, 8, z * scale);
+    } else {
+        LPWrite(A, 6, 1.0);
+        LPWrite(A, 7, 0.0);
+        LPWrite(A, 8, 0.0);
+    }
 
-    A(3, 0) = B(3, 0);
-    A(3, 1) = B(3, 1);
-    A(3, 2) = B(3, 2);
+    /* 532fe1..533021: B row1 is live across the X and Y stores. */
+    z = LPRead(A, 8);
+    y = LPRead(A, 7);
+    first = LPRead(B, 4);
+    first = z * first;
+    second = LPRead(B, 5);
+    second = y * second;
+    x = first - second;
+    next_z = LPRead(A, 8);
+    LPWrite(A, 0, x);
+
+    first = LPRead(B, 5);
+    second = LPRead(B, 3);
+    x = LPRead(A, 6);
+    first = first * x;
+    second = next_z * second;
+    cached_y = LPRead(A, 7);
+    y = first - second;
+    LPWrite(A, 1, y);
+
+    first = LPRead(B, 4);
+    second = LPRead(B, 3);
+    second = cached_y * second;
+    x = LPRead(A, 6);
+    first = first * x;
+    y = LPRead(A, 1);
+    z = second - first;
+    x = LPRead(A, 0);
+
+    /* 533027..533056: FST32 z does not pop its wide register value.
+     * The norm is (y32*y32 + zWide*z32) + x32*x32, then z32 is stored
+     * before FSQRT. Replacing this with the length of three stored words
+     * loses the original finite result, even with double accumulation. */
+    z_scalar = LPScalar(z);
+    first = y * LPScalar(y);
+    second = z * z_scalar;
+    x_scalar = x * x;
+    sum = first + second;
+    sum = sum + x_scalar;
+    LPWrite(A, 2, z_scalar);
+    length = sqrt(sum);
+    if (!LPNaN(length) && length > 2.384185791015625e-7) {
+        scale = 1.0 / length;
+        z = LPRead(A, 2);
+        y = LPRead(A, 1);
+        x = LPRead(A, 0);
+        x = scale * x;
+        y = y * scale;
+        z = z * scale;
+        LPWrite(A, 0, x);
+        LPWrite(A, 1, y);
+        LPWrite(A, 2, z);
+    } else {
+        LPWrite(A, 0, 1.0);
+        LPWrite(A, 1, 0.0);
+        LPWrite(A, 2, 0.0);
+    }
+
+    /* 53309d..5330e3: retain cached row0/row2 values across row1 writes. */
+    row0z = LPRead(A, 2);
+    row2y = LPRead(A, 7);
+    row0y = LPRead(A, 1);
+    row2z = LPRead(A, 8);
+    row2z_copy = LPRead(A, 8);
+    row0z_copy = LPRead(A, 2);
+    first = row0z * row2y;
+    row2x = LPRead(A, 6);
+    second = row0y * row2z;
+    x = first - second;
+    first = LPRead(A, 0);
+    first = row2z_copy * first;
+    LPWrite(A, 3, x);
+    y = LPRead(A, 1);
+    second = row0z_copy * row2x;
+    y = y * LPRead(A, 6);
+    z = first - second;
+    second = LPRead(A, 7);
+    second = second * LPRead(A, 0);
+    LPWrite(A, 4, z);
+    z = y - second;
+    LPWrite(A, 5, z);
+
+    /* Three sequential DWORD copies; preserve payloads and source aliases. */
+    LPCopyWord(A, B, 9);
+    LPCopyWord(A, B, 10);
+    LPCopyWord(A, B, 11);
 }
 
 // FUNCTION: CARMA2_HW 0x00533100
@@ -1305,22 +1445,67 @@ void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, const br_vector3* B, const br
 #endif
 }
 
-// FUNCTION: CARMA2_HW 0x00533590
-void C2_HOOK_CDECL BrMatrix34TApply(br_vector4* A, const br_vector4* B, const br_matrix34* C) {
-
-    A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
-    A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
-    A->v[2] = BR_MAC3(B->v[0], C(2, 0), B->v[1], C(2, 1), B->v[2], C(2, 2));
-    A->v[3] = BR_MAC3(B->v[0], C(3, 0), B->v[1], C(3, 1), B->v[2], C(3, 2)) + B->v[3];
+/* The retained paired-NaN probes require the original final FADD scalar
+ * operand. Loading the scalar separately changes signaling-NaN selection. */
+static double C2_HOOK_CDECL Matrix34ApplyAddScalar(double value, const br_scalar* scalar) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, scalar
+        fld qword ptr value
+        fadd dword ptr [eax]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fadds %2; fstpl %0"
+        : "=m"(result) : "m"(value), "m"(*scalar) : "st");
+#else
+    result = value + (double)*scalar;
+#endif
+    return result;
 }
 
+/* Preserve the original 0x533590/142B scalar operand forms and row stores. */
+// FUNCTION: CARMA2_HW 0x00533590
+void C2_HOOK_CDECL BrMatrix34TApply(br_vector4* A, const br_vector4* B, const br_matrix34* C) {
+    volatile br_vector4* output = A;
+    double x, y, z, sum;
+    z = Matrix34ApplyProductLoaded(&C->m[0][2], &B->v[2]);
+    y = Matrix34ApplyProductLoaded(&C->m[0][1], &B->v[1]);
+    x = Matrix34ApplyProductMemory(&C->m[0][0], &B->v[0]);
+    output->v[0] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(z, y), x);
+    z = Matrix34ApplyProductLoaded(&C->m[1][2], &B->v[2]);
+    y = Matrix34ApplyProductMemory(&C->m[1][1], &B->v[1]);
+    x = Matrix34ApplyProductMemory(&C->m[1][0], &B->v[0]);
+    output->v[1] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(z, y), x);
+    y = Matrix34ApplyProductLoaded(&C->m[2][1], &B->v[1]);
+    z = Matrix34ApplyProductMemory(&C->m[2][2], &B->v[2]);
+    x = Matrix34ApplyProductMemory(&C->m[2][0], &B->v[0]);
+    output->v[2] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(y, z), x);
+    y = Matrix34ApplyProductLoaded(&C->m[3][1], &B->v[1]);
+    z = Matrix34ApplyProductMemory(&C->m[3][2], &B->v[2]);
+    x = Matrix34ApplyProductMemory(&C->m[3][0], &B->v[0]);
+    sum = Matrix34ApplyAdd(Matrix34ApplyAdd(y, z), x);
+    output->v[3] = (br_scalar)Matrix34ApplyAddScalar(sum, &B->v[3]);
+}
+
+/* Full original 0x533620/107B: retain scalar operand forms and live row stores. */
 // FUNCTION: CARMA2_HW 0x00533620
 void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
-
-    // translation elements are presumed zero or irrelevant
-    A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
-    A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
-    A->v[2] = BR_MAC3(B->v[0], C(2, 0), B->v[1], C(2, 1), B->v[2], C(2, 2));
+    volatile br_vector3* output = A;
+    double x, y, z;
+    y = Matrix34ApplyProductLoaded(&C->m[0][1], &B->v[1]);
+    z = Matrix34ApplyProductLoaded(&C->m[0][2], &B->v[2]);
+    x = Matrix34ApplyProductMemory(&C->m[0][0], &B->v[0]);
+    output->v[0] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(y, z), x);
+    y = Matrix34ApplyProductLoaded(&C->m[1][1], &B->v[1]);
+    z = Matrix34ApplyProductMemory(&C->m[1][2], &B->v[2]);
+    x = Matrix34ApplyProductMemory(&C->m[1][0], &B->v[0]);
+    output->v[1] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(y, z), x);
+    y = Matrix34ApplyProductLoaded(&C->m[2][1], &B->v[1]);
+    z = Matrix34ApplyProductMemory(&C->m[2][2], &B->v[2]);
+    x = Matrix34ApplyProductMemory(&C->m[2][0], &B->v[0]);
+    output->v[2] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(y, z), x);
 }
 
 // FUNCTION: CARMA2_HW 0x00533690
