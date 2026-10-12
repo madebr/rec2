@@ -40,6 +40,9 @@ br_scalar gPhysics_bounds_max_x;
 // GLOBAL: CARMA2_HW 0x00692dd4
 br_scalar gPhysics_bounds_min_x;
 
+// GLOBAL: CARMA2_HW 0x00679430
+tU32 gPhysics_contact_679430;
+
 // GLOBAL: CARMA2_HW 0x00679434
 tU32 gPhysics_contact_679434;
 
@@ -593,7 +596,123 @@ int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* object, tPhysics_shape* shape
 }
 
 
-/* Complete near-parallel edge-contact fallback; original lexical name unknown. */
+/* Complete moving wall-edge consumer; original lexical name unknown. */
+// FUNCTION: CARMA2_HW 0x00424270
+int C2_HOOK_FASTCALL FUN_00424270(br_vector3* start, br_vector3* end, tPhysics_object* object, tPhysics_shape* shape, tPhysics_contact* contacts, int count, tFace_ref* face, tPhysics_wall_workspace* workspace) {
+    /* Preserve the original private-buffer overlaps and initialize only slots
+     * explicitly initialized by the authentic body. Offset0x10 begins locals;
+     * offsets0..0xf describe saved registers and are not read here. */
+    volatile union { tU8 bytes[0x180];tU32 words[0x60];br_scalar values[0x60]; } frame;
+    br_actor* actor;
+    br_matrix34* matrix;
+    br_vector3* relative20=(br_vector3*)(void*)&frame.bytes[0x20];
+    br_vector3* change=(br_vector3*)(void*)&frame.bytes[0x2c];
+    br_vector3* relative38=(br_vector3*)(void*)&frame.bytes[0x38];
+    br_vector3* edge=(br_vector3*)(void*)&frame.bytes[0x44];
+    br_vector3* velocity=(br_vector3*)(void*)&frame.bytes[0x54];
+    br_vector3* buffer60=(br_vector3*)(void*)&frame.bytes[0x60];
+    br_vector3* direction=(br_vector3*)(void*)&frame.bytes[0x6c];
+    br_vector3* buffer78=(br_vector3*)(void*)&frame.bytes[0x78];
+    br_vector3* buffer84=(br_vector3*)(void*)&frame.bytes[0x84];
+    br_vector3* buffer90=(br_vector3*)(void*)&frame.bytes[0x90];
+    br_vector3* gate_end=(br_vector3*)(void*)&frame.bytes[0x9c];
+    br_vector3* gate_start=(br_vector3*)(void*)&frame.bytes[0xa8];
+    br_vector3* gate_point=(br_vector3*)(void*)&frame.bytes[0x174];
+    volatile tPhysics_contact* candidates=(volatile tPhysics_contact*)(void*)&frame.bytes[0xb4];
+    br_vector3* first;
+    br_vector3* second;
+    br_vector3* trial_first;
+    br_vector3* trial_second;
+    double projected_start,low,wide_change_z,normal_side;
+    volatile br_scalar projected_end,high;
+    int axis,component,result,selector;
+    tU8 index1,index2;
+    tU32 current;
+    frame.words[0x18/4]=1;frame.words[0x1c/4]=1;
+    PhysicsCopyWord(&actor,&object->actor);
+    matrix=&actor->t.t.mat;
+    for(axis=0;axis<3;axis++) {
+        projected_start=((double)matrix->m[axis][0]*start->v[0]+(double)matrix->m[axis][2]*start->v[2])+(double)matrix->m[axis][1]*start->v[1];
+        projected_end=PhysicsScalar(((double)matrix->m[axis][0]*end->v[0]+(double)matrix->m[axis][2]*end->v[2])+(double)matrix->m[axis][1]*end->v[1]);
+        low=(double)shape->common.field_0x1c.min.v[axis]-.005;
+        if((PhysicsWallNaN(projected_start)||PhysicsWallNaN(low)||projected_start<low)&&(PhysicsWallNaN(projected_end)||PhysicsWallNaN(low)||projected_end<low))return count;
+        frame.words[0x18/4]|=(tU32)(PhysicsWallNaN(projected_start)||PhysicsWallNaN(low)||projected_start<low);
+        frame.words[0x1c/4]|=(tU32)(PhysicsWallNaN(projected_end)||PhysicsWallNaN(low)||projected_end<low);
+        high=PhysicsScalar((double)shape->common.field_0x1c.max.v[axis]-(-.005));
+        frame.words[0x18/4]|=(tU32)(PhysicsWallNaN(projected_start)||PhysicsWallNaN(high)||projected_start<high);
+        frame.words[0x1c/4]|=(tU32)(PhysicsWallNaN(projected_end)||PhysicsWallNaN(high)||projected_end<high);
+        if(!PhysicsWallNaN(projected_start)&&!PhysicsWallNaN(high)&&projected_start>high&&!PhysicsWallNaN(projected_end)&&projected_end>high)return count;
+    }
+    if(object->field_0xed==0) {
+        if(frame.words[0x18/4]!=0) {
+            for(component=0;component<3;component++)PhysicsSubtractScalar(&relative38->v[component],&start->v[component],&object->transform_matrix.m[3][component]);
+            BrMatrix34TApplyV(buffer84,relative38,&object->transform_matrix);
+            PhysicsCopyWord(&actor,&object->actor);
+            for(component=0;component<3;component++)PhysicsSubtractScalar(&relative20->v[component],&start->v[component],&actor->t.t.mat.m[3][component]);
+            BrMatrix34TApplyV(buffer90,relative20,&actor->t.t.mat);
+            result=ShapeRayCastWithSphere(buffer84,buffer90,shape,buffer60,buffer78,(br_scalar*)(void*)&frame.values[0x10/4]);
+            if(result>0) {
+                if(result>64)frame.values[0x10/4]=1.1f;
+                count=AddObjectWallForce(contacts,buffer60,frame.values[0x10/4],buffer78,0,count,object,2,face,NULL);
+            }
+        }
+        if(frame.words[0x1c/4]!=0) {
+            for(component=0;component<3;component++)PhysicsSubtractScalar(&relative20->v[component],&end->v[component],&object->transform_matrix.m[3][component]);
+            BrMatrix34TApplyV(buffer78,relative20,&object->transform_matrix);
+            PhysicsCopyWord(&actor,&object->actor);
+            for(component=0;component<3;component++)PhysicsSubtractScalar(&relative38->v[component],&end->v[component],&actor->t.t.mat.m[3][component]);
+            BrMatrix34TApplyV(buffer60,relative38,&actor->t.t.mat);
+            result=ShapeRayCastWithSphere(buffer78,buffer60,shape,buffer90,buffer84,(br_scalar*)(void*)&frame.values[0x10/4]);
+            if(result>0) {
+                if(result>64)frame.values[0x10/4]=1.1f;
+                count=AddObjectWallForce(contacts,buffer90,frame.values[0x10/4],buffer84,0,count,object,2,face,NULL);
+            }
+        }
+    }
+    for(component=0;component<3;component++)PhysicsSubtractScalar(&direction->v[component],&end->v[component],&start->v[component]);
+    selector=0;candidates[0].face=face;candidates[1].face=face;
+    candidates[0].t=2.f;candidates[1].t=2.f;
+    frame.words[0x14/4]=0xffffffffu;frame.words[0x10/4]=0;
+    if(*(volatile tU16*)&workspace->count_edges!=0) {
+        do {
+            current=frame.words[0x10/4];
+            index1=workspace->edges[current].index1;index2=workspace->edges[current].index2;
+            first=&workspace->original_points[index1];second=&workspace->original_points[index2];
+            trial_first=&workspace->trial_points[index1];trial_second=&workspace->trial_points[index2];
+            for(component=0;component<3;component++)PhysicsSubtractScalar(&velocity->v[component],&trial_first->v[component],&first->v[component]);
+            for(component=0;component<3;component++)PhysicsSubtractScalar(&edge->v[component],&second->v[component],&first->v[component]);
+            PhysicsSubtractScalar(&change->v[0],&trial_second->v[0],&trial_first->v[0]);
+            PhysicsSubtractScalar(&change->v[1],&trial_second->v[1],&trial_first->v[1]);
+            wide_change_z=(double)trial_second->v[2]-trial_first->v[2];
+            PhysicsSubtractScalar(&change->v[0],&change->v[0],&edge->v[0]);
+            PhysicsSubtractScalar(&change->v[1],&change->v[1],&edge->v[1]);
+            change->v[2]=PhysicsScalar(wide_change_z-edge->v[2]);
+            result=FUN_00424990(start,direction,first,edge,velocity,change,(tPhysics_contact*)(void*)&candidates[selector],count,object,NULL);
+            if(result!=0) {
+                frame.words[0x14/4]=current;
+                if(PhysicsWallNaN(candidates[selector].t)||PhysicsWallNaN(candidates[!selector].t)||candidates[selector].t<candidates[!selector].t)selector=!selector;
+            }
+            current=frame.words[0x10/4]+1;frame.words[0x10/4]=current;
+        } while((int)current<(int)*(volatile tU16*)&workspace->count_edges);
+    }
+    if(!PhysicsWallNaN(candidates[0].t)&&!(candidates[0].t<2.f))return count;
+    normal_side=((double)face->normal.v[2]*(double)*(volatile br_scalar*)(void*)(candidates[0].field_0x38+8)+(double)face->normal.v[1]*(double)*(volatile br_scalar*)(void*)(candidates[0].field_0x38+4))+(double)face->normal.v[0]*(double)*(volatile br_scalar*)(void*)candidates[0].field_0x38;
+    if(PhysicsWallNaN(normal_side)||normal_side<0.0) {
+        matrix=&object->transform_matrix;
+        for(component=0;component<3;component++)PhysicsSubtractScalar(&relative20->v[component],&start->v[component],&matrix->m[3][component]);
+        BrMatrix34TApplyV(gate_start,relative20,matrix);
+        for(component=0;component<3;component++)PhysicsSubtractScalar(&relative20->v[component],&end->v[component],&matrix->m[3][component]);
+        BrMatrix34TApplyV(gate_end,relative20,matrix);
+        result=ShapeRayCast(gate_start,gate_end,shape,gate_point,(br_scalar*)(void*)&frame.values[0x18/4],NULL);
+        if(result!=0)return count;
+    }
+    gPhysics_contact_679430|=(tU32)1<<(frame.words[0x14/4]&31);
+    count=AddObjectWallForce(contacts,(const br_vector3*)(const void*)&candidates[0].position,candidates[0].t,(const br_vector3*)(const void*)&candidates[0].normal,0,count,object,0,face,(const br_vector3*)(const void*)&candidates[0].reference_position);
+    if(PhysicsWallNaN(candidates[1].t)||candidates[1].t<2.f)count=AddObjectWallForce(contacts,(const br_vector3*)(const void*)&candidates[1].position,candidates[1].t,(const br_vector3*)(const void*)&candidates[1].normal,0,count,object,0,face,(const br_vector3*)(const void*)&candidates[1].reference_position);
+    return count;
+}
+
+/* Complete quadratic moving-edge contact; original lexical name unknown. */
 // FUNCTION: CARMA2_HW 0x00424990
 int C2_HOOK_FASTCALL FUN_00424990(const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* moving_direction, const br_vector3* velocity, const br_vector3* direction_change, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other) {
     br_vector3 n0,n1,delta,normal,edge,origin,local,world,relative,previous_normal;
