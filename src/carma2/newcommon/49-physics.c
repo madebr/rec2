@@ -1099,8 +1099,6 @@ void C2_HOOK_FASTCALL PrepareForCollisions(tPhysics_object* pObject, tWorld_call
 
 // CheckPointVelocities
 
-// WriteNewPositions
-
 // FUNCTION: CARMA2_HW 0x004b9eb0
 void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, tU8 pFlag) {
     while (pObject != NULL) {
@@ -3200,7 +3198,104 @@ int C2_HOOK_FASTCALL MakeVelocitiesVector2(br_scalar* pOutput, tPhysics_joint_fo
 
 // RotateObject
 
-// TranslateObject
+// FUNCTION: CARMA2_HW 0x004b8fe0
+void C2_HOOK_FAKE_THISCALL TranslateObject(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {
+    volatile tPhysics_object* object = pObject;
+    tPhysics_joint* joint = object->physics_joint2;
+    br_vector3 axis, point, delta;
+    br_scalar before, speed[3];
+    double x, y, z, projection, correction;
+    br_actor* actor;
+
+    (void)pUnused;
+    if (joint->type == 5) {
+        BrMatrix34ApplyV(&axis, &joint->hinge_axis, &pObject->transform_matrix);
+        actor = object->actor;
+        /* Original FADDP first combines Z+Y, then adds X before the scalar spill. */
+        before = (br_scalar)PhysicsJointScalar(PhysicsJointSum(PhysicsJointSum(PhysicsJointProductMemory(&actor->t.t.mat.m[3][2], &axis.v[2]), PhysicsJointProductMemory(&actor->t.t.mat.m[3][1], &axis.v[1])), PhysicsJointProductMemory(&actor->t.t.mat.m[3][0], &axis.v[0])));
+        joint = object->physics_joint2;
+        BrMatrix34ApplyP(&point, &joint->field_0x08, &actor->t.t.mat);
+        x = PartnerDifferenceScalars(&pObject->field_0x17c.v[0], &point.v[0]);
+        z = PartnerDifferenceScalars(&pObject->field_0x17c.v[2], &point.v[2]);
+        y = PartnerDifferenceScalars(&pObject->field_0x17c.v[1], &point.v[1]);
+        delta.v[1] = (br_scalar)PhysicsJointScalar(y);
+        delta.v[2] = (br_scalar)PhysicsJointScalar(z);
+        actor = object->actor;
+        actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar(x, &actor->t.t.mat.m[3][0]));
+        actor = object->actor;
+        actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)delta.v[1], &actor->t.t.mat.m[3][1]));
+        actor = object->actor;
+        actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)delta.v[2], &actor->t.t.mat.m[3][2]));
+        actor = object->actor;
+        projection = PhysicsJointSum(PhysicsJointSum(PhysicsJointProductMemory(&actor->t.t.mat.m[3][0], &axis.v[0]), PhysicsJointProductMemory(&actor->t.t.mat.m[3][2], &axis.v[2])), PhysicsJointProductMemory(&actor->t.t.mat.m[3][1], &axis.v[1]));
+        correction = PartnerReverseSubtractScalar(projection, &before);
+        delta.v[0] = (br_scalar)PhysicsJointScalar(PartnerMultiplyRawScalar(correction, &axis.v[0]));
+        delta.v[1] = (br_scalar)PhysicsJointScalar(PartnerMultiplyRawScalar(correction, &axis.v[1]));
+        delta.v[2] = (br_scalar)PhysicsJointScalar(PartnerMultiplyRawScalar(correction, &axis.v[2]));
+        actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)delta.v[0], &actor->t.t.mat.m[3][0]));
+        actor = object->actor;
+        actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)delta.v[1], &actor->t.t.mat.m[3][1]));
+        actor = object->actor;
+        actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)delta.v[2], &actor->t.t.mat.m[3][2]));
+        projection = PhysicsJointSum(PhysicsJointSum(PhysicsJointProductMemory(&pObject->v.v[2], &axis.v[2]), PhysicsJointProductMemory(&pObject->v.v[1], &axis.v[1])), PhysicsJointProductMemory(&pObject->v.v[0], &axis.v[0]));
+        speed[0] = (br_scalar)PhysicsJointScalar(PartnerMultiplyRawScalar(projection, &axis.v[0]));
+        speed[1] = (br_scalar)PhysicsJointScalar(PartnerMultiplyRawScalar(projection, &axis.v[1]));
+        speed[2] = (br_scalar)PhysicsJointScalar(PartnerMultiplyRawScalar(projection, &axis.v[2]));
+        object->v.v[1] = speed[1];
+        object->v.v[2] = speed[2];
+        object->v.v[0] = speed[0];
+        actor = object->actor;
+        actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar(PhysicsJointProductMemory(&pTime, &speed[0]), &actor->t.t.mat.m[3][0]));
+        actor = object->actor;
+        actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar(PhysicsJointProductMemory(&pTime, &speed[1]), &actor->t.t.mat.m[3][1]));
+        actor = object->actor;
+        actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar(PhysicsJointProductMemory(&pTime, &speed[2]), &actor->t.t.mat.m[3][2]));
+    } else {
+        BrMatrix34ApplyP(&point, &joint->field_0x08, &object->actor->t.t.mat);
+        x = PartnerDifferenceScalars(&pObject->field_0x17c.v[0], &point.v[0]);
+        z = PartnerDifferenceScalars(&pObject->field_0x17c.v[2], &point.v[2]);
+        y = PartnerDifferenceScalars(&pObject->field_0x17c.v[1], &point.v[1]);
+        delta.v[1] = (br_scalar)PhysicsJointScalar(y);
+        delta.v[2] = (br_scalar)PhysicsJointScalar(z);
+        actor = object->actor;
+        actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar(x, &actor->t.t.mat.m[3][0]));
+        actor = object->actor;
+        actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)delta.v[1], &actor->t.t.mat.m[3][1]));
+        actor = object->actor;
+        actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)delta.v[2], &actor->t.t.mat.m[3][2]));
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c2a10
+void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject) {
+    volatile tPhysics_object* object = pObject;
+    tPhysics_object* child = object->child;
+    tPhysics_object* root = pObject;
+    br_vector3 parent_point, child_point;
+    br_actor* actor;
+    int i;
+
+    if (object->flags & 0x400) {
+        root = object->field_0x230;
+    }
+    while (child != NULL) {
+        if (!(object->flags & 0x400)) {
+            BrMatrix34ApplyP(&parent_point, &child->physics_joint1->field_0x14, &object->actor->t.t.mat);
+            BrMatrix34ApplyP(&child_point, &child->physics_joint1->field_0x08, &child->actor->t.t.mat);
+            for (i = 0; i < 3; i++) {
+                parent_point.v[i] = (br_scalar)PhysicsJointScalar(PartnerDifferenceScalars(&parent_point.v[i], &child_point.v[i]));
+            }
+            for (i = 0; i < 3; i++) {
+                actor = ((volatile tPhysics_object*)child)->actor;
+                actor->t.t.mat.m[3][i] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)parent_point.v[i], &actor->t.t.mat.m[3][i]));
+            }
+        } else {
+            BrMatrix34Mul(&object->actor->t.t.mat, &pObject->field_0x1e8, &root->actor->t.t.mat);
+        }
+        WriteNewPositions(child);
+        child = ((volatile tPhysics_object*)child)->next;
+    }
+}
 
 // GetFacesNearObject
 
@@ -3643,6 +3738,46 @@ void C2_HOOK_FASTCALL RQSingleExpand(br_scalar* matrix, const br_scalar* origina
         matrix[i * 101] = RQScalar(-PartnerMultiplyWide(length, maximum));
     }
     memcpy(&matrix[size * 101], &row[size], sizeof(br_scalar));
+}
+
+/* Semantic name inferred from the complete original 0x004c5220 entry.
+ * Cached records expose a count at0, Q pointer at0x14 and R pointer at0x18;
+ * the rest of their layout is not required or inferred here. */
+// FUNCTION: CARMA2_HW 0x004c5220
+void C2_HOOK_FASTCALL RQFromCachedGroups(br_scalar* matrix, br_scalar* orthogonal, const br_scalar* original, br_scalar* result, const br_scalar* rhs, const unsigned char* indices, int size, const void* const* cached_groups, int group_count) {
+    int total, group, count, i, j, k;
+    const void* record;
+    const br_scalar* cached;
+    total = 0;
+    for (group = 0; group < group_count; group++) {
+        record = (const void*)ForcePointerAt(cached_groups, group * sizeof(void*));
+        count = (int)ForcePointerAt(record, 0);
+        for (i = 0; i < count; i++) {
+            for (j = 0; j < count; j++) {
+                record = (const void*)ForcePointerAt(cached_groups, group * sizeof(void*));
+                cached = (const br_scalar*)ForcePointerAt(record, 0x18);
+                memcpy(&matrix[(total + i) * 100 + total + j], &cached[i * count + j], sizeof(br_scalar));
+                record = (const void*)ForcePointerAt(cached_groups, group * sizeof(void*));
+                cached = (const br_scalar*)ForcePointerAt(record, 0x14);
+                memcpy(&orthogonal[(total + i) * 100 + total + j], &cached[i * count + j], sizeof(br_scalar));
+            }
+            for (k = 0; k < total; k++) {
+                matrix[k * 100 + total + i] = 0.0f;
+                matrix[(total + i) * 100 + k] = 0.0f;
+                orthogonal[k * 100 + total + i] = 0.0f;
+                orthogonal[(total + i) * 100 + k] = 0.0f;
+            }
+        }
+        total += count;
+    }
+    if (size - total == 1) {
+        RQSingleExpand(matrix, original, total, orthogonal, indices);
+    } else if (total < size) {
+        RQExpand(matrix, original, total, size, orthogonal, indices);
+    }
+    for (i = 0; i < size; i++) {
+        memcpy(&result[i], &rhs[indices[i]], sizeof(br_scalar));
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004c5830

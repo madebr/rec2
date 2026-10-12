@@ -195,7 +195,7 @@ extern void C2_HOOK_FASTCALL PrepareForCollisions(tPhysics_object* pObject, tWor
 
 // CheckPointVelocities
 
-// WriteNewPositions
+void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject);
 
 void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, tU8 pFlag);
 
@@ -293,7 +293,7 @@ int C2_HOOK_FASTCALL MakeVelocitiesVector2(br_scalar* pOutput, tPhysics_joint_fo
 
 // RotateObject
 
-// TranslateObject
+void C2_HOOK_FAKE_THISCALL TranslateObject(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime);
 
 // GetFacesNearObject
 
@@ -338,6 +338,8 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject);
 void C2_HOOK_FASTCALL RQExpand(br_scalar* matrix, const br_scalar* original, int old_size, int size, br_scalar* orthogonal, const unsigned char* indices);
 
 void C2_HOOK_FASTCALL RQSingleExpand(br_scalar* matrix, const br_scalar* original, int size, br_scalar* orthogonal, const unsigned char* indices);
+
+void C2_HOOK_FASTCALL RQFromCachedGroups(br_scalar* matrix, br_scalar* orthogonal, const br_scalar* original, br_scalar* result, const br_scalar* rhs, const unsigned char* indices, int size, const void* const* cached_groups, int group_count);
 
 int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal);
 
