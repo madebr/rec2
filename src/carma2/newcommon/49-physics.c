@@ -56,6 +56,9 @@ int gPhysics_other_buffer_capacity;
 // GLOBAL: CARMA2_HW 0x006940c4
 void* gPhysics_other_buffer;
 
+// GLOBAL: CARMA2_HW 0x006940bc
+void* gPhysics_scratch_ptr;
+
 // count
 
 // DrMatrix34ApplyLPInverse
@@ -428,7 +431,75 @@ br_scalar C2_HOOK_FASTCALL HierarchyCalcEnergy(tPhysics_object* pObject) {
 
 // TranslateAndRotateJointedObject
 
-// CountJointForces
+static tU32 C2_HOOK_CDECL PhysicsJointWorkState(const tPhysics_object* pObject) {
+    tU32 value;
+
+    memcpy(&value, (const char*)pObject + 0x1e4, sizeof(value));
+    return value;
+}
+
+static void C2_HOOK_CDECL PhysicsSetJointWorkState(tPhysics_object* pObject, tU32 pValue) {
+    memcpy((char*)pObject + 0x1e4, &pValue, sizeof(pValue));
+}
+
+// FUNCTION: CARMA2_HW 0x004b9650
+int C2_HOOK_FASTCALL CountJointForces(tPhysics_object* pObject, tPhysics_object* pRoot) {
+    tPhysics_joint* joint;
+    tPhysics_object* child;
+    tU32 count = 0;
+
+    joint = pObject->physics_joint1;
+    pObject->field_0x230 = pRoot;
+    PhysicsSetJointWorkState(pObject, 0);
+    if (joint != NULL && !(pObject->flags & 0x400)) {
+        switch (joint->type) {
+        case 0:
+            break;
+        case 2:
+            count = 4;
+            break;
+        case 3:
+            count = 3;
+            break;
+        case 4:
+            if (PhysicsJointWorkState(pRoot) == 0) {
+                count = 2;
+                PhysicsSetJointWorkState(pObject, 0xffffffffu);
+                PhysicsSetJointWorkState(pRoot, 0xffffffffu);
+                break;
+            }
+            joint->type = (tPhysics_joint_type)1;
+            /* fall through */
+        case 1:
+            count = 5;
+            break;
+        default:
+            PhysicsError((tPhysicsError)8, &gPhysics_empty_message);
+        }
+    }
+    if (pObject->physics_joint2 != NULL) {
+        switch (pObject->physics_joint2->type) {
+        case 2:
+            count += 4;
+            break;
+        case 3:
+            count += 3;
+            break;
+        case 5:
+            count += 2;
+            break;
+        default:
+            break;
+        }
+    }
+    if (!(pObject->flags & 0x400)) {
+        pRoot = pObject;
+    }
+    for (child = pObject->child; child != NULL; child = child->next) {
+        count += (tU32)CountJointForces(child, pRoot);
+    }
+    return (int)count;
+}
 
 // MoveJointedObject
 
@@ -942,11 +1013,36 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject) {
 
 // RqBackSub
 
-// GetPhysicsScratchPointer
+// FUNCTION: CARMA2_HW 0x004c5c70
+void* C2_HOOK_FASTCALL GetPhysicsScratchPointer(int pSize) {
+    tU32 end = (tU32)(uintptr_t)gPhysics_other_buffer + (tU32)gPhysics_other_buffer_capacity;
 
-// IncreasePhysicsScratchPointer
+    if ((tU32)(uintptr_t)gPhysics_scratch_ptr + (tU32)pSize > end) {
+        if (gPhysics_error_cb != NULL) {
+            gPhysics_error_cb((tPhysicsError)6, NULL);
+        }
+        exit(6);
+    }
+    return gPhysics_scratch_ptr;
+}
 
-// ClearPhysicsScratchSpace
+// FUNCTION: CARMA2_HW 0x004c5cb0
+void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize) {
+    tU32 end = (tU32)(uintptr_t)gPhysics_other_buffer + (tU32)gPhysics_other_buffer_capacity;
+
+    if ((tU32)(uintptr_t)gPhysics_scratch_ptr + (tU32)pSize > end) {
+        if (gPhysics_error_cb != NULL) {
+            gPhysics_error_cb((tPhysicsError)6, NULL);
+        }
+        exit(6);
+    }
+    gPhysics_scratch_ptr = (void*)(uintptr_t)((tU32)(uintptr_t)gPhysics_scratch_ptr + (tU32)pSize);
+}
+
+// FUNCTION: CARMA2_HW 0x004c5d00
+void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void) {
+    gPhysics_scratch_ptr = gPhysics_other_buffer;
+}
 
 // FUNCTION: CARMA2_HW 0x004c5d10
 tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(int pType) {

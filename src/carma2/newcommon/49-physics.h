@@ -159,7 +159,7 @@ br_scalar C2_HOOK_FASTCALL HierarchyCalcEnergy(tPhysics_object* pObject);
 
 // TranslateAndRotateJointedObject
 
-// CountJointForces
+int C2_HOOK_FASTCALL CountJointForces(tPhysics_object* pObject, tPhysics_object* pRoot);
 
 // MoveJointedObject
 
@@ -351,11 +351,13 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject);
 
 // RqBackSub
 
-// GetPhysicsScratchPointer
+extern void* gPhysics_scratch_ptr;
 
-// IncreasePhysicsScratchPointer
+void* C2_HOOK_FASTCALL GetPhysicsScratchPointer(int pSize);
 
-// ClearPhysicsScratchSpace
+void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize);
+
+void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void);
 
 extern tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(int pType);
 
