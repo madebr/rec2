@@ -9,6 +9,8 @@ extern int gFace_num__car;
 extern br_scalar gPhysics_bounds_max_x;
 extern br_scalar gPhysics_bounds_min_x;
 extern tPhysicsError_cbfn* gPhysics_error_cb;
+extern tPolyhedron_edge_indexes gPhysics_box_edges_58f7f0[12];
+
 extern char gPhysics_empty_message;
 extern tU32 gPhysics_contact_679430;
 extern tU32 gPhysics_contact_679434;
@@ -87,6 +89,22 @@ int C2_HOOK_FASTCALL FUN_00424270(br_vector3* start, br_vector3* end, tPhysics_o
 int C2_HOOK_FASTCALL FUN_00424990(const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* moving_direction, const br_vector3* velocity, const br_vector3* direction_change, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other);
 
 int C2_HOOK_FASTCALL FUN_00425630(const br_vector3* n0, const br_vector3* n1, const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* velocity0, const br_vector3* edge_change, const br_vector3* velocity1, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other);
+
+int C2_HOOK_FASTCALL FUN_004228b0(tPhysics_object* object, tPhysics_contact* contacts, int initial_count);
+
+void C2_HOOK_FASTCALL FUN_004b9230(tPhysics_object* pObject, tPhysics_object** pSelected, br_scalar pTime);
+
+void C2_HOOK_FAKE_THISCALL FUN_004b8ee0(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime);
+
+void C2_HOOK_FAKE_THISCALL FUN_004bc8e0(tPhysics_object* object, undefined4 unused, br_scalar factor);
+
+int C2_HOOK_FASTCALL FUN_004bd720(tPhysics_object* object);
+
+int C2_HOOK_FASTCALL FUN_004bd7f0(tPhysics_object* list);
+
+tPhysics_object** C2_HOOK_FASTCALL FUN_004bd830(tPhysics_object* scan, tPhysics_object* context, tPhysics_object** output);
+
+void C2_HOOK_FASTCALL FUN_004bd9b0(tPhysics_object* object, tU32 state);
 
 // CylinderCheck
 

@@ -51,6 +51,10 @@ tU32 gPhysics_contact_679434;
 // GLOBAL: CARMA2_HW 0x00679438
 tU32 gPhysics_contact_679438;
 
+/* Original writable box-edge table. */
+// GLOBAL: CARMA2_HW 0x0058f7f0
+tPolyhedron_edge_indexes gPhysics_box_edges_58f7f0[12]={{0,1},{2,3},{4,5},{6,7},{0,2},{1,3},{4,6},{5,7},{0,4},{1,5},{2,6},{3,7}};
+
 // GLOBAL: CARMA2_HW 0x00676920
 char gPhysics_empty_message;
 
@@ -971,6 +975,148 @@ int C2_HOOK_FASTCALL FUN_00425630(const br_vector3* n0, const br_vector3* n1, co
 
 // SetUpWorkspace
 
+/* Complete wall-contact consumer; original lexical name unknown. */
+// FUNCTION: CARMA2_HW 0x004228b0
+int C2_HOOK_FASTCALL FUN_004228b0(tPhysics_object* object, tPhysics_contact* contacts, int initial_count) {
+    volatile union {tU8 bytes[0x7e8];tU32 words[0x1fa];br_scalar values[0x1fa];} frame;
+    tPhysics_wall_workspace* workspace=(tPhysics_wall_workspace*)(void*)&frame.bytes[0xe0];
+    br_matrix34* delta=(br_matrix34*)(void*)&frame.bytes[0x80];
+    br_matrix34* inverse=(br_matrix34*)(void*)&frame.bytes[0xb0];
+    br_vector3* corner=(br_vector3*)(void*)&frame.bytes[0x48];
+    br_vector3* intersection=(br_vector3*)(void*)&frame.bytes[0x34];
+    br_vector3* trial_normal=(br_vector3*)(void*)&frame.bytes[0x54];
+    br_vector3* best_normal=(br_vector3*)(void*)&frame.bytes[0x68];
+    br_vector3* previous_normal=(br_vector3*)(void*)&frame.bytes[0x74];
+    br_matrix34* current=&object->transform_matrix;
+    br_matrix34* previous;
+    tPhysics_shape* shape=object->shape;
+    tPhysics_contact* first_contact;
+    tPhysics_contact* next_contact;
+    tCollision_shape_sphere_data* sphere;
+    tFace_ref* face;
+    tFace_ref* best_face;
+    br_vector3* source;
+    br_scalar* radius_product_x=(br_scalar*)(void*)&frame.values[0x34/4];
+    br_scalar* radius_product_y=(br_scalar*)(void*)&frame.values[0x38/4];
+    double negative_radius;
+    double radius_product_z;
+    double normal_dot;
+    int count=0,touched_all=0,touched;
+    int result,ordinal,point,component,sphere_count,classification=1;
+
+    if(object->box_face_start==object->box_face_end)return 0;
+    if(initial_count>36)return 0;
+    BrMatrix34LPInverse(inverse,&object->actor->t.t.mat);
+    BrMatrix34Mul(delta,current,inverse);
+    while(shape!=NULL) {
+        result=EliminateFaces(object,shape,delta);
+        if(result!=0) {
+            previous=gPhysics_contact_679438?current:&object->actor->t.t.mat;
+            switch(shape->common.type) {
+            case kCollisionShapeType_Box:
+                workspace->count_points=8;workspace->count_edges=12;
+                for(point=0;point<8;point++) {
+                    PhysicsCopyWord(&corner->v[0],(point&2)?&shape->common.bb.min.v[0]:&shape->common.bb.max.v[0]);
+                    PhysicsCopyWord(&corner->v[1],(point&1)?&shape->common.bb.min.v[1]:&shape->common.bb.max.v[1]);
+                    PhysicsCopyWord(&corner->v[2],(point&4)?&shape->common.bb.min.v[2]:&shape->common.bb.max.v[2]);
+                    BrMatrix34ApplyP(&workspace->original_points[point],corner,current);
+                    BrMatrix34ApplyP(&workspace->trial_points[point],corner,previous);
+                    workspace->vertex_flags[point]=0;
+                }
+                workspace->edges=gPhysics_box_edges_58f7f0;
+                break;
+            case kCollisionShapeType_Wireframe:
+                workspace->count_points=(tU16)shape->wireframe.wireframe.count_points;
+                workspace->count_edges=(tU16)shape->wireframe.wireframe.count_lines;
+                for(point=0;point<(int)workspace->count_points;point++) {
+                    source=&shape->wireframe.wireframe.points[point];
+                    BrMatrix34ApplyP(&workspace->original_points[point],source,current);
+                    source=&shape->wireframe.wireframe.points[point];
+                    BrMatrix34ApplyP(&workspace->trial_points[point],source,previous);
+                    workspace->vertex_flags[point]=0;
+                }
+                workspace->edges=shape->wireframe.wireframe.lines;
+                break;
+            case kCollisionShapeType_Polyhedron:
+            case kCollisionShapeType_Wireframe_Polyhedron:
+                workspace->count_points=(tU16)shape->polyhedron.polyhedron.count_points;
+                workspace->count_edges=(tU16)shape->polyhedron.polyhedron.count_edges;
+                for(point=0;point<(int)workspace->count_points;point++) {
+                    source=&shape->polyhedron.polyhedron.points[point];
+                    BrMatrix34ApplyP(&workspace->original_points[point],source,current);
+                    source=&shape->polyhedron.polyhedron.points[point];
+                    BrMatrix34ApplyP(&workspace->trial_points[point],source,previous);
+                    workspace->vertex_flags[point]=0;
+                }
+                workspace->edges=shape->polyhedron.polyhedron.edges;
+                break;
+            case kCollisionShapeType_Sphere:
+                workspace->count_points=1;workspace->count_edges=0;
+                BrMatrix34ApplyP(&workspace->original_points[0],&shape->sphere.sphere.center,current);
+                BrMatrix34ApplyP(&workspace->trial_points[0],&shape->sphere.sphere.center,previous);
+                break;
+            default:
+                PhysicsError(ePhysicsError_UnknownShapeType,&gPhysics_empty_message);
+            }
+            if(gPhysics_contact_679438!=0) {
+                BrMatrix34ApplyP(&workspace->original_points[0],&object->cmpos,current);
+                for(point=1;point<(int)workspace->count_points;point++)for(component=0;component<3;component++)PhysicsCopyWord(&workspace->original_points[point].v[component],&workspace->original_points[0].v[component]);
+            }
+            if(shape->common.type!=kCollisionShapeType_Sphere) {
+                touched=0;
+                if(object->field_0xed!=0)count=FUN_004236a0(object,shape,contacts+initial_count,count,40-initial_count,workspace,delta,&touched);
+                touched_all|=touched;
+                count=GetCornerToFacePoints(object,shape,contacts+initial_count,count,40-initial_count,workspace,delta);
+                if(touched==0)count=FUN_00424140(object,shape,contacts+initial_count,count,40-initial_count,workspace,delta);
+            } else {
+                sphere=&shape->sphere.sphere;
+                sphere_count=count;
+                frame.values[0x28/4]=2.f;
+                ordinal=object->box_face_start;
+                face=&gFace_list__car[ordinal];
+                while(ordinal<(int)*(volatile tU16*)&object->box_face_end) {
+                    SphereFaceCollide(face,&workspace->original_points[0],&workspace->trial_points[0],sphere->radius,intersection,trial_normal,(br_scalar*)(void*)&frame.values[0x40/4]);
+                    if(PhysicsWallNaN(frame.values[0x40/4])||PhysicsWallNaN(frame.values[0x28/4])||frame.values[0x40/4]<frame.values[0x28/4]) {
+                        PhysicsCopyWord((void*)&frame.values[0x28/4],(const void*)&frame.values[0x40/4]);
+                        PhysicsCopyWord((void*)&frame.words[0x60/4],&face);
+                        for(component=0;component<3;component++)PhysicsCopyWord(&best_normal->v[component],&trial_normal->v[component]);
+                    }
+                    ordinal++;face++;
+                }
+                if(PhysicsWallNaN(frame.values[0x28/4])||frame.values[0x28/4]<=1.f) {
+                    BrMatrix34TApplyV(trial_normal,best_normal,current);
+                    BrMatrix34TApplyV(previous_normal,best_normal,&object->actor->t.t.mat);
+                    negative_radius=-(double)sphere->radius;
+                    *radius_product_x=PhysicsScalar((double)previous_normal->v[0]*negative_radius);
+                    *radius_product_y=PhysicsScalar((double)previous_normal->v[1]*negative_radius);
+                    radius_product_z=negative_radius*previous_normal->v[2];
+                    intersection->v[0]=PhysicsScalar(PhysicsWallAddScalar(&sphere->center.v[0],radius_product_x));
+                    intersection->v[1]=PhysicsScalar(PhysicsWallAddScalar(&sphere->center.v[1],radius_product_y));
+                    intersection->v[2]=PhysicsScalar((double)sphere->center.v[2]+radius_product_z);
+                    PhysicsCopyWord(&best_face,(const void*)&frame.words[0x60/4]);
+                    sphere_count=AddObjectWallForce(contacts+initial_count,intersection,frame.values[0x28/4],trial_normal,0,sphere_count,object,3,best_face,NULL);
+                }
+                result=GetSphereToEdgePoints(object,sphere,contacts+initial_count,sphere_count,40-initial_count,&workspace->original_points[0],&workspace->trial_points[0],delta);
+                if(result>count)count++;
+            }
+        }
+        PhysicsCopyWord(&shape,&shape->common.next);
+    }
+    object->field_0xed=(tU8)touched_all;
+    if(count==0)return 0;
+    if(count>1) {
+        first_contact=contacts+initial_count;
+        next_contact=first_contact+1;
+        do {
+            normal_dot=((double)first_contact->normal.v[0]*next_contact->normal.v[0]+(double)first_contact->normal.v[1]*next_contact->normal.v[1])+(double)first_contact->normal.v[2]*next_contact->normal.v[2];
+            if(PhysicsWallNaN(normal_dot)||normal_dot<=.95)break;
+            classification++;next_contact++;
+        }while(classification<count);
+    }
+    for(component=0;component<3;component++)PhysicsCopyWord(&object->omega.v[component],&object->rotate_omega.v[component]);
+    return classification;
+}
+
 // GetObjectWallForceInfo
 
 // GetObjectCornerToObjectFacePoints
@@ -1284,6 +1430,211 @@ void C2_HOOK_FASTCALL MakeJointVelocitiesVector(br_scalar* pOutput, tPhysics_joi
 
 // SkipForces
 
+/* Complete force-group foundation; original lexical names unknown. */
+static double C2_HOOK_CDECL FrictionProductScalars(volatile const br_scalar* left, volatile const br_scalar* right);
+
+typedef struct tForce_group_container {
+    int count;
+    tPhysics_joint_force* records;
+    unsigned char unused_08[12];
+    br_scalar* orthogonal;
+    br_scalar* matrix;
+} tForce_group_container;
+
+typedef void (C2_HOOK_FASTCALL *tForce_group_callback)(tPhysics_object* object);
+
+static br_scalar C2_HOOK_CDECL GroupScalar(double value) {
+    volatile union { br_scalar value; tU32 bits; } stored;
+    union { br_scalar value; tU32 bits; } result;
+    stored.value = (br_scalar)value;
+    result.bits = stored.bits;
+    return result.value;
+}
+
+static void* C2_HOOK_CDECL GroupPointer(const void* base, int offset) {
+    void* result;
+    memcpy(&result, (const tU8*)base + offset, 4);
+    return result;
+}
+
+static tPhysics_object** C2_HOOK_CDECL GroupReducedSlot(tPhysics_object* object) {
+    return (tPhysics_object**)((tU8*)object + 0x234);
+}
+
+/* A nonempty child list makes its final slot an object field, never this
+ * temporary head. Keep the temporary's address opaque to GCC's local-return
+ * heuristic; the original returns the recursively produced slot verbatim. */
+#if defined(__GNUC__)
+__attribute__((noinline))
+#endif
+static tPhysics_object** C2_HOOK_CDECL GroupTemporaryHead(tPhysics_object** head) {
+    return head;
+}
+
+/* Original ECX object / stack float / RET4; EDX is not consumed. */
+// FUNCTION: CARMA2_HW 0x004bc8e0
+void C2_HOOK_FAKE_THISCALL FUN_004bc8e0(tPhysics_object* object, undefined4 unused, br_scalar factor) {
+    double x, y, z, scale;
+    tPhysics_object* partner;
+    tPhysics_object* ancestor;
+    tForce_group_container* container;
+    tPhysics_joint_force* records[40];
+    void* workspace;
+    int index;
+    (void)unused;
+    x = FrictionProductScalars(&object->I.v[0], &factor);
+    y = FrictionProductScalars(&object->I.v[1], &factor);
+    z = FrictionProductScalars(&object->I.v[2], &factor);
+    scale = FrictionProductScalars(&factor, &object->field_0x21c);
+    object->I.v[0] = GroupScalar(x);
+    workspace = GroupPointer(object, 0x1e4);
+    object->I.v[1] = GroupScalar(y);
+    object->I.v[2] = GroupScalar(z);
+    object->field_0x21c = GroupScalar(scale);
+    if (workspace != NULL) {
+        partner = GroupPointer(workspace, 4);
+        x = FrictionProductScalars(&partner->I.v[0], &factor);
+        y = FrictionProductScalars(&partner->I.v[1], &factor);
+        z = FrictionProductScalars(&partner->I.v[2], &factor);
+        scale = FrictionProductScalars(&factor, &partner->field_0x21c);
+        partner->I.v[0] = GroupScalar(x);
+        partner->I.v[1] = GroupScalar(y);
+        partner->I.v[2] = GroupScalar(z);
+        partner->field_0x21c = GroupScalar(scale);
+        RedoQuickHingeVelocities(object);
+    }
+    ancestor = object;
+    while (GroupPointer(ancestor, 0x218) == NULL && ancestor->parent != NULL) {
+        ancestor = ancestor->parent;
+    }
+    container = GroupPointer(ancestor, 0x218);
+    if (container != NULL) {
+        for (index = 0; index < container->count; index++) {
+            records[index] = (tPhysics_joint_force*)((tU8*)container->records + 96 * index);
+        }
+        MakeMatrix(container->matrix, container->count, records, container->count);
+        MatrixProcess(container->matrix, container->orthogonal, container->count);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004bd720
+int C2_HOOK_FASTCALL FUN_004bd720(tPhysics_object* object) {
+    double x, y, z, energy, factor, denominator;
+    void* workspace;
+    tPhysics_object* partner;
+    tForce_group_callback callback;
+    x = object->omega.v[0];
+    y = object->omega.v[1];
+    z = object->omega.v[2];
+    energy = ((x * x + y * y) + z * z) * (double)0.0015999999595806003f;
+    if (!(energy > (double)2.464900016784668f)) {
+        return 0;
+    }
+    workspace = GroupPointer(object, 0x1e4);
+    factor = sqrt(energy) * (double)1.2738852500915527f;
+    x = object->omega.v[0];
+    y = object->omega.v[1];
+    denominator = factor + factor;
+    z = object->omega.v[2];
+    x /= denominator;
+    y /= denominator;
+    z /= denominator;
+    object->omega.v[0] = GroupScalar(x);
+    object->omega.v[1] = GroupScalar(y);
+    object->omega.v[2] = GroupScalar(z);
+    if (workspace != NULL) {
+        partner = GroupPointer(workspace, 4);
+        partner->omega.v[0] = GroupScalar((double)partner->omega.v[0] / denominator);
+        partner->omega.v[1] = GroupScalar((double)partner->omega.v[1] / denominator);
+        partner->omega.v[2] = GroupScalar((double)partner->omega.v[2] / denominator);
+    }
+    FUN_004bc8e0(object, 0, GroupScalar(factor * factor));
+    memcpy(&callback, (tU8*)object + 0x198, 4);
+    if (callback != NULL) {
+        callback(object);
+    }
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x004bd7f0
+int C2_HOOK_FASTCALL FUN_004bd7f0(tPhysics_object* list) {
+    tU32 total = 0;
+    while (list != NULL) {
+        total += (tU32)FUN_004bd720(list);
+        if (list->child != NULL) {
+            total += (tU32)FUN_004bd7f0(list->child);
+        }
+        list = list->next;
+    }
+    return (int)total;
+}
+
+// FUNCTION: CARMA2_HW 0x004bd830
+tPhysics_object** C2_HOOK_FASTCALL FUN_004bd830(tPhysics_object* scan, tPhysics_object* context, tPhysics_object** output) {
+    tPhysics_object** tail = output;
+    tPhysics_object** child_tail;
+    tPhysics_object* node;
+    tPhysics_object* children;
+    br_scalar cutoff;
+    if (context->parent != NULL) {
+        for (node = context; node != NULL; node = node->next) {
+            if ((node == scan && !(scan->flags & 8)) || BoundsOverlapTest__finteray(&scan->field_0x10c, &node->field_0x10c)) {
+                *tail = node;
+                tail = GroupReducedSlot(node);
+            }
+        }
+    } else {
+        cutoff = GroupScalar((double)scan->field_0x10c.min.v[0] - gPhysics_bounds_max_x);
+        for (node = scan->prev; node != NULL; node = node->prev) {
+            if (!(node->transform_matrix.m[3][0] >= cutoff)) {
+                break;
+            }
+            if (BoundsOverlapTest__finteray(&scan->field_0x10c, &node->field_0x10c)) {
+                *tail = node;
+                tail = GroupReducedSlot(node);
+            }
+        }
+        cutoff = GroupScalar((double)scan->field_0x10c.max.v[0] - gPhysics_bounds_min_x);
+        for (node = scan->next; node != NULL; node = node->next) {
+            if (node->transform_matrix.m[3][0] > cutoff) {
+                break;
+            }
+            if (BoundsOverlapTest__finteray(&scan->field_0x10c, &node->field_0x10c)) {
+                *tail = node;
+                tail = GroupReducedSlot(node);
+            }
+        }
+        if (!(scan->flags & 8)) {
+            *tail = scan;
+            tail = GroupReducedSlot(scan);
+        }
+    }
+    *tail = NULL;
+    children = NULL;
+    child_tail = GroupTemporaryHead(&children);
+    for (node = *output; node != NULL; node = GroupPointer(node, 0x234)) {
+        if (node->child != NULL) {
+            child_tail = FUN_004bd830(scan, node->child, child_tail);
+        }
+    }
+    if (children != NULL) {
+        *child_tail = NULL;
+        *tail = children;
+        return child_tail;
+    }
+    return tail;
+}
+
+// FUNCTION: CARMA2_HW 0x004bd9b0
+void C2_HOOK_FASTCALL FUN_004bd9b0(tPhysics_object* object, tU32 state) {
+    tPhysics_object* child = object->child;
+    object->field_0xf0 = state;
+    while (child != NULL) {
+        FUN_004bd9b0(child, state);
+        child = child->next;
+    }
+}
+
 // ScaleUpObjectMI
 
 // CheckForTwang
@@ -1352,6 +1703,178 @@ void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_objec
 // GroupLimitOmega
 
 // PositionWorldJointedObject
+
+/* Complete hierarchy motion entries; original lexical names unknown. */
+static double C2_HOOK_CDECL PartnerMultiplyRawScalar(double a, const br_scalar* b);
+
+/* Original calls push the time DWORD with MOV/PUSH. GNU's typed float
+ * forwarding can instead FLD/FSTP it, quieting sNaNs before a raw-memory
+ * multiply. These i386 call views preserve the actual three-DWORD ABI. */
+#if defined(__GNUC__) && defined(__i386__)
+static tU32 C2_HOOK_CDECL HierarchyTimeWord(const br_scalar* pTime) {
+    tU32 word;
+    memcpy(&word, pTime, sizeof(word));
+    return word;
+}
+typedef void (C2_HOOK_FASTCALL *tHierarchyRawRecursive)(tPhysics_object*, tPhysics_object**, tU32);
+typedef void (C2_HOOK_FAKE_THISCALL *tHierarchyRawMotion)(tPhysics_object*, undefined4, tU32);
+#define HIERARCHY_RECURSE(object, selected, time) do { \
+    tHierarchyRawRecursive volatile function = (tHierarchyRawRecursive)(void*)FUN_004b9230; \
+    function((object), (selected), HierarchyTimeWord(&(time))); \
+} while (0)
+#define HIERARCHY_MOTION(function_name, object, time) do { \
+    tHierarchyRawMotion volatile function = (tHierarchyRawMotion)(void*)(function_name); \
+    function((object), 0, HierarchyTimeWord(&(time))); \
+} while (0)
+#else
+#define HIERARCHY_RECURSE(object, selected, time) FUN_004b9230((object), (selected), (time))
+#define HIERARCHY_MOTION(function_name, object, time) (function_name)((object), 0, (time))
+#endif
+// FUNCTION: CARMA2_HW 0x004b9230
+void C2_HOOK_FASTCALL FUN_004b9230(tPhysics_object* pObject, tPhysics_object** pSelected, br_scalar pTime) {
+    volatile tPhysics_object* object = pObject;
+    tPhysics_object* partner;
+    tPhysics_object* child;
+    tPhysics_joint* joint;
+    br_actor* actor;
+    br_vector3 point, other, relative_omega, cross;
+    br_matrix34 inverse, relative;
+    br_scalar angle;
+    br_scalar vx, vy, vz;
+    double x, y, z;
+    int i;
+
+    joint = object->physics_joint1;
+    if (joint != NULL && joint->type != eJoint_none) {
+        partner = object->field_0x230;
+        if (partner == NULL) {
+            PhysicsError((tPhysicsError)11, &gPhysics_empty_message);
+        }
+        if (object->flags & 0x400) {
+            BrMatrix34Mul(&object->actor->t.t.mat, &pObject->field_0x1e8, &partner->actor->t.t.mat);
+            BrMatrix34TApplyV(&pObject->omega, &partner->rotate_omega, &pObject->field_0x1e8);
+            memcpy(&pObject->rotate_omega, &pObject->omega, sizeof(br_vector3));
+            DrMatrix34ApplyLPInverse(&point, &partner->cmpos, &pObject->field_0x1e8);
+            x = (double)object->cmpos.v[0] - point.v[0];
+            y = (double)object->cmpos.v[1] - point.v[1];
+            z = (double)object->cmpos.v[2] - point.v[2];
+            vx = object->omega.v[0];
+            vy = object->omega.v[1];
+            vz = object->omega.v[2];
+            point.v[0] = (br_scalar)PhysicsJointScalar(x);
+            point.v[1] = (br_scalar)PhysicsJointScalar(y);
+            point.v[2] = (br_scalar)PhysicsJointScalar(z);
+            cross.v[0] = (br_scalar)PhysicsJointScalar((double)vy * point.v[2] - (double)vz * point.v[1]);
+            cross.v[1] = (br_scalar)PhysicsJointScalar((double)vz * point.v[0] - (double)vx * point.v[2]);
+            cross.v[2] = (br_scalar)PhysicsJointScalar((double)vx * point.v[1] - (double)vy * point.v[0]);
+            BrMatrix34ApplyV(&pObject->v, &cross, &pObject->transform_matrix);
+            pObject->v.v[0] = (br_scalar)PhysicsJointScalar((double)partner->v.v[0] + object->v.v[0]);
+            pObject->v.v[1] = (br_scalar)PhysicsJointScalar((double)partner->v.v[1] + object->v.v[1]);
+            pObject->v.v[2] = (br_scalar)PhysicsJointScalar((double)partner->v.v[2] + object->v.v[2]);
+            BrMatrix34TApplyV(&pObject->velocity_car_space, &pObject->v, &pObject->transform_matrix);
+        } else {
+            joint = object->physics_joint1;
+            switch (joint->type) {
+            case eJoint_hinge:
+            case eJoint_quick_hinge:
+                BrMatrix34ApplyV(&point, &partner->rotate_omega, &partner->transform_matrix);
+                BrMatrix34TApplyV(&relative_omega, &point, &pObject->transform_matrix);
+                joint = object->physics_joint1;
+                x = ((double)object->omega.v[0] - relative_omega.v[0]) * joint->hinge_axis.v[0];
+                y = ((double)object->omega.v[1] - relative_omega.v[1]) * joint->hinge_axis.v[1];
+                z = ((double)object->omega.v[2] - relative_omega.v[2]) * joint->hinge_axis.v[2];
+                angle = (br_scalar)PhysicsJointScalar(((x + y) + z) * pTime);
+                BrMatrix34LPInverse(&inverse, &partner->transform_matrix);
+                BrMatrix34Mul(&relative, &pObject->transform_matrix, &inverse);
+                BrMatrix34Mul(&object->actor->t.t.mat, &relative, &partner->actor->t.t.mat);
+                joint = object->physics_joint1;
+                BrMatrix34PreRotate(&object->actor->t.t.mat, (br_angle)(br_int_64)((double)angle * 10430.378350470453), &joint->hinge_axis);
+                memcpy(&pObject->rotate_omega, &pObject->omega, sizeof(br_vector3));
+                BrMatrix34ApplyV(&point, &pObject->omega, &pObject->transform_matrix);
+                BrMatrix34TApplyV(&pObject->omega, &point, &object->actor->t.t.mat);
+                break;
+            case eJoint_universal:
+            case eJoint_ball_n_socket:
+                HIERARCHY_MOTION(RotateObject, pObject, pTime);
+                break;
+            default:
+                PhysicsError((tPhysicsError)5, NULL);
+            }
+            BrMatrix34ApplyP(&point, &object->physics_joint1->field_0x08, &object->actor->t.t.mat);
+            BrMatrix34ApplyP(&other, &object->physics_joint1->field_0x14, &partner->actor->t.t.mat);
+            for (i = 0; i < 3; ++i) {
+                point.v[i] = (br_scalar)PhysicsJointScalar((double)other.v[i] - point.v[i]);
+            }
+            for (i = 0; i < 3; ++i) {
+                actor = object->actor;
+                actor->t.t.mat.m[3][i] = (br_scalar)PhysicsJointScalar((double)point.v[i] + actor->t.t.mat.m[3][i]);
+            }
+        }
+    } else {
+        joint = object->physics_joint2;
+        if (joint != NULL && joint->type != eJoint_none) {
+            HIERARCHY_MOTION(RotateObject, pObject, pTime);
+            HIERARCHY_MOTION(TranslateObject, pObject, pTime);
+        } else {
+            x = PhysicsJointProductMemory(&pObject->v.v[0], &pTime);
+            actor = object->actor;
+            y = object->v.v[1];
+            x = PhysicsJointAddScalar(x, &actor->t.t.mat.m[3][0]);
+            z = object->v.v[2];
+            y = PartnerMultiplyRawScalar(y, &pTime);
+            actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(x);
+            actor = object->actor;
+            y = PhysicsJointAddScalar(y, &actor->t.t.mat.m[3][1]);
+            z = PartnerMultiplyRawScalar(z, &pTime);
+            actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(y);
+            actor = object->actor;
+            actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar(z, &actor->t.t.mat.m[3][2]));
+            HIERARCHY_MOTION(RotateObject, pObject, pTime);
+        }
+    }
+    child = object->child;
+    while (child != NULL) {
+        HIERARCHY_RECURSE(child, pSelected, pTime);
+        child = ((volatile tPhysics_object*)child)->next;
+    }
+    if (object->physics_joint2 != NULL) {
+        *pSelected = pObject;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004b8ee0
+void C2_HOOK_FAKE_THISCALL FUN_004b8ee0(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {
+    tPhysics_object* selected = NULL;
+    tPhysics_object* current;
+    tPhysics_object* next;
+    br_vector3 point, other;
+    br_actor* actor;
+    int i;
+
+    (void)pUnused;
+    HIERARCHY_RECURSE(pObject, &selected, pTime);
+    if (selected != NULL && ((volatile tPhysics_object*)selected)->field_0x230 != NULL) {
+        current = selected;
+        HIERARCHY_MOTION(TranslateObject, selected, pTime);
+        next = ((volatile tPhysics_object*)current)->field_0x230;
+        do {
+            BrMatrix34ApplyP(&point, &current->physics_joint1->field_0x08, &current->actor->t.t.mat);
+            BrMatrix34ApplyP(&other, &current->physics_joint1->field_0x14, &next->actor->t.t.mat);
+            for (i = 0; i < 3; ++i) {
+                point.v[i] = (br_scalar)PhysicsJointScalar((double)point.v[i] - other.v[i]);
+            }
+            for (i = 0; i < 3; ++i) {
+                actor = ((volatile tPhysics_object*)((volatile tPhysics_object*)current)->parent)->actor;
+                actor->t.t.mat.m[3][i] = (br_scalar)PhysicsJointScalar((double)point.v[i] + actor->t.t.mat.m[3][i]);
+            }
+            current = ((volatile tPhysics_object*)current)->field_0x230;
+            next = ((volatile tPhysics_object*)current)->field_0x230;
+        } while (next != NULL);
+        WriteNewPositions(pObject);
+    }
+}
+#undef HIERARCHY_RECURSE
+#undef HIERARCHY_MOTION
 
 // TranslateAndRotatePartialObject
 
