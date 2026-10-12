@@ -1005,11 +1005,20 @@ void C2_HOOK_FASTCALL ARDoActionReplay(int pUnused, tReplay_session_callback* pB
     }
 }
 
-// ReverseSound
+// FUNCTION: CARMA2_HW 0x00403d10
+void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag pTag) {
+    S3ReverseSample(pEffect, pTag);
+}
 
-// ARGoBackwards
+// FUNCTION: CARMA2_HW 0x00403d00
+int C2_HOOK_FASTCALL ARGoBackwards(void) {
+    return S3SetSampleFilterCallbacks(ReverseSound, ReverseSound);
+}
 
-// ARGoForwards
+// FUNCTION: CARMA2_HW 0x00403d20
+int C2_HOOK_FASTCALL ARGoForwards(void) {
+    return S3SetSampleFilterCallbacks(NULL, NULL);
+}
 
 // FUNCTION: CARMA2_HW 0x00403d30
 void C2_HOOK_FASTCALL ARService(void) {
@@ -1054,7 +1063,12 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 
 // AddSmudgeToPipingSession
 
-// AddSparkToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6f20
+void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV) {
+    ARAddVariedDataToSession(ePipe_chunk_spark, pSpark_index, 2,
+        12, 0, pPos,
+        12, 12, pV);
+}
 
 // AddShrapnelToPipingSession
 

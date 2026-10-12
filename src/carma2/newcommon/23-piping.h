@@ -127,11 +127,11 @@ extern void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBe
 
 extern void C2_HOOK_FASTCALL ARDoActionReplay(int pUnused, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ReverseSound
+extern void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag pTag);
 
-// ARGoBackwards
+extern int C2_HOOK_FASTCALL ARGoBackwards(void);
 
-// ARGoForwards
+extern int C2_HOOK_FASTCALL ARGoForwards(void);
 
 extern void C2_HOOK_FASTCALL ARService(void);
 
@@ -171,7 +171,7 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 // AddSmudgeToPipingSession
 
-// AddSparkToPipingSession
+extern void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV);
 
 // AddShrapnelToPipingSession
 

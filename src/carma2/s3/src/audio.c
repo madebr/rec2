@@ -1357,6 +1357,31 @@ tS3_error_codes C2_HOOK_FASTCALL S3MIDILoadSong(tS3_channel* pChannel) {
     return eS3_error_none;
 }
 
+// FUNCTION: CARMA2_HW 0x00564d4a
+void C2_HOOK_FASTCALL S3ReverseSample(tS3_effect_tag pEffect, tS3_sound_tag pTag) {
+    tS3_channel* channel;
+
+    (void)pEffect;
+    channel = S3GetChannelForTag(pTag);
+    if (channel != NULL) {
+        PDReverseAudio(channel);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00564d75
+int C2_HOOK_FASTCALL S3SetSampleFilterCallbacks(tS3_sample_filter pEnable, tS3_sample_filter pDisable) {
+    if (pEnable != NULL) {
+        gS3_sample_filter_func = pEnable;
+    }
+    if (pDisable != NULL) {
+        gS3_sample_filter_disable_func = pDisable;
+    } else {
+        gS3_sample_filter_disable_func = gS3_sample_filter_func;
+    }
+    gS3_effects_enabled = pEnable != NULL;
+    return 0;
+}
+
 // FUNCTION: CARMA2_HW 0x00564de0
 int C2_HOOK_FASTCALL S3ExecuteSampleFilterFuncs(tS3_channel* pChannel) {
 

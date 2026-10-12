@@ -2,6 +2,7 @@
 
 #include "platform.h"
 #include "s3/internal/audio.h"
+#include "s3/internal/resource.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x006aaa1c
@@ -150,9 +151,9 @@ void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor) {
 
 // FUNCTION: CARMA2_HW 0x00569401
 int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel) {
-    tU8* buffer_data;
+    tU8* buffer_data = NULL;
     DWORD buffer_data_size;
-    DWORD i;
+    int i;
     tU8* tmp_buffer;
     DWORD sample_size;
 
@@ -161,22 +162,23 @@ int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel) {
         return 1;
     }
     sample_size = pChannel->descriptor->buffer_description->sample_size;
+    /* The original accepts exactly zero and checks the limit after Lock. */
+    if (IDirectSoundBuffer_Lock(buffer, 0, sample_size, (void**)&buffer_data, &buffer_data_size, NULL, NULL, 0) != 0) {
+        return 0;
+    }
     if (sample_size > 2000000) {
         return 0;
     }
-    if (FAILED(IDirectSoundBuffer_Lock(buffer, 0, sample_size, (void**)&buffer_data, &buffer_data_size, NULL, NULL, 0))) {
-        return 0;
-    }
-    tmp_buffer = BrMemAllocate(sample_size, kMem_S3_Windows_95_create_temp_buffer_space_to_reverse_sample);
+    tmp_buffer = S3MemAllocate(sample_size, kMem_S3_Windows_95_create_temp_buffer_space_to_reverse_sample);
     if (tmp_buffer == NULL) {
-        IDirectSoundBuffer_Unlock(buffer, buffer_data, buffer_data_size, NULL, 0);
+        /* Preserve the original early return without Unlock. */
         return 1;
     }
     memmove(tmp_buffer, buffer_data, buffer_data_size);
-    for (i = 0; i < buffer_data_size; i++) {
+    for (i = 0; i < (int)buffer_data_size; i++) {
         buffer_data[i] = tmp_buffer[sample_size - 1 - i];
     }
-    BrMemFree(tmp_buffer);
+    S3MemFree(tmp_buffer);
     IDirectSoundBuffer_Unlock(buffer, buffer_data, buffer_data_size, NULL, 0);
     return 0;
 }
