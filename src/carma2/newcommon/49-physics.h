@@ -342,13 +342,9 @@ void C2_HOOK_FAKE_THISCALL TranslateObject(tPhysics_object* pObject, undefined4 
 
 // ResetObjectAndChildren
 
-// ResetObjectList
-
 // RepositionObjectGroup
 
 // SimpleRotate
-
-// InterpolateSingleObject
 
 // InterpolateObjects
 
@@ -448,8 +444,6 @@ extern void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint);
 
 // FillInShape
 
-// UpdateCollisionObject
-
 extern void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char* pMessage);
 
 // PhysicsWarning
@@ -479,8 +473,6 @@ extern void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pM
 // ResetMan2
 
 // SetUpTestObjects
-
-// ResetObjectList
 
 // ResetMan
 
@@ -532,5 +524,12 @@ int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tPhysics_object
 void C2_HOOK_FASTCALL InternalPrepareObject(tPhysics_object* object);
 void C2_HOOK_FASTCALL PrepareObject(tPhysics_object* object, tPhysics_object** list_head);
 int C2_HOOK_FASTCALL FUN_004ba550(tPhysics_joint_force* records, br_scalar* impulses, int count, const int* indices, int selected_count, br_scalar maximum);
+
+void C2_HOOK_FAKE_THISCALL FUN_004c2670(tPhysics_object* object, undefined4 unused_edx, br_scalar time);
+void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* object, undefined4 unused_edx, br_scalar time);
+void C2_HOOK_FAKE_THISCALL FUN_004c28a0(tPhysics_object* list, undefined4 unused_edx, br_scalar time);
+void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* list);
+void C2_HOOK_FASTCALL FUN_004c62e0(tPhysics_object* object, const br_matrix34* matrix);
+void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* object);
 
 #endif // GUARD_49_PHYSICS_H

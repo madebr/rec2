@@ -5072,13 +5072,9 @@ void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject) {
 
 // ResetObjectAndChildren
 
-// ResetObjectList
-
 // RepositionObjectGroup
 
 // SimpleRotate
-
-// InterpolateSingleObject
 
 // InterpolateObjects
 
@@ -6190,8 +6186,6 @@ void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint) {
 
 // FillInShape
 
-// UpdateCollisionObject
-
 // FUNCTION: CARMA2_HW 0x004c61c0
 void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char* pMessage) {
     if (gPhysics_error_cb != NULL) {
@@ -6329,8 +6323,6 @@ void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage)
 // ResetMan2
 
 // SetUpTestObjects
-
-// ResetObjectList
 
 // ResetMan
 
@@ -7656,4 +7648,251 @@ int C2_HOOK_FASTCALL FUN_004ba550(tPhysics_joint_force* records, br_scalar* impu
         *ClampWord(records, (tU32)i * 96u + 0x5c) = 9;
     }
     return 1;
+}
+
+static double C2_HOOK_CDECL PhysicsJointScalar(double value);
+static double C2_HOOK_CDECL PhysicsJointSum(double a, double b);
+static double C2_HOOK_CDECL FrictionRead(const void* base, unsigned offset);
+static double C2_HOOK_CDECL FrictionDivideScalars(volatile const br_scalar* left, volatile const br_scalar* right);
+static double C2_HOOK_CDECL FrictionAddScalar(double value, volatile const br_scalar* scalar);
+static double C2_HOOK_CDECL FrictionSubtractScalar(double value, volatile const br_scalar* scalar);
+static double C2_HOOK_CDECL PartnerMultiplyRawScalar(double value, const br_scalar* scalar);
+static int C2_HOOK_CDECL FrictionLessOrUnordered(double left, double right);
+static tPhysics_object* C2_HOOK_CDECL WakePointer(const void* base, unsigned offset);
+static br_angle C2_HOOK_CDECL AngularForceAngle(double value);
+
+typedef void (C2_HOOK_FAKE_THISCALL *tInterpolation_scalar_call)(tPhysics_object*, undefined4, br_scalar);
+typedef void (C2_HOOK_FAKE_THISCALL *tInterpolation_word_call)(tPhysics_object*, undefined4, tU32);
+
+/* The original internal calls MOV/PUSH the scalar stack word. GCC instead
+ * quiets a signaling NaN while forwarding a typed float argument. These exact
+ * supported 32-bit ABI views differ only in the representation of that word. */
+static void C2_HOOK_CDECL InterpolationForward(tInterpolation_scalar_call target, tPhysics_object* object, undefined4 unused_edx, const br_scalar* time) {
+    tInterpolation_word_call function;
+    tU32 bits;
+
+    memcpy(&function, &target, sizeof(function));
+    memcpy(&bits, time, sizeof(bits));
+    function(object, unused_edx, bits);
+}
+
+static br_actor* C2_HOOK_CDECL InterpolationActor(tPhysics_object* object) {
+    return (br_actor*)WakePointer(object, 0);
+}
+
+// FUNCTION: CARMA2_HW 0x004c2670
+void C2_HOOK_FAKE_THISCALL FUN_004c2670(tPhysics_object* object, undefined4 unused_edx, br_scalar time) {
+    br_vector3 axis, projected;
+    br_scalar magnitude, angle;
+    const br_scalar* snapshot = (const br_scalar*)((const tU8*)object + 0x1c0);
+    const br_vector3* center;
+    br_actor* actor;
+    double x, y, z, norm, angle_wide;
+    br_angle integer_angle;
+
+    (void)unused_edx;
+    if (((volatile const tPhysics_object*)object)->disable_move_rotate != 0) return;
+    x = FrictionRead(object, 0x1c0);
+    y = FrictionRead(object, 0x1c4);
+    z = FrictionRead(object, 0x1c8);
+    norm = PhysicsJointSum(PhysicsJointSum(x * x, y * y), z * z);
+    magnitude = (br_scalar)PhysicsJointScalar(sqrt(norm));
+    axis.v[0] = (br_scalar)PhysicsJointScalar(FrictionDivideScalars(snapshot, &magnitude));
+    axis.v[1] = (br_scalar)PhysicsJointScalar(FrictionDivideScalars(snapshot + 1, &magnitude));
+    axis.v[2] = (br_scalar)PhysicsJointScalar(FrictionDivideScalars(snapshot + 2, &magnitude));
+    angle_wide = PartnerMultiplyRawScalar((double)magnitude, &time);
+    angle = (br_scalar)PhysicsJointScalar(angle_wide);
+    if (FrictionLessOrUnordered(fabs(angle_wide), 0.0001)) return;
+
+    actor = InterpolationActor(object);
+    center = (const br_vector3*)((const tU8*)object + 0x14);
+    BrMatrix34ApplyV(&projected, center, &actor->t.t.mat);
+    actor = InterpolationActor(object);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(FrictionAddScalar((double)projected.v[0], &actor->t.t.mat.m[3][0]));
+    actor = InterpolationActor(object);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(FrictionAddScalar((double)projected.v[1], &actor->t.t.mat.m[3][1]));
+    actor = InterpolationActor(object);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(FrictionAddScalar((double)projected.v[2], &actor->t.t.mat.m[3][2]));
+    integer_angle = AngularForceAngle((double)angle * 10430.378350470453);
+    actor = InterpolationActor(object);
+    BrMatrix34PreRotate(&actor->t.t.mat, integer_angle, &axis);
+    actor = InterpolationActor(object);
+    BrMatrix34ApplyV(&projected, center, &actor->t.t.mat);
+    actor = InterpolationActor(object);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(FrictionSubtractScalar(FrictionRead(actor, 0x50), &projected.v[0]));
+    actor = InterpolationActor(object);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(FrictionSubtractScalar(FrictionRead(actor, 0x54), &projected.v[1]));
+    actor = InterpolationActor(object);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(FrictionSubtractScalar(FrictionRead(actor, 0x58), &projected.v[2]));
+}
+
+// FUNCTION: CARMA2_HW 0x004c2830
+void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* object, undefined4 unused_edx, br_scalar time) {
+    tPhysics_object* child;
+    br_actor* actor;
+    double x = FrictionRead(object, 0x68);
+    double y, z;
+
+    actor = InterpolationActor(object);
+    x = PartnerMultiplyRawScalar(x, &time);
+    y = FrictionRead(object, 0x6c);
+    x = FrictionAddScalar(x, &actor->t.t.mat.m[3][0]);
+    z = FrictionRead(object, 0x70);
+    y = PartnerMultiplyRawScalar(y, &time);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(x);
+    actor = InterpolationActor(object);
+    y = FrictionAddScalar(y, &actor->t.t.mat.m[3][1]);
+    z = PartnerMultiplyRawScalar(z, &time);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(y);
+    actor = InterpolationActor(object);
+    *(volatile br_scalar*)&actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(FrictionAddScalar(z, &actor->t.t.mat.m[3][2]));
+    InterpolationForward(FUN_004c2670, object, unused_edx, &time);
+    child = WakePointer(object, 0x224);
+    while (child != NULL) {
+        InterpolationForward(InterpolateSingleObject, child, unused_edx, &time);
+        child = WakePointer(child, 0x220);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c28a0
+void C2_HOOK_FAKE_THISCALL FUN_004c28a0(tPhysics_object* list, undefined4 unused_edx, br_scalar time) {
+    br_actor* actor;
+    tPhysics_object* child;
+    double x, y, z;
+
+    while (list != NULL) {
+        x = FrictionRead(list, 0x68);
+        actor = InterpolationActor(list);
+        x = PartnerMultiplyRawScalar(x, &time);
+        y = FrictionRead(list, 0x6c);
+        x = FrictionAddScalar(x, &actor->t.t.mat.m[3][0]);
+        z = FrictionRead(list, 0x70);
+        y = PartnerMultiplyRawScalar(y, &time);
+        *(volatile br_scalar*)&actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(x);
+        actor = InterpolationActor(list);
+        y = FrictionAddScalar(y, &actor->t.t.mat.m[3][1]);
+        z = PartnerMultiplyRawScalar(z, &time);
+        *(volatile br_scalar*)&actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(y);
+        actor = InterpolationActor(list);
+        *(volatile br_scalar*)&actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(FrictionAddScalar(z, &actor->t.t.mat.m[3][2]));
+        InterpolationForward(FUN_004c2670, list, unused_edx, &time);
+        child = WakePointer(list, 0x224);
+        if (child != NULL) InterpolationForward(FUN_004c28a0, child, unused_edx, &time);
+        list = WakePointer(list, 0x220);
+    }
+}
+
+static tPhysics_object* C2_HOOK_CDECL ListMatrixPointer(const void* base, tU32 offset) {
+    return (tPhysics_object*)(uintptr_t)*(volatile const tU32*)((const tU8*)base + offset);
+}
+static br_matrix34* C2_HOOK_CDECL ListMatrixActor(const tPhysics_object* object) {
+    return (br_matrix34*)(uintptr_t)((tU32)(uintptr_t)ListMatrixPointer(object, 0) + 0x2cu);
+}
+
+// FUNCTION: CARMA2_HW 0x004c2600
+void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* list) {
+    tPhysics_object* child;
+    while (list != NULL) {
+        if (*(volatile const tU32*)((const tU8*)list + 0xf0) == 1) {
+            BrMatrix34Copy(ListMatrixActor(list), (const br_matrix34*)((const tU8*)list + 0xbc));
+        } else {
+            BrMatrix34LPNormalise(ListMatrixActor(list), (const br_matrix34*)((const tU8*)list + 0x8c));
+        }
+        child = ListMatrixPointer(list, 0x224);
+        while (child != NULL) {
+            FUN_004c25a0(child);
+            child = ListMatrixPointer(child, 0x220);
+        }
+        list = ListMatrixPointer(list, 0x220);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c62e0
+void C2_HOOK_FASTCALL FUN_004c62e0(tPhysics_object* object, const br_matrix34* matrix) {
+    br_matrix34 inverse;
+    br_matrix34 working;
+    br_matrix34 product;
+    tPhysics_object* child = ListMatrixPointer(object, 0x224);
+    br_matrix34* transform = (br_matrix34*)((tU8*)object + 0x8c);
+    const br_matrix34* selected = matrix;
+
+    if (matrix != NULL) {
+        BrMatrix34Mul(ListMatrixActor(object), transform, matrix);
+    } else {
+        BrMatrix34LPInverse(&inverse, transform);
+        BrMatrix34Mul(&product, &inverse, ListMatrixActor(object));
+        BrMatrix34LPNormalise(&working, &product);
+        selected = &working;
+    }
+    if (child != NULL) {
+        BrMatrix34LPInverse(&inverse, transform);
+        /* Original overwrites the selected local normalized matrix here.
+         * With an external matrix this full computation remains unused. */
+        BrMatrix34Mul(&working, &inverse, ListMatrixActor(object));
+        while (child != NULL) {
+            FUN_004c62e0(child, selected);
+            child = ListMatrixPointer(child, 0x220);
+        }
+    }
+    BrMatrix34Copy(transform, ListMatrixActor(object));
+}
+
+static tU32 C2_HOOK_CDECL CollisionBoundsReadWord(const void* base, unsigned offset) {
+    return *(volatile const tU32*)((const tU8*)base + offset);
+}
+static void C2_HOOK_CDECL CollisionBoundsCopy(void* destination, const void* source) {
+    int i;
+    for (i = 0; i < 6; ++i) {
+        *(volatile tU32*)((tU8*)destination + i * 4) = CollisionBoundsReadWord(source, i * 4);
+    }
+}
+static double C2_HOOK_CDECL CollisionBoundsSquared(const void* bounds, unsigned axis) {
+    double minimum = FrictionRead(bounds, axis * 4);
+    double maximum = FrictionRead(bounds, 12 + axis * 4);
+    volatile double square_minimum = minimum * minimum;
+    br_scalar maximum_scalar = (br_scalar)PhysicsJointScalar(maximum);
+    double square_maximum = PhysicsJointScalar(PartnerMultiplyRawScalar(maximum, &maximum_scalar));
+
+    /* The original compares the wide minimum square against a scalar32
+     * maximum square, and selects the latter on equality or unordered. */
+    if (!PhysicsWallNaN(square_minimum) && !PhysicsWallNaN(square_maximum) && square_minimum > square_maximum) {
+        return square_minimum;
+    }
+    return square_maximum;
+}
+
+// FUNCTION: CARMA2_HW 0x004c60a0
+void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* object) {
+    tPhysics_shape* shape = (tPhysics_shape*)(uintptr_t)CollisionBoundsReadWord(object, 0x20);
+    tU8* bounds = (tU8*)object + 0x24;
+    int axis;
+    br_scalar* low;
+    br_scalar* high;
+    const br_scalar* other_low;
+    const br_scalar* other_high;
+    double x, y, z, squared, radius;
+
+    if (shape == NULL) return;
+    CollisionBoundsCopy(bounds, (const tU8*)shape + 4);
+    shape = (tPhysics_shape*)(uintptr_t)CollisionBoundsReadWord(shape, 0x34);
+    while (shape != NULL) {
+        for (axis = 0; axis < 3; ++axis) {
+            low = (br_scalar*)(bounds + axis * 4);
+            high = (br_scalar*)(bounds + 12 + axis * 4);
+            other_low = (const br_scalar*)((const tU8*)shape + 4 + axis * 4);
+            other_high = (const br_scalar*)((const tU8*)shape + 16 + axis * 4);
+            PhysicsScalarStore(low, PhysicsLessOrUnordered(low, other_low) ? low : other_low);
+            PhysicsScalarStore(high, PhysicsGreaterOrdered(high, other_high) ? high : other_high);
+        }
+        shape = (tPhysics_shape*)(uintptr_t)CollisionBoundsReadWord(shape, 0x34);
+    }
+    CollisionBoundsCopy((tU8*)object + 0x3c, bounds);
+    x = CollisionBoundsSquared((const tU8*)object + 0x3c, 0);
+    y = CollisionBoundsSquared((const tU8*)object + 0x3c, 1);
+    z = CollisionBoundsSquared((const tU8*)object + 0x3c, 2);
+    squared = PhysicsJointSum(x, PhysicsJointSum(z, y));
+    radius = sqrt(squared);
+    /* Preserve actual stores despite the current struct's reversed names. */
+    *(volatile br_scalar*)((tU8*)object + 0x140) = (br_scalar)PhysicsJointScalar(squared);
+    *(volatile br_scalar*)((tU8*)object + 0x13c) = (br_scalar)PhysicsJointScalar(radius);
 }
