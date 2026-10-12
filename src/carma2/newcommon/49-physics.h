@@ -297,6 +297,8 @@ int C2_HOOK_FASTCALL MakeVelocitiesVector2(br_scalar* pOutput, tPhysics_joint_fo
 
 void C2_HOOK_FASTCALL NewAddFriction(tPhysics_joint_force* force, tWorld_callbacks* callbacks);
 
+int C2_HOOK_FASTCALL FUN_004baa00(tPhysics_object* objects);
+
 // ApplyForces
 
 void C2_HOOK_FASTCALL DoJointFriction(tPhysics_object* object);

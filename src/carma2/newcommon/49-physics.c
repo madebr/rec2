@@ -4076,6 +4076,114 @@ void C2_HOOK_FASTCALL DoJointFriction(tPhysics_object* object) {
     }
 }
 
+static br_scalar* C2_HOOK_CDECL RestScalar(tPhysics_object* object, unsigned offset) {
+    return (br_scalar*)((tU8*)object + offset);
+}
+static tU8 C2_HOOK_CDECL RestByte(tPhysics_object* object, unsigned offset) {
+    return *((volatile tU8*)object + offset);
+}
+static void C2_HOOK_CDECL RestSetByte(tPhysics_object* object, unsigned offset, tU8 value) {
+    *((volatile tU8*)object + offset) = value;
+}
+
+/* Complete original post-friction rest-state pass. Numeric name retained. */
+// FUNCTION: CARMA2_HW 0x004baa00
+int C2_HOOK_FASTCALL FUN_004baa00(tPhysics_object* objects) {
+    tPhysics_object* object = objects;
+    tPhysics_object* child;
+    br_scalar angular_x, angular_z, direction[3], gravity_length;
+    br_scalar downward_speed, previous_downward_speed, base[3];
+    br_scalar corner_x, corner_y, corner_z, point_y, point_z;
+    double x, y, z, angular_energy, linear_energy, gravity_energy;
+    double point_energy, speed_change, change_limit;
+    unsigned flags, corner;
+    int all_at_rest = 1, child_at_rest;
+    tU8 at_rest;
+
+    while (object != NULL) {
+        if (*(volatile tU32*)RestScalar(object, 0x21c) != 0x3f800000u) {
+            object->I.v[0] = FrictionScalar(FrictionDivideScalars(&object->I.v[0], RestScalar(object, 0x21c)));
+            object->I.v[1] = FrictionScalar(FrictionDivideScalars(&object->I.v[1], RestScalar(object, 0x21c)));
+            object->I.v[2] = FrictionScalar(FrictionDivideScalars(&object->I.v[2], RestScalar(object, 0x21c)));
+        }
+        if (object->field_0xf0 != 0) {
+            flags = (unsigned)object->flags;
+            object->field_0xf0 = 0;
+            object->disable_move_rotate = (tU8)((flags >> 5) & 1);
+        }
+        flags = (unsigned)object->flags;
+        object->flags = (int)((flags & 0xfffffeffu) | ((flags >> 1) & 0x100u));
+        at_rest = 0;
+        if (object->disable_move_rotate == 0) {
+            if (RestByte(object, 0x1df) != 0 && (tU32)object->field183_0x1d8 == (tU32)(uintptr_t)object) {
+                RestSetByte(object, 0x1df, 0);
+            }
+            x = (double)*RestScalar(object, 0x1cc) + object->omega.v[0];
+            y = (double)*RestScalar(object, 0x1d0) + object->omega.v[1];
+            z = (double)*RestScalar(object, 0x1d4) + object->omega.v[2];
+            angular_x = FrictionScalar(x);
+            angular_z = FrictionScalar(z);
+            angular_energy = ((y * y) * object->I.v[1] + (x * angular_x) * object->I.v[0]) + (z * angular_z) * object->I.v[2];
+            angular_energy /= object->M;
+            if (RestByte(object, 0x1dd) == 0 && RestByte(object, 0x1df) != 0) {
+                linear_energy = 0.0;
+            } else {
+                x = object->v.v[0]; y = object->v.v[1]; z = object->v.v[2];
+                linear_energy = (y * y + x * x) + z * z;
+            }
+            if (!(linear_energy >= 0.001) && !(angular_energy >= 8.999999999999999e-05)) {
+                x = object->field_0x54.v[0]; y = object->field_0x54.v[1]; z = object->field_0x54.v[2];
+                gravity_energy = (y * y + x * x) + z * z;
+                gravity_length = FrictionScalar(sqrt(gravity_energy));
+                direction[0] = FrictionScalar((double)object->field_0x54.v[0] / gravity_length);
+                direction[1] = FrictionScalar((double)object->field_0x54.v[1] / gravity_length);
+                direction[2] = FrictionScalar((double)object->field_0x54.v[2] / gravity_length);
+                downward_speed = FrictionScalar(-(((double)object->v.v[1] * direction[1] + (double)object->v.v[0] * direction[0]) + (double)object->v.v[2] * direction[2]));
+                previous_downward_speed = FrictionScalar(-(((double)*RestScalar(object, 0x1b8) * direction[1] + (double)*RestScalar(object, 0x1b4) * direction[0]) + (double)*RestScalar(object, 0x1bc) * direction[2]));
+                if (RestByte(object, 0x1df) == 0) {
+                    speed_change = (double)downward_speed - previous_downward_speed;
+                    change_limit = (double)gravity_length * 0.9f;
+                    if (downward_speed >= 0.012f || change_limit >= speed_change) goto update_transform;
+                    base[0] = FrictionScalar(((double)object->omega.v[1] * object->cmpos.v[2] - (double)object->omega.v[2] * object->cmpos.v[1]) + object->velocity_car_space.v[0]);
+                    base[1] = FrictionScalar(((double)object->omega.v[2] * object->cmpos.v[0] - (double)object->cmpos.v[2] * object->omega.v[0]) + object->velocity_car_space.v[1]);
+                    base[2] = FrictionScalar(((double)object->cmpos.v[1] * object->omega.v[0] - (double)object->omega.v[1] * object->cmpos.v[0]) + object->velocity_car_space.v[2]);
+                    for (corner = 0; corner < 8; corner++) {
+                        corner_x = (corner & 2) ? object->bb1.min.v[0] : object->bb1.max.v[0];
+                        corner_y = (corner & 1) ? object->bb1.min.v[1] : object->bb1.max.v[1];
+                        corner_z = (corner & 4) ? object->bb1.min.v[2] : object->bb1.max.v[2];
+                        x = ((double)object->omega.v[1] * corner_z - (double)object->omega.v[2] * corner_y) + base[0];
+                        y = ((double)object->omega.v[2] * corner_x - (double)object->omega.v[0] * corner_z) + base[1];
+                        z = ((double)object->omega.v[0] * corner_y - (double)object->omega.v[1] * corner_x) + base[2];
+                        point_y = FrictionScalar(y); point_z = FrictionScalar(z);
+                        point_energy = (x * x + y * point_y) + z * point_z;
+                        if (point_energy > 0.0004f) goto update_transform;
+                    }
+                }
+                if (object->physics_joint2 == NULL || RestByte(object, 0x1dd) != 0 || object->transform_matrix.m[1][1] > 0.999) {
+                    at_rest = 1;
+                    BrVector3SetFloat(&object->v, 0, 0, 0);
+                    BrVector3SetFloat(&object->omega, 0, 0, 0);
+                    BrVector3SetFloat(&object->rotate_omega, 0, 0, 0);
+                }
+            }
+        }
+update_transform:
+        RestSetByte(object, 0x1df, at_rest);
+        BrMatrix34Copy(&object->transform_matrix, &object->actor->t.t.mat);
+        BrMatrix34ApplyP(&object->pos, &object->cmpos, &object->transform_matrix);
+        child = object->child;
+        if (child == NULL) {
+            RestSetByte(object, 0x1df, (tU8)(RestByte(object, 0x1df) * 3));
+        } else {
+            child_at_rest = FUN_004baa00(child);
+            if (RestByte(object, 0x1df) != 0) RestSetByte(object, 0x1df, (tU8)(child_at_rest * 2 + RestByte(object, 0x1df)));
+        }
+        all_at_rest &= (RestByte(object, 0x1df) >> 1) & 1;
+        object = object->next;
+    }
+    return all_at_rest;
+}
+
 // ApplyForces
 
 
