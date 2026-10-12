@@ -263,15 +263,137 @@ br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, const br_quat* l, const br_quat* r)
 #endif
 }
 
+/* Retained paired-NaN probes require the original x87 operand forms.
+ * The complete quaternion algorithms remain C with explicit scalar spills. */
+static double C2_HOOK_CDECL QuaternionSum(double a, double b) {
+    double value;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld a
+        fld b
+        faddp st(1), st(0)
+        fstp value
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; fldl %2; faddp; fstpl %0" : "=m"(value) : "m"(a), "m"(b) : "st", "st(1)");
+#else
+    value = a + b;
+#endif
+    return value;
+}
+
+static double C2_HOOK_CDECL QuaternionScaleRaw(double factor, const br_scalar* component) {
+    double value;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, component
+        fld factor
+        fmul dword ptr [eax]
+        fstp value
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; fmuls %2; fstpl %0" : "=m"(value) : "m"(factor), "m"(*component) : "st");
+#else
+    value = factor * *component;
+#endif
+    return value;
+}
+
+static double C2_HOOK_CDECL QuaternionScaleLoaded(double factor, const br_scalar* component) {
+    double value;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, component
+        fld factor
+        fld dword ptr [eax]
+        fmul st(0), st(1)
+        fstp value
+        fstp st(0)
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; flds %2; fmul %%st(1); fstpl %0; fstp %%st(0)" : "=m"(value) : "m"(factor), "m"(*component) : "st", "st(1)");
+#else
+    value = (double)*component * factor;
+#endif
+    return value;
+}
+
+static double C2_HOOK_CDECL QuaternionMultiply(double a, double b) {
+    double value;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld b
+        fld a
+        fmul st(0), st(1)
+        fstp value
+        fstp st(0)
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %2; fldl %1; fmul %%st(1); fstpl %0; fstp %%st(0)" : "=m"(value) : "m"(a), "m"(b) : "st", "st(1)");
+#else
+    value = a * b;
+#endif
+    return value;
+}
+
+static double C2_HOOK_CDECL QuaternionAddScalar(double a, const br_scalar* b) {
+    double value;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, b
+        fld a
+        fadd dword ptr [eax]
+        fstp value
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; fadds %2; fstpl %0" : "=m"(value) : "m"(a), "m"(*b) : "st");
+#else
+    value = a + *b;
+#endif
+    return value;
+}
+
+static double C2_HOOK_CDECL QuaternionSubtractScalar(double a, const br_scalar* b) {
+    double value;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, b
+        fld a
+        fsub dword ptr [eax]
+        fstp value
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; fsubs %2; fstpl %0" : "=m"(value) : "m"(a), "m"(*b) : "st");
+#else
+    value = a - *b;
+#endif
+    return value;
+}
+
+static double C2_HOOK_CDECL QuaternionScalar(double value) {
+    union { br_scalar scalar; br_uint_32 word; } bits;
+    volatile br_uint_32 stored;
+
+    bits.scalar = (br_scalar)value;
+    stored = bits.word;
+    bits.word = stored;
+    return bits.scalar;
+}
+
 // FUNCTION: CARMA2_HW 0x00535710
 br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, const br_quat* qq) {
-    br_scalar s;
+    double factor;
+    volatile double sum;
 
-    s = 1.0f / (float)sqrt(qq->x * qq->x + qq->y * qq->y + qq->z * qq->z + qq->w * qq->w);
-    q->x = qq->x * s;
-    q->y = qq->y * s;
-    q->z = qq->z * s;
-    q->w = qq->w * s;
+    /* Original sum is Y^2+Z^2, then W^2, then X^2. No scalar root/scale spill. */
+    sum = QuaternionSum((double)qq->y * qq->y, (double)qq->z * qq->z);
+    sum = QuaternionSum(sum, (double)qq->w * qq->w);
+    sum = QuaternionSum(sum, (double)qq->x * qq->x);
+    factor = 1.0 / sqrt(sum);
+    q->x = (br_scalar)QuaternionScalar(QuaternionScaleRaw(factor, &qq->x));
+    q->y = (br_scalar)QuaternionScalar(QuaternionScaleLoaded(factor, &qq->y));
+    q->z = (br_scalar)QuaternionScalar(QuaternionScaleLoaded(factor, &qq->z));
+    q->w = (br_scalar)QuaternionScalar(QuaternionScaleLoaded(factor, &qq->w));
     return q;
 }
 
@@ -331,7 +453,7 @@ br_quat* C2_HOOK_CDECL BrQuatSlerp(br_quat* q, const br_quat* l, const br_quat* 
     br_scalar scale_r;
     br_quat t;
 
-    // Animating rotation with quaternion curves, Ken Shoemake,SIGGRAPH Computer Graphics, 19(3):245–254, 1985. doi:10.1145/325165.325242.
+    // Animating rotation with quaternion curves, Ken Shoemake,SIGGRAPH Computer Graphics, 19(3):245â€“254, 1985. doi:10.1145/325165.325242.
     c_omega = l->x * r->x + l->y * r->y + l->z * r->z + l->w * r->w;
     if (c_omega >= 0.f) {
         t.x = r->x;
@@ -365,45 +487,37 @@ br_quat* C2_HOOK_CDECL BrQuatSlerp(br_quat* q, const br_quat* l, const br_quat* 
 
 // FUNCTION: CARMA2_HW 0x005359a0
 br_matrix34* C2_HOOK_CDECL BrQuatToMatrix34(br_matrix34* mat, const br_quat* q) {
-    br_scalar xs;
-    br_scalar ys;
-    br_scalar zs;
-    br_scalar wx;
-    br_scalar wy;
-    br_scalar wz;
-    br_scalar xx;
-    br_scalar xy;
-    br_scalar xz;
-    br_scalar yy;
-    br_scalar yz;
-    br_scalar zz;
+    double x = q->x, y = q->y, z = q->z, w = q->w;
+    double twice_x = x + x, twice_y = y + y;
+    br_scalar twice_z, rounded_y, wx, wy, wz, xx, yy, zz, xy, xz, yz;
+    double wide_zz, wide_xy, wide_xz;
 
-    zz = q->z + q->z;
-    yy = q->y + q->y;
-    zs = q->z * zz;
-    xx = q->x + q->x;
-    wx = q->w * xx;
-    wy = q->w * yy;
-    wz = q->w * zz;
-    xy = q->x * yy;
-    xz = q->x * zz;
-    ys = q->y * yy;
-    xs = q->x * xx;
-    yz = q->y * zz;
-
-    M(0, 0) = 1.f - (ys + zs);
-    M(1, 0) = xy - wz;
-    M(2, 0) = xz + wy;
-    M(0, 1) = xy + wz;
-    M(1, 1) = 1.f - (zs + xs);
-    M(2, 1) = yz - wx;
-    M(0, 2) = xz - wy;
-    M(1, 2) = yz + wx;
-    M(2, 2) = 1.f - (xs + ys);
-    M(3, 0) = 0.f;
-    M(3, 1) = 0.f;
-    M(3, 2) = 0.f;
-
+    twice_z = (br_scalar)QuaternionScalar(z + z);
+    rounded_y = (br_scalar)QuaternionScalar(twice_y);
+    wx = (br_scalar)QuaternionScalar(QuaternionMultiply(w, twice_x));
+    wy = (br_scalar)QuaternionScalar(QuaternionScaleRaw(w, &rounded_y));
+    wz = (br_scalar)QuaternionScalar(QuaternionScaleRaw(w, &twice_z));
+    wide_zz = QuaternionScaleRaw(z, &twice_z);
+    zz = (br_scalar)QuaternionScalar(wide_zz);
+    xx = (br_scalar)QuaternionScalar(QuaternionScaleRaw(twice_x, &q->x));
+    yy = (br_scalar)QuaternionScalar(QuaternionScaleRaw(y, &rounded_y));
+    wide_xy = QuaternionScaleRaw(twice_y, &q->x);
+    xy = (br_scalar)QuaternionScalar(wide_xy);
+    wide_xz = QuaternionScaleRaw(twice_z, &q->x);
+    xz = (br_scalar)QuaternionScalar(wide_xz);
+    yz = (br_scalar)QuaternionScalar(QuaternionScaleRaw(y, &twice_z));
+    mat->m[0][0] = (br_scalar)QuaternionScalar(1.0 - QuaternionAddScalar(wide_zz, &yy));
+    mat->m[1][0] = (br_scalar)QuaternionScalar(QuaternionSubtractScalar(wide_xy, &wz));
+    mat->m[2][0] = (br_scalar)QuaternionScalar(QuaternionAddScalar(wide_xz, &wy));
+    mat->m[0][1] = (br_scalar)QuaternionScalar(QuaternionAddScalar(xy, &wz));
+    mat->m[1][1] = (br_scalar)QuaternionScalar(1.0 - QuaternionAddScalar(zz, &xx));
+    mat->m[2][1] = (br_scalar)QuaternionScalar(QuaternionSubtractScalar(yz, &wx));
+    mat->m[0][2] = (br_scalar)QuaternionScalar(QuaternionSubtractScalar(xz, &wy));
+    mat->m[1][2] = (br_scalar)QuaternionScalar(QuaternionAddScalar(yz, &wx));
+    mat->m[2][2] = (br_scalar)QuaternionScalar(1.0 - QuaternionAddScalar(yy, &xx));
+    mat->m[3][0] = 0.0f;
+    mat->m[3][1] = 0.0f;
+    mat->m[3][2] = 0.0f;
     return mat;
 }
 

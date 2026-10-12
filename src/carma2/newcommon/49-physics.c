@@ -582,6 +582,90 @@ int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* object, tPhysics_shape* shape
 }
 
 
+/* Complete near-parallel edge-contact fallback; original lexical name unknown. */
+// FUNCTION: CARMA2_HW 0x00425630
+int C2_HOOK_FASTCALL FUN_00425630(const br_vector3* n0, const br_vector3* n1, const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* velocity0, const br_vector3* edge_change, const br_vector3* velocity1, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other) {
+    br_vector3 normal,delta,speed,point,relative,world;
+    double combined[3],unit[3],cross[3],wide_delta[3],wide_point[3];
+    double length,projection,denominator,numerator,scaled_x,parameter,distance,orientation;
+    br_scalar stored_length,time,segment,orientation_y,direction_y,direction_z;
+    volatile union { br_scalar value; tU32 word; } scaled_y,scaled_z;
+    tU32 rounded_word;
+    int i;
+    (void)unused;
+    if(!((double)output->t>1.0)) return 0;
+    combined[0]=(double)n0->v[0]+n1->v[0];
+    combined[1]=(double)n1->v[1]+n0->v[1];
+    combined[2]=(double)n1->v[2]+n0->v[2];
+    for(i=0;i<3;i++)normal.v[i]=PhysicsScalar(combined[i]);
+    length=sqrt((combined[0]*normal.v[0]+combined[1]*normal.v[1])+combined[2]*normal.v[2]);
+    stored_length=PhysicsScalar(length);
+    if(!(length>1e-7)) return 0;
+    for(i=0;i<3;i++) {
+        wide_delta[i]=((double)moving_origin->v[i]+edge_change->v[i])-old_origin->v[i];
+        delta.v[i]=PhysicsScalar(wide_delta[i]);
+    }
+    projection=fabs(((wide_delta[0]*normal.v[0]+wide_delta[1]*normal.v[1])+wide_delta[2]*normal.v[2])/stored_length);
+    if(!PhysicsWallNaN(projection)&&!(projection<.002)) return 0;
+    for(i=0;i<3;i++)unit[i]=(double)normal.v[i]/stored_length;
+    for(i=0;i<3;i++)normal.v[i]=PhysicsScalar(unit[i]);
+    speed.v[0]=PhysicsScalar((double)velocity1->v[0]+velocity0->v[0]);
+    speed.v[1]=PhysicsScalar((double)velocity1->v[1]+velocity0->v[1]);
+    speed.v[2]=PhysicsScalar((double)velocity1->v[2]+velocity0->v[2]);
+    cross[0]=(double)old_direction->v[1]*normal.v[2]-(double)old_direction->v[2]*normal.v[1];
+    cross[1]=(double)old_direction->v[2]*normal.v[0]-unit[2]*old_direction->v[0];
+    cross[2]=unit[1]*old_direction->v[0]-(double)old_direction->v[1]*normal.v[0];
+    denominator=(cross[0]*((double)velocity1->v[0]+velocity0->v[0])+cross[1]*speed.v[1])+cross[2]*speed.v[2];
+    if(!(fabs(denominator)>1e-7)) return 0;
+    numerator=(cross[0]*delta.v[0]+cross[1]*delta.v[1])+cross[2]*delta.v[2];
+    time=PhysicsScalar(-(numerator/denominator));
+    if(!(time>=0.f)||!(time<=1.f)) return 0;
+    scaled_x=(double)time*speed.v[0]+delta.v[0];
+    scaled_y.value=PhysicsScalar((double)time*speed.v[1]+delta.v[1]);
+    scaled_z.value=PhysicsScalar((double)time*speed.v[2]+delta.v[2]);
+    rounded_word=scaled_y.word;PhysicsCopyWord(&delta.v[1],&rounded_word);
+    rounded_word=scaled_z.word;PhysicsCopyWord(&delta.v[2],&rounded_word);
+    for(i=0;i<3;i++)normal.v[i]=PhysicsScalar(unit[i]);
+    parameter=(((double)old_direction->v[1]*delta.v[1]+(double)old_direction->v[2]*delta.v[2])+scaled_x*old_direction->v[0])/
+        (((double)old_direction->v[1]*old_direction->v[1]+(double)old_direction->v[2]*old_direction->v[2])+(double)old_direction->v[0]*old_direction->v[0]);
+    segment=PhysicsScalar(parameter);
+    if(!(segment>=0.f)||!(segment<=1.f)) return 0;
+    output->t=1.f;
+    scaled_y.value=PhysicsScalar((double)moving_origin->v[1]-old_origin->v[1]);
+    rounded_word=scaled_y.word;PhysicsCopyWord(&orientation_y,&rounded_word);
+    orientation=((double)orientation_y*n0->v[1]+((double)moving_origin->v[2]-old_origin->v[2])*n0->v[2])+((double)moving_origin->v[0]-old_origin->v[0])*n0->v[0];
+    if(PhysicsWallNaN(orientation)||orientation<0.0) {
+        for(i=0;i<3;i++)normal.v[i]=-normal.v[i];
+    }
+    for(i=0;i<3;i++)wide_delta[i]=((double)moving_origin->v[i]+edge_change->v[i])-old_origin->v[i];
+    distance=(wide_delta[0]*normal.v[0]+wide_delta[1]*normal.v[1])+wide_delta[2]*normal.v[2];
+    if(PhysicsWallNaN(distance)||distance<0.0) {
+        for(i=0;i<3;i++)normal.v[i]=-normal.v[i];
+    }
+    if(other==NULL&&(PhysicsWallNaN(distance)||fabs(distance)<.001))output->t=1.1f;
+    for(i=0;i<3;i++) {
+        wide_point[i]=(double)time*velocity0->v[i]+moving_origin->v[i];
+        point.v[i]=PhysicsScalar(wide_point[i]);
+    }
+    if(other!=NULL) {
+        BrMatrix34ApplyP(&world,&point,&other->transform_matrix);
+        for(i=0;i<3;i++)PhysicsSubtractScalar(&relative.v[i],&world.v[i],&object->transform_matrix.m[3][i]);
+        BrMatrix34TApplyV(&output->position,&relative,&object->transform_matrix);
+        BrMatrix34ApplyV(&output->normal,&normal,&other->transform_matrix);
+    } else {
+        for(i=0;i<3;i++)relative.v[i]=PhysicsScalar(wide_point[i]-object->transform_matrix.m[3][i]);
+        BrMatrix34TApplyV(&output->position,&relative,&object->transform_matrix);
+        BrMatrix34TApplyV(&output->normal,&normal,&object->transform_matrix);
+        for(i=0;i<3;i++)PhysicsCopyWord(output->field_0x38+4*i,&normal.v[i]);
+    }
+    PhysicsCopyWord(&direction_y,&old_direction->v[1]);
+    PhysicsCopyWord(&direction_z,&old_direction->v[2]);
+    output->reference_position.v[0]=PhysicsScalar((double)segment*old_direction->v[0]+old_origin->v[0]);
+    output->reference_position.v[1]=PhysicsScalar((double)direction_y*segment+old_origin->v[1]);
+    output->reference_position.v[2]=PhysicsScalar((double)direction_z*segment+old_origin->v[2]);
+    return 1;
+}
+
 // CylinderCheck
 
 // CheckTwoEdges
@@ -3345,15 +3429,518 @@ int C2_HOOK_FASTCALL MakeVelocitiesVector2(br_scalar* pOutput, tPhysics_joint_fo
 
 // NewAddFrictionObjectObject
 
-// NewAddFriction
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+static double C2_HOOK_CDECL FrictionRead(const void* base, unsigned offset) {
+    return *(volatile const br_scalar*)((const tU8*)base + offset);
+}
+static tU32 C2_HOOK_CDECL FrictionWord(const void* base, unsigned offset) {
+    return *(volatile const tU32*)((const tU8*)base + offset);
+}
+static void* C2_HOOK_CDECL FrictionPointer(const void* base, unsigned offset) {
+    return (void*)(uintptr_t)FrictionWord(base, offset);
+}
+static br_scalar C2_HOOK_CDECL FrictionScalar(double value) {
+    volatile union { br_scalar scalar; tU32 bits; } stored;
+    union { br_scalar scalar; tU32 bits; } result;
+    stored.scalar = (br_scalar)value;
+    result.bits = stored.bits;
+    return result.scalar;
+}
+static void C2_HOOK_CDECL FrictionWrite(void* base, unsigned offset, double value) {
+    *(volatile br_scalar*)((tU8*)base + offset) = FrictionScalar(value);
+}
+static br_matrix34* C2_HOOK_CDECL FrictionActorMatrix(const void* object) {
+    return (br_matrix34*)((tU8*)FrictionPointer(object, 0) + 0x2c);
+}
+static void C2_HOOK_CDECL FrictionFlag(void* object, unsigned flag) {
+    volatile tU8* field = (volatile tU8*)object + 0x1dd;
+    *field = (tU8)(*field | flag);
+}
+/* Paired signaling/quiet NaN fixtures show that promoting both operands
+ * changes original raw-memory selection. Keep only these scalar operand
+ * forms x87; complete consumer control flow and accumulation stay readable C.
+ */
+static volatile const br_scalar* C2_HOOK_CDECL FrictionAt(const void* base, unsigned offset) {
+    return (volatile const br_scalar*)((const tU8*)base + offset);
+}
+
+static double C2_HOOK_CDECL FrictionProductScalars(volatile const br_scalar* left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, left
+        mov edx, right
+        fld dword ptr [eax]
+        fmul dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fmuls %2; fstpl %0" : "=m"(result) : "m"(*left), "m"(*right) : "st");
+#else
+    result = (double)*left * (double)*right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL FrictionDivideScalars(volatile const br_scalar* left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, left
+        mov edx, right
+        fld dword ptr [eax]
+        fdiv dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fdivs %2; fstpl %0" : "=m"(result) : "m"(*left), "m"(*right) : "st");
+#else
+    result = (double)*left / (double)*right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL FrictionSubtractScalar(double left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov edx, right
+        fld qword ptr left
+        fsub dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fsubs %2; fstpl %0" : "=m"(result) : "m"(left), "m"(*right) : "st");
+#else
+    result = left - (double)*right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL FrictionAddScalar(double left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov edx, right
+        fld qword ptr left
+        fadd dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fadds %2; fstpl %0" : "=m"(result) : "m"(left), "m"(*right) : "st");
+#else
+    result = left + (double)*right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL FrictionReverseSubtractScalar(double right, volatile const br_scalar* left) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, left
+        fld qword ptr right
+        fsubr dword ptr [eax]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fsubrs %2; fstpl %0" : "=m"(result) : "m"(right), "m"(*left) : "st");
+#else
+    result = (double)*left - right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL FrictionReverseDivideScalar(double divisor, volatile const br_scalar* numerator) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, numerator
+        fld qword ptr divisor
+        fdivr dword ptr [eax]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fdivrs %2; fstpl %0" : "=m"(result) : "m"(divisor), "m"(*numerator) : "st");
+#else
+    result = (double)*numerator / divisor;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL FrictionAddWide(double left, double right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+
+        fld qword ptr left
+        fadd qword ptr right
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; faddl %2; fstpl %0" : "=m"(result) : "m"(left), "m"(right) : "st");
+#else
+    result = left + right;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL FrictionProductWide(double left, double right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+
+        fld qword ptr left
+        fmul qword ptr right
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fmull %2; fstpl %0" : "=m"(result) : "m"(left), "m"(right) : "st");
+#else
+    result = left * right;
+#endif
+    return result;
+}
+#if defined(_MSC_VER) && _MSC_VER < 1300
+/* The retained nonfinite probes demonstrate that MSVC5 reverses some C
+ * comparisons and thereby changes their unordered result. Preserve only
+ * the original FCOM status-bit predicate, with the arithmetic still in C.
+ */
+static unsigned C2_HOOK_CDECL FrictionStatus(double left, double right) {
+    unsigned short status;
+    __asm {
+        fld qword ptr left
+        fcomp qword ptr right
+        fnstsw ax
+        mov status, ax
+    }
+    return status;
+}
+#endif
+static int C2_HOOK_CDECL FrictionGreater(double left, double right) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    return (FrictionStatus(left, right) & 0x4100) == 0;
+#else
+    return left > right;
+#endif
+}
+static int C2_HOOK_CDECL FrictionLessOrUnordered(double left, double right) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    return (FrictionStatus(left, right) & 0x100) != 0;
+#else
+    return !(left >= right);
+#endif
+}
+static int C2_HOOK_CDECL FrictionNonZero(double value) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    return (FrictionStatus(value, 0.0) & 0x4000) == 0;
+#else
+    return value > 0.0 || value < 0.0;
+#endif
+}
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
+// FUNCTION: CARMA2_HW 0x004c0ac0
+void C2_HOOK_FASTCALL NewAddFriction(tPhysics_joint_force* force, tWorld_callbacks* callbacks) {
+    tPhysics_object* object_a = FrictionPointer(force, 4);
+    tPhysics_object* object_b = FrictionPointer(force, 8);
+    br_vector3 velocity_a, velocity_b, world, normal, direction_a, direction_b;
+    br_matrix34* actor_matrix;
+    br_vector3 angular_a, cross, scaled_lever;
+    br_scalar coefficient, maximum, stored_speed, dot, base;
+    double tangent_x, tangent_y, tangent_z, speed, response, inverse_speed;
+    double angular_b_x, angular_b_y, angular_b_z, denominator, impulse, scale, negative;
+    double callback_coefficient, wide_dot;
+    unsigned i;
+
+    if (object_b != NULL && FrictionWord(force, 0x5c) != 14) {
+        coefficient = FrictionScalar(FrictionRead(force, 0));
+        FrictionFlag(object_a, 2);
+        FrictionFlag(object_b, 2);
+        velocity_a.v[0] = FrictionScalar(FrictionRead(force, 0x1c) * FrictionRead(object_a, 0x78) - FrictionRead(force, 0x18) * FrictionRead(object_a, 0x7c) + FrictionRead(object_a, 0x1a8));
+        velocity_a.v[1] = FrictionScalar(FrictionRead(object_a, 0x7c) * FrictionRead(force, 0x14) - FrictionRead(object_a, 0x74) * FrictionRead(force, 0x1c) + FrictionRead(object_a, 0x1ac));
+        velocity_a.v[2] = FrictionScalar(FrictionRead(object_a, 0x74) * FrictionRead(force, 0x18) - FrictionRead(object_a, 0x78) * FrictionRead(force, 0x14) + FrictionRead(object_a, 0x1b0));
+        velocity_b.v[0] = FrictionScalar(FrictionRead(object_b, 0x78) * FrictionRead(force, 0x28) - FrictionRead(object_b, 0x7c) * FrictionRead(force, 0x24));
+        velocity_b.v[1] = FrictionScalar(FrictionRead(force, 0x20) * FrictionRead(object_b, 0x7c) - FrictionRead(object_b, 0x74) * FrictionRead(force, 0x28));
+        velocity_b.v[2] = FrictionScalar(FrictionRead(object_b, 0x74) * FrictionRead(force, 0x24) - FrictionRead(object_b, 0x78) * FrictionRead(force, 0x20));
+        for (i = 0; i < 3; i++) velocity_b.v[i] = FrictionScalar((double)velocity_b.v[i] + FrictionRead(object_b, 0x1a8 + 4 * i));
+        actor_matrix = FrictionActorMatrix(object_b);
+        BrMatrix34ApplyV(&world, &velocity_b, actor_matrix);
+        actor_matrix = FrictionActorMatrix(object_a);
+        BrMatrix34TApplyV(&velocity_b, &world, actor_matrix);
+        for (i = 0; i < 3; i++) velocity_a.v[i] = FrictionScalar((double)velocity_a.v[i] - velocity_b.v[i]);
+        BrMatrix34ApplyV(&world, (const br_vector3*)((const tU8*)force + 0x2c), (const br_matrix34*)((const tU8*)object_a + 0x8c));
+        actor_matrix = FrictionActorMatrix(object_a);
+        BrMatrix34TApplyV(&normal, &world, actor_matrix);
+        response = ((double)normal.v[1] * velocity_a.v[1] + (double)normal.v[0] * velocity_a.v[0]) + (double)normal.v[2] * velocity_a.v[2];
+        world.v[0] = FrictionScalar((double)normal.v[0] * response);
+        world.v[1] = FrictionScalar((double)normal.v[1] * response);
+        world.v[2] = FrictionScalar((double)normal.v[2] * response);
+        tangent_x = (double)velocity_a.v[0] - world.v[0];
+        tangent_y = (double)velocity_a.v[1] - world.v[1];
+        tangent_z = (double)velocity_a.v[2] - world.v[2];
+        velocity_a.v[1] = FrictionScalar(tangent_y);
+        speed = sqrt((tangent_y * velocity_a.v[1] + tangent_x * tangent_x) + tangent_z * tangent_z);
+        stored_speed = FrictionScalar(speed);
+        base = FrictionScalar((double)coefficient * (double)0.3499999940395355f);
+        maximum = FrictionScalar(FrictionRead(object_a, 0x64) * base + base);
+        maximum = FrictionScalar(FrictionRead(object_b, 0x64) * maximum + maximum);
+        if (!FrictionLessOrUnordered(speed, (double)0.0010000000474974513f)) {
+            inverse_speed = 1.0 / -(double)stored_speed;
+            direction_a.v[0] = FrictionScalar(inverse_speed * tangent_x);
+            direction_a.v[1] = FrictionScalar(inverse_speed * velocity_a.v[1]);
+            direction_a.v[2] = FrictionScalar(inverse_speed * tangent_z);
+            actor_matrix = FrictionActorMatrix(object_a);
+            BrMatrix34ApplyV(&world, &direction_a, actor_matrix);
+            actor_matrix = FrictionActorMatrix(object_b);
+            BrMatrix34TApplyV(&direction_b, &world, actor_matrix);
+            if ((FrictionWord(object_a, 0x19c) & 0x800) == 0) {
+                angular_a.v[0] = FrictionScalar((FrictionRead(force, 0x18) * direction_a.v[2] - FrictionRead(force, 0x1c) * direction_a.v[1]) / FrictionRead(object_a, 8));
+                angular_a.v[1] = FrictionScalar((FrictionRead(force, 0x1c) * direction_a.v[0] - FrictionRead(force, 0x14) * direction_a.v[2]) / FrictionRead(object_a, 0xc));
+                angular_a.v[2] = FrictionScalar((FrictionRead(force, 0x14) * direction_a.v[1] - FrictionRead(force, 0x18) * direction_a.v[0]) / FrictionRead(object_a, 0x10));
+            } else {
+                angular_a.v[0] = angular_a.v[1] = angular_a.v[2] = 0.0f;
+            }
+            if ((FrictionWord(object_b, 0x19c) & 0x800) == 0) {
+                angular_b_z = FrictionScalar((FrictionRead(force, 0x20) * direction_b.v[1] - FrictionRead(force, 0x24) * direction_b.v[0]) / FrictionRead(object_b, 0x10));
+                angular_b_x = (FrictionRead(force, 0x24) * direction_b.v[2] - FrictionRead(force, 0x28) * direction_b.v[1]) / FrictionRead(object_b, 8);
+                angular_b_y = (FrictionRead(force, 0x28) * direction_b.v[0] - FrictionRead(force, 0x20) * direction_b.v[2]) / FrictionRead(object_b, 0xc);
+            } else {
+                angular_b_z = angular_b_x = angular_b_y = 0.0;
+            }
+            world.v[0] = FrictionScalar(FrictionRead(force, 0x28) * angular_b_y - FrictionRead(force, 0x24) * angular_b_z);
+            world.v[1] = FrictionScalar(FrictionRead(force, 0x20) * angular_b_z - FrictionRead(force, 0x28) * angular_b_x);
+            world.v[2] = FrictionScalar(FrictionRead(force, 0x24) * angular_b_x - FrictionRead(force, 0x20) * angular_b_y);
+            base = FrictionScalar(((FrictionRead(force, 0x14) * angular_a.v[2] - FrictionRead(force, 0x1c) * angular_a.v[0]) * direction_a.v[1] + (FrictionRead(force, 0x1c) * angular_a.v[1] - FrictionRead(force, 0x18) * angular_a.v[2]) * direction_a.v[0]) + (FrictionRead(force, 0x18) * angular_a.v[0] - FrictionRead(force, 0x14) * angular_a.v[1]) * direction_a.v[2] + 1.0 / FrictionRead(object_a, 4) + 1.0 / FrictionRead(object_b, 4));
+            denominator = ((double)direction_b.v[1] * world.v[1] + (double)direction_b.v[0] * world.v[0]) + (double)direction_b.v[2] * world.v[2] + base;
+            if (FrictionGreater(fabs(denominator), (double)9.999999747378752e-05f)) {
+                impulse = (double)stored_speed / denominator;
+                if (FrictionGreater(impulse, maximum)) impulse = maximum;
+                scale = impulse / FrictionRead(object_a, 4);
+                for (i = 0; i < 3; i++) direction_a.v[i] = FrictionScalar((double)direction_a.v[i] * scale);
+                scale = FrictionScalar(-(impulse / FrictionRead(object_b, 4)));
+                for (i = 0; i < 3; i++) direction_b.v[i] = FrictionScalar((double)direction_b.v[i] * scale);
+                FrictionWrite(force, 0x44, FrictionRead(object_a, 4) * direction_a.v[0]);
+                FrictionWrite(force, 0x48, FrictionRead(object_a, 4) * direction_a.v[1]);
+                FrictionWrite(force, 0x4c, FrictionRead(object_a, 4) * direction_a.v[2]);
+                FrictionWrite(force, 0x50, FrictionRead(object_b, 4) * direction_b.v[0]);
+                FrictionWrite(force, 0x54, FrictionRead(object_b, 4) * direction_b.v[1]);
+                response = FrictionRead(object_b, 4);
+                *(volatile tU32*)((tU8*)force + 0x5c) = FrictionWord(force, 0x5c) | 0x100;
+                FrictionWrite(force, 0x58, response * direction_b.v[2]);
+                for (i = 0; i < 3; i++) FrictionWrite(object_a, 0x74 + 4 * i, impulse * angular_a.v[i] + FrictionRead(object_a, 0x74 + 4 * i));
+                negative = FrictionScalar(-impulse);
+                FrictionWrite(object_b, 0x74, angular_b_x * negative + FrictionRead(object_b, 0x74));
+                FrictionWrite(object_b, 0x78, angular_b_y * negative + FrictionRead(object_b, 0x78));
+                FrictionWrite(object_b, 0x7c, angular_b_z * negative + FrictionRead(object_b, 0x7c));
+                actor_matrix = FrictionActorMatrix(object_a);
+                BrMatrix34ApplyV(&world, &direction_a, actor_matrix);
+                for (i = 0; i < 3; i++) FrictionWrite(object_a, 0x68 + 4 * i, (double)world.v[i] + FrictionRead(object_a, 0x68 + 4 * i));
+                for (i = 0; i < 3; i++) FrictionWrite(object_a, 0x1a8 + 4 * i, (double)direction_a.v[i] + FrictionRead(object_a, 0x1a8 + 4 * i));
+                actor_matrix = FrictionActorMatrix(object_b);
+                BrMatrix34ApplyV(&world, &direction_b, actor_matrix);
+                for (i = 0; i < 3; i++) FrictionWrite(object_b, 0x68 + 4 * i, (double)world.v[i] + FrictionRead(object_b, 0x68 + 4 * i));
+                for (i = 0; i < 3; i++) FrictionWrite(object_b, 0x1a8 + 4 * i, (double)direction_b.v[i] + FrictionRead(object_b, 0x1a8 + 4 * i));
+            }
+        }
+        PostAddFriction(FrictionPointer(force, 4));
+        PostAddFriction(FrictionPointer(force, 8));
+        return;
+    }
+
+    /* The single-object branch saves the raw coefficient before the callback. */
+    memcpy(&coefficient, force, sizeof(coefficient));
+    FrictionFlag(object_a, 1);
+    if (FrictionWord(force, 0x5c) == 1) {
+        for (i = 0; i < 3; i++) scaled_lever.v[i] = FrictionScalar(FrictionRead(force, 0x14 + 4 * i) * (double)-0.004999999888241291f + FrictionRead(force, 0x14 + 4 * i));
+    } else {
+        memcpy(&scaled_lever, (const tU8*)force + 0x14, sizeof(scaled_lever));
+    }
+    velocity_a.v[0] = FrictionScalar(FrictionRead(object_a, 0x78) * scaled_lever.v[2] - FrictionRead(object_a, 0x7c) * scaled_lever.v[1] + FrictionRead(object_a, 0x1a8));
+    velocity_a.v[1] = FrictionScalar(FrictionRead(object_a, 0x7c) * scaled_lever.v[0] - FrictionRead(object_a, 0x74) * scaled_lever.v[2] + FrictionRead(object_a, 0x1ac));
+    velocity_a.v[2] = FrictionScalar(FrictionRead(object_a, 0x74) * scaled_lever.v[1] - FrictionRead(object_a, 0x78) * scaled_lever.v[0] + FrictionRead(object_a, 0x1b0));
+    BrMatrix34ApplyV(&world, (const br_vector3*)((const tU8*)force + 0x2c), (const br_matrix34*)((const tU8*)object_a + 0x8c));
+    actor_matrix = FrictionActorMatrix(object_a);
+    BrMatrix34TApplyV(&normal, &world, actor_matrix);
+    response = ((double)normal.v[1] * velocity_a.v[1] + (double)normal.v[0] * velocity_a.v[0]) + (double)normal.v[2] * velocity_a.v[2];
+    for (i = 0; i < 3; i++) world.v[i] = FrictionScalar(response * normal.v[i]);
+    for (i = 0; i < 3; i++) velocity_a.v[i] = FrictionScalar((double)velocity_a.v[i] - world.v[i]);
+    if (callbacks != NULL && FrictionWord(callbacks, 0x18) != 0 && FrictionWord(force, 0xc) != 0) {
+        callback_coefficient = (double)callbacks->get_friction_from_face(FrictionPointer(force, 0xc)) * (double)coefficient;
+    } else {
+        callback_coefficient = coefficient;
+    }
+    speed = sqrt(((double)velocity_a.v[0] * velocity_a.v[0] + (double)velocity_a.v[1] * velocity_a.v[1]) + (double)velocity_a.v[2] * velocity_a.v[2]);
+    stored_speed = FrictionScalar(speed);
+    base = FrictionScalar(callback_coefficient * (double)0.3499999940395355f);
+    maximum = FrictionScalar(FrictionRead(object_a, 0x60) * base + base);
+    if (!FrictionLessOrUnordered(speed, (double)0.0010000000474974513f)) {
+        inverse_speed = 1.0 / -(double)stored_speed;
+        for (i = 0; i < 3; i++) direction_a.v[i] = FrictionScalar(inverse_speed * velocity_a.v[i]);
+        if ((FrictionWord(object_a, 0x19c) & 0x800) == 0) {
+            angular_a.v[0] = FrictionScalar(FrictionRead(force, 0x18) * direction_a.v[2] - FrictionRead(force, 0x1c) * direction_a.v[1]);
+            angular_a.v[1] = FrictionScalar(FrictionRead(force, 0x1c) * direction_a.v[0] - FrictionRead(force, 0x14) * direction_a.v[2]);
+            angular_a.v[2] = FrictionScalar(FrictionRead(force, 0x14) * direction_a.v[1] - FrictionRead(force, 0x18) * direction_a.v[0]);
+            for (i = 0; i < 3; i++) angular_a.v[i] = FrictionScalar((double)angular_a.v[i] / FrictionRead(object_a, 8 + 4 * i));
+        } else {
+            angular_a.v[0] = angular_a.v[1] = angular_a.v[2] = 0.0f;
+        }
+        wide_dot = (FrictionRead(object_a, 0x74) * FrictionRead(force, 0x2c) + FrictionRead(force, 0x34) * FrictionRead(object_a, 0x7c)) + FrictionRead(object_a, 0x78) * FrictionRead(force, 0x30);
+        dot = FrictionScalar(wide_dot);
+        response = (FrictionRead(object_a, 0x74) * angular_a.v[0] + FrictionRead(object_a, 0x7c) * angular_a.v[2]) + FrictionRead(object_a, 0x78) * angular_a.v[1];
+        speed = (FrictionRead(object_a, 0x68) * FrictionRead(object_a, 0x68) + FrictionRead(object_a, 0x6c) * FrictionRead(object_a, 0x6c)) + FrictionRead(object_a, 0x70) * FrictionRead(object_a, 0x70);
+        if (FrictionLessOrUnordered(fabs(wide_dot), (double)0.10000000149011612f) && FrictionLessOrUnordered(response, 0.0) && FrictionLessOrUnordered(speed, 0.001)) {
+            for (i = 0; i < 3; i++) world.v[i] = FrictionScalar(FrictionRead(force, 0x2c + 4 * i) * dot);
+            for (i = 0; i < 3; i++) FrictionWrite(object_a, 0x74 + 4 * i, FrictionRead(object_a, 0x74 + 4 * i) - world.v[i]);
+            BrVector3SetFloat(&angular_a, 0.0f, 0.0f, 0.0f);
+            direction_a.v[0] = FrictionScalar(FrictionRead(object_a, 0x1a8));
+            direction_a.v[2] = FrictionScalar(FrictionRead(object_a, 0x1b0));
+            world.v[1] = FrictionScalar(FrictionRead(object_a, 0x1ac));
+            speed = sqrt(((double)direction_a.v[0] * direction_a.v[0] + (double)world.v[1] * world.v[1]) + (double)direction_a.v[2] * direction_a.v[2]);
+            stored_speed = FrictionScalar(speed);
+            if (FrictionLessOrUnordered(speed, (double)0.0010000000474974513f)) return;
+            negative = -(double)stored_speed;
+            direction_a.v[0] = FrictionScalar((double)direction_a.v[0] / negative);
+            direction_a.v[1] = FrictionScalar((double)world.v[1] / negative);
+            direction_a.v[2] = FrictionScalar((double)direction_a.v[2] / negative);
+        }
+        cross.v[0] = FrictionScalar(FrictionRead(force, 0x1c) * angular_a.v[1] - FrictionRead(force, 0x18) * angular_a.v[2]);
+        cross.v[1] = FrictionScalar(FrictionRead(force, 0x14) * angular_a.v[2] - FrictionRead(force, 0x1c) * angular_a.v[0]);
+        cross.v[2] = FrictionScalar(FrictionRead(force, 0x18) * angular_a.v[0] - FrictionRead(force, 0x14) * angular_a.v[1]);
+        denominator = ((double)direction_a.v[1] * cross.v[1] + (double)direction_a.v[0] * cross.v[0]) + (double)direction_a.v[2] * cross.v[2] + 1.0 / FrictionRead(object_a, 4);
+        if (FrictionGreater(fabs(denominator), (double)9.999999747378752e-05f)) {
+            impulse = (double)stored_speed / denominator;
+            if (FrictionGreater(impulse, maximum)) impulse = maximum;
+            for (i = 0; i < 3; i++) angular_a.v[i] = FrictionScalar(impulse * angular_a.v[i]);
+            scale = impulse / FrictionRead(object_a, 4);
+            for (i = 0; i < 3; i++) direction_a.v[i] = FrictionScalar((double)direction_a.v[i] * scale);
+            FrictionWrite(force, 0x44, FrictionRead(object_a, 4) * direction_a.v[0]);
+            FrictionWrite(force, 0x48, FrictionRead(object_a, 4) * direction_a.v[1]);
+            response = FrictionRead(object_a, 4);
+            *(volatile tU32*)((tU8*)force + 0x5c) = FrictionWord(force, 0x5c) | 0x100;
+            FrictionWrite(force, 0x4c, response * direction_a.v[2]);
+            for (i = 0; i < 3; i++) FrictionWrite(object_a, 0x74 + 4 * i, (double)angular_a.v[i] + FrictionRead(object_a, 0x74 + 4 * i));
+            actor_matrix = FrictionActorMatrix(object_a);
+            BrMatrix34ApplyV(&world, &direction_a, actor_matrix);
+            for (i = 0; i < 3; i++) FrictionWrite(object_a, 0x68 + 4 * i, (double)world.v[i] + FrictionRead(object_a, 0x68 + 4 * i));
+            for (i = 0; i < 3; i++) FrictionWrite(object_a, 0x1a8 + 4 * i, (double)direction_a.v[i] + FrictionRead(object_a, 0x1a8 + 4 * i));
+            PostAddFriction(FrictionPointer(force, 4));
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c1840
+void C2_HOOK_FASTCALL PostAddFriction(tPhysics_object* object) {
+    double x = FrictionRead(object, 0x74);
+    double y = FrictionRead(object, 0x78);
+    double z = FrictionRead(object, 0x7c);
+    double energy = ((x * x + y * y) + z * z) * (double)0.0015999999595806003f;
+    if (FrictionGreater(energy, (double)2.464900016784668f)) {
+        double denominator = sqrt(energy) * (double)0.6369426250457764f;
+        br_scalar stored_denominator;
+        x = FrictionRead(object, 0x74);
+        y = FrictionRead(object, 0x78);
+        z = FrictionRead(object, 0x7c);
+        stored_denominator = FrictionScalar(denominator + denominator);
+        x /= stored_denominator;
+        y /= stored_denominator;
+        z /= stored_denominator;
+        FrictionWrite(object, 0x74, x);
+        FrictionWrite(object, 0x78, y);
+        FrictionWrite(object, 0x7c, z);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c18d0
+void C2_HOOK_FASTCALL DoJointFriction(tPhysics_object* object) {
+    tPhysics_object* parent;
+    tPhysics_object* child;
+    void* joint = FrictionPointer(object, 0x188);
+    br_scalar impulse[3], responses[3][3];
+    br_vector3 axis;
+    br_scalar limit, accumulated, base_numerator;
+    double wide_limit, sum, scale, response, numerator, denominator, negative;
+    double x, y, z;
+    unsigned i, j;
+
+    if (joint != NULL && FrictionNonZero(FrictionRead(joint, 4)) && (parent = FrictionPointer(object, 0x230)) != NULL) {
+        scale = FrictionRead(joint, 4) * (double)0.03999999910593033f;
+        limit = FrictionScalar(scale * scale);
+        accumulated = 0.0f;
+        for (i = 0; i < 3; i++) {
+            BrMatrix34TApplyV(&axis, (const br_vector3*)((const tU8*)object + 0x8c + 12 * i), (const br_matrix34*)((const tU8*)parent + 0x8c));
+            parent = FrictionPointer(object, 0x230);
+            x = FrictionProductScalars(FrictionAt(parent, 0x74), &axis.v[0]);
+            z = FrictionProductScalars(FrictionAt(parent, 0x7c), &axis.v[2]);
+            y = FrictionProductScalars(FrictionAt(parent, 0x78), &axis.v[1]);
+            numerator = FrictionScalar(FrictionSubtractScalar(FrictionAddWide(FrictionAddWide(x, z), y), FrictionAt(object, 0x74 + 4 * i)));
+            for (j = 0; j < 3; j++) {
+                responses[i][j] = FrictionScalar(FrictionDivideScalars(&axis.v[j], FrictionAt(parent, 8 + 4 * j)));
+            }
+            x = FrictionProductScalars(&responses[i][0], &axis.v[0]);
+            z = FrictionProductScalars(&responses[i][2], &axis.v[2]);
+            y = FrictionProductScalars(&responses[i][1], &axis.v[1]);
+            denominator = FrictionAddWide(FrictionAddWide(FrictionAddWide(x, z), y), 1.0 / FrictionRead(object, 8 + 4 * i));
+            base_numerator = FrictionScalar(numerator);
+            response = FrictionReverseDivideScalar(denominator, &base_numerator);
+            impulse[i] = FrictionScalar(response);
+            accumulated = FrictionScalar(FrictionAddScalar(FrictionProductWide(response, response), &accumulated));
+        }
+        if (FrictionGreater(accumulated, limit)) {
+            scale = sqrt((double)limit / accumulated);
+            for (i = 0; i < 3; i++) impulse[i] = FrictionScalar(scale * impulse[i]);
+        }
+        for (i = 0; i < 3; i++) {
+            response = FrictionAddScalar(FrictionDivideScalars(&impulse[i], FrictionAt(object, 8 + 4 * i)), FrictionAt(object, 0x74 + 4 * i));
+            negative = -(double)impulse[i];
+            responses[i][0] = FrictionScalar(FrictionProductWide(responses[i][0], negative));
+            FrictionWrite(object, 0x74 + 4 * i, response);
+            parent = FrictionPointer(object, 0x230);
+            responses[i][1] = FrictionScalar(FrictionProductWide(responses[i][1], negative));
+            response = FrictionProductWide(negative, responses[i][2]);
+            responses[i][2] = FrictionScalar(response);
+            FrictionWrite(parent, 0x74, FrictionAddScalar((double)responses[i][0], FrictionAt(parent, 0x74)));
+            parent = FrictionPointer(object, 0x230);
+            FrictionWrite(parent, 0x78, FrictionAddScalar((double)responses[i][1], FrictionAt(parent, 0x78)));
+            parent = FrictionPointer(object, 0x230);
+            FrictionWrite(parent, 0x7c, FrictionAddScalar(response, FrictionAt(parent, 0x7c)));
+        }
+    }
+    joint = FrictionPointer(object, 0x18c);
+    if (joint != NULL && FrictionNonZero(FrictionRead(joint, 4))) {
+        scale = FrictionRead(joint, 4) * (double)0.03999999910593033f;
+        wide_limit = scale * scale;
+        sum = 0.0;
+        for (i = 0; i < 3; i++) {
+            response = FrictionProductScalars(FrictionAt(object, 0x74 + 4 * i), FrictionAt(object, 8 + 4 * i));
+            sum = FrictionAddWide(sum, FrictionProductWide(response, response));
+            impulse[i] = FrictionScalar(response);
+        }
+        if (FrictionGreater(sum, wide_limit)) {
+            scale = sqrt(wide_limit / sum);
+            for (i = 0; i < 3; i++) impulse[i] = FrictionScalar(scale * impulse[i]);
+        }
+        for (i = 0; i < 3; i++) {
+            response = FrictionDivideScalars(&impulse[i], FrictionAt(object, 8 + 4 * i));
+            FrictionWrite(object, 0x74 + 4 * i, FrictionReverseSubtractScalar(response, FrictionAt(object, 0x74 + 4 * i)));
+        }
+    }
+    child = FrictionPointer(object, 0x224);
+    while (child != NULL) {
+        if (*((volatile const tU8*)child + 0xec) == 0) DoJointFriction(child);
+        child = FrictionPointer(child, 0x220);
+    }
+}
 
 // ApplyForces
 
-// DoJointFriction
 
 // ListDoJointFriction
 
-// PostAddFriction
 
 // RotateObjectSecondOrder
 

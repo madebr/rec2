@@ -35,9 +35,9 @@ extern tU32 gPHIL_last_physics_tick;
 
 // FractionToScalar
 
-// GetOrientationFromMatrix
+void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matrix34* pMatrix);
 
-// GetMatrixFromOrientation
+void C2_HOOK_FASTCALL GetMatrixFromOrientation(br_matrix34* pMatrix, const tU16* pOrientation);
 
 // OmegaCompScalarTo16
 

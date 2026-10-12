@@ -8,6 +8,10 @@
 #include <stddef.h>
 #include <stdarg.h>
 
+/* Quaternion APIs used by the packed orientation conversion below. */
+extern br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, const br_quat* qq);
+extern br_matrix34* C2_HOOK_CDECL BrQuatToMatrix34(br_matrix34* mat, const br_quat* q);
+
 // GLOBAL: CARMA2_HW 0x006923e0
 tPHIL_registry_storage gPHIL_registry;
 
@@ -41,9 +45,57 @@ static void C2_HOOK_CDECL PhilCopyWords(void* pOutput, const void* pInput, int p
 
 // FractionToScalar
 
-// GetOrientationFromMatrix
+static double C2_HOOK_CDECL PhilOrientationScalar(double value) {
+    union { br_scalar scalar; tU32 word; } bits;
+    volatile tU32 stored;
 
-// GetMatrixFromOrientation
+    /* The integer reload forces the scalar rounding even with MSVC5. */
+    bits.scalar = (br_scalar)value;
+    stored = bits.word;
+    bits.word = stored;
+    return bits.scalar;
+}
+
+// FUNCTION: CARMA2_HW 0x0049be90
+void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matrix34* pMatrix) {
+    br_quat quaternion;
+    double value;
+    int i;
+
+    BrMatrix34ToQuat(&quaternion, pMatrix);
+    for (i = 0; i < 4; i++) {
+        value = (&quaternion.x)[i];
+        if (value > 1.0) {
+            value = 1.0;
+        }
+        /* Original C0 test replaces unordered values with the lower bound. */
+        if (!(value >= -1.0)) {
+            value = -1.0;
+        }
+        value = ((value - -1.0) * 0.5) * 65534.0 - -0.5;
+        pOrientation[i] = (tU16)(br_int_64)value;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0049c000
+void C2_HOOK_FASTCALL GetMatrixFromOrientation(br_matrix34* pMatrix, const tU16* pOrientation) {
+    br_quat quaternion;
+    tU16 parts[4];
+    double value;
+    int i;
+
+    parts[0] = pOrientation[0];
+    parts[1] = pOrientation[1];
+    parts[2] = pOrientation[2];
+    parts[3] = pOrientation[3];
+    for (i = 0; i < 4; i++) {
+        /* 0x37800100 is the original scalar; double its product unspilled. */
+        value = (double)parts[i] * 1.5259254723787308e-05;
+        (&quaternion.x)[i] = (br_scalar)PhilOrientationScalar((value + value) - 1.0);
+    }
+    BrQuatNormalise(&quaternion, &quaternion);
+    BrQuatToMatrix34(pMatrix, &quaternion);
+}
 
 // OmegaCompScalarTo16
 
