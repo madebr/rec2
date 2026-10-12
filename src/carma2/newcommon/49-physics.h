@@ -19,11 +19,24 @@ extern void* gPhysics_other_buffer;
 
 // DrMatrix34ApplyLPInverse
 
-// AddObjectWallForce
+typedef struct {
+    br_scalar t;
+    tPhysics_object* object1;
+    tPhysics_object* object2;
+    tFace_ref* face;
+    tU32 field_0x10;
+    br_vector3 position;
+    br_vector3 reference_position;
+    br_vector3 normal;
+    tU8 field_0x38[36];
+    int type;
+} tPhysics_contact;
+
+int C2_HOOK_FASTCALL AddObjectWallForce(tPhysics_contact* pContacts, const br_vector3* pPosition, br_scalar pT, const br_vector3* pNormal, int pUnused, int pCount, tPhysics_object* pObject, int pType, tFace_ref* pFace, const br_vector3* pReference_position);
 
 // AddObjectObjectForce
 
-// RayCastThruFaceList
+tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount);
 
 // RayCastThruFaceList2
 

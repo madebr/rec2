@@ -10,6 +10,7 @@
 #include "globvars.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
+#include "c2_math.h"
 
 #include <stddef.h>
 
@@ -19,6 +20,8 @@
 static int C2_HOOK_FASTCALL PhysicsScalarNaN(const br_scalar* value);
 static int C2_HOOK_FASTCALL PhysicsLessOrUnordered(const br_scalar* a, const br_scalar* b);
 static int C2_HOOK_FASTCALL PhysicsGreaterOrdered(const br_scalar* a, const br_scalar* b);
+static br_scalar C2_HOOK_FASTCALL PhysicsScalar(double value);
+static void C2_HOOK_FASTCALL PhysicsScalarStore(br_scalar* output, const br_scalar* input);
 
 // GLOBAL: CARMA2_HW 0x0074a5e4
 int gPHIL_mechanics_time_sync;
@@ -54,11 +57,162 @@ void* gPhysics_other_buffer;
 
 // DrMatrix34ApplyLPInverse
 
-// AddObjectWallForce
+static void C2_HOOK_FASTCALL PhysicsCopyWord(void* output, const void* input) {
+    volatile tU32 value;
+
+    memcpy((void*)&value, input, sizeof(value));
+    memcpy(output, (const void*)&value, sizeof(value));
+}
+
+/* The original memory-operand subtraction selects distinct NaNs by x87 rules. */
+static void C2_HOOK_FASTCALL PhysicsSubtractScalar(br_scalar* output, const br_scalar* a, const br_scalar* b) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, a
+        mov ecx, b
+        mov edx, output
+        fld dword ptr [eax]
+        fsub dword ptr [ecx]
+        fstp dword ptr [edx]
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("flds %1; fsubs %2; fstps %0"
+        : "=m" (*output) : "m" (*a), "m" (*b) : "st");
+#else
+    *output = (br_scalar)((double)*a - *b);
+#endif
+}
+
+// FUNCTION: CARMA2_HW 0x00422fe0
+int C2_HOOK_FASTCALL AddObjectWallForce(tPhysics_contact* pContacts, const br_vector3* pPosition, br_scalar pT, const br_vector3* pNormal, int pUnused, int pCount, tPhysics_object* pObject, int pType, tFace_ref* pFace, const br_vector3* pReference_position) {
+    br_vector3 relative;
+    double difference[3];
+    br_scalar rounded_x;
+    br_scalar rounded_y;
+    br_vector3 low;
+    br_vector3 high;
+    br_scalar margin = 0.f;
+    double distance_squared;
+    double normal_dot;
+    int i;
+    int slot;
+    int last;
+    tPhysics_contact* contact;
+
+    (void)pUnused;
+    if (pObject->parent == NULL && pObject->physics_joint2 != NULL && pObject->physics_joint2->type != eJoint_none) {
+        for (i = 0; i < 3; i++) {
+            PhysicsSubtractScalar(&low.v[i], &pObject->bb1.min.v[i], &pObject->physics_joint2->field_0x08.v[i]);
+            PhysicsSubtractScalar(&high.v[i], &pObject->bb1.max.v[i], &pObject->physics_joint2->field_0x08.v[i]);
+        }
+        for (i = 0; i < 3; i++) {
+            double smallest = fabs((double)high.v[i]);
+
+            if (fabs((double)low.v[i]) <= smallest) {
+                smallest = fabs((double)low.v[i]);
+            }
+            if (smallest > margin) {
+                margin = (br_scalar)smallest;
+            }
+        }
+        margin = (br_scalar)((double)margin - -.01);
+        if (!(fabs((double)pPosition->v[0] - pObject->physics_joint2->field_0x08.v[0]) >= margin)
+            && !(fabs((double)pPosition->v[1] - pObject->physics_joint2->field_0x08.v[1]) >= margin)
+            && fabs((double)pPosition->v[1] - pObject->physics_joint2->field_0x08.v[1]) * 2. < (double)pObject->bb1.max.v[1] - pObject->bb1.min.v[1]
+            && !(fabs((double)pPosition->v[2] - pObject->physics_joint2->field_0x08.v[2]) >= margin)) {
+            return pCount;
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        PhysicsSubtractScalar(&relative.v[i], &pPosition->v[i], &pObject->cmpos.v[i]);
+    }
+    for (slot = 0; slot < pCount; slot++) {
+        contact = &pContacts[slot];
+        for (i = 0; i < 3; i++) {
+            difference[i] = (double)contact->position.v[i] - relative.v[i];
+        }
+        rounded_x = PhysicsScalar(difference[0]);
+        rounded_y = PhysicsScalar(difference[1]);
+        distance_squared = (difference[0] * rounded_x + difference[1] * rounded_y) + difference[2] * difference[2];
+        if (!(distance_squared >= .0045000000000000005)) {
+            normal_dot = ((double)contact->normal.v[2] * pNormal->v[2] + (double)contact->normal.v[1] * pNormal->v[1]) + (double)contact->normal.v[0] * pNormal->v[0];
+            if (normal_dot > .95 && !(PhysicsScalar(distance_squared) >= .0005)) {
+                return pCount;
+            }
+            if (!(normal_dot >= -.95)) {
+                return pCount;
+            }
+        }
+    }
+    if (pCount < 4) {
+        pContacts[pCount].t = 2.f;
+        pCount++;
+    }
+    if (pCount <= 0) {
+        return pCount;
+    }
+    for (slot = 0; slot < pCount; slot++) {
+        if (!(pT >= pContacts[slot].t)) {
+            break;
+        }
+    }
+    if (slot == pCount) {
+        return pCount;
+    }
+    last = pCount < 4 ? pCount : 3;
+    for (; last >= slot; last--) {
+        for (i = 0; i < 24; i++) {
+            PhysicsCopyWord((tU8*)&pContacts[last] + 4 * i, (const tU8*)&pContacts[last - 1] + 4 * i);
+        }
+    }
+    contact = &pContacts[slot];
+    PhysicsScalarStore(&contact->t, &pT);
+    contact->object1 = pObject;
+    contact->object2 = NULL;
+    contact->face = pFace;
+    for (i = 0; i < 3; i++) {
+        PhysicsCopyWord(&contact->normal.v[i], &pNormal->v[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        PhysicsSubtractScalar(&contact->position.v[i], &pPosition->v[i], &pObject->cmpos.v[i]);
+    }
+    if (pReference_position != NULL) {
+        for (i = 0; i < 3; i++) {
+            PhysicsCopyWord(&contact->reference_position.v[i], &pReference_position->v[i]);
+        }
+    }
+    contact->type = pType;
+    return pCount;
+}
 
 // AddObjectObjectForce
 
-// RayCastThruFaceList
+// FUNCTION: CARMA2_HW 0x004225f0
+tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount) {
+    br_vector3 normal;
+    br_vector3 collision_position;
+    br_scalar t;
+    tFace_ref* best = NULL;
+    int i;
+
+    *pT = 2.f;
+    for (; pCount > 0; pCount--, pFaces++) {
+        if ((pFaces->flags & 0x80) == 0) {
+            CheckSingleFace(pFaces, pPosition, pDirection, &normal, &t, &collision_position);
+            if (!(t >= *pT)) {
+                PhysicsCopyWord(pT, &t);
+                for (i = 0; i < 3; i++) {
+                    PhysicsCopyWord(&pNormal->v[i], &normal.v[i]);
+                }
+                best = pFaces;
+                for (i = 0; i < 3; i++) {
+                    PhysicsCopyWord(&pCollision_position->v[i], &collision_position.v[i]);
+                }
+            }
+        }
+    }
+    return !(*pT >= 2.f) ? best : NULL;
+}
 
 // RayCastThruFaceList2
 
