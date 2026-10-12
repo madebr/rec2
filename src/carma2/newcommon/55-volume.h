@@ -17,7 +17,7 @@ extern tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
 
 extern void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject);
 
-// TestAutoSpecialVolume
+extern void C2_HOOK_FASTCALL TestAutoSpecialVolume(tPhysics_object* pObject);
 
 extern void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx);
 

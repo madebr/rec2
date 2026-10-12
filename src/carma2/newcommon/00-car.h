@@ -14,6 +14,7 @@ extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
 extern int gFace_count;
+extern int gCollision_skip_pling_faces;
 extern tFace_ref gFace_list__car[300];
 
 // DamageUnit
@@ -151,6 +152,8 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 // MultiFindFloorInBoxBU
 
 extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vector3* nor, br_scalar* t, br_material** material);
+
+extern int C2_HOOK_FASTCALL FUN_0041e480(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pDistance, tPhysics_object* pObject);
 
 // findfloor
 

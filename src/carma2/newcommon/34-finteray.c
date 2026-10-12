@@ -787,7 +787,7 @@ void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_
     material = pFace->material;
     *rt = 100.f;
     d = FinterayScalar(((double)pFace->normal.v[0] * ray_dir->v[0] + (double)pFace->normal.v[2] * ray_dir->v[2]) + (double)pFace->normal.v[1] * ray_dir->v[1]);
-    if (material != NULL && (material->flags & (BR_MATF_ALWAYS_VISIBLE | BR_MATF_TWO_SIDED)) == 0 && d > 0.f) {
+    if (material != NULL && (*(const volatile br_uint_32*)&material->flags & (BR_MATF_ALWAYS_VISIBLE | BR_MATF_TWO_SIDED)) == 0 && d > 0.f) {
         return;
     }
     if (material != NULL && material->identifier != NULL && (material->identifier[0] == '!' || material->identifier[0] == '>' || material->identifier[0] == '?') && gPling_materials) {
