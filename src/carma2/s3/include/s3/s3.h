@@ -263,6 +263,8 @@ extern int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3)
 
 extern tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id);
 
+extern int C2_HOOK_FASTCALL S3GetSampleDuration(int pSample_id);
+
 extern tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id);
 
 extern void C2_HOOK_FASTCALL S3EnableCDA(void);

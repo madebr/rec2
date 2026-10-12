@@ -1,5 +1,7 @@
 #include "23-piping.h"
 
+#include "41-utility.h"
+#include "42-input.h"
 #include "52-errors.h"
 #include "globvars.h"
 #include "c2_string.h"
@@ -59,6 +61,21 @@ tU8* gPipe_chunk_end;
 
 // GLOBAL: CARMA2_HW 0x0058f1e8
 int gMax_previous_pipe_sessions = 1000;
+
+// GLOBAL: CARMA2_HW 0x00676910
+int gPipe_count_callbacks;
+
+// GLOBAL: CARMA2_HW 0x00676918
+int gDisable_piped_sounds;
+
+// GLOBAL: CARMA2_HW 0x006768b0
+tU32 gPipe_sound_time;
+
+// GLOBAL: CARMA2_HW 0x00676904
+tU32 gPipe_sound_start_time;
+
+// GLOBAL: CARMA2_HW 0x006768a8
+tU32 gPipe_sound_time_window;
 
 // GLOBAL: CARMA2_HW 0x0069410c
 tU32 gUNK_0069410c;
@@ -624,9 +641,88 @@ void C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDef
 
 // CheckSound
 
-// SoundTimeout
+// FUNCTION: CARMA2_HW 0x00403c50
+int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime) {
+    return gPipe_sound_start_time < pTime
+        || gPipe_sound_start_time - pTime < gPipe_sound_time_window;
+}
 
-// ScanAndPlaySoundsToBe
+/* _ftol returns a signed 64-bit integer; these original callers use its low
+ * word. The indefinite result for nonfinite/out-of-range input has low word0. */
+static tU32 C2_HOOK_FASTCALL ReplayFtolLow(double pValue) {
+    tU32 bits[2];
+
+    memcpy(bits, &pValue, sizeof(bits));
+    if ((bits[1] & 0x7fffffffu) >= 0x43e00000u) {
+        return 0;
+    }
+    return (tU32)(int64_t)pValue;
+}
+
+// FUNCTION: CARMA2_HW 0x00403990
+void C2_HOOK_FASTCALL ScanAndPlaySoundsToBe(tU8* pSession, tU32 pTime, tU32 pStart_time) {
+    tU32 rate_bits;
+    float absolute_rate;
+    tU32 length;
+    tU32 time;
+    tU32 end_time;
+    tU8* chunk;
+    int count;
+    int duration;
+    int pitch;
+
+    if (gDisable_piped_sounds) {
+        return;
+    }
+    memcpy(&rate_bits, &gReplay_rate, sizeof(rate_bits));
+    rate_bits &= 0x7fffffffu;
+    memcpy(&absolute_rate, &rate_bits, sizeof(absolute_rate));
+    gPipe_sound_start_time = pStart_time;
+    gPipe_sound_time = pTime;
+    gPipe_sound_time_window = ReplayFtolLow((double)absolute_rate * 1500.0);
+    time = pTime;
+    do {
+        if (ARReplayForwards()) {
+            length = LengthOfSession((tPipe_chunk*)pSession);
+            pSession = (tU8*)((uintptr_t)pSession + length);
+            if ((uintptr_t)pSession >= (uintptr_t)gPipe_buffer_working_end) {
+                if (pSession == gPipe_record_ptr) {
+                    return;
+                }
+                pSession = gPipe_buffer_start;
+            }
+            if (pSession == gPipe_record_ptr) {
+                return;
+            }
+        } else if (MoveSessionPointerBackOne(&pSession)) {
+            return;
+        }
+        length = LengthOfSession((tPipe_chunk*)pSession);
+        gPipe_chunk_end = (tU8*)((uintptr_t)pSession + length - 2);
+        if (((tPipe_chunk*)pSession)->type == 0) {
+            memcpy(&time, pSession + 12, sizeof(time));
+        } else if (((tPipe_chunk*)pSession)->type == 2) {
+            count = (int)((tPipe_chunk*)pSession)->count;
+            chunk = pSession + 8;
+            while (count > 0) {
+                duration = S3GetSampleDuration(*(int*)chunk);
+                pitch = *(int*)(chunk + 4);
+                if (pitch > 1) {
+                    duration = (int)ReplayFtolLow((double)duration / ((double)pitch * 0.0000152587890625));
+                }
+                end_time = (tU32)duration + time;
+                if (end_time >= gPipe_sound_start_time && end_time < gPipe_sound_time) {
+                    if (gPipe_callbacks[2].apply != NULL) {
+                        gPipe_callbacks[2].apply((tPipe_chunk**)&chunk);
+                    }
+                } else {
+                    ARAdvanceChunkPtr(&chunk, 2);
+                }
+                count--;
+            }
+        }
+    } while (SoundTimeout(time));
+}
 
 // FUNCTION: CARMA2_HW 0x00403020
 tU32 C2_HOOK_FASTCALL ARGetStartTime(void) {
@@ -701,13 +797,213 @@ tPipe_chunk_data* C2_HOOK_FASTCALL FindNextChunk(tPipe_chunk_type pType, uintptr
     }
 }
 
-// MoveReplayBuffer
+// FUNCTION: CARMA2_HW 0x00403260
+void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    tU8* session;
+    tU8* first_session;
+    tU8* previous_session;
+    tU8* frame_start;
+    tU8* look;
+    tU8* chunk;
+    tU8* saved_chunk_end;
+    tPipe_chunk* previous_chunk;
+    const tReplay_callback* callbacks;
+    tU32 time;
+    tU32 length;
+    tU32 i;
+    int count;
+    int frame;
+    int type;
+    int flags;
+    int done;
 
-// ARMoveToEndOfReplay
+    session = gPipe_play_ptr;
+    first_session = session;
+    time = GetTotalTime();
+    count = pFrames < 0 ? (int)(0u - (tU32)pFrames) : pFrames;
+    previous_session = NULL;
+    for (frame = 0; frame < count && previous_session != session && !KeyIsDown(0); frame++) {
+        look = session;
+        if (pFrames > 0) {
+            if (gPipe_play_ptr != gPipe_record_ptr) {
+                for (;;) {
+                    if (((tPipe_chunk*)look)->type == 0) {
+                        memcpy(&gLast_replay_frame_time, look + 12, sizeof(gLast_replay_frame_time));
+                        break;
+                    }
+                    length = LengthOfSession((tPipe_chunk*)look);
+                    look = (tU8*)((uintptr_t)look + length);
+                    if ((uintptr_t)look >= (uintptr_t)gPipe_buffer_working_end) {
+                        if (look == gPipe_record_ptr) {
+                            break;
+                        }
+                        look = gPipe_buffer_start;
+                    }
+                    if (look == gPipe_record_ptr) {
+                        break;
+                    }
+                }
+            }
+        } else if (!MoveSessionPointerBackOne(&look)) {
+            while (!MoveSessionPointerBackOne(&look)) {
+                if (((tPipe_chunk*)look)->type == 0) {
+                    memcpy(&gLast_replay_frame_time, look + 12, sizeof(gLast_replay_frame_time));
+                    break;
+                }
+            }
+        }
+        if (ARSomeReplayLeft()) {
+            for (i = 0; (int)i < gPipe_count_callbacks; i++) {
+                if (gPipe_callbacks[i].reset != NULL) {
+                    gPipe_callbacks[i].reset();
+                }
+            }
+        }
+        pBefore_frame(gFrame_period);
+        frame_start = session;
+        if (pFrames > 0) {
+            for (;;) {
+                if (session == gPipe_record_ptr) {
+                    break;
+                }
+                length = LengthOfSession((tPipe_chunk*)session);
+                gPipe_chunk_end = (tU8*)((uintptr_t)session + length - 2);
+                chunk = session + 8;
+                type = ((tPipe_chunk*)session)->type;
+                for (i = 0; i < ((tPipe_chunk*)session)->count; i++) {
+                    if (gPipe_callbacks[type].apply != NULL) {
+                        gPipe_callbacks[type].apply((tPipe_chunk**)&chunk);
+                    }
+                    ARAdvanceChunkPtr(&chunk, type);
+                }
+                length = LengthOfSession((tPipe_chunk*)session);
+                session = (tU8*)((uintptr_t)session + length);
+                if ((uintptr_t)session >= (uintptr_t)gPipe_buffer_working_end && session != gPipe_record_ptr) {
+                    session = gPipe_buffer_start;
+                }
+                if (type == 0) {
+                    break;
+                }
+                pBetween_sessions(pFrames);
+            }
+            gPipe_play_ptr = session;
+        } else if (pFrames < 0) {
+            for (;;) {
+                done = MoveSessionPointerBackOne(&session);
+                if (!done) {
+                    length = LengthOfSession((tPipe_chunk*)session);
+                    gPipe_chunk_end = (tU8*)((uintptr_t)session + length - 2);
+                    chunk = session + 8;
+                    type = ((tPipe_chunk*)session)->type;
+                    callbacks = gPipe_callbacks;
+                    for (i = 0; i < ((tPipe_chunk*)session)->count; i++) {
+                        saved_chunk_end = gPipe_chunk_end;
+                        flags = (int)callbacks[type].flags;
+                        if (flags < 2 || flags == 5) {
+                            previous_chunk = NULL;
+                        } else {
+                            previous_chunk = (tPipe_chunk*)FindPreviousChunk(session, ((tPipe_chunk*)session)->type, *(uintptr_t*)chunk);
+                            callbacks = gPipe_callbacks;
+                        }
+                        gPipe_chunk_end = saved_chunk_end;
+                        switch (callbacks[type].flags) {
+                        case 1:
+                            if (callbacks[type].apply != NULL) {
+                                callbacks[type].apply((tPipe_chunk**)&chunk);
+                                ARAdvanceChunkPtr(&chunk, type);
+                                callbacks = gPipe_callbacks;
+                            }
+                            break;
+                        case 2:
+                            if (callbacks[type].apply != NULL) {
+                                if (previous_chunk != NULL) {
+                                    gDisable_advance = 1;
+                                    callbacks[type].apply(&previous_chunk);
+                                    gDisable_advance = 0;
+                                }
+                                ARAdvanceChunkPtr(&chunk, type);
+                                callbacks = gPipe_callbacks;
+                            }
+                            break;
+                        case 3:
+                            if (callbacks[type].apply != NULL) {
+                                if (previous_chunk != NULL) {
+                                    gDisable_advance = 1;
+                                    callbacks[type].apply(&previous_chunk);
+                                    gDisable_advance = 0;
+                                    ARAdvanceChunkPtr(&chunk, type);
+                                } else {
+                                    callbacks[type].apply((tPipe_chunk**)&chunk);
+                                }
+                                callbacks = gPipe_callbacks;
+                            }
+                            break;
+                        case 4:
+                        case 5:
+                            if (callbacks[type].undo != NULL) {
+                                callbacks[type].undo((tPipe_chunk**)&chunk, previous_chunk);
+                            }
+                            ARAdvanceChunkPtr(&chunk, type);
+                            callbacks = gPipe_callbacks;
+                            break;
+                        }
+                    }
+                    look = session;
+                    done = MoveSessionPointerBackOne(&look) || ((tPipe_chunk*)look)->type == 0;
+                }
+                if (done) {
+                    break;
+                }
+                pBetween_sessions(pFrames);
+            }
+            gPipe_play_ptr = session;
+        }
+        pAfter_frame(gFrame_period);
+        previous_session = frame_start;
+    }
+    if (!ARReplayForwards()) {
+        ScanAndPlaySoundsToBe(first_session, time, GetTotalTime());
+    }
+    if (previous_session == session) {
+        gReplay_rate = 0.0f;
+        gReplay_pause_state = 1;
+    }
+    if (KeyIsDown(0)) {
+        WaitForNoKeys();
+    }
+}
 
-// ARMoveToStartOfReplay
+// FUNCTION: CARMA2_HW 0x00403210
+void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    tU32 old_rate;
 
-// ARDoActionReplay
+    gDisable_piped_sounds = 1;
+    memcpy(&old_rate, &gReplay_rate, sizeof(old_rate));
+    gReplay_rate = 100.0f;
+    MoveReplayBuffer(0x7fffffff, pBetween_sessions, pBefore_frame, pAfter_frame);
+    gDisable_piped_sounds = 0;
+    memcpy(&gReplay_rate, &old_rate, sizeof(old_rate));
+}
+
+// FUNCTION: CARMA2_HW 0x00403c70
+void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    tU32 old_rate;
+
+    gDisable_piped_sounds = 1;
+    memcpy(&old_rate, &gReplay_rate, sizeof(old_rate));
+    gReplay_rate = -100.0f;
+    MoveReplayBuffer((int)0x80000001u, pBetween_sessions, pBefore_frame, pAfter_frame);
+    gDisable_piped_sounds = 0;
+    memcpy(&gReplay_rate, &old_rate, sizeof(old_rate));
+}
+
+// FUNCTION: CARMA2_HW 0x00403cc0
+void C2_HOOK_FASTCALL ARDoActionReplay(int pUnused, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    (void)pUnused;
+    if (!ARReplayIsReallyPaused()) {
+        MoveReplayBuffer((int)ReplayFtolLow(gReplay_rate), pBetween_sessions, pBefore_frame, pAfter_frame);
+    }
+}
 
 // ReverseSound
 

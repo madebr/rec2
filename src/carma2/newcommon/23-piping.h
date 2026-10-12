@@ -25,6 +25,14 @@ extern tU8* gPipe_chunk_end;
 
 extern int gMax_previous_pipe_sessions;
 
+extern int gPipe_count_callbacks;
+extern int gDisable_piped_sounds;
+extern tU32 gPipe_sound_time;
+extern tU32 gPipe_sound_start_time;
+extern tU32 gPipe_sound_time_window;
+
+typedef void C2_HOOK_FASTCALL tReplay_session_callback(int pFrames);
+
 extern int C2_HOOK_FASTCALL ARReplayForwards(void);
 
 extern int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void);
@@ -99,9 +107,9 @@ extern void C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU
 
 // CheckSound
 
-// SoundTimeout
+extern int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime);
 
-// ScanAndPlaySoundsToBe
+extern void C2_HOOK_FASTCALL ScanAndPlaySoundsToBe(tU8* pSession, tU32 pTime, tU32 pStart_time);
 
 extern tU32 C2_HOOK_FASTCALL ARGetStartTime(void);
 
@@ -111,13 +119,13 @@ extern void C2_HOOK_FASTCALL AREnableAdvance(void);
 
 extern tPipe_chunk_data* C2_HOOK_FASTCALL FindNextChunk(tPipe_chunk_type pType, uintptr_t pOwner);
 
-// MoveReplayBuffer
+extern void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToEndOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToStartOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARDoActionReplay
+extern void C2_HOOK_FASTCALL ARDoActionReplay(int pUnused, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
 // ReverseSound
 
