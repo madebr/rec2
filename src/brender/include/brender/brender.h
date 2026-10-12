@@ -130,7 +130,7 @@ extern br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matri
 extern void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, const br_matrix4* B);
 extern br_scalar C2_HOOK_CDECL BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B);
 extern void C2_HOOK_CDECL BrMatrix4TApply(br_vector4* A, const br_vector4* B, const br_matrix4* C);
-extern void C2_HOOK_CDECL BrMatrix4ApplyP(br_vector4* A, br_vector3* B, const br_matrix4* C);
+extern void C2_HOOK_CDECL BrMatrix4ApplyP(br_vector4* A, const br_vector3* B, const br_matrix4* C);
 extern void C2_HOOK_CDECL BrMatrix4Perspective(br_matrix4* mat, br_angle field_of_view, br_scalar aspect, br_scalar hither, br_scalar yon);
 extern void C2_HOOK_CDECL BrMatrix4Scale(br_matrix4* mat, br_scalar sx, br_scalar sy, br_scalar sz);
 extern void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, const br_matrix4* B, const br_matrix4* C);
