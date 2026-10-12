@@ -335,7 +335,7 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject);
 
 // RQIterativeImprovement
 
-// RQExpand
+void C2_HOOK_FASTCALL RQExpand(br_scalar* matrix, const br_scalar* original, int old_size, int size, br_scalar* orthogonal, const unsigned char* indices);
 
 void C2_HOOK_FASTCALL RQSingleExpand(br_scalar* matrix, const br_scalar* original, int size, br_scalar* orthogonal, const unsigned char* indices);
 

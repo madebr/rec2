@@ -3328,8 +3328,6 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject) {
 
 // RQIterativeImprovement
 
-// RQExpand
-
 /* RQ arithmetic preserves the original scalar spills and NaN operand order. */
 static br_scalar C2_HOOK_CDECL RQScalar(double x) {
     volatile br_scalar result = (br_scalar)x;
@@ -3424,6 +3422,159 @@ static br_scalar C2_HOOK_CDECL RQMultiplyScalars(const br_scalar* left, const vo
 #error RQMultiplyScalars requires x86
 #endif
     return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004c4850
+void C2_HOOK_FASTCALL RQExpand(br_scalar* matrix, const br_scalar* original, int old_size, int size, br_scalar* orthogonal, const unsigned char* indices) {
+    br_scalar row[100];
+    br_scalar maximum_scalar, diagonal_scalar, denominator, coefficient_scalar;
+    volatile br_scalar first;
+    volatile double root;
+    double value, sum, maximum, diagonal, length, head, coefficient;
+    const br_scalar* selected;
+    int i, j, k;
+
+    for (j = old_size; j < size; j++) {
+        selected = &original[100 * indices[j]];
+        for (i = 0; i < old_size; i++) {
+            row[i] = RQScalar(selected[indices[i]]);
+            matrix[i * 100 + j] = row[i];
+        }
+        for (i = 0; i < old_size; i++) {
+            sum = 0.0;
+            for (k = 0; k < old_size; k++) {
+                sum = RQAccumulate(sum, &row[k], &orthogonal[i * 100 + k]);
+            }
+            matrix[j * 100 + i] = RQScalar(sum);
+        }
+    }
+
+    for (i = old_size; i < size; i++) {
+        selected = &original[100 * indices[i]];
+        for (j = old_size; j < size; j++) {
+            memcpy(&matrix[i * 100 + j], &selected[indices[j]], sizeof(br_scalar));
+            orthogonal[i * 100 + j] = 0.0f;
+        }
+        for (j = 0; j < old_size; j++) {
+            orthogonal[i * 100 + j] = 0.0f;
+            orthogonal[j * 100 + i] = 0.0f;
+        }
+        orthogonal[i * 101] = 1.0f;
+    }
+
+    /* Extend each existing reflector through the appended columns. */
+    for (i = 0; i < old_size; i++) {
+        diagonal_scalar = RQScalar(matrix[i * 101]);
+        maximum_scalar = 0.0f;
+        for (k = old_size; k < size; k++) {
+            value = fabs(matrix[i * 100 + k]);
+            if (!(maximum_scalar > value)) {
+                maximum_scalar = RQScalar(value);
+            }
+        }
+        if (maximum_scalar == 0.0f || RQNaN(maximum_scalar)) {
+            continue;
+        }
+        maximum = fabs(diagonal_scalar);
+        if (maximum_scalar > maximum) {
+            maximum = maximum_scalar;
+        }
+        for (k = old_size; k < size; k++) {
+            matrix[i * 100 + k] = RQScalar((double)matrix[i * 100 + k] / maximum);
+        }
+        diagonal = (double)diagonal_scalar / maximum;
+        sum = 0.0;
+        for (k = old_size; k < size; k++) {
+            sum = RQAccumulate(sum, &matrix[i * 100 + k], &matrix[i * 100 + k]);
+        }
+        root = sqrt(diagonal * diagonal + sum);
+        length = fabs(root);
+        if (!(diagonal > 0.0)) {
+            length = -length;
+        }
+        head = PartnerAddWide(diagonal, length);
+        first = RQScalar(head);
+        denominator = RQScalar(PartnerMultiplyWide(head, length));
+        for (j = 0; j < size; j++) {
+            sum = PartnerMultiplyRawScalar(first, &orthogonal[i * 100 + j]);
+            for (k = old_size; k < size; k++) {
+                sum = RQAccumulate(sum, &orthogonal[k * 100 + j], &matrix[i * 100 + k]);
+            }
+            coefficient = sum / denominator;
+            for (k = old_size; k < size; k++) {
+                orthogonal[k * 100 + j] = RQScalar(PartnerReverseSubtractScalar(PartnerMultiplyRawScalar(coefficient, &matrix[i * 100 + k]), &orthogonal[k * 100 + j]));
+            }
+            orthogonal[i * 100 + j] = RQScalar(PartnerReverseSubtractScalar(PartnerMultiplyWide(first, coefficient), &orthogonal[i * 100 + j]));
+        }
+        for (j = i + 1; j < size; j++) {
+            sum = PartnerMultiplyRawScalar(first, &matrix[j * 100 + i]);
+            for (k = old_size; k < size; k++) {
+                sum = RQAccumulate(sum, &matrix[j * 100 + k], &matrix[i * 100 + k]);
+            }
+            coefficient = sum / denominator;
+            for (k = old_size; k < size; k++) {
+                matrix[j * 100 + k] = RQScalar(PartnerReverseSubtractScalar(PartnerMultiplyRawScalar(coefficient, &matrix[i * 100 + k]), &matrix[j * 100 + k]));
+            }
+            matrix[j * 100 + i] = RQScalar(PartnerReverseSubtractScalar(PartnerMultiplyWide(first, coefficient), &matrix[j * 100 + i]));
+        }
+        matrix[i * 101] = RQScalar(-PartnerMultiplyWide(length, maximum));
+        for (k = old_size; k < size; k++) {
+            matrix[i * 100 + k] = 0.0f;
+        }
+    }
+
+    /* Factor the new rows with the original fixed matrix stride. */
+    for (i = old_size; i < size; i++) {
+        maximum_scalar = 0.0f;
+        for (k = i; k < size; k++) {
+            value = fabs(matrix[i * 100 + k]);
+            if (!(maximum_scalar > value)) {
+                maximum_scalar = RQScalar(value);
+            }
+        }
+        if (maximum_scalar == 0.0f || RQNaN(maximum_scalar)) {
+            continue;
+        }
+        for (k = i; k < size; k++) {
+            matrix[i * 100 + k] = RQDivideScalars(&matrix[i * 100 + k], &maximum_scalar);
+        }
+        sum = 0.0;
+        for (k = i; k < size; k++) {
+            sum = RQAccumulate(sum, &matrix[i * 100 + k], &matrix[i * 100 + k]);
+        }
+        root = sqrt(sum);
+        length = fabs(root);
+        if (!(matrix[i * 101] > 0.0f)) {
+            length = -length;
+        }
+        head = PartnerAddScalar(length, &matrix[i * 101]);
+        denominator = RQScalar(PartnerMultiplyWide(length, head));
+        matrix[i * 101] = RQScalar(head);
+        for (j = 0; j < size; j++) {
+            sum = 0.0;
+            for (k = i; k < size; k++) {
+                sum = RQAccumulate(sum, &matrix[i * 100 + k], &orthogonal[k * 100 + j]);
+            }
+            coefficient_scalar = RQScalar(sum / denominator);
+            for (k = i; k < size; k++) {
+                orthogonal[k * 100 + j] = RQSubtractProduct(coefficient_scalar, &matrix[i * 100 + k], &orthogonal[k * 100 + j]);
+            }
+        }
+        for (j = i + 1; j < size; j++) {
+            sum = 0.0;
+            for (k = i; k < size; k++) {
+                sum = RQAccumulate(sum, &matrix[j * 100 + k], &matrix[i * 100 + k]);
+            }
+            coefficient_scalar = RQScalar(sum / denominator);
+            for (k = i; k < size; k++) {
+                matrix[j * 100 + k] = RQSubtractProduct(coefficient_scalar, &matrix[i * 100 + k], &matrix[j * 100 + k]);
+            }
+        }
+        matrix[i * 101] = RQScalar(-PartnerMultiplyRawScalar(length, &maximum_scalar));
+        for (k = i + 1; k < size; k++) {
+            matrix[i * 100 + k] = 0.0f;
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004c4f40
