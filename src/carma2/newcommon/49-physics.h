@@ -524,4 +524,13 @@ void C2_HOOK_FASTCALL FUN_004bddd0(tPhysics_object* object, tPhysics_object* oth
 void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tPhysics_object* object, tPhysics_object* list, tPhysics_object* original_list);
 void C2_HOOK_FASTCALL FUN_004be0e0(tPhysics_object* object, tPhysics_object* original_list);
 
+extern tU32 gPhysics_prepared_objects_692dcc;
+extern tPhysics_object** gReduced_object_list;
+extern tU32 gPhysics_stationary_filter_6940ac;
+
+int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tPhysics_object* object, tPhysics_object* other, tPhysics_object* original_list);
+void C2_HOOK_FASTCALL InternalPrepareObject(tPhysics_object* object);
+void C2_HOOK_FASTCALL PrepareObject(tPhysics_object* object, tPhysics_object** list_head);
+int C2_HOOK_FASTCALL FUN_004ba550(tPhysics_joint_force* records, br_scalar* impulses, int count, const int* indices, int selected_count, br_scalar maximum);
+
 #endif // GUARD_49_PHYSICS_H

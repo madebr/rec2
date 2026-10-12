@@ -29,6 +29,8 @@ static int C2_HOOK_FASTCALL PhysicsLessOrUnordered(const br_scalar* a, const br_
 static int C2_HOOK_FASTCALL PhysicsGreaterOrdered(const br_scalar* a, const br_scalar* b);
 static br_scalar C2_HOOK_FASTCALL PhysicsScalar(double value);
 static void C2_HOOK_FASTCALL PhysicsScalarStore(br_scalar* output, const br_scalar* input);
+static double C2_HOOK_CDECL FrictionRead(const void* base, unsigned offset);
+static double C2_HOOK_CDECL FrictionSubtractScalar(double left, volatile const br_scalar* right);
 
 // GLOBAL: CARMA2_HW 0x0074a5e4
 int gPHIL_mechanics_time_sync;
@@ -1990,11 +1992,11 @@ void C2_HOOK_FASTCALL GetWorldBoundingBoxForObject(tPhysics_object* pObject, br_
             }
         }
     } else {
-        double extent = (double)pObject->field_0x10c.max.v[0] - pObject->transform_matrix.m[3][0];
+        double extent = FrictionSubtractScalar(FrictionRead(pObject, 0x118), (volatile const br_scalar*)((const tU8*)pObject + 0xb0));
         if (!(gPhysics_bounds_max_x > extent)) {
             gPhysics_bounds_max_x = (br_scalar)extent;
         }
-        extent = (double)pObject->field_0x10c.min.v[0] - pObject->transform_matrix.m[3][0];
+        extent = FrictionSubtractScalar(FrictionRead(pObject, 0x10c), (volatile const br_scalar*)((const tU8*)pObject + 0xb0));
         if (gPhysics_bounds_min_x >= extent) {
             gPhysics_bounds_min_x = (br_scalar)extent;
         }
@@ -2002,10 +2004,6 @@ void C2_HOOK_FASTCALL GetWorldBoundingBoxForObject(tPhysics_object* pObject, br_
 }
 
 // MatricesAreIdentical
-
-// InternalPrepareObject
-
-// PrepareObject
 
 static int C2_HOOK_FASTCALL PhysicsScalarNaN(const br_scalar* value) {
     tU32 bits;
@@ -7304,4 +7302,358 @@ void C2_HOOK_FASTCALL FUN_004be0e0(tPhysics_object* object, tPhysics_object* ori
         }
         current=WakeNext(current);
     }
+}
+
+
+// GLOBAL: CARMA2_HW 0x00692dcc
+tU32 gPhysics_prepared_objects_692dcc = 0;
+
+// GLOBAL: CARMA2_HW 0x006940a8
+tPhysics_object** gReduced_object_list = NULL;
+
+// GLOBAL: CARMA2_HW 0x006940ac
+tU32 gPhysics_stationary_filter_6940ac = 0;
+
+// FUNCTION: CARMA2_HW 0x004b9f90
+int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tPhysics_object* object, tPhysics_object* other, tPhysics_object* original_list) {
+    tPhysics_object* root;
+    tPhysics_object* current;
+    tPhysics_object* child;
+    tU32 face;
+
+    /* Original ordered-greater rejects; equality and unordered overlap.
+     * Failure is the only EAX0 return, before any wake-state mutation. */
+    if (!WakeBounds(object, other)) {
+        return 0;
+    }
+    if (WAKE_DISABLED(other) != 0) {
+        root = WakeAncestor(other);
+        face = (tU32)*(volatile int*)&gFace_num__car;
+        WAKE_DISABLED(root) = 0;
+        WAKE_FACE(root) = (tU16)(face - 2u);
+        if (WakeChild(root) != NULL || WakeJoint(root) != NULL || WakePointer(root, 0x18c) != NULL) {
+            WakeDescendants(root);
+        }
+
+        current = original_list;
+        while (current != NULL) {
+            if (WAKE_DISABLED(current) != 0) {
+                CheckForObjectHierachyTouchingAnotherObject(root, current, original_list);
+                child = WakeChild(root);
+                if (child != NULL && WAKE_DISABLED(current) != 0) {
+                    while (child != NULL) {
+                        if (CheckForObjectHierachyTouchingAnotherObject(child, current, original_list) != 0) {
+                            break;
+                        }
+                        child = WakeNext(child);
+                    }
+                }
+                child = WakeChild(current);
+                if (child != NULL) {
+                    CheckForObjectHierachyTouchingObjectList(root, child, original_list);
+                }
+            }
+            current = WakeNext(current);
+        }
+    }
+    /* Even an already-active other returns1 after an overlap, and callers
+     * use this real integer result to stop their child traversal. */
+    return 1;
+}
+
+static tU32 C2_HOOK_CDECL PrepareWord(const void* base, unsigned offset) {
+    return *(const volatile tU32*)((const tU8*)base + offset);
+}
+static void C2_HOOK_CDECL PrepareWriteWord(void* base, unsigned offset, tU32 value) {
+    *(volatile tU32*)((tU8*)base + offset) = value;
+}
+static tPhysics_object* C2_HOOK_CDECL PreparePointer(const void* base, unsigned offset) {
+    return (tPhysics_object*)(uintptr_t)PrepareWord(base, offset);
+}
+static tU8 C2_HOOK_CDECL PrepareByte(const void* base, unsigned offset) {
+    return *(const volatile tU8*)((const tU8*)base + offset);
+}
+static void C2_HOOK_CDECL PrepareWriteByte(void* base, unsigned offset, tU8 value) {
+    *(volatile tU8*)((tU8*)base + offset) = value;
+}
+static const br_scalar* C2_HOOK_CDECL PrepareScalarPointer(const void* base, unsigned offset) {
+    return (const br_scalar*)((const tU8*)base + offset);
+}
+static int C2_HOOK_CDECL PrepareEqualOrUnordered(const br_scalar* a, const br_scalar* b) {
+    return PhysicsScalarNaN(a) || PhysicsScalarNaN(b) || (double)*a == (double)*b;
+}
+
+// FUNCTION: CARMA2_HW 0x004b99e0
+void C2_HOOK_FASTCALL InternalPrepareObject(tPhysics_object* object) {
+    tPhysics_object* parent;
+    tPhysics_object* child;
+    br_actor* actor;
+    br_matrix34* transform = (br_matrix34*)((tU8*)object + 0x8c);
+    tU32 a, b, c, omega_a, omega_b, omega_c;
+    tU32 mode;
+    tU8 disabled;
+    double x, y, z, scale, rounded_y, rounded_z, distance_squared;
+    br_scalar zero = 0.f;
+    int row, lane, same;
+
+    /* Original TEST AH,40 treats zero and unordered mass alike. */
+    if (PrepareEqualOrUnordered(PrepareScalarPointer(object, 4), &zero)) {
+        PrepareWriteWord(object, 4, 0x3c23d70a);
+        BrVector3SetFloat((br_vector3*)((tU8*)object + 8), .01f, .01f, .01f);
+    }
+    a = PrepareWord(object, 0x19c) & 0xffffedffu;
+    disabled = PrepareByte(object, 0xec);
+    PrepareWriteWord(object, 0x19c, a);
+    PrepareWriteByte(object, 0x1de, 0);
+    PrepareWriteByte(object, 0x1dd, 0);
+    PrepareWriteByte(object, 0x1dc, 0);
+    PrepareWriteWord(object, 0x1e4, 0);
+    PrepareWriteWord(object, 0x21c, 0x3f800000);
+    PrepareWriteWord(object, 0x1d8, (tU32)(uintptr_t)object);
+    PrepareWriteWord(object, 0x218, 0);
+    PrepareWriteByte(object, 0x1e0, disabled);
+    BrMatrix34TApplyV((br_vector3*)((tU8*)object + 0x1a8),
+        (const br_vector3*)((const tU8*)object + 0x68), transform);
+
+    a = PrepareWord(object, 0x68);
+    b = PrepareWord(object, 0x6c);
+    c = PrepareWord(object, 0x70);
+    parent = PreparePointer(object, 0x228);
+    PrepareWriteWord(object, 0x1b4, a);
+    omega_a = PrepareWord(object, 0x74);
+    PrepareWriteWord(object, 0x1b8, b);
+    omega_b = PrepareWord(object, 0x78);
+    PrepareWriteWord(object, 0x1bc, c);
+    omega_c = PrepareWord(object, 0x7c);
+    PrepareWriteWord(object, 0x1cc, omega_a);
+    PrepareWriteWord(object, 0x1d0, omega_b);
+    PrepareWriteWord(object, 0x1d4, omega_c);
+    if (parent != NULL) {
+        PrepareWriteByte(object, 0xec, PrepareByte(parent, 0xec));
+    }
+    disabled = PrepareByte(object, 0xec);
+    if (disabled == 0 && PrepareByte(object, 0x1df) != 0) {
+        scale = FrictionRead(object, 0x21c);
+        x = FrictionRead(object, 8);
+        y = FrictionRead(object, 0xc);
+        z = FrictionRead(object, 0x10);
+        x *= 50.0;
+        y *= 50.0;
+        z *= 50.0;
+        scale *= 50.0;
+        *(volatile br_scalar*)((tU8*)object + 8) = (br_scalar)PhysicsJointScalar(x);
+        *(volatile br_scalar*)((tU8*)object + 0xc) = (br_scalar)PhysicsJointScalar(y);
+        *(volatile br_scalar*)((tU8*)object + 0x10) = (br_scalar)PhysicsJointScalar(z);
+        *(volatile br_scalar*)((tU8*)object + 0x21c) = (br_scalar)PhysicsJointScalar(scale);
+    }
+    mode = PrepareWord(object, 0xf0);
+    /* TEST CL,DL tests only the low bit of the disabled byte. */
+    if ((disabled & (mode != 2 ? 1u : 0u)) != 0) {
+        actor = (br_actor*)PreparePointer(object, 0);
+        BrMatrix34Copy(&actor->t.t.mat, transform);
+        child = PreparePointer(object, 0x224);
+        while (child != NULL) {
+            InternalPrepareObject(child);
+            child = PreparePointer(child, 0x220);
+        }
+        if (PreparePointer(object, 0x228) == NULL) {
+            GetWorldBoundingBoxForObject(object, NULL);
+        }
+        return;
+    }
+    if (mode == 2) {
+        actor = (br_actor*)PreparePointer(object, 0);
+        PrepareWriteWord(object, 0x230, (tU32)(uintptr_t)parent);
+        x = FrictionRead(actor, 0x50);
+        y = FrictionSubtractScalar(FrictionRead(actor, 0x54), PrepareScalarPointer(object, 0xb4));
+        x = FrictionSubtractScalar(x, PrepareScalarPointer(object, 0xb0));
+        z = FrictionSubtractScalar(FrictionRead(actor, 0x58), PrepareScalarPointer(object, 0xb8));
+        rounded_y = PhysicsJointScalar(y);
+        rounded_z = PhysicsJointScalar(z);
+        distance_squared = ((x * x) + (y * rounded_y)) + rounded_z * rounded_z;
+        if (distance_squared > 1.0) {
+            FUN_004c61e0("Stupid trial position");
+            actor = (br_actor*)PreparePointer(object, 0);
+            BrMatrix34Copy(transform, &actor->t.t.mat);
+        }
+        actor = (br_actor*)PreparePointer(object, 0);
+        same = 1;
+        for (row = 3; row >= 0 && same; --row) {
+            for (lane = 0; lane < 3; ++lane) {
+                if (!PrepareEqualOrUnordered(&transform->m[row][lane], &actor->t.t.mat.m[row][lane])) {
+                    same = 0;
+                    break;
+                }
+            }
+        }
+        if (!same) PrepareWriteByte(object, 0xec, 0);
+        child = PreparePointer(object, 0x224);
+        while (child != NULL) {
+            InternalPrepareObject(child);
+            child = PreparePointer(child, 0x220);
+        }
+        GetWorldBoundingBoxForObject(object, NULL);
+        return;
+    }
+    actor = (br_actor*)PreparePointer(object, 0);
+    if (mode == 1) {
+        BrMatrix34Copy((br_matrix34*)((tU8*)object + 0xbc), &actor->t.t.mat);
+    } else {
+        BrMatrix34LPNormalise(&actor->t.t.mat, transform);
+    }
+    child = PreparePointer(object, 0x224);
+    while (child != NULL) {
+        InternalPrepareObject(child);
+        child = PreparePointer(child, 0x220);
+    }
+    if (PreparePointer(object, 0x228) == NULL) {
+        MoveJointedObject(object, 0, .04f);
+        GetWorldBoundingBoxForObject(object, NULL);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004b9770
+void C2_HOOK_FASTCALL PrepareObject(tPhysics_object* object, tPhysics_object** list_head) {
+    tPhysics_object* neighbor;
+    tPhysics_object* before;
+    tPhysics_object* after;
+    tPhysics_object* root;
+    tPhysics_object* original_list;
+    tPhysics_object* current;
+    tPhysics_object* child;
+    tPhysics_object** reduced;
+    tU32 face;
+    tU8 disabled;
+
+    InternalPrepareObject(object);
+    *(volatile tU32*)&gPhysics_prepared_objects_692dcc = 1;
+    neighbor = PreparePointer(object, 0x22c);
+    if (neighbor != NULL && PhysicsLessOrUnordered(PrepareScalarPointer(object, 0xb0), PrepareScalarPointer(neighbor, 0xb0))) {
+        do {
+            before = PreparePointer(neighbor, 0x22c);
+            after = PreparePointer(object, 0x220);
+            if (before != NULL) PrepareWriteWord(before, 0x220, (tU32)(uintptr_t)object);
+            if (after != NULL) PrepareWriteWord(after, 0x22c, (tU32)(uintptr_t)neighbor);
+            PrepareWriteWord(neighbor, 0x22c, (tU32)(uintptr_t)object);
+            PrepareWriteWord(object, 0x22c, (tU32)(uintptr_t)before);
+            PrepareWriteWord(neighbor, 0x220, (tU32)(uintptr_t)after);
+            PrepareWriteWord(object, 0x220, (tU32)(uintptr_t)neighbor);
+            neighbor = PreparePointer(object, 0x22c);
+        } while (neighbor != NULL && PhysicsLessOrUnordered(PrepareScalarPointer(object, 0xb0), PrepareScalarPointer(neighbor, 0xb0)));
+        if (neighbor == NULL) PrepareWriteWord(list_head, 0, (tU32)(uintptr_t)object);
+    } else {
+        neighbor = PreparePointer(object, 0x220);
+        while (neighbor != NULL && PhysicsGreaterOrdered(PrepareScalarPointer(object, 0xb0), PrepareScalarPointer(neighbor, 0xb0))) {
+            before = PreparePointer(object, 0x22c);
+            after = PreparePointer(neighbor, 0x220);
+            if (before != NULL) PrepareWriteWord(before, 0x220, (tU32)(uintptr_t)neighbor);
+            if (after != NULL) PrepareWriteWord(after, 0x22c, (tU32)(uintptr_t)object);
+            PrepareWriteWord(object, 0x22c, (tU32)(uintptr_t)neighbor);
+            PrepareWriteWord(neighbor, 0x22c, (tU32)(uintptr_t)before);
+            PrepareWriteWord(object, 0x220, (tU32)(uintptr_t)after);
+            PrepareWriteWord(neighbor, 0x220, (tU32)(uintptr_t)object);
+            neighbor = PreparePointer(object, 0x220);
+        }
+    }
+    if (*(volatile tU32*)&gPhysics_stationary_filter_6940ac != 0) {
+        disabled = PrepareByte(object, 0xec);
+        /* The original dereferences list_head even for an active object. */
+        original_list = PreparePointer(list_head, 0);
+        if (disabled != 0) {
+            root = WakeAncestor(object);
+            face = (tU32)*(volatile int*)&gFace_num__car;
+            PrepareWriteByte(root, 0xec, 0);
+            *(volatile tU16*)((tU8*)root + 0x178) = (tU16)(face - 2u);
+            if (PreparePointer(root, 0x224) != NULL || PreparePointer(root, 0x188) != NULL || PreparePointer(root, 0x18c) != NULL) WakeDescendants(root);
+            current = original_list;
+            while (current != NULL) {
+                if (PrepareByte(current, 0xec) != 0) {
+                    CheckForObjectHierachyTouchingAnotherObject(root, current, original_list);
+                    child = PreparePointer(root, 0x224);
+                    if (child != NULL && PrepareByte(current, 0xec) != 0) {
+                        while (child != NULL) {
+                            if (CheckForObjectHierachyTouchingAnotherObject(child, current, original_list)) break;
+                            child = PreparePointer(child, 0x220);
+                        }
+                    }
+                    child = PreparePointer(current, 0x224);
+                    if (child != NULL) CheckForObjectHierachyTouchingObjectList(root, child, original_list);
+                }
+                current = PreparePointer(current, 0x220);
+            }
+        }
+    }
+    reduced = *(tPhysics_object** volatile*)&gReduced_object_list;
+    if (reduced != NULL) {
+        before = PreparePointer(reduced, 0);
+        PrepareWriteWord(object, 0x234, (tU32)(uintptr_t)before);
+        PrepareWriteWord(reduced, 0, (tU32)(uintptr_t)object);
+    }
+}
+
+static volatile br_scalar* C2_HOOK_CDECL ClampScalar(void* base, tU32 offset) {
+    return (volatile br_scalar*)(uintptr_t)((tU32)(uintptr_t)base + offset);
+}
+static volatile tU32* C2_HOOK_CDECL ClampWord(void* base, tU32 offset) {
+    return (volatile tU32*)(uintptr_t)((tU32)(uintptr_t)base + offset);
+}
+static void* C2_HOOK_CDECL ClampRecord(tPhysics_joint_force* records, const volatile tU32* index) {
+    return (void*)(uintptr_t)((tU32)(uintptr_t)records + *index * 96u);
+}
+static void C2_HOOK_CDECL ClampScale(void* record, tU32 offset, const volatile br_scalar* ratio) {
+    volatile double loaded = (double)*ClampScalar(record, offset);
+    *ClampScalar(record, offset) = (br_scalar)(loaded * (double)*ratio);
+}
+
+// FUNCTION: CARMA2_HW 0x004ba550
+int C2_HOOK_FASTCALL FUN_004ba550(tPhysics_joint_force* records, br_scalar* impulses, int count, const int* indices, int selected_count, br_scalar maximum) {
+    const volatile tU32* index = (const volatile tU32*)indices;
+    volatile double sum = 0.0;
+    volatile double loaded;
+    volatile br_scalar ratio;
+    volatile double negative_ratio;
+    volatile double wide_ratio;
+    volatile br_scalar* impulse;
+    void* record;
+    int i;
+
+    for (i = 0; i < selected_count; ++i) {
+        sum = sum + (double)*ClampScalar(impulses, index[i] * 4u);
+    }
+    if (PhysicsWallNaN(sum) || PhysicsWallNaN((double)maximum) || !(sum > (double)maximum)) return 0;
+
+    wide_ratio = (double)maximum / sum;
+    *(volatile tU32*)&gPhysics_joints_changed_692dc8 = 1;
+    ratio = (br_scalar)wide_ratio;
+    for (i = 0; i < count; ++i) {
+        impulse = ClampScalar(impulses, (tU32)i * 4u);
+        loaded = (double)*impulse;
+        *impulse = (br_scalar)-loaded;
+    }
+    negative_ratio = -(double)ratio;
+    for (i = 0; i < selected_count; ++i) {
+        impulse = ClampScalar(impulses, *index * 4u);
+        loaded = (double)*impulse;
+        *impulse = (br_scalar)(loaded * negative_ratio);
+        record = ClampRecord(records, index);
+        if ((*ClampWord(record, 0x5c) & 0x100u) != 0) {
+            ClampScale(record, 0x44, &ratio);
+            ClampScale(ClampRecord(records, index), 0x48, &ratio);
+            ClampScale(ClampRecord(records, index), 0x4c, &ratio);
+            record = ClampRecord(records, index);
+            if (*ClampWord(record, 8) != 0) {
+                ClampScale(record, 0x44, &ratio);
+                ClampScale(ClampRecord(records, index), 0x48, &ratio);
+                ClampScale(ClampRecord(records, index), 0x4c, &ratio);
+            }
+        }
+        ++index;
+    }
+    for (i = 0; i < count; ++i) {
+        impulse = ClampScalar(impulses, (tU32)i * 4u);
+        loaded = (double)*impulse;
+        if (loaded < 0.0 || PhysicsWallNaN(loaded)) *ClampWord(impulses, (tU32)i * 4u) = 0;
+        *ClampWord(records, (tU32)i * 96u + 0x5c) = 9;
+    }
+    return 1;
 }
