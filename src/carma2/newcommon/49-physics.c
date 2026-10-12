@@ -385,7 +385,187 @@ br_scalar C2_HOOK_FASTCALL HierarchyCalcEnergy(tPhysics_object* pObject) {
 
 // CheckCollisionList
 
-// MakeJointVelocitiesVector
+/* MSVC5 can return the pre-spill ST0 value from a scalar-return C helper. */
+static double C2_HOOK_CDECL PhysicsJointScalar(double pValue) {
+    br_scalar scalar;
+    double rounded;
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld pValue
+        fstp scalar
+        fld scalar
+        fstp rounded
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %2; fstps %0; flds %0; fstpl %1"
+        : "=m" (scalar), "=m" (rounded) : "m" (pValue) : "st");
+#else
+    volatile br_scalar stored = (br_scalar)pValue;
+
+    scalar = stored;
+    rounded = scalar;
+#endif
+    return rounded;
+}
+
+/* SSE sums choose a different operand for distinct NaN payloads. */
+static double C2_HOOK_CDECL PhysicsJointSum(double pA, double pB) {
+    double result;
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld pA
+        fld pB
+        faddp st(1), st(0)
+        fstp result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; fldl %2; faddp; fstpl %0"
+        : "=m" (result) : "m" (pA), "m" (pB) : "st", "st(1)");
+#else
+    result = pA + pB;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL PhysicsJointProduct(const br_scalar* pA, const br_scalar* pB) {
+    double result;
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, pA
+        mov edx, pB
+        fld dword ptr [eax]
+        fld dword ptr [edx]
+        fmulp st(1), st(0)
+        fstp result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("flds %1; flds %2; fmulp; fstpl %0"
+        : "=m" (result) : "m" (*pA), "m" (*pB) : "st", "st(1)");
+#else
+    result = (double)*pA * *pB;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL PhysicsJointProductMemory(const br_scalar* pA, const br_scalar* pB) {
+    double result;
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, pA
+        mov edx, pB
+        fld dword ptr [eax]
+        fmul dword ptr [edx]
+        fstp result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("flds %1; fmuls %2; fstpl %0"
+        : "=m" (result) : "m" (*pA), "m" (*pB) : "st");
+#else
+    result = (double)*pA * *pB;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL PhysicsJointAddScalar(double pValue, const br_scalar* pScalar) {
+    double result;
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, pScalar
+        fld pValue
+        fadd dword ptr [eax]
+        fstp result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; fadds %2; fstpl %0"
+        : "=m" (result) : "m" (pValue), "m" (*pScalar) : "st");
+#else
+    result = pValue + *pScalar;
+#endif
+    return result;
+}
+
+static void C2_HOOK_CDECL PhysicsJointVelocityA(br_scalar* pOutput, const tPhysics_joint_force* pForce, const tPhysics_object* pObject, int pTorque) {
+    const volatile tPhysics_joint_force* force = pForce;
+    const volatile tPhysics_object* object = pObject;
+    br_scalar x;
+    br_scalar y;
+    br_scalar z;
+    double value;
+
+    if (pTorque) {
+        value = PhysicsJointSum(PhysicsJointSum(PhysicsJointProduct(&pObject->omega.v[1], &pForce->direction_a.v[1]), PhysicsJointProduct(&pForce->direction_a.v[2], &pObject->omega.v[2])), PhysicsJointProductMemory(&pObject->omega.v[0], &pForce->direction_a.v[0]));
+    } else {
+        x = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)force->point_a.v[2] * object->omega.v[1] - (double)force->point_a.v[1] * object->omega.v[2], &pObject->velocity_car_space.v[0]));
+        y = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)force->point_a.v[0] * object->omega.v[2] - (double)force->point_a.v[2] * object->omega.v[0], &pObject->velocity_car_space.v[1]));
+        z = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)force->point_a.v[1] * object->omega.v[0] - (double)force->point_a.v[0] * object->omega.v[1], &pObject->velocity_car_space.v[2]));
+        value = PhysicsJointSum(PhysicsJointSum(PhysicsJointProductMemory(&pForce->direction_a.v[1], &y), PhysicsJointProductMemory(&pForce->direction_a.v[2], &z)), PhysicsJointProductMemory(&pForce->direction_a.v[0], &x));
+    }
+    *pOutput = (br_scalar)PhysicsJointScalar(-value);
+}
+
+/* FADD32 keeps the original tie-breaking between opposite-sign NaNs. */
+static void C2_HOOK_CDECL PhysicsJointAddVelocity(br_scalar* pOutput, double pValue) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, pOutput
+        fld pValue
+        fadd dword ptr [eax]
+        fstp dword ptr [eax]
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("fldl %1; fadds %0; fstps %0"
+        : "+m" (*pOutput) : "m" (pValue) : "st");
+#else
+    *pOutput = (br_scalar)(pValue + *pOutput);
+#endif
+}
+
+static void C2_HOOK_CDECL PhysicsJointVelocityB(br_scalar* pOutput, const tPhysics_joint_force* pForce, const tPhysics_object* pObject, int pTorque) {
+    const volatile tPhysics_joint_force* force = pForce;
+    const volatile tPhysics_object* object = pObject;
+    br_scalar x;
+    double y;
+    br_scalar z;
+    double value;
+
+    if (pTorque) {
+        value = PhysicsJointSum(PhysicsJointSum(PhysicsJointProduct(&pObject->omega.v[1], &pForce->direction_b.v[1]), PhysicsJointProduct(&pForce->direction_b.v[0], &pObject->omega.v[0])), PhysicsJointProductMemory(&pObject->omega.v[2], &pForce->direction_b.v[2]));
+    } else {
+        x = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)force->point_b.v[2] * object->omega.v[1] - (double)force->point_b.v[1] * object->omega.v[2], &pObject->velocity_car_space.v[0]));
+        y = PhysicsJointAddScalar((double)force->point_b.v[0] * object->omega.v[2] - (double)force->point_b.v[2] * object->omega.v[0], &pObject->velocity_car_space.v[1]);
+        z = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar((double)force->point_b.v[1] * object->omega.v[0] - (double)force->point_b.v[0] * object->omega.v[1], &pObject->velocity_car_space.v[2]));
+        value = PhysicsJointSum(PhysicsJointSum(PhysicsJointProductMemory(&pForce->direction_b.v[0], &x), PhysicsJointProductMemory(&pForce->direction_b.v[2], &z)), (double)force->direction_b.v[1] * y);
+    }
+    PhysicsJointAddVelocity(pOutput, value);
+}
+
+// FUNCTION: CARMA2_HW 0x004b77b0
+void C2_HOOK_FASTCALL MakeJointVelocitiesVector(br_scalar* pOutput, tPhysics_joint_force* const* pForces, int pCount) {
+    tPhysics_joint_force* const volatile* forces = pForces;
+    tPhysics_joint_force* force;
+    tPhysics_object* object;
+    int torque;
+
+    while (pCount > 0) {
+        force = *forces;
+        torque = force->type == 11;
+        object = force->object_a;
+        PhysicsJointVelocityA(pOutput, force, object, torque);
+        force = *forces;
+        object = force->object_b;
+        if (object != NULL) {
+            PhysicsJointVelocityB(pOutput, force, object, torque);
+        }
+        ++forces;
+        ++pOutput;
+        --pCount;
+    }
+}
 
 // ApplySingleForce
 
@@ -397,9 +577,48 @@ br_scalar C2_HOOK_FASTCALL HierarchyCalcEnergy(tPhysics_object* pObject) {
 
 // CheckForTwang
 
-// CreateJointForce
+// FUNCTION: CARMA2_HW 0x004b8c20
+void C2_HOOK_FASTCALL CreateJointForce(tPhysics_object* pObject, tPhysics_object* pPartner, tPhysics_joint_force* pForce, const br_vector3* pDirection) {
+    br_vector3 direction;
 
-// CreateJointTorque
+    pForce->field_0 = 0;
+    pForce->object_a = pObject;
+    pForce->object_b = pPartner;
+    pForce->field_c = 0;
+    PhysicsSubtractScalar(&pForce->point_a.v[0], &pObject->physics_joint1->field_0x08.v[0], &pObject->cmpos.v[0]);
+    PhysicsSubtractScalar(&pForce->point_a.v[1], &pObject->physics_joint1->field_0x08.v[1], &pObject->cmpos.v[1]);
+    PhysicsSubtractScalar(&pForce->point_a.v[2], &pObject->physics_joint1->field_0x08.v[2], &pObject->cmpos.v[2]);
+    PhysicsSubtractScalar(&pForce->point_b.v[0], &pObject->physics_joint1->field_0x14.v[0], &pPartner->cmpos.v[0]);
+    PhysicsSubtractScalar(&pForce->point_b.v[1], &pObject->physics_joint1->field_0x14.v[1], &pPartner->cmpos.v[1]);
+    PhysicsSubtractScalar(&pForce->point_b.v[2], &pObject->physics_joint1->field_0x14.v[2], &pPartner->cmpos.v[2]);
+    PhysicsCopyWord(&pForce->direction_a.v[0], &pDirection->v[0]);
+    PhysicsCopyWord(&pForce->direction_a.v[1], &pDirection->v[1]);
+    PhysicsCopyWord(&pForce->direction_a.v[2], &pDirection->v[2]);
+    BrMatrix34ApplyV(&direction, pDirection, &pObject->transform_matrix);
+    BrMatrix34TApplyV(&pForce->direction_b, &direction, &pPartner->transform_matrix);
+    pForce->type = 10;
+}
+
+// FUNCTION: CARMA2_HW 0x004b8e10
+void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_object* pPartner, tPhysics_joint_force* pForce, const br_vector3* pDirection) {
+    br_vector3 direction;
+
+    pForce->field_0 = 0;
+    pForce->object_a = pObject;
+    pForce->object_b = pPartner;
+    PhysicsSubtractScalar(&pForce->point_a.v[0], &pObject->physics_joint1->field_0x08.v[0], &pObject->cmpos.v[0]);
+    PhysicsSubtractScalar(&pForce->point_a.v[1], &pObject->physics_joint1->field_0x08.v[1], &pObject->cmpos.v[1]);
+    PhysicsSubtractScalar(&pForce->point_a.v[2], &pObject->physics_joint1->field_0x08.v[2], &pObject->cmpos.v[2]);
+    PhysicsSubtractScalar(&pForce->point_b.v[0], &pObject->physics_joint1->field_0x14.v[0], &pPartner->cmpos.v[0]);
+    PhysicsSubtractScalar(&pForce->point_b.v[1], &pObject->physics_joint1->field_0x14.v[1], &pPartner->cmpos.v[1]);
+    PhysicsSubtractScalar(&pForce->point_b.v[2], &pObject->physics_joint1->field_0x14.v[2], &pPartner->cmpos.v[2]);
+    PhysicsCopyWord(&pForce->direction_a.v[0], &pDirection->v[0]);
+    PhysicsCopyWord(&pForce->direction_a.v[1], &pDirection->v[1]);
+    PhysicsCopyWord(&pForce->direction_a.v[2], &pDirection->v[2]);
+    BrMatrix34ApplyV(&direction, &pForce->direction_a, &pObject->transform_matrix);
+    BrMatrix34TApplyV(&pForce->direction_b, &direction, &pPartner->transform_matrix);
+    pForce->type = 11;
+}
 
 // AllocateObjectWorkspace
 
@@ -813,7 +1032,332 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 
 // AddDoubleTorqueToMatrix
 
-// DRMatrix33Inverse
+/* Original cofactor spills and source reloads preserve x87 rounding and NaN operand order. */
+// FUNCTION: CARMA2_HW 0x004be350
+void C2_HOOK_FASTCALL DRMatrix33Inverse(br_scalar* result, const br_scalar* pInput) {
+    const double one = 1.0;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov ecx, result
+        mov edx, pInput
+        fld dword ptr [edx + 0x14]
+        fld dword ptr [edx + 0x20]
+        fld dword ptr [edx + 0x1c]
+        fxch st(2)
+        fchs
+        fxch st(1)
+        fmul dword ptr [edx + 0x10]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fstp dword ptr [ecx]
+        fld dword ptr [edx + 8]
+        fld dword ptr [edx + 0x20]
+        fld dword ptr [edx + 4]
+        fld dword ptr [edx + 0x1c]
+        fxch st(3)
+        fchs
+        fxch st(1)
+        fmulp st(2), st(0)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fchs
+        fstp dword ptr [ecx + 4]
+        fld dword ptr [edx + 8]
+        fld dword ptr [edx + 0x14]
+        fld dword ptr [edx + 4]
+        fld dword ptr [edx + 0x10]
+        fxch st(3)
+        fchs
+        fxch st(1)
+        fmulp st(2), st(0)
+        fmulp st(2), st(0)
+        fld dword ptr [ecx + 4]
+        fxch st(2)
+        faddp st(1), st(0)
+        fxch st(1)
+        fld st(1)
+        fstp dword ptr [ecx + 8]
+        fld dword ptr [edx + 8]
+        fld dword ptr [edx]
+        fmul dword ptr [ecx]
+        fld dword ptr [edx + 4]
+        fxch st(2)
+        fmul st(0), st(4)
+        fxch st(2)
+        fmulp st(3), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fstp st(1)
+        fdivr one
+        fld dword ptr [ecx]
+        fmul st(0), st(1)
+        fld dword ptr [ecx + 4]
+        fxch st(1)
+        fstp dword ptr [ecx]
+        fld dword ptr [edx + 0x14]
+        fld dword ptr [edx + 0xc]
+        fld dword ptr [edx + 0x20]
+        fld dword ptr [edx + 0x18]
+        fxch st(3)
+        fchs
+        fxch st(1)
+        fmulp st(2), st(0)
+        fmulp st(2), st(0)
+        fxch st(2)
+        fmul st(0), st(3)
+        fxch st(1)
+        faddp st(2), st(0)
+        fld dword ptr [ecx + 8]
+        fxch st(2)
+        fmul st(0), st(3)
+        fxch st(2)
+        fmul st(0), st(3)
+        fxch st(2)
+        fchs
+        fstp dword ptr [ecx + 0xc]
+        fld dword ptr [edx + 0x10]
+        fld dword ptr [edx + 0xc]
+        fld dword ptr [edx + 0x1c]
+        fld dword ptr [edx + 0x18]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(2)
+        fchs
+        fmulp st(2), st(0)
+        fxch st(2)
+        fstp dword ptr [ecx + 4]
+        faddp st(1), st(0)
+        fmul st(0), st(2)
+        fstp dword ptr [ecx + 0x18]
+        fld dword ptr [edx + 8]
+        fld dword ptr [edx + 0x20]
+        fld dword ptr [edx + 0x18]
+        fxch st(2)
+        fchs
+        fxch st(1)
+        fmul dword ptr [edx]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fmul st(0), st(2)
+        fstp dword ptr [ecx + 0x10]
+        fld dword ptr [edx + 4]
+        fld dword ptr [edx + 0x1c]
+        fld dword ptr [edx + 0x18]
+        fxch st(2)
+        fchs
+        fxch st(1)
+        fmul dword ptr [edx]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(2)
+        fstp dword ptr [ecx + 8]
+        faddp st(1), st(0)
+        fmul st(0), st(1)
+        fchs
+        fstp dword ptr [ecx + 0x1c]
+        fld dword ptr [edx + 8]
+        fld dword ptr [edx + 0x14]
+        fld dword ptr [edx + 0xc]
+        fxch st(2)
+        fchs
+        fxch st(1)
+        fmul dword ptr [edx]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fmul st(0), st(1)
+        fchs
+        fstp dword ptr [ecx + 0x14]
+        fld dword ptr [edx + 4]
+        fld dword ptr [edx + 0x10]
+        fld dword ptr [edx + 0xc]
+        fxch st(2)
+        fchs
+        fxch st(1)
+        fmul dword ptr [edx]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fmul st(0), st(1)
+        fstp dword ptr [ecx + 0x20]
+        fstp st(0)
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    {
+        const double* one_ptr = &one;
+        __asm__ volatile (
+            "movl %[result], %%ecx\n\t"
+            "movl %[input], %%edx\n\t"
+            "movl %[one], %%eax\n\t"
+            ".intel_syntax noprefix\n\t"
+            "fld dword ptr [edx + 0x14]\n\t"
+            "fld dword ptr [edx + 0x20]\n\t"
+            "fld dword ptr [edx + 0x1c]\n\t"
+            "fxch st(2)\n\t"
+            "fchs\n\t"
+            "fxch st(1)\n\t"
+            "fmul dword ptr [edx + 0x10]\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(1)\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fstp dword ptr [ecx]\n\t"
+            "fld dword ptr [edx + 8]\n\t"
+            "fld dword ptr [edx + 0x20]\n\t"
+            "fld dword ptr [edx + 4]\n\t"
+            "fld dword ptr [edx + 0x1c]\n\t"
+            "fxch st(3)\n\t"
+            "fchs\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(1)\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fchs\n\t"
+            "fstp dword ptr [ecx + 4]\n\t"
+            "fld dword ptr [edx + 8]\n\t"
+            "fld dword ptr [edx + 0x14]\n\t"
+            "fld dword ptr [edx + 4]\n\t"
+            "fld dword ptr [edx + 0x10]\n\t"
+            "fxch st(3)\n\t"
+            "fchs\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fld dword ptr [ecx + 4]\n\t"
+            "fxch st(2)\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fxch st(1)\n\t"
+            "fld st(1)\n\t"
+            "fstp dword ptr [ecx + 8]\n\t"
+            "fld dword ptr [edx + 8]\n\t"
+            "fld dword ptr [edx]\n\t"
+            "fmul dword ptr [ecx]\n\t"
+            "fld dword ptr [edx + 4]\n\t"
+            "fxch st(2)\n\t"
+            "fmul st(0), st(4)\n\t"
+            "fxch st(2)\n\t"
+            "fmulp st(3), st(0)\n\t"
+            "fxch st(1)\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fxch st(1)\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fstp st(1)\n\t"
+            "fdivr qword ptr [eax]\n\t"
+            "fld dword ptr [ecx]\n\t"
+            "fmul st(0), st(1)\n\t"
+            "fld dword ptr [ecx + 4]\n\t"
+            "fxch st(1)\n\t"
+            "fstp dword ptr [ecx]\n\t"
+            "fld dword ptr [edx + 0x14]\n\t"
+            "fld dword ptr [edx + 0xc]\n\t"
+            "fld dword ptr [edx + 0x20]\n\t"
+            "fld dword ptr [edx + 0x18]\n\t"
+            "fxch st(3)\n\t"
+            "fchs\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(2)\n\t"
+            "fmul st(0), st(3)\n\t"
+            "fxch st(1)\n\t"
+            "faddp st(2), st(0)\n\t"
+            "fld dword ptr [ecx + 8]\n\t"
+            "fxch st(2)\n\t"
+            "fmul st(0), st(3)\n\t"
+            "fxch st(2)\n\t"
+            "fmul st(0), st(3)\n\t"
+            "fxch st(2)\n\t"
+            "fchs\n\t"
+            "fstp dword ptr [ecx + 0xc]\n\t"
+            "fld dword ptr [edx + 0x10]\n\t"
+            "fld dword ptr [edx + 0xc]\n\t"
+            "fld dword ptr [edx + 0x1c]\n\t"
+            "fld dword ptr [edx + 0x18]\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(2)\n\t"
+            "fchs\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(2)\n\t"
+            "fstp dword ptr [ecx + 4]\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fmul st(0), st(2)\n\t"
+            "fstp dword ptr [ecx + 0x18]\n\t"
+            "fld dword ptr [edx + 8]\n\t"
+            "fld dword ptr [edx + 0x20]\n\t"
+            "fld dword ptr [edx + 0x18]\n\t"
+            "fxch st(2)\n\t"
+            "fchs\n\t"
+            "fxch st(1)\n\t"
+            "fmul dword ptr [edx]\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(1)\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fmul st(0), st(2)\n\t"
+            "fstp dword ptr [ecx + 0x10]\n\t"
+            "fld dword ptr [edx + 4]\n\t"
+            "fld dword ptr [edx + 0x1c]\n\t"
+            "fld dword ptr [edx + 0x18]\n\t"
+            "fxch st(2)\n\t"
+            "fchs\n\t"
+            "fxch st(1)\n\t"
+            "fmul dword ptr [edx]\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(2)\n\t"
+            "fstp dword ptr [ecx + 8]\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fmul st(0), st(1)\n\t"
+            "fchs\n\t"
+            "fstp dword ptr [ecx + 0x1c]\n\t"
+            "fld dword ptr [edx + 8]\n\t"
+            "fld dword ptr [edx + 0x14]\n\t"
+            "fld dword ptr [edx + 0xc]\n\t"
+            "fxch st(2)\n\t"
+            "fchs\n\t"
+            "fxch st(1)\n\t"
+            "fmul dword ptr [edx]\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(1)\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fmul st(0), st(1)\n\t"
+            "fchs\n\t"
+            "fstp dword ptr [ecx + 0x14]\n\t"
+            "fld dword ptr [edx + 4]\n\t"
+            "fld dword ptr [edx + 0x10]\n\t"
+            "fld dword ptr [edx + 0xc]\n\t"
+            "fxch st(2)\n\t"
+            "fchs\n\t"
+            "fxch st(1)\n\t"
+            "fmul dword ptr [edx]\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fxch st(1)\n\t"
+            "faddp st(1), st(0)\n\t"
+            "fmul st(0), st(1)\n\t"
+            "fstp dword ptr [ecx + 0x20]\n\t"
+            "fstp st(0)\n\t"
+            ".att_syntax prefix\n\t"
+            :
+            : [result] "m" (result), [input] "m" (pInput), [one] "m" (one_ptr)
+            : "eax", "ecx", "edx", "memory", "st", "st(1)", "st(2)", "st(3)", "st(4)", "st(5)", "st(6)", "st(7)");
+    }
+#else
+#error DRMatrix33Inverse requires the original x86 floating-point behavior
+#endif
+}
 
 // SetUpQuickHingeData
 
@@ -821,7 +1365,147 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 
 // CalcQuickHingeData
 
-// SetUpForce
+/* Keep the sequential cross-product stores, inertia divisions and wide mass reciprocal. */
+// FUNCTION: CARMA2_HW 0x004be4b0
+void C2_HOOK_FASTCALL SetUpForce(br_vector3* out_omega, br_vector3* out_velocity, const br_vector3* lever, const br_vector3* force, const tPhysics_object* object) {
+    const double one = 1.0;
+#if defined(__GNUC__) && defined(__i386__)
+    const double* one_ptr = &one;
+#endif
+    if (!(object->flags & 0x800)) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+        __asm {
+            mov eax, out_omega
+            mov ecx, lever
+            mov edx, force
+            mov esi, object
+            fld dword ptr [edx + 8]
+            fld dword ptr [ecx + 4]
+            fld dword ptr [ecx + 8]
+            fxch st(1)
+            fmulp st(2), st(0)
+            fmul dword ptr [edx + 4]
+            fsubp st(1), st(0)
+            fstp dword ptr [eax]
+            fld dword ptr [edx + 8]
+            fld dword ptr [ecx + 8]
+            fmul dword ptr [edx]
+            fxch st(1)
+            fmul dword ptr [ecx]
+            fsubp st(1), st(0)
+            fstp dword ptr [eax + 4]
+            fld dword ptr [ecx + 4]
+            fld dword ptr [edx + 4]
+            fmul dword ptr [ecx]
+            fxch st(1)
+            fmul dword ptr [edx]
+            fsubp st(1), st(0)
+            fstp dword ptr [eax + 8]
+            fld dword ptr [eax]
+            fdiv dword ptr [esi + 8]
+            fstp dword ptr [eax]
+            fld dword ptr [eax + 4]
+            fdiv dword ptr [esi + 12]
+            fstp dword ptr [eax + 4]
+            fld dword ptr [eax + 8]
+            fdiv dword ptr [esi + 16]
+            fstp dword ptr [eax + 8]
+        }
+#elif defined(__GNUC__) && defined(__i386__)
+        __asm__ volatile (
+            "movl %[out_omega], %%eax\n\t"
+            "movl %[lever], %%ecx\n\t"
+            "movl %[force], %%edx\n\t"
+            "movl %[object], %%esi\n\t"
+            ".intel_syntax noprefix\n\t"
+            "fld dword ptr [edx + 8]\n\t"
+            "fld dword ptr [ecx + 4]\n\t"
+            "fld dword ptr [ecx + 8]\n\t"
+            "fxch st(1)\n\t"
+            "fmulp st(2), st(0)\n\t"
+            "fmul dword ptr [edx + 4]\n\t"
+            "fsubp st(1), st(0)\n\t"
+            "fstp dword ptr [eax]\n\t"
+            "fld dword ptr [edx + 8]\n\t"
+            "fld dword ptr [ecx + 8]\n\t"
+            "fmul dword ptr [edx]\n\t"
+            "fxch st(1)\n\t"
+            "fmul dword ptr [ecx]\n\t"
+            "fsubp st(1), st(0)\n\t"
+            "fstp dword ptr [eax + 4]\n\t"
+            "fld dword ptr [ecx + 4]\n\t"
+            "fld dword ptr [edx + 4]\n\t"
+            "fmul dword ptr [ecx]\n\t"
+            "fxch st(1)\n\t"
+            "fmul dword ptr [edx]\n\t"
+            "fsubp st(1), st(0)\n\t"
+            "fstp dword ptr [eax + 8]\n\t"
+            "fld dword ptr [eax]\n\t"
+            "fdiv dword ptr [esi + 8]\n\t"
+            "fstp dword ptr [eax]\n\t"
+            "fld dword ptr [eax + 4]\n\t"
+            "fdiv dword ptr [esi + 12]\n\t"
+            "fstp dword ptr [eax + 4]\n\t"
+            "fld dword ptr [eax + 8]\n\t"
+            "fdiv dword ptr [esi + 16]\n\t"
+            "fstp dword ptr [eax + 8]\n\t"
+            ".att_syntax prefix\n\t"
+            :
+            : [out_omega] "m" (out_omega), [lever] "m" (lever), [force] "m" (force), [object] "m" (object)
+            : "eax", "ecx", "edx", "esi", "memory", "st", "st(1)", "st(2)");
+#else
+#error SetUpForce requires the original x86 floating-point behavior
+#endif
+    } else {
+        out_omega->v[0] = 0.f;
+        out_omega->v[1] = 0.f;
+        out_omega->v[2] = 0.f;
+    }
+#if defined(_MSC_VER) && defined(_M_IX86)
+        __asm {
+            mov eax, out_velocity
+            mov edx, force
+            mov esi, object
+            fld dword ptr [esi + 4]
+            fdivr one
+            fld dword ptr [edx]
+            fmul st(0), st(1)
+            fstp dword ptr [eax]
+            fld dword ptr [edx + 4]
+            fmul st(0), st(1)
+            fstp dword ptr [eax + 4]
+            fld dword ptr [edx + 8]
+            fmul st(0), st(1)
+            fstp dword ptr [eax + 8]
+            fstp st(0)
+        }
+#elif defined(__GNUC__) && defined(__i386__)
+        __asm__ volatile (
+            "movl %[out_velocity], %%eax\n\t"
+            "movl %[force], %%edx\n\t"
+            "movl %[object], %%esi\n\t"
+            "movl %[one_ptr], %%ecx\n\t"
+            ".intel_syntax noprefix\n\t"
+            "fld dword ptr [esi + 4]\n\t"
+            "fdivr qword ptr [ecx]\n\t"
+            "fld dword ptr [edx]\n\t"
+            "fmul st(0), st(1)\n\t"
+            "fstp dword ptr [eax]\n\t"
+            "fld dword ptr [edx + 4]\n\t"
+            "fmul st(0), st(1)\n\t"
+            "fstp dword ptr [eax + 4]\n\t"
+            "fld dword ptr [edx + 8]\n\t"
+            "fmul st(0), st(1)\n\t"
+            "fstp dword ptr [eax + 8]\n\t"
+            "fstp st(0)\n\t"
+            ".att_syntax prefix\n\t"
+            :
+            : [out_velocity] "m" (out_velocity), [force] "m" (force), [object] "m" (object), [one_ptr] "m" (one_ptr)
+            : "eax", "ecx", "edx", "esi", "memory", "st", "st(1)", "st(2)");
+#else
+#error SetUpForce requires the original x86 floating-point behavior
+#endif
+ }
 
 // SetUpTorqueHingePartners
 

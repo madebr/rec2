@@ -113,7 +113,21 @@ br_scalar C2_HOOK_FASTCALL HierarchyCalcEnergy(tPhysics_object* pObject);
 
 // CheckCollisionList
 
-// MakeJointVelocitiesVector
+typedef struct {
+    tU32 field_0;
+    tPhysics_object* object_a;
+    tPhysics_object* object_b;
+    tU32 field_c;
+    tU32 field_10;
+    br_vector3 point_a;
+    br_vector3 point_b;
+    br_vector3 direction_a;
+    br_vector3 direction_b;
+    tU8 field_44[0x18];
+    int type;
+} tPhysics_joint_force;
+
+void C2_HOOK_FASTCALL MakeJointVelocitiesVector(br_scalar* pOutput, tPhysics_joint_force* const* pForces, int pCount);
 
 // ApplySingleForce
 
@@ -125,9 +139,9 @@ br_scalar C2_HOOK_FASTCALL HierarchyCalcEnergy(tPhysics_object* pObject);
 
 // CheckForTwang
 
-// CreateJointForce
+void C2_HOOK_FASTCALL CreateJointForce(tPhysics_object* pObject, tPhysics_object* pPartner, tPhysics_joint_force* pForce, const br_vector3* pDirection);
 
-// CreateJointTorque
+void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_object* pPartner, tPhysics_joint_force* pForce, const br_vector3* pDirection);
 
 // AllocateObjectWorkspace
 
@@ -237,7 +251,7 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject);
 
 // AddDoubleTorqueToMatrix
 
-// DRMatrix33Inverse
+void C2_HOOK_FASTCALL DRMatrix33Inverse(br_scalar* result, const br_scalar* pInput);
 
 // SetUpQuickHingeData
 
@@ -245,7 +259,7 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject);
 
 // CalcQuickHingeData
 
-// SetUpForce
+void C2_HOOK_FASTCALL SetUpForce(br_vector3* out_omega, br_vector3* out_velocity, const br_vector3* lever, const br_vector3* force, const tPhysics_object* object);
 
 // SetUpTorqueHingePartners
 
