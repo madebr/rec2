@@ -6357,3 +6357,548 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 // GetCarSpecFromCollObjID
 
 // GetCollObjFromID
+
+// GLOBAL: CARMA2_HW 0x00692dc8
+tU32 gPhysics_joints_changed_692dc8;
+
+// GLOBAL: CARMA2_HW 0x00692dd8
+tU32 gPhysics_group_limit_692dd8;
+
+// FUNCTION: CARMA2_HW 0x004b7220
+void C2_HOOK_FASTCALL FUN_004b7220(tPhysics_object* pObject, const br_matrix34* pMatrix) {
+    BrMatrix34Copy(&pObject->transform_matrix, pMatrix);
+    BrMatrix34Copy(&pObject->actor->t.t.mat, pMatrix);
+}
+
+// FUNCTION: CARMA2_HW 0x00428cf0
+int C2_HOOK_FASTCALL FUN_00428cf0(tPhysics_contact* output, int count, const tPhysics_contact* input, int input_count) {
+    int index, word;
+    tU8* destination;
+    const tU8* source = (const tU8*)input;
+
+    if (input_count <= 0) {
+        return count;
+    }
+    destination = (tU8*)(uintptr_t)((tU32)(uintptr_t)output + (tU32)count * 96u);
+    for (index = 0; index < input_count; index++) {
+        if (count >= 40) {
+            return count;
+        }
+        if (((const tPhysics_contact*)source)->type != 9) {
+            count++;
+            for (word = 0; word < 24; word++) {
+                PhysicsCopyWord(destination + word * 4, source + word * 4);
+            }
+            destination += 96;
+        }
+        source += 96;
+    }
+    return count;
+}
+
+static volatile br_scalar* C2_HOOK_CDECL LimitScalarAt(const void* base, unsigned offset) {
+    return (volatile br_scalar*)((tU8*)(uintptr_t)base + offset);
+}
+static void C2_HOOK_CDECL LimitWord(void* base, unsigned offset, tU32 value) {
+    *(volatile tU32*)((tU8*)base + offset) = value;
+}
+static void C2_HOOK_CDECL LimitCopyWord(void* dest, unsigned dest_offset, const void* source, unsigned source_offset) {
+    tU32 value = FrictionWord(source, source_offset);
+    LimitWord(dest, dest_offset, value);
+}
+static br_matrix34* C2_HOOK_CDECL LimitActorMatrix(const tPhysics_object* object) {
+    return (br_matrix34*)((tU8*)FrictionPointer(object, 0) + 0x2c);
+}
+static tU8* C2_HOOK_CDECL LimitRow(const tPhysics_object* object, unsigned joint_offset, unsigned row_offset) {
+    return (tU8*)FrictionPointer(object, joint_offset) + row_offset;
+}
+static tU8* C2_HOOK_CDECL LimitRecord(tPhysics_joint_force* records, int index) {
+    return (tU8*)(uintptr_t)((tU32)(uintptr_t)records + 96u * (tU32)index);
+}
+/* The arguments preserve original product and accumulation ordering. */
+static double C2_HOOK_CDECL LimitDot(const void* a, unsigned ax, const void* b, unsigned bx, unsigned i, unsigned j, unsigned k) {
+    double first = FrictionProductScalars(LimitScalarAt(a, ax + 4*i), LimitScalarAt(b, bx + 4*i));
+    double second = FrictionProductScalars(LimitScalarAt(a, ax + 4*j), LimitScalarAt(b, bx + 4*j));
+    double third = FrictionProductScalars(LimitScalarAt(a, ax + 4*k), LimitScalarAt(b, bx + 4*k));
+    return FrictionAddWide(FrictionAddWide(first, second), third);
+}
+static double C2_HOOK_CDECL LimitCross(br_vector3* out, const void* axis, unsigned offset, const br_vector3* vector) {
+    double z, length;
+    FrictionWrite(out, 0, PartnerSubtractWide(
+        FrictionProductScalars(LimitScalarAt(axis, offset+8), LimitScalarAt(vector, 4)),
+        FrictionProductScalars(LimitScalarAt(axis, offset+4), LimitScalarAt(vector, 8))));
+    FrictionWrite(out, 4, PartnerSubtractWide(
+        FrictionProductScalars(LimitScalarAt(axis, offset), LimitScalarAt(vector, 8)),
+        FrictionProductScalars(LimitScalarAt(axis, offset+8), LimitScalarAt(vector, 0))));
+    z = PartnerSubtractWide(
+        FrictionProductScalars(LimitScalarAt(axis, offset+4), LimitScalarAt(vector, 0)),
+        FrictionProductScalars(LimitScalarAt(axis, offset), LimitScalarAt(vector, 4)));
+    FrictionWrite(out, 8, z);
+    /* Original keeps z wide while its FST scalar copy feeds the last product. */
+    length = FrictionAddWide(
+        FrictionAddWide(FrictionProductScalars(LimitScalarAt(out, 0), LimitScalarAt(out, 0)),
+                       FrictionProductScalars(LimitScalarAt(out, 4), LimitScalarAt(out, 4))),
+        z * FrictionRead(out, 8));
+    return sqrt(length);
+}
+
+// FUNCTION: CARMA2_HW 0x004bd4f0
+void C2_HOOK_FASTCALL FUN_004bd4f0(const br_matrix34* child_matrix, const br_matrix34* parent_matrix, const br_vector3* child_axis0, const br_vector3* parent_axis0, const br_vector3* child_axis1, const br_vector3* unused_parent_axis1, br_vector3* reflected, br_vector3* bisector) {
+    br_vector3 intermediate, converted;
+    br_scalar stored_y, stored_z, twice_dot, product_z;
+    double x, y, z, length, reciprocal, reflected_x, reflected_y, reflected_z;
+    double parent_y, parent_z, dot, wide_twice_dot;
+    (void)unused_parent_axis1;
+    BrMatrix34ApplyV(&intermediate, child_axis0, child_matrix);
+    BrMatrix34TApplyV(&converted, &intermediate, parent_matrix);
+    x = FrictionAddScalar(FrictionRead(&converted, 0), LimitScalarAt(parent_axis0, 0));
+    y = FrictionRead(&converted, 4);
+    z = FrictionRead(&converted, 8);
+    FrictionWrite(bisector, 0, x);
+    y = FrictionAddScalar(y, LimitScalarAt(parent_axis0, 4));
+    x = FrictionRead(bisector, 0);
+    FrictionWrite(bisector, 4, y);
+    z = FrictionAddScalar(z, LimitScalarAt(parent_axis0, 8));
+    stored_y = FrictionScalar(FrictionRead(bisector, 4));
+    stored_z = FrictionScalar(z);
+    length = FrictionAddWide(FrictionAddWide((double)stored_y * stored_y,
+                                             z * stored_z), x * x);
+    FrictionWrite(bisector, 8, z);
+    length = sqrt(length);
+    if (length > (double)2.384185791015625e-7f) {
+        reciprocal = 1.0 / length;
+        z = FrictionRead(bisector, 8);
+        y = FrictionRead(bisector, 4);
+        x = FrictionRead(bisector, 0) * reciprocal;
+        y *= reciprocal;
+        z *= reciprocal;
+        FrictionWrite(bisector, 0, x);
+        FrictionWrite(bisector, 4, y);
+        FrictionWrite(bisector, 8, z);
+    } else {
+        LimitWord(bisector, 0, 0x3f800000);
+        LimitWord(bisector, 4, 0);
+        LimitWord(bisector, 8, 0);
+    }
+    BrMatrix34ApplyV(&intermediate, child_axis1, child_matrix);
+    BrMatrix34TApplyV(reflected, &intermediate, parent_matrix);
+    dot = LimitDot(bisector, 0, reflected, 0, 0, 2, 1);
+    twice_dot = FrictionScalar(dot + dot);
+    /* The original spills each of the first reflection's products independently. */
+    reflected_y = FrictionRead(reflected, 4);
+    reflected_z = FrictionRead(reflected, 8);
+    x = FrictionProductScalars(&twice_dot, LimitScalarAt(bisector, 0));
+    y = FrictionProductScalars(LimitScalarAt(bisector, 4), &twice_dot);
+    z = FrictionProductScalars(LimitScalarAt(bisector, 8), &twice_dot);
+    reflected_x = FrictionReverseSubtractScalar(x, LimitScalarAt(reflected, 0));
+    product_z = FrictionScalar(z);
+    reflected_y = PartnerSubtractWide(reflected_y, y);
+    reflected_z = FrictionSubtractScalar(reflected_z, &product_z);
+    stored_y = FrictionScalar(reflected_y);
+    stored_z = FrictionScalar(reflected_z);
+    FrictionWrite(reflected, 0, reflected_x);
+    x = FrictionRead(reflected, 0);
+    FrictionWrite(reflected, 4, reflected_y);
+    FrictionWrite(reflected, 8, reflected_z);
+    parent_y = FrictionRead(parent_axis0, 4);
+    parent_z = FrictionRead(parent_axis0, 8);
+    dot = FrictionAddWide(FrictionAddWide(
+        FrictionProductScalars(LimitScalarAt(reflected, 0), LimitScalarAt(parent_axis0, 0)),
+        FrictionProductScalars(LimitScalarAt(parent_axis0, 4), &stored_y)),
+        FrictionProductScalars(LimitScalarAt(parent_axis0, 8), &stored_z));
+    wide_twice_dot = FrictionAddWide(dot, dot);
+    twice_dot = FrictionScalar(wide_twice_dot);
+    x = PartnerMultiplyRawScalar(wide_twice_dot, (const br_scalar*)LimitScalarAt(parent_axis0, 0));
+    y = PartnerMultiplyRawScalar(parent_y, &twice_dot);
+    z = PartnerMultiplyRawScalar(parent_z, &twice_dot);
+    FrictionWrite(reflected, 0, FrictionReverseSubtractScalar(x, LimitScalarAt(reflected, 0)));
+    reflected_z = FrictionRead(reflected, 8);
+    reflected_y = FrictionRead(reflected, 4);
+    FrictionWrite(reflected, 4, PartnerSubtractWide(reflected_y, y));
+    FrictionWrite(reflected, 8, PartnerSubtractWide(reflected_z, z));
+}
+
+// FUNCTION: CARMA2_HW 0x004bca10
+int C2_HOOK_FASTCALL FUN_004bca10(tPhysics_object* object, tPhysics_joint_force* records, int count, int capacity) {
+    tPhysics_object* partner;
+    tU8* joint;
+    tU8* row;
+    tU8* record;
+    tU8* scan;
+    br_matrix34* partner_matrix;
+    br_vector3 temporary, current, predicted, cross;
+    br_scalar current_dot, predicted_dot, reference_dot, actor_dot;
+    double wide, next, length, reference, actor_position, predicted_position, threshold;
+    unsigned row_offset, word_offset;
+    int row_index, kind, index, remaining;
+    joint = FrictionPointer(object, 0x188);
+    if (joint != NULL) {
+        partner = FrictionPointer(object, 0x230);
+        if (partner == NULL) PhysicsError((tPhysicsError)11, &gPhysics_empty_message);
+        row_index = 0;
+        row_offset = 0;
+        record = LimitRecord(records, count);
+        while (row_index < (int)FrictionWord(FrictionPointer(object, 0x188), 0x50)) {
+            if (count >= capacity) break;
+            row = LimitRow(object, 0x188, row_offset);
+            kind = (int)FrictionWord(row, 0x54);
+            if (kind == 0) {
+                BrMatrix34ApplyV(&temporary, (br_vector3*)(row+0x5c), LimitActorMatrix(object));
+                BrMatrix34TApplyV(&current, &temporary, LimitActorMatrix(partner));
+                row = LimitRow(object, 0x188, row_offset);
+                wide = LimitDot(row, 0x68, &current, 0, 0, 1, 2);
+                current_dot = FrictionScalar(wide);
+                if (!(wide >= 0.001)) {
+                    BrMatrix34ApplyV(&temporary, (br_vector3*)(row+0x5c), &object->transform_matrix);
+                    partner_matrix = &partner->transform_matrix;
+                    BrMatrix34TApplyV(&predicted, &temporary, partner_matrix);
+                    row = LimitRow(object, 0x188, row_offset);
+                    wide = LimitDot(row, 0x68, &predicted, 0, 0, 1, 2);
+                    predicted_dot = FrictionScalar(wide);
+                    if (wide >= 0.0 && (predicted_dot >= 0.001 || FrictionWord(object, 0xf0))) {
+                        FrictionWrite(record, 0, FrictionSubtractScalar(current_dot, &predicted_dot));
+                        LimitWord(record, 0x5c, 11);
+                        LimitWord(record, 4, (tU32)(uintptr_t)object);
+                        LimitWord(record, 8, (tU32)(uintptr_t)partner);
+                        row = LimitRow(object, 0x188, row_offset);
+                        length = LimitCross(&cross, row, 0x68, &predicted);
+                        if (length > 1.0e-6) {
+                            FrictionWrite(record, 0x38, FrictionRead(&cross, 0) / length);
+                            FrictionWrite(record, 0x3c, FrictionRead(&cross, 4) / length);
+                            FrictionWrite(record, 0x40, FrictionRead(&cross, 8) / length);
+                        } else {
+                            BrMatrix34ApplyV(&cross, &object->omega, &object->transform_matrix);
+                            BrMatrix34TApplyV((br_vector3*)(record+0x38), &cross, partner_matrix);
+                            FrictionWrite(record, 0x38, FrictionSubtractScalar(FrictionRead(record, 0x38), LimitScalarAt(partner, 0x74)));
+                            FrictionWrite(record, 0x3c, FrictionSubtractScalar(FrictionRead(record, 0x3c), LimitScalarAt(partner, 0x78)));
+                            next = FrictionSubtractScalar(FrictionRead(record, 0x40), LimitScalarAt(partner, 0x7c));
+                            FrictionWrite(record, 0x40, next);
+                            length = sqrt(FrictionAddWide(FrictionAddWide(
+                                FrictionRead(record, 0x38)*FrictionRead(record, 0x38),
+                                next*next), FrictionRead(record, 0x3c)*FrictionRead(record, 0x3c)));
+                            if (length > (double)2.384185791015625e-7f) {
+                                wide = 1.0 / length;
+                                FrictionWrite(record, 0x38, FrictionRead(record, 0x38)*wide);
+                                FrictionWrite(record, 0x3c, FrictionRead(record, 0x3c)*wide);
+                                FrictionWrite(record, 0x40, FrictionRead(record, 0x40)*wide);
+                            } else {
+                                LimitWord(record, 0x38, 0x3f800000);
+                                LimitWord(record, 0x3c, 0);
+                                LimitWord(record, 0x40, 0);
+                            }
+                        }
+                        BrMatrix34ApplyV(&cross, (br_vector3*)(record+0x38), partner_matrix);
+                        BrMatrix34TApplyV((br_vector3*)(record+0x2c), &cross, &object->transform_matrix);
+                        for (word_offset=0; word_offset<24; word_offset+=4) {
+                            joint=FrictionPointer(object, 0x188);
+                            LimitCopyWord(record, 0x14+word_offset, joint, 8+word_offset);
+                        }
+                        ++count;
+                        record += 96;
+                    }
+                }
+            } else if (kind == 1) {
+                FUN_004bd4f0(LimitActorMatrix(object), LimitActorMatrix(partner),
+                    (br_vector3*)(row+0x5c), (br_vector3*)(row+0x68),
+                    (br_vector3*)(row+0x7c), (br_vector3*)(row+0x88), &current, &cross);
+                row=LimitRow(object, 0x188, row_offset);
+                wide=LimitDot(row, 0x88, &current, 0, 0, 2, 1);
+                current_dot=FrictionScalar(wide);
+                threshold=FrictionRead(row, 0x58)-(-0.001);
+                if (wide < threshold) {
+                    partner_matrix=&partner->transform_matrix;
+                    FUN_004bd4f0(&object->transform_matrix, partner_matrix,
+                        (br_vector3*)(row+0x5c), (br_vector3*)(row+0x68),
+                        (br_vector3*)(row+0x7c), (br_vector3*)(row+0x88), &predicted, (br_vector3*)(record+0x38));
+                    row=LimitRow(object, 0x188, row_offset);
+                    wide=LimitDot(row, 0x88, &predicted, 0, 2, 1, 0);
+                    predicted_dot=FrictionScalar(wide);
+                    if (wide > FrictionRead(row, 0x58)) {
+                        /* Original cross: predicted x current, stored componentwise. */
+                        FrictionWrite(&cross, 0, PartnerSubtractWide(
+                            FrictionProductScalars(LimitScalarAt(&predicted, 8), LimitScalarAt(&current, 4)),
+                            FrictionProductScalars(LimitScalarAt(&predicted, 4), LimitScalarAt(&current, 8))));
+                        FrictionWrite(&cross, 4, PartnerSubtractWide(
+                            FrictionProductScalars(LimitScalarAt(&predicted, 0), LimitScalarAt(&current, 8)),
+                            FrictionProductScalars(LimitScalarAt(&predicted, 8), LimitScalarAt(&current, 0))));
+                        FrictionWrite(&cross, 8, PartnerSubtractWide(
+                            FrictionProductScalars(LimitScalarAt(&predicted, 4), LimitScalarAt(&current, 0)),
+                            FrictionProductScalars(LimitScalarAt(&predicted, 0), LimitScalarAt(&current, 4))));
+                        wide=LimitDot(record, 0x38, &cross, 0, 1, 2, 0);
+                        if (!(wide >= 0.0)) {
+                            FrictionWrite(record, 0x38, -FrictionRead(record, 0x38));
+                            FrictionWrite(record, 0x3c, -FrictionRead(record, 0x3c));
+                            FrictionWrite(record, 0x40, -FrictionRead(record, 0x40));
+                        }
+                        BrMatrix34ApplyV(&cross, (br_vector3*)(record+0x38), partner_matrix);
+                        BrMatrix34TApplyV((br_vector3*)(record+0x2c), &cross, &object->transform_matrix);
+                        FrictionWrite(record, 0, FrictionSubtractScalar(current_dot, &predicted_dot));
+                        LimitWord(record, 0x5c, 11);
+                        LimitWord(record, 4, (tU32)(uintptr_t)object);
+                        LimitWord(record, 8, (tU32)(uintptr_t)partner);
+                        ++count;
+                        record+=96;
+                    }
+                }
+                ++row_index;
+                row_offset+=32;
+            } else PhysicsError((tPhysicsError)8, &gPhysics_empty_message);
+            ++row_index;
+            row_offset+=32;
+        }
+    }
+    joint=FrictionPointer(object, 0x18c);
+    row_index=0;
+    row_offset=0;
+    /* Only the entry guard checks NULL. Original post-write reload reads the
+     * new joint count unconditionally, including the authentic alias fault. */
+    if (joint != NULL) {
+        while (row_index < (int)FrictionWord(joint, 0x50)) {
+            row=joint+row_offset;
+            kind=(int)FrictionWord(row, 0x54);
+            if (kind == 0) {
+                BrMatrix34ApplyV(&current, (br_vector3*)(row+0x5c), LimitActorMatrix(object));
+                row=LimitRow(object, 0x18c, row_offset);
+                wide=LimitDot(row, 0x68, &current, 0, 1, 0, 2);
+                if (!(wide >= 0.001)) {
+                    if (count == capacity) return count;
+                    record=LimitRecord(records, count);
+                    FrictionWrite(record, 0, wide);
+                    LimitWord(record, 0x5c, 11);
+                    LimitWord(record, 4, (tU32)(uintptr_t)object);
+                    LimitWord(record, 8, 0);
+                    row=LimitRow(object, 0x18c, row_offset);
+                    length=LimitCross(&cross, row, 0x68, &current);
+                    if (length > 1.0e-6) {
+                        FrictionWrite(record, 0x38, FrictionRead(&cross, 0)/length);
+                        FrictionWrite(record, 0x3c, FrictionRead(&cross, 4)/length);
+                        FrictionWrite(record, 0x40, FrictionRead(&cross, 8)/length);
+                    }
+                    /* Original writes this slot without increasing count. */
+                }
+            } else if (kind == 10) {
+                if (*(volatile tU8*)((tU8*)object+0x1e0)) {
+                    gPhysics_group_limit_692dd8=1;
+                    scan=(tU8*)records;
+                    for (index=0; index<count; ++index,scan+=96) {
+                        if (FrictionWord(scan,4)==(tU32)(uintptr_t)object) {
+                            if (FrictionWord(scan,8)==0) {
+                                /* Forward MOVSD copy includes the trailing sentinel. */
+                                for (remaining=0;remaining<count-index;++remaining)
+                                    for (word_offset=0;word_offset<96;word_offset+=4)
+                                        LimitCopyWord(scan,96u*remaining+word_offset,scan,96u*(remaining+1)+word_offset);
+                                --count;
+                                --index;
+                                scan-=96;
+                                continue;
+                            }
+                            wide=-FrictionRead(scan,0x2c);
+                            current_dot=FrictionScalar(-FrictionRead(scan,0x30));
+                            predicted_dot=FrictionScalar(-FrictionRead(scan,0x34));
+                            FrictionWrite(scan,0x2c,-FrictionRead(scan,0x38));
+                            FrictionWrite(scan,0x30,-FrictionRead(scan,0x3c));
+                            next=-FrictionRead(scan,0x40);
+                            FrictionWrite(scan,0x34,next);
+                            FrictionWrite(scan,0x38,wide);
+                            LimitCopyWord(scan,0x3c,&current_dot,0);
+                            LimitCopyWord(scan,0x40,&predicted_dot,0);
+                            wide=FrictionRead(scan,0x14);
+                            LimitCopyWord(&current_dot,0,scan,0x18);
+                            LimitCopyWord(&predicted_dot,0,scan,0x1c);
+                            LimitCopyWord(scan,0x14,scan,0x20);
+                            LimitCopyWord(scan,0x18,scan,0x24);
+                            LimitCopyWord(scan,0x1c,scan,0x28);
+                            FrictionWrite(scan,0x20,wide);
+                            LimitCopyWord(scan,0x24,&current_dot,0);
+                            LimitCopyWord(scan,0x28,&predicted_dot,0);
+                            LimitCopyWord(scan,4,scan,8);
+                            LimitWord(scan,8,(tU32)(uintptr_t)object);
+                            LimitWord(scan,0x5c,14);
+                        } else if (FrictionWord(scan,8)==(tU32)(uintptr_t)object) LimitWord(scan,0x5c,14);
+                    }
+                }
+            } else if (kind == 11) {
+                BrMatrix34ApplyV(&temporary,(br_vector3*)(joint+0x38),&object->transform_matrix);
+                reference=LimitDot(object,0x17c,&temporary,0,1,2,0);
+                reference_dot=FrictionScalar(reference);
+                row=LimitRow(object,0x18c,row_offset);
+                threshold=FrictionRead(row,0x58)+reference_dot;
+                current_dot=FrictionScalar(threshold);
+                actor_position=LimitDot(FrictionPointer(object,0),0x50,&temporary,0,2,1,0);
+                actor_dot=FrictionScalar(actor_position);
+                predicted_position=LimitDot(object,0xb0,&temporary,0,0,1,2);
+                predicted_dot=FrictionScalar(predicted_position);
+                if (actor_position > current_dot && predicted_dot < current_dot-(-0.001)) {
+                    if (count == capacity) return count;
+                    record=LimitRecord(records,count);
+                    FrictionWrite(record,0,(current_dot-(double)predicted_dot)/(actor_dot-(double)predicted_dot));
+                    LimitWord(record,0xc,0);
+                    LimitWord(record,0x5c,2);
+                    LimitWord(record,4,(tU32)(uintptr_t)object);
+                    LimitWord(record,8,0);
+                    FrictionWrite(record,0x2c,-FrictionRead(FrictionPointer(object,0x18c),0x38));
+                    FrictionWrite(record,0x30,-FrictionRead(FrictionPointer(object,0x18c),0x3c));
+                    FrictionWrite(record,0x34,-FrictionRead(FrictionPointer(object,0x18c),0x40));
+                    BrVector3SetFloat((br_vector3*)(record+0x14),0,0,0);
+                    ++count;
+                } else if (actor_dot < reference_dot-0.001 && !(predicted_dot <= reference_dot-0.002)) {
+                    if (count == capacity) return count;
+                    record=LimitRecord(records,count);
+                    FrictionWrite(record,0,(reference_dot-(double)predicted_dot)/(actor_dot-(double)predicted_dot));
+                    LimitWord(record,0xc,0);
+                    LimitWord(record,0x5c,2);
+                    LimitWord(record,4,(tU32)(uintptr_t)object);
+                    LimitWord(record,8,0);
+                    LimitCopyWord(record,0x2c,FrictionPointer(object,0x18c),0x38);
+                    LimitCopyWord(record,0x30,FrictionPointer(object,0x18c),0x3c);
+                    LimitCopyWord(record,0x34,FrictionPointer(object,0x18c),0x40);
+                    BrVector3SetFloat((br_vector3*)(record+0x14),0,0,0);
+                    ++count;
+                }
+            } else PhysicsError((tPhysicsError)8, &gPhysics_empty_message);
+            joint=FrictionPointer(object,0x18c);
+            ++row_index;
+            row_offset+=32;
+        }
+    }
+    return count;
+}
+
+// FUNCTION: CARMA2_HW 0x004bd6d0
+int C2_HOOK_FASTCALL FUN_004bd6d0(tPhysics_object* list, tPhysics_joint_force* records, int count, int capacity) {
+    tPhysics_object* child;
+    while (list != NULL) {
+        count=FUN_004bca10(list,records,count,capacity);
+        child=FrictionPointer(list,0x224);
+        if (child != NULL) count=FUN_004bd6d0(child,records,count,capacity);
+        list=FrictionPointer(list,0x220);
+    }
+    return count;
+}
+
+/* Both original inline passes execute even though their accumulated energy
+ * is not consumed. Keep the reads, child calls and scalar accumulation. */
+static void C2_HOOK_CDECL JointedMotionEnergyPass(tPhysics_object* first) {
+    volatile br_scalar total = 0.f;
+    volatile br_scalar energy;
+    br_scalar children;
+    br_scalar omega;
+    double sum, velocity, angular, inertia, mass, subtotal;
+    tPhysics_object* next;
+    tPhysics_object* object = first;
+    int component;
+
+    while (object != NULL) {
+        sum = 0.;
+        for (component = 0; component < 3; component++) {
+            velocity = object->v.v[component];
+            angular = object->omega.v[component];
+            omega = (br_scalar)PhysicsJointScalar(angular);
+            angular *= omega;
+            inertia = object->I.v[component];
+            velocity *= velocity;
+            mass = object->M;
+            sum += inertia * angular + mass * velocity;
+        }
+        energy = (br_scalar)PhysicsJointScalar(sum);
+        children = HierarchyCalcEnergy(object->child);
+        subtotal = (double)energy + total;
+        next = ((volatile tPhysics_object*)object)->next;
+        total = (br_scalar)PhysicsJointScalar(subtotal + children);
+        object = next;
+    }
+}
+
+/* Reuse the proven original raw-time forwarding rule for this parent.
+ * Integration must share the existing GNU-only helper/type declarations. */
+#if defined(__GNUC__) && defined(__i386__)
+#define JOINTED_MOTION(function_name, object, time) do { \
+    tHierarchyRawMotion volatile function = (tHierarchyRawMotion)(void*)(function_name); \
+    function((object), 0, HierarchyTimeWord(&(time))); \
+} while (0)
+#else
+#define JOINTED_MOTION(function_name, object, time) (function_name)((object), 0, (time))
+#endif
+
+// FUNCTION: CARMA2_HW 0x004b7510
+void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {
+    volatile tPhysics_object* observed = pObject;
+    tPhysics_joint_force* records[40];
+    br_scalar velocity[100];
+    br_scalar impulses[100];
+    tForce_group_container* workspace;
+    tPhysics_joint_force* first_record;
+    br_actor* actor;
+    tU32 count, bytes;
+    int actual_count, i;
+    double x, y, z;
+
+    (void)pUnused;
+    count = (tU32)CountJointForces(pObject, NULL);
+    if (count != 0) {
+        bytes = (count + 12u) * count * 8u + 28u;
+        workspace = (tForce_group_container*)GetPhysicsScratchPointer((int)bytes);
+        IncreasePhysicsScratchPointer((int)bytes);
+        workspace->count = (int)count;
+        first_record = (tPhysics_joint_force*)((tU8*)workspace + 28);
+        workspace->orthogonal = (br_scalar*)((tU8*)first_record + count * 96u);
+        workspace->records = first_record;
+        workspace->matrix = (br_scalar*)((tU8*)workspace->orthogonal + count * count * 4u);
+        actual_count = AllocateObjectWorkspace(pObject, first_record);
+        memcpy((tU8*)pObject + 0x218, &workspace, sizeof(workspace));
+        for (i = 0; i < actual_count; i++) {
+            records[i] = first_record++;
+        }
+        MakeMatrix(workspace->matrix, actual_count, records, actual_count);
+        MakeJointVelocitiesVector(velocity, records, actual_count);
+        SparseRQDcmpV(workspace->matrix, workspace->orthogonal, velocity, impulses, actual_count);
+        if (pTime == 0.f || PhysicsScalarNaN(&pTime)) {
+            return;
+        }
+        JointedMotionEnergyPass(pObject);
+        for (i = 0; i < actual_count; i++) {
+            ApplySingleForce(records[i], 0, impulses[i]);
+        }
+        JointedMotionEnergyPass(pObject);
+        if (pTime > 0.f) {
+            JOINTED_MOTION(FUN_004b8ee0, pObject, pTime);
+        }
+        return;
+    }
+    if (((volatile tPhysics_object*)pObject)->child != NULL) {
+        JOINTED_MOTION(FUN_004b8ee0, pObject, pTime);
+        return;
+    }
+    x = PhysicsJointProductMemory(&pObject->v.v[0], &pTime);
+    actor = observed->actor;
+    y = observed->v.v[1];
+    x = PhysicsJointAddScalar(x, &actor->t.t.mat.m[3][0]);
+    z = observed->v.v[2];
+    y = PartnerMultiplyRawScalar(y, &pTime);
+    actor->t.t.mat.m[3][0] = (br_scalar)PhysicsJointScalar(x);
+    actor = observed->actor;
+    y = PhysicsJointAddScalar(y, &actor->t.t.mat.m[3][1]);
+    z = PartnerMultiplyRawScalar(z, &pTime);
+    actor->t.t.mat.m[3][1] = (br_scalar)PhysicsJointScalar(y);
+    actor = observed->actor;
+    actor->t.t.mat.m[3][2] = (br_scalar)PhysicsJointScalar(PhysicsJointAddScalar(z, &actor->t.t.mat.m[3][2]));
+    JOINTED_MOTION(RotateObject, pObject, pTime);
+}
+
+#undef JOINTED_MOTION
+
+/* Original clears the published container before invoking time-zero setup. */
+// FUNCTION: CARMA2_HW 0x004b9750
+void C2_HOOK_FASTCALL FUN_004b9750(tPhysics_object* object) {
+    void* empty = NULL;
+    memcpy((tU8*)object + 0x218, &empty, sizeof(empty));
+#if defined(__GNUC__) && defined(__i386__)
+    {
+        tHierarchyRawMotion volatile function = (tHierarchyRawMotion)(void*)MoveJointedObject;
+        function(object, 0, 0);
+    }
+#else
+    MoveJointedObject(object, 0, 0.f);
+#endif
+    gPhysics_joints_changed_692dc8 = 1;
+}

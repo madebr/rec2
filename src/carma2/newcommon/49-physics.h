@@ -496,4 +496,21 @@ extern void C2_HOOK_FASTCALL InitPhysics(void);
 
 // GetCollObjFromID
 
+extern tU32 gPhysics_joints_changed_692dc8;
+extern tU32 gPhysics_group_limit_692dd8;
+
+void C2_HOOK_FASTCALL FUN_004b7220(tPhysics_object* pObject, const br_matrix34* pMatrix);
+
+int C2_HOOK_FASTCALL FUN_00428cf0(tPhysics_contact* output, int count, const tPhysics_contact* input, int input_count);
+
+void C2_HOOK_FASTCALL FUN_004bd4f0(const br_matrix34* child_matrix, const br_matrix34* parent_matrix, const br_vector3* child_axis0, const br_vector3* parent_axis0, const br_vector3* child_axis1, const br_vector3* unused_parent_axis1, br_vector3* reflected, br_vector3* bisector);
+
+int C2_HOOK_FASTCALL FUN_004bca10(tPhysics_object* object, tPhysics_joint_force* records, int count, int capacity);
+
+int C2_HOOK_FASTCALL FUN_004bd6d0(tPhysics_object* list, tPhysics_joint_force* records, int count, int capacity);
+
+void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime);
+
+void C2_HOOK_FASTCALL FUN_004b9750(tPhysics_object* object);
+
 #endif // GUARD_49_PHYSICS_H
