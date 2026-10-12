@@ -670,6 +670,27 @@ void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
 
+/* The original loads scale_x before multiplying raw size. A signaling NaN
+ * in size must remain a memory operand; paired physical probes demonstrate
+ * that loading it first changes the chosen NaN sign/payload. */
+static double C2_HOOK_CDECL SplashScaleProduct(const tSplash* pSplash) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, pSplash
+        fld dword ptr [eax + 0x18]
+        fmul dword ptr [eax + 0x14]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fmuls %2; fstpl %0"
+        : "=m"(result) : "m"(pSplash->scale_x), "m"(pSplash->size) : "st");
+#else
+#error SplashScaleProduct requires the original x86 floating-point behavior
+#endif
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x004f9790
 void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
     tPhysics_object* object;
@@ -782,7 +803,7 @@ void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
                         BrActorRemove(splash->actor);
                     }
                 } else {
-                    scale = (double)splash->scale_x * splash->size;
+                    scale = SplashScaleProduct(splash);
                     for (j = 0; j < 3; j++) {
                         splash->actor->t.t.mat.m[0][j] = SmokeScalarRound(scale * gCamera_to_world.m[0][j]);
                     }
