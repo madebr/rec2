@@ -6203,11 +6203,53 @@ void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn) {
 
 // RepositionAndOrientateChildren
 
-// PhysicsAddObject
+// FUNCTION: CARMA2_HW 0x004c63b0
+void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* parent, tPhysics_object* child) {
+    tPhysics_object* previous = ((volatile const tPhysics_object*)parent)->child;
+    ((volatile tPhysics_object*)child)->next = previous;
+    ((volatile tPhysics_object*)parent)->child = child;
+    ((volatile tPhysics_object*)child)->parent = parent;
+}
 
-// PhysicsAddObjectList
+// FUNCTION: CARMA2_HW 0x004c63d0
+void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* parent, tPhysics_object* list) {
+    tPhysics_object* current;
+    tPhysics_object* last = list;
+    tPhysics_object* previous;
 
-// PhysicsRemoveObject
+    ((volatile tPhysics_object*)list)->parent = parent;
+    current = ((volatile const tPhysics_object*)list)->next;
+    while (current != NULL) {
+        last = current;
+        ((volatile tPhysics_object*)last)->parent = parent;
+        current = ((volatile const tPhysics_object*)last)->next;
+    }
+    previous = ((volatile const tPhysics_object*)parent)->child;
+    ((volatile tPhysics_object*)last)->next = previous;
+    ((volatile tPhysics_object*)parent)->child = list;
+}
+
+// FUNCTION: CARMA2_HW 0x004c6410
+void C2_HOOK_FASTCALL FUN_004c6410(tPhysics_object* object) {
+    tPhysics_object* parent = ((volatile const tPhysics_object*)object)->parent;
+    tPhysics_object* previous = ((volatile const tPhysics_object*)parent)->child;
+    tPhysics_object* next;
+
+    if (previous == object) {
+        next = ((volatile const tPhysics_object*)object)->next;
+        ((volatile tPhysics_object*)parent)->child = next;
+    } else {
+        next = ((volatile const tPhysics_object*)previous)->next;
+        while (next != object) {
+            previous = next;
+            next = ((volatile const tPhysics_object*)previous)->next;
+        }
+        next = ((volatile const tPhysics_object*)object)->next;
+        ((volatile tPhysics_object*)previous)->next = next;
+    }
+    ((volatile tPhysics_object*)object)->parent = NULL;
+    ((volatile tPhysics_object*)object)->next = NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x004c6470
 int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext) {

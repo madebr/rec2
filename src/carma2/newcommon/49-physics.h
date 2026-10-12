@@ -452,11 +452,11 @@ extern void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_c
 
 // RepositionAndOrientateChildren
 
-// PhysicsAddObject
+void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* parent, tPhysics_object* child);
 
-// PhysicsAddObjectList
+void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* parent, tPhysics_object* list);
 
-// PhysicsRemoveObject
+void C2_HOOK_FASTCALL FUN_004c6410(tPhysics_object* object);
 
 extern int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext);
 
