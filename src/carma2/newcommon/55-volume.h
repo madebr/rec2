@@ -7,14 +7,15 @@
 #include <stdio.h>
 
 extern tSpecial_volume gDefault_default_water_spec_vol;
+extern tSpecial_volume* gDefault_water_spec_vol_real;
 
-// GetDefaultSpecialVolumeForWater
+extern tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
 
 // FindSpecialVolume
 
 // MungeSpecialVolume
 
-// ResetCarSpecialVolume
+extern void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject);
 
 // TestAutoSpecialVolume
 

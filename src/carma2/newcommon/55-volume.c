@@ -1,6 +1,8 @@
 #include "55-volume.h"
 
 #include "08-loading1.h"
+#include "00-car.h"
+#include "34-finteray.h"
 #include "69-sound.h"
 #include "globvars.h"
 
@@ -11,19 +13,67 @@
 // GLOBAL: CARMA2_HW 0x00761b80
 tSpecial_volume gDefault_default_water_spec_vol;
 
+// GLOBAL: CARMA2_HW 0x00761f44
+tSpecial_volume* gDefault_water_spec_vol_real;
+
 // GLOBAL: CARMA2_HW 0x00660268
 const char* gSoundType_choices[2] = {
     "SATURATED",
     "SCATTERED"
 };
 
-// GetDefaultSpecialVolumeForWater
+// FUNCTION: CARMA2_HW 0x004ff110
+tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
+    return gDefault_water_spec_vol_real;
+}
 
 // FindSpecialVolume
 
 // MungeSpecialVolume
 
-// ResetCarSpecialVolume
+/* The original scans the complete identifier even though only emptiness is used. */
+static int C2_HOOK_CDECL VolumeIdentifierHasLength(const char* pIdentifier) {
+    const volatile char* end = pIdentifier;
+
+    while (*end != '\0') {
+        end++;
+    }
+    return end != pIdentifier;
+}
+
+static int C2_HOOK_CDECL VolumeBelowSurfaceLimit(const br_scalar* pDistance) {
+    tU32 bits;
+
+    memcpy(&bits, pDistance, 4);
+    return (bits & 0x7fffffffu) > 0x7f800000u || *pDistance < 100.f;
+}
+
+// FUNCTION: CARMA2_HW 0x004ff530
+void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject) {
+    br_vector3 direction;
+    br_vector3 normal;
+    br_scalar distance;
+    br_material* material;
+    const char* identifier;
+    tSpecial_volume* volume = NULL;
+
+    direction.v[0] = 0.f;
+    direction.v[1] = 200.f;
+    direction.v[2] = 0.f;
+    DisablePlingMaterials();
+    FindFace(&pObject->actor->t.t.translate.t, &direction, &normal, &distance, &material);
+    EnablePlingMaterials();
+    if (VolumeBelowSurfaceLimit(&distance) && material != NULL) {
+        identifier = material->identifier;
+        if (identifier != NULL && VolumeIdentifierHasLength(identifier)) {
+            if (identifier[0] == '!' || identifier[0] == '#') {
+                volume = gDefault_water_spec_vol_real;
+            }
+        }
+    }
+    pObject->auto_special_volume = volume;
+    pObject->water_depth_factor = 1.f;
+}
 
 // TestAutoSpecialVolume
 
