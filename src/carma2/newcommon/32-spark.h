@@ -10,6 +10,14 @@ extern tSmoke_column gSmoke_column[10];
 extern br_material* gBlack_material;
 extern br_model* gLollipop_model;
 extern br_pixelmap* gFlame_map[20];
+extern int gSplash_flags;
+extern br_model* gSplash_model;
+extern int gNum_splash_types;
+extern br_material* gSplash_material[20];
+extern tSplash gSplash[32];
+extern br_model* gShrapnel_model[2];
+extern int gShrapnel_flags;
+extern tShrapnel gShrapnel[30];
 extern int gSmoke_on;
 extern tSmoke gSmoke[25];
 extern int gSmoke_flags;
@@ -155,7 +163,7 @@ extern void C2_HOOK_FASTCALL DisposeFlame(void);
 
 extern void C2_HOOK_FASTCALL InitFlame(void);
 
-// InitSplash
+extern void C2_HOOK_FASTCALL InitSplash(FILE* pF);
 
 // DisposeSplash
 
@@ -193,7 +201,7 @@ extern void C2_HOOK_FASTCALL FreeSmokeShadeTables(void);
 
 // LoadInKevStuff
 
-// DisposeKevStuff
+extern void C2_HOOK_FASTCALL DisposeKevStuff(void);
 
 // DisposeKevStuffCar
 
