@@ -107,7 +107,7 @@ def compile_native(output,args,original):
     from verify_tinted_native_reconstruction import extract
     output=output.resolve();output.mkdir(parents=True,exist_ok=True)
     source=(ROOT/'src/carma2/newcommon/34-finteray.c').read_text()
-    body=[extract(source,'FinterayScalar')]+[extract(source,n) for n in list(ADDRESSES)[:3]]
+    body=[extract(source,'FinterayScalar'),extract(source,'FinterayBoundsAdd')]+[extract(source,n) for n in list(ADDRESSES)[:3]]
     matrix=extract((ROOT/'src/brender/core/math/matrix34.c').read_text(),'BrMatrix34ApplyP').replace('BrMatrix34ApplyP','BoundsApplyBody')
     provenance=original_relocations(original)
     prefix=r'''

@@ -67,7 +67,7 @@ def native_harness():
         else:sig='br_vector3* A, const br_vector3* B, const br_matrix34* C';call='A,B,C';size=12;matrix='(void*)C'
         body=f'void C2_HOOK_CDECL {name}({sig}){{event({i+1},A,(void*)B,{matrix},{size},{size},0);CALL;event({i+1},A,(void*)B,{matrix},{size},{size},1);}}\n'
         s+=body.replace('CALL','Native'+name+'('+call+')');wrappers.append((sig,body,call))
-    for name in ['FinterayScalar','FinterayBoxNaN','FinterayBoxCopyScalar','FinterayBoxStoreScalar','FinterayBoxClip','ModelPickBox','FinterayBoxBoundsTransform','ActorBoxPick','GetNewBoundingBox','BoundsOverlapTest__finteray','FillInBounds']:s+='\n'+extract(GEOMETRY.read_text(),name)
+    for name in ['FinterayScalar','FinterayBoxNaN','FinterayBoxCopyScalar','FinterayBoxStoreScalar','FinterayBoxClip','ModelPickBox','FinterayBoxBoundsTransform','ActorBoxPick','FinterayBoundsAdd','GetNewBoundingBox','BoundsOverlapTest__finteray','FillInBounds']:s+='\n'+extract(GEOMETRY.read_text(),name)
     s+='\n'+extract(COLUMNS.read_text(),'XZToColumnXZ')+'\n'+extract(PHYSICS.read_text(),'FindFacesInBox')
     s+=DRIVER.replace('ARGS','2').replace('INSTALL','').replace('CALL','FindFacesInBox((tBounds*)arena,(tFace_ref*)(arena+header[2]),(int)header[1],callbacks)')
     return s,wrappers

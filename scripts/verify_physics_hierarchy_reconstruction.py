@@ -62,7 +62,7 @@ int C2_HOOK_CDECL main(int argc,char**argv){
 def native_harness():
     s=PREFIX;body=SOURCE.read_text();geo=GEOMETRY.read_text()
     for name in ('PhysicsScalarNaN','PhysicsLessOrUnordered','PhysicsGreaterOrdered','PhysicsObjectEnergy','PhysicsAccumulateEnergy'):s+=extract(body,name)+'\n'
-    s+=extract(MATRIX.read_text(),'BrMatrix34ApplyP')+'\n'+extract(geo,'FinterayScalar')+'\n'+extract(geo,'GetNewBoundingBox')+'\n'
+    s+=extract(MATRIX.read_text(),'BrMatrix34ApplyP')+'\n'+extract(geo,'FinterayScalar')+'\n'+extract(geo,'FinterayBoundsAdd')+'\n'+extract(geo,'GetNewBoundingBox')+'\n'
     for name,a,n in ENTRIES[:6]:s+=extract(body,name)+'\n'
     d=DRIVER.replace('ARGS','2').replace('INSTALL','')
     for key,(name,a,n) in zip(('BOUND','ENERGY','LIST','GROUP','HIERARCHY','WAKE'),ENTRIES):d=d.replace(key,name)

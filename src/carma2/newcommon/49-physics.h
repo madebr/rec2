@@ -18,7 +18,7 @@ extern void* gPhysics_other_buffer;
 
 // count
 
-// DrMatrix34ApplyLPInverse
+void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest,const br_vector3* source,const br_matrix34* matrix);
 
 typedef struct {
     br_scalar t;
@@ -49,7 +49,7 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector
 
 // FaceOnCount
 
-// EliminateFaces
+int C2_HOOK_FASTCALL EliminateFaces(tPhysics_object* pObject, tPhysics_shape* pShape, br_matrix34* pTransform);
 
 // GetShapePoint
 
@@ -59,9 +59,9 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector
 
 // GetSphereToFacePoints
 
-// CheckSingleEdgeWithSphere
+int C2_HOOK_FASTCALL CheckSingleEdgeWithSphere(br_vector3* pEdge_start, br_vector3* pEdge_end, tPhysics_object* pObject, tCollision_shape_sphere_data* pSphere, tPhysics_contact* pContacts, int pCount, br_vector3* pSphere_start, br_vector3* pSphere_end, tFace_ref* pFace);
 
-// GetSphereToEdgePoints
+int C2_HOOK_FASTCALL GetSphereToEdgePoints(tPhysics_object* pObject, tCollision_shape_sphere_data* pSphere, tPhysics_contact* pContacts, int pCount, int pUnused_capacity, br_vector3* pSphere_start, br_vector3* pSphere_end, br_matrix34* pUnused_matrix);
 
 // GetCornerToFacePoints
 
@@ -131,7 +131,7 @@ void C2_HOOK_FASTCALL MakeJointVelocitiesVector(br_scalar* pOutput, tPhysics_joi
 
 // ApplySingleForce
 
-// ApplyJointForces
+void C2_HOOK_FAKE_THISCALL ApplySingleForce(tPhysics_joint_force* record, undefined4 unused, br_scalar impulse);
 
 // SkipForces
 
@@ -143,9 +143,9 @@ void C2_HOOK_FASTCALL CreateJointForce(tPhysics_object* pObject, tPhysics_object
 
 void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_object* pPartner, tPhysics_joint_force* pForce, const br_vector3* pDirection);
 
-// AllocateObjectWorkspace
+int C2_HOOK_FASTCALL AllocateObjectWorkspace(tPhysics_object* object, tPhysics_joint_force* output);
 
-// RedoQuickHingeVelocities
+void C2_HOOK_FASTCALL RedoQuickHingeVelocities(tPhysics_object* object);
 
 // GetJointForces
 
@@ -267,11 +267,11 @@ tPhysics_object* C2_HOOK_FASTCALL SetUpHingePartners(br_vector3* pAngular, br_ve
 
 void C2_HOOK_FASTCALL MakeMatrix(br_scalar* matrix, int dimension, tPhysics_joint_force* const* records, int count);
 
-// RestoreListOmega
+void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* object);
 
 // RestoreGroupOmegas
 
-// MakeVelocitiesVector2
+int C2_HOOK_FASTCALL MakeVelocitiesVector2(br_scalar* pOutput, tPhysics_joint_force* const* pForces, int pCapacity, int pCount);
 
 // MakeVelocitiesVector
 
@@ -337,7 +337,7 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject);
 
 // RQExpand
 
-// RQSingleExpand
+void C2_HOOK_FASTCALL RQSingleExpand(br_scalar* matrix, const br_scalar* original, int size, br_scalar* orthogonal, const unsigned char* indices);
 
 int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal);
 

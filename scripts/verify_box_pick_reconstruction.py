@@ -143,7 +143,7 @@ static const float original_zero=0.f;
   typedef=f'typedef void (C2_HOOK_CDECL *original_matrix_{i})({signature});\n'
   probe+=typedef+body.replace('CALL',f'((original_matrix_{i})original_code[{i+4}])({args_call})')
   wrappers+=f'case {i+4}:target=(unsigned){name};break;'
- native+='\n'.join(extract(GEOMETRY.read_text(),name) for name in ['FinterayScalar','FinterayBoxNaN','FinterayBoxCopyScalar','FinterayBoxStoreScalar','FinterayBoxClip','ModelPickBox','FinterayBoxBoundsTransform','ActorBoxPick','GetNewBoundingBox','BoundsOverlapTest__finteray'])
+ native+='\n'.join(extract(GEOMETRY.read_text(),name) for name in ['FinterayScalar','FinterayBoxNaN','FinterayBoxCopyScalar','FinterayBoxStoreScalar','FinterayBoxClip','ModelPickBox','FinterayBoxBoundsTransform','ActorBoxPick','FinterayBoundsAdd','GetNewBoundingBox','BoundsOverlapTest__finteray'])
  probe+=r'''
 static int install_original(const char* name){
  FILE*f;unsigned char*disk;unsigned size,i,j,old,target,site;IMAGE_DOS_HEADER*dos;IMAGE_NT_HEADERS32*nt;IMAGE_SECTION_HEADER*sec;

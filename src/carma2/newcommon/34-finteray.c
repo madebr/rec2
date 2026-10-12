@@ -901,6 +901,25 @@ void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, b
     }
 }
 
+/* Preserve the original NaN operand choice during bounds accumulation. */
+static double C2_HOOK_FASTCALL FinterayBoundsAdd(const br_scalar* a, const br_scalar* b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, a
+        mov ecx, b
+        fld dword ptr [eax]
+        fadd dword ptr [ecx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1\n\tfadds %2\n\tfstpl %0" : "=m"(result) : "m"(*a), "m"(*b) : "st");
+#else
+    result = (double)*a + *b;
+#endif
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x0045f5b0
 void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m) {
     br_vector3 a;
@@ -921,9 +940,9 @@ void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix3
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 3; j++) {
             if (!(c[j].v[i] >= 0.f)) {
-                b2->min.v[i] = FinterayScalar((double)b2->min.v[i] + c[j].v[i]);
+                b2->min.v[i] = FinterayScalar(FinterayBoundsAdd(&b2->min.v[i], &c[j].v[i]));
             } else {
-                b2->max.v[i] = FinterayScalar((double)b2->max.v[i] + c[j].v[i]);
+                b2->max.v[i] = FinterayScalar(FinterayBoundsAdd(&b2->max.v[i], &c[j].v[i]));
             }
         }
     }

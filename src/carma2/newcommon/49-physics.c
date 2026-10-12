@@ -61,8 +61,6 @@ void* gPhysics_scratch_ptr;
 
 // count
 
-// DrMatrix34ApplyLPInverse
-
 static void C2_HOOK_FASTCALL PhysicsCopyWord(void* output, const void* input) {
     volatile tU32 value;
 
@@ -230,7 +228,186 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector
 
 // FaceOnCount
 
-// EliminateFaces
+static int C2_HOOK_FASTCALL PhysicsWallNaN(double value) {
+    union { double d; tU32 w[2]; } u;
+    u.d=value;
+    return (u.w[1]&0x7ff00000u)==0x7ff00000u && ((u.w[1]&0xfffffu)||u.w[0]);
+}
+
+static double C2_HOOK_FASTCALL PhysicsWallAddScalar(const br_scalar* a, const volatile br_scalar* b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, a
+        mov ecx, b
+        fld dword ptr [eax]
+        fadd dword ptr [ecx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1\n\tfadds %2\n\tfstpl %0" : "=m"(result) : "m"(*a), "m"(*b) : "st");
+#else
+    result = (double)*a + *b;
+#endif
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x00423320
+int C2_HOOK_FASTCALL EliminateFaces(tPhysics_object* pObject, tPhysics_shape* pShape, br_matrix34* pTransform) {
+    br_matrix34* actor_matrix=&pObject->actor->t.t.mat;
+    br_bounds* bounds=&pShape->common.field_0x1c;
+    br_vector3 center;
+    volatile br_vector3 scaled[3];
+    volatile br_scalar extent_scalar;
+    volatile br_scalar low_scalar;
+    volatile br_scalar threshold;
+    double extent;
+    double low;
+    double high;
+    double translated;
+    double vertex;
+    double x;
+    double y;
+    double z;
+    int count=0;
+    int i;
+    int j;
+    int ordinal=0;
+    tFace_ref* face;
+    br_material* material;
+
+    GetNewBoundingBox(bounds,&pShape->common.bb,pTransform);
+    for (i=0;i<3;i++) {
+        if (bounds->min.v[i]>pShape->common.bb.min.v[i]) {
+            PhysicsCopyWord(&bounds->min.v[i],&pShape->common.bb.min.v[i]);
+        }
+        if (PhysicsScalarNaN(&bounds->max.v[i])||PhysicsScalarNaN(&pShape->common.bb.max.v[i])||bounds->max.v[i]<pShape->common.bb.max.v[i]) {
+            PhysicsCopyWord(&bounds->max.v[i],&pShape->common.bb.max.v[i]);
+        }
+    }
+    BrMatrix34ApplyV(&center,&bounds->min,actor_matrix);
+    for (i=0;i<3;i++) center.v[i]=PhysicsScalar((double)center.v[i]+actor_matrix->m[3][i]);
+    for (i=0;i<3;i++) {
+        extent=(double)bounds->max.v[i]-bounds->min.v[i];
+        for (j=0;j<3;j++) scaled[i].v[j]=PhysicsScalar(actor_matrix->m[i][j]*extent);
+    }
+    face=&gFace_list__car[pObject->box_face_start];
+    while (ordinal<(int)pObject->box_face_end-(int)pObject->box_face_start) {
+        x=((double)center.v[0]-face->v[0].v[0])*face->normal.v[0];
+        z=((double)center.v[2]-face->v[0].v[2])*face->normal.v[2];
+        y=((double)center.v[1]-face->v[0].v[1])*face->normal.v[1];
+        low=(x+z)+y;
+        high=low;
+        for (i=0;i<3;i++) {
+            extent=((double)scaled[i].v[0]*face->normal.v[0]+(double)scaled[i].v[1]*face->normal.v[1])+(double)scaled[i].v[2]*face->normal.v[2];
+            extent_scalar=PhysicsScalar(extent);
+            if (PhysicsWallNaN(extent)||extent<0.0) low+=extent_scalar;
+            else high+=extent_scalar;
+        }
+        low_scalar=PhysicsScalar(low);
+        if ((!PhysicsWallNaN(high)&&high>(double)0.005f && !PhysicsWallNaN(low)&&low>(double)0.005f)
+            ||((PhysicsWallNaN(high)||high<(double)-0.005f)&&(PhysicsScalarNaN((const br_scalar*)&low_scalar)||low_scalar<-0.005f))) {
+            *(volatile int*)&face->flags=face->flags|0x80;
+        } else {
+            material=face->material;
+            if ((material!=NULL&&material->identifier[0]=='!')||material->identifier[0]=='>') {
+                *(volatile int*)&face->flags=face->flags|0x80;
+            } else {
+                for (i=0;i<3;i++) {
+                    translated=((double)actor_matrix->m[3][2]*actor_matrix->m[i][2]+(double)actor_matrix->m[3][0]*actor_matrix->m[i][0])+(double)actor_matrix->m[3][1]*actor_matrix->m[i][1];
+                    vertex=((double)face->v[0].v[2]*actor_matrix->m[i][2]+(double)face->v[0].v[0]*actor_matrix->m[i][0])+(double)face->v[0].v[1]*actor_matrix->m[i][1];
+                    threshold=PhysicsScalar(((double)bounds->min.v[i]-0.005f)+translated);
+                    if (PhysicsWallNaN(vertex)||PhysicsScalarNaN((const br_scalar*)&threshold)||vertex<threshold) {
+                        vertex=((double)face->v[1].v[2]*actor_matrix->m[i][2]+(double)face->v[1].v[0]*actor_matrix->m[i][0])+(double)face->v[1].v[1]*actor_matrix->m[i][1];
+                        if (PhysicsWallNaN(vertex)||PhysicsScalarNaN((const br_scalar*)&threshold)||vertex<threshold) {
+                            vertex=((double)face->v[2].v[2]*actor_matrix->m[i][2]+(double)face->v[2].v[0]*actor_matrix->m[i][0])+(double)face->v[2].v[1]*actor_matrix->m[i][1];
+                            if (PhysicsWallNaN(vertex)||PhysicsScalarNaN((const br_scalar*)&threshold)||vertex<threshold) *(volatile int*)&face->flags=face->flags|0x80;
+                        }
+                    } else {
+                        threshold=PhysicsScalar(((double)bounds->max.v[i]+translated)-(-0.005f));
+                        if (!PhysicsWallNaN(vertex)&&!PhysicsScalarNaN((const br_scalar*)&threshold)&&vertex>threshold) {
+                            vertex=((double)face->v[1].v[2]*actor_matrix->m[i][2]+(double)face->v[1].v[0]*actor_matrix->m[i][0])+(double)face->v[1].v[1]*actor_matrix->m[i][1];
+                            if (!PhysicsWallNaN(vertex)&&!PhysicsScalarNaN((const br_scalar*)&threshold)&&vertex>threshold) {
+                                vertex=((double)face->v[2].v[2]*actor_matrix->m[i][2]+(double)face->v[2].v[0]*actor_matrix->m[i][0])+(double)face->v[2].v[1]*actor_matrix->m[i][1];
+                                if (!PhysicsWallNaN(vertex)&&!PhysicsScalarNaN((const br_scalar*)&threshold)&&vertex>threshold) *(volatile int*)&face->flags=face->flags|0x80;
+                            }
+                        }
+                    }
+                }
+                *(volatile int*)&face->flags=face->flags&~0x80;
+                count++;
+            }
+        }
+        ordinal++;
+        face++;
+    }
+    return count;
+}
+
+// FUNCTION: CARMA2_HW 0x00423ce0
+int C2_HOOK_FASTCALL CheckSingleEdgeWithSphere(br_vector3* pEdge_start, br_vector3* pEdge_end, tPhysics_object* pObject, tCollision_shape_sphere_data* pSphere, tPhysics_contact* pContacts, int pCount, br_vector3* pSphere_start, br_vector3* pSphere_end, tFace_ref* pFace) {
+    br_vector3 point;
+    br_vector3 normal;
+    br_vector3 trial_normal;
+    br_vector3 actor_normal;
+    volatile br_vector3 scaled_normal;
+    br_vector3 surface_point;
+    br_actor* actor;
+    volatile br_scalar time;
+    volatile br_scalar normalized_z;
+    volatile br_scalar radius_product[3];
+    double remainder;
+    double x;
+    double y;
+    double z;
+    double length;
+    double scale;
+    int i;
+
+    SphereEdgeCollide(pEdge_start,pEdge_end,pSphere_start,pSphere_end,pSphere,&point,&normal,(br_scalar*)&time,0,0);
+    if (!PhysicsScalarNaN((const br_scalar*)&time) && time>1.0f) return pCount;
+    BrMatrix34TApplyV(&trial_normal,&normal,&pObject->transform_matrix);
+    actor=*(br_actor* volatile*)&pObject->actor;
+    BrMatrix34TApplyV(&actor_normal,&normal,&actor->t.t.mat);
+    remainder=1.0-(double)time;
+    for (i=0;i<3;i++) scaled_normal.v[i]=PhysicsScalar((double)time*actor_normal.v[i]);
+    x=(double)trial_normal.v[0]*remainder+scaled_normal.v[0];
+    y=(double)trial_normal.v[1]*remainder+scaled_normal.v[1];
+    z=(double)trial_normal.v[2]*remainder+scaled_normal.v[2];
+    length=sqrt((x*x+y*y)+z*z);
+    if (PhysicsWallNaN(length)||length<=2.3841858e-7f) {
+        x=1.0;y=0.0;normalized_z=0.0f;
+    } else {
+        scale=1.0/length;x=scale*x;y=scale*y;normalized_z=PhysicsScalar(scale*z);
+    }
+    radius_product[0]=PhysicsScalar(pSphere->radius*x);
+    radius_product[1]=PhysicsScalar(pSphere->radius*y);
+    radius_product[2]=PhysicsScalar(pSphere->radius*(double)normalized_z);
+    surface_point.v[0]=PhysicsScalar(PhysicsWallAddScalar(&pSphere->center.v[0], &radius_product[0]));
+    surface_point.v[1]=PhysicsScalar(PhysicsWallAddScalar(&pSphere->center.v[1], &radius_product[1]));
+    surface_point.v[2]=PhysicsScalar(PhysicsWallAddScalar(&pSphere->center.v[2], &radius_product[2]));
+    for(i=0;i<3;i++) trial_normal.v[i]=PhysicsScalar(-(double)trial_normal.v[i]);
+    return AddObjectWallForce(pContacts,&surface_point,time,&trial_normal,0,pCount,pObject,4,pFace,NULL);
+}
+
+// FUNCTION: CARMA2_HW 0x00423c00
+int C2_HOOK_FASTCALL GetSphereToEdgePoints(tPhysics_object* pObject, tCollision_shape_sphere_data* pSphere, tPhysics_contact* pContacts, int pCount, int pUnused_capacity, br_vector3* pSphere_start, br_vector3* pSphere_end, br_matrix34* pUnused_matrix) {
+    int index=pObject->box_face_start;
+    tFace_ref* face=&gFace_list__car[index];
+
+    (void)pUnused_capacity;
+    (void)pUnused_matrix;
+    if(index>=(int)pObject->box_face_end) return pCount;
+    do {
+        if((*(volatile int*)&face->flags&0x80)==0) {
+            if((*(volatile int*)&face->flags&1)==0) pCount=CheckSingleEdgeWithSphere(&face->v[0],&face->v[1],pObject,pSphere,pContacts,pCount,pSphere_start,pSphere_end,face);
+            if((*(volatile int*)&face->flags&2)==0) pCount=CheckSingleEdgeWithSphere(&face->v[1],&face->v[2],pObject,pSphere,pContacts,pCount,pSphere_start,pSphere_end,face);
+            if((*(volatile int*)&face->flags&4)==0) pCount=CheckSingleEdgeWithSphere(&face->v[2],&face->v[0],pObject,pSphere,pContacts,pCount,pSphere_start,pSphere_end,face);
+        }
+        index++;face++;
+    }while(index<(int)*(volatile tU16*)&pObject->box_face_end);
+    return pCount;
+}
 
 // GetShapePoint
 
@@ -239,10 +416,6 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector
 // GetFaceEdgeIntersection
 
 // GetSphereToFacePoints
-
-// CheckSingleEdgeWithSphere
-
-// GetSphereToEdgePoints
 
 // GetCornerToFacePoints
 
@@ -569,8 +742,6 @@ void C2_HOOK_FASTCALL MakeJointVelocitiesVector(br_scalar* pOutput, tPhysics_joi
 
 // ApplySingleForce
 
-// ApplyJointForces
-
 // SkipForces
 
 // ScaleUpObjectMI
@@ -619,10 +790,6 @@ void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_objec
     BrMatrix34TApplyV(&pForce->direction_b, &direction, &pPartner->transform_matrix);
     pForce->type = 11;
 }
-
-// AllocateObjectWorkspace
-
-// RedoQuickHingeVelocities
 
 // GetJointForces
 
@@ -2335,11 +2502,683 @@ void C2_HOOK_FASTCALL MakeMatrix(br_scalar* matrix, int dimension, tPhysics_join
     }
 }
 
-// RestoreListOmega
+static void C2_HOOK_CDECL ApplicationScaleAdd(br_vector3* value, br_scalar impulse, br_vector3* target) {
+    double x = (double)value->v[0] * impulse;
+    value->v[0] = (br_scalar)PhysicsJointScalar(x);
+    value->v[1] = (br_scalar)PhysicsJointScalar((double)value->v[1] * impulse);
+    value->v[2] = (br_scalar)PhysicsJointScalar((double)value->v[2] * impulse);
+    PhysicsJointAddVelocity(&target->v[0], x);
+    PhysicsJointAddVelocity(&target->v[1], value->v[1]);
+    PhysicsJointAddVelocity(&target->v[2], value->v[2]);
+}
+
+static void C2_HOOK_CDECL ApplicationWorldAdd(tPhysics_object* object, const br_vector3* delta) {
+    br_vector3 world;
+    BrMatrix34ApplyV(&world, delta, &object->transform_matrix);
+    PhysicsJointAddVelocity(&object->v.v[0], world.v[0]);
+    PhysicsJointAddVelocity(&object->v.v[1], world.v[1]);
+    PhysicsJointAddVelocity(&object->v.v[2], world.v[2]);
+}
+
+static void C2_HOOK_CDECL ApplicationDirect(tPhysics_joint_force* record, tPhysics_object* object, br_scalar impulse, int second) {
+    br_vector3 force;
+    br_vector3 delta;
+    br_vector3 cross;
+    const br_vector3* direction = second ? &record->direction_b : &record->direction_a;
+    const br_vector3* point = second ? &record->point_b : &record->point_a;
+    double x;
+    double y;
+    double z;
+    tU32 flags;
+    force.v[0] = (br_scalar)PhysicsJointScalar((double)direction->v[0] * impulse);
+    delta.v[0] = (br_scalar)PhysicsJointScalar(PartnerReverseDivideScalars(&object->M, &force.v[0]));
+    force.v[1] = (br_scalar)PhysicsJointScalar((double)direction->v[1] * impulse);
+    delta.v[1] = (br_scalar)PhysicsJointScalar(PartnerReverseDivideScalars(&object->M, &force.v[1]));
+    force.v[2] = (br_scalar)PhysicsJointScalar((double)direction->v[2] * impulse);
+    delta.v[2] = (br_scalar)PhysicsJointScalar(PartnerReverseDivideScalars(&object->M, &force.v[2]));
+    PhysicsJointAddVelocity(&object->velocity_car_space.v[0], delta.v[0]);
+    PhysicsJointAddVelocity(&object->velocity_car_space.v[1], delta.v[1]);
+    PhysicsJointAddVelocity(&object->velocity_car_space.v[2], delta.v[2]);
+    BrMatrix34ApplyV(&cross, &delta, &object->transform_matrix);
+    PhysicsJointAddVelocity(&object->v.v[0], cross.v[0]);
+    flags = object->flags;
+    PhysicsJointAddVelocity(&object->v.v[1], cross.v[1]);
+    PhysicsJointAddVelocity(&object->v.v[2], cross.v[2]);
+    if (!(flags & 0x800)) {
+        x = PartnerSubtractWide(PhysicsJointProductMemory(&point->v[1], &force.v[2]), PhysicsJointProductMemory(&point->v[2], &force.v[1]));
+        y = PartnerSubtractWide(PhysicsJointProductMemory(&point->v[2], &force.v[0]), PhysicsJointProductMemory(&point->v[0], &force.v[2]));
+        z = PartnerSubtractWide(PhysicsJointProductMemory(&point->v[0], &force.v[1]), PhysicsJointProductMemory(&point->v[1], &force.v[0]));
+        cross.v[0] = (br_scalar)PhysicsJointScalar(x);
+        cross.v[1] = (br_scalar)PhysicsJointScalar(y);
+        cross.v[2] = (br_scalar)PhysicsJointScalar(z);
+        PhysicsJointAddVelocity(&object->omega.v[0], PartnerReverseDivideScalars(&object->I.v[0], &cross.v[0]));
+        PhysicsJointAddVelocity(&object->omega.v[1], PartnerReverseDivideScalars(&object->I.v[1], &cross.v[1]));
+        PhysicsJointAddVelocity(&object->omega.v[2], PartnerReverseDivideScalars(&object->I.v[2], &cross.v[2]));
+    }
+}
+
+static void C2_HOOK_CDECL ApplicationHinged(tPhysics_object* object, br_vector3* angular, br_vector3* linear, tPhysics_object* partner, br_vector3* partner_angular, br_vector3* partner_linear, br_scalar impulse, int second) {
+    ApplicationScaleAdd(angular, impulse, &object->omega);
+    ApplicationScaleAdd(partner_angular, impulse, &partner->omega);
+    if (second) {
+        linear->v[0] = (br_scalar)PhysicsJointScalar((double)linear->v[0] * impulse);
+        linear->v[1] = (br_scalar)PhysicsJointScalar((double)linear->v[1] * impulse);
+        linear->v[2] = (br_scalar)PhysicsJointScalar((double)linear->v[2] * impulse);
+        PhysicsJointAddVelocity(&object->velocity_car_space.v[0], linear->v[0]);
+        PhysicsJointAddVelocity(&object->velocity_car_space.v[1], linear->v[1]);
+        PhysicsJointAddVelocity(&object->velocity_car_space.v[2], linear->v[2]);
+    } else {
+        ApplicationScaleAdd(linear, impulse, &object->velocity_car_space);
+    }
+    ApplicationWorldAdd(object, linear);
+    ApplicationScaleAdd(partner_linear, impulse, &partner->velocity_car_space);
+    ApplicationWorldAdd(partner, partner_linear);
+}
+
+// FUNCTION: CARMA2_HW 0x004b7960
+void C2_HOOK_FAKE_THISCALL ApplySingleForce(tPhysics_joint_force* record, undefined4 unused, br_scalar impulse) {
+    tPhysics_object* a;
+    tPhysics_object* b;
+    tPhysics_object* partner;
+    br_vector3 angular;
+    br_vector3 linear;
+    br_vector3 partner_angular;
+    br_vector3 partner_linear;
+    int type = record->type;
+    (void)unused;
+    if (type == 9 || impulse == 0.f || PhysicsScalarNaN(&impulse)) {
+        return;
+    }
+    a = record->object_a;
+    b = record->object_b;
+    if (type == 11) {
+        partner = SetUpTorqueHingePartners(&angular, &linear, &partner_angular, &partner_linear, &record->direction_a, a);
+        ApplicationScaleAdd(&angular, impulse, &a->omega);
+        if (partner != NULL) {
+            ApplicationScaleAdd(&linear, impulse, &a->velocity_car_space);
+            BrMatrix34ApplyV(&a->v, &a->velocity_car_space, &a->transform_matrix);
+            ApplicationScaleAdd(&partner_linear, impulse, &partner->velocity_car_space);
+            BrMatrix34ApplyV(&partner->v, &partner->velocity_car_space, &partner->transform_matrix);
+            ApplicationScaleAdd(&partner_angular, impulse, &partner->omega);
+        }
+        if (b != NULL) {
+            partner = SetUpTorqueHingePartners(&angular, &linear, &partner_angular, &partner_linear, &record->direction_b, b);
+            impulse = -impulse;
+            ApplicationScaleAdd(&angular, impulse, &b->omega);
+            if (partner != NULL) {
+                ApplicationScaleAdd(&linear, impulse, &b->velocity_car_space);
+                BrMatrix34ApplyV(&b->v, &b->velocity_car_space, &b->transform_matrix);
+                ApplicationScaleAdd(&partner_linear, impulse, &partner->velocity_car_space);
+                BrMatrix34ApplyV(&partner->v, &partner->velocity_car_space, &partner->transform_matrix);
+                ApplicationScaleAdd(&partner_angular, impulse, &partner->omega);
+            }
+        }
+        return;
+    }
+    if (ForcePointerAt(a, 0x1e4) == 0) {
+        ApplicationDirect(record, a, impulse, 0);
+    } else {
+        SetUpForce(&angular, &linear, &record->point_a, &record->direction_a, a);
+        partner = SetUpHingePartners(&angular, &linear, &partner_angular, &partner_linear, a);
+        ApplicationHinged(a, &angular, &linear, partner, &partner_angular, &partner_linear, impulse, 0);
+    }
+    if (b != NULL && record->type != 14) {
+        if (ForcePointerAt(b, 0x1e4) != 0) {
+            SetUpForce(&angular, &linear, &record->point_b, &record->direction_b, b);
+            partner = SetUpHingePartners(&angular, &linear, &partner_angular, &partner_linear, b);
+            impulse = -impulse;
+            ApplicationHinged(b, &angular, &linear, partner, &partner_angular, &partner_linear, impulse, 1);
+        } else {
+            ApplicationDirect(record, b, -impulse, 1);
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004b8cf0
+void C2_HOOK_FASTCALL RedoQuickHingeVelocities(tPhysics_object* object) {
+    tPhysics_object* partner = (tPhysics_object*)ForcePointerAt((void*)ForcePointerAt(object, 0x1e4), 4);
+    tPhysics_object* root = object->field_0x230;
+    tPhysics_joint_force records[3];
+    tPhysics_joint_force* pointers[3];
+    br_scalar matrix[9];
+    br_vector3 velocity;
+    br_vector3 coefficients;
+    void* saved_root;
+    void* saved_object;
+    int i;
+    if (partner != root) {
+        root = object;
+        object = partner;
+    }
+    CreateJointForce(object, root, &records[0], &object->physics_joint1->hinge_axis);
+    CreateJointTorque(object, root, &records[1], &object->physics_joint1->hinge_axis2);
+    CreateJointTorque(object, root, &records[2], &object->physics_joint1->hinge_axis3);
+    for (i = 0; i < 3; i++) {
+        pointers[i] = &records[i];
+    }
+    saved_root = (void*)ForcePointerAt(root, 0x1e4);
+    saved_object = (void*)ForcePointerAt(object, 0x1e4);
+    *(void**)((tU8*)object + 0x1e4) = NULL;
+    *(void**)((tU8*)root + 0x1e4) = NULL;
+    MakeMatrix(matrix, 3, pointers, 3);
+    DRMatrix33Inverse((br_scalar*)((tU8*)saved_object + 8), matrix);
+    MakeJointVelocitiesVector(velocity.v, pointers, 3);
+    BrMatrix34ApplyV(&coefficients, &velocity, (br_matrix34*)((tU8*)saved_object + 8));
+    for (i = 0; i < 3; i++) {
+        ApplySingleForce(pointers[i], 0, coefficients.v[i]);
+    }
+    *(void**)((tU8*)object + 0x1e4) = saved_object;
+    *(void**)((tU8*)root + 0x1e4) = saved_root;
+}
+
+static tPhysics_joint* C2_HOOK_CDECL ApplicationJoint(tPhysics_object* object, int secondary) {
+    return (tPhysics_joint*)ForcePointerAt(object, secondary ? 0x18c : 0x188);
+}
+
+/* Unlike CreateJointTorque, the inlined constructors reload the joint pointer
+ * at each source load. Record storage may overlap the object's joint pointer. */
+static void C2_HOOK_CDECL ApplicationInlineTorque(tPhysics_object* object, tPhysics_object* root, tPhysics_joint_force* record, unsigned axis) {
+    br_vector3 world;
+    int i;
+    record->field_0 = 0;
+    record->object_a = object;
+    record->object_b = root;
+    for (i = 0; i < 3; i++) {
+        PhysicsSubtractScalar(&record->point_a.v[i], &ApplicationJoint(object, 0)->field_0x08.v[i], &object->cmpos.v[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        PhysicsSubtractScalar(&record->point_b.v[i], &ApplicationJoint(object, 0)->field_0x14.v[i], &root->cmpos.v[i]);
+    }
+    for (i = 0; i < 3; i++) {
+        PhysicsCopyWord(&record->direction_a.v[i], (tU8*)ApplicationJoint(object, 0) + axis + 4*i);
+    }
+    BrMatrix34ApplyV(&world, &record->direction_a, &object->transform_matrix);
+    BrMatrix34TApplyV(&record->direction_b, &world, &root->transform_matrix);
+    record->type = 11;
+}
+
+static void C2_HOOK_CDECL ApplicationSecondary(tPhysics_object* object, tPhysics_joint_force* record, unsigned axis, int kind, int point) {
+    int i;
+    record->field_0 = 0;
+    record->object_a = object;
+    record->object_b = NULL;
+    record->field_c = 0;
+    if (point) {
+        for (i = 0; i < 3; i++) {
+            PhysicsSubtractScalar(&record->point_a.v[i], &ApplicationJoint(object, 1)->field_0x08.v[i], &object->cmpos.v[i]);
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        PhysicsCopyWord(&record->direction_a.v[i], (tU8*)ApplicationJoint(object, 1) + axis + 4*i);
+    }
+    record->type = kind;
+}
+
+// FUNCTION: CARMA2_HW 0x004b8350
+int C2_HOOK_FASTCALL AllocateObjectWorkspace(tPhysics_object* object, tPhysics_joint_force* output) {
+    tPhysics_joint* joint = ApplicationJoint(object, 0);
+    tPhysics_object* root;
+    tPhysics_object* partner;
+    tPhysics_object* child;
+    tU8* workspace;
+    br_matrix34 inverse;
+    br_vector3 axis;
+    br_vector3 temp;
+    br_vector3 world;
+    br_vector3 response;
+    br_vector3 cross;
+    double projection;
+    double high;
+    int count = 0;
+    int i;
+    int added;
+    int type;
+    if (joint != NULL && joint->type != 0 && !(object->flags & 0x400)) {
+        root = object->field_0x230;
+        if (joint->type == 4) {
+            CreateJointForce(object, root, output, &joint->hinge_axis2);
+            CreateJointForce(object, root, output + 1, &ApplicationJoint(object, 0)->hinge_axis3);
+            output += 2;
+            count = 2;
+        } else {
+            for (i = 0; i < 3; i++) {
+                axis.v[0] = axis.v[1] = axis.v[2] = 0.f;
+                axis.v[i] = 1.f;
+                CreateJointForce(object, root, output, &axis);
+                output++;
+            }
+            count = 3;
+        }
+        type = ApplicationJoint(object, 0)->type;
+        switch (type) {
+        case 1:
+            ApplicationInlineTorque(object, root, output, 0x20);
+            ApplicationInlineTorque(object, root, output + 1, 0x2c);
+            output += 2;
+            count += 2;
+            break;
+        case 2:
+            ApplicationInlineTorque(object, root, output, 0x20);
+            output++;
+            count++;
+            break;
+        case 3:
+            break;
+        case 4:
+            partner = object->field_0x230;
+            workspace = GetPhysicsScratchPointer(208);
+            IncreasePhysicsScratchPointer(208);
+            *(void**)((tU8*)object + 0x1e4) = workspace;
+            *(void**)((tU8*)partner + 0x1e4) = workspace + 104;
+            *(tU32*)ForcePointerAt(object, 0x1e4) = 0;
+            *(tPhysics_object**)(ForcePointerAt(object, 0x1e4) + 4) = partner;
+            *(tU32*)ForcePointerAt(partner, 0x1e4) = 0;
+            *(tPhysics_object**)(ForcePointerAt(partner, 0x1e4) + 4) = object;
+            partner = (tPhysics_object*)ForcePointerAt((void*)ForcePointerAt(object, 0x1e4), 4);
+            BrMatrix34LPInverse(&inverse, &object->transform_matrix);
+            BrMatrix34Mul((br_matrix34*)(ForcePointerAt(object, 0x1e4) + 0x38), &partner->transform_matrix, &inverse);
+            BrMatrix34LPInverse((br_matrix34*)(ForcePointerAt(partner, 0x1e4) + 0x38), (br_matrix34*)(ForcePointerAt(object, 0x1e4) + 0x38));
+            *(tU32*)ForcePointerAt(object, 0x1e4) = 1;
+            *(tU32*)ForcePointerAt(partner, 0x1e4) = 1;
+            RedoQuickHingeVelocities(object);
+            joint = ApplicationJoint(object, 0);
+            projection = PhysicsJointSum(PhysicsJointSum(PhysicsJointProductMemory(&joint->parent_bone_axis.v[1], &root->omega.v[1]), PhysicsJointProductMemory(&root->omega.v[0], &joint->parent_bone_axis.v[0])), PhysicsJointProductMemory(&joint->parent_bone_axis.v[2], &root->omega.v[2]));
+            for (i = 0; i < 3; i++) {
+                temp.v[i] = (br_scalar)PhysicsJointScalar(PartnerMultiplyScalarWide(&joint->parent_bone_axis.v[i], projection));
+            }
+            for (i = 0; i < 3; i++) {
+                PhysicsSubtractScalar(&temp.v[i], &root->omega.v[i], &temp.v[i]);
+            }
+            BrMatrix34ApplyV(&world, &temp, &root->transform_matrix);
+            BrMatrix34TApplyV(&temp, &world, &object->transform_matrix);
+            joint = ApplicationJoint(object, 0);
+            projection = PhysicsJointSum(PhysicsJointSum(PhysicsJointProduct(&object->omega.v[0], &joint->hinge_axis.v[0]), PhysicsJointProductMemory(&joint->hinge_axis.v[2], &object->omega.v[2])), PhysicsJointProductMemory(&joint->hinge_axis.v[1], &object->omega.v[1]));
+            object->omega.v[0] = (br_scalar)PhysicsJointScalar(PartnerMultiplyScalarWide(&joint->hinge_axis.v[0], projection));
+            object->omega.v[1] = (br_scalar)PhysicsJointScalar(PartnerMultiplyScalarWide(&joint->hinge_axis.v[1], projection));
+            high = PartnerMultiplyScalarWide(&joint->hinge_axis.v[2], projection);
+            PhysicsJointAddVelocity(&object->omega.v[0], temp.v[0]);
+            PhysicsJointAddVelocity(&object->omega.v[1], temp.v[1]);
+            object->omega.v[2] = (br_scalar)PhysicsJointScalar(high);
+            PhysicsJointAddVelocity(&object->omega.v[2], temp.v[2]);
+            for (i = 0; i < 3; i++) {
+                PhysicsSubtractScalar(&temp.v[i], &joint->field_0x14.v[i], &root->cmpos.v[i]);
+            }
+            cross.v[0] = (br_scalar)PhysicsJointScalar((double)root->omega.v[1] * temp.v[2] - (double)root->omega.v[2] * temp.v[1]);
+            cross.v[1] = (br_scalar)PhysicsJointScalar((double)root->omega.v[2] * temp.v[0] - (double)root->omega.v[0] * temp.v[2]);
+            cross.v[2] = (br_scalar)PhysicsJointScalar((double)root->omega.v[0] * temp.v[1] - (double)root->omega.v[1] * temp.v[0]);
+            BrMatrix34ApplyV(&temp, &cross, &root->transform_matrix);
+            for (i = 0; i < 3; i++) {
+                temp.v[i] = (br_scalar)PhysicsJointScalar((double)root->v.v[i] + temp.v[i]);
+            }
+            BrMatrix34TApplyV(&response, &temp, &object->transform_matrix);
+            joint = ApplicationJoint(object, 0);
+            for (i = 0; i < 3; i++) {
+                PhysicsSubtractScalar(&temp.v[i], &joint->field_0x08.v[i], &object->cmpos.v[i]);
+            }
+            cross.v[0] = (br_scalar)PhysicsJointScalar((double)object->omega.v[1] * temp.v[2] - (double)object->omega.v[2] * temp.v[1]);
+            cross.v[1] = (br_scalar)PhysicsJointScalar((double)object->omega.v[2] * temp.v[0] - (double)object->omega.v[0] * temp.v[2]);
+            cross.v[2] = (br_scalar)PhysicsJointScalar((double)object->omega.v[0] * temp.v[1] - (double)object->omega.v[1] * temp.v[0]);
+            for (i = 0; i < 3; i++) {
+                PhysicsSubtractScalar(&response.v[i], &response.v[i], &cross.v[i]);
+            }
+            high = PhysicsJointSum(PhysicsJointSum(PhysicsJointProductMemory(&joint->hinge_axis.v[2], &response.v[2]), PhysicsJointProductMemory(&joint->hinge_axis.v[0], &response.v[0])), PhysicsJointProductMemory(&joint->hinge_axis.v[1], &response.v[1]));
+            projection = PartnerSubtractWide(high, PhysicsJointSum(PhysicsJointSum(PhysicsJointProduct(&object->velocity_car_space.v[2], &joint->hinge_axis.v[2]), PhysicsJointProduct(&object->velocity_car_space.v[0], &joint->hinge_axis.v[0])), PhysicsJointProduct(&object->velocity_car_space.v[1], &joint->hinge_axis.v[1])));
+            for (i = 0; i < 3; i++) {
+                temp.v[i] = (br_scalar)PhysicsJointScalar(PartnerMultiplyScalarWide(&joint->hinge_axis.v[i], projection));
+            }
+            for (i = 0; i < 3; i++) {
+                PhysicsJointAddVelocity(&object->velocity_car_space.v[i], temp.v[i]);
+            }
+            BrMatrix34ApplyV(&object->v, &object->velocity_car_space, &object->transform_matrix);
+            break;
+        default:
+            PhysicsError((tPhysicsError)5, NULL);
+        }
+    }
+    joint = ApplicationJoint(object, 1);
+    if (joint != NULL) {
+        if (joint->type == 5) {
+            ApplicationSecondary(object, output, 0x20, 10, 0);
+            ApplicationSecondary(object, output + 1, 0x2c, 10, 0);
+            output += 2;
+            count += 2;
+        } else {
+            for (i = 0; i < 3; i++) {
+                output->field_0 = 0;
+                output->object_a = object;
+                output->object_b = NULL;
+                output->field_c = 0;
+                PhysicsSubtractScalar(&output->point_a.v[0], &ApplicationJoint(object, 1)->field_0x08.v[0], &object->cmpos.v[0]);
+                PhysicsSubtractScalar(&output->point_a.v[1], &ApplicationJoint(object, 1)->field_0x08.v[1], &object->cmpos.v[1]);
+                PhysicsSubtractScalar(&output->point_a.v[2], &ApplicationJoint(object, 1)->field_0x08.v[2], &object->cmpos.v[2]);
+                output->direction_a.v[0] = output->direction_a.v[1] = output->direction_a.v[2] = 0.f;
+                output->direction_a.v[i] = 1.f;
+                output->type = 10;
+                output++;
+            }
+            count += 3;
+            type = ApplicationJoint(object, 1)->type;
+            if (type == 2) {
+                ApplicationSecondary(object, output, 0x20, 11, 1);
+                output++;
+                count++;
+            } else if (type != 1 && type != 3) {
+                PhysicsError((tPhysicsError)5, NULL);
+            }
+        }
+    }
+    for (child = object->child; child != NULL; child = child->next) {
+        added = AllocateObjectWorkspace(child, output);
+        count = (int)((tU32)count + (tU32)added);
+        output = (tPhysics_joint_force*)((uintptr_t)output + (tU32)added * 96u);
+    }
+    return count;
+}
+
+static br_scalar* C2_HOOK_CDECL VelocityField(void* base,unsigned offset) {return (br_scalar*)((tU8*)base+offset);}
+static double C2_HOOK_CDECL VelocityRead(const void* base,unsigned offset) {return *(const volatile br_scalar*)((const tU8*)base+offset);}
+static uintptr_t C2_HOOK_CDECL VelocityPointer(const void* base,unsigned offset) {return *(const volatile tU32*)((const tU8*)base+offset);}
+static br_scalar C2_HOOK_CDECL VelocityScalar(double value) {volatile union {br_scalar f;tU32 u;} stored;union {br_scalar f;tU32 u;} result;stored.f=(br_scalar)value;result.u=stored.u;return result.f;}
+/* MSVC5 reverses a scalar comparison and drops unordered for !(value >= 0).
+ * Keep the original FCOMP C0 test for the demonstrated nonfinite cases. */
+static int C2_HOOK_CDECL VelocityBelowOrUnordered(double value,double threshold) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+ unsigned status;
+ __asm {
+ fld qword ptr value
+ fcomp qword ptr threshold
+ fnstsw ax
+ movzx eax,ax
+ mov status,eax
+ }
+ return (status & 0x100)!=0;
+#else
+ return !(value >= threshold);
+#endif
+}
+static int C2_HOOK_CDECL VelocityGreater(double value,double threshold) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+ unsigned status;
+ __asm {
+ fld qword ptr value
+ fcomp qword ptr threshold
+ fnstsw ax
+ movzx eax,ax
+ mov status,eax
+ }
+ return (status & 0x4100)==0;
+#else
+ return value > threshold;
+#endif
+}
+// FUNCTION: CARMA2_HW 0x004c03f0
+void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* object) {
+ while(object!=NULL) {
+  tU32 words[3];
+  memcpy(words,&object->rotate_omega,12);
+  memcpy(&object->omega,words,12);
+  if(object->child!=NULL)RestoreListOmega(object->child);
+  object=object->next;
+ }
+}
+/* Paired NaN physical counterexamples show modern SSE and whole-TU MSVC5
+ * promote the raw matrix operand before subtraction. Keep original FLD source
+ * / FSUB matrix operand form on both Microsoft x86 compilers. */
+static br_scalar C2_HOOK_CDECL VelocitySubtractScalar(const br_scalar* source,const br_scalar* translation) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+ br_scalar result;
+ __asm {
+ mov eax,source
+ fld dword ptr [eax]
+ mov eax,translation
+ fsub dword ptr [eax]
+ fstp dword ptr result
+ }
+ return result;
+#else
+ return VelocityScalar((double)*source-*translation);
+#endif
+}
+// FUNCTION: CARMA2_HW 0x004225b0
+void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest,const br_vector3* source,const br_matrix34* matrix) {
+ br_vector3 relative;
+ relative.v[0]=VelocitySubtractScalar(&source->v[0],&matrix->m[3][0]);
+ relative.v[1]=VelocitySubtractScalar(&source->v[1],&matrix->m[3][1]);
+ relative.v[2]=VelocitySubtractScalar(&source->v[2],&matrix->m[3][2]);
+ BrMatrix34TApplyV(dest,&relative,matrix);
+}
+static const br_scalar VelocityConstant58a768 = 0.0f;
+static const double VelocityConstant58a798 = 0.01;
+static const double VelocityConstant58a7a0 = 0.001;
+static const br_scalar VelocityConstant58a7c8 = 25.0f;
+static const double VelocityConstant58a7d8 = -1.001;
+static const double VelocityConstant58a7e0 = 25.0;
+static const br_scalar VelocityConstant58a800 = 1.0f;
+static const br_scalar VelocityConstant58a804 = 0.10000000149011612f;
+static const double VelocityConstant58a830 = 0.1;
+static const double VelocityConstant58a838 = -0.1;
+static const double VelocityConstant58a840 = 0.0099;
+// FUNCTION: CARMA2_HW 0x004c0430
+int C2_HOOK_FASTCALL MakeVelocitiesVector2(br_scalar* pOutput, tPhysics_joint_force* const* pForces, int pCapacity, int pCount) {
+  /* The public pointers describe the real ABI. Raw word cursors preserve
+   * output/pointer-array aliases and opaque field_0/field_10 scalar reads;
+   * every original pointer-array reload remains volatile. */
+  tU32* output_words = (tU32*)pOutput;
+  tU32* force_words = (tU32*)pForces;
+  int capacity = pCapacity;
+  int count = pCount;
+  uintptr_t force_address;
+  uintptr_t object_a_address;
+  uintptr_t object_b_address;
+  float *force_fields;
+  double value;
+  double minimum;
+  int has_velocity;
+  int has_separation;
+  tU32 *force_cursor;
+  intptr_t remaining;
+  intptr_t cursor_delta;
+  intptr_t output_delta;
+  intptr_t current_force_address;
+  tU32 *output_tail;
+  br_vector3 projected,delta,point,other;
+
+  has_velocity = 0;
+  if (count < capacity) {
+    output_tail = output_words + count;
+    for (capacity = capacity - count; capacity != 0; capacity = capacity + -1) {
+      *(volatile tU32*)output_tail = 0;
+      output_tail = output_tail + 1;
+    }
+  }
+  if (0 < count) {
+    output_delta = (intptr_t)output_words - (intptr_t)force_words;
+    force_cursor = force_words;
+    remaining = count;
+    do {
+      force_address = *(const volatile tU32*)force_cursor;
+      object_a_address = *(int *)(force_address + 4);
+      if (*(int *)(force_address + 0x5c) == 0xb) {
+        *VelocityField((void*)(output_delta+(intptr_t)force_cursor),0) = VelocityScalar(-((VelocityRead((const void*)(object_a_address + 0x74),0) * VelocityRead((const void*)(force_address + 0x2c),0) +
+              VelocityRead((const void*)(object_a_address + 0x78),0) * VelocityRead((const void*)(force_address + 0x30),0)) +
+              VelocityRead((const void*)(object_a_address + 0x7c),0) * VelocityRead((const void*)(force_address + 0x34),0)));
+        force_address = *(const volatile tU32*)force_cursor;
+        object_a_address = *(int *)(force_address + 8);
+        if (object_a_address != 0) {
+          *VelocityField((void*)(output_delta+(intptr_t)force_cursor),0) = VelocityScalar(((VelocityRead((const void*)(object_a_address + 0x7c),0) * VelocityRead((const void*)(force_address + 0x40),0) +
+               VelocityRead((const void*)(object_a_address + 0x74),0) * VelocityRead((const void*)(force_address + 0x38),0)) +
+               VelocityRead((const void*)(object_a_address + 0x78),0) * VelocityRead((const void*)(force_address + 0x3c),0)) +
+               VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0));
+        }
+        if (VelocityConstant58a7a0 <= VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0)) {
+          has_velocity = 1;
+        }
+        else {
+          *(volatile tU32 *)(output_delta + (intptr_t)force_cursor) = 0x3a83126f;
+        }
+      }
+      else {
+        projected.v[0] = VelocityScalar(VelocityRead((const void*)(object_a_address + 0x78),0) * VelocityRead((const void*)(force_address + 0x1c),0) -
+                   VelocityRead((const void*)(force_address + 0x18),0) * VelocityRead((const void*)(object_a_address + 0x7c),0));
+        projected.v[0] = VelocityScalar(VelocityRead((const void*)(object_a_address + 0x1a8),0) + (double)projected.v[0]);
+        projected.v[1] = VelocityScalar(VelocityRead((const void*)(object_a_address + 0x7c),0) * VelocityRead((const void*)(force_address + 0x14),0) -
+                   VelocityRead((const void*)(force_address + 0x1c),0) * VelocityRead((const void*)(object_a_address + 0x74),0));
+        projected.v[1] = VelocityScalar(VelocityRead((const void*)(object_a_address + 0x1ac),0) + (double)projected.v[1]);
+        projected.v[2] = VelocityScalar(VelocityRead((const void*)(object_a_address + 0x74),0) * VelocityRead((const void*)(force_address + 0x18),0) -
+                   VelocityRead((const void*)(force_address + 0x14),0) * VelocityRead((const void*)(object_a_address + 0x78),0));
+        projected.v[2] = VelocityScalar(VelocityRead((const void*)(object_a_address + 0x1b0),0) + (double)projected.v[2]);
+        *VelocityField((void*)(output_delta+(intptr_t)force_cursor),0) = VelocityScalar(-((VelocityRead((const void*)(force_address + 0x2c),0) * projected.v[0] +
+              VelocityRead((const void*)(force_address + 0x30),0) * projected.v[1]) + VelocityRead((const void*)(force_address + 0x34),0) * projected.v[2]));
+        force_address = *(const volatile tU32*)force_cursor;
+        object_b_address = *(int *)(force_address + 8);
+        if (object_b_address != 0) {
+          projected.v[0] = VelocityScalar(VelocityRead((const void*)(object_b_address + 0x78),0) * VelocityRead((const void*)(force_address + 0x28),0) -
+                   VelocityRead((const void*)(force_address + 0x24),0) * VelocityRead((const void*)(object_b_address + 0x7c),0));
+        projected.v[0] = VelocityScalar(VelocityRead((const void*)(object_b_address + 0x1a8),0) + (double)projected.v[0]);
+          projected.v[1] = VelocityScalar(VelocityRead((const void*)(object_b_address + 0x7c),0) * VelocityRead((const void*)(force_address + 0x20),0) -
+                   VelocityRead((const void*)(force_address + 0x28),0) * VelocityRead((const void*)(object_b_address + 0x74),0));
+        projected.v[1] = VelocityScalar(VelocityRead((const void*)(object_b_address + 0x1ac),0) + (double)projected.v[1]);
+          projected.v[2] = VelocityScalar(VelocityRead((const void*)(object_b_address + 0x74),0) * VelocityRead((const void*)(force_address + 0x24),0) -
+                   VelocityRead((const void*)(force_address + 0x20),0) * VelocityRead((const void*)(object_b_address + 0x78),0));
+        projected.v[2] = VelocityScalar(VelocityRead((const void*)(object_b_address + 0x1b0),0) + (double)projected.v[2]);
+          *VelocityField((void*)(output_delta+(intptr_t)force_cursor),0) = VelocityScalar(((VelocityRead((const void*)(force_address + 0x40),0) * projected.v[2] +
+               VelocityRead((const void*)(force_address + 0x38),0) * projected.v[0]) + VelocityRead((const void*)(force_address + 0x3c),0) * projected.v[1]) +
+               VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0));
+        }
+        if (VelocityConstant58a798 < VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0)) {
+          has_velocity = 1;
+        }
+        if (VelocityConstant58a830 < VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0)) {
+          value = VelocityConstant58a830 - (VelocityRead((const void*)*(const volatile tU32*)force_cursor,0) - VelocityConstant58a800);
+          if (VelocityGreater(value,VelocityConstant58a800)) {
+            value = VelocityConstant58a800;
+          }
+          if (!(value >= VelocityConstant58a830)) {
+            value = VelocityConstant58a804;
+          }
+          *VelocityField((void*)(output_delta+(intptr_t)force_cursor),0) = VelocityScalar(value * (VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0) - VelocityConstant58a830) -
+               VelocityConstant58a838);
+        }
+        if (VelocityBelowOrUnordered(VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0),VelocityConstant58a768)) {
+          *(volatile tU32 *)(output_delta + (intptr_t)force_cursor) = 0;
+        }
+        value = VelocityConstant58a798 - VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0) * VelocityConstant58a7d8;
+        *VelocityField((void*)(output_delta+(intptr_t)force_cursor),0) = VelocityScalar(value);
+        if (((object_b_address == 0) || (*(char *)(object_b_address + 0x1df) != '\0')) &&
+           (*(char *)(object_a_address + 0x1df) != '\0')) {
+          *VelocityField((void*)(output_delta+(intptr_t)force_cursor),0) = VelocityScalar((double)VelocityRead((const void*)(output_delta+(intptr_t)force_cursor),0) - VelocityConstant58a840);
+        }
+      }
+      force_cursor = force_cursor + 1;
+      remaining = remaining + -1;
+    } while (remaining != 0);
+  }
+  if (!has_velocity) {
+    has_separation = 0;
+    if (0 < count) {
+      cursor_delta = (intptr_t)output_words - (intptr_t)force_words;
+      capacity = count;
+      force_cursor = force_words;
+      do {
+        force_fields = (float *)*(const volatile tU32*)force_cursor;
+        if (*(const tU32*)((tU8*)force_fields+0x5c) == 11) {
+          value = (VelocityConstant58a7a0 - *force_fields) * VelocityConstant58a7e0;
+          minimum = VelocityConstant58a7a0;
+          *VelocityField((void*)((intptr_t)force_cursor+cursor_delta),0) = VelocityScalar(value);
+          if (minimum <= value) {
+            has_velocity = 1;
+          }
+          else {
+            *(volatile tU32 *)((intptr_t)force_cursor + cursor_delta) = 0x3a83126f;
+          }
+        }
+        else {
+          if (*(const tU32*)((tU8*)force_fields+8) == 0) {
+            point.v[0] = VelocityScalar(force_fields[5] + VelocityRead((const void*)VelocityPointer(force_fields,4),0x14));
+            point.v[1] = VelocityScalar(force_fields[6] + VelocityRead((const void*)VelocityPointer(force_fields,4),0x18));
+            point.v[2] = VelocityScalar(force_fields[7] + VelocityRead((const void*)VelocityPointer(force_fields,4),0x1c));
+            BrMatrix34ApplyP(&projected,&point,(const br_matrix34*)(VelocityPointer((const void*)VelocityPointer(force_fields,4),0)+0x2c));
+            DrMatrix34ApplyLPInverse(&delta,&projected,(const br_matrix34*)(VelocityPointer((const void*)VelocityPointer(force_cursor,0),4)+0x8c));
+            delta.v[0] = VelocityScalar((double)delta.v[0] - point.v[0]);
+            delta.v[1] = VelocityScalar((double)delta.v[1] - point.v[1]);
+            delta.v[2] = VelocityScalar((double)delta.v[2] - point.v[2]);
+            current_force_address = *(const volatile tU32*)force_cursor;
+            *VelocityField((void*)((intptr_t)force_cursor+cursor_delta),0) = VelocityScalar(VelocityConstant58a798 -
+                 ((VelocityRead((const void*)(current_force_address + 0x30),0) * delta.v[1] +
+                 VelocityRead((const void*)(current_force_address + 0x34),0) * delta.v[2]) + VelocityRead((const void*)(current_force_address + 0x2c),0) * delta.v[0]) *
+                 VelocityConstant58a7c8);
+          }
+          else {
+            point.v[0] = VelocityScalar(force_fields[5] + VelocityRead((const void*)VelocityPointer(force_fields,4),0x14));
+            point.v[1] = VelocityScalar(force_fields[6] + VelocityRead((const void*)VelocityPointer(force_fields,4),0x18));
+            point.v[2] = VelocityScalar(force_fields[7] + VelocityRead((const void*)VelocityPointer(force_fields,4),0x1c));
+            BrMatrix34ApplyP(&projected,&point,(const br_matrix34*)(VelocityPointer(force_fields,4)+0x8c));
+            DrMatrix34ApplyLPInverse(&delta,&projected,(const br_matrix34*)(VelocityPointer((const void*)VelocityPointer(force_cursor,0),8)+0x8c));
+            BrMatrix34ApplyP(&projected,&point,(const br_matrix34*)(VelocityPointer((const void*)(VelocityPointer((const void*)VelocityPointer(force_cursor,0),4)),0)+0x2c));
+            DrMatrix34ApplyLPInverse(&other,&projected,(const br_matrix34*)(VelocityPointer((const void*)VelocityPointer((const void*)VelocityPointer(force_cursor,0),8),0)+0x2c));
+            delta.v[0] = VelocityScalar((double)other.v[0] - delta.v[0]);
+            current_force_address = *(const volatile tU32*)force_cursor;
+            delta.v[1] = VelocityScalar((double)other.v[1] - delta.v[1]);
+            delta.v[2] = VelocityScalar((double)other.v[2] - delta.v[2]);
+            *VelocityField((void*)((intptr_t)force_cursor+cursor_delta),0) = VelocityScalar(-(((VelocityRead((const void*)(current_force_address + 0x38),0) * delta.v[0] +
+                   VelocityRead((const void*)(current_force_address + 0x3c),0) * delta.v[1]) + VelocityRead((const void*)(current_force_address + 0x40),0) * delta.v[2]) *
+                  VelocityConstant58a7c8));
+            current_force_address = *(const volatile tU32*)force_cursor;
+            if (*(int *)(current_force_address + 0x5c) == 5) {
+              BrMatrix34ApplyV(&projected,(const br_vector3*)(current_force_address+0x38),(const br_matrix34*)(VelocityPointer((const void*)current_force_address,8)+0x8c));
+              BrMatrix34TApplyV(&other,&projected,(const br_matrix34*)(VelocityPointer((const void*)VelocityPointer((const void*)VelocityPointer(force_cursor,0),8),0)+0x2c));
+              value = -((((double)other.v[0] * delta.v[0] + (double)other.v[1] * delta.v[1]) + (double)other.v[2] * delta.v[2]) *
+                       VelocityConstant58a7c8);
+              if (VelocityGreater(value,VelocityRead((const void*)((intptr_t)force_cursor+cursor_delta),0))) {
+                *VelocityField((void*)((intptr_t)force_cursor+cursor_delta),0) = VelocityScalar(value);
+              }
+            }
+            if ((VelocityConstant58a768 < VelocityRead((const void*)(*(const volatile tU32*)force_cursor + 0x10),0)) &&
+               (value = VelocityRead((const void*)(*(const volatile tU32*)force_cursor + 0x10),0) * VelocityConstant58a7c8,
+               VelocityGreater(value,VelocityRead((const void*)((intptr_t)force_cursor+cursor_delta),0)))) {
+              *VelocityField((void*)((intptr_t)force_cursor+cursor_delta),0) = VelocityScalar(value);
+            }
+          }
+          if (!(VelocityRead((const void*)((intptr_t)force_cursor+cursor_delta),0) > VelocityConstant58a830)) {
+            if (VelocityBelowOrUnordered(VelocityRead((const void*)((intptr_t)force_cursor+cursor_delta),0),VelocityConstant58a768)) {
+              *(volatile tU32 *)((intptr_t)force_cursor + cursor_delta) = 0;
+            }
+          }
+          else {
+            value = VelocityConstant58a830 - (VelocityRead((const void*)*(const volatile tU32*)force_cursor,0) - VelocityConstant58a800);
+            if (VelocityGreater(value,VelocityConstant58a800)) {
+              value = VelocityConstant58a800;
+            }
+            if (!(value >= VelocityConstant58a830)) {
+              value = VelocityConstant58a804;
+            }
+            *VelocityField((void*)((intptr_t)force_cursor+cursor_delta),0) = VelocityScalar(value * (VelocityRead((const void*)((intptr_t)force_cursor+cursor_delta),0) - VelocityConstant58a830) -
+                 VelocityConstant58a838);
+          }
+          if (VelocityConstant58a7a0 < VelocityRead((const void*)((intptr_t)force_cursor+cursor_delta),0)) {
+            has_separation = 1;
+          }
+          *VelocityField((void*)((intptr_t)force_cursor+cursor_delta),0) = VelocityScalar(VelocityConstant58a798 - VelocityRead((const void*)((intptr_t)force_cursor+cursor_delta),0) * VelocityConstant58a7d8);
+        }
+        force_cursor = force_cursor + 1;
+        capacity = capacity + -1;
+      } while (capacity != 0);
+    }
+    if ((!has_separation) && (0 < count)) {
+      cursor_delta = (intptr_t)force_words - (intptr_t)output_words;
+      do {
+        if (*(int *)(*(int *)(cursor_delta + (intptr_t)output_words) + 0x5c) != 0xb) {
+          *(volatile tU32*)output_words = 0x3d4ccccd;
+        }
+        output_words = output_words + 1;
+        count = count + -1;
+      } while (count != 0);
+    }
+  }
+  return !has_velocity;
+}
 
 // RestoreGroupOmegas
-
-// MakeVelocitiesVector2
 
 // MakeVelocitiesVector
 
@@ -2491,8 +3330,6 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pObject) {
 
 // RQExpand
 
-// RQSingleExpand
-
 /* RQ arithmetic preserves the original scalar spills and NaN operand order. */
 static br_scalar C2_HOOK_CDECL RQScalar(double x) {
     volatile br_scalar result = (br_scalar)x;
@@ -2587,6 +3424,74 @@ static br_scalar C2_HOOK_CDECL RQMultiplyScalars(const br_scalar* left, const vo
 #error RQMultiplyScalars requires x86
 #endif
     return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004c4f40
+void C2_HOOK_FASTCALL RQSingleExpand(br_scalar* matrix, const br_scalar* original, int size, br_scalar* orthogonal, const unsigned char* indices) {
+    br_scalar row[100];
+    br_scalar magnitude, second, second_coefficient, first_coefficient;
+    /* The original reloads the rounded head for its coefficient division. */
+    volatile br_scalar first;
+    /* Keep FABS after sqrt: GCC otherwise drops it even for negative NaNs. */
+    volatile double root;
+    br_scalar updated_row, updated_matrix;
+    double sum, maximum, diagonal, length, head, denominator;
+    int i, j;
+    if (size >= 0) {
+        for (i = 0; i <= size; i++) {
+            memcpy(&row[i], &original[100 * indices[size] + indices[i]], sizeof(br_scalar));
+        }
+    }
+    for (i = 0; i < size; i++) {
+        sum = 0.0;
+        for (j = 0; j < size; j++) {
+            sum = RQAccumulate(sum, &orthogonal[i * 100 + j], &row[j]);
+        }
+        matrix[size * 100 + i] = RQScalar(sum);
+    }
+    orthogonal[size * 101] = 1.0f;
+    for (i = 0; i < size; i++) {
+        orthogonal[i * 100 + size] = 0.0f;
+        orthogonal[size * 100 + i] = 0.0f;
+    }
+    for (i = 0; i < size; i++) {
+        magnitude = RQScalar(fabs(row[i]));
+        matrix[i * 100 + size] = 0.0f;
+        if (magnitude == 0.0f || RQNaN(magnitude)) {
+            continue;
+        }
+        maximum = fabs(matrix[i * 101]);
+        if (magnitude > maximum) {
+            maximum = magnitude;
+        }
+        second = RQScalar((double)row[i] / maximum);
+        diagonal = (double)matrix[i * 101] / maximum;
+        root = sqrt(diagonal * diagonal + (double)second * second);
+        length = fabs(root);
+        row[i] = second;
+        if (!(diagonal > 0.0)) {
+            length = -length;
+        }
+        head = PartnerAddWide(diagonal, length);
+        first = RQScalar(head);
+        denominator = head * length;
+        second_coefficient = RQScalar((double)second / denominator);
+        first_coefficient = RQScalar((double)first / denominator);
+        for (j = 0; j <= size; j++) {
+            sum = PartnerAddWide(PartnerMultiplyRawScalar(first, &orthogonal[i * 100 + j]), PartnerMultiplyRawScalar(second, &orthogonal[size * 100 + j]));
+            orthogonal[size * 100 + j] = RQScalar(PartnerReverseSubtractScalar(PartnerMultiplyWide(second_coefficient, sum), &orthogonal[size * 100 + j]));
+            orthogonal[i * 100 + j] = RQScalar(PartnerReverseSubtractScalar(PartnerMultiplyWide(first_coefficient, sum), &orthogonal[i * 100 + j]));
+        }
+        for (j = i + 1; j <= size; j++) {
+            sum = PartnerAddWide(PartnerMultiplyRawScalar(first, &matrix[j * 100 + i]), PartnerMultiplyRawScalar(second, &row[j]));
+            updated_row = RQScalar(PartnerReverseSubtractScalar(PartnerMultiplyWide(second_coefficient, sum), &row[j]));
+            updated_matrix = RQScalar(PartnerReverseSubtractScalar(PartnerMultiplyWide(first_coefficient, sum), &matrix[j * 100 + i]));
+            row[j] = updated_row;
+            matrix[j * 100 + i] = updated_matrix;
+        }
+        matrix[i * 101] = RQScalar(-PartnerMultiplyWide(length, maximum));
+    }
+    memcpy(&matrix[size * 101], &row[size], sizeof(br_scalar));
 }
 
 // FUNCTION: CARMA2_HW 0x004c5830
