@@ -666,12 +666,13 @@ void C2_HOOK_FASTCALL PDInitTimer(void) {
 // FUNCTION: CARMA2_HW 0x0051d410
 tU32 C2_HOOK_FASTCALL PDGetTotalTime(void) {
     LARGE_INTEGER perfCountValue;
-    LARGE_INTEGER delta;
+    br_uint_64 delta;
 
     if (gPerformanceCounterInitialized) {
         QueryPerformanceCounter(&perfCountValue);
-        delta.QuadPart = perfCountValue.QuadPart - gPerformanceCounterStart.QuadPart;
-        return (tU32) (delta.QuadPart / gPerformanceCounterFrequency_ms.QuadPart);
+        /* The original subtracts modulo 64 bits and calls unsigned __aulldiv. */
+        delta = (br_uint_64)perfCountValue.QuadPart - (br_uint_64)gPerformanceCounterStart.QuadPart;
+        return (tU32)(delta / (br_uint_64)gPerformanceCounterFrequency_ms.QuadPart);
     }
     return 0;
 }

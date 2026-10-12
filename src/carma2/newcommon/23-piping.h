@@ -135,7 +135,7 @@ extern int C2_HOOK_FASTCALL ARGoForwards(void);
 
 extern void C2_HOOK_FASTCALL ARService(void);
 
-// ARMainLoopStart
+extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 // ARToggleReplay
 

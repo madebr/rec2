@@ -5,6 +5,7 @@
 #include "52-errors.h"
 #include "globvars.h"
 #include "c2_string.h"
+#include "platform.h"
 
 #include <stdarg.h>
 
@@ -1024,7 +1025,11 @@ int C2_HOOK_FASTCALL ARGoForwards(void) {
 void C2_HOOK_FASTCALL ARService(void) {
 }
 
-// ARMainLoopStart
+// FUNCTION: CARMA2_HW 0x00403d40
+void C2_HOOK_FASTCALL ARMainLoopStart(void) {
+    gAction_replay_mode = 0;
+    gLast_replay_frame_time = PDGetTotalTime();
+}
 
 // ARToggleReplay
 
