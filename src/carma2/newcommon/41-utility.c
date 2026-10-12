@@ -1400,9 +1400,47 @@ void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale) {
 }
 
 // FUNCTION: CARMA2_HW 0x005162a0
-float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF) {
+double C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    double result;
 
-    return BrVector3Dot(pP, pN) - pF;
+    __asm {
+        mov ecx, pP
+        mov edx, pN
+        fld dword ptr [edx + 4]
+        fld dword ptr [edx + 8]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [ecx + 8]
+        fld dword ptr [edx]
+        fxch st(4)
+        fmulp st(2), st(0)
+        fxch st(2)
+        fmulp st(2), st(0)
+        fxch st(2)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fsub pF
+        fstp result
+    }
+    return result;
+#elif defined(__GNUC__) && defined(__i386__)
+    double result;
+
+    __asm__ volatile(
+        "flds 4(%%edx); flds 8(%%edx); flds 4(%%ecx); flds 8(%%ecx); flds (%%edx); "
+        "fxch %%st(4); fmulp %%st,%%st(2); fxch %%st(2); fmulp %%st,%%st(2); "
+        "fxch %%st(2); fmuls (%%ecx); fxch %%st(1); faddp %%st,%%st(2); "
+        "faddp %%st,%%st(1); fsubs %3; fstpl %0"
+        : "=m" (result) : "c" (pP), "d" (pN), "m" (pF)
+        : "st", "st(1)", "st(2)", "st(3)", "st(4)");
+    return result;
+#else
+    volatile double yz = (double)pP->v[1] * pN->v[1] + (double)pP->v[2] * pN->v[2];
+
+    return (yz + (double)pP->v[0] * pN->v[0]) - pF;
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00516350
