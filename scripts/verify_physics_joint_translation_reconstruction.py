@@ -108,7 +108,7 @@ def main():
  p=argparse.ArgumentParser();p.add_argument('--output',required=True,type=Path);p.add_argument('--case-index',type=int,action='append');p.add_argument('--limit',type=int);p.add_argument('--candidate-source',type=Path);p.add_argument('--recompiled',type=Path);p.add_argument('--symbols',type=Path);args=p.parse_args();assert bool(args.recompiled)==bool(args.symbols);out=args.output.resolve();out.mkdir(parents=True,exist_ok=True)
  source=ROOT/'src/carma2/newcommon/49-physics.c';matrix=ROOT/'src/brender/core/math/matrix34.c';candidate=args.candidate_source.resolve() if args.candidate_source else None;caller,physical,template=registry.literals()
  paths=[source,source.with_suffix('.h'),matrix,Path(__file__),template,Path(registry.__file__),ROOT/'src/carma2/include/rec2_types.h',ROOT/'src/carma2/hooks/c2_hooks.h']
- 
+
  if candidate:paths.append(candidate)
  if args.symbols:paths.extend([args.recompiled,args.recompiled.with_suffix('.map'),args.symbols])
  before={str(x):x.read_bytes() for x in paths};original=ROOT/'build-reference/originals/CARMA2_HW.EXE';data=original.read_bytes();assert sha(data)==HASH;nt,base,size,tab=pe(data);cs=Cs(CS_ARCH_X86,CS_MODE_32);cs.detail=True;closure=[]
