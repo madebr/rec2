@@ -7,7 +7,9 @@
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "52-errors.h"
+#include "60-phil.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
 #include "c2_math.h"
@@ -595,6 +597,38 @@ int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* object, tPhysics_shape* shape
     return count;
 }
 
+
+/* Traverse actual wall-face edges; original lexical name unknown. */
+// FUNCTION: CARMA2_HW 0x00424140
+int C2_HOOK_FASTCALL FUN_00424140(tPhysics_object* object, tPhysics_shape* shape, tPhysics_contact* contacts, int count, int unused_capacity, tPhysics_wall_workspace* workspace, void* unused) {
+    br_actor* actor;
+    br_vector3 translation;
+    tFace_ref* face;
+    tU32 flags;
+    int axis;
+    int index;
+
+    (void)unused_capacity;
+    (void)unused;
+    gPhysics_contact_679430=0;
+    PhysicsCopyWord(&actor,&object->actor);
+    BrMatrix34TApplyV(&translation,(const br_vector3*)&actor->t.t.mat.m[3],&actor->t.t.mat);
+    for(axis=0;axis<3;axis++)shape->common.field_0x1c.min.v[axis]=PhysicsScalar(PhysicsWallAddScalar(&translation.v[axis],&shape->common.field_0x1c.min.v[axis]));
+    for(axis=0;axis<3;axis++)shape->common.field_0x1c.max.v[axis]=PhysicsScalar(PhysicsWallAddScalar(&translation.v[axis],&shape->common.field_0x1c.max.v[axis]));
+    index=object->box_face_start;
+    face=&gFace_list__car[index];
+    if(index>=(int)object->box_face_end)return count;
+    do {
+        flags=*(volatile tU32*)&face->flags;
+        if((flags&0x80)==0) {
+            if((flags&1)==0)count=FUN_00424270(&face->v[0],&face->v[1],object,shape,contacts,count,face,workspace);
+            if((*(volatile tU8*)&face->flags&2)==0)count=FUN_00424270(&face->v[1],&face->v[2],object,shape,contacts,count,face,workspace);
+            if((*(volatile tU8*)&face->flags&4)==0)count=FUN_00424270(&face->v[2],&face->v[0],object,shape,contacts,count,face,workspace);
+        }
+        index++;face++;
+    }while(index<(int)*(volatile tU16*)&object->box_face_end);
+    return count;
+}
 
 /* Complete moving wall-edge consumer; original lexical name unknown. */
 // FUNCTION: CARMA2_HW 0x00424270
@@ -4311,9 +4345,108 @@ update_transform:
 
 // RotateObjectSecondOrder
 
-// RotateObjectFirstOrder
+/* PRE-translation uses the original scalar spill before negation. */
+static br_scalar C2_HOOK_CDECL RotationArgument(br_scalar value) {
+    return (br_scalar)PhysicsJointScalar((double)value);
+}
 
-// RotateObject
+// FUNCTION: CARMA2_HW 0x004c1f10
+void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {
+    br_matrix34 rotation;
+    br_vector3 axis, momentum, rotated;
+    double x = pObject->omega.v[0], y = pObject->omega.v[1], z = pObject->omega.v[2];
+    double length = sqrt((x * x + y * y) + z * z);
+    double angle_wide = length * pTime;
+    br_scalar angle = (br_scalar)PhysicsJointScalar(angle_wide);
+    br_angle integer_angle;
+
+    (void)pUnused;
+    if (PhysicsWallNaN(angle_wide) || angle_wide < 0.0001) {
+        return;
+    }
+    axis.v[0] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[0] / length);
+    axis.v[1] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[1] / length);
+    axis.v[2] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[2] / length);
+    momentum.v[0] = (br_scalar)PhysicsJointScalar((double)pObject->I.v[0] * pObject->omega.v[0]);
+    momentum.v[1] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[1] * pObject->I.v[1]);
+    momentum.v[2] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[2] * pObject->I.v[2]);
+    integer_angle = (br_angle)(br_int_64)((double)angle * 10430.378350470453);
+    BrMatrix34Rotate(&rotation, integer_angle, &axis);
+    BrMatrix34TApplyV(&rotated, &momentum, &rotation);
+    BrMatrix34PreTranslate(&rotation, -RotationArgument(pObject->cmpos.v[0]), -RotationArgument(pObject->cmpos.v[1]), -RotationArgument(pObject->cmpos.v[2]));
+    BrMatrix34PostTranslate(&rotation, pObject->cmpos.v[0], pObject->cmpos.v[1], pObject->cmpos.v[2]);
+    BrMatrix34Pre(&pObject->actor->t.t.mat, &rotation);
+    pObject->omega.v[0] = (br_scalar)PhysicsJointScalar((double)rotated.v[0] / pObject->I.v[0]);
+    pObject->omega.v[1] = (br_scalar)PhysicsJointScalar((double)rotated.v[1] / pObject->I.v[1]);
+    pObject->omega.v[2] = (br_scalar)PhysicsJointScalar((double)rotated.v[2] / pObject->I.v[2]);
+}
+
+// FUNCTION: CARMA2_HW 0x004c1be0
+void C2_HOOK_FAKE_THISCALL RotateObject(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {
+    br_matrix34 rotation;
+    br_vector3 axis, momentum, rotated;
+    tU16 packed[4];
+    tU32 translation[3];
+    double x = pObject->omega.v[0], y = pObject->omega.v[1], z = pObject->omega.v[2];
+    br_scalar amount = (br_scalar)PhysicsJointScalar(((x * x + y * y) + z * z) * ((double)pTime * pTime));
+    int count, iteration;
+
+    (void)pUnused;
+    memcpy(&pObject->rotate_omega, &pObject->omega, sizeof(pObject->rotate_omega));
+    if (PhysicsWallNaN(amount) || amount < 0.0000001) {
+        return;
+    }
+    if (amount <= 0.00800000037997961f) {
+        RotateObjectFirstOrder(pObject, 0, pTime);
+    } else {
+        count = (int)(br_int_64)sqrt((double)amount * 31.249998092651367f);
+        count = (int)((tU32)count + 1);
+        pTime = (br_scalar)PhysicsJointScalar((double)pTime / count);
+        for (iteration = 0; iteration < count && iteration < 400; iteration++) {
+            double length, next_x, next_y, next_z;
+            br_scalar next_y_scalar, next_z_scalar, next_length;
+            br_angle integer_angle;
+
+            x = pObject->omega.v[0]; y = pObject->omega.v[1]; z = pObject->omega.v[2];
+            length = PhysicsJointScalar(sqrt((x * x + y * y) + z * z));
+            axis.v[0] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[0] / length);
+            axis.v[1] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[1] / length);
+            axis.v[2] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[2] / length);
+            momentum.v[0] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[0] * pObject->I.v[0]);
+            momentum.v[1] = (br_scalar)PhysicsJointScalar((double)pObject->omega.v[1] * pObject->I.v[1]);
+            momentum.v[2] = (br_scalar)PhysicsJointScalar((double)pObject->I.v[2] * pObject->omega.v[2]);
+            integer_angle = (br_angle)((tU16)(br_int_64)((length * pTime) * 10430.378350470453) >> 1);
+            BrMatrix34Rotate(&rotation, integer_angle, &axis);
+            BrMatrix34TApplyV(&rotated, &momentum, &rotation);
+            next_x = (double)rotated.v[0] / pObject->I.v[0];
+            next_y = (double)rotated.v[1] / pObject->I.v[1];
+            next_z = (double)rotated.v[2] / pObject->I.v[2];
+            next_y_scalar = (br_scalar)PhysicsJointScalar(next_y);
+            next_z_scalar = (br_scalar)PhysicsJointScalar(next_z);
+            next_length = (br_scalar)PhysicsJointScalar(sqrt((next_x * next_x + (double)next_y_scalar * next_y_scalar) + (double)next_z_scalar * next_z_scalar));
+            axis.v[0] = (br_scalar)PhysicsJointScalar(next_x / next_length);
+            axis.v[1] = (br_scalar)PhysicsJointScalar((double)next_y_scalar / next_length);
+            axis.v[2] = (br_scalar)PhysicsJointScalar((double)next_z_scalar / next_length);
+            integer_angle = (br_angle)(br_int_64)(((double)next_length * pTime) * 10430.378350470453);
+            BrMatrix34Rotate(&rotation, integer_angle, &axis);
+            BrMatrix34PreTranslate(&rotation, -RotationArgument(pObject->cmpos.v[0]), -RotationArgument(pObject->cmpos.v[1]), -RotationArgument(pObject->cmpos.v[2]));
+            BrMatrix34PostTranslate(&rotation, pObject->cmpos.v[0], pObject->cmpos.v[1], pObject->cmpos.v[2]);
+            BrMatrix34Pre(&pObject->actor->t.t.mat, &rotation);
+            BrMatrix34TApplyV(&rotated, &momentum, &rotation);
+            pObject->omega.v[0] = (br_scalar)PhysicsJointScalar((double)rotated.v[0] / pObject->I.v[0]);
+            pObject->omega.v[1] = (br_scalar)PhysicsJointScalar((double)rotated.v[1] / pObject->I.v[1]);
+            pObject->omega.v[2] = (br_scalar)PhysicsJointScalar((double)rotated.v[2] / pObject->I.v[2]);
+        }
+    }
+    if (gNet_mode != 0) {
+        GetOrientationFromMatrix(packed, &pObject->actor->t.t.mat);
+        memcpy(translation, &pObject->actor->t.t.mat.m[3], sizeof(translation));
+        GetMatrixFromOrientation(&pObject->actor->t.t.mat, packed);
+        memcpy(&pObject->actor->t.t.mat.m[3][0], &translation[0], 4);
+        memcpy(&pObject->actor->t.t.mat.m[3][1], &translation[1], 4);
+        memcpy(&pObject->actor->t.t.mat.m[3][2], &translation[2], 4);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004b8fe0
 void C2_HOOK_FAKE_THISCALL TranslateObject(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {

@@ -80,6 +80,8 @@ int C2_HOOK_FASTCALL GetCornerToFacePoints(tPhysics_object* pObject, tPhysics_sh
 
 int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* object, tPhysics_shape* shape, tPhysics_contact* contacts, int count, int capacity, tPhysics_wall_workspace* workspace, void* unused, int* touched);
 
+int C2_HOOK_FASTCALL FUN_00424140(tPhysics_object* object, tPhysics_shape* shape, tPhysics_contact* contacts, int count, int unused_capacity, tPhysics_wall_workspace* workspace, void* unused);
+
 int C2_HOOK_FASTCALL FUN_00424270(br_vector3* start, br_vector3* end, tPhysics_object* object, tPhysics_shape* shape, tPhysics_contact* contacts, int count, tFace_ref* face, tPhysics_wall_workspace* workspace);
 
 int C2_HOOK_FASTCALL FUN_00424990(const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* moving_direction, const br_vector3* velocity, const br_vector3* direction_change, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other);
@@ -312,9 +314,9 @@ void C2_HOOK_FASTCALL PostAddFriction(tPhysics_object* object);
 
 // RotateObjectSecondOrder
 
-// RotateObjectFirstOrder
+void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime);
 
-// RotateObject
+void C2_HOOK_FAKE_THISCALL RotateObject(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime);
 
 void C2_HOOK_FAKE_THISCALL TranslateObject(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime);
 

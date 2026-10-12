@@ -503,43 +503,136 @@ void C2_HOOK_CDECL BrMatrix34RotateZ(br_matrix34* mat, br_angle rz) {
     M(3, 2) = 0;
 }
 
+/* C-first recovery of existing BrMatrix34Rotate532940/333B. Explicit scalar
+ * spills and live wide contributions follow the raw x87 instruction trace. */
+static double C2_HOOK_CDECL MatrixRotateScalar(double value) {
+    union { br_scalar scalar; br_uint_32 bits; } rounded;
+    volatile br_uint_32 stored;
+    rounded.scalar = (br_scalar)value;
+    stored = rounded.bits;
+    rounded.bits = stored;
+    return rounded.scalar;
+}
+
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+/* The original uses FSIN/FCOS, whose quarter-turn result is observably
+ * different from the modern CRT. Keep these narrow transcendental operations. */
+static double C2_HOOK_CDECL MatrixRotateCosine(double radians) {
+    br_scalar result;
+    __asm {
+        fld radians
+        fcos
+        fstp result
+    }
+    return result;
+}
+
+static double C2_HOOK_CDECL MatrixRotateSine(double radians) {
+    br_scalar result;
+    __asm {
+        fld radians
+        fsin
+        fstp result
+    }
+    return result;
+}
+
+static double C2_HOOK_CDECL MatrixRotateSineProduct(double radians, br_scalar x) {
+    br_scalar result;
+    __asm {
+        fld radians
+        fsin
+        fmul x
+        fstp result
+    }
+    return result;
+}
+
+/* Paired NaNs with equal payloads expose the modern SSE operand choice.
+ * Preserve the original x87 arithmetic for these individual operations. */
+static double C2_HOOK_CDECL MatrixRotateProduct(double left, double right) {
+    double result;
+    __asm {
+        fld left
+        fmul right
+        fstp result
+    }
+    return result;
+}
+static double C2_HOOK_CDECL MatrixRotateSum(double left, double right) {
+    double result;
+    __asm {
+        fld left
+        fadd right
+        fstp result
+    }
+    return result;
+}
+static double C2_HOOK_CDECL MatrixRotateDifference(double left, double right) {
+    double result;
+    __asm {
+        fld left
+        fsub right
+        fstp result
+    }
+    return result;
+}
+#define MR_PRODUCT(l, r) MatrixRotateProduct((l), (r))
+#define MR_SUM(l, r) MatrixRotateSum((l), (r))
+#define MR_DIFFERENCE(l, r) MatrixRotateDifference((l), (r))
+#else
+#define MR_PRODUCT(l, r) ((l) * (r))
+#define MR_SUM(l, r) ((l) + (r))
+#define MR_DIFFERENCE(l, r) ((l) - (r))
+#endif
+
 // FUNCTION: CARMA2_HW 0x00532940
 void C2_HOOK_CDECL BrMatrix34Rotate(br_matrix34* mat, br_angle r, const br_vector3* a) {
-    br_scalar t;
-    br_scalar s;
-    br_scalar c;
-    br_scalar txy;
-    br_scalar txz;
-    br_scalar tyz;
-    br_scalar sx;
-    br_scalar sy;
-    br_scalar sz;
+    const volatile br_scalar* input = (const volatile br_scalar*)a;
+    double radians = (double)(br_uint_16)r * 0.00009587379924285257;
+    double x = input[0], z = input[2], y = input[1];
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+    double sine = MatrixRotateSine(radians), cosine = MatrixRotateCosine(radians);
+#else
+    double sine = sin(radians), cosine = cos(radians);
+#endif
+    br_scalar rounded_sine = (br_scalar)MatrixRotateScalar(sine);
+    br_scalar rounded_cosine = (br_scalar)MatrixRotateScalar(cosine);
+    double remainder = MR_DIFFERENCE(1.0, rounded_cosine);
+    br_scalar rounded_remainder = (br_scalar)MatrixRotateScalar(remainder);
+    br_scalar tx = (br_scalar)MatrixRotateScalar(MR_PRODUCT(remainder, x));
+    double xz = MR_PRODUCT(z, tx), xy = MR_PRODUCT(y, tx);
+    br_scalar rounded_xz = (br_scalar)MatrixRotateScalar(xz);
+    br_scalar rounded_xy = (br_scalar)MatrixRotateScalar(xy);
+    br_scalar yz = (br_scalar)MatrixRotateScalar(MR_PRODUCT(MR_PRODUCT(z, y), rounded_remainder));
+    br_scalar rounded_x = (br_scalar)MatrixRotateScalar(x);
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+    br_scalar sx = (br_scalar)MatrixRotateSineProduct(radians, (br_scalar)x);
+#else
+    br_scalar sx = (br_scalar)MatrixRotateScalar(sine * x);
+#endif
+    double sz = MR_PRODUCT(z, rounded_sine);
+    br_scalar rounded_sz = (br_scalar)MatrixRotateScalar(sz);
+    br_scalar sy = (br_scalar)MatrixRotateScalar(MR_PRODUCT(y, rounded_sine));
 
-    s = BR_SIN(r);
-    c = BR_COS(r);
-    t = 1.0f - c;
-
-    txy = t * a->v[0];
-    txz = txy * a->v[2];
-    txy = txy * a->v[1];
-    tyz = t * a->v[1] * a->v[2];
-
-    sx = s * a->v[0];
-    sy = s * a->v[1];
-    sz = s * a->v[2];
-
-    M(0, 0) = t * a->v[0] * a->v[0] + c;
-    M(0, 1) = txy + sz;
-    M(0, 2) = txz - sy;
-    M(1, 0) = txy - sz;
-    M(1, 1) = t * a->v[1] * a->v[1] + c;
-    M(1, 2) = tyz + sx;
-    M(2, 0) = txz + sy;
-    M(2, 1) = tyz - sx;
-    M(2, 2) = t * a->v[2] * a->v[2] + c;
-
-    M(3, 0) = M(3, 1) = M(3, 2) = 0.0f;
+    M(0, 1) = (br_scalar)MatrixRotateScalar(MR_SUM(sz, rounded_xy));
+    M(0, 2) = (br_scalar)MatrixRotateScalar(MR_DIFFERENCE(xz, sy));
+    M(1, 0) = (br_scalar)MatrixRotateScalar(MR_DIFFERENCE(xy, rounded_sz));
+    M(0, 0) = (br_scalar)MatrixRotateScalar(MR_SUM(MR_PRODUCT(MR_PRODUCT(x, rounded_x), rounded_remainder), rounded_cosine));
+    y = input[1];
+    M(1, 2) = (br_scalar)MatrixRotateScalar(MR_SUM((double)sx, yz));
+    M(2, 0) = (br_scalar)MatrixRotateScalar(MR_SUM((double)sy, rounded_xz));
+    M(2, 1) = (br_scalar)MatrixRotateScalar(MR_DIFFERENCE((double)yz, sx));
+    M(1, 1) = (br_scalar)MatrixRotateScalar(MR_SUM(MR_PRODUCT(MR_PRODUCT(y, y), rounded_remainder), rounded_cosine));
+    z = input[2];
+    M(3, 2) = 0.0f;
+    M(3, 1) = 0.0f;
+    M(3, 0) = 0.0f;
+    M(2, 2) = (br_scalar)MatrixRotateScalar(MR_SUM(MR_PRODUCT(MR_PRODUCT(z, z), rounded_remainder), rounded_cosine));
 }
+#undef MR_PRODUCT
+#undef MR_SUM
+#undef MR_DIFFERENCE
 
 // FUNCTION: CARMA2_HW 0x00532a90
 void C2_HOOK_CDECL BrMatrix34Translate(br_matrix34* mat, br_scalar dx, br_scalar dy, br_scalar dz) {
@@ -952,12 +1045,86 @@ void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const
     A->v[2] = BR_MAC3(B->v[0], C(2, 0), B->v[1], C(2, 1), B->v[2], C(2, 2));
 }
 
+/* The paired-NaN C-first counterexample requires original operand forms.
+ * Each kernel retains one arithmetic operation; C retains grouping and stores.
+ * Products of scalar inputs and their sums fit the double exponent range, so
+ * private double stores preserve the original PC53 intermediate values. */
+static double C2_HOOK_CDECL Matrix34ApplyProductLoaded(const br_scalar* a, const br_scalar* b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, a
+        mov ecx, b
+        fld dword ptr [eax]
+        fld dword ptr [ecx]
+        fmulp st(1), st(0)
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; flds %2; fmulp %%st, %%st(1); fstpl %0"
+        : "=m"(result) : "m"(*a), "m"(*b) : "st", "st(1)");
+#else
+    result=(double)*a * *b;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL Matrix34ApplyProductMemory(const br_scalar* a, const br_scalar* b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, a
+        mov ecx, b
+        fld dword ptr [eax]
+        fmul dword ptr [ecx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fmuls %2; fstpl %0"
+        : "=m"(result) : "m"(*a), "m"(*b) : "st");
+#else
+    result=(double)*a * *b;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL Matrix34ApplyAdd(double a, double b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld qword ptr a
+        fld qword ptr b
+        faddp st(1), st(0)
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fldl %2; faddp %%st, %%st(1); fstpl %0"
+        : "=m"(result) : "m"(a), "m"(b) : "st", "st(1)");
+#else
+    result=a+b;
+#endif
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x00533410
 void C2_HOOK_CDECL BrMatrix34Apply(br_vector3* A, const br_vector4* B, const br_matrix34* C) {
-
-    A->v[0] = BR_MAC4(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0), B->v[3], C(3, 0));
-    A->v[1] = BR_MAC4(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1), B->v[3], C(3, 1));
-    A->v[2] = BR_MAC4(B->v[0], C(0, 2), B->v[1], C(1, 2), B->v[2], C(2, 2), B->v[3], C(3, 2));
+    volatile br_vector3* output=A;
+    double first,second,third,fourth;
+    first=Matrix34ApplyProductLoaded(&C->m[3][0],&B->v[3]);
+    second=Matrix34ApplyProductLoaded(&C->m[2][0],&B->v[2]);
+    third=Matrix34ApplyProductMemory(&C->m[1][0],&B->v[1]);
+    fourth=Matrix34ApplyProductMemory(&C->m[0][0],&B->v[0]);
+    output->v[0]=(float)Matrix34ApplyAdd(Matrix34ApplyAdd(Matrix34ApplyAdd(first,second),third),fourth);
+    first=Matrix34ApplyProductLoaded(&C->m[3][1],&B->v[3]);
+    second=Matrix34ApplyProductLoaded(&C->m[1][1],&B->v[1]);
+    third=Matrix34ApplyProductMemory(&C->m[2][1],&B->v[2]);
+    fourth=Matrix34ApplyProductMemory(&C->m[0][1],&B->v[0]);
+    output->v[1]=(float)Matrix34ApplyAdd(Matrix34ApplyAdd(Matrix34ApplyAdd(first,second),third),fourth);
+    first=Matrix34ApplyProductLoaded(&C->m[2][2],&B->v[2]);
+    second=Matrix34ApplyProductLoaded(&C->m[3][2],&B->v[3]);
+    third=Matrix34ApplyProductMemory(&C->m[1][2],&B->v[1]);
+    fourth=Matrix34ApplyProductMemory(&C->m[0][2],&B->v[0]);
+    output->v[2]=(float)Matrix34ApplyAdd(Matrix34ApplyAdd(Matrix34ApplyAdd(first,second),third),fourth);
 }
 
 // FUNCTION: CARMA2_HW 0x005334a0
@@ -1302,12 +1469,34 @@ void C2_HOOK_CDECL BrMatrix34PreTranslate(br_matrix34* mat, br_scalar x, br_scal
     BrMatrix34Copy(mat, &mattmp1);
 }
 
+/* Complete existing BrMatrix34PostTranslate533e60/45B. Original FADD32
+ * chooses opposite-sign paired NaNs differently from modern SSE arithmetic. */
+static br_scalar C2_HOOK_CDECL MatrixPostTranslateAdd(br_scalar value, const br_scalar* existing) {
+    br_scalar result;
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+    __asm {
+        mov eax, existing
+        fld value
+        fadd dword ptr [eax]
+        fstp result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fadds %2; fstps %0"
+        : "=m"(result) : "m"(value), "m"(*existing) : "st");
+#else
+    result = value + *existing;
+#endif
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x00533e60
 void C2_HOOK_CDECL BrMatrix34PostTranslate(br_matrix34* mat, br_scalar x, br_scalar y, br_scalar z) {
-
-    M(3, 0) += x;
-    M(3, 1) += y;
-    M(3, 2) += z;
+    br_scalar dx = MatrixPostTranslateAdd(x, &M(3, 0));
+    br_scalar dy = MatrixPostTranslateAdd(y, &M(3, 1));
+    br_scalar dz = MatrixPostTranslateAdd(z, &M(3, 2));
+    M(3, 0) = dx;
+    M(3, 1) = dy;
+    M(3, 2) = dz;
 }
 
 // FUNCTION: CARMA2_HW 0x00533e90
