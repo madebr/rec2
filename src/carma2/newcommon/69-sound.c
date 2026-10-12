@@ -104,8 +104,8 @@ tS3_outlet* gMusic_outlet;
 // GLOBAL: CARMA2_HW 0x00684614
 tS3_outlet* gXXX_outlet;
 
-// GLOBAL: CARMA2_HW 0x0079e160
 /* Lookup includes the trailing zero-initialized DWORD. */
+// GLOBAL: CARMA2_HW 0x0079e160
 tS3_outlet* gIndexed_outlets[7];
 
 // GLOBAL: CARMA2_HW 0x00595c38
