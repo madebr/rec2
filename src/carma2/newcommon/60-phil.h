@@ -71,7 +71,7 @@ extern int C2_HOOK_FASTCALL PHILInit(void);
 
 extern void C2_HOOK_FASTCALL PHILDisable(void);
 
-// PHILAddObject
+extern int C2_HOOK_FASTCALL PHILAddObject(tPhysics_object* object);
 
 extern int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject);
 
@@ -87,11 +87,11 @@ extern int C2_HOOK_FASTCALL PHILMakeObjectActive(tPhysics_object* pObject, const
 
 extern int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const br_matrix34* pMatrix);
 
-// PHILAddActiveObject
+extern int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* object, const br_matrix34* matrix, const br_vector3* velocity, const br_vector3* omega);
 
-// PHILAddObjectImmediately
+extern int C2_HOOK_FASTCALL FUN_004b62b0(tPhysics_object* object);
 
-// PHILAddActiveObjectImmediately
+extern int C2_HOOK_FASTCALL FUN_004b62e0(tPhysics_object* object, const br_matrix34* matrix, const br_vector3* velocity, const br_vector3* omega);
 
 extern int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...);
 
@@ -111,7 +111,7 @@ void C2_HOOK_FASTCALL LevelOutOnSurface(tPhysics_object* object);
 
 // PHILMungeObjects
 
-// PHILActivatePassive
+void C2_HOOK_FASTCALL PHILActivatePassive(tPhysics_object* object, undefined4 captured_edx);
 
 // PHILInterpolateObjects
 

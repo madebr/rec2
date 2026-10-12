@@ -1,4 +1,7 @@
 #include "transfrm.h"
+#include <string.h>
+#include <stdint.h>
+#include "c2_math.h"
 
 #include "angles.h"
 #include "matrix34.h"
@@ -85,74 +88,150 @@ br_uint_8 _CombineTransforms[7][7] = {
     },
 };
 
+#if defined(__GNUC__)
+typedef br_uint_32 tActivation_transform_word __attribute__((__may_alias__));
+#else
+typedef br_uint_32 tActivation_transform_word;
+#endif
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+static br_uint_32 C2_HOOK_CDECL ActivationTransformWord(const void* base, unsigned offset) {
+    return *(volatile const tActivation_transform_word*)((br_uint_32)(uintptr_t)base + offset);
+}
+static void C2_HOOK_CDECL ActivationTransformCopy(br_matrix34* mat, const br_transform* xform, unsigned output_word, unsigned input_word) {
+    br_uint_32 value = ActivationTransformWord(xform, input_word * 4u);
+
+    *(volatile tActivation_transform_word*)((br_uint_32)(uintptr_t)mat + output_word * 4u) = value;
+}
+static double C2_HOOK_CDECL ActivationTransformRead(const br_transform* xform, unsigned word) {
+    return *(volatile const br_scalar*)((br_uint_32)(uintptr_t)xform + word * 4u);
+}
+static double C2_HOOK_CDECL ActivationTransformScalar(double value) {
+    union { br_scalar scalar; br_uint_32 bits; } rounded;
+    volatile br_uint_32 stored;
+
+    rounded.scalar = (br_scalar)value;
+    stored = rounded.bits;
+    rounded.bits = stored;
+    return rounded.scalar;
+}
+static double C2_HOOK_CDECL ActivationTransformNegativeZero(void) {
+    union { br_scalar scalar; br_uint_32 bits; } value;
+    volatile br_uint_32 stored = 0x80000000u;
+
+    /* MSVC5 folds the literal -0.0 to positive zero. Original FCHS changes
+     * both zero components of the fallback basis before their scalar stores. */
+    value.bits = stored;
+    return value.scalar;
+}
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
+
 // FUNCTION: CARMA2_HW 0x00531870
 void C2_HOOK_CDECL BrTransformToMatrix34(br_matrix34* mat, const br_transform* xform) {
+    volatile br_matrix34* output = mat;
+    unsigned type = *(volatile const br_uint_16*)xform;
+    unsigned word;
+    double x, y, z, norm, reciprocal;
+    double zx, zy, zz, ux_first, ux_second, uy_first, uy_second, uz_first, uz_second;
+    double cross_x, cross_y, cross_z, round_x, round_y, round_z;
+    double xx, xy, xz, yx, yy, yz;
 
-    switch (xform->type) {
+    switch (type) {
     case BR_TRANSFORM_MATRIX34:
     case BR_TRANSFORM_MATRIX34_LP:
-        *mat = xform->t.mat;
-        break;
-
+        for (word = 0; word < 12; word++) {
+            ActivationTransformCopy(mat, xform, word, word + 1);
+        }
+        return;
     case BR_TRANSFORM_QUAT:
-
         BrQuatToMatrix34(mat, &xform->t.quat.q);
-
-        mat->m[V_W][V_X] = xform->t.quat.t.v[V_X];
-        mat->m[V_W][V_Y] = xform->t.quat.t.v[V_Y];
-        mat->m[V_W][V_Z] = xform->t.quat.t.v[V_Z];
-        break;
-
+        ActivationTransformCopy(mat, xform, 9, 10);
+        ActivationTransformCopy(mat, xform, 10, 11);
+        ActivationTransformCopy(mat, xform, 11, 12);
+        return;
     case BR_TRANSFORM_EULER:
-
         BrEulerToMatrix34(mat, &xform->t.euler.e);
-
-        mat->m[V_W][V_X] = xform->t.euler.t.v[V_X];
-        mat->m[V_W][V_Y] = xform->t.euler.t.v[V_Y];
-        mat->m[V_W][V_Z] = xform->t.euler.t.v[V_Z];
-
-        break;
-
+        ActivationTransformCopy(mat, xform, 9, 10);
+        ActivationTransformCopy(mat, xform, 10, 11);
+        ActivationTransformCopy(mat, xform, 11, 12);
+        return;
     case BR_TRANSFORM_TRANSLATION:
-        BrMatrix34Translate(mat,
-            xform->t.look_up.t.v[V_X],
-            xform->t.look_up.t.v[V_Y],
-            xform->t.look_up.t.v[V_Z]);
-
-        break;
-
-    case BR_TRANSFORM_LOOK_UP: {
-        /*
-			 * 1) Normalise Lookat vector to get Z component of matrix
-			 * 2) Cross with up vector and normalise to get X component
-			 * 3) Cross X & Z to get Y
-			 */
-        br_vector3 vx, vy, vz;
-
-        BrVector3Normalise(&vz, &xform->t.look_up.look);
-        BrVector3Negate(&vz, &vz);
-        BrVector3Cross(&vx, &xform->t.look_up.up, &vz);
-        BrVector3Normalise(&vx, &vx);
-        BrVector3Cross(&vy, &vz, &vx);
-
-        mat->m[V_X][V_X] = vx.v[V_X];
-        mat->m[V_X][V_Y] = vx.v[V_Y];
-        mat->m[V_X][V_Z] = vx.v[V_Z];
-        mat->m[V_Y][V_X] = vy.v[V_X];
-        mat->m[V_Y][V_Y] = vy.v[V_Y];
-        mat->m[V_Y][V_Z] = vy.v[V_Z];
-        mat->m[V_Z][V_X] = vz.v[V_X];
-        mat->m[V_Z][V_Y] = vz.v[V_Y];
-        mat->m[V_Z][V_Z] = vz.v[V_Z];
-
-        mat->m[V_W][V_X] = xform->t.look_up.t.v[V_X];
-        mat->m[V_W][V_Y] = xform->t.look_up.t.v[V_Y];
-        mat->m[V_W][V_Z] = xform->t.look_up.t.v[V_Z];
-    } break;
-
+        /* Original three PUSHes capture raw Z/Y/X before any output store. */
+        {
+            br_uint_32 bx, by, bz;
+            br_scalar tx, ty, tz;
+            bz = ActivationTransformWord(xform, 48);
+            by = ActivationTransformWord(xform, 44);
+            bx = ActivationTransformWord(xform, 40);
+            memcpy(&tx, &bx, 4); memcpy(&ty, &by, 4); memcpy(&tz, &bz, 4);
+            BrMatrix34Translate(mat, tx, ty, tz);
+        }
+        return;
+    case BR_TRANSFORM_LOOK_UP:
+        x = ActivationTransformRead(xform, 1);
+        y = ActivationTransformRead(xform, 2);
+        z = ActivationTransformRead(xform, 3);
+        norm = sqrt((x * ActivationTransformScalar(x) + y * y) + z * ActivationTransformScalar(z));
+        if (norm > 2.384185791015625e-7) {
+            reciprocal = 1.0 / norm;
+            x = ActivationTransformRead(xform, 1);
+            y = ActivationTransformRead(xform, 2);
+            z = ActivationTransformRead(xform, 3);
+            zx = ActivationTransformScalar(-(x * reciprocal));
+            zy = ActivationTransformScalar(-(y * reciprocal));
+            /* Original Z component is rounded before its sign change. */
+            zz = ActivationTransformScalar(-ActivationTransformScalar(z * reciprocal));
+        } else {
+            zx = -1.0;
+            zy = ActivationTransformNegativeZero();
+            zz = ActivationTransformNegativeZero();
+        }
+        /* Retain the original first-fault address as well as the individual
+         * loads before any public store. The duplicate operands serve different
+         * cross products in the x87 stack, and are all loaded while input is live. */
+        uy_first = ActivationTransformRead(xform, 5);
+        uz_first = ActivationTransformRead(xform, 6);
+        uz_second = ActivationTransformRead(xform, 6);
+        ux_first = ActivationTransformRead(xform, 4);
+        ux_second = ActivationTransformRead(xform, 4);
+        uy_second = ActivationTransformRead(xform, 5);
+        cross_x = uy_first * zz - uz_first * zy;
+        round_x = ActivationTransformScalar(cross_x);
+        cross_y = uz_second * zx - ux_first * zz;
+        round_y = ActivationTransformScalar(cross_y);
+        cross_z = ux_second * zy - uy_second * zx;
+        round_z = ActivationTransformScalar(cross_z);
+        norm = ActivationTransformScalar(sqrt((cross_x * round_x + cross_y * round_y) + cross_z * round_z));
+        if (norm > 2.384185791015625e-7) {
+            reciprocal = 1.0 / norm;
+            xx = ActivationTransformScalar(reciprocal * round_x);
+            xy = ActivationTransformScalar(reciprocal * round_y);
+            xz = ActivationTransformScalar(reciprocal * round_z);
+        } else {
+            xx = 1.0; xy = 0.0; xz = 0.0;
+        }
+        yx = zy * xz - zz * xy;
+        yy = zz * xx - zx * xz;
+        yz = zx * xy - zy * xx;
+        output->m[0][0] = (br_scalar)xx;
+        output->m[1][1] = (br_scalar)yy;
+        output->m[0][1] = (br_scalar)xy;
+        output->m[0][2] = (br_scalar)xz;
+        output->m[1][2] = (br_scalar)yz;
+        output->m[1][0] = (br_scalar)yx;
+        output->m[2][0] = (br_scalar)zx;
+        output->m[2][1] = (br_scalar)zy;
+        output->m[2][2] = (br_scalar)zz;
+        ActivationTransformCopy(mat, xform, 9, 10);
+        ActivationTransformCopy(mat, xform, 10, 11);
+        ActivationTransformCopy(mat, xform, 11, 12);
+        return;
     case BR_TRANSFORM_IDENTITY:
         BrMatrix34Identity(mat);
-        break;
+        return;
     }
 }
 

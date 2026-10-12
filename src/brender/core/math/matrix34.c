@@ -636,19 +636,32 @@ void C2_HOOK_CDECL BrMatrix34Rotate(br_matrix34* mat, br_angle r, const br_vecto
 
 // FUNCTION: CARMA2_HW 0x00532a90
 void C2_HOOK_CDECL BrMatrix34Translate(br_matrix34* mat, br_scalar dx, br_scalar dy, br_scalar dz) {
+#if defined(__GNUC__)
+    typedef br_uint_32 tMatrix34_translate_word __attribute__((__may_alias__));
+#else
+    typedef br_uint_32 tMatrix34_translate_word;
+#endif
+    volatile tMatrix34_translate_word* output = (volatile tMatrix34_translate_word*)(void*)mat;
+    br_uint_32 bits_x, bits_y, bits_z;
 
-    M(0, 0) = 1.f;
-    M(0, 1) = 0.f;
-    M(0, 2) = 0.f;
-    M(1, 0) = 0.f;
-    M(1, 1) = 1.f;
-    M(1, 2) = 0.f;
-    M(2, 0) = 0.f;
-    M(2, 1) = 0.f;
-    M(2, 2) = 1.f;
-    M(3, 0) = dx;
-    M(3, 1) = dy;
-    M(3, 2) = dz;
+    /* Public float arguments are copied as DWORDs; FLD/FSTP would quiet sNaNs.
+     * The six zeros precede the first diagonal and translation writes, which
+     * also preserves original partial-write state on an inaccessible output. */
+    output[1] = 0;
+    output[2] = 0;
+    output[3] = 0;
+    output[5] = 0;
+    output[6] = 0;
+    output[7] = 0;
+    bits_x = *(volatile const tMatrix34_translate_word*)(const void*)&dx;
+    output[0] = 0x3f800000u;
+    output[4] = 0x3f800000u;
+    output[8] = 0x3f800000u;
+    bits_y = *(volatile const tMatrix34_translate_word*)(const void*)&dy;
+    output[9] = bits_x;
+    bits_z = *(volatile const tMatrix34_translate_word*)(const void*)&dz;
+    output[10] = bits_y;
+    output[11] = bits_z;
 }
 
 // FUNCTION: CARMA2_HW 0x00532ad0
@@ -752,79 +765,153 @@ void C2_HOOK_CDECL BrMatrix34ShearZ(br_matrix34* mat, br_scalar sx, br_scalar sy
     M(3, 2) = 0.f;
 }
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+static double C2_HOOK_CDECL Matrix34ApplyAdd(double a, double b);
+
+static int C2_HOOK_CDECL ActivationInverseNaN(double value) {
+    br_uint_32 bits[2];
+
+    memcpy(bits, &value, 8);
+    return (bits[1] & 0x7ff00000u) == 0x7ff00000u
+        && ((bits[1] & 0xfffffu) != 0 || bits[0] != 0);
+}
+
+static double C2_HOOK_CDECL ActivationInverseAdd(double left, double right) {
+    /* Root's complete816-case compound corpus retains326 modern SSE NaN
+     * preference failures. Both operands have already passed their original
+     * FLD/float arithmetic load. Use the existing elementary x87 add only
+     * for a paired unordered sum; finite C arithmetic remains PC53 exact. */
+    if (ActivationInverseNaN(left) && ActivationInverseNaN(right)) {
+        return Matrix34ApplyAdd(left, right);
+    }
+    return left + right;
+}
+static double C2_HOOK_CDECL ActivationInverseRead(const br_matrix34* matrix, unsigned word) {
+    const volatile br_scalar* scalar = (const volatile br_scalar*)((const char*)matrix + word * 4u);
+
+    return (double)*scalar;
+}
+
+static double C2_HOOK_CDECL ActivationInverseScalar(double value) {
+    union { br_scalar scalar; br_uint_32 bits; } rounded;
+    volatile br_uint_32 stored;
+
+    rounded.scalar = (br_scalar)value;
+    stored = rounded.bits;
+    rounded.bits = stored;
+    return rounded.scalar;
+}
+
+static void C2_HOOK_CDECL ActivationInverseWrite(br_matrix34* matrix, unsigned word, double value) {
+    volatile br_scalar* scalar = (volatile br_scalar*)((char*)matrix + word * 4u);
+
+    *scalar = (br_scalar)value;
+}
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
 // FUNCTION: CARMA2_HW 0x00532bd0
 br_scalar C2_HOOK_CDECL BrMatrix34Inverse(br_matrix34* B, const br_matrix34* A) {
-    float idet;
-    float det;
-    float pos;
-    float neg;
-    float temp;
-    float AF[4][3];
-    float BF[4][3];
-    int i;
+    double a, b, c, d;
+    double term, rounded_first, positive = 0.0, negative = 0.0;
+    volatile double determinant;
+    double absolute, reciprocal;
+    double x, y, z, first, second, third;
+    double held_b02, held_b12;
 
-#define AF(x, y) (AF[x][y])
-#define BF(x, y) (BF[x][y])
-
-#define ACCUMULATE   \
-    if (temp >= 0.f) \
-        pos += temp; \
-    else             \
-        neg += temp;
-#define PRECISION_LIMIT BR_SCALAR(1.0e-15)
-#define ABS(a) (((a) < 0) ? -(a) : (a))
-
-    for (i = 0; i < 4; i++) {
-        AF(i, 0) = A(i, 0);
-        AF(i, 1) = A(i, 1);
-        AF(i, 2) = A(i, 2);
+    a = ActivationInverseRead(A, 4);
+    b = ActivationInverseRead(A, 0);
+    c = ActivationInverseRead(A, 8);
+    term = (a * b) * c;
+    rounded_first = ActivationInverseScalar(term);
+    if (term >= 0.0) {
+        positive = rounded_first;
+    } else {
+        negative = rounded_first;
     }
+    a = ActivationInverseRead(A, 5);
+    b = ActivationInverseRead(A, 1);
+    c = ActivationInverseRead(A, 6);
+    term = (a * b) * c;
+    if (term >= 0.0) positive = ActivationInverseAdd(positive, term); else negative = ActivationInverseAdd(negative, term);
+    a = ActivationInverseRead(A, 2);
+    b = ActivationInverseRead(A, 3);
+    c = ActivationInverseRead(A, 7);
+    term = (a * b) * c;
+    if (term >= 0.0) positive = ActivationInverseAdd(positive, term); else negative = ActivationInverseAdd(negative, term);
+    a = ActivationInverseRead(A, 2);
+    b = ActivationInverseRead(A, 4);
+    c = ActivationInverseRead(A, 6);
+    term = -((a * b) * c);
+    if (term >= 0.0) positive = ActivationInverseAdd(positive, term); else negative = ActivationInverseAdd(negative, term);
+    a = ActivationInverseRead(A, 3);
+    b = ActivationInverseRead(A, 1);
+    c = ActivationInverseRead(A, 8);
+    term = -((a * b) * c);
+    if (term >= 0.0) positive = ActivationInverseAdd(positive, term); else negative = ActivationInverseAdd(negative, term);
+    a = ActivationInverseRead(A, 5);
+    b = ActivationInverseRead(A, 0);
+    c = ActivationInverseRead(A, 7);
+    term = -((a * b) * c);
+    if (term >= 0.0) positive = ActivationInverseAdd(positive, term); else negative = ActivationInverseAdd(negative, term);
+    determinant = ActivationInverseScalar(ActivationInverseAdd(positive, negative));
+    absolute = determinant;
+    if (!(absolute >= 0.0)) absolute = -absolute;
+    if (!(absolute > 2.384185791015625e-7)) return 0.f;
+    absolute = determinant / (positive - negative);
+    if (!(absolute >= 0.0)) absolute = -absolute;
+    if (!(absolute >= (double)(br_scalar)1.0e-15)) return 0.f;
+    reciprocal = 1.0 / determinant;
 
-    pos = neg = 0.0F;
-    temp = AF(0, 0) * AF(1, 1) * AF(2, 2);
-    ACCUMULATE
-    temp = AF(0, 1) * AF(1, 2) * AF(2, 0);
-    ACCUMULATE
-    temp = AF(0, 2) * AF(1, 0) * AF(2, 1);
-    ACCUMULATE
-    temp = -AF(0, 2) * AF(1, 1) * AF(2, 0);
-    ACCUMULATE
-    temp = -AF(0, 1) * AF(1, 0) * AF(2, 2);
-    ACCUMULATE
-    temp = -AF(0, 0) * AF(1, 2) * AF(2, 1);
-    ACCUMULATE
-    det = pos + neg;
+    a = ActivationInverseRead(A, 5); b = ActivationInverseRead(A, 4);
+    c = ActivationInverseRead(A, 8); d = ActivationInverseRead(A, 7);
+    ActivationInverseWrite(B, 0, ActivationInverseAdd(b * c, (-a) * d) * reciprocal);
+    a = ActivationInverseRead(A, 3); b = ActivationInverseRead(A, 5);
+    c = ActivationInverseRead(A, 6); d = ActivationInverseRead(A, 8);
+    ActivationInverseWrite(B, 3, ActivationInverseAdd(b * c, (-a) * d) * reciprocal);
+    a = ActivationInverseRead(A, 4); b = ActivationInverseRead(A, 3);
+    c = ActivationInverseRead(A, 7); d = ActivationInverseRead(A, 6);
+    ActivationInverseWrite(B, 6, ActivationInverseAdd(b * c, (-a) * d) * reciprocal);
+    a = ActivationInverseRead(A, 1); b = ActivationInverseRead(A, 2);
+    c = ActivationInverseRead(A, 7); d = ActivationInverseRead(A, 8);
+    ActivationInverseWrite(B, 1, ActivationInverseAdd(b * c, (-a) * d) * reciprocal);
+    a = ActivationInverseRead(A, 2); b = ActivationInverseRead(A, 8);
+    c = ActivationInverseRead(A, 0); d = ActivationInverseRead(A, 6);
+    ActivationInverseWrite(B, 4, ActivationInverseAdd(b * c, (-a) * d) * reciprocal);
+    a = ActivationInverseRead(A, 0); b = ActivationInverseRead(A, 7);
+    c = ActivationInverseRead(A, 1); d = ActivationInverseRead(A, 6);
+    ActivationInverseWrite(B, 7, ActivationInverseAdd(c * d, (-a) * b) * reciprocal);
+    a = ActivationInverseRead(A, 2); b = ActivationInverseRead(A, 5);
+    c = ActivationInverseRead(A, 1); d = ActivationInverseRead(A, 4);
+    ActivationInverseWrite(B, 2, ActivationInverseAdd(c * b, (-a) * d) * reciprocal);
+    a = ActivationInverseRead(A, 0); b = ActivationInverseRead(A, 2);
+    c = ActivationInverseRead(A, 3); d = ActivationInverseRead(A, 5);
+    ActivationInverseWrite(B, 5, ActivationInverseAdd(c * b, (-a) * d) * reciprocal);
+    a = ActivationInverseRead(A, 1); b = ActivationInverseRead(A, 4);
+    c = ActivationInverseRead(A, 0); d = ActivationInverseRead(A, 3);
+    ActivationInverseWrite(B, 8, ActivationInverseAdd(b * c, (-a) * d) * reciprocal);
 
-    if (ABS(det) <= PRECISION_LIMIT)
-        return 0.f;
-
-    if ((ABS(det / (pos - neg)) < PRECISION_LIMIT)) {
-        return 0.f;
-    }
-
-    idet = 1.f / det;
-
-    BF(0, 0) = (AF(1, 1) * AF(2, 2) - AF(1, 2) * AF(2, 1)) * idet;
-    BF(1, 0) = -(AF(1, 0) * AF(2, 2) - AF(1, 2) * AF(2, 0)) * idet;
-    BF(2, 0) = (AF(1, 0) * AF(2, 1) - AF(1, 1) * AF(2, 0)) * idet;
-    BF(0, 1) = -(AF(0, 1) * AF(2, 2) - AF(0, 2) * AF(2, 1)) * idet;
-    BF(1, 1) = (AF(0, 0) * AF(2, 2) - AF(0, 2) * AF(2, 0)) * idet;
-    BF(2, 1) = -(AF(0, 0) * AF(2, 1) - AF(0, 1) * AF(2, 0)) * idet;
-    BF(0, 2) = (AF(0, 1) * AF(1, 2) - AF(0, 2) * AF(1, 1)) * idet;
-    BF(1, 2) = -(AF(0, 0) * AF(1, 2) - AF(0, 2) * AF(1, 0)) * idet;
-    BF(2, 2) = (AF(0, 0) * AF(1, 1) - AF(0, 1) * AF(1, 0)) * idet;
-
-    BF(3, 0) = -(AF(3, 0) * BF(0, 0) + AF(3, 1) * BF(1, 0) + AF(3, 2) * BF(2, 0));
-    BF(3, 1) = -(AF(3, 0) * BF(0, 1) + AF(3, 1) * BF(1, 1) + AF(3, 2) * BF(2, 1));
-    BF(3, 2) = -(AF(3, 0) * BF(0, 2) + AF(3, 1) * BF(1, 2) + AF(3, 2) * BF(2, 2));
-
-    for (i = 0; i < 4; i++) {
-        B(i, 0) = BF(i, 0);
-        B(i, 1) = BF(i, 1);
-        B(i, 2) = BF(i, 2);
-    }
-
-    return det;
+    x = ActivationInverseRead(A, 9); z = ActivationInverseRead(A, 11); y = ActivationInverseRead(A, 10);
+    first = x * ActivationInverseRead(B, 0);
+    third = z * ActivationInverseRead(B, 6);
+    second = y * ActivationInverseRead(B, 3);
+    ActivationInverseWrite(B, 9, -ActivationInverseAdd(ActivationInverseAdd(first, third), second));
+    x = ActivationInverseRead(A, 9); a = ActivationInverseRead(B, 1);
+    y = ActivationInverseRead(A, 10); b = ActivationInverseRead(B, 4);
+    z = ActivationInverseRead(A, 11);
+    first = x * a; second = y * b; third = z * ActivationInverseRead(B, 7);
+    held_b02 = ActivationInverseRead(B, 2);
+    absolute = ActivationInverseAdd(ActivationInverseAdd(first, second), third);
+    held_b12 = ActivationInverseRead(B, 5);
+    ActivationInverseWrite(B, 10, -absolute);
+    x = ActivationInverseRead(A, 9); y = ActivationInverseRead(A, 10); z = ActivationInverseRead(A, 11);
+    first = x * held_b02; second = y * held_b12;
+    third = z * ActivationInverseRead(B, 8);
+    ActivationInverseWrite(B, 11, -ActivationInverseAdd(ActivationInverseAdd(first, second), third));
+    return (br_scalar)determinant;
 }
 
 // FUNCTION: CARMA2_HW 0x00532eb0
@@ -1177,12 +1264,44 @@ void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, const br_matrix4* B) {
     A(3, 2) = B(3, 2);
 }
 
-// FUNCTION: CARMA2_HW 0x005333a0
-void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C) {
+static double C2_HOOK_CDECL Matrix34ApplyProductLoaded(const br_scalar* a, const br_scalar* b);
+static double C2_HOOK_CDECL Matrix34ApplyProductMemory(const br_scalar* a, const br_scalar* b);
 
-    A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
-    A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
-    A->v[2] = BR_MAC3(B->v[0], C(2, 0), B->v[1], C(2, 1), B->v[2], C(2, 2));
+// FUNCTION: CARMA2_HW 0x005333a0
+void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* output, const br_fvector3* input, const br_matrix34* matrix) {
+    const volatile br_fvector3* live_input = input;
+    const volatile br_matrix34* live_matrix = matrix;
+    volatile br_vector3* live_output = output;
+    br_scalar matrix_y, matrix_z, matrix_x, input_y, input_z, input_x;
+    double y, z, x;
+
+    matrix_y = live_matrix->m[0][1];
+    matrix_z = live_matrix->m[0][2];
+    input_y = live_input->v[1];
+    input_z = live_input->v[2];
+    input_x = live_input->v[0];
+    y = Matrix34ApplyProductLoaded(&matrix_y, &input_y);
+    z = Matrix34ApplyProductLoaded(&matrix_z, &input_z);
+    x = Matrix34ApplyProductMemory(&input_x, &matrix->m[0][0]);
+    live_output->v[0] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(y, z), x);
+
+    matrix_z = live_matrix->m[1][2];
+    input_z = live_input->v[2];
+    matrix_y = live_matrix->m[1][1];
+    matrix_x = live_matrix->m[1][0];
+    z = Matrix34ApplyProductLoaded(&matrix_z, &input_z);
+    y = Matrix34ApplyProductMemory(&matrix_y, &input->v[1]);
+    x = Matrix34ApplyProductMemory(&matrix_x, &input->v[0]);
+    live_output->v[1] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(z, y), x);
+
+    matrix_z = live_matrix->m[2][2];
+    input_z = live_input->v[2];
+    matrix_y = live_matrix->m[2][1];
+    matrix_x = live_matrix->m[2][0];
+    z = Matrix34ApplyProductLoaded(&matrix_z, &input_z);
+    y = Matrix34ApplyProductMemory(&matrix_y, &input->v[1]);
+    x = Matrix34ApplyProductMemory(&matrix_x, &input->v[0]);
+    live_output->v[2] = (br_scalar)Matrix34ApplyAdd(Matrix34ApplyAdd(z, y), x);
 }
 
 /* The paired-NaN C-first counterexample requires original operand forms.

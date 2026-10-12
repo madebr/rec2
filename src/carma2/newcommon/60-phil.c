@@ -154,7 +154,124 @@ void C2_HOOK_FASTCALL PHILDisable(void) {
     gPHIL_disabled = 1;
 }
 
-// PHILAddObject
+/* Registry access order follows the original overlapping Win32 storage. */
+#if defined(__GNUC__)
+typedef tU32 tRegistrationWord __attribute__((__may_alias__));
+#else
+typedef tU32 tRegistrationWord;
+#endif
+
+static void* C2_HOOK_CDECL RegistrationAddress(const void* base, tU32 offset) {
+    return (void*)(uintptr_t)((tU32)(uintptr_t)base + offset);
+}
+
+static tU32 C2_HOOK_CDECL RegistrationRead(const void* base, tU32 offset) {
+    return *(volatile const tRegistrationWord*)RegistrationAddress(base, offset);
+}
+
+static void C2_HOOK_CDECL RegistrationWrite(void* base, tU32 offset, tU32 value) {
+    *(volatile tRegistrationWord*)RegistrationAddress(base, offset) = value;
+}
+
+static tU8 C2_HOOK_CDECL RegistrationByte(const void* base, tU32 offset) {
+    return *(volatile const tU8*)RegistrationAddress(base, offset);
+}
+
+static void C2_HOOK_CDECL RegistrationWriteByte(void* base, tU32 offset, tU8 value) {
+    *(volatile tU8*)RegistrationAddress(base, offset) = value;
+}
+
+static void* C2_HOOK_CDECL RegistrationPointer(const void* base, tU32 offset) {
+    return (void*)(uintptr_t)RegistrationRead(base, offset);
+}
+
+/* REP MOVSD captures both bases once then sequentially copies each rawDWORD.
+   Use the genuine published identical PhilCopyWords in the future verifier. */
+static void C2_HOOK_CDECL RegistrationCopyWords(void* output, const void* input, int count) {
+    int i;
+    for (i = 0; i < count; i++) {
+        tU32 value = RegistrationRead(input, (tU32)i * 4u);
+        RegistrationWrite(output, (tU32)i * 4u, value);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004b5d40
+int C2_HOOK_FASTCALL PHILAddObject(tPhysics_object* object) {
+    void* info;
+    void* first_free = NULL;
+    void* scan;
+    void* queued;
+    tPhysics_object* current;
+    tPhysics_object* head;
+    tPhysics_object* next;
+    tU32 index, count, flags;
+    int i;
+
+    if (RegistrationRead(&gPHIL_disabled, 0) != 0) {
+        return 0;
+    }
+    if (RegistrationRead(&gPHIL_munging_objects, 0) != 0 && RegistrationRead(&gPHIL_registry.object_added, 0) == 0) {
+        /* Original100*count moduloDWORD; no added capacity clamp. */
+        index = RegistrationRead(&gPHIL_registry.count_adds, 0);
+        queued = RegistrationAddress(&gPHIL_registry, 0x10u + index * 100u);
+        RegistrationWrite(queued, 0, (tU32)(uintptr_t)object);
+        RegistrationWrite(queued, 8, 1);
+        RegistrationWriteByte(queued, 0x60, 0);
+        RegistrationWrite(object, 0x240, (tU32)(uintptr_t)queued);
+        RegistrationWriteByte(object, 0x239, 2);
+        count = RegistrationRead(&gPHIL_registry.count_adds, 0);
+        RegistrationWrite(&gPHIL_registry.count_adds, 0, count + 1u);
+        return 0;
+    }
+    scan = RegistrationAddress(&gPHIL_registry, 0x78);
+    for (i = 0; i < 100; i++) {
+        current = RegistrationPointer(scan, 0);
+        if (current == NULL) {
+            if (first_free == NULL) {
+                first_free = scan;
+            }
+        } else if (current == object) {
+            return 2;
+        }
+        scan = RegistrationAddress(scan, 24);
+    }
+    if (first_free == NULL) {
+        return 1;
+    }
+    info = first_free;
+    for (i = 0; i < 6; i++) {
+        RegistrationWrite(info, (tU32)i * 4u, 0);
+    }
+    RegistrationWrite(info, 0, (tU32)(uintptr_t)object);
+    RegistrationWrite(info, 8, 1);
+    flags = RegistrationRead(object, 0x19c) | 0x20u;
+    RegistrationWrite(object, 0x240, (tU32)(uintptr_t)info);
+    RegistrationWrite(object, 0x19c, flags);
+    RegistrationWriteByte(object, 0x239, 1);
+    count = RegistrationRead(&gPHIL_registry.count_list, 0);
+    head = RegistrationPointer(&gPHIL_list_collision_infos, 0);
+    RegistrationWrite(&gPHIL_registry.count_list, 0, count + 1u);
+    if (head != NULL) {
+        next = RegistrationPointer(head, 0x220);
+        RegistrationWrite(object, 0x220, (tU32)(uintptr_t)next);
+        head = RegistrationPointer(&gPHIL_list_collision_infos, 0);
+        RegistrationWrite(head, 0x220, (tU32)(uintptr_t)object);
+        next = RegistrationPointer(object, 0x220);
+        head = RegistrationPointer(&gPHIL_list_collision_infos, 0);
+        RegistrationWrite(object, 0x22c, (tU32)(uintptr_t)head);
+        if (next != NULL) {
+            RegistrationWrite(next, 0x22c, (tU32)(uintptr_t)object);
+        }
+    } else {
+        RegistrationWrite(&gPHIL_list_collision_infos, 0, (tU32)(uintptr_t)object);
+        RegistrationWrite(object, 0x220, 0);
+        RegistrationWrite(object, 0x22c, 0);
+    }
+    if (RegistrationRead(&gPHIL_doing_physics, 0) != 0) {
+        PrepareObject(object, &gPHIL_list_collision_infos);
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004b5ea0
 int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject) {
@@ -322,11 +439,99 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const
     return 0;
 }
 
-// PHILAddActiveObject
+// FUNCTION: CARMA2_HW 0x004b6210
+int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* object, const br_matrix34* matrix, const br_vector3* velocity, const br_vector3* omega) {
+    int result;
+    void* info;
+    void* info_object;
+    void* actor;
+    tU8 type;
 
-// PHILAddObjectImmediately
+    if (RegistrationRead(&gPHIL_disabled, 0) != 0) {
+        return 0;
+    }
+    result = PHILAddObject(object);
+    if (result != 0) {
+        return result;
+    }
+    if (matrix != NULL && RegistrationRead(&gPHIL_disabled, 0) == 0) {
+        type = RegistrationByte(object, 0x239);
+        info = RegistrationPointer(object, 0x240);
+        if (type == 2) {
+            RegistrationCopyWords(RegistrationAddress(info, 0x30), matrix, 12);
+            RegistrationWriteByte(info, 0x60, (tU8)(RegistrationByte(info, 0x60) | 4u));
+        } else {
+            if (info == NULL) {
+                return 3;
+            }
+            if (RegistrationRead(info, 8) != 1) {
+                return 4;
+            }
+            info_object = RegistrationPointer(info, 0);
+            actor = RegistrationPointer(info_object, 0);
+            RegistrationCopyWords(RegistrationAddress(actor, 0x2c), matrix, 12);
+        }
+    }
+    return PHILMakeObjectActive(object, velocity, omega, 0);
+}
 
-// PHILAddActiveObjectImmediately
+// FUNCTION: CARMA2_HW 0x004b62b0
+int C2_HOOK_FASTCALL FUN_004b62b0(tPhysics_object* object) {
+    int result;
+    if (RegistrationRead(&gPHIL_disabled, 0) != 0) {
+        return 0;
+    }
+    if (RegistrationRead(&gPHIL_munging_objects, 0) != 0) {
+        RegistrationWrite(&gPHIL_registry.object_added, 0, 1);
+    }
+    result = PHILAddObject(object);
+    RegistrationWrite(&gPHIL_registry.object_added, 0, 0);
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004b62e0
+int C2_HOOK_FASTCALL FUN_004b62e0(tPhysics_object* object, const br_matrix34* matrix, const br_vector3* velocity, const br_vector3* omega) {
+    int result;
+    void* info;
+    void* info_object;
+    void* actor;
+    tU8 type;
+
+    if (RegistrationRead(&gPHIL_disabled, 0) != 0) {
+        return 0;
+    }
+    if (RegistrationRead(&gPHIL_munging_objects, 0) != 0) {
+        RegistrationWrite(&gPHIL_registry.object_added, 0, 1);
+    }
+    result = PHILAddObject(object);
+    if (result != 0) {
+        RegistrationWrite(&gPHIL_registry.object_added, 0, 0);
+        return result;
+    }
+    if (matrix != NULL && RegistrationRead(&gPHIL_disabled, 0) == 0) {
+        type = RegistrationByte(object, 0x239);
+        info = RegistrationPointer(object, 0x240);
+        if (type == 2) {
+            RegistrationCopyWords(RegistrationAddress(info, 0x30), matrix, 12);
+            RegistrationWriteByte(info, 0x60, (tU8)(RegistrationByte(info, 0x60) | 4u));
+        } else {
+            if (info == NULL) {
+                RegistrationWrite(&gPHIL_registry.object_added, 0, 0);
+                return 3;
+            }
+            if (RegistrationRead(info, 8) != 1) {
+                RegistrationWrite(&gPHIL_registry.object_added, 0, 0);
+                return 4;
+            }
+            info_object = RegistrationPointer(info, 0);
+            actor = RegistrationPointer(info_object, 0);
+            RegistrationCopyWords(RegistrationAddress(actor, 0x2c), matrix, 12);
+        }
+    }
+    result = PHILMakeObjectActive(object, velocity, omega, 0);
+    RegistrationWrite(&gPHIL_registry.object_added, 0, 0);
+    return result;
+}
 
 // FUNCTION: CARMA2_HW 0x004b63b0
 int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) {
@@ -446,7 +651,47 @@ double C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pPro
 
 // PHILMungeObjects
 
-// PHILActivatePassive
+typedef void (C2_HOOK_FASTCALL *tActivation_original_call)(tPhysics_object*, undefined4);
+typedef int (C2_HOOK_FASTCALL *tActivation_permission_call)(tPhysics_object*, undefined4);
+#if defined(__GNUC__)
+typedef tU32 tActivation_raw_word __attribute__((__may_alias__));
+#else
+typedef tU32 tActivation_raw_word;
+#endif
+
+static tU32 C2_HOOK_CDECL ActivationWord(const void* base, tU32 offset) {
+    return *(volatile const tActivation_raw_word*)((tU32)(uintptr_t)base + offset);
+}
+
+// FUNCTION: CARMA2_HW 0x004b71b0
+void C2_HOOK_FASTCALL PHILActivatePassive(tPhysics_object* object, undefined4 captured_edx) {
+    tU32 header = ActivationWord(object, 0x240);
+    tU32 address;
+    tU32 callbacks;
+    tActivation_original_call original;
+    tActivation_permission_call permission;
+
+    if (header != 0 && ActivationWord((const void*)(uintptr_t)header, 8) == 1) {
+        address = *(volatile const tActivation_raw_word*)(const void*)&gPHIL_registry.original_activate_passive;
+        if (address != 0) {
+            memcpy(&original, &address, sizeof(original));
+            /* EDX is still the entry word at the first original call. */
+            original(object, captured_edx);
+        }
+        callbacks = *(volatile const tActivation_raw_word*)(const void*)&gPHIL_registry.callbacks;
+        address = ActivationWord((const void*)(uintptr_t)callbacks, 0x14);
+        if (address != 0) {
+            memcpy(&permission, &address, sizeof(permission));
+            /* Original explicitly restores the captured entry EDX here. */
+            if (permission(object, captured_edx) == 0) {
+                return;
+            }
+        }
+        PHILMakeObjectActive(object, NULL, NULL, 1);
+    } else {
+        *(volatile tActivation_raw_word*)((tU32)(uintptr_t)object + 0x19c) = ActivationWord(object, 0x19c) | 0x1000u;
+    }
+}
 
 // PHILInterpolateObjects
 

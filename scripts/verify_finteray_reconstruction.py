@@ -190,7 +190,11 @@ def compile_native(output,gcc,msvc_root,extra_bodies='',extra_driver='',source_t
     matrix=(ROOT/'src/brender/core/math/matrix34.c').read_text()
     bodies=[extract(source,'FinterayScalar')]+[extract(source,n) for n in FUNCTIONS if n!='FindFace']
     bodies.append(extract((ROOT/'src/carma2/newcommon/00-car.c').read_text(),'FindFace'))
-    matrix_bodies=[extract(matrix,n) for n in ['BrMatrix34Inverse','BrMatrix34ApplyP','BrMatrix34ApplyV']]
+    inverse_helpers=['Matrix34ApplyAdd','ActivationInverseNaN','ActivationInverseAdd','ActivationInverseRead','ActivationInverseScalar','ActivationInverseWrite']
+    matrix_bodies=['#if defined(_MSC_VER) && _MSC_VER < 1300\n#pragma auto_inline(off)\n#endif']
+    matrix_bodies += [extract(matrix,n) for n in inverse_helpers]
+    matrix_bodies += ['#if defined(_MSC_VER) && _MSC_VER < 1300\n#pragma auto_inline(on)\n#endif']
+    matrix_bodies += [extract(matrix,n) for n in ['BrMatrix34Inverse','BrMatrix34ApplyP','BrMatrix34ApplyV']]
     prefix='''#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
