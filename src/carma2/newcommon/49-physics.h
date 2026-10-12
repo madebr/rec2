@@ -11,6 +11,7 @@ extern br_scalar gPhysics_bounds_min_x;
 extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern char gPhysics_empty_message;
 extern tU32 gPhysics_contact_679434;
+extern tU32 gPhysics_contact_679438;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
 extern void* gPhysics_buffer3_ptr;
@@ -77,6 +78,8 @@ typedef struct {
 int C2_HOOK_FASTCALL GetCornerToFacePoints(tPhysics_object* pObject, tPhysics_shape* pUnused_shape, tPhysics_contact* pContacts, int pCount, int pCapacity, tPhysics_wall_workspace* pWorkspace, void* pUnused_argument);
 
 int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* object, tPhysics_shape* shape, tPhysics_contact* contacts, int count, int capacity, tPhysics_wall_workspace* workspace, void* unused, int* touched);
+
+int C2_HOOK_FASTCALL FUN_00424990(const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* moving_direction, const br_vector3* velocity, const br_vector3* direction_change, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other);
 
 int C2_HOOK_FASTCALL FUN_00425630(const br_vector3* n0, const br_vector3* n1, const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* velocity0, const br_vector3* edge_change, const br_vector3* velocity1, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other);
 

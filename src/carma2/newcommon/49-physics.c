@@ -43,6 +43,9 @@ br_scalar gPhysics_bounds_min_x;
 // GLOBAL: CARMA2_HW 0x00679434
 tU32 gPhysics_contact_679434;
 
+// GLOBAL: CARMA2_HW 0x00679438
+tU32 gPhysics_contact_679438;
+
 // GLOBAL: CARMA2_HW 0x00676920
 char gPhysics_empty_message;
 
@@ -591,6 +594,135 @@ int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* object, tPhysics_shape* shape
 
 
 /* Complete near-parallel edge-contact fallback; original lexical name unknown. */
+// FUNCTION: CARMA2_HW 0x00424990
+int C2_HOOK_FASTCALL FUN_00424990(const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* moving_direction, const br_vector3* velocity, const br_vector3* direction_change, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other) {
+    br_vector3 n0,n1,delta,normal,edge,origin,local,world,relative,previous_normal;
+    double a,c,ac4,b2,root,wide_time,normal_square,normal_length,scale;
+    volatile br_scalar b;
+    double dot,numerator,denominator,orientation,mixed[3],wide_delta[3],wide_edge_x;
+    volatile br_scalar negative_square,projection[3],stored_dot,stored_z_product;
+    volatile br_scalar stored_current[3],stored_blend[3];
+    volatile br_scalar time,stored_two_a,stored_root,stored_ac4,stored_b2,edge_fraction,old_fraction;
+    volatile br_scalar complement;
+    unsigned axis,i;
+    n0.v[0]=PhysicsScalar((double)moving_direction->v[1]*old_direction->v[2]-(double)old_direction->v[1]*moving_direction->v[2]);
+    n0.v[1]=PhysicsScalar((double)moving_direction->v[2]*old_direction->v[0]-(double)old_direction->v[2]*moving_direction->v[0]);
+    n0.v[2]=PhysicsScalar((double)old_direction->v[1]*moving_direction->v[0]-(double)moving_direction->v[1]*old_direction->v[0]);
+    n1.v[0]=PhysicsScalar((double)direction_change->v[1]*old_direction->v[2]-(double)direction_change->v[2]*old_direction->v[1]);
+    n1.v[1]=PhysicsScalar((double)direction_change->v[2]*old_direction->v[0]-(double)old_direction->v[2]*direction_change->v[0]);
+    n1.v[2]=PhysicsScalar((double)old_direction->v[1]*direction_change->v[0]-(double)direction_change->v[1]*old_direction->v[0]);
+    for(i=0;i<3;i++)PhysicsSubtractScalar(&delta.v[i],&moving_origin->v[i],&old_origin->v[i]);
+    a=((double)velocity->v[1]*n1.v[1]+(double)velocity->v[2]*n1.v[2])+(double)n1.v[0]*velocity->v[0];
+    b=PhysicsScalar(((((double)moving_origin->v[2]*n1.v[2]+(double)moving_origin->v[1]*n1.v[1])+(double)n1.v[0]*moving_origin->v[0])+
+        (((double)velocity->v[1]*n0.v[1]+(double)velocity->v[2]*n0.v[2])+(double)n0.v[0]*velocity->v[0]))-
+        ((((double)old_origin->v[2]*n1.v[2]+(double)old_origin->v[1]*n1.v[1])+(double)n1.v[0]*old_origin->v[0])+
+        (((double)old_direction->v[2]*n0.v[2]+(double)old_direction->v[1]*n0.v[1])+(double)n0.v[0]*old_direction->v[0])));
+    c=((double)delta.v[0]*n0.v[0]+(double)delta.v[1]*n0.v[1])+(double)delta.v[2]*n0.v[2];
+    if(PhysicsWallNaN(a)||a<0.0) {a=-a;b=-b;c=-c;}
+    ac4=(c*a)*4.f;
+    stored_ac4=PhysicsScalar(ac4);
+    b2=b*b;
+    stored_b2=PhysicsScalar(b2);
+    if((double)stored_b2<fabs(ac4)*1000.f) {
+        root=(double)stored_b2-stored_ac4;
+        if(PhysicsWallNaN(root)||root<0.0)goto fallback;
+        stored_root=PhysicsScalar(sqrt(root));
+        stored_two_a=PhysicsScalar(a+a);
+        wide_time=(-b-stored_root)/stored_two_a;
+        time=PhysicsScalar(wide_time);
+        if(wide_time>1.0)goto fallback;
+        if(!PhysicsWallNaN(time)&&time>=0.f) {
+            for(i=0;i<3;i++) {mixed[i]=(double)time*n1.v[i]+n0.v[i];normal.v[i]=PhysicsScalar(mixed[i]);}
+            normal_square=(mixed[0]*normal.v[0]+mixed[1]*normal.v[1])+mixed[2]*normal.v[2];
+            if(PhysicsWallNaN(normal_square)||normal_square<1e-7)goto fallback;
+        }
+        if(PhysicsWallNaN(time)||time<0.f)time=PhysicsScalar(((double)stored_root-b)/stored_two_a);
+    } else {
+        if(!(fabs(b)>1e-7))goto fallback;
+        wide_time=-(c/b)-(((c*c*a)/((double)stored_b2*b))*(double)-1.3333333730697632f);
+        time=PhysicsScalar(wide_time);
+        if(PhysicsWallNaN(wide_time)||wide_time<0.0||time>1.f||gPhysics_contact_679438!=0)time=PhysicsScalar(-(b/a)-time);
+    }
+    if(!(time>=0.f)||!(time<=1.f))goto fallback;
+    for(i=0;i<3;i++) {mixed[i]=(double)time*n1.v[i]+n0.v[i];normal.v[i]=PhysicsScalar(mixed[i]);}
+    normal_square=(mixed[0]*normal.v[0]+mixed[1]*normal.v[1])+mixed[2]*normal.v[2];
+    if(PhysicsWallNaN(normal_square)||normal_square<1e-7)goto fallback;
+    if(!PhysicsWallNaN(output->t)&&!(time<output->t))return 0;
+    normal_length=sqrt(((double)normal.v[0]*normal.v[0]+(double)normal.v[1]*normal.v[1])+(double)normal.v[2]*normal.v[2]);
+    if(PhysicsWallNaN(normal_length)||normal_length<=2.384185791015625e-7f) {
+        normal.v[0]=1.f;normal.v[1]=0.f;normal.v[2]=0.f;
+    } else {
+        scale=1.0/normal_length;
+        for(i=0;i<3;i++)normal.v[i]=PhysicsScalar(scale*normal.v[i]);
+    }
+    wide_edge_x=(double)time*direction_change->v[0]+moving_direction->v[0];
+    edge.v[0]=PhysicsScalar(wide_edge_x);
+    for(i=1;i<3;i++)edge.v[i]=PhysicsScalar((double)direction_change->v[i]*time+moving_direction->v[i]);
+    for(i=0;i<3;i++)origin.v[i]=PhysicsScalar((double)time*velocity->v[i]+moving_origin->v[i]);
+    dot=((double)old_direction->v[1]*edge.v[1]+(double)old_direction->v[2]*edge.v[2])+wide_edge_x*old_direction->v[0];
+    stored_dot=PhysicsScalar(dot);
+    negative_square=PhysicsScalar(-(((double)old_direction->v[1]*old_direction->v[1]+(double)old_direction->v[2]*old_direction->v[2])+(double)old_direction->v[0]*old_direction->v[0]));
+    projection[0]=PhysicsScalar((double)edge.v[0]*negative_square+dot*old_direction->v[0]);
+    projection[1]=PhysicsScalar((double)edge.v[1]*negative_square+(double)old_direction->v[1]*stored_dot);
+    stored_z_product=PhysicsScalar((double)old_direction->v[2]*stored_dot);
+    projection[2]=PhysicsScalar((double)edge.v[2]*negative_square+stored_z_product);
+    for(i=0;i<3;i++) {wide_delta[i]=(double)old_origin->v[i]-origin.v[i];delta.v[i]=PhysicsScalar(wide_delta[i]);}
+    numerator=(wide_delta[0]*projection[0]+wide_delta[1]*projection[1])+wide_delta[2]*projection[2];
+    denominator=((double)edge.v[0]*projection[0]+(double)edge.v[1]*projection[1])+(double)edge.v[2]*projection[2];
+    edge_fraction=PhysicsScalar(numerator/denominator);
+    if(!(edge_fraction>=0.f)||!(edge_fraction<=1.f))goto fallback;
+    axis=!(fabs((double)old_direction->v[0])>=fabs((double)old_direction->v[1]));
+    if(!(fabs((double)old_direction->v[2])<=fabs((double)old_direction->v[axis])))axis=2;
+    old_fraction=PhysicsScalar((((double)edge.v[axis]*edge_fraction+origin.v[axis])-old_origin->v[axis])/old_direction->v[axis]);
+    if(!(old_fraction>=0.f)||!(old_fraction<=1.f))goto fallback;
+    for(i=0;i<3;i++)PhysicsSubtractScalar(&delta.v[i],&moving_origin->v[i],&old_origin->v[i]);
+    orientation=((double)delta.v[0]*n0.v[0]+(double)delta.v[1]*n0.v[1])+(double)delta.v[2]*n0.v[2];
+    if(PhysicsWallNaN(orientation)||orientation<0.0)for(i=0;i<3;i++)normal.v[i]=-normal.v[i];
+    if(other!=NULL) {
+        BrMatrix34ApplyV(&output->normal,&normal,&other->transform_matrix);
+        BrMatrix34ApplyV(&previous_normal,&normal,&other->actor->t.t.mat);
+        complement=PhysicsScalar(1.f-time);
+        for(i=0;i<3;i++)stored_current[i]=PhysicsScalar((double)output->normal.v[i]*time);
+        output->normal.v[0]=stored_current[0];
+        for(i=0;i<3;i++) {
+            mixed[i]=(double)previous_normal.v[i]*complement+stored_current[i];
+            stored_blend[i]=PhysicsScalar(mixed[i]);
+        }
+        normal_length=sqrt((mixed[0]*stored_blend[0]+mixed[1]*stored_blend[1])+mixed[2]*stored_blend[2]);
+        output->normal.v[1]=stored_current[1];output->normal.v[1]=stored_blend[1];
+        output->normal.v[2]=stored_current[2];output->normal.v[0]=stored_blend[0];output->normal.v[2]=stored_blend[2];
+        if(PhysicsWallNaN(normal_length)||normal_length<=2.384185791015625e-7f) {
+            output->normal.v[0]=1.f;output->normal.v[1]=0.f;output->normal.v[2]=0.f;
+        } else {
+            scale=1.0/normal_length;
+            output->normal.v[0]=PhysicsScalar(scale*mixed[0]);
+            output->normal.v[1]=PhysicsScalar(scale*stored_blend[1]);
+            output->normal.v[2]=PhysicsScalar(scale*stored_blend[2]);
+        }
+        for(i=0;i<3;i++)wide_delta[i]=(double)old_fraction*old_direction->v[i];
+        for(i=0;i<3;i++)output->reference_position.v[i]=PhysicsScalar(wide_delta[i]+old_origin->v[i]);
+        for(i=0;i<3;i++)local.v[i]=PhysicsScalar((double)edge_fraction*moving_direction->v[i]+moving_origin->v[i]);
+        BrMatrix34ApplyP(&world,&local,&other->transform_matrix);
+        for(i=0;i<3;i++)PhysicsSubtractScalar(&relative.v[i],&world.v[i],&object->transform_matrix.m[3][i]);
+        BrMatrix34TApplyV(&output->position,&relative,&object->transform_matrix);
+        output->t=time;
+    } else {
+        BrMatrix34TApplyV(&output->normal,&normal,&object->transform_matrix);
+        for(i=0;i<3;i++)PhysicsCopyWord(output->field_0x38+4*i,&normal.v[i]);
+        for(i=0;i<3;i++) {
+            mixed[i]=(double)edge_fraction*moving_direction->v[i]+moving_origin->v[i];
+            relative.v[i]=PhysicsScalar(mixed[i]-object->transform_matrix.m[3][i]);
+        }
+        BrMatrix34TApplyV(&output->position,&relative,&object->transform_matrix);
+        for(i=0;i<3;i++)output->reference_position.v[i]=PhysicsScalar((double)old_fraction*old_direction->v[i]);
+        for(i=0;i<3;i++)output->reference_position.v[i]=PhysicsScalar((double)output->reference_position.v[i]+old_origin->v[i]);
+        output->t=time;
+    }
+    return 1;
+fallback:
+    return FUN_00425630(&n0,&n1,old_origin,old_direction,moving_origin,moving_direction,velocity,direction_change,output,unused,object,other);
+}
+
 // FUNCTION: CARMA2_HW 0x00425630
 int C2_HOOK_FASTCALL FUN_00425630(const br_vector3* n0, const br_vector3* n1, const br_vector3* old_origin, const br_vector3* old_direction, const br_vector3* moving_origin, const br_vector3* velocity0, const br_vector3* edge_change, const br_vector3* velocity1, tPhysics_contact* output, int unused, tPhysics_object* object, tPhysics_object* other) {
     br_vector3 normal,delta,speed,point,relative,world;
