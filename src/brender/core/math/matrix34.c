@@ -575,9 +575,39 @@ void C2_HOOK_CDECL BrMatrix34Scale(br_matrix34* mat, br_scalar sx, br_scalar sy,
     M(3, 2) = 0.f;
 }
 
+#if !defined(_MSC_VER) || _MSC_VER >= 1300
+/* The original shear construction copies both argument words before stores.
+ * A float assignment through x87 would quiet a signaling NaN in mattmp2. */
+static void C2_HOOK_CDECL BrMatrix34RawShearX(br_matrix34* mat, const br_scalar* sy, const br_scalar* sz) {
+    br_uint_32 bits_y;
+    br_uint_32 bits_z;
+    volatile br_uint_32 barrier_y;
+    volatile br_uint_32 barrier_z;
+
+    memcpy(&bits_y, sy, sizeof(bits_y));
+    memcpy(&bits_z, sz, sizeof(bits_z));
+    barrier_y = bits_y;
+    barrier_z = bits_z;
+    bits_y = barrier_y;
+    bits_z = barrier_z;
+    M(0, 0) = 1.f;
+    memcpy(&M(0, 1), &bits_y, sizeof(bits_y));
+    memcpy(&M(0, 2), &bits_z, sizeof(bits_z));
+    M(1, 0) = 0.f;
+    M(1, 1) = 1.f;
+    M(1, 2) = 0.f;
+    M(2, 0) = 0.f;
+    M(2, 1) = 0.f;
+    M(2, 2) = 1.f;
+    M(3, 0) = 0.f;
+    M(3, 1) = 0.f;
+    M(3, 2) = 0.f;
+}
+#endif
+
 // FUNCTION: CARMA2_HW 0x00532b10
 void C2_HOOK_CDECL BrMatrix34ShearX(br_matrix34* mat, br_scalar sy, br_scalar sz) {
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
     M(0, 0) = 1.f;
     M(0, 1) = sy;
     M(0, 2) = sz;
@@ -590,6 +620,9 @@ void C2_HOOK_CDECL BrMatrix34ShearX(br_matrix34* mat, br_scalar sy, br_scalar sz
     M(3, 0) = 0.f;
     M(3, 1) = 0.f;
     M(3, 2) = 0.f;
+#else
+    BrMatrix34RawShearX(mat, &sy, &sz);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00532b50
@@ -1243,8 +1276,11 @@ void C2_HOOK_CDECL BrMatrix34PostScale(br_matrix34* mat, br_scalar sx, br_scalar
 
 // FUNCTION: CARMA2_HW 0x00533fd0
 void C2_HOOK_CDECL BrMatrix34PreShearX(br_matrix34* mat, br_scalar sy, br_scalar sz) {
-
+#if defined(_MSC_VER) && _MSC_VER < 1300
     BrMatrix34ShearX(&mattmp2, sy, sz);
+#else
+    BrMatrix34RawShearX(&mattmp2, &sy, &sz);
+#endif
     BrMatrix34Mul(&mattmp1, &mattmp2, mat);
     BrMatrix34Copy(mat, &mattmp1);
 }
