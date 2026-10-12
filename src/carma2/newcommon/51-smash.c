@@ -5,6 +5,9 @@
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
+// GLOBAL: CARMA2_HW 0x006abee8
+br_vector3 gZero_vector__smash;
+
 // GLOBAL: CARMA2_HW 0x006a55c8
 tExplosion gExplosions[50];
 

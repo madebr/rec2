@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern br_vector3 gZero_vector__smash;
+
 extern tExplosion gExplosions[50];
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);

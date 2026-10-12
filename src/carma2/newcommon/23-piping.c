@@ -1,6 +1,8 @@
 #include "23-piping.h"
 
 #include "41-utility.h"
+#include "51-smash.h"
+#include "69-sound.h"
 #include "42-input.h"
 #include "52-errors.h"
 #include "globvars.h"
@@ -1172,9 +1174,27 @@ void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar 
 
 // PipeSingleGraphicalWheelStuff
 
-// STUB: CARMA2_HW 0x004c84a0
+// FUNCTION: CARMA2_HW 0x004c84a0
 void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPosition) {
-    NOT_IMPLEMENTED();
+    tU32 packed_volume;
+    int outlet_index;
+
+    if (*(const volatile int*)&gAction_replay_mode != 0
+        || !((const volatile tProgram_state*)&gProgram_state)->racing) {
+        return;
+    }
+    if (pPosition == NULL) {
+        pPosition = &gZero_vector__smash;
+    }
+    /* Original SHL/ADD wraps32 bits, including negative/out-of-range ints.
+     * The varied writer stores the low16 bits of this raw DWORD. */
+    packed_volume = ((tU32)pR_volume << 8) + (tU32)pL_volume;
+    outlet_index = GetIndexFromOutlet(pOutlet);
+    ARDoSingleVariedSession(2, (uintptr_t)(tU32)pSound, 4,
+        4, 0, (uintptr_t)(tU32)pPitch,
+        12, 4, (uintptr_t)pPosition,
+        2, 16, (uintptr_t)(tU32)outlet_index,
+        2, 18, (uintptr_t)packed_volume);
 }
 
 // PipeSingleSpecial

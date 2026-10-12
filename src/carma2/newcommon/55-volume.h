@@ -23,7 +23,7 @@ extern void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec
 
 // SaveSpecialVolumes
 
-// FindInverseAndWorldBox
+extern void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pVolume);
 
 // ReadSpecialVolumes
 
