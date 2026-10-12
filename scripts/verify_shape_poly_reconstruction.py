@@ -239,6 +239,8 @@ def scenarios():
             cases.append(scene(mode,patch=[(0x400,left),(0x404,right)]))
     for value in specials:cases.append(scene(0,radius=value))
     for mode in (1,2,3):cases.append(scene(mode,normal=0x14c,expect_fault=True))
+    for mode in range(4):
+        for value in (0x7fc12345,0x7f812345):cases.append(scene(mode,patch=[(0x41c,value)]))
     return cases
 
 def assert_oracle_contract(case,result):

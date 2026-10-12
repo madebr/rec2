@@ -6,6 +6,10 @@
 #include "c2_math.h"
 #include "c2_string.h"
 
+static int C2_HOOK_FASTCALL FinterayBoxNaN(double value);
+static void C2_HOOK_FASTCALL FinterayBoxCopyScalar(br_scalar* output, const br_scalar* input);
+static double C2_HOOK_FASTCALL FinterayShapeLoadScalar(const br_scalar* input);
+
 // GLOBAL: CARMA2_HW 0x005964c0
 int gPling_materials = 1;
 
@@ -42,6 +46,39 @@ static float C2_HOOK_FASTCALL FinterayScalar(double value) {
     volatile float scalar = (float)value;
 
     return scalar;
+}
+
+/* VC5 crashes when it expands the scalar stores into the edge arithmetic.
+ * Keep this private call boundary without changing the existing ray helpers. */
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+static br_scalar C2_HOOK_FASTCALL FinterayEdgeScalar(double value) {
+    return FinterayScalar(value);
+}
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
+
+/* Modern SSE subtraction selects a different NaN operand from the original
+ * FLD/FSUB. Retain that instruction order and the unspilled PC53 difference. */
+static double C2_HOOK_FASTCALL FinterayEdgeDifference(const br_scalar* a, const br_scalar* b) {
+    double result;
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, a
+        mov ecx, b
+        fld dword ptr [eax]
+        fsub dword ptr [ecx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1\n\tfsubs %2\n\tfstpl %0" : "=m"(result) : "m"(*a), "m"(*b) : "st");
+#else
+    result = (double)*a - *b;
+#endif
+    return result;
 }
 
 // FUNCTION: CARMA2_HW 0x0045cd90
@@ -371,9 +408,138 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // SphereSphereCollide
 
-// StationarySphereEdgeCollide
+// FUNCTION: CARMA2_HW 0x0045dea0
+void C2_HOOK_FASTCALL StationarySphereEdgeCollide(br_vector3* pEdge_start, br_vector3* pEdge_end, br_vector3* pEdge_direction, br_scalar pEdge_length_squared, br_vector3* pSphere_end, tCollision_shape_sphere_data* pSphere, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    double x;
+    double y;
+    double z;
+    double projection;
+    double product;
+    double point_x;
+    double limit;
+    double length;
+    double radius_squared;
+    volatile br_scalar ratio;
+    br_scalar normal_x;
+    br_scalar normal_y;
+    volatile br_scalar squared;
 
-// PointSphereCollision
+    x = FinterayShapeLoadScalar(&pSphere_end->v[0]) - FinterayShapeLoadScalar(&pEdge_start->v[0]);
+    y = FinterayShapeLoadScalar(&pSphere_end->v[1]) - FinterayShapeLoadScalar(&pEdge_start->v[1]);
+    z = FinterayShapeLoadScalar(&pSphere_end->v[2]) - FinterayShapeLoadScalar(&pEdge_start->v[2]);
+    projection = ((x * FinterayShapeLoadScalar(&pEdge_direction->v[0])
+        + FinterayShapeLoadScalar(&pEdge_direction->v[1]) * y) + z * FinterayShapeLoadScalar(&pEdge_direction->v[2])) / pEdge_length_squared;
+    ratio = FinterayEdgeScalar(projection);
+    if (FinterayBoxNaN(projection) || !(projection > 0.0)) {
+        FinterayBoxCopyScalar(&pPoint->v[0], &pEdge_start->v[0]);
+        FinterayBoxCopyScalar(&pPoint->v[1], &pEdge_start->v[1]);
+        FinterayBoxCopyScalar(&pPoint->v[2], &pEdge_start->v[2]);
+    } else if (ratio < 1.0f || FinterayBoxNaN(ratio)) {
+        pPoint->v[0] = FinterayEdgeScalar(FinterayShapeLoadScalar(&pEdge_direction->v[0]) * ratio);
+        product = FinterayShapeLoadScalar(&pEdge_direction->v[1]) * ratio;
+        point_x = FinterayShapeLoadScalar(&pPoint->v[0]);
+        pPoint->v[1] = FinterayEdgeScalar(product);
+        pPoint->v[2] = FinterayEdgeScalar(FinterayShapeLoadScalar(&pEdge_direction->v[2]) * ratio);
+        pPoint->v[0] = FinterayEdgeScalar(point_x + FinterayShapeLoadScalar(&pEdge_start->v[0]));
+        pPoint->v[1] = FinterayEdgeScalar(FinterayShapeLoadScalar(&pEdge_start->v[1]) + FinterayShapeLoadScalar(&pPoint->v[1]));
+        pPoint->v[2] = FinterayEdgeScalar(FinterayShapeLoadScalar(&pEdge_start->v[2]) + FinterayShapeLoadScalar(&pPoint->v[2]));
+    } else {
+        FinterayBoxCopyScalar(&pPoint->v[0], &pEdge_end->v[0]);
+        FinterayBoxCopyScalar(&pPoint->v[1], &pEdge_end->v[1]);
+        FinterayBoxCopyScalar(&pPoint->v[2], &pEdge_end->v[2]);
+    }
+    pNormal->v[0] = FinterayEdgeScalar(FinterayEdgeDifference(&pPoint->v[0], &pSphere_end->v[0]));
+    product = FinterayEdgeDifference(&pPoint->v[1], &pSphere_end->v[1]);
+    FinterayBoxCopyScalar(&normal_x, &pNormal->v[0]);
+    pNormal->v[1] = FinterayEdgeScalar(product);
+    z = FinterayEdgeDifference(&pPoint->v[2], &pSphere_end->v[2]);
+    normal_y = FinterayEdgeScalar(FinterayShapeLoadScalar(&pNormal->v[1]));
+    squared = FinterayEdgeScalar((normal_y * (double)normal_y + z * z) + normal_x * (double)normal_x);
+    pNormal->v[2] = FinterayEdgeScalar(z);
+    radius_squared = FinterayShapeLoadScalar(&pSphere->radius_squared);
+    if (!FinterayBoxNaN(squared) && !FinterayBoxNaN(radius_squared) && squared > radius_squared) {
+        limit = FinterayShapeLoadScalar(&pSphere->radius) * 0.002f;
+        limit = FinterayShapeLoadScalar(&pSphere->radius_squared) - limit * -2.0f;
+        if (squared < limit || FinterayBoxNaN(limit)) {
+            length = sqrt((double)squared);
+            *pT = 1.0f;
+            pNormal->v[0] = FinterayEdgeScalar(FinterayShapeLoadScalar(&pNormal->v[0]) / length);
+            pNormal->v[1] = FinterayEdgeScalar(FinterayShapeLoadScalar(&pNormal->v[1]) / length);
+            pNormal->v[2] = FinterayEdgeScalar(FinterayShapeLoadScalar(&pNormal->v[2]) / length);
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0045e020
+void C2_HOOK_FASTCALL PointSphereCollision(br_vector3* pVertex, br_vector3* pSphere_start, br_vector3* pSphere_end, br_vector3* pSphere_direction, tCollision_shape_sphere_data* pSphere, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    double x;
+    double y;
+    double z;
+    double direction_x;
+    double direction_y;
+    double direction_z;
+    double projection;
+    double distance;
+    double time;
+    double length;
+    double scale;
+    double point_z;
+    volatile br_vector3 delta;
+    volatile br_scalar direction_squared;
+    volatile br_scalar projection_scalar;
+    volatile br_scalar distance_squared;
+    volatile br_scalar time_scalar;
+
+    (void)pSphere_end;
+    direction_y = FinterayShapeLoadScalar(&pSphere_direction->v[1]);
+    direction_z = FinterayShapeLoadScalar(&pSphere_direction->v[2]);
+    y = FinterayShapeLoadScalar(&pVertex->v[1]) - FinterayShapeLoadScalar(&pSphere_start->v[1]);
+    z = FinterayShapeLoadScalar(&pVertex->v[2]) - FinterayShapeLoadScalar(&pSphere_start->v[2]);
+    direction_x = FinterayShapeLoadScalar(&pSphere_direction->v[0]);
+    x = FinterayShapeLoadScalar(&pVertex->v[0]) - FinterayShapeLoadScalar(&pSphere_start->v[0]);
+    delta.v[0] = FinterayEdgeScalar(x);
+    delta.v[1] = FinterayEdgeScalar(y);
+    delta.v[2] = FinterayEdgeScalar(z);
+    direction_squared = FinterayEdgeScalar((direction_y * direction_y + direction_z * direction_z) + direction_x * direction_x);
+    projection = ((direction_z * delta.v[2] + FinterayShapeLoadScalar(&pSphere_direction->v[1]) * delta.v[1])
+        + FinterayShapeLoadScalar(&pSphere_direction->v[0]) * delta.v[0]) / direction_squared;
+    projection_scalar = FinterayEdgeScalar(projection);
+    distance = ((x * delta.v[0] + y * delta.v[1]) + z * delta.v[2]) - (projection * projection_scalar) * direction_squared;
+    distance_squared = FinterayEdgeScalar(distance);
+    if (distance_squared > FinterayShapeLoadScalar(&pSphere->radius_squared)) {
+        return;
+    }
+    time = projection_scalar - sqrt((FinterayShapeLoadScalar(&pSphere->radius_squared) - distance_squared) / direction_squared);
+    time_scalar = FinterayEdgeScalar(time);
+    if (!(time >= 0.0) || time_scalar > 1.0f) {
+        return;
+    }
+    FinterayBoxCopyScalar(&pPoint->v[0], &pVertex->v[0]);
+    FinterayBoxCopyScalar(&pPoint->v[1], &pVertex->v[1]);
+    point_z = FinterayShapeLoadScalar(&pVertex->v[2]);
+    pPoint->v[2] = FinterayEdgeScalar(point_z);
+    direction_y = FinterayShapeLoadScalar(&pSphere_direction->v[1]) * time_scalar;
+    direction_x = FinterayShapeLoadScalar(&pSphere_direction->v[0]) * time_scalar;
+    direction_z = FinterayShapeLoadScalar(&pSphere_direction->v[2]) * time_scalar;
+    direction_x += FinterayShapeLoadScalar(&pSphere_start->v[0]);
+    direction_y += FinterayShapeLoadScalar(&pSphere_start->v[1]);
+    direction_z += FinterayShapeLoadScalar(&pSphere_start->v[2]);
+    x = FinterayShapeLoadScalar(&pPoint->v[0]) - direction_x;
+    y = FinterayShapeLoadScalar(&pPoint->v[1]) - direction_y;
+    z = point_z - direction_z;
+    length = sqrt((x * x + y * y) + z * z);
+    if (length > 2.3841858e-7f) {
+        scale = 1.0 / length;
+        pNormal->v[0] = FinterayEdgeScalar(scale * x);
+        pNormal->v[1] = FinterayEdgeScalar(scale * y);
+        pNormal->v[2] = FinterayEdgeScalar(scale * z);
+    } else {
+        pNormal->v[0] = 1.0f;
+        pNormal->v[1] = 0.0f;
+        pNormal->v[2] = 0.0f;
+    }
+    *pT = time_scalar;
+}
 
 // SphereEdgeCollide
 
