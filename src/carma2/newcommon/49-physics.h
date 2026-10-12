@@ -261,11 +261,11 @@ void C2_HOOK_FASTCALL DRMatrix33Inverse(br_scalar* result, const br_scalar* pInp
 
 void C2_HOOK_FASTCALL SetUpForce(br_vector3* out_omega, br_vector3* out_velocity, const br_vector3* lever, const br_vector3* force, const tPhysics_object* object);
 
-// SetUpTorqueHingePartners
+tPhysics_object* C2_HOOK_FASTCALL SetUpTorqueHingePartners(br_vector3* pAngular, br_vector3* pLinear, br_vector3* pPartner_angular, br_vector3* pPartner_linear, const br_vector3* pTorque, tPhysics_object* pObject);
 
-// SetUpHingePartners
+tPhysics_object* C2_HOOK_FASTCALL SetUpHingePartners(br_vector3* pAngular, br_vector3* pLinear, br_vector3* pPartner_angular, br_vector3* pPartner_linear, tPhysics_object* pObject);
 
-// MakeMatrix
+void C2_HOOK_FASTCALL MakeMatrix(br_scalar* matrix, int dimension, tPhysics_joint_force* const* records, int count);
 
 // RestoreListOmega
 

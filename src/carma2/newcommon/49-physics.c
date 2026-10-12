@@ -1507,11 +1507,833 @@ void C2_HOOK_FASTCALL SetUpForce(br_vector3* out_omega, br_vector3* out_velocity
 #endif
  }
 
-// SetUpTorqueHingePartners
+/* Hinge response workspace. */
+typedef struct {
+    tU32 selector;
+    tPhysics_object* partner;
+    br_scalar response[3][3];
+    tU8 padding_0x2c[12];
+    br_matrix34 relative_matrix;
+} tForce_workspace_view;
+typedef char force_workspace_layout[sizeof(tForce_workspace_view)==104 && offsetof(tForce_workspace_view,partner)==4 && offsetof(tForce_workspace_view,response)==8 && offsetof(tForce_workspace_view,relative_matrix)==0x38 ? 1:-1];
 
-// SetUpHingePartners
+static tU8* ForceBytes(const void* pBase, unsigned pOffset) {
+    return (tU8*)(uintptr_t)pBase + pOffset;
+}
+static uintptr_t ForcePointerAt(const void* pBase, unsigned pOffset) {
+    volatile const tU32* field=(volatile const tU32*)ForceBytes(pBase,pOffset);
+    return *field;
+}
+#if defined(_MSC_VER) && _MSC_VER >= 1300
+__declspec(noinline)
+#endif
+static br_scalar ForceScalarRound(double pValue) {
+    volatile union {br_scalar scalar;tU32 bits;} stored;
+    union {br_scalar scalar;tU32 bits;} result;
+    stored.scalar=(br_scalar)pValue;result.bits=stored.bits;return result.scalar;
+}
 
-// MakeMatrix
+/* Retained physical comparisons demonstrate modern SSE NaN-sign changes
+ * in combined additions/subtractions. Keep these small wide operations x87. */
+static double C2_HOOK_CDECL PartnerAddWide(double a,double b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ fld qword ptr a
+ fadd qword ptr b
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; faddl %2; fstpl %0" : "=m"(result) : "m"(a),"m"(b) : "st");
+#else
+ result=a+b;
+#endif
+ return result;
+}
+static double C2_HOOK_CDECL PartnerSubtractWide(double a, double b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ fld qword ptr a
+ fsub qword ptr b
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fsubl %2; fstpl %0" : "=m"(result) : "m"(a),"m"(b) : "st");
+#else
+ result=a-b;
+#endif
+ return result;
+}
+static double C2_HOOK_CDECL PartnerNegateWide(double a) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ fld qword ptr a
+ fchs
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fchs; fstpl %0" : "=m"(result) : "m"(a) : "st");
+#else
+ result=-a;
+#endif
+ return result;
+}
+
+static double C2_HOOK_CDECL PartnerAddScalar(double a,const br_scalar* b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ mov eax,b
+ fld qword ptr a
+ fadd dword ptr [eax]
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fadds %2; fstpl %0" : "=m"(result) : "m"(a),"m"(*b) : "st");
+#else
+ result=a+*b;
+#endif
+ return result;
+}
+static const br_scalar* PartnerScalarPtr(const void* base,unsigned offset) {
+ return (const br_scalar*)ForceBytes(base,offset);
+}
+static double C2_HOOK_CDECL PartnerDifferenceScalars(const br_scalar* a,const br_scalar* b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ mov eax,a
+ mov ecx,b
+ fld dword ptr [eax]
+ fsub dword ptr [ecx]
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("flds %1; fsubs %2; fstpl %0" : "=m"(result) : "m"(*a),"m"(*b) : "st");
+#else
+ result=(double)*a - *b;
+#endif
+ return result;
+}
+static double C2_HOOK_CDECL PartnerDivideScalars(const br_scalar* a,const br_scalar* b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ mov eax,a
+ mov ecx,b
+ fld dword ptr [eax]
+ fdiv dword ptr [ecx]
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("flds %1; fdivs %2; fstpl %0" : "=m"(result) : "m"(*a),"m"(*b) : "st");
+#else
+ result=(double)*a / *b;
+#endif
+ return result;
+}
+static double C2_HOOK_CDECL PartnerReverseDivideScalars(const br_scalar* a,const br_scalar* b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ mov eax,a
+ mov ecx,b
+ fld dword ptr [eax]
+ fdivr dword ptr [ecx]
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("flds %1; fdivrs %2; fstpl %0" : "=m"(result) : "m"(*a),"m"(*b) : "st");
+#else
+ result=*b / (double)*a;
+#endif
+ return result;
+}
+static double C2_HOOK_CDECL PartnerReverseSubtractScalar(double a,const br_scalar* b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ mov eax,b
+ fld qword ptr a
+ fsubr dword ptr [eax]
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fsubrs %2; fstpl %0" : "=m"(result) : "m"(a),"m"(*b) : "st");
+#else
+ result=*b-a;
+#endif
+ return result;
+}
+
+static double C2_HOOK_CDECL PartnerMultiplyWide(double a, double b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ fld qword ptr a
+ fmul qword ptr b
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fmull %2; fstpl %0" : "=m"(result) : "m"(a),"m"(b) : "st");
+#else
+ result=(double)a * b;
+#endif
+ return result;
+}
+static double C2_HOOK_CDECL PartnerMultiplyScalars(const br_scalar* a,const br_scalar* b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ mov eax,a
+ fld dword ptr [eax]
+ mov ecx,b
+ fmul dword ptr [ecx]
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("flds %1; fmuls %2; fstpl %0" : "=m"(result) : "m"(*a),"m"(*b) : "st");
+#else
+ result=(double)*a * *b;
+#endif
+ return result;
+}
+static double C2_HOOK_CDECL PartnerMultiplyScalarWide(const br_scalar* a,double b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ mov eax,a
+ fld dword ptr [eax]
+ fmul qword ptr b
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("flds %1; fmull %2; fstpl %0" : "=m"(result) : "m"(*a),"m"(b) : "st");
+#else
+ result=(double)*a * b;
+#endif
+ return result;
+}
+static double C2_HOOK_CDECL PartnerMultiplyRawScalar(double a,const br_scalar* b) {
+ double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+ __asm {
+ fld qword ptr a
+ mov ecx,b
+ fmul dword ptr [ecx]
+ fstp qword ptr result
+ }
+#elif defined(__GNUC__) && defined(__i386__)
+ __asm__ __volatile__("fldl %1; fmuls %2; fstpl %0" : "=m"(result) : "m"(a),"m"(*b) : "st");
+#else
+ result=(double)a * *b;
+#endif
+ return result;
+}
+
+/* Semantic name inferred from the original hinge response. */
+// FUNCTION: CARMA2_HW 0x004be550
+tPhysics_object* C2_HOOK_FASTCALL SetUpTorqueHingePartners(br_vector3* pAngular, br_vector3* pLinear, br_vector3* pPartner_angular, br_vector3* pPartner_linear, const br_vector3* pTorque, tPhysics_object* pObject) {
+  br_scalar* angular=pAngular->v;
+  br_scalar* linear=pLinear->v;
+  br_scalar* partner_angular=pPartner_angular->v;
+  br_scalar* partner_linear=pPartner_linear->v;
+  const br_scalar* torque=pTorque->v;
+  double fVar1;
+  tPhysics_object* partner;
+  double fVar3;
+  double fVar4;
+  double fVar5;
+  double fVar6;
+  float *pfVar7;
+  uintptr_t cursor;
+  uintptr_t state;
+  float *pfVar10;
+  br_vector3 angular_temp, lever, response, rotated, rhs;
+  double local_4, lever_z_wide;
+
+  if ((pObject->flags & 0x800) == 0) {
+    *angular = ForceScalarRound(PartnerReverseDivideScalars(PartnerScalarPtr(pObject, 8), torque));
+    angular[1] = ForceScalarRound(PartnerDivideScalars(&torque[1], PartnerScalarPtr(pObject, 0xc)));
+    angular[2] = ForceScalarRound(PartnerDivideScalars(&torque[2], PartnerScalarPtr(pObject, 0x10)));
+  }
+  else {
+    *angular = ForceScalarRound(0.0);
+    angular[1] = ForceScalarRound(0.0);
+    angular[2] = ForceScalarRound(0.0);
+  }
+  state = ForcePointerAt(pObject, 0x1e4);
+  if (state == 0) {
+    BrVector3SetFloat((br_vector3*)linear,0,0,0);
+    return 0;
+  }
+  partner = (tPhysics_object*)ForcePointerAt((const void*)(uintptr_t)(state), 4);
+  if ((uintptr_t)partner == ForcePointerAt((const void*)(uintptr_t)(pObject), 0x230)) {
+    cursor = ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188);
+    lever.v[0] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 8), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x14)));
+    lever.v[1] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0xc), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x18)));
+    lever.v[2] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x10), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x1c)));
+    rhs.v[0] = ForceScalarRound(PartnerNegateWide((PartnerAddWide(PartnerAddWide(PartnerMultiplyRawScalar((PartnerSubtractWide(PartnerMultiplyWide((double)angular[1], (double)lever.v[2]), PartnerMultiplyWide((double)angular[2], (double)lever.v[1]))), PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x38)), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x3c), (PartnerSubtractWide(PartnerMultiplyWide((double)angular[2], (double)lever.v[0]), PartnerMultiplyWide((double)*angular, (double)lever.v[2]))))), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x40), (PartnerSubtractWide(PartnerMultiplyWide((double)*angular, (double)lever.v[1]), PartnerMultiplyWide((double)angular[1], (double)lever.v[0]))))))));
+    rhs.v[1] = ForceScalarRound(PartnerNegateWide((PartnerAddWide(PartnerAddWide(PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x20), angular), PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x24), &angular[1])), PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x28), &angular[2])))));
+    rhs.v[2] = ForceScalarRound(PartnerNegateWide((PartnerAddWide(PartnerAddWide(PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x34), &angular[2]), PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x30), &angular[1])), PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x2c), angular)))));
+    BrMatrix34ApplyV((br_vector3*)(response.v), (const br_vector3*)(rhs.v), (const br_matrix34*)(state + 8));
+    fVar1 = PartnerReverseDivideScalars(PartnerScalarPtr(pObject, 4), &response.v[0]);
+    *linear = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x38), fVar1));
+    linear[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x3c), fVar1));
+    linear[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x40), fVar1));
+    fVar1 = PartnerNegateWide((PartnerReverseDivideScalars(PartnerScalarPtr(partner, 4), &response.v[0])));
+    *partner_linear = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x44), fVar1));
+    partner_linear[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x48), fVar1));
+    cursor = 3;
+    partner_linear[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x4c), fVar1));
+    state = ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188);
+    rotated.v[0] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x20), (double)response.v[1]));
+    rotated.v[0] = ForceScalarRound(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x2c), (double)response.v[2]), (double)rotated.v[0]));
+    rotated.v[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x24), (double)response.v[1]));
+    rotated.v[1] = ForceScalarRound(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x30), (double)response.v[2]), (double)rotated.v[1]));
+    rotated.v[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x28), (double)response.v[1]));
+    rotated.v[2] = ForceScalarRound(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x34), (double)response.v[2]), (double)rotated.v[2]));
+    fVar1 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x38), (double)response.v[0]));
+    fVar3 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x3c), (double)response.v[0]));
+    fVar4 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x40), (double)response.v[0]));
+    pfVar7 = (br_scalar*)ForceBytes(pObject, 8);
+    local_4 = (PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[0], fVar3), PartnerMultiplyWide((double)lever.v[1], fVar1)));
+    angular_temp.v[1] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[2], fVar1), PartnerMultiplyWide((double)lever.v[0], fVar4))), (double)rotated.v[1]));
+    angular_temp.v[2] = ForceScalarRound(PartnerAddWide(local_4, (double)rotated.v[2]));
+    angular_temp.v[0] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[1], fVar4), PartnerMultiplyWide((double)lever.v[2], fVar3))), (double)rotated.v[0]));
+    pfVar10 = angular;
+    do {
+      fVar1 = (double)*pfVar7;
+      pfVar7 = pfVar7 + 1;
+      cursor = cursor + -1;
+      *pfVar10 = ForceScalarRound(PartnerAddScalar(PartnerDivideScalars(&angular_temp.v[((uintptr_t)pfVar10 - (uintptr_t)angular) / sizeof(br_scalar)], pfVar7-1), pfVar10));
+      pfVar10 = pfVar10 + 1;
+    } while (cursor != 0);
+    BrMatrix34ApplyV((br_vector3*)(angular_temp.v), (const br_vector3*)(rotated.v), (const br_matrix34*)(ForceBytes(pObject, 0x8c)));
+    BrMatrix34TApplyV((br_vector3*)(partner_angular), (const br_vector3*)(angular_temp.v), (const br_matrix34*)(ForceBytes(partner, 0x8c)));
+    state = ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188);
+    pfVar7 = (br_scalar*)ForceBytes(partner, 8);
+    fVar1 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x44), (double)response.v[0]));
+    fVar3 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x14), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x14));
+    fVar4 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x18), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x18));
+    fVar5 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x1c), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x1c));
+    fVar6 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x48), (double)response.v[0]));
+    response.v[0] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x4c), (double)response.v[0]));
+    *partner_angular = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide(fVar4, (double)response.v[0]), PartnerMultiplyWide(fVar5, fVar6))), partner_angular));
+    state = 3;
+    partner_angular[1] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)ForceScalarRound(fVar5), fVar1), PartnerMultiplyWide(fVar3, (double)response.v[0]))), &partner_angular[1]));
+    partner_angular[2] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide(fVar3, fVar6), PartnerMultiplyWide((double)ForceScalarRound(fVar4), fVar1))), &partner_angular[2]));
+    do {
+      fVar1 = (double)*pfVar7;
+      pfVar7 = pfVar7 + 1;
+      state = state + -1;
+      *partner_angular = ForceScalarRound(PartnerNegateWide((PartnerDivideScalars(partner_angular, pfVar7-1))));
+      partner_angular = partner_angular + 1;
+    } while (state != 0);
+    return partner;
+  }
+  state = ForcePointerAt((const void*)(uintptr_t)(partner), 0x188);
+  lever.v[0] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x14), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x14)));
+  lever.v[1] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x18), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x18)));
+  lever.v[2] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x1c), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x1c)));
+  rhs.v[0] = ForceScalarRound(PartnerAddWide(PartnerAddWide(PartnerMultiplyRawScalar((PartnerSubtractWide(PartnerMultiplyWide((double)angular[1], (double)lever.v[2]), PartnerMultiplyWide((double)angular[2], (double)lever.v[1]))), PartnerScalarPtr((const void*)(uintptr_t)(state), 0x44)), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x48), (PartnerSubtractWide(PartnerMultiplyWide((double)angular[2], (double)lever.v[0]), PartnerMultiplyWide((double)*angular, (double)lever.v[2]))))), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x4c), (PartnerSubtractWide(PartnerMultiplyWide((double)*angular, (double)lever.v[1]), PartnerMultiplyWide((double)angular[1], (double)lever.v[0]))))));
+  BrMatrix34ApplyV((br_vector3*)(rotated.v), (const br_vector3*)(angular), (const br_matrix34*)(ForceBytes(pObject, 0x8c)));
+  BrMatrix34TApplyV((br_vector3*)(angular_temp.v), (const br_vector3*)(rotated.v), (const br_matrix34*)(ForceBytes(partner, 0x8c)));
+  state = ForcePointerAt((const void*)(uintptr_t)(partner), 0x188);
+  rhs.v[1] = ForceScalarRound(PartnerAddWide(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x24), (double)angular_temp.v[1]), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x20), (double)angular_temp.v[0])), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x28), (double)angular_temp.v[2])));
+  state = ForcePointerAt((const void*)(uintptr_t)(partner), 0x188);
+  rhs.v[2] = ForceScalarRound(PartnerAddWide(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x2c), (double)angular_temp.v[0]), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x34), (double)angular_temp.v[2])), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x30), (double)angular_temp.v[1])));
+  BrMatrix34ApplyV((br_vector3*)(response.v), (const br_vector3*)(rhs.v), (const br_matrix34*)(ForcePointerAt((const void*)(uintptr_t)(partner), 0x1e4) + 8));
+  fVar1 = PartnerReverseDivideScalars(PartnerScalarPtr(partner, 4), &response.v[0]);
+  *partner_linear = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x38), fVar1));
+  partner_linear[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x3c), fVar1));
+  partner_linear[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x40), fVar1));
+  fVar1 = PartnerNegateWide((PartnerReverseDivideScalars(PartnerScalarPtr(pObject, 4), &response.v[0])));
+  *linear = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x44), fVar1));
+  linear[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x48), fVar1));
+  linear[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x4c), fVar1));
+  *partner_angular = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x20), (double)response.v[1]));
+  partner_angular[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x24), (double)response.v[1]));
+  partner_angular[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x28), (double)response.v[1]));
+  *partner_angular = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x2c), (double)response.v[2]), partner_angular));
+  partner_angular[1] = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x30), (double)response.v[2]), &partner_angular[1]));
+  partner_angular[2] = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x34), (double)response.v[2]), &partner_angular[2]));
+  BrMatrix34ApplyV((br_vector3*)(angular_temp.v), (const br_vector3*)(partner_angular), (const br_matrix34*)(ForceBytes(partner, 0x8c)));
+  BrMatrix34TApplyV((br_vector3*)(rotated.v), (const br_vector3*)(angular_temp.v), (const br_matrix34*)(ForceBytes(pObject, 0x8c)));
+  fVar1 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x44), (double)response.v[0]));
+  pfVar10 = (br_scalar*)ForceBytes(pObject, 8);
+  fVar3 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x48), (double)response.v[0]));
+  fVar4 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x4c), (double)response.v[0]));
+  rotated.v[0] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[1], fVar4), PartnerMultiplyWide((double)lever.v[2], fVar3))), (double)rotated.v[0]));
+  rotated.v[1] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[2], fVar1), PartnerMultiplyWide((double)lever.v[0], fVar4))), (double)rotated.v[1]));
+  rotated.v[2] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[0], fVar3), PartnerMultiplyWide((double)lever.v[1], fVar1))), (double)rotated.v[2]));
+  state = ForcePointerAt((const void*)(uintptr_t)(partner), 0x188);
+  angular_temp.v[0] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x38), (double)response.v[0]));
+  fVar1 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 8), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x14));
+  lever.v[1] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 0xc), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x18)));
+  lever_z_wide = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(state), 0x10), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x1c));
+  lever.v[2] = ForceScalarRound(lever_z_wide);
+  angular_temp.v[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x3c), (double)response.v[0]));
+  angular_temp.v[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x40), (double)response.v[0]));
+  state = 3;
+  *partner_angular = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[1], (double)angular_temp.v[2]), PartnerMultiplyWide(lever_z_wide, (double)angular_temp.v[1]))), partner_angular));
+  partner_angular[1] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[2], (double)angular_temp.v[0]), PartnerMultiplyWide(fVar1, (double)angular_temp.v[2]))), &partner_angular[1]));
+  partner_angular[2] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide(fVar1, (double)angular_temp.v[1]), PartnerMultiplyWide((double)lever.v[1], (double)angular_temp.v[0]))), &partner_angular[2]));
+  pfVar7 = angular;
+  do {
+    fVar1 = (double)*pfVar10;
+    pfVar10 = pfVar10 + 1;
+    state = state + -1;
+    *pfVar7 = ForceScalarRound(PartnerReverseSubtractScalar(PartnerDivideScalars(&rotated.v[((uintptr_t)pfVar7 - (uintptr_t)angular) / sizeof(br_scalar)], pfVar10-1), pfVar7));
+    pfVar7 = pfVar7 + 1;
+  } while (state != 0);
+  pfVar7 = (br_scalar*)ForceBytes(partner, 8);
+  state = 3;
+  do {
+    fVar1 = (double)*pfVar7;
+    pfVar7 = pfVar7 + 1;
+    state = state + -1;
+    *partner_angular = ForceScalarRound(PartnerDivideScalars(partner_angular, pfVar7-1));
+    partner_angular = partner_angular + 1;
+  } while (state != 0);
+  return partner;
+}
+
+
+/* Semantic name inferred from the original hinge response. */
+// FUNCTION: CARMA2_HW 0x004becf0
+tPhysics_object* C2_HOOK_FASTCALL SetUpHingePartners(br_vector3* pAngular, br_vector3* pLinear, br_vector3* pPartner_angular, br_vector3* pPartner_linear, tPhysics_object* pObject) {
+  br_scalar* angular=pAngular->v;
+  br_scalar* linear=pLinear->v;
+  br_scalar* partner_angular=pPartner_angular->v;
+  br_scalar* partner_linear=pPartner_linear->v;
+  double fVar1;
+  tPhysics_object* partner;
+  double fVar3;
+  double fVar4;
+  double fVar5;
+  double fVar6;
+  float *pfVar7;
+  uintptr_t cursor;
+  float *pfVar9;
+  br_vector3 angular_temp, lever, rotated, response, rhs;
+  double local_4, lever_y_wide, lever_z_wide;
+
+  partner = (tPhysics_object*)ForcePointerAt((const void*)ForcePointerAt(pObject, 0x1e4), 4);
+  if ((uintptr_t)partner == ForcePointerAt((const void*)(uintptr_t)(pObject), 0x230)) {
+    cursor = ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188);
+    lever_y_wide = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0xc), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x18));
+    lever.v[1] = ForceScalarRound(lever_y_wide);
+    lever_z_wide = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x10), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x1c));
+    lever.v[2] = ForceScalarRound(lever_z_wide);
+    lever.v[0] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 8), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x14)));
+    response.v[0] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)angular[1], (double)lever.v[2]), PartnerMultiplyWide((double)angular[2], (double)lever.v[1]))), linear));
+    response.v[1] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)angular[2], (double)lever.v[0]), PartnerMultiplyWide(lever_z_wide, (double)*angular))), &linear[1]));
+    rhs.v[0] = ForceScalarRound(PartnerNegateWide((PartnerAddWide(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x40), (PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide(lever_y_wide, (double)*angular), PartnerMultiplyWide((double)angular[1], (double)lever.v[0]))), &linear[2]))), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x3c), (double)response.v[1])), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x38), (double)response.v[0])))));
+    rhs.v[1] = ForceScalarRound(PartnerNegateWide((PartnerAddWide(PartnerAddWide(PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x20), angular), PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x28), &angular[2])), PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x24), &angular[1])))));
+    rhs.v[2] = ForceScalarRound(PartnerNegateWide((PartnerAddWide(PartnerAddWide(PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x2c), angular), PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x30), &angular[1])), PartnerMultiplyScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x34), &angular[2])))));
+    BrMatrix34ApplyV((br_vector3*)(response.v), (const br_vector3*)(rhs.v), (const br_matrix34*)(ForcePointerAt(pObject, 0x1e4) + 8));
+    fVar1 = PartnerReverseDivideScalars(PartnerScalarPtr(pObject, 4), &response.v[0]);
+    *linear = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x38), fVar1), linear));
+    linear[1] = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x3c), fVar1), &linear[1]));
+    linear[2] = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x40), fVar1), &linear[2]));
+    fVar1 = PartnerNegateWide((PartnerReverseDivideScalars(PartnerScalarPtr(partner, 4), &response.v[0])));
+    *partner_linear = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x44), fVar1));
+    partner_linear[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x48), fVar1));
+    partner_linear[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188), 0x4c), fVar1));
+    cursor = ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188);
+    rotated.v[0] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x20), (double)response.v[1]));
+    rotated.v[0] = ForceScalarRound(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x2c), (double)response.v[2]), (double)rotated.v[0]));
+    rotated.v[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x24), (double)response.v[1]));
+    rotated.v[1] = ForceScalarRound(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x30), (double)response.v[2]), (double)rotated.v[1]));
+    rotated.v[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x28), (double)response.v[1]));
+    rotated.v[2] = ForceScalarRound(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x34), (double)response.v[2]), (double)rotated.v[2]));
+    fVar1 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x38), (double)response.v[0]));
+    fVar3 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x3c), (double)response.v[0]));
+    fVar4 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x40), (double)response.v[0]));
+    local_4 = (PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[0], fVar3), PartnerMultiplyWide((double)lever.v[1], fVar1)));
+    angular_temp.v[1] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[2], fVar1), PartnerMultiplyWide((double)lever.v[0], fVar4))), (double)rotated.v[1]));
+    pfVar7 = (br_scalar*)ForceBytes(pObject, 8);
+    angular_temp.v[2] = ForceScalarRound(PartnerAddWide(local_4, (double)rotated.v[2]));
+    cursor = 3;
+    angular_temp.v[0] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[1], fVar4), PartnerMultiplyWide((double)lever.v[2], fVar3))), (double)rotated.v[0]));
+    pfVar9 = angular;
+    do {
+      fVar1 = (double)*pfVar7;
+      pfVar7 = pfVar7 + 1;
+      cursor = cursor + -1;
+      *pfVar9 = ForceScalarRound(PartnerAddScalar(PartnerDivideScalars(&angular_temp.v[((uintptr_t)pfVar9 - (uintptr_t)angular) / sizeof(br_scalar)], pfVar7-1), pfVar9));
+      pfVar9 = pfVar9 + 1;
+    } while (cursor != 0);
+    BrMatrix34ApplyV((br_vector3*)(angular_temp.v), (const br_vector3*)(rotated.v), (const br_matrix34*)(ForceBytes(pObject, 0x8c)));
+    BrMatrix34TApplyV((br_vector3*)(partner_angular), (const br_vector3*)(angular_temp.v), (const br_matrix34*)(ForceBytes(partner, 0x8c)));
+    cursor = ForcePointerAt((const void*)(uintptr_t)(pObject), 0x188);
+    pfVar7 = (br_scalar*)ForceBytes(partner, 8);
+    fVar1 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x44), (double)response.v[0]));
+    fVar3 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x14), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x14));
+    fVar4 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x18), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x18));
+    fVar5 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x1c), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x1c));
+    fVar6 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x48), (double)response.v[0]));
+    response.v[0] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x4c), (double)response.v[0]));
+    *partner_angular = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide(fVar4, (double)response.v[0]), PartnerMultiplyWide(fVar5, fVar6))), partner_angular));
+    cursor = 3;
+    partner_angular[1] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)ForceScalarRound(fVar5), fVar1), PartnerMultiplyWide(fVar3, (double)response.v[0]))), &partner_angular[1]));
+    partner_angular[2] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide(fVar3, fVar6), PartnerMultiplyWide((double)ForceScalarRound(fVar4), fVar1))), &partner_angular[2]));
+    do {
+      fVar1 = (double)*pfVar7;
+      pfVar7 = pfVar7 + 1;
+      cursor = cursor + -1;
+      *partner_angular = ForceScalarRound(PartnerNegateWide((PartnerDivideScalars(partner_angular, pfVar7-1))));
+      partner_angular = partner_angular + 1;
+    } while (cursor != 0);
+    return partner;
+  }
+  cursor = ForcePointerAt((const void*)(uintptr_t)(partner), 0x188);
+  lever_y_wide = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x18), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x18));
+  lever.v[1] = ForceScalarRound(lever_y_wide);
+  lever.v[0] = ForceScalarRound(PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x14), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x14)));
+  lever_z_wide = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x1c), PartnerScalarPtr((const void*)(uintptr_t)(pObject), 0x1c));
+  lever.v[2] = ForceScalarRound(lever_z_wide);
+  response.v[1] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)angular[2], (double)lever.v[0]), PartnerMultiplyWide(lever_z_wide, (double)*angular))), &linear[1]));
+  response.v[2] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide(lever_y_wide, (double)*angular), PartnerMultiplyWide((double)angular[1], (double)lever.v[0]))), &linear[2]));
+  rhs.v[0] = ForceScalarRound(PartnerAddWide(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x44), (PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)angular[1], (double)lever.v[2]), PartnerMultiplyWide((double)angular[2], (double)lever.v[1]))), linear))), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x4c), (double)response.v[2])), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x48), (double)response.v[1])));
+  BrMatrix34ApplyV((br_vector3*)(rotated.v), (const br_vector3*)(angular), (const br_matrix34*)(ForceBytes(pObject, 0x8c)));
+  BrMatrix34TApplyV((br_vector3*)(angular_temp.v), (const br_vector3*)(rotated.v), (const br_matrix34*)(ForceBytes(partner, 0x8c)));
+  cursor = ForcePointerAt((const void*)(uintptr_t)(partner), 0x188);
+  rhs.v[1] = ForceScalarRound(PartnerAddWide(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x28), (double)angular_temp.v[2]), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x24), (double)angular_temp.v[1])), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x20), (double)angular_temp.v[0])));
+  cursor = ForcePointerAt((const void*)(uintptr_t)(partner), 0x188);
+  rhs.v[2] = ForceScalarRound(PartnerAddWide(PartnerAddWide(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x34), (double)angular_temp.v[2]), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x30), (double)angular_temp.v[1])), PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x2c), (double)angular_temp.v[0])));
+  BrMatrix34ApplyV((br_vector3*)(response.v), (const br_vector3*)(rhs.v), (const br_matrix34*)(ForcePointerAt((const void*)(uintptr_t)(partner), 0x1e4) + 8));
+  fVar1 = PartnerReverseDivideScalars(PartnerScalarPtr(partner, 4), &response.v[0]);
+  *partner_linear = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x38), fVar1));
+  partner_linear[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x3c), fVar1));
+  partner_linear[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x40), fVar1));
+  fVar1 = PartnerNegateWide((PartnerReverseDivideScalars(PartnerScalarPtr(pObject, 4), &response.v[0])));
+  *linear = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x44), fVar1), linear));
+  linear[1] = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x48), fVar1), &linear[1]));
+  linear[2] = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x4c), fVar1), &linear[2]));
+  *partner_angular = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x20), (double)response.v[1]));
+  partner_angular[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x24), (double)response.v[1]));
+  partner_angular[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x28), (double)response.v[1]));
+  *partner_angular = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x2c), (double)response.v[2]), partner_angular));
+  partner_angular[1] = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x30), (double)response.v[2]), &partner_angular[1]));
+  partner_angular[2] = ForceScalarRound(PartnerAddScalar(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x34), (double)response.v[2]), &partner_angular[2]));
+  BrMatrix34ApplyV((br_vector3*)(angular_temp.v), (const br_vector3*)(partner_angular), (const br_matrix34*)(ForceBytes(partner, 0x8c)));
+  BrMatrix34TApplyV((br_vector3*)(rotated.v), (const br_vector3*)(angular_temp.v), (const br_matrix34*)(ForceBytes(pObject, 0x8c)));
+  angular_temp.v[0] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x44), (double)response.v[0]));
+  angular_temp.v[1] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x48), (double)response.v[0]));
+  angular_temp.v[2] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x4c), (double)response.v[0]));
+  pfVar9 = (br_scalar*)ForceBytes(pObject, 8);
+  rotated.v[0] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[1], (double)angular_temp.v[2]), PartnerMultiplyWide((double)lever.v[2], (double)angular_temp.v[1]))), (double)rotated.v[0]));
+  cursor = 3;
+  rotated.v[1] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[2], (double)angular_temp.v[0]), PartnerMultiplyWide((double)lever.v[0], (double)angular_temp.v[2]))), (double)rotated.v[1]));
+  rotated.v[2] = ForceScalarRound(PartnerAddWide((PartnerSubtractWide(PartnerMultiplyWide((double)lever.v[0], (double)angular_temp.v[1]), PartnerMultiplyWide((double)lever.v[1], (double)angular_temp.v[0]))), (double)rotated.v[2]));
+  pfVar7 = angular;
+  do {
+    fVar1 = (double)*pfVar9;
+    pfVar9 = pfVar9 + 1;
+    cursor = cursor + -1;
+    *pfVar7 = ForceScalarRound(PartnerReverseSubtractScalar(PartnerDivideScalars(&rotated.v[((uintptr_t)pfVar7 - (uintptr_t)angular) / sizeof(br_scalar)], pfVar9-1), pfVar7));
+    pfVar7 = pfVar7 + 1;
+  } while (cursor != 0);
+  cursor = ForcePointerAt((const void*)(uintptr_t)(partner), 0x188);
+  pfVar7 = (br_scalar*)ForceBytes(partner, 8);
+  fVar1 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x38), (double)response.v[0]));
+  fVar3 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 8), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x14));
+  fVar4 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0xc), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x18));
+  fVar5 = PartnerDifferenceScalars(PartnerScalarPtr((const void*)(uintptr_t)(cursor), 0x10), PartnerScalarPtr((const void*)(uintptr_t)(partner), 0x1c));
+  fVar6 = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x3c), (double)response.v[0]));
+  cursor = 3;
+  response.v[0] = ForceScalarRound(PartnerMultiplyScalarWide(PartnerScalarPtr((const void*)ForcePointerAt((const void*)(uintptr_t)(partner), 0x188), 0x40), (double)response.v[0]));
+  *partner_angular = ForceScalarRound(PartnerAddScalar((double)ForceScalarRound(PartnerSubtractWide(PartnerMultiplyWide((double)ForceScalarRound(fVar4), (double)response.v[0]), PartnerMultiplyWide(fVar5, fVar6))), partner_angular));
+  partner_angular[1] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide((double)ForceScalarRound(fVar5), fVar1), PartnerMultiplyWide(fVar3, (double)response.v[0]))), &partner_angular[1]));
+  partner_angular[2] = ForceScalarRound(PartnerAddScalar((PartnerSubtractWide(PartnerMultiplyWide(fVar3, fVar6), PartnerMultiplyWide((double)ForceScalarRound(fVar4), fVar1))), &partner_angular[2]));
+  do {
+    fVar1 = (double)*pfVar7;
+    pfVar7 = pfVar7 + 1;
+    cursor = cursor + -1;
+    *partner_angular = ForceScalarRound(PartnerDivideScalars(partner_angular, pfVar7-1));
+    partner_angular = partner_angular + 1;
+  } while (cursor != 0);
+  return partner;
+}
+
+
+
+
+
+static int C2_HOOK_CDECL ForceMatrixHasPartner(const tPhysics_object* object) {
+    tU32 value;
+    memcpy(&value,(const char*)object+0x1e4,4);
+    return value != 0;
+}
+
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+static double C2_HOOK_CDECL ForceMatrixScalar(double value) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    br_scalar scalar;
+    double result;
+    __asm {
+        fld qword ptr value
+        fstp dword ptr scalar
+        fld dword ptr scalar
+        fstp qword ptr result
+    }
+    return result;
+#else
+    volatile br_scalar result=(br_scalar)value;
+    return result;
+#endif
+}
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
+
+/* Distinct raw NaN inputs expose SSE/x87 operand-selection differences.
+ * These small operations retain the original FLD and arithmetic operand order. */
+static double C2_HOOK_CDECL ForceMatrixMultiplyScalars(const br_scalar* a, const br_scalar* b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, a
+        mov ecx, b
+        fld dword ptr [eax]
+        fmul dword ptr [ecx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fmuls %2; fstpl %0" : "=m"(result) : "m"(*a), "m"(*b) : "st");
+#else
+    result=(double)*a * *b;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL ForceMatrixMultiplyWide(const br_scalar* a, double b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, a
+        fld dword ptr [eax]
+        fmul qword ptr b
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("flds %1; fmull %2; fstpl %0" : "=m"(result) : "m"(*a), "m"(b) : "st");
+#else
+    result=(double)*a * b;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL ForceMatrixAddScalar(double a, const br_scalar* b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, b
+        fld qword ptr a
+        fadd dword ptr [eax]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fadds %2; fstpl %0" : "=m"(result) : "m"(a), "m"(*b) : "st");
+#else
+    result=a + *b;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL ForceMatrixReverseSubtractScalar(double a, const br_scalar* b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, b
+        fld qword ptr a
+        fsubr dword ptr [eax]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fsubrs %2; fstpl %0" : "=m"(result) : "m"(a), "m"(*b) : "st");
+#else
+    result=*b - a;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL ForceMatrixAddWide(double a, double b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld qword ptr a
+        fadd qword ptr b
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; faddl %2; fstpl %0" : "=m"(result) : "m"(a), "m"(b) : "st");
+#else
+    result=a + b;
+#endif
+    return result;
+}
+
+static double C2_HOOK_CDECL ForceMatrixSubtractWide(double a, double b) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        fld qword ptr a
+        fsub qword ptr b
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fsubl %2; fstpl %0" : "=m"(result) : "m"(a), "m"(b) : "st");
+#else
+    result=a - b;
+#endif
+    return result;
+}
+
+/* Source torque and force routes have different original sum and spill orders. */
+static double C2_HOOK_CDECL ForceMatrixResponse(const tPhysics_joint_force* row,
+    int side, const br_vector3* angular, const br_vector3* linear, int source_torque, int row_torque) {
+    const br_vector3* point;
+    const br_vector3* direction;
+    double x,y,z;
+
+    point=side ? &row->point_b : &row->point_a;
+    direction=side ? &row->direction_b : &row->direction_a;
+    if (row_torque) {
+        x=ForceMatrixMultiplyScalars(&direction->v[0],&angular->v[0]);
+        y=ForceMatrixMultiplyScalars(&direction->v[1],&angular->v[1]);
+        z=ForceMatrixMultiplyScalars(&direction->v[2],&angular->v[2]);
+        if (source_torque) {
+            return side ? ForceMatrixAddWide(ForceMatrixAddWide(y,x),z) : ForceMatrixAddWide(ForceMatrixAddWide(z,y),x);
+        }
+        return side ? ForceMatrixAddWide(ForceMatrixAddWide(z,x),y) : ForceMatrixAddWide(ForceMatrixAddWide(x,y),z);
+    }
+    x=ForceMatrixAddScalar(ForceMatrixSubtractWide(ForceMatrixMultiplyScalars(&point->v[2],&angular->v[1]),
+        ForceMatrixMultiplyScalars(&point->v[1],&angular->v[2])),&linear->v[0]);
+    y=ForceMatrixAddScalar(ForceMatrixSubtractWide(ForceMatrixMultiplyScalars(&point->v[0],&angular->v[2]),
+        ForceMatrixMultiplyScalars(&point->v[2],&angular->v[0])),&linear->v[1]);
+    z=ForceMatrixAddScalar(ForceMatrixSubtractWide(ForceMatrixMultiplyScalars(&point->v[1],&angular->v[0]),
+        ForceMatrixMultiplyScalars(&point->v[0],&angular->v[1])),&linear->v[2]);
+    if (source_torque || side) {
+        x=ForceMatrixScalar(x);
+    } else {
+        y=ForceMatrixScalar(y);
+    }
+    z=ForceMatrixScalar(z);
+    x=ForceMatrixMultiplyWide(&direction->v[0],x);
+    y=ForceMatrixMultiplyWide(&direction->v[1],y);
+    z=ForceMatrixMultiplyWide(&direction->v[2],z);
+    if (source_torque) {
+        return side ? ForceMatrixAddWide(ForceMatrixAddWide(x,y),z) : ForceMatrixAddWide(ForceMatrixAddWide(y,z),x);
+    }
+    return side ? ForceMatrixAddWide(ForceMatrixAddWide(z,y),x) : ForceMatrixAddWide(ForceMatrixAddWide(x,z),y);
+}
+
+// FUNCTION: CARMA2_HW 0x004bf490
+void C2_HOOK_FASTCALL MakeMatrix(br_scalar* matrix, int dimension, tPhysics_joint_force* const* records, int count) {
+    br_vector3 angular_a,linear_a,angular_b,linear_b;
+    br_vector3 angular_partner_a,linear_partner_a,angular_partner_b,linear_partner_b;
+    tPhysics_object *object_a,*object_b,*partner_a,*partner_b;
+    tPhysics_joint_force *source,*row;
+    br_scalar *column_cell,*row_cell;
+    int index,j,source_torque,row_torque;
+
+    C2_HOOK_BUG_ON(sizeof(tPhysics_joint_force)!=0x60);
+    for (index=0;index<count;index++) {
+        source=records[index];
+        object_a=source->object_a;
+        object_b=source->object_b;
+        if (object_b!=NULL && source->type==14) {
+            object_b=NULL;
+        }
+        source_torque=source->type==11;
+        partner_a=NULL;
+        partner_b=NULL;
+        if (source_torque) {
+            object_a=source->object_a;
+            object_b=source->object_b;
+            partner_a=SetUpTorqueHingePartners(&angular_a,&linear_a,
+                &angular_partner_a,&linear_partner_a,&source->direction_a,object_a);
+            if (object_b!=NULL) {
+                partner_b=SetUpTorqueHingePartners(&angular_b,&linear_b,
+                    &angular_partner_b,&linear_partner_b,&source->direction_b,object_b);
+            }
+        } else {
+            SetUpForce(&angular_a,&linear_a,&source->point_a,&source->direction_a,object_a);
+            if (ForceMatrixHasPartner(object_a)) {
+                partner_a=SetUpHingePartners(&angular_a,&linear_a,
+                    &angular_partner_a,&linear_partner_a,object_a);
+            }
+            if (object_b!=NULL) {
+                SetUpForce(&angular_b,&linear_b,&source->point_b,&source->direction_b,object_b);
+                if (ForceMatrixHasPartner(object_b)) {
+                    partner_b=SetUpHingePartners(&angular_b,&linear_b,
+                        &angular_partner_b,&linear_partner_b,object_b);
+                }
+            }
+        }
+        column_cell=matrix+index;
+        row_cell=matrix+(tU32)index*(tU32)dimension;
+        for (j=0;j<=index;j++) {
+            if (!source_torque) {
+                *column_cell=0.f;
+            }
+            row=records[j];
+            row_torque=row->type==11;
+            if (row->object_a==object_a) {
+                *column_cell=(br_scalar)ForceMatrixResponse(row,0,&angular_a,&linear_a,source_torque,row_torque);
+            } else if (row->object_b==object_a && (source_torque || row->type!=14)) {
+                *column_cell=(br_scalar)-ForceMatrixResponse(row,1,&angular_a,&linear_a,source_torque,row_torque);
+            } else if (source_torque) {
+                *column_cell=0.f;
+            }
+            if (source_torque && partner_a!=NULL) {
+                row=records[j];
+                if (row->object_a==partner_a) {
+                    *column_cell=(br_scalar)ForceMatrixAddScalar(ForceMatrixResponse(row,0,&angular_partner_a,&linear_partner_a,1,row_torque),column_cell);
+                } else if (row->object_b==partner_a) {
+                    *column_cell=(br_scalar)ForceMatrixReverseSubtractScalar(ForceMatrixResponse(row,1,&angular_partner_a,&linear_partner_a,1,row_torque),column_cell);
+                }
+            }
+            if (object_b!=NULL) {
+                if (source_torque) {
+                    row=records[j];
+                }
+                if (row->object_a==object_b) {
+                    *column_cell=(br_scalar)ForceMatrixReverseSubtractScalar(ForceMatrixResponse(row,0,&angular_b,&linear_b,source_torque,row_torque),column_cell);
+                } else if (row->object_b==object_b && (source_torque || row->type!=14)) {
+                    *column_cell=(br_scalar)ForceMatrixAddScalar(ForceMatrixResponse(row,1,&angular_b,&linear_b,source_torque,row_torque),column_cell);
+                }
+            }
+            if (!source_torque && partner_a!=NULL) {
+                if (row->object_a==partner_a) {
+                    *column_cell=(br_scalar)ForceMatrixAddScalar(ForceMatrixResponse(row,0,&angular_partner_a,&linear_partner_a,0,row_torque),column_cell);
+                } else if (row->object_b==partner_a) {
+                    *column_cell=(br_scalar)ForceMatrixReverseSubtractScalar(ForceMatrixResponse(row,1,&angular_partner_a,&linear_partner_a,0,row_torque),column_cell);
+                }
+            }
+            if (partner_b!=NULL) {
+                if (source_torque) {
+                    row=records[j];
+                }
+                if (row->object_a==partner_b) {
+                    *column_cell=(br_scalar)ForceMatrixReverseSubtractScalar(ForceMatrixResponse(row,0,&angular_partner_b,&linear_partner_b,source_torque,row_torque),column_cell);
+                } else if (row->object_b==partner_b) {
+                    *column_cell=(br_scalar)ForceMatrixAddScalar(ForceMatrixResponse(row,1,&angular_partner_b,&linear_partner_b,source_torque,row_torque),column_cell);
+                }
+            }
+            memcpy(row_cell,column_cell,4);
+            row_cell++;
+            column_cell+=dimension;
+        }
+    }
+}
 
 // RestoreListOmega
 
@@ -1989,4 +2811,3 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 // GetCarSpecFromCollObjID
 
 // GetCollObjFromID
-
