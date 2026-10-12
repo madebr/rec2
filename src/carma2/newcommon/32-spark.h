@@ -27,6 +27,9 @@ extern int gShade_list[16];
 extern int* gShade_table;
 extern int gNum_dust_tables;
 extern int gSpark_flags;
+extern tSpark gSpark[32];
+extern br_camera* gSpark_cam;
+extern br_matrix4 gCameraToScreen;
 extern br_pixelmap* gIt_shade_table;
 extern tBRender_smoke* gBR_smoke_pointers[35];
 extern int gN_BR_smoke_structs;
@@ -37,15 +40,15 @@ extern int gN_BR_smoke_structs;
 
 // DrawLine3DThroughBRender
 
-// DrawLine3D
+extern int C2_HOOK_FASTCALL DrawLine3D(const br_vector3* pStart, const br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_pixelmap* pShade);
 
-// DrawLine2D
+extern int C2_HOOK_FASTCALL DrawLine2D(br_vector3* pStart, br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_scalar pBrightness, br_pixelmap* pShade);
 
-// SetLineModelCols
+extern void C2_HOOK_FASTCALL SetLineModelCols(tU8 pWhite);
 
 // ReplaySparks
 
-// RenderSparks
+extern void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pScreen, br_pixelmap* pDepth, br_actor* pCamera, const br_matrix34* pCamera_to_world, tU32 pTime);
 
 // CreateSingleSpark
 

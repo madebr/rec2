@@ -4,6 +4,7 @@
 #include "13-crush1.h"
 #include "18-graphics2.h"
 #include "23-piping.h"
+#include "33-depth.h"
 #include "36-trig.h"
 #include "41-utility.h"
 #include "49-physics.h"
@@ -112,21 +113,454 @@ int gShrapnel_flags;
 // GLOBAL: CARMA2_HW 0x006a9180
 tShrapnel gShrapnel[30];
 
+// GLOBAL: CARMA2_HW 0x006a9b80
+tSpark gSpark[32];
+
+// GLOBAL: CARMA2_HW 0x006a82b0
+br_camera* gSpark_cam;
+
+// GLOBAL: CARMA2_HW 0x006a8718
+br_matrix4 gCameraToScreen;
+
+static br_scalar C2_HOOK_CDECL SmokeScalarRound(double pValue);
+static tU32 C2_HOOK_CDECL SmokeScalarBits(const br_scalar* pValue);
+
+/* These callers consume only the original _ftol result's low DWORD. */
+static tS32 C2_HOOK_CDECL SparkFtol(double pValue) {
+    tU32 words[2];
+
+    memcpy(words, &pValue, sizeof(words));
+    if ((words[1] & 0x7fffffffu) >= 0x43e00000u) {
+        return 0;
+    }
+    return (tS32)(tU32)(br_int_64)pValue;
+}
+
+static int C2_HOOK_CDECL SparkClipInteger(int pOrigin, int pOther, int pAmount, int pDivisor) {
+    tS32 product;
+
+    product = (tS32)(((tU32)pOrigin - (tU32)pOther) * (tU32)pAmount);
+    return (tS32)((tU32)pOrigin - (tU32)(product / pDivisor));
+}
+
+static void C2_HOOK_CDECL SparkClipDepth(br_vector3* pPoint, const br_vector3* pOther, int pAmount, int pDivisor) {
+    pPoint->v[2] = SmokeScalarRound((double)pOther->v[2]
+        - (((double)pOther->v[2] - pPoint->v[2]) * pAmount) / pDivisor);
+}
+
 // DrawDot
 
 // SetWorldToScreen
 
 // DrawLine3DThroughBRender
 
-// DrawLine3D
+// FUNCTION: CARMA2_HW 0x004f6b80
+int C2_HOOK_FASTCALL DrawLine3D(const br_vector3* pStart, const br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_pixelmap* pShade) {
+    br_vector3 start;
+    br_vector3 end;
+    br_vector4 projected_start;
+    br_vector4 projected_end;
+    double fraction;
+    br_scalar near_z;
+    int i;
 
-// DrawLine2D
+    if (gNo_2d_effects) {
+        for (i = 0; i < 3; i++) {
+            memcpy(&gLine_model->vertices[0].p.v[i], &pStart->v[i], sizeof(br_scalar));
+        }
+        for (i = 0; i < 3; i++) {
+            memcpy(&gLine_model->vertices[1].p.v[i], &pEnd->v[i], sizeof(br_scalar));
+        }
+        BrModelUpdate(gLine_model, BR_MODU_VERTEX_POSITIONS);
+        BrZbsSceneRenderAdd(gLine_actor);
+        return 999;
+    }
+    /* X is MOV-copied; the other original FLD/FSTP pairs quiet sNaNs. */
+    memcpy(&start.v[0], &pStart->v[0], sizeof(br_scalar));
+    start.v[1] = SmokeScalarRound(pStart->v[1]);
+    start.v[2] = SmokeScalarRound(pStart->v[2]);
+    for (i = 0; i < 3; i++) {
+        end.v[i] = SmokeScalarRound(pEnd->v[i]);
+    }
+    near_z = SmokeScalarRound(-(double)gSpark_cam->hither_z);
+    if (start.v[2] > near_z || end.v[2] > near_z) {
+        if (start.v[2] > near_z && end.v[2] > near_z) {
+            return 0;
+        }
+        fraction = ((double)end.v[2] + gSpark_cam->hither_z) / ((double)end.v[2] - start.v[2]);
+        if (start.v[2] > near_z) {
+            start.v[0] = SmokeScalarRound((double)end.v[0] - ((double)end.v[0] - start.v[0]) * fraction);
+            start.v[1] = SmokeScalarRound((double)end.v[1] - ((double)end.v[1] - start.v[1]) * fraction);
+            start.v[2] = SmokeScalarRound(-(double)gSpark_cam->hither_z);
+        }
+        if (end.v[2] > -gSpark_cam->hither_z) {
+            end.v[0] = SmokeScalarRound((double)end.v[0] - ((double)end.v[0] - start.v[0]) * fraction);
+            end.v[1] = SmokeScalarRound((double)end.v[1] - ((double)end.v[1] - start.v[1]) * fraction);
+            end.v[2] = SmokeScalarRound(-(double)gSpark_cam->hither_z);
+        }
+    }
+    BrMatrix4ApplyP(&projected_start, &start, &gCameraToScreen);
+    BrMatrix4ApplyP(&projected_end, &end, &gCameraToScreen);
+    for (i = 0; i < 3; i++) {
+        start.v[i] = SmokeScalarRound((double)projected_start.v[i] / projected_start.v[3]);
+    }
+    for (i = 0; i < 3; i++) {
+        end.v[i] = SmokeScalarRound((double)projected_end.v[i] / projected_end.v[3]);
+    }
+    return DrawLine2D(&start, &end, pScreen, pDepth, 1.f, pShade);
+}
 
-// SetLineModelCols
+// FUNCTION: CARMA2_HW 0x004f6de0
+int C2_HOOK_FASTCALL DrawLine2D(br_vector3* pStart, br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_scalar pBrightness, br_pixelmap* pShade) {
+    tU8* screen_base;
+    tU8* shade;
+    tU8* pixel;
+    tU16* depth;
+    int x0;
+    int x1;
+    int y0;
+    int y1;
+    int delta_x;
+    int delta_y;
+    int twice_x;
+    int twice_y;
+    int step_x;
+    int step_y;
+    int amount;
+    int divisor;
+    int shade_count;
+    int shade_step;
+    int shade_error;
+    int error;
+    double z;
+    double z_step;
+    double depth_value;
+    tU32 bits[2];
+
+    screen_base = (tU8*)pScreen->pixels + (tU16)pScreen->base_y * pScreen->row_bytes + (tU16)pScreen->base_x;
+    depth = (tU16*)pDepth->pixels;
+    shade = (tU8*)pShade->pixels + (tU16)pShade->base_y * pShade->row_bytes;
+    x0 = (tS32)((tU32)SparkFtol(pStart->v[0]) + ((tU16)pScreen->width >> 1));
+    x1 = (tS32)((tU32)SparkFtol(pEnd->v[0]) + ((tU16)pScreen->width >> 1));
+    y0 = (tS32)(((tU16)pScreen->height >> 1) - (tU32)SparkFtol(pStart->v[1]));
+    y1 = (tS32)(((tU16)pScreen->height >> 1) - (tU32)SparkFtol(pEnd->v[1]));
+    if ((SmokeScalarBits(&pBrightness) & 0x7fffffffu) > 0x7f800000u || pBrightness < .001f || pBrightness > 1.f) {
+        return 0;
+    }
+    if (x0 < 0 || x1 < 0) {
+        if (x0 < 0 && x1 < 0) {
+            return 0;
+        }
+        if (x0 < 0) {
+            divisor = (tS32)((tU32)x1 - (tU32)x0);
+            SparkClipDepth(pStart, pEnd, x1, divisor);
+            y0 = SparkClipInteger(y1, y0, x1, divisor);
+            x0 = 0;
+        } else {
+            divisor = (tS32)((tU32)x0 - (tU32)x1);
+            SparkClipDepth(pEnd, pStart, x0, divisor);
+            y1 = SparkClipInteger(y0, y1, x0, divisor);
+            x1 = 0;
+        }
+    }
+    if (x0 >= (tU16)pScreen->width || x1 >= (tU16)pScreen->width) {
+        if (x0 >= (tU16)pScreen->width && x1 >= (tU16)pScreen->width) {
+            return 0;
+        }
+        if (x0 >= (tU16)pScreen->width) {
+            amount = x1 - (tU16)pScreen->width + 1;
+            divisor = (tS32)((tU32)x1 - (tU32)x0);
+            SparkClipDepth(pStart, pEnd, amount, divisor);
+            y0 = SparkClipInteger(y1, y0, amount, divisor);
+            x0 = (tU16)pScreen->width - 1;
+        } else {
+            amount = x0 - (tU16)pScreen->width + 1;
+            divisor = (tS32)((tU32)x0 - (tU32)x1);
+            SparkClipDepth(pEnd, pStart, amount, divisor);
+            y1 = SparkClipInteger(y0, y1, amount, divisor);
+            x1 = (tU16)pScreen->width - 1;
+        }
+    }
+    if (y0 < 0 || y1 < 0) {
+        if (y0 < 0 && y1 < 0) {
+            return 0;
+        }
+        if (y0 < 0) {
+            divisor = (tS32)((tU32)y1 - (tU32)y0);
+            SparkClipDepth(pStart, pEnd, y1, divisor);
+            x0 = SparkClipInteger(x1, x0, y1, divisor);
+            y0 = 0;
+        } else {
+            divisor = (tS32)((tU32)y0 - (tU32)y1);
+            SparkClipDepth(pEnd, pStart, y0, divisor);
+            x1 = SparkClipInteger(x0, x1, y0, divisor);
+            y1 = 0;
+        }
+    }
+    if (y0 >= (tU16)pScreen->height || y1 >= (tU16)pScreen->height) {
+        if (y0 >= (tU16)pScreen->height && y1 >= (tU16)pScreen->height) {
+            return 0;
+        }
+        if (y0 >= (tU16)pScreen->height) {
+            amount = y1 - (tU16)pScreen->height + 1;
+            divisor = (tS32)((tU32)y1 - (tU32)y0);
+            SparkClipDepth(pStart, pEnd, amount, divisor);
+            x0 = SparkClipInteger(x1, x0, amount, divisor);
+            y0 = (tU16)pScreen->height - 1;
+        } else {
+            amount = y0 - (tU16)pScreen->height + 1;
+            divisor = (tS32)((tU32)y0 - (tU32)y1);
+            SparkClipDepth(pEnd, pStart, amount, divisor);
+            x1 = SparkClipInteger(x0, x1, amount, divisor);
+            y1 = (tU16)pScreen->height - 1;
+        }
+    }
+    delta_x = x1 - x0;
+    delta_y = y1 - y0;
+    step_x = delta_x >= 0 ? 1 : -1;
+    step_y = delta_y >= 0 ? 1 : -1;
+    if (delta_x < 0) {
+        delta_x = -delta_x;
+    }
+    if (delta_y < 0) {
+        delta_y = -delta_y;
+    }
+    twice_x = delta_x * 2;
+    twice_y = delta_y * 2;
+    pixel = screen_base + y0 * pScreen->row_bytes + x0;
+    depth += (pDepth->row_bytes / 2) * y0 + x0;
+    shade_count = SparkFtol(((double)pBrightness - .001f) * (tU16)pShade->height);
+    z = pStart->v[2];
+    if (twice_x > twice_y) {
+        error = twice_y - twice_x / 2;
+        shade_step = (delta_x * 1000) / shade_count;
+        shade_error = shade_step;
+        z_step = (((double)pEnd->v[2] - pStart->v[2]) * 2.0) / twice_x;
+    } else {
+        error = twice_x - twice_y / 2;
+        shade_step = (delta_y * 1000) / shade_count;
+        shade_error = shade_step;
+        z_step = (((double)pEnd->v[2] - pStart->v[2]) * 2.0) / twice_y;
+    }
+    for (;;) {
+        depth_value = (1.0 - z) * 32768.f;
+        memcpy(bits, &depth_value, sizeof(bits));
+        if (((bits[1] & 0x7fffffffu) > 0x7ff00000u || ((bits[1] & 0x7fffffffu) == 0x7ff00000u && bits[0] != 0)) || depth_value < *depth) {
+            *depth = (tU16)SparkFtol(depth_value);
+            *pixel = shade[*pixel];
+        }
+        if (twice_x > twice_y) {
+            if (x0 == x1) {
+                break;
+            }
+            if (error >= 0) {
+                pixel += step_y * pScreen->row_bytes;
+                depth += (pDepth->row_bytes / 2) * step_y;
+                error -= twice_x;
+            }
+            x0 += step_x;
+            pixel += step_x;
+            depth += step_x;
+            error += twice_y;
+        } else {
+            if (y0 == y1) {
+                break;
+            }
+            if (error >= 0) {
+                pixel += step_x;
+                depth += step_x;
+                error -= twice_y;
+            }
+            y0 += step_y;
+            pixel += step_y * pScreen->row_bytes;
+            depth += (pDepth->row_bytes / 2) * step_y;
+            error += twice_x;
+        }
+        shade_error -= 1000;
+        z += z_step;
+        while (shade_error < 1) {
+            shade_error += shade_step;
+            shade += pShade->row_bytes;
+        }
+    }
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x004f7cb0
+void C2_HOOK_FASTCALL SetLineModelCols(tU8 pWhite) {
+    gLine_model->vertices[0].red = 255;
+    gLine_model->vertices[0].grn = pWhite ? 255 : 0;
+    gLine_model->vertices[0].blu = pWhite ? 255 : 0;
+    gLine_model->vertices[1].red = 255;
+    gLine_model->vertices[1].grn = 255;
+    gLine_model->vertices[1].blu = pWhite ? 255 : 0;
+    BrModelUpdate(gLine_model, BR_MODU_ALL);
+}
 
 // ReplaySparks
 
-// RenderSparks
+// FUNCTION: CARMA2_HW 0x004f7450
+void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pScreen, br_pixelmap* pDepth, br_actor* pCamera, const br_matrix34* pCamera_to_world, tU32 pTime) {
+    br_matrix4 projection;
+    br_matrix4 scale;
+    br_matrix34* camera_to_world;
+    br_vector3 world_pos;
+    br_vector3 world_end;
+    br_vector3 delta;
+    br_vector3 view_start;
+    br_vector3 view_end;
+    br_vector3 temp;
+    tSpark* spark;
+    double dot;
+    double interval;
+    double factor;
+    double new_z;
+    double damping;
+    br_scalar float_time;
+    br_scalar gravity;
+    br_scalar random_y;
+    br_scalar random_z;
+    int trail;
+    int replay;
+    int i;
+    int j;
+    tU32 bit;
+
+    (void)pCamera_to_world;
+    gSpark_cam = pCamera->type_data;
+    BrMatrix4Perspective(&projection, gSpark_cam->field_of_view, gSpark_cam->aspect,
+        SmokeScalarRound(-(double)gSpark_cam->hither_z), SmokeScalarRound(-(double)gSpark_cam->yon_z));
+    BrMatrix4Scale(&scale, (br_scalar)((tU16)pScreen->width >> 1), (br_scalar)((tU16)pScreen->height >> 1), 1.f);
+    BrMatrix4Mul(&gCameraToScreen, &projection, &scale);
+    if (gSpark_flags == 0) {
+        return;
+    }
+    if (gNo_2d_effects) {
+        BrActorRemove(gLine_actor);
+        BrActorAdd(pCamera, gLine_actor);
+    }
+    replay = gAction_replay_mode;
+    if (!replay) {
+        ARStartPipingSession(ePipe_chunk_spark);
+    }
+    for (i = 0; i < 32; i++) {
+        bit = 1u << i;
+        if (!((tU32)gSpark_flags & bit)) {
+            continue;
+        }
+        spark = &gSpark[i];
+        if (replay) {
+            if (spark->car != NULL) {
+                /* The original first transforms this unwritten private endpoint,
+                 * then replaces it below. Preserve the call and its ordering. */
+                BrMatrix34ApplyP(&temp, &world_end, &spark->car->car_master_actor->t.t.mat);
+                memcpy(&world_end, &temp, sizeof(world_end));
+                BrMatrix34ApplyP(&world_pos, &spark->pos, &spark->car->car_master_actor->t.t.mat);
+            } else {
+                memcpy(&world_pos, &spark->pos, sizeof(world_pos));
+            }
+            for (j = 0; j < 3; j++) {
+                world_end.v[j] = SmokeScalarRound((double)spark->length.v[j] + world_pos.v[j]);
+            }
+        } else {
+            if (spark->count <= 0) {
+                spark->count = 0;
+                gSpark_flags = (int)((tU32)gSpark_flags & ~bit);
+            }
+            dot = ((double)spark->normal.v[2] * spark->v.v[2]
+                + (double)spark->normal.v[0] * spark->v.v[0])
+                + (double)spark->normal.v[1] * spark->v.v[1];
+            for (j = 0; j < 3; j++) {
+                temp.v[j] = SmokeScalarRound((double)spark->normal.v[j] * dot);
+            }
+            for (j = 0; j < 3; j++) {
+                spark->v.v[j] = SmokeScalarRound((double)spark->v.v[j] - temp.v[j]);
+            }
+            if (spark->time_sync != 0) {
+                interval = (double)spark->time_sync * .001f;
+                spark->count = (int)((tU32)spark->count + spark->time_sync - pTime);
+                spark->time_sync = 0;
+            } else {
+                interval = (double)pTime * .001f;
+                spark->count = (int)((tU32)spark->count - pTime);
+            }
+            for (j = 0; j < 3; j++) {
+                spark->pos.v[j] = SmokeScalarRound((double)spark->v.v[j] * interval + spark->pos.v[j]);
+            }
+            trail = (int)(1000u - (tU32)spark->count);
+            if (trail > 150) {
+                trail = 150;
+            }
+            factor = (double)(tS32)(0u - (tU32)trail) * .001f;
+            if (spark->colour != 0) {
+                factor *= .5f;
+            }
+            for (j = 0; j < 3; j++) {
+                spark->length.v[j] = SmokeScalarRound((double)spark->v.v[j] * factor);
+            }
+            gravity = SmokeScalarRound((double)pTime * 10.f * .00014492753623188405);
+            if (spark->car != NULL) {
+                BrMatrix34ApplyV(&temp, &spark->length, &spark->car->car_master_actor->t.t.mat);
+                for (j = 0; j < 3; j++) {
+                    spark->length.v[j] = SmokeScalarRound(temp.v[j]);
+                }
+                BrMatrix34ApplyP(&world_pos, &spark->pos, &spark->car->car_master_actor->t.t.mat);
+                for (j = 0; j < 3; j++) {
+                    spark->v.v[j] = SmokeScalarRound((double)spark->v.v[j]
+                        - (double)spark->car->car_master_actor->t.t.mat.m[j][1] * gravity);
+                }
+            } else {
+                memcpy(&world_pos, &spark->pos, sizeof(world_pos));
+                spark->v.v[1] = SmokeScalarRound((double)spark->v.v[1] - gravity);
+            }
+            AddSparkToPipingSession((spark->colour << 8) + i, &world_pos, &spark->length);
+            for (j = 0; j < 3; j++) {
+                world_end.v[j] = SmokeScalarRound((double)world_pos.v[j] + spark->length.v[j]);
+            }
+        }
+        camera_to_world = gRendering_mirror ? &gRearview_camera_to_world : &gCamera_to_world;
+        for (j = 0; j < 3; j++) {
+            delta.v[j] = SmokeScalarRound((double)world_pos.v[j] - camera_to_world->m[3][j]);
+        }
+        BrMatrix34TApplyV(&view_start, &delta, camera_to_world);
+        for (j = 0; j < 3; j++) {
+            delta.v[j] = SmokeScalarRound((double)world_end.v[j] - camera_to_world->m[3][j]);
+        }
+        BrMatrix34TApplyV(&view_end, &delta, camera_to_world);
+        if (!replay) {
+            random_z = SmokeScalarRound(FRandomBetween(-.1f, .1f));
+            random_y = SmokeScalarRound(FRandomBetween(-.1f, .1f));
+            BrVector3SetFloat(&temp, SmokeScalarRound(FRandomBetween(-.1f, .1f)), random_y, random_z);
+            spark->v.v[0] = SmokeScalarRound((double)temp.v[0] + spark->v.v[0]);
+            spark->v.v[1] = SmokeScalarRound((double)temp.v[1] + spark->v.v[1]);
+            new_z = (double)temp.v[2] + spark->v.v[2];
+            spark->v.v[2] = SmokeScalarRound(new_z);
+            float_time = SmokeScalarRound((double)pTime);
+            damping = 1.0 - sqrt(((double)spark->v.v[0] * spark->v.v[0]
+                + (double)spark->v.v[1] * spark->v.v[1]) + new_z * spark->v.v[2])
+                * .7142857313156128f * float_time * .001f;
+            /* The original AH bit test also clamps unordered results. */
+            if (!(damping >= .1f)) {
+                damping = .1f;
+            }
+            for (j = 0; j < 3; j++) {
+                spark->v.v[j] = SmokeScalarRound((double)spark->v.v[j] * damping);
+            }
+        }
+        if (gNo_2d_effects) {
+            SetLineModelCols(spark->colour);
+        }
+        DrawLine3D(&view_end, &view_start, pScreen, pDepth,
+            spark->colour ? gFog_shade_table : gAcid_shade_table);
+    }
+    if (!replay) {
+        AREndPipingSession();
+    }
+    if (gNo_2d_effects) {
+        BrActorRemove(gLine_actor);
+        BrActorAdd(gDont_render_actor, gLine_actor);
+    }
+}
 
 // CreateSingleSpark
 
