@@ -10,6 +10,7 @@ extern br_scalar gPhysics_bounds_max_x;
 extern br_scalar gPhysics_bounds_min_x;
 extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern char gPhysics_empty_message;
+extern tU32 gPhysics_contact_679434;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
 extern void* gPhysics_buffer3_ptr;
@@ -63,7 +64,19 @@ int C2_HOOK_FASTCALL CheckSingleEdgeWithSphere(br_vector3* pEdge_start, br_vecto
 
 int C2_HOOK_FASTCALL GetSphereToEdgePoints(tPhysics_object* pObject, tCollision_shape_sphere_data* pSphere, tPhysics_contact* pContacts, int pCount, int pUnused_capacity, br_vector3* pSphere_start, br_vector3* pSphere_end, br_matrix34* pUnused_matrix);
 
-// GetCornerToFacePoints
+/* The original wall-contact workspace contains two arrays of 64 points. */
+typedef struct {
+    br_vector3 original_points[64];
+    br_vector3 trial_points[64];
+    tU32 vertex_flags[64];
+    tU16 count_points;
+    tU16 count_edges;
+    tPolyhedron_edge_indexes* edges;
+} tPhysics_wall_workspace;
+
+int C2_HOOK_FASTCALL GetCornerToFacePoints(tPhysics_object* pObject, tPhysics_shape* pUnused_shape, tPhysics_contact* pContacts, int pCount, int pCapacity, tPhysics_wall_workspace* pWorkspace, void* pUnused_argument);
+
+int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* object, tPhysics_shape* shape, tPhysics_contact* contacts, int count, int capacity, tPhysics_wall_workspace* workspace, void* unused, int* touched);
 
 // CylinderCheck
 

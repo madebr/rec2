@@ -35,6 +35,9 @@ br_scalar gPhysics_bounds_max_x;
 // GLOBAL: CARMA2_HW 0x00692dd4
 br_scalar gPhysics_bounds_min_x;
 
+// GLOBAL: CARMA2_HW 0x00679434
+tU32 gPhysics_contact_679434;
+
 // GLOBAL: CARMA2_HW 0x00676920
 char gPhysics_empty_message;
 
@@ -417,7 +420,167 @@ int C2_HOOK_FASTCALL GetSphereToEdgePoints(tPhysics_object* pObject, tCollision_
 
 // GetSphereToFacePoints
 
-// GetCornerToFacePoints
+/* Original0x423ed0: ECX object, EDX unused shape, RET20. Third stack word
+ * is remaining capacity, not existing contact count; Ghidra mislabels it. */
+// FUNCTION: CARMA2_HW 0x00423ed0
+int C2_HOOK_FASTCALL GetCornerToFacePoints(tPhysics_object* pObject, tPhysics_shape* pUnused_shape, tPhysics_contact* pContacts, int pCount, int pCapacity, tPhysics_wall_workspace* pWorkspace, void* pUnused_argument) {
+    br_matrix34* matrix=&pObject->transform_matrix;
+    br_vector3 direction;
+    br_vector3 extension;
+    br_vector3 normal;
+    br_vector3 transformed_normal;
+    br_vector3 intersection;
+    br_vector3 relative;
+    br_vector3 local_position;
+    br_scalar time;
+    br_scalar penetration;
+    tU32 penetration_word;
+    double x;
+    double y;
+    double z;
+    double length;
+    double scale;
+    double unit_x;
+    tFace_ref* face;
+    tU32* flags=pWorkspace->vertex_flags;
+    br_vector3* first=pWorkspace->original_points;
+    br_vector3* second=pWorkspace->trial_points;
+    int i;
+
+    (void)pUnused_shape;
+    (void)pUnused_argument;
+    if(pCapacity<4) return 0;
+    gPhysics_contact_679434=0;
+    for(i=0;i<(int)*(volatile tU16*)&pWorkspace->count_points;i++,flags++,first++,second++) {
+        if(*flags!=0) continue;
+        x=(double)second->v[0]-first->v[0];
+        y=(double)second->v[1]-first->v[1];
+        z=(double)second->v[2]-first->v[2];
+        direction.v[1]=PhysicsScalar(y);
+        direction.v[2]=PhysicsScalar(z);
+        length=sqrt((x*x+y*direction.v[1])+z*direction.v[2]);
+        if(PhysicsWallNaN(length)||length<=2.3841858e-7f) {
+            unit_x=1.0;
+            extension.v[1]=0.0f;
+            extension.v[2]=0.0f;
+        } else {
+            scale=1.0/length;
+            unit_x=scale*x;
+            extension.v[1]=PhysicsScalar(scale*direction.v[1]);
+            extension.v[2]=PhysicsScalar(scale*direction.v[2]);
+        }
+        extension.v[0]=PhysicsScalar(unit_x*0.0010434782598167658f);
+        extension.v[1]=PhysicsScalar((double)extension.v[1]*0.0010434782598167658f);
+        extension.v[2]=PhysicsScalar((double)extension.v[2]*0.0010434782598167658f);
+        direction.v[0]=PhysicsScalar((double)extension.v[0]+x);
+        direction.v[1]=PhysicsScalar((double)direction.v[1]+extension.v[1]);
+        direction.v[2]=PhysicsScalar((double)direction.v[2]+extension.v[2]);
+        face=RayCastThruFaceList(first,&direction,&normal,&time,&intersection,&gFace_list__car[pObject->box_face_start],(int)pObject->box_face_end-(int)pObject->box_face_start);
+        if(face==NULL) continue;
+        BrMatrix34TApplyV(&transformed_normal,&normal,matrix);
+        penetration=PhysicsScalar(((double)normal.v[0]*direction.v[0]+(double)normal.v[1]*direction.v[1])+(double)normal.v[2]*direction.v[2]);
+        PhysicsSubtractScalar(&relative.v[0],&first->v[0],&matrix->m[3][0]);
+        PhysicsSubtractScalar(&relative.v[1],&first->v[1],&matrix->m[3][1]);
+        PhysicsSubtractScalar(&relative.v[2],&first->v[2],&matrix->m[3][2]);
+        BrMatrix34TApplyV(&local_position,&relative,matrix);
+        PhysicsCopyWord(&penetration_word,&penetration);
+        pCount=AddObjectWallForce(pContacts,&local_position,time,&transformed_normal,(int)penetration_word,pCount,pObject,1,face,NULL);
+    }
+    return pCount>=4?4:pCount;
+}
+
+/* Preserve the wide center-to-hit vector and its normalization. */
+static double C2_HOOK_CDECL WallEdgeAlignment(const br_vector3* centre, const br_vector3* hit, const br_vector3* normal) {
+    double x=(double)centre->v[0]-hit->v[0];
+    double y=(double)centre->v[1]-hit->v[1];
+    double z=(double)centre->v[2]-hit->v[2];
+    double length=sqrt((x*x+y*y)+z*z);
+    double scale;
+    if(PhysicsWallNaN(length)||length<=2.384185791015625e-7f) {
+        x=1.0;y=0.0;z=0.0;
+    } else {
+        scale=1.0/length;x=scale*x;y=scale*y;z=scale*z;
+    }
+    return (x*normal->v[0]+y*normal->v[1])+z*normal->v[2];
+}
+
+// FUNCTION: CARMA2_HW 0x004236a0
+int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* object, tPhysics_shape* shape, tPhysics_contact* contacts, int count, int capacity, tPhysics_wall_workspace* workspace, void* unused, int* touched) {
+    br_vector3 centre,direction,reverse,normal,hit,other_normal,other_hit;
+    br_vector3 relative,local,previous,local_normal;
+    br_vector3* first;
+    br_vector3* second;
+    tFace_ref* face;
+    tFace_ref* other_face;
+    br_scalar time,other_time,alignment,depth;
+    tU32 depth_word;
+    double other_alignment,wide_depth;
+    unsigned first_index,second_index;
+    int edge,selected;
+    (void)capacity;(void)unused;
+    if(shape->common.type==4) return count;
+    BrMatrix34ApplyP(&centre,&object->cmpos,&object->transform_matrix);
+    for(edge=0;edge<(int)*(volatile tU16*)&workspace->count_edges;edge++) {
+        first_index=((const tU8*)workspace->edges)[edge*2];
+        second_index=((const tU8*)workspace->edges)[edge*2+1];
+        first=&workspace->original_points[first_index];
+        second=&workspace->original_points[second_index];
+        PhysicsSubtractScalar(&direction.v[0],&second->v[0],&first->v[0]);
+        PhysicsSubtractScalar(&direction.v[1],&second->v[1],&first->v[1]);
+        PhysicsSubtractScalar(&direction.v[2],&second->v[2],&first->v[2]);
+        face=RayCastThruFaceList(first,&direction,&normal,&time,&hit,&gFace_list__car[object->box_face_start],(int)object->box_face_end-(int)object->box_face_start);
+        PhysicsSubtractScalar(&reverse.v[0],&first->v[0],&second->v[0]);
+        PhysicsSubtractScalar(&reverse.v[1],&first->v[1],&second->v[1]);
+        PhysicsSubtractScalar(&reverse.v[2],&first->v[2],&second->v[2]);
+        selected=0;
+        if(face==NULL) {
+            face=RayCastThruFaceList(second,&reverse,&normal,&time,&hit,&gFace_list__car[object->box_face_start],(int)object->box_face_end-(int)object->box_face_start);
+            if(face!=NULL) {
+                other_alignment=WallEdgeAlignment(&centre,&hit,&normal);
+                if(!PhysicsWallNaN(other_alignment)&&other_alignment>=0.009999999776482582f) {
+                    workspace->vertex_flags[first_index]=1;selected=1;
+                }
+            }
+        } else {
+            alignment=PhysicsScalar(WallEdgeAlignment(&centre,&hit,&normal));
+            other_face=RayCastThruFaceList(second,&reverse,&other_normal,&other_time,&other_hit,&gFace_list__car[object->box_face_start],(int)object->box_face_end-(int)object->box_face_start);
+            if(other_face==NULL) {
+                if(!PhysicsWallNaN(alignment)&&alignment>0.009999999776482582f) {
+                    workspace->vertex_flags[second_index]=1;selected=1;
+                }
+            } else {
+                other_alignment=WallEdgeAlignment(&centre,&other_hit,&other_normal);
+                if((!PhysicsWallNaN(alignment)&&alignment>=0.05000000074505806f)||(!PhysicsWallNaN(other_alignment)&&other_alignment>=0.05000000074505806f)) {
+                    if(PhysicsWallNaN(other_alignment)||PhysicsWallNaN(alignment)||other_alignment<=alignment) {
+                        workspace->vertex_flags[second_index]=1;
+                    } else {
+                        PhysicsCopyWord(&hit.v[0],&other_hit.v[0]);PhysicsCopyWord(&hit.v[1],&other_hit.v[1]);PhysicsCopyWord(&hit.v[2],&other_hit.v[2]);
+                        PhysicsCopyWord(&normal.v[0],&other_normal.v[0]);PhysicsCopyWord(&normal.v[1],&other_normal.v[1]);PhysicsCopyWord(&normal.v[2],&other_normal.v[2]);
+                        workspace->vertex_flags[first_index]=1;
+                    }
+                    selected=1;
+                }
+            }
+        }
+        if(selected) {
+            PhysicsSubtractScalar(&relative.v[0],&hit.v[0],&object->transform_matrix.m[3][0]);
+            PhysicsSubtractScalar(&relative.v[1],&hit.v[1],&object->transform_matrix.m[3][1]);
+            PhysicsSubtractScalar(&relative.v[2],&hit.v[2],&object->transform_matrix.m[3][2]);
+            BrMatrix34TApplyV(&local,&relative,&object->transform_matrix);
+            BrMatrix34ApplyP(&previous,&local,&object->actor->t.t.mat);
+            wide_depth=(((double)hit.v[0]-previous.v[0])*normal.v[0]+((double)hit.v[1]-previous.v[1])*normal.v[1])+((double)hit.v[2]-previous.v[2])*normal.v[2];
+            depth=PhysicsScalar(wide_depth);
+            if(!PhysicsWallNaN(wide_depth)&&wide_depth>0.0) {
+                BrMatrix34TApplyV(&local_normal,&normal,&object->transform_matrix);
+                PhysicsCopyWord(&depth_word,&depth);
+                count=AddObjectWallForce(contacts,&local,0.0f,&local_normal,(int)depth_word,count,object,1,face,NULL);
+            }
+            *touched=1;
+        }
+    }
+    return count;
+}
+
 
 // CylinderCheck
 
