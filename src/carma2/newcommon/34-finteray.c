@@ -1,4 +1,5 @@
 #include "34-finteray.h"
+#include "49-physics.h"
 
 #include <brender/brender.h>
 #include "rec2_macros.h"
@@ -1299,15 +1300,214 @@ int C2_HOOK_FASTCALL LineSphereCollWithSphere(br_vector3* pStart, br_vector3* pE
     return 2;
 }
 
-// LinePolyColl
+// FUNCTION: CARMA2_HW 0x00461310
+int C2_HOOK_FASTCALL LinePolyColl(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_polyhedron_data* pPoly, br_vector3* pPoint, br_scalar pRadius, br_scalar* pT) {
+    br_vector3 direction;
+    volatile br_scalar candidate[64];
+    volatile br_scalar denominators[64];
+    int count;
+    int plane;
+    int selected = -1;
+    int inside = 1;
+    br_vector4* equation;
+    double denominator;
+    double distance;
+    double best_t = 0.0;
+    double point_x;
+    double point_y;
+    double point_z;
+    float dot;
+
+    *pT = 2.0f;
+    direction.v[0] = FinterayScalar((double)pEnd->v[0] - pStart->v[0]);
+    count = pPoly->count_planes;
+    direction.v[1] = FinterayScalar((double)pEnd->v[1] - pStart->v[1]);
+    direction.v[2] = FinterayScalar((double)pEnd->v[2] - pStart->v[2]);
+    equation = pPoly->planes;
+    for (plane = 0; plane < count; plane++, equation++) {
+        denominator = ((FinterayShapeLoadScalar(&equation->v[2]) * FinterayShapeLoadScalar(&direction.v[2])
+            + FinterayShapeLoadScalar(&equation->v[1]) * FinterayShapeLoadScalar(&direction.v[1]))
+            + FinterayShapeLoadScalar(&equation->v[0]) * FinterayShapeLoadScalar(&direction.v[0]));
+        denominators[plane] = FinterayScalar(denominator);
+        dot = FinterayScalar(((FinterayShapeLoadScalar(&equation->v[0]) * pStart->v[0]
+            + (double)pStart->v[1] * equation->v[1]) + FinterayShapeLoadScalar(&equation->v[2]) * pStart->v[2]) + pRadius);
+        distance = FinterayShapeLoadScalar(&equation->v[3]) + FinterayShapeLoadScalar(&dot);
+        if (!(distance >= 0.0)) {
+            inside = 0;
+        }
+        if (denominator == 0.0 || FinterayBoxNaN(denominator)) {
+            if (!(distance >= 0.0)) {
+                return 0;
+            }
+        } else {
+            candidate[plane] = FinterayScalar(-(distance / denominator));
+        }
+        if (denominator > 0.0 && !(best_t > candidate[plane])) {
+            if (candidate[plane] > 1.0f) {
+                return 0;
+            }
+            best_t = candidate[plane];
+            selected = plane;
+        }
+    }
+    if (inside) {
+        return -1;
+    }
+    if (selected < 0) {
+        return 0;
+    }
+    for (plane = 0; plane < count; plane++) {
+        if (!(denominators[plane] >= 0.0f) && best_t > candidate[plane]) {
+            return 0;
+        }
+    }
+    point_x = best_t * FinterayShapeLoadScalar(&direction.v[0]);
+    point_y = best_t * FinterayShapeLoadScalar(&direction.v[1]);
+    point_z = best_t * FinterayShapeLoadScalar(&direction.v[2]);
+    pPoint->v[0] = FinterayScalar(point_x);
+    pPoint->v[1] = FinterayScalar(point_y);
+    pPoint->v[2] = FinterayScalar(point_z);
+    pPoint->v[0] = FinterayScalar((double)pStart->v[0] + point_x);
+    pPoint->v[1] = FinterayScalar(point_y + pStart->v[1]);
+    pPoint->v[2] = FinterayScalar(point_z + pStart->v[2]);
+    *pT = FinterayScalar(best_t);
+    return selected + 1;
+}
 
 // SpherePolyIntersection
 
-// LinePolyCollWithSphere
+/* Normal outputs may overwrite the shape's own plane pointer/count. */
+static br_vector4* C2_HOOK_FASTCALL FinterayShapePlanes(tCollision_shape_polyhedron_data* poly) {
+    return *(br_vector4* volatile*)&poly->planes;
+}
 
-// ShapeRayCast
+static int C2_HOOK_FASTCALL FinterayShapePlaneCount(tCollision_shape_polyhedron_data* poly) {
+    return *(volatile int*)&poly->count_planes;
+}
 
-// ShapeRayCastWithSphere
+// FUNCTION: CARMA2_HW 0x00461520
+int C2_HOOK_FASTCALL LinePolyCollWithSphere(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_polyhedron* pShape, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    br_scalar distance[64];
+    tCollision_shape_polyhedron_data* poly = &pShape->polyhedron;
+    br_vector4* equation;
+    int result;
+    int count;
+    int plane;
+    int selected;
+    double extended;
+    double x;
+    double y;
+    double z;
+    double length;
+    double scale;
+
+    result = LinePolyColl(pStart, pEnd, poly, pPoint, 0.0f, pT);
+    if (result < 0) {
+        BrVector3SetFloat(pNormal, 1.0f, 0.0f, 0.0f);
+        return result;
+    }
+    if (result != 0) {
+        selected = (result & 0x3f) - 1;
+        FinterayBoxCopyScalar(&pNormal->v[0], &FinterayShapePlanes(poly)[selected].v[0]);
+        FinterayBoxCopyScalar(&pNormal->v[1], &FinterayShapePlanes(poly)[selected].v[1]);
+        FinterayBoxCopyScalar(&pNormal->v[2], &FinterayShapePlanes(poly)[selected].v[2]);
+        return result;
+    }
+    count = FinterayShapePlaneCount(poly);
+    equation = FinterayShapePlanes(poly);
+    for (plane = 0; plane < count; plane++, equation++) {
+        extended = ((FinterayShapeLoadScalar(&equation->v[0]) * pEnd->v[0]
+            + (double)pEnd->v[2] * equation->v[2]) + FinterayShapeLoadScalar(&equation->v[1]) * pEnd->v[1]) + equation->v[3];
+        distance[plane] = FinterayScalar(extended);
+        if (!(extended >= -0.005f)) {
+            return 0;
+        }
+    }
+    pNormal->v[0] = 0.0f;
+    pNormal->v[1] = 0.0f;
+    pNormal->v[2] = 0.0f;
+    selected = 0;
+    for (plane = 0; plane < FinterayShapePlaneCount(poly); plane++) {
+        if (!(FinterayShapeLoadScalar(&distance[plane]) >= 0.0)) {
+            selected++;
+            pNormal->v[0] = FinterayScalar(FinterayShapeLoadScalar(&FinterayShapePlanes(poly)[plane].v[0]) + pNormal->v[0]);
+            pNormal->v[1] = FinterayScalar(FinterayShapeLoadScalar(&FinterayShapePlanes(poly)[plane].v[1]) + pNormal->v[1]);
+            pNormal->v[2] = FinterayScalar(FinterayShapeLoadScalar(&FinterayShapePlanes(poly)[plane].v[2]) + pNormal->v[2]);
+        }
+    }
+    if (selected > 1) {
+        x = FinterayShapeLoadScalar(&pNormal->v[0]);
+        y = FinterayShapeLoadScalar(&pNormal->v[1]);
+        z = FinterayShapeLoadScalar(&pNormal->v[2]);
+        length = sqrt((y * y + z * z) + x * x);
+        if (length > 2.3841858e-7f) {
+            scale = 1.0 / length;
+            pNormal->v[0] = FinterayScalar(scale * FinterayShapeLoadScalar(&pNormal->v[0]));
+            pNormal->v[1] = FinterayScalar(y * scale);
+            pNormal->v[2] = FinterayScalar(z * scale);
+        } else {
+            pNormal->v[0] = 1.0f;
+            pNormal->v[1] = 0.0f;
+            pNormal->v[2] = 0.0f;
+        }
+    }
+    FinterayBoxCopyScalar(&pPoint->v[0], &pEnd->v[0]);
+    FinterayBoxCopyScalar(&pPoint->v[1], &pEnd->v[1]);
+    FinterayBoxCopyScalar(&pPoint->v[2], &pEnd->v[2]);
+    *pT = 1.0f;
+    return 0x40;
+}
+
+// FUNCTION: CARMA2_HW 0x00461740
+int C2_HOOK_FASTCALL ShapeRayCast(br_vector3* pStart, br_vector3* pEnd, tPhysics_shape* pShape, br_vector3* pPoint, br_scalar* pT, br_vector3* pNormal) {
+    int result;
+    int selected;
+
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        result = LineBoxColl(pStart, pEnd, &pShape->common.bb, pPoint, pT);
+        if (pNormal != NULL && result > 0) {
+            pNormal->v[0] = 0.0f;
+            pNormal->v[1] = 0.0f;
+            pNormal->v[2] = 0.0f;
+            pNormal->v[(result - 1) & 3] = (result & 4) ? 1.0f : -1.0f;
+        }
+        return result;
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        result = LinePolyColl(pStart, pEnd, &pShape->polyhedron.polyhedron, pPoint, 0.0f, pT);
+        if (pNormal != NULL && result > 0) {
+            selected = (result & 0x3f) - 1;
+            FinterayBoxCopyScalar(&pNormal->v[0], &FinterayShapePlanes(&pShape->polyhedron.polyhedron)[selected].v[0]);
+            FinterayBoxCopyScalar(&pNormal->v[1], &FinterayShapePlanes(&pShape->polyhedron.polyhedron)[selected].v[1]);
+            FinterayBoxCopyScalar(&pNormal->v[2], &FinterayShapePlanes(&pShape->polyhedron.polyhedron)[selected].v[2]);
+        }
+        return result;
+    case kCollisionShapeType_Wireframe:
+        return 0;
+    case kCollisionShapeType_Sphere:
+        return LineSphereColl(pStart, pEnd, &pShape->sphere.sphere, pPoint, pNormal, pT);
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType, &gPhysics_empty_message);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00461850
+int C2_HOOK_FASTCALL ShapeRayCastWithSphere(br_vector3* pStart, br_vector3* pEnd, tPhysics_shape* pShape, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        return LineBoxCollWithSphere(pStart, pEnd, &pShape->common.bb, pPoint, pNormal, pT);
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        return LinePolyCollWithSphere(pStart, pEnd, &pShape->polyhedron, pPoint, pNormal, pT);
+    case kCollisionShapeType_Wireframe:
+        return 0;
+    case kCollisionShapeType_Sphere:
+        return LineSphereCollWithSphere(pStart, pEnd, &pShape->sphere.sphere, pPoint, pNormal, pT);
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType, &gPhysics_empty_message);
+    }
+}
 
 // CastRayDownThruFaces
 

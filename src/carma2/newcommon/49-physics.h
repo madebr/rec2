@@ -9,6 +9,7 @@ extern int gFace_num__car;
 extern br_scalar gPhysics_bounds_max_x;
 extern br_scalar gPhysics_bounds_min_x;
 extern tPhysicsError_cbfn* gPhysics_error_cb;
+extern char gPhysics_empty_message;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
 extern void* gPhysics_buffer3_ptr;

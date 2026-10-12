@@ -35,6 +35,9 @@ br_scalar gPhysics_bounds_max_x;
 // GLOBAL: CARMA2_HW 0x00692dd4
 br_scalar gPhysics_bounds_min_x;
 
+// GLOBAL: CARMA2_HW 0x00676920
+char gPhysics_empty_message;
+
 // GLOBAL: CARMA2_HW 0x006940c0
 tPhysicsError_cbfn* gPhysics_error_cb;
 
