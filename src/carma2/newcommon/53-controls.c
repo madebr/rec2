@@ -41,6 +41,9 @@ char gString[84];
 // GLOBAL: CARMA2_HW 0x0067c3c8
 char* gAbuse_text[10];
 
+// GLOBAL: CARMA2_HW 0x0079ec50
+int gInstant_handbrake;
+
 // CompleteRace
 
 // AbortRace

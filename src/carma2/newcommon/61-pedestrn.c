@@ -49,6 +49,15 @@ int gPanicking_peds;
 // GLOBAL: CARMA2_HW 0x007447b8
 int gDrunk_pedestrians;
 
+// GLOBAL: CARMA2_HW 0x007447d0
+int gBlind_pedestrians;
+
+// GLOBAL: CARMA2_HW 0x00744810
+int gImmortal_peds;
+
+// GLOBAL: CARMA2_HW 0x007447ac
+int gPeds_suicidal;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix

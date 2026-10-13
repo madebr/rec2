@@ -15,6 +15,12 @@ extern int gDancing_peds;
 extern int gPanicking_peds;
 extern int gDrunk_pedestrians;
 
+extern int gBlind_pedestrians;
+
+extern int gImmortal_peds;
+
+extern int gPeds_suicidal;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix
