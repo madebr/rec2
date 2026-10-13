@@ -946,7 +946,16 @@ void C2_HOOK_FASTCALL SetModelFlags(br_model* pModel, int pOwner) {
     }
 }
 
-// FindCarShellModel
+br_model* C2_HOOK_FASTCALL FindCarShellModel(br_model** pModels, int pCount) {
+    int i;
+
+    for (i = 0; i < pCount; i++) {
+        if (strcmp(pModels[i]->identifier, "SHELL") == 0) {
+            return pModels[i];
+        }
+    }
+    return NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x0048c130
 intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pData) {
@@ -966,7 +975,22 @@ void C2_HOOK_FASTCALL LinkCarActorsToGroovidelics(br_actor* pActor) {
 
 // ReadCarKeywordData
 
-// TrashModelMaterialIdentifiers
+void C2_HOOK_FASTCALL TrashModelMaterialIdentifiers(tCar_spec* pCar_spec, tBrender_storage* pStorage_space) {
+    int i;
+    br_material* material;
+
+    for (i = pCar_spec->old_material_count; i < pCar_spec->new_material_count && i < pStorage_space->materials_count; i++) {
+        material = pStorage_space->materials[i];
+        if (material->identifier != NULL && material->identifier[0] != '\0') {
+            if (material->flags & BR_MATF_TWO_SIDED) {
+                material->identifier[0] = 'D';
+            } else {
+                material->identifier[0] = 'S';
+            }
+            BrMaterialUpdate(material, BR_MATU_ALL);
+        }
+    }
+}
 
 // CentreModel
 

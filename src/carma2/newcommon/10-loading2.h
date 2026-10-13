@@ -77,7 +77,7 @@ extern void C2_HOOK_FASTCALL ReadShrapnelMaterials(FILE* pF, tCar_spec* pCar_spe
 
 extern void C2_HOOK_FASTCALL SetModelFlags(br_model* pModel, int pOwner);
 
-// FindCarShellModel
+extern br_model* C2_HOOK_FASTCALL FindCarShellModel(br_model** pModels, int pCount);
 
 extern intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pData);
 
@@ -85,7 +85,7 @@ extern void C2_HOOK_FASTCALL LinkCarActorsToGroovidelics(br_actor* pActor);
 
 // ReadCarKeywordData
 
-// TrashModelMaterialIdentifiers
+extern void C2_HOOK_FASTCALL TrashModelMaterialIdentifiers(tCar_spec* pCar_spec, tBrender_storage* pStorage_space);
 
 // CentreModel
 
