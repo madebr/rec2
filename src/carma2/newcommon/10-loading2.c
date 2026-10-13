@@ -612,6 +612,7 @@ void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions)
 // STUB: CARMA2_HW 0x0048d190
 int C2_HOOK_FASTCALL SaveOptions(void) {
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0048d8f0
