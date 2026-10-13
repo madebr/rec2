@@ -105,6 +105,14 @@ char* gRaces_file_names[9] = {
     "NETRACES.TXT",
 };
 
+// GLOBAL: CARMA2_HW 0x00657558
+const char* gNet_avail_names[4] = {
+    "never",
+    "eagle",
+    "hawk",
+    "all",
+};
+
 // GLOBAL: CARMA2_HW 0x0068c6f4
 int gCurrent_race_file_index;
 
@@ -838,7 +846,88 @@ void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
     }
 }
 
-// LoadOpponents
+// FUNCTION: CARMA2_HW 0x0048c930
+void C2_HOOK_FASTCALL LoadOpponents(void) {
+    FILE* f;
+    tPath_name the_path;
+    int i;
+    int j;
+    int k;
+    int value;
+    char s[256];
+    char* str;
+    tText_chunk* text_chunks;
+    tText_chunk* the_chunk;
+
+    C2_HOOK_BUG_ON(sizeof(tOpponent) != 0x1c0);
+    C2_HOOK_BUG_ON(sizeof(tText_chunk) != 52);
+
+    PathCat(the_path, gApplication_path, "OPPONENT.TXT");
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotOpenOpponentsFile);
+    }
+    GetALineAndDontArgue(f, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", &gNumber_of_racers);
+    gOpponents = BrMemAllocate(sizeof(tOpponent) * gNumber_of_racers, kMem_oppo_array);
+
+    for (i = 0; i < gNumber_of_racers; i++) {
+        PossibleService();
+        GetALineAndDontArgue(f, gOpponents[i].name);
+        if (strcmp(gOpponents[i].name, "END") == 0) {
+            FatalError(kFatalError_OpponentCountMismatchesActualNumberOfOpponents);
+        }
+        GetALineAndDontArgue(f, s);
+        str = strtok(s, "\t ,/");
+        strcpy(gOpponents[i].abbrev_name, str);
+        GetALineAndDontArgue(f, gOpponents[i].car_name);
+        value = GetAnInt(f);
+        gOpponents[i].strength_rating = value;
+        value = GetAnInt(f);
+        gOpponents[i].price = value;
+        value = GetALineAndInterpretCommand(f, gNet_avail_names, (int)REC2_ASIZE(gNet_avail_names));
+        gOpponents[i].network_availability = (tNet_avail)value;
+
+        gOpponents[i].mug_shot_image_data = NULL;
+        gOpponents[i].grid_icon_image = NULL;
+        gOpponents[i].stolen_car_image_data = NULL;
+        GetALineAndDontArgue(f, s);
+        str = strtok(s, "\t ,/");
+        strcpy(gOpponents[i].car_file_name, str);
+        GetALineAndDontArgue(f, gOpponents[i].line1_topspeed);
+        GetALineAndDontArgue(f, gOpponents[i].line2_weight);
+        GetALineAndDontArgue(f, gOpponents[i].line3_acceleration);
+        GetALineAndDontArgue(f, gOpponents[i].line4_description);
+
+        gOpponents[i].text_chunk_count = 0;
+        text_chunks = BrMemAllocate(sizeof(tText_chunk) * gOpponents[i].text_chunk_count, kMem_oppo_text_chunk);
+        gOpponents[i].text_chunks = text_chunks;
+        the_chunk = gOpponents[i].text_chunks;
+        for (j = 0; j < gOpponents[i].text_chunk_count; j++, the_chunk++) {
+            PossibleService();
+            GetPairOfInts(f, &the_chunk->x_coord, &the_chunk->y_coord);
+            GetPairOfInts(f, &the_chunk->frame_cue, &the_chunk->frame_end);
+            the_chunk->line_count = GetAnInt(f);
+            while (the_chunk->line_count > (int)REC2_ASIZE(the_chunk->text)) {
+                the_chunk->line_count--;
+                GetALineAndDontArgue(f, s);
+            }
+            for (k = 0; k < the_chunk->line_count; k++) {
+                GetALineAndDontArgue(f, s);
+                the_chunk->text[k] = BrMemAllocate(strlen(s) + 1, kMem_oppo_text_str);
+                strcpy(the_chunk->text[k], s);
+            }
+        }
+        gOpponents[i].dead = 0;
+        InitOpponentPsyche(i);
+    }
+    GetALineAndDontArgue(f, s);
+    if (strcmp(s, "END") != 0) {
+        FatalError(kFatalError_OpponentCountMismatchesActualNumberOfOpponents);
+    }
+    PFfclose(f);
+}
 
 // FUNCTION: CARMA2_HW 0x0048cd80
 void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {

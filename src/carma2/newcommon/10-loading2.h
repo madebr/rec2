@@ -7,6 +7,7 @@
 extern tHeadup_info gHeadup_image_info[45];
 extern br_pixelmap* gHeadup_images[45];
 extern char* gRaces_file_names[9];
+extern const char* gNet_avail_names[4];
 extern int gCurrent_race_file_index;
 extern int gCountRaceGroups;
 
@@ -98,7 +99,7 @@ extern void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount,
 
 extern void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info);
 
-// LoadOpponents
+extern void C2_HOOK_FASTCALL LoadOpponents(void);
 
 extern void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
 
