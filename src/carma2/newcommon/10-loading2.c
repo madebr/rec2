@@ -11,6 +11,7 @@
 #include "18-graphics2.h"
 #include "21-mainloop.h"
 #include "22-replay.h"
+#include "25-grafdata.h"
 #include "27-powerup.h"
 #include "28-world3.h"
 #include "30-opponent.h"
@@ -586,7 +587,38 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
     // empty
 }
 
-// AdjustCarCoordinates
+void C2_HOOK_FASTCALL AdjustCarCoordinates(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(pCar->render_left); i++) {
+        pCar->render_left[i] -= gCurrent_graf_data->cock_margin_x;
+        pCar->render_top[i] -= gCurrent_graf_data->cock_margin_y;
+        pCar->render_right[i] -= gCurrent_graf_data->cock_margin_x;
+        pCar->render_bottom[i] -= gCurrent_graf_data->cock_margin_y;
+    }
+    pCar->mirror_left -= gCurrent_graf_data->cock_margin_x;
+    pCar->mirror_top -= gCurrent_graf_data->cock_margin_y;
+    pCar->mirror_right -= gCurrent_graf_data->cock_margin_x;
+    pCar->mirror_bottom -= gCurrent_graf_data->cock_margin_y;
+    pCar->speedo_centre_x[1] -= gCurrent_graf_data->cock_margin_x;
+    pCar->speedo_centre_y[1] -= gCurrent_graf_data->cock_margin_y;
+    pCar->tacho_centre_x[1] -= gCurrent_graf_data->cock_margin_x;
+    pCar->tacho_centre_y[1] -= gCurrent_graf_data->cock_margin_y;
+    pCar->speedo_x[1] -= gCurrent_graf_data->cock_margin_x;
+    pCar->speedo_y[1] -= gCurrent_graf_data->cock_margin_y;
+    pCar->tacho_x[1] -= gCurrent_graf_data->cock_margin_x;
+    pCar->tacho_y[1] -= gCurrent_graf_data->cock_margin_y;
+    for (i = 0; i < (int)REC2_ASIZE(pCar->lhands_x); i++) {
+        pCar->lhands_x[i] -= gCurrent_graf_data->cock_margin_x;
+        pCar->lhands_y[i] -= gCurrent_graf_data->cock_margin_y;
+        pCar->rhands_x[i] -= gCurrent_graf_data->cock_margin_x;
+        pCar->rhands_y[i] -= gCurrent_graf_data->cock_margin_y;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(pCar->damage_units); i++) {
+        pCar->damage_units[i].x_coord -= gCurrent_graf_data->cock_margin_x;
+        pCar->damage_units[i].y_coord -= gCurrent_graf_data->cock_margin_y;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0048b560
 void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
@@ -678,7 +710,56 @@ void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     }
 }
 
-// LoadHeadups
+// FUNCTION: CARMA2_HW 0x0048ba60
+void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+    int j;
+    int number_of_slots;
+
+    number_of_slots = GetAnInt(pF);
+    for (j = 0; j < number_of_slots; j++) {
+        GetALineAndDontArgue(pF, s);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].field_0x28);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].x);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].y);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].colour);
+        str = strtok(NULL, "\t ,/");
+        /* The token and destination share the line buffer. */
+        memmove(s, str, strlen(str) + 1);
+        switch (s[0]) {
+        case 'c':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_centre;
+            break;
+        case 'l':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_left;
+            break;
+        case 'r':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_right;
+            break;
+        }
+        if (s[1] == 'c') {
+            pCar_spec->headup_slots[pIndex][j].cockpit_anchored = 1;
+        }
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_left);
+        if (pCar_spec->headup_slots[pIndex][j].dim_left < 0) {
+            pCar_spec->headup_slots[pIndex][j].dimmed_background = 0;
+        } else {
+            pCar_spec->headup_slots[pIndex][j].dimmed_background = 1;
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_top);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_right);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_bottom);
+        }
+    }
+}
 
 // OldReadNonCarMechanicsData
 

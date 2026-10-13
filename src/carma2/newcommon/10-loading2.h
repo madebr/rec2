@@ -35,13 +35,13 @@ extern void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race);
 
 extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
-// AdjustCarCoordinates
+extern void C2_HOOK_FASTCALL AdjustCarCoordinates(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
-// LoadHeadups
+extern void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
 // OldReadNonCarMechanicsData
 
