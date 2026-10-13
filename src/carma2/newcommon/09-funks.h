@@ -69,7 +69,7 @@ extern br_scalar C2_HOOK_FASTCALL NormaliseDegreeAngle(br_scalar pAngle);
 
 extern void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it);
 
-// ObjectGrooveBastard
+extern void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it);
 
 // GrooveThisDelic
 

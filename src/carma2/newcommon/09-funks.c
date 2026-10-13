@@ -3,6 +3,7 @@
 #include "08-loading1.h"
 #include "10-loading2.h"
 #include "23-piping.h"
+#include "36-trig.h"
 #include "38-flicplay.h"
 #include "41-utility.h"
 #include "52-errors.h"
@@ -1321,7 +1322,107 @@ void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, 
     }
 }
 
-// ObjectGrooveBastard
+// FUNCTION: CARMA2_HW 0x00479890
+void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it) {
+    int rock_it;
+    br_scalar x_size;
+    br_scalar y_size;
+    br_scalar z_size;
+    br_scalar pos;
+    br_bounds* bounds;
+    br_scalar x_extent;
+    br_scalar y_extent;
+    br_scalar z_extent;
+    double f_the_time = (double)pTime;
+
+    switch (pGroove->object_type) {
+    case eGroove_object_spin:
+        switch (pGroove->object_data.spin_info.axis) {
+        case eAxis_x:
+            MOVE_FUNK_PARAMETER(pos, pGroove->object_mode, pGroove->object_data.spin_info.period.value, pGroove->object_data.spin_info.texture_info.data, 360.f, -360.f);
+            DRMatrix34PostRotateX(pMat, BrDegreeToAngle(pos));
+            break;
+        case eAxis_y:
+            MOVE_FUNK_PARAMETER(pos, pGroove->object_mode, pGroove->object_data.spin_info.period.value, pGroove->object_data.spin_info.texture_info.data, 360.f, -360.f);
+            DRMatrix34PostRotateY(pMat, BrDegreeToAngle(pos));
+            break;
+        case eAxis_z:
+            MOVE_FUNK_PARAMETER(pos, pGroove->object_mode, pGroove->object_data.spin_info.period.value, pGroove->object_data.spin_info.texture_info.data, 360.f, -360.f);
+            DRMatrix34PostRotateZ(pMat, BrDegreeToAngle(pos));
+            break;
+        }
+        break;
+    case eGroove_object_rock:
+        MOVE_FUNK_PARAMETER(pos, pGroove->object_mode, pGroove->object_data.rock_info.period.value, pGroove->object_data.rock_info.texture_info.data, pGroove->object_data.rock_info.max_angle, pGroove->object_data.rock_info.max_angle);
+        rock_it = 1;
+        if (pInterrupt_it) {
+            pGroove->object_resumption_value = pos;
+            if (pos >= pGroove->object_data.rock_info.current_angle) {
+                pGroove->object_interrupt_status = eInterrupt_greater_than;
+            } else {
+                pGroove->object_interrupt_status = eInterrupt_less_than;
+            }
+        } else {
+            if (pGroove->object_interrupt_status == eInterrupt_less_than) {
+                if (pos >= pGroove->object_resumption_value || gAction_replay_mode) {
+                    rock_it = 0;
+                } else {
+                    pGroove->object_interrupt_status = eInterrupt_none;
+                }
+            } else if (pGroove->object_interrupt_status == eInterrupt_greater_than) {
+                if (!(pos > pGroove->object_resumption_value) || gAction_replay_mode) {
+                    rock_it = 0;
+                } else {
+                    pGroove->object_interrupt_status = eInterrupt_none;
+                }
+            }
+        }
+        if (rock_it) {
+            pGroove->object_data.rock_info.current_angle = pos;
+        }
+
+        switch (pGroove->object_data.rock_info.axis) {
+        case eAxis_x:
+            DRMatrix34PostRotateX(pMat, BrDegreeToAngle(pGroove->object_data.rock_info.current_angle));
+            break;
+        case eAxis_y:
+            DRMatrix34PostRotateY(pMat, BrDegreeToAngle(pGroove->object_data.rock_info.current_angle));
+            break;
+        case eAxis_z:
+            DRMatrix34PostRotateZ(pMat, BrDegreeToAngle(pGroove->object_data.rock_info.current_angle));
+            break;
+        }
+        break;
+    case eGroove_object_throb:
+        MOVE_FUNK_PARAMETER(z_size, pGroove->object_mode, pGroove->object_data.throb_info.z_period.value, pGroove->object_data.throb_info.z_texture_info.data, pGroove->object_data.throb_info.z_magnitude, -pGroove->object_data.throb_info.z_magnitude);
+        MOVE_FUNK_PARAMETER(y_size, pGroove->object_mode, pGroove->object_data.throb_info.y_period.value, pGroove->object_data.throb_info.y_texture_info.data, pGroove->object_data.throb_info.y_magnitude, -pGroove->object_data.throb_info.y_magnitude);
+        MOVE_FUNK_PARAMETER(x_size, pGroove->object_mode, pGroove->object_data.throb_info.x_period.value, pGroove->object_data.throb_info.x_texture_info.data, pGroove->object_data.throb_info.x_magnitude, -pGroove->object_data.throb_info.x_magnitude);
+
+        BrMatrix34PostScale(pMat, x_size + 1.f, y_size + 1.f, z_size + 1.f);
+        /* FALLTHROUGH */
+    case eGroove_object_shear:
+        bounds = &pGroove->actor->model->bounds;
+        x_extent = bounds->max.v[0] - bounds->min.v[0];
+        y_extent = bounds->max.v[1] - bounds->min.v[1];
+        z_extent = bounds->max.v[2] - bounds->min.v[2];
+        if (!(pGroove->object_data.shear_info.x_magnitude < 0.0f || pGroove->object_data.shear_info.x_magnitude > 0.0f)) {
+            MOVE_FUNK_PARAMETER(z_size, pGroove->object_mode, pGroove->object_data.shear_info.z_period.value, pGroove->object_data.shear_info.z_texture_info.data, pGroove->object_data.shear_info.z_magnitude, -pGroove->object_data.shear_info.z_magnitude);
+            MOVE_FUNK_PARAMETER(y_size, pGroove->object_mode, pGroove->object_data.shear_info.y_period.value, pGroove->object_data.shear_info.y_texture_info.data, pGroove->object_data.shear_info.y_magnitude, -pGroove->object_data.shear_info.y_magnitude);
+            BrMatrix34PostShearX(pMat, y_size / y_extent, z_size / z_extent);
+        } else if (!(pGroove->object_data.shear_info.y_magnitude < 0.0f || pGroove->object_data.shear_info.y_magnitude > 0.0f)) {
+            MOVE_FUNK_PARAMETER(z_size, pGroove->object_mode, pGroove->object_data.shear_info.z_period.value, pGroove->object_data.shear_info.z_texture_info.data, pGroove->object_data.shear_info.z_magnitude, -pGroove->object_data.shear_info.z_magnitude);
+            MOVE_FUNK_PARAMETER(x_size, pGroove->object_mode, pGroove->object_data.shear_info.x_period.value, pGroove->object_data.shear_info.x_texture_info.data, pGroove->object_data.shear_info.x_magnitude, -pGroove->object_data.shear_info.x_magnitude);
+            BrMatrix34PostShearY(pMat, x_size / x_extent, z_size / z_extent);
+        } else {
+            MOVE_FUNK_PARAMETER(y_size, pGroove->object_mode, pGroove->object_data.shear_info.y_period.value, pGroove->object_data.shear_info.y_texture_info.data, pGroove->object_data.shear_info.y_magnitude, -pGroove->object_data.shear_info.y_magnitude);
+            MOVE_FUNK_PARAMETER(x_size, pGroove->object_mode, pGroove->object_data.shear_info.x_period.value, pGroove->object_data.shear_info.x_texture_info.data, pGroove->object_data.shear_info.x_magnitude, -pGroove->object_data.shear_info.x_magnitude);
+            BrMatrix34PostShearZ(pMat, x_size / x_extent, y_size / y_extent);
+        }
+        break;
+    default:
+        return;
+    }
+}
 
 // GrooveThisDelic
 
