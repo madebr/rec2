@@ -1273,7 +1273,10 @@ void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* object) {
 
 // PipeSinglePowerupLose
 
-// PipeSingleFunkEnable
+// FUNCTION: CARMA2_HW 0x004c8de0
+void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
+    ARDoSingleVariedSession(ePipe_funk_enable, (uintptr_t)pIndex, 1, 2, 0, (uintptr_t)(tU16)pFlags);
+}
 
 // PipeSingleVanishedDismembered
 

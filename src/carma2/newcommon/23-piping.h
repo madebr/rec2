@@ -279,7 +279,7 @@ extern void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* object);
 
 // PipeSinglePowerupLose
 
-// PipeSingleFunkEnable
+extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
 // PipeSingleVanishedDismembered
 
