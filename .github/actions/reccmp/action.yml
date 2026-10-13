@@ -31,6 +31,9 @@ inputs:
   gist-token:
     description: 'GitHub gist token (used for pushing updates)'
     default: ${{ github.token }}
+  comment-payload-path:
+    description: 'Where to store commit message'
+    default: ''
 runs:
   using: 'composite'
   steps:
@@ -56,9 +59,13 @@ runs:
             unix_temp_path="${{ runner.temp }}"
             ;;
         esac
+        safe_temp_path="$(echo '${{ runner.temp }}' | sed -e 's#[\]#/#g')"
+        safe_comment_payload_path="$(echo '${{ inputs.comment-payload-path }}' | sed -e 's#[\]#/#g')"
+
         echo "unix-temp-path=${unix_temp_path}" >> ${GITHUB_OUTPUT}
-        echo "safe-temp-path=$(echo '${{ runner.temp }}' | sed -e 's#[\]#/#g')" >> ${GITHUB_OUTPUT}
+        echo "safe-temp-path=${safe_temp_path}" >> ${GITHUB_OUTPUT}
         echo "gist-hash=$(echo '${{ inputs.gist-repo }}' | sed -nEe 's#[^/]+/##p')" >> ${GITHUB_OUTPUT}
+        echo "comment-payload-path=${safe_comment_payload_path}" >> ${GITHUB_OUTPUT}
     - name: 'Fetch previous ${{ inputs.target }} json'
       shell: sh
       run: |
@@ -103,26 +110,19 @@ runs:
               '${{ inputs.target }}.txt':  { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.txt',  'utf8'),  },
             },
           });
-    - name: 'Create comment on PR'
+    - name: 'Show progress'
+      shell: sh
+      run:
+        cat "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt"
+    - name: 'Create comment payload'
       if: ${{ github.event_name == 'pull_request' }}
       shell: sh
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        cat <<EOF >${{ steps.calc.outputs.unix-temp-path }}/reccmp-pr-message.txt
+        cat <<EOF >${{ steps.calc.outputs.comment-payload-path }}
         ## reccmp report
         \`\`\`
         $(cat ${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt)
         \`\`\`
         EOF
-
-        gh pr comment ${{ github.event.number }} \
-          --repo "${{ github.repository }}" \
-          --create-if-none \
-          --edit-last \
-          --body-file "${{ steps.calc.outputs.unix-temp-path }}/reccmp-pr-message.txt"
-    - name: 'Show progress'
-      shell: sh
-      run:
-        cat "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt"
-
