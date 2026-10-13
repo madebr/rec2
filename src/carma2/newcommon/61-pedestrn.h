@@ -21,6 +21,8 @@ extern int gImmortal_peds;
 
 extern int gPeds_suicidal;
 
+extern float gMutant_speed;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix

@@ -58,6 +58,9 @@ int gImmortal_peds;
 // GLOBAL: CARMA2_HW 0x007447ac
 int gPeds_suicidal;
 
+// GLOBAL: CARMA2_HW 0x007447a4
+float gMutant_speed;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix

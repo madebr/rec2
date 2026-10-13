@@ -683,17 +683,61 @@ void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* powerup, tCar_spec* car) {
 
 // ResetMassMultiplier
 
-// ShowPedestrians
+// FUNCTION: CARMA2_HW 0x004dec10
+int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* powerup, tCar_spec* car) {
+    tPowerup* captured_array;
 
-// HidePedestrians
+    if (car != NULL && *(const volatile tPedPowerupWord*)(uintptr_t)((tU32)(uintptr_t)car + 0xcu) == 8u) {
+        *(volatile int*)&gShow_peds_on_map = 1;
+    }
+    captured_array = *(tPowerup* volatile*)&gPowerup_array;
+    return PedPowerupIndex(powerup, captured_array);
+}
 
-// SetElectroBastard
+// FUNCTION: CARMA2_HW 0x004dec40
+void C2_HOOK_FASTCALL HidePedestrians(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    if (car != NULL && *(const volatile tPedPowerupWord*)(uintptr_t)((tU32)(uintptr_t)car + 0xcu) == 8u) {
+        *(volatile int*)&gShow_peds_on_map = 0;
+    }
+}
 
-// ResetElectroBastard
+// FUNCTION: CARMA2_HW 0x004dec60
+int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* powerup, tCar_spec* car) {
+    tU32 parameters = *(const volatile tPedPowerupWord*)(uintptr_t)((tU32)(uintptr_t)powerup + 0x48u);
+    double value = (double)*(const volatile float*)(uintptr_t)parameters;
+    double squared = value * value;
+    tPowerup* captured_array;
 
-// SetMutantCorpses
+    *(volatile float*)(uintptr_t)((tU32)(uintptr_t)car + 0x170cu) = (float)squared;
+    captured_array = *(tPowerup* volatile*)&gPowerup_array;
+    return PedPowerupIndex(powerup, captured_array);
+}
 
-// ResetMutantCorpses
+// FUNCTION: CARMA2_HW 0x004dec90
+void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    *(volatile tPedPowerupWord*)(uintptr_t)((tU32)(uintptr_t)car + 0x170cu) = 0u;
+}
+
+// FUNCTION: CARMA2_HW 0x004deca0
+int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* powerup, tCar_spec* car) {
+    tU32 parameters = *(const volatile tPedPowerupWord*)(uintptr_t)((tU32)(uintptr_t)powerup + 0x48u);
+    tU32 value = *(const volatile tPedPowerupWord*)(uintptr_t)parameters;
+    tPowerup* captured_array;
+
+    (void)car;
+    *(volatile tPedPowerupWord*)&gMutant_speed = value;
+    captured_array = *(tPowerup* volatile*)&gPowerup_array;
+    return PedPowerupIndex(powerup, captured_array);
+}
+
+// FUNCTION: CARMA2_HW 0x004decd0
+void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    (void)car;
+    *(volatile tPedPowerupWord*)&gMutant_speed = 0u;
+}
 
 // ReceivedPowerup
 

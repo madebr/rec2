@@ -327,17 +327,17 @@ extern void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* powerup, tCar_spec* car);
 
 // ResetMassMultiplier
 
-// ShowPedestrians
+int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* powerup, tCar_spec* car);
 
-// HidePedestrians
+void C2_HOOK_FASTCALL HidePedestrians(tPowerup* powerup, tCar_spec* car);
 
-// SetElectroBastard
+int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* powerup, tCar_spec* car);
 
-// ResetElectroBastard
+void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* powerup, tCar_spec* car);
 
-// SetMutantCorpses
+int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* powerup, tCar_spec* car);
 
-// ResetMutantCorpses
+void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* powerup, tCar_spec* car);
 
 // ReceivedPowerup
 
