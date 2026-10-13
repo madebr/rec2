@@ -1162,7 +1162,12 @@ void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar 
 
 // PipeSingleCrush
 
-// PipeSingleScreenWobble
+// FUNCTION: CARMA2_HW 0x004c8090
+void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pX, int pY) {
+    ARDoSingleVariedSession(ePipe_chunk_screen_wobble, 0, 2,
+        1, 0, (uintptr_t)pX,
+        1, 1, (uintptr_t)pY);
+}
 
 // FUNCTION: CARMA2_HW 0x004c80b0
 void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption) {

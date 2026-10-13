@@ -205,7 +205,7 @@ extern void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_
 
 // PipeSingleCrush
 
-// PipeSingleScreenWobble
+extern void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pX, int pY);
 
 extern void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption);
 
