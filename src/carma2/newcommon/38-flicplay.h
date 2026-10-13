@@ -9,6 +9,7 @@ extern int gPending_pending_flic;
 extern int gTransparency_on;
 extern int gPanel_flic_disable;
 extern int gPlay_from_disk;
+extern char gLast_flic_name[14];
 
 extern float gFlic_sound_delay_pre_smack;
 extern float gFlic_sound_delay_post_smack;
@@ -45,7 +46,7 @@ extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 extern void C2_HOOK_FASTCALL AssertFlicPixelmap(tFlic_descriptor_ptr pFlic_info, br_pixelmap* pDest_pixelmap);
 
-// StartFlic
+extern int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_ptr pFlic_info, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, int pFrame_rate);
 
 extern int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
 
