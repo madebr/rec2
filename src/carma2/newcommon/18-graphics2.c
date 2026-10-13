@@ -743,9 +743,49 @@ void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLeft, int
 
 // DR8BitPixelmapRotatedAndFeatheredCopy
 
-// DR16BitPixelmapRotatedAndFeatheredCopy
-
 // DRPixelmapRotatedAndFeatheredCopy
+
+// FUNCTION: CARMA2_HW 0x0047d0d0
+void C2_HOOK_FASTCALL DR16BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans) {
+    int half_width;
+    int half_height;
+    int dy;
+    int dx;
+    int dest_y;
+    int src_x;
+    int src_y;
+    int src_word_row;
+    float row_start_x;
+    float row_start_y;
+    float half_src_height;
+    float src_f_x;
+    float src_f_y;
+    tU8* ptr_write;
+    tU16 pixel;
+
+    (void)pTrans;
+    half_width = pSrc_width / 2;
+    half_height = pSrc_height / 2;
+    half_src_height = pSrc_height * 0.5f;
+    row_start_x = -(pMat->m[0][0] * half_width);
+    row_start_y = -(pMat->m[1][0] * half_width);
+    dest_y = pDest_y;
+    for (dy = -half_height; dy < half_height; ++dy, ++dest_y) {
+        src_f_x = row_start_x - dy * pMat->m[0][1] + pSrc_x;
+        src_f_y = dy * pMat->m[1][1] - row_start_y + half_src_height + pSrc_y;
+        ptr_write = (tU8*)pDest->pixels + dest_y * pDest->row_bytes + 2 * pDest_x;
+        for (dx = -half_width; dx < half_width; ++dx) {
+            src_y = (int)src_f_y;
+            src_word_row = (src_y * pSrc->row_bytes) / 2;
+            src_x = (int)src_f_x;
+            src_f_x += pMat->m[0][0];
+            src_f_y -= pMat->m[1][0];
+            memcpy(&pixel, (tU8*)pSrc->pixels + 2 * (src_word_row + half_width + src_x), sizeof(pixel));
+            memcpy(ptr_write, &pixel, sizeof(pixel));
+            ptr_write += sizeof(pixel);
+        }
+    }
+}
 
 // DRPixelmapBlendedLine
 

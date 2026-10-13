@@ -106,9 +106,9 @@ extern void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLe
 
 // DR8BitPixelmapRotatedAndFeatheredCopy
 
-// DR16BitPixelmapRotatedAndFeatheredCopy
-
 // DRPixelmapRotatedAndFeatheredCopy
+
+extern void C2_HOOK_FASTCALL DR16BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans);
 
 // DRPixelmapBlendedLine
 
