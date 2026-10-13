@@ -5,11 +5,16 @@
 #include "rec2_types.h"
 #include "brender/brender.h"
 
+extern const char* gFunk_type_names[5];
+extern const char* gFunk_anim_names[4];
+extern const char* gTime_mode_names[2];
 extern const char* gFunk_move_names[7];
+extern const char* gFunk_nature_names[4];
 extern const char* gGroove_nature_names[2];
 extern const char* gLollipop_names[3];
 extern const char* gGroove_path_names[2];
 extern const char* gGroove_object_names[4];
+extern const char* gCamera_animation_names[2];
 
 extern tGroove_funk_binding gGroove_funk_bindings[1440];
 extern tFunk_temp_buffer* gFunk_temp_vertices;
@@ -46,7 +51,7 @@ extern br_material* C2_HOOK_FASTCALL TryThisFunkLink(tCar_crush_buffer_entry* pF
 
 extern br_material* C2_HOOK_FASTCALL FindSmashableMaterial(const char* pStr, tFunkotronic_spec* pFunk, tCar_crush_buffer* pCar_crush_datas);
 
-// AddFunkotronics
+extern void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
 
 extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 

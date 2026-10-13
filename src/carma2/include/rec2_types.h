@@ -1721,7 +1721,7 @@ typedef struct {
             };
             int texture_count;
             int current_frame;
-            undefined has_matrix;
+            int has_matrix;
             br_pixelmap *textures[8];
             br_matrix23 mat[8];
         } frames_info;
