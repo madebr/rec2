@@ -4,6 +4,7 @@
 #include "02-init.h"
 #include "07-structur.h"
 #include "08-loading1.h"
+#include "09-funks.h"
 #include "13-crush1.h"
 #include "15-displays.h"
 #include "16-graphics1.h"
@@ -947,9 +948,21 @@ void C2_HOOK_FASTCALL SetModelFlags(br_model* pModel, int pOwner) {
 
 // FindCarShellModel
 
-// LinkCarActorsToGroovidelicsCB
+// FUNCTION: CARMA2_HW 0x0048c130
+intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush;
 
-// LinkCarActorsToGroovidelics
+    user_crush = pActor->user;
+    if (user_crush != NULL) {
+        user_crush->groove = ActorsGroove(pActor);
+    }
+    return 0;
+}
+
+void C2_HOOK_FASTCALL LinkCarActorsToGroovidelics(br_actor* pActor) {
+
+    DRActorEnumRecurse(pActor, LinkCarActorsToGroovidelicsCB, NULL);
+}
 
 // ReadCarKeywordData
 

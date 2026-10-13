@@ -79,9 +79,9 @@ extern void C2_HOOK_FASTCALL SetModelFlags(br_model* pModel, int pOwner);
 
 // FindCarShellModel
 
-// LinkCarActorsToGroovidelicsCB
+extern intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pData);
 
-// LinkCarActorsToGroovidelics
+extern void C2_HOOK_FASTCALL LinkCarActorsToGroovidelics(br_actor* pActor);
 
 // ReadCarKeywordData
 
