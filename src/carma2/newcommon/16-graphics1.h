@@ -10,6 +10,8 @@ extern int gHeight;
 extern int gScreen_wobble_x;
 extern int gScreen_wobble_y;
 extern int gNumber_of_lollipops;
+extern int gHud_actor_storage_size;
+extern br_actor* gHud_actor_storage[128];
 extern tU8 gTemporary_physics_render_buffer[300000];
 
 extern tClip_details gShadow_clip_planes[8];
@@ -87,11 +89,11 @@ extern void C2_HOOK_FASTCALL ResetScreenWobble(void);
 
 // RenderAFrame
 
-// StartRenderingHeadups
+extern void C2_HOOK_FASTCALL StartRenderingHeadups(void);
 
 extern void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor);
 
-// StopRenderingHeadups
+extern void C2_HOOK_FASTCALL StopRenderingHeadups(void);
 
 extern void C2_HOOK_FASTCALL CleanPolyFontDanglers(void);
 
