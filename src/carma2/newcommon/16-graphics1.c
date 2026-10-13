@@ -46,7 +46,7 @@ int gNumber_of_lollipops;
 tWobble_spec gWobble_array[5];
 
 // GLOBAL: CARMA2_HW 0x00705080
-float gCosine_array[64];
+float gCosine_array[65];
 
 // GLOBAL: CARMA2_HW 0x0065fdc8
 tShadow_level gShadow_level = eShadow_us_only;

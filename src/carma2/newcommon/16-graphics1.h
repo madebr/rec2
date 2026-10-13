@@ -9,6 +9,7 @@ extern int gWidth;
 extern int gHeight;
 extern int gScreen_wobble_x;
 extern int gScreen_wobble_y;
+extern float gCosine_array[65];
 extern int gNumber_of_lollipops;
 extern int gHud_actor_storage_size;
 extern br_actor* gHud_actor_storage[128];
@@ -66,7 +67,7 @@ extern void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_of
 
 // ScreenLarger
 
-// ClearWobbles
+extern void C2_HOOK_FASTCALL ClearWobbles(void);
 
 extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
