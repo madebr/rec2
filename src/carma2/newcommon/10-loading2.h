@@ -4,6 +4,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tU32 gSimple_material_colours[12];
+extern br_material* gSimple_materials[32];
+
 extern tHeadup_info gHeadup_image_info[45];
 extern br_pixelmap* gHeadup_images[45];
 extern char* gRaces_file_names[9];
@@ -67,9 +70,9 @@ extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 // LinkCarModelsToActor
 
-// GetSimpleMaterial
+extern br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type);
 
-// ReadShrapnelMaterials
+extern void C2_HOOK_FASTCALL ReadShrapnelMaterials(FILE* pF, tCar_spec* pCar_spec);
 
 // SetModelFlags
 

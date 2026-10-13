@@ -36,9 +36,17 @@
 #include "72-interface.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+
+// GLOBAL: CARMA2_HW 0x006572f0
+tU32 gSimple_material_colours[12] = {
+    0x005d0303, 0x02a56e04, 0x03a9a905, 0x08006868,
+    0x0d3c3626, 0x0e212121, 0x15284c21, 0x1900326a,
+    0x1a93491d, 0x1ec0bfc0, 0x23141414, 0x00000000,
+};
 
 // GLOBAL: CARMA2_HW 0x00657320
 tHeadup_info gHeadup_image_info[45] = {
@@ -167,6 +175,9 @@ int gDemo_race_rank_equivalent;
 
 // GLOBAL: CARMA2_HW 0x0074b4fc
 int gCount_demo_opponents;
+
+// GLOBAL: CARMA2_HW 0x0074b500
+br_material* gSimple_materials[32];
 
 // GLOBAL: CARMA2_HW 0x0074b4c0
 int gDemo_opponents[15];
@@ -593,9 +604,67 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
 // LinkCarModelsToActor
 
-// GetSimpleMaterial
+// FUNCTION: CARMA2_HW 0x00488dd0
+br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type) {
+    int i;
+    int material_number;
+    int red;
+    int green;
+    int blue;
+    int palette_index;
+    br_colour colour;
 
-// ReadShrapnelMaterials
+    if (pName[0] == 'M') {
+        strtok(pName, "\t ,/");
+        material_number = 10 * ((tS8)pName[1] - '0') + (tS8)pName[2] - '0';
+        for (i = 0; gSimple_material_colours[i] != 0; i++) {
+            if (material_number == (int)(gSimple_material_colours[i] >> 24)) {
+                break;
+            }
+        }
+        if (gSimple_material_colours[i] == 0) {
+            PDFatalError("Obsolete simple material");
+        }
+        colour = gSimple_material_colours[i] & 0xffffff;
+    } else {
+        sscanf(pName, "%d,%d,%d", &red, &green, &blue);
+        colour = (((br_colour)red << 8) | (br_colour)green) << 8 | (br_colour)blue;
+    }
+    /* Materials with the same colour share the first requested shading. */
+    for (i = 0; gSimple_materials[i] != NULL; i++) {
+        if (gSimple_materials[i]->colour == colour) {
+            return gSimple_materials[i];
+        }
+    }
+    if (i < 32) {
+        gSimple_materials[i] = BrMaterialAllocate("Simple");
+        gSimple_materials[i]->colour = colour;
+        palette_index = FindBestColourMatch(gSimple_materials[i]->colour);
+        gSimple_materials[i]->index_base = (br_uint_8)palette_index;
+        gSimple_materials[i]->index_range = 0;
+        GlorifyMaterial(&gSimple_materials[i], 1, pShading_type);
+        BrMaterialAdd(gSimple_materials[i]);
+    }
+    return gSimple_materials[i];
+}
+
+// FUNCTION: CARMA2_HW 0x00488f00
+void C2_HOOK_FASTCALL ReadShrapnelMaterials(FILE* pF, tCar_spec* pCar_spec) {
+    int i;
+    char name[256];
+    tRendererShadingType shading;
+
+    pCar_spec->count_shrapnel_materials = GetAnInt(pF);
+    for (i = 0; i < pCar_spec->count_shrapnel_materials; i++) {
+        GetALineAndDontArgue(pF, name);
+        if (pCar_spec == NULL || (int)pCar_spec->driver < eDriver_oppo) {
+            shading = kRendererShadingType_Default;
+        } else {
+            shading = kRendererShadingType_Specular;
+        }
+        pCar_spec->shrapnel_materials[i] = GetSimpleMaterial(name, shading);
+    }
+}
 
 // SetModelFlags
 
