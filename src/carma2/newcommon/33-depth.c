@@ -24,6 +24,21 @@ br_material* gHorizon_material;
 // GLOBAL: CARMA2_HW 0x0067c4a0
 br_model* gForward_sky_model;
 
+// GLOBAL: CARMA2_HW 0x0067c4a8
+int gHas_sky_texture;
+
+// GLOBAL: CARMA2_HW 0x0067c4b4
+br_scalar gSky_height;
+
+// GLOBAL: CARMA2_HW 0x0067c4c8
+br_scalar gSky_width;
+
+// GLOBAL: CARMA2_HW 0x0067c4d0
+br_scalar gSky_x_multiplier;
+
+// GLOBAL: CARMA2_HW 0x0067c4d4
+br_scalar gSky_y_multiplier;
+
 // GLOBAL: CARMA2_HW 0x0074cee8
 br_material* gMaterial[2];
 
@@ -297,7 +312,98 @@ br_scalar C2_HOOK_FASTCALL EdgeU(br_angle pSky, br_angle pView, br_angle pPerfec
     return b * a * a / (BrAngleToRadian(pSky) * (1.f + c));
 }
 
-// MungeSkyModel
+// FUNCTION: CARMA2_HW 0x00445e20
+void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel) {
+    br_camera* camera_data;
+    br_scalar horizon_half_height;
+    br_scalar horizon_half_width;
+    br_scalar horizon_half_diag;
+    br_scalar tan_half_fov;
+    br_scalar sky_distance;
+    br_angle half_diag_fov;
+    br_scalar edge_u;
+    br_scalar narrow_u;
+    br_angle min_angle;
+    br_angle angle_range;
+    br_angle angle;
+    int band;
+    int vertex;
+    int stripe;
+
+    camera_data = pCamera->type_data;
+    tan_half_fov = Tan((br_scalar)(camera_data->field_of_view / 2));
+    sky_distance = camera_data->yon_z - 1.f;
+    horizon_half_width = sky_distance * tan_half_fov;
+    horizon_half_height = horizon_half_width * camera_data->aspect;
+    horizon_half_diag = (br_scalar)sqrt(horizon_half_height * horizon_half_height + horizon_half_width * horizon_half_width);
+    half_diag_fov = BrRadianToAngle(atan2(horizon_half_diag, sky_distance));
+    edge_u = EdgeU(gSky_image_width, (br_angle)(2 * half_diag_fov), BR_ANGLE_DEG(10));
+    narrow_u = edge_u / 2.f;
+    gSky_width = horizon_half_width * 2.f;
+    gSky_height = horizon_half_height * 2.f;
+    gSky_x_multiplier = CalculateWrappingMultiplier(gSky_width, camera_data->yon_z);
+    gSky_y_multiplier = CalculateWrappingMultiplier(gSky_height, camera_data->yon_z);
+
+    for (vertex = 0; vertex < 88; vertex += 4) {
+        pModel->vertices[vertex].map.v[0] = -edge_u;
+    }
+    for (vertex = 1; vertex < 88; vertex += 4) {
+        pModel->vertices[vertex].map.v[0] = -narrow_u;
+    }
+    for (vertex = 2; vertex < 88; vertex += 4) {
+        pModel->vertices[vertex].map.v[0] = narrow_u;
+    }
+    for (vertex = 3; vertex < 88; vertex += 4) {
+        pModel->vertices[vertex].map.v[0] = edge_u;
+    }
+    for (vertex = 0; vertex < 88; vertex += 4) {
+        pModel->vertices[vertex].p.v[0] = -horizon_half_diag;
+    }
+    for (vertex = 1; vertex < 88; vertex += 4) {
+        pModel->vertices[vertex].p.v[0] = -horizon_half_diag / 2.f;
+    }
+    for (vertex = 2; vertex < 88; vertex += 4) {
+        pModel->vertices[vertex].p.v[0] = horizon_half_diag / 2.f;
+    }
+    for (vertex = 3; vertex < 88; vertex += 4) {
+        pModel->vertices[vertex].p.v[0] = horizon_half_diag;
+    }
+    PossibleService();
+
+    min_angle = (br_angle)(-BR_ANGLE_DEG(90) - half_diag_fov);
+    angle_range = (br_angle)(-gSky_image_underground - min_angle);
+    for (band = 0; band < 2; ++band) {
+        vertex = 4 * band;
+        angle = (br_angle)(min_angle + angle_range * band / 2);
+        pModel->vertices[vertex].p.v[1] = (br_scalar)(sin(BrAngleToRadian(angle)) * sky_distance);
+        pModel->vertices[vertex].p.v[2] = (br_scalar)(-cos(BrAngleToRadian(angle)) * sky_distance);
+    }
+    min_angle = (br_angle)-gSky_image_underground;
+    angle_range = gSky_image_height;
+    for (band = 0; band < 18; ++band) {
+        vertex = 4 * band + 8;
+        angle = (br_angle)(min_angle + angle_range * band / 18);
+        pModel->vertices[vertex].p.v[1] = (br_scalar)(sin(BrAngleToRadian(angle)) * sky_distance);
+        pModel->vertices[vertex].p.v[2] = (br_scalar)(-cos(BrAngleToRadian(angle)) * sky_distance);
+    }
+    min_angle = (br_angle)(gSky_image_height - gSky_image_underground);
+    angle_range = (br_angle)(half_diag_fov + BR_ANGLE_DEG(90) - min_angle);
+    for (band = 0; band < 2; ++band) {
+        vertex = 4 * band + 80;
+        angle = (br_angle)(min_angle + angle_range * band);
+        pModel->vertices[vertex].p.v[1] = (br_scalar)(sin(BrAngleToRadian(angle)) * sky_distance);
+        pModel->vertices[vertex].p.v[2] = (br_scalar)(-cos(BrAngleToRadian(angle)) * sky_distance);
+    }
+    PossibleService();
+    for (band = 0; band < 22; ++band) {
+        vertex = 4 * band;
+        for (stripe = 1; stripe < 4; ++stripe) {
+            pModel->vertices[vertex + stripe].p.v[1] = pModel->vertices[vertex].p.v[1];
+            pModel->vertices[vertex + stripe].p.v[2] = pModel->vertices[vertex].p.v[2];
+        }
+    }
+    BrModelUpdate(pModel, BR_MODU_ALL & ~BR_MODU_FACES);
+}
 
 static br_model* C2_HOOK_FASTCALL CreateHorizonModel(void) {
     tU8 nbands;
@@ -526,7 +632,11 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
 
 // ChangeDepthEffect
 
-// MungeForwardSky
+// FUNCTION: CARMA2_HW 0x00447250
+void C2_HOOK_FASTCALL MungeForwardSky(void) {
+    MungeSkyModel(gCamera, gForward_sky_model);
+    gHas_sky_texture = gProgram_state.default_depth_effect.sky_texture != NULL;
+}
 
 // MungeRearviewSky
 

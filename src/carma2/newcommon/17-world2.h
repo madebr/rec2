@@ -4,6 +4,10 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern br_angle gSky_image_height;
+extern br_angle gSky_image_width;
+extern br_angle gSky_image_underground;
+
 extern void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
 extern void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);

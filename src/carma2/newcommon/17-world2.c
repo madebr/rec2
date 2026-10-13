@@ -40,6 +40,15 @@ br_colour gRGB_colours[9] = {
 // GLOBAL: CARMA2_HW 0x0074a620
 br_colour gColours[9];
 
+// GLOBAL: CARMA2_HW 0x0079ec2c
+br_angle gSky_image_height;
+
+// GLOBAL: CARMA2_HW 0x0079ec2e
+br_angle gSky_image_width;
+
+// GLOBAL: CARMA2_HW 0x0079ec30
+br_angle gSky_image_underground;
+
 // FUNCTION: CARMA2_HW 0x004e5cb0
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
 

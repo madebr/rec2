@@ -16,6 +16,11 @@ extern int gWater_shade_table_power;
 extern br_actor* gForward_sky_actor;
 extern br_material* gHorizon_material;
 extern br_model* gForward_sky_model;
+extern int gHas_sky_texture;
+extern br_scalar gSky_height;
+extern br_scalar gSky_width;
+extern br_scalar gSky_x_multiplier;
+extern br_scalar gSky_y_multiplier;
 
 // Log2
 
@@ -37,7 +42,7 @@ extern br_scalar C2_HOOK_FASTCALL Tan(br_scalar pAngle);
 
 extern br_scalar C2_HOOK_FASTCALL EdgeU(br_angle pSky, br_angle pView, br_angle pPerfect);
 
-// MungeSkyModel
+extern void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel);
 
 // CreateHorizonModel
 
@@ -91,7 +96,7 @@ extern void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
 
 // ChangeDepthEffect
 
-// MungeForwardSky
+extern void C2_HOOK_FASTCALL MungeForwardSky(void);
 
 // MungeRearviewSky
 
