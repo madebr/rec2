@@ -23,6 +23,12 @@ int gX_offset;
 // GLOBAL: CARMA2_HW 0x006baa2c
 int gY_offset;
 
+// GLOBAL: CARMA2_HW 0x00705188
+int gScreen_wobble_x;
+
+// GLOBAL: CARMA2_HW 0x00705184
+int gScreen_wobble_y;
+
 // GLOBAL: CARMA2_HW 0x0068be30
 int gBrZb_initialized;
 
@@ -31,6 +37,9 @@ br_pixelmap* gRear_pixelmap;
 
 // GLOBAL: CARMA2_HW 0x006a22b8
 br_pixelmap* gEvalu;
+
+// GLOBAL: CARMA2_HW 0x006a22c4
+int gNumber_of_lollipops;
 
 // GLOBAL: CARMA2_HW 0x006a22f8
 tWobble_spec gWobble_array[5];
@@ -130,7 +139,10 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
 
 // LollipopizeActor
 
-// ResetLollipopQueue
+// FUNCTION: CARMA2_HW 0x004e4900
+void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
+    gNumber_of_lollipops = 0;
+}
 
 // RenderLollipops
 
@@ -146,7 +158,7 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
     if (pHeight == 0) {
         pHeight = gBack_screen->height;
     }
-    gRender_screen = DRPixelmapAllocateSub(gBack_screen, pX_offset, pY_offset, pWidth, pHeight);
+    gRender_screen = DRPixelmapAllocateSub(gBack_screen, (br_uint_16)pX_offset, (br_uint_16)pY_offset, (br_uint_16)pWidth, (br_uint_16)pHeight);
     gWidth = pWidth;
     gHeight = pHeight;
     gX_offset = pX_offset;
@@ -209,9 +221,17 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
 
 // NewScreenWobble
 
-// SetScreenWobble
+// FUNCTION: CARMA2_HW 0x004e4e20
+void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY) {
+    gScreen_wobble_x = pX;
+    gScreen_wobble_y = pY;
+}
 
-// ResetScreenWobble
+// FUNCTION: CARMA2_HW 0x004e4e30
+void C2_HOOK_FASTCALL ResetScreenWobble(void) {
+    gScreen_wobble_x = 0;
+    gScreen_wobble_y = 0;
+}
 
 // CalculateWobblitude
 

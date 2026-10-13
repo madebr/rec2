@@ -7,6 +7,9 @@
 extern int gRender_indent;
 extern int gWidth;
 extern int gHeight;
+extern int gScreen_wobble_x;
+extern int gScreen_wobble_y;
+extern int gNumber_of_lollipops;
 extern tU8 gTemporary_physics_render_buffer[300000];
 
 extern tClip_details gShadow_clip_planes[8];
@@ -44,7 +47,7 @@ extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
 // LollipopizeActor
 
-// ResetLollipopQueue
+extern void C2_HOOK_FASTCALL ResetLollipopQueue(void);
 
 // RenderLollipops
 
@@ -64,9 +67,9 @@ extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 // NewScreenWobble
 
-// SetScreenWobble
+extern void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY);
 
-// ResetScreenWobble
+extern void C2_HOOK_FASTCALL ResetScreenWobble(void);
 
 // CalculateWobblitude
 
