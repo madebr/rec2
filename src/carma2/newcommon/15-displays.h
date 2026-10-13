@@ -9,6 +9,10 @@ extern int gHeadup_detail_level;
 extern int gLast_fancy_index;
 extern int gLast_credit_headup__displays;
 extern int gLast_time_credit_headup;
+extern int gPS_apo_level_changed[3];
+extern int gPrev_ps_apo_levels[3];
+extern int gPrev_ps_drawn_levels[3];
+
 extern tU32 gLast_earn_time;
 extern int gLast_credit_amount;
 extern int gCredit_multiplier;
@@ -57,9 +61,9 @@ extern void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void);
 
 extern void C2_HOOK_FASTCALL ClearQueuedHeadups(void);
 
-// DoTestPowerHeadup
+extern void C2_HOOK_FASTCALL DoPSPowerupHeadups(void);
 
-// DoPSPowerupHeadups
+extern void C2_HOOK_FASTCALL DoTestPowerHeadup(int pLevel, const char* pAPO_str);
 
 // DoHeadups
 

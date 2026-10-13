@@ -27,6 +27,15 @@ int gLast_credit_headup__displays = -1;
 // GLOBAL: CARMA2_HW 0x005913dc
 int gLast_time_credit_headup = -1;
 
+// GLOBAL: CARMA2_HW 0x005913e0
+int gPS_apo_level_changed[3] = { 1, 1, 1 };
+
+// GLOBAL: CARMA2_HW 0x005913ec
+int gPrev_ps_apo_levels[3] = { -1, -1, -1 };
+
+// GLOBAL: CARMA2_HW 0x005913f8
+int gPrev_ps_drawn_levels[3] = { -1, -1, -1 };
+
 // GLOBAL: CARMA2_HW 0x0067c500
 tHeadup gHeadups[37];
 
@@ -356,9 +365,109 @@ void C2_HOOK_FASTCALL ClearQueuedHeadups(void) {
     }
 }
 
-// DoTestPowerHeadup
+// FUNCTION: CARMA2_HW 0x00449800
+void C2_HOOK_FASTCALL DoPSPowerupHeadups(void) {
+    DoTestPowerHeadup(gProgram_state.current_car.power_up_levels[0], "A");
+    DoTestPowerHeadup(gProgram_state.current_car.power_up_levels[1], "P");
+    DoTestPowerHeadup(gProgram_state.current_car.power_up_levels[2], "O");
+}
 
-// DoPSPowerupHeadups
+// FUNCTION: CARMA2_HW 0x00449830
+void C2_HOOK_FASTCALL DoTestPowerHeadup(int pLevel, const char* pAPO_str) {
+    int changed;
+    br_pixelmap* dest_pm;
+    br_pixelmap* icon;
+    br_pixelmap* block;
+    int count_slots;
+    int level;
+    int i;
+    int j;
+    int delta_x = 2;
+
+    switch (pAPO_str[0]) {
+    case 'A':
+        dest_pm = gArmour_colour_map;
+        icon = gIcon_armour;
+        count_slots = gProgram_state.current_car.power_up_slots[0];
+        changed = pLevel != gPrev_ps_apo_levels[0] || count_slots != gPrev_ps_drawn_levels[0];
+        gPS_apo_level_changed[0] = changed;
+        gPrev_ps_apo_levels[0] = pLevel;
+        gPrev_ps_drawn_levels[0] = count_slots;
+        break;
+    case 'P':
+        dest_pm = gPower_colour_map;
+        icon = gIcon_power;
+        count_slots = gProgram_state.current_car.power_up_slots[1];
+        changed = pLevel != gPrev_ps_apo_levels[1] || count_slots != gPrev_ps_drawn_levels[1];
+        gPS_apo_level_changed[1] = changed;
+        gPrev_ps_apo_levels[1] = pLevel;
+        gPrev_ps_drawn_levels[1] = count_slots;
+        break;
+    case 'O':
+        dest_pm = gOffensive_colour_map;
+        icon = gIcon_offense;
+        count_slots = gProgram_state.current_car.power_up_slots[2];
+        /* Offense redraws use the cached power slot count. */
+        changed = pLevel != gPrev_ps_apo_levels[2] || count_slots != gPrev_ps_drawn_levels[1];
+        gPS_apo_level_changed[2] = changed;
+        gPrev_ps_drawn_levels[2] = count_slots;
+        gPrev_ps_apo_levels[2] = pLevel;
+        break;
+    default:
+        return;
+    }
+
+    if (changed) {
+        DRPixelmapCopy(dest_pm, gPowerbar);
+        DRPixelmapRectangleMaskedCopy(dest_pm, (br_int_16)delta_x, 0, icon, 0, 0,
+            (br_int_16)icon->width, (br_int_16)icon->height);
+        count_slots -= pLevel;
+        level = pLevel;
+        for (i = 0; i < 15; i += 5) {
+            for (j = 0; j < 10; ++j) {
+                if (level > 0) {
+                    block = gIcon_litBloc1;
+                } else if (count_slots > 0) {
+                    block = gIcon_grnBlock1;
+                } else {
+                    block = gIcon_greyBloc1;
+                }
+                DRPixelmapRectangleMaskedCopy(
+                    dest_pm,
+                    (br_int_16)(j * block->width + delta_x + icon->width + 2),
+                    (br_int_16)i,
+                    block, 0, 0, (br_int_16)block->width, (br_int_16)block->height);
+                if (level > 0) {
+                    --level;
+                } else if (count_slots > 0) {
+                    --count_slots;
+                }
+            }
+            delta_x -= 2;
+        }
+
+        switch (pAPO_str[0]) {
+        case 'A':
+            BrMapUpdate(gArmour_colour_map, BR_MAPU_ALL);
+            gArmour_material->colour_map = gArmour_colour_map;
+            BrMaterialUpdate(gArmour_material, BR_MATU_COLOURMAP);
+            break;
+        case 'P':
+            BrMapUpdate(gPower_colour_map, BR_MAPU_ALL);
+            gPower_material->colour_map = gPower_colour_map;
+            BrMaterialUpdate(gPower_material, BR_MATU_COLOURMAP);
+            break;
+        case 'O':
+            BrMapUpdate(gOffensive_colour_map, BR_MAPU_ALL);
+            gOffence_material->colour_map = gOffensive_colour_map;
+            BrMaterialUpdate(gOffence_material, BR_MATU_COLOURMAP);
+            break;
+        }
+    }
+    gArmour_actor->render_style = BR_RSTYLE_FACES;
+    gPower_actor->render_style = BR_RSTYLE_FACES;
+    gOffense_actor->render_style = BR_RSTYLE_FACES;
+}
 
 // DoHeadups
 
