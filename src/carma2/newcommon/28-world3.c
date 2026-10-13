@@ -258,7 +258,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pSto
     int i;
 
     gDuplicate_model = NULL;
-    if (pStorage_space->materials_count < pStorage_space->max_models) {
+    if (pStorage_space->models_count < pStorage_space->max_models) {
         if (pStorage_space->flags & 0x1) { /* FIXME: add enum (0x1 -> eStorage_space_flags_No_duplicates*/
             for (i = 0; i < pStorage_space->models_count; i++) {
                 if (pStorage_space->models[i] != NULL
