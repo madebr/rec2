@@ -1,9 +1,16 @@
 #include "24-loadsave.h"
 
+#include "globvars.h"
+#include "rec2_macros.h"
 #include "rec2_types.h"
+
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x0068b8ec
 int gSave_game_out_of_sync;
+
+// GLOBAL: CARMA2_HW 0x0068c728
+int gCount_saved_games;
 
 // GLOBAL: CARMA2_HW 0x0068c72c
 tSave_game* gSaved_games;
@@ -28,16 +35,55 @@ void C2_HOOK_FASTCALL EndSavedGamesList(void) {
     gSaved_games = NULL;
 }
 
-// STUB: CARMA2_HW 0x00491cb0
+// FUNCTION: CARMA2_HW 0x00491cb0
 tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
-    NOT_IMPLEMENTED();
+
+    if (gSaved_games != NULL && pN < gCount_saved_games) {
+        return &gSaved_games[gCount_saved_games - pN - 1];
+    }
+    return NULL;
 }
 
-// DoLoadGame2
+// FUNCTION: CARMA2_HW 0x00491ce0
+int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game) {
+    int i;
 
-// STUB: CARMA2_HW 0x00491e20
+    C2_HOOK_BUG_ON(REC2_ASIZE(gProgram_state.cars_available) != 60);
+
+    if (pSave_game->magic != 0x12345678) {
+        return 0;
+    }
+    gProgram_state.skill_level = pSave_game->skill_level;
+    gProgram_state.game_completed = pSave_game->game_completed;
+    gProgram_state.current_race_index = pSave_game->current_race_index;
+    gCurrent_race_group = gRace_list[gProgram_state.current_race_index].group;
+    gIs_boundary_race = pSave_game->is_boundary_race;
+    gProgram_state.credits = pSave_game->credits;
+    strcpy(gProgram_state.car_name, pSave_game->car_name);
+    strcpy(gProgram_state.player_name, pSave_game->player_name);
+    for (i = 0; i < gNumber_of_races; i++) {
+        gRace_list[i].count_opponents = pSave_game->races_finished[i];
+    }
+    gProgram_state.number_of_cars = pSave_game->number_of_cars;
+    gProgram_state.current_car_index = pSave_game->current_car_index;
+    for (i = 0; i < REC2_ASIZE(gProgram_state.cars_available); i++) {
+        gProgram_state.cars_available[i] = pSave_game->cars[i];
+    }
+    for (i = 0; i < 3; i++) {
+        gCurrent_APO_levels[i] = gProgram_state.current_car.power_up_levels[i] = pSave_game->apo_levels[i];
+        gProgram_state.current_car.power_up_slots[i] = gCurrent_APO_potential_levels[i] = pSave_game->apo_potential[i];
+    }
+    gProgram_state.field_0x2c = 1;
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x00491e20
 int C2_HOOK_FASTCALL DoLoadGame(int pIndex) {
-    NOT_IMPLEMENTED();
+
+    if (gSaved_games != NULL && pIndex >= 0 && pIndex < gCount_saved_games) {
+        return DoLoadGame2(GetNthSavedGame(pIndex));
+    }
+    return 0;
 }
 
 // DoLoadMostRecentGame
