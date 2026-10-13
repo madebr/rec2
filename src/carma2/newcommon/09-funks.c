@@ -14,6 +14,52 @@
 #include "c2_math.h"
 #include "c2_string.h"
 
+#define SAW(T, PERIOD) (fmod((T), (PERIOD)) / (PERIOD))
+
+#define MOVE_FUNK_PARAMETER(DEST, MODE, PERIOD, TEXTUREBITS, AMPLITUDE, FLASH_VALUE) \
+    do { \
+        switch (MODE) { \
+        case eMove_continuous: \
+            if ((PERIOD) < 0.0f || (PERIOD) > 0.0f) { \
+                (DEST) = (br_scalar)((AMPLITUDE) * SAW(f_the_time, (PERIOD))); \
+            } else { \
+                (DEST) = 0.0f; \
+            } \
+            break; \
+        case eMove_controlled: \
+            (DEST) = (PERIOD) * (AMPLITUDE); \
+            break; \
+        case eMove_absolute: \
+            (DEST) = (PERIOD); \
+            break; \
+        case eMove_linear: \
+            if ((PERIOD) < 0.0f || (PERIOD) > 0.0f) { \
+                (DEST) = (AMPLITUDE) * MapSawToTriangle((float)SAW(f_the_time, (PERIOD))); \
+            } else { \
+                (DEST) = 0.0f; \
+            } \
+            break; \
+        case eMove_flash: \
+            if (!(2.0 * fmod(f_the_time, (PERIOD)) <= (PERIOD))) { \
+                (DEST) = (FLASH_VALUE); \
+            } else { \
+                (DEST) = -(FLASH_VALUE); \
+            } \
+            break; \
+        case eMove_texturebits: \
+            (DEST) = (br_scalar)CalculateTextureBitsValue(TEXTUREBITS); \
+            break; \
+        case eMove_harmonic: \
+        default: \
+            if ((PERIOD) < 0.0f || (PERIOD) > 0.0f) { \
+                (DEST) = (br_scalar)((AMPLITUDE) * sin(BrAngleToRadian(BrDegreeToAngle(SAW(f_the_time, (PERIOD)) * 360.0)))); \
+            } else { \
+                (DEST) = 0.0f; \
+            } \
+            break; \
+        } \
+    } while (0)
+
 // GLOBAL: CARMA2_HW 0x00655b50
 const char* gFunk_type_names[5] = { "spin", "rock", "throb", "slither", "roll" };
 
@@ -1171,7 +1217,109 @@ br_scalar C2_HOOK_FASTCALL NormaliseDegreeAngle(br_scalar pAngle) {
 
 // FunkThoseTronics
 
-// PathGrooveBastard
+// FUNCTION: CARMA2_HW 0x00478e30
+void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it) {
+    br_scalar pos;
+    br_scalar* delta;
+    double f_the_time;
+    int i;
+    int move;
+    int use_cos;
+    br_angle angle;
+
+    f_the_time = (double)pTime;
+    switch (pGroove->path_type) {
+    case eGroove_path_straight:
+        for (i = 0; i < 3; i++) {
+            switch (i) {
+            case 0:
+                delta = &pGroove->path_data.straight_info.x_delta;
+                break;
+            case 1:
+                delta = &pGroove->path_data.straight_info.y_delta;
+                break;
+            default:
+                delta = &pGroove->path_data.straight_info.z_delta;
+                break;
+            }
+            if (!(*delta < 0.0f || *delta > 0.0f)) {
+                continue;
+            }
+            MOVE_FUNK_PARAMETER(pos, pGroove->path_mode, pGroove->path_data.straight_info.period.value, pGroove->path_data.straight_info.texture_info.data, *delta, -*delta);
+            pos += pGroove->path_data.straight_info.centre.v[i];
+            move = 0;
+            if (pInterrupt_it) {
+                pGroove->path_resumption_value = pos;
+                if (pos >= pMat->m[3][i]) {
+                    pGroove->path_interrupt_status = eInterrupt_greater_than;
+                } else {
+                    pGroove->path_interrupt_status = eInterrupt_less_than;
+                }
+                move = 1;
+            } else if (pGroove->path_interrupt_status == eInterrupt_none) {
+                move = 1;
+            } else if (pGroove->path_interrupt_status == eInterrupt_less_than) {
+                if (!(pos >= pGroove->path_resumption_value)) {
+                    pGroove->path_interrupt_status = eInterrupt_none;
+                    move = 1;
+                }
+            } else if (pos > pGroove->path_resumption_value) {
+                pGroove->path_interrupt_status = eInterrupt_none;
+                move = 1;
+            }
+            if (move) {
+                BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                pMat->m[3][i] = pos;
+            }
+        }
+        BrVector3Copy(&pGroove->object_position, &pGroove->actor->t.t.translate.t);
+        break;
+    case eGroove_path_circular:
+        BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.circular_info.centre);
+        for (i = 0; i < 3; i++) {
+            if (i == 0) {
+                if (pGroove->path_data.circular_info.axis == eAxis_y) {
+                    use_cos = 1;
+                } else if (pGroove->path_data.circular_info.axis == eAxis_z) {
+                    use_cos = 0;
+                } else {
+                    continue;
+                }
+            } else if (i == 1) {
+                if (pGroove->path_data.circular_info.axis == eAxis_x) {
+                    use_cos = 0;
+                } else if (pGroove->path_data.circular_info.axis == eAxis_z) {
+                    use_cos = 1;
+                } else {
+                    continue;
+                }
+            } else {
+                if (pGroove->path_data.circular_info.axis == eAxis_x) {
+                    use_cos = 1;
+                } else if (pGroove->path_data.circular_info.axis == eAxis_y) {
+                    use_cos = 0;
+                } else {
+                    continue;
+                }
+            }
+            if (pGroove->path_data.circular_info.period.value < 0.0f || pGroove->path_data.circular_info.period.value > 0.0f) {
+                angle = BrDegreeToAngle(SAW(f_the_time, pGroove->path_data.circular_info.period.value) * 360.0);
+                if (use_cos) {
+                    pos = (br_scalar)(cos(BrAngleToRadian(angle)) * pGroove->path_data.circular_info.radius);
+                } else {
+                    pos = (br_scalar)(sin(BrAngleToRadian(angle)) * pGroove->path_data.circular_info.radius);
+                }
+            } else {
+                pos = 0.0f;
+            }
+            pMat->m[3][i] = pGroove->path_data.circular_info.centre.v[i] + pos;
+        }
+        BrVector3Copy(&pGroove->object_position, &pGroove->actor->t.t.translate.t);
+        break;
+    default:
+        break;
+    }
+}
 
 // ObjectGrooveBastard
 
