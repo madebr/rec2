@@ -11,6 +11,8 @@ extern tConnected_items* gConnected_items;
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
 extern tRace_group_spec* gRace_groups;
+extern tSave_game gStashed_save_game;
+extern int gValid_stashed_save_game;
 
 extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
@@ -58,11 +60,11 @@ extern void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend);
 
 // NetRaceDn
 
-// SaveSinglePlayerState
+extern void C2_HOOK_FASTCALL SaveSinglePlayerState(void);
 
-// RestoreSinglePlayerState
+extern void C2_HOOK_FASTCALL RestoreSinglePlayerState(void);
 
-// MaybeRestoreSavedGame
+extern void C2_HOOK_FASTCALL MaybeRestoreSavedGame(void);
 
 // NetworkJoinUpdateScroller
 

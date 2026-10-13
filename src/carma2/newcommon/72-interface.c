@@ -57,6 +57,12 @@ tFrontend_brender_item gFrontend_brender_items[100]; /* FIXME: parametrize size 
 // GLOBAL: CARMA2_HW 0x00688770
 int gFrontend_selected_item_index;
 
+// GLOBAL: CARMA2_HW 0x00688780
+tSave_game gStashed_save_game;
+
+// GLOBAL: CARMA2_HW 0x00688ae4
+int gValid_stashed_save_game;
+
 // GLOBAL: CARMA2_HW 0x0068b8a0
 tRace_group_spec* gRace_groups;
 
@@ -555,11 +561,25 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 
 // NetRaceDn
 
-// SaveSinglePlayerState
+void C2_HOOK_FASTCALL SaveSinglePlayerState(void) {
+    if (!gValid_stashed_save_game) {
+        MakeSavedGame(&gStashed_save_game);
+    }
+    gValid_stashed_save_game = 1;
+}
 
-// RestoreSinglePlayerState
+void C2_HOOK_FASTCALL RestoreSinglePlayerState(void) {
+    LoadRaces(gRace_list, &gNumber_of_races, -1);
+    DoLoadGame2(&gStashed_save_game);
+    gValid_stashed_save_game = 0;
+}
 
-// MaybeRestoreSavedGame
+// FUNCTION: CARMA2_HW 0x00466e90
+void C2_HOOK_FASTCALL MaybeRestoreSavedGame(void) {
+    if (gValid_stashed_save_game) {
+        RestoreSinglePlayerState();
+    }
+}
 
 // NetworkJoinUpdateScroller
 
