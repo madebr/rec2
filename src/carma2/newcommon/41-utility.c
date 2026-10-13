@@ -2054,35 +2054,42 @@ tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupp
 }
 
 // GetBlenficatiousnessOfMaterialTablishly
+int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterialTablishly(br_material* pMaterial) {
+    br_pixelmap* table;
+
+    table = BrTableFind("BLEND75.TAB");
+    if (pMaterial->index_blend == table) {
+        return 25;
+    }
+    table = BrTableFind("BLEND50.TAB");
+    if (pMaterial->index_blend == table) {
+        return 50;
+    }
+    table = BrTableFind("BLEND25.TAB");
+    if (pMaterial->index_blend == table) {
+        return 75;
+    }
+    return 100;
+}
 
 // GetBlenficatiousnessOfMaterialPrimitively
+int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterialPrimitively(br_material* pMaterial) {
+    br_token_value* prims;
+
+    prims = pMaterial->extra_prim;
+    if (prims != NULL && prims[0].t == BRT_BLEND_B && prims[0].v.b == 1 && prims[1].t == BRT_OPACITY_X) {
+        /* Integer division preserves truncation toward zero for negatives. */
+        return (100 * (prims[1].v.x >> 16)) / 256;
+    }
+    return 100;
+}
 
 // FUNCTION: CARMA2_HW 0x00518e70
 int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material* pMaterial) {
-    br_token_value* prims;
-    br_pixelmap* table;
-
     if (gScreen->type == BR_PMT_INDEX_8) {
-        table = BrTableFind("BLEND75.TAB");
-        if (pMaterial->index_blend == table) {
-            return 25;
-        }
-        table = BrTableFind("BLEND50.TAB");
-        if (pMaterial->index_blend == table) {
-            return 50;
-        }
-        table = BrTableFind("BLEND25.TAB");
-        if (pMaterial->index_blend == table) {
-            return 75;
-        }
-    } else {
-        prims = pMaterial->extra_prim;
-        if (prims != NULL && prims[0].t == BRT_BLEND_B && prims[0].v.b == 1 && prims[1].t == BRT_OPACITY_X) {
-            /* Integer division preserves truncation toward zero for negatives. */
-            return (100 * (prims[1].v.x >> 16)) / 256;
-        }
+        return GetBlenficatiousnessOfMaterialTablishly(pMaterial);
     }
-    return 100;
+    return GetBlenficatiousnessOfMaterialPrimitively(pMaterial);
 }
 
 // FUNCTION: CARMA2_HW 0x00518f20

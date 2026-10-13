@@ -200,9 +200,9 @@ extern void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMs
 
 extern tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp);
 
-// GetBlenficatiousnessOfMaterialTablishly
+extern int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterialTablishly(br_material* pMaterial);
 
-// GetBlenficatiousnessOfMaterialPrimitively
+extern int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterialPrimitively(br_material* pMaterial);
 
 extern int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material* pMaterial);
 
