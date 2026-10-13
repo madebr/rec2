@@ -443,19 +443,31 @@ void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void) {
     SetDefaultPixelmapFolderName();
 }
 
-// STUB: CARMA2_HW 0x004d6f50
+// FUNCTION: CARMA2_HW 0x004d6f50
 void C2_HOOK_FASTCALL SetZombiePedFolderNames(void) {
-    NOT_IMPLEMENTED();
+    *(const char* volatile*)&gPedsFolder = "ZOMBIES";
+    ConfigureZombiePedSoundPath();
+    ConfigureZombiePedPowerupTxtPath();
+    ConfigureZombiePedTextTxtPath();
+    ConfigureZombiePedTexturePath(); /* genuine final tail edge */
 }
 
-// STUB: CARMA2_HW 0x004d6f30
+// FUNCTION: CARMA2_HW 0x004d6f30
 void C2_HOOK_FASTCALL SetBloodPedFolderNames(void) {
-    NOT_IMPLEMENTED();
+    *(const char* volatile*)&gPedsFolder = "PEDS";
+    ConfigureBloodPedSoundPath();
+    ConfigureBloodPedPowerupTxtPath();
+    ConfigureBloodPedTextTxtPath();
+    ConfigureBloodPedTexturePath(); /* genuine final tail edge */
 }
 
-// STUB: CARMA2_HW 0x004d6f70
+// FUNCTION: CARMA2_HW 0x004d6f70
 void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
-    NOT_IMPLEMENTED();
+    *(const char* volatile*)&gPedsFolder = "ALIENS";
+    ConfigureAlienPedSoundPath();
+    ConfigureAlienPedPowerupTxtPath();
+    ConfigureAlienPedTextTxtPath();
+    ConfigureAlienPedTexturePath(); /* genuine final tail edge */
 }
 
 // AddChangedPoint

@@ -313,3 +313,19 @@ void C2_HOOK_FASTCALL SetDefaultPixelmapFolderName(void) {
     gPedTexturePath = "PIXELMAP";
 }
 
+
+
+// FUNCTION: CARMA2_HW 0x0048f810
+void C2_HOOK_FASTCALL ConfigureZombiePedTexturePath(void) {
+    *(char* volatile*)&gPedTexturePath = "ZOMPIXELMAP";
+}
+
+// FUNCTION: CARMA2_HW 0x0048f800
+void C2_HOOK_FASTCALL ConfigureBloodPedTexturePath(void) {
+    *(char* volatile*)&gPedTexturePath = "PIXELMAP";
+}
+
+// FUNCTION: CARMA2_HW 0x0048f820
+void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void) {
+    *(char* volatile*)&gPedTexturePath = "ALPIXELMAP";
+}

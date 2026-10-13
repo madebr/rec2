@@ -956,3 +956,19 @@ void C2_HOOK_FASTCALL PeriodicCloaking(void) {
         }
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x004e0c20
+void C2_HOOK_FASTCALL ConfigureZombiePedPowerupTxtPath(void) {
+    *(const char* volatile*)&gPowerup_txt_path = "ZOMPOWERUP.TXT";
+}
+
+// FUNCTION: CARMA2_HW 0x004e0c10
+void C2_HOOK_FASTCALL ConfigureBloodPedPowerupTxtPath(void) {
+    *(const char* volatile*)&gPowerup_txt_path = "POWERUP.TXT";
+}
+
+// FUNCTION: CARMA2_HW 0x004e0c30
+void C2_HOOK_FASTCALL ConfigureAlienPedPowerupTxtPath(void) {
+    *(const char* volatile*)&gPowerup_txt_path = "ALPOWERUP.TXT";
+}

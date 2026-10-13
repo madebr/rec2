@@ -562,4 +562,8 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // DisableRetainRootMode
 
+
+extern const char* gPedsFolder;
+
+
 #endif // GUARD_61_PEDESTRN_H

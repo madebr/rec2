@@ -114,4 +114,11 @@ extern int C2_HOOK_FASTCALL RestoreOptions(void);
 
 extern void C2_HOOK_FASTCALL SetDefaultTextFileName(void);
 
+
+extern const char* gPedTextTxtPath;
+
+void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void);
+void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void);
+void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void);
+
 #endif // GUARD_10_LOADING2_H
