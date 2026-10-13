@@ -838,9 +838,9 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             FRONTEND_CreateMenuButton(
                 &gFrontend_brender_items[gFrontend_count_brender_items],
                 (tS16)pFrontend_spec->items[i].x,
-                pFrontend_spec->items[i].y,
-                pFrontend_spec->items[i].width,
-                pFrontend_spec->items[i].height,
+                (tS16)pFrontend_spec->items[i].y,
+                (tS16)pFrontend_spec->items[i].width,
+                (tS16)pFrontend_spec->items[i].height,
                 gFrontend_some_color,
                 map,
                 pFrontend_spec->items[i].text);
@@ -848,9 +848,9 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             FRONTEND_CreateMenuButton(
                 &gFrontend_brender_items[gFrontend_count_brender_items],
                 (tS16)pFrontend_spec->items[i].x,
-                pFrontend_spec->items[i].y,
-                pFrontend_spec->items[i].width,
-                pFrontend_spec->items[i].height,
+                (tS16)pFrontend_spec->items[i].y,
+                (tS16)pFrontend_spec->items[i].width,
+                (tS16)pFrontend_spec->items[i].height,
                 gFrontend_some_color,
                 map,
                 pFrontend_spec->items[i].text);
@@ -1439,15 +1439,8 @@ void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
     float map_right;
 
     model = gFrontend_billboard_actors[pIndex]->model;
-#if defined(_MSC_VER) && _MSC_VER >= 1400
-#pragma warning(push)
-#pragma warning(disable : 4244) // '=' : conversion from 'double ' to 'float ', possible loss of data
-#endif
-    map_left = (float)(pTex_index + 0) * 3.0 / 16.0;
-    map_right = (float)(pTex_index + 1) * 3.0 / 16.0;
-#if defined(_MSC_VER) && _MSC_VER >= 1400
-#pragma warning(pop)
-#endif
+    map_left = (float)(pTex_index * 3.0 / 16.0);
+    map_right = (float)((pTex_index + 1) * 3.0 / 16.0);
     BrVector2Set(&model->vertices[0].map, 0.0f,   map_left);
     BrVector2Set(&model->vertices[1].map, 10.0f / 16.0f, map_left);
     BrVector2Set(&model->vertices[2].map, 0.0f, map_right);
