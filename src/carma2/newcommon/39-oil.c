@@ -104,7 +104,21 @@ void C2_HOOK_FASTCALL ResetOilSpills(void) {
 
 // MungeIndexedOilsHeightAboveGround
 
-// SetInitialOilStuff
+// FUNCTION: CARMA2_HW 0x004a7460
+void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel) {
+    /* Resize the spill in the ground plane without changing vertex heights. */
+    pModel->vertices[0].p.v[0] = -pOil->field_0x20;
+    pModel->vertices[0].p.v[2] = -pOil->field_0x20;
+    pModel->vertices[1].p.v[0] = pOil->field_0x20;
+    pModel->vertices[1].p.v[2] = -pOil->field_0x20;
+    pModel->vertices[2].p.v[0] = pOil->field_0x20;
+    pModel->vertices[2].p.v[2] = pOil->field_0x20;
+    pModel->vertices[3].p.v[0] = -pOil->field_0x20;
+    pModel->vertices[3].p.v[2] = pOil->field_0x20;
+    pOil->actor->render_style = BR_RSTYLE_FACES;
+    BrMaterialUpdate(pOil->actor->material, BR_MATU_ALL);
+    BrModelUpdate(pModel, BR_MODU_ALL);
+}
 
 // ProcessOilSpills
 
