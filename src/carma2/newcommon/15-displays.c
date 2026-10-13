@@ -322,7 +322,25 @@ void C2_HOOK_FASTCALL ClearHeadups(void) {
     gLast_centre_headup = 0;
 }
 
-// DimAFewBits
+// FUNCTION: CARMA2_HW 0x004496f0
+void C2_HOOK_FASTCALL DimAFewBits(void) {
+    int i;
+    int dim_index;
+
+    for (i = 0; ; ++i) {
+        dim_index = gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0;
+        if (i >= gProgram_state.current_car.dim_count[dim_index]) {
+            break;
+        }
+        DimRectangle(
+            gBack_screen,
+            gProgram_state.current_car.dim_left[dim_index][i],
+            gProgram_state.current_car.dim_top[dim_index][i],
+            gProgram_state.current_car.dim_right[dim_index][i],
+            gProgram_state.current_car.dim_bottom[dim_index][i],
+            1);
+    }
+}
 
 void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void) {
     if (gQueued_headup_count != 0) {
