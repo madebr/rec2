@@ -3479,7 +3479,7 @@ typedef struct {
     float field_0x44;
     float field_0x48;
     float field_0x4c;
-    undefined4 field_0x50;
+    br_material* field_0x50;
 } tOil_spill_info;
 
 typedef struct {
