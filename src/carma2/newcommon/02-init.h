@@ -30,7 +30,7 @@ extern void C2_HOOK_FASTCALL AllocateCamera(void);
 
 // ReinitialiseRearviewCamera
 
-// ReinitialiseRenderStuff
+extern void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void);
 
 extern void C2_HOOK_FASTCALL InstallFindFailedHooks(void);
 

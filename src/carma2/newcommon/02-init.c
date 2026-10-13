@@ -92,7 +92,38 @@ tSlot_info gMax_APO[3];
 
 // ReinitialiseRearviewCamera
 
-// ReinitialiseRenderStuff
+// FUNCTION: CARMA2_HW 0x0047dc30
+void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
+    int index;
+    int width;
+    int height;
+    int x_diff;
+    int y_diff;
+
+    if (gProgram_state.cockpit_on) {
+        index = gProgram_state.cockpit_image_index;
+        gProgram_state.current_render_left = gProgram_state.current_car.render_left[index];
+        gProgram_state.current_render_top = gProgram_state.current_car.render_top[index];
+        gProgram_state.current_render_right = gProgram_state.current_car.render_right[index];
+        gProgram_state.current_render_bottom = gProgram_state.current_car.render_bottom[index];
+    } else {
+        width = gGraf_specs[gGraf_spec_index].total_width;
+        height = gGraf_specs[gGraf_spec_index].total_height;
+        if (gNo_render_indent) {
+            gProgram_state.current_render_left = 0;
+            gProgram_state.current_render_top = 0;
+            gProgram_state.current_render_right = width;
+            gProgram_state.current_render_bottom = height;
+        } else {
+            x_diff = (width / 18 & ~3) * gRender_indent;
+            y_diff = (height / 18 & ~1) * gRender_indent;
+            gProgram_state.current_render_left = x_diff;
+            gProgram_state.current_render_right = width - x_diff;
+            gProgram_state.current_render_top = y_diff;
+            gProgram_state.current_render_bottom = height - y_diff;
+        }
+    }
+}
 
 void C2_HOOK_FASTCALL InstallFindFailedHooks(void) {
 
