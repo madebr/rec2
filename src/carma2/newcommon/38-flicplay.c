@@ -413,22 +413,22 @@ int C2_HOOK_FASTCALL TranslationMode(void) {
 
 // FUNCTION: CARMA2_HW 0x00461a00
 void C2_HOOK_FASTCALL PlayFlicsFromDisk(void) {
-    *(volatile int*)&gPlay_from_disk = 1;
+    gPlay_from_disk = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a10
 void C2_HOOK_FASTCALL PlayFlicsFromMemory(void) {
-    *(volatile int*)&gPlay_from_disk = 0;
+    gPlay_from_disk = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a20
 void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
-    *(volatile int*)&gPanel_flic_disable = 1;
+    gPanel_flic_disable = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a30
 void C2_HOOK_FASTCALL TurnOnPanelFlics(void) {
-    *(volatile int*)&gPanel_flic_disable = 0;
+    gPanel_flic_disable = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a60
