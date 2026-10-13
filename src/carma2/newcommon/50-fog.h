@@ -2,6 +2,7 @@
 #define GUARD_50_FOG_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 #include <brender/brender.h>
 
 extern int gMaterials_to_adapt_count;
@@ -10,9 +11,9 @@ extern int gAllow_material_adapt;
 
 extern void C2_HOOK_FASTCALL InitFogificateMaterials(void);
 
-// FogificateMaterials
+extern void C2_HOOK_FASTCALL FogificateMaterials(tRendererShadingType pShading_type);
 
-// AutoFogificateMaterials
+extern void C2_HOOK_FASTCALL AutoFogificateMaterials(tRendererShadingType pShading_type);
 
 extern void C2_HOOK_FASTCALL AddFogificateMaterial(br_material* pMaterial);
 
