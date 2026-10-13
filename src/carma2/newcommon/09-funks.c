@@ -2,6 +2,7 @@
 
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "38-flicplay.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "63-loading3.h"
@@ -120,9 +121,53 @@ tFunkotronic_spec* C2_HOOK_FASTCALL AddNewFunkotronic(void) {
     return &gFunkotronics_array[gFunkotronics_array_size - 16];
 }
 
-// STUB: CARMA2_HW 0x00474950
+// FUNCTION: CARMA2_HW 0x00474950
 void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
-    NOT_IMPLEMENTED();
+    tFunkotronic_spec* the_funk;
+    int i;
+
+    the_funk = gFunkotronics_array;
+    if (the_funk == NULL) {
+        return;
+    }
+    for (i = 0; i < gFunkotronics_array_size; i++, the_funk++) {
+        PossibleService();
+        if (the_funk->owner == pOwner) {
+            the_funk->owner = -999;
+            if (the_funk->proximity_array != NULL) {
+                BrMemFree(the_funk->proximity_array);
+            }
+            if (the_funk->texture_animation_type == eTexture_animation_frames
+                && the_funk->texture_animation_data.frames_info.mode == eMove_texturebits) {
+                BrMemFree(the_funk->texture_animation_data.frames_info.texture_info.data);
+            }
+            switch (the_funk->texture_animation_type) {
+            case eTexture_animation_flic:
+                BrMemFree(the_funk->texture_animation_data.flic_info.flic_data);
+                EndFlic(&the_funk->texture_animation_data.flic_info.flic_descriptor);
+                BrMemFree(the_funk->material->colour_map->pixels);
+                the_funk->material->colour_map->pixels = NULL;
+                BrPixelmapFree(the_funk->material->colour_map);
+                the_funk->material->colour_map = NULL;
+                break;
+            case eTexture_animation_camera:
+                /* Camera disposal shares this counter with the outer traversal. */
+                for (i = 0; i < the_funk->texture_animation_data.camera_info.count; i++) {
+                    BrActorRemove(the_funk->texture_animation_data.camera_info.actors[i]);
+                    BrActorFree(the_funk->texture_animation_data.camera_info.actors[i]);
+                }
+                break;
+            case eTexture_animation_mirror:
+                if (the_funk->texture_animation_data.mirror_info.actor != NULL) {
+                    BrActorRemove(the_funk->texture_animation_data.mirror_info.actor);
+                    BrActorFree(the_funk->texture_animation_data.mirror_info.actor);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004761e0
@@ -206,9 +251,21 @@ br_material* C2_HOOK_FASTCALL FindSmashableMaterial(const char* pStr, tFunkotron
 
 // AddFunkotronics
 
-// STUB: CARMA2_HW 0x00476430
+// FUNCTION: CARMA2_HW 0x00476430
 void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
-    NOT_IMPLEMENTED();
+    tGroovidelic_spec* the_groove;
+    int i;
+
+    the_groove = gGroovidelics_array;
+    if (the_groove == NULL) {
+        return;
+    }
+    for (i = 0; i < gGroovidelics_array_size; i++, the_groove++) {
+        PossibleService();
+        if (the_groove->owner == pOwner) {
+            the_groove->owner = -999;
+        }
+    }
 }
 
 tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void) {
