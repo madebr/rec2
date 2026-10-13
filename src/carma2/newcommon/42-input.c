@@ -2,6 +2,7 @@
 
 #include "41-utility.h"
 #include "25-grafdata.h"
+#include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -354,7 +355,10 @@ int C2_HOOK_FASTCALL PDKeyDown(int pKey_index) {
     return result == tKey_down_yes || result == tKey_down_repeat;
 }
 
-// PDKeyDown3
+int C2_HOOK_FASTCALL PDKeyDown3(int pKey_index) {
+
+    return gKey_array[pKey_index];
+}
 
 // FUNCTION: CARMA2_HW 0x00482a00
 int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
@@ -390,7 +394,59 @@ int C2_HOOK_FASTCALL AnyKeyDown(void) {
     return (the_key != -1 && the_key != 4) || EitherMouseButtonDown();
 }
 
-// KevKeyService
+// FUNCTION: CARMA2_HW 0x00482f10
+tU32* C2_HOOK_FASTCALL KevKeyService(void) {
+    // GLOBAL: CARMA2_HW 0x0068c1d4
+    static tU32 sum;
+    // GLOBAL: CARMA2_HW 0x0068c1d8
+    static tU32 code;
+    // GLOBAL: CARMA2_HW 0x0068c1dc
+    static tU32 code2;
+    // GLOBAL: CARMA2_HW 0x00657210
+    static int last_key = -1;
+    // GLOBAL: CARMA2_HW 0x00657214
+    static int last_single_key = -1;
+    // GLOBAL: CARMA2_HW 0x0068be8c
+    static tU32 last_time;
+    // GLOBAL: CARMA2_HW 0x0068c1e0
+    static tU32 return_val[2];
+    tU32 keys;
+
+    keys = gKeys_pressed;
+    return_val[0] = 0;
+    return_val[1] = 0;
+    if (keys < 0x6b) {
+        last_single_key = (int)keys;
+    } else {
+        if (keys > 0x6b00
+            || ((keys & 0xff) != (tU32)last_single_key && (keys >> 8) != (tU32)last_single_key)) {
+            sum = 0;
+            code = 0;
+            return return_val;
+        }
+        // Keep the newly pressed member of a two-key chord.
+        if ((keys & 0xff) == (tU32)last_single_key) {
+            keys >>= 8;
+        } else {
+            keys &= 0xff;
+        }
+    }
+    if (keys != 0 && keys != (tU32)last_key) {
+        sum += keys;
+        code += keys << 11;
+        code = (code >> 17) + (code << 4);
+        code2 = (code2 >> 29) + keys * keys + (code2 << 3);
+        last_time = PDGetTotalTime();
+    } else if (PDGetTotalTime() > last_time + 1000u) {
+        return_val[0] = (code >> 11) + (sum << 21);
+        return_val[1] = code2;
+        code = 0;
+        code2 = 0;
+        sum = 0;
+    }
+    last_key = (int)keys;
+    return return_val;
+}
 
 // FUNCTION: CARMA2_HW 0x00483040
 int C2_HOOK_FASTCALL KeyIsDown(int pKey_index) {

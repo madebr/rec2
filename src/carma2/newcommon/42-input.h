@@ -52,13 +52,13 @@ extern tKey_down_result C2_HOOK_FASTCALL EdgeTriggeryKey(int pKey_index, int pRe
 
 extern int C2_HOOK_FASTCALL PDKeyDown(int pKey_index);
 
-// PDKeyDown3
+extern int C2_HOOK_FASTCALL PDKeyDown3(int pKey_index);
 
 extern int C2_HOOK_FASTCALL PDAnyKeyDown(void);
 
 extern int C2_HOOK_FASTCALL AnyKeyDown(void);
 
-// KevKeyService
+extern tU32* C2_HOOK_FASTCALL KevKeyService(void);
 
 extern int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
 
