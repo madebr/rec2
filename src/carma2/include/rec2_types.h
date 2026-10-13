@@ -1595,7 +1595,8 @@ typedef struct {
 
 typedef struct {
     float* v;
-    undefined4 field_0x4;
+    tU8 field_0x4;
+    undefined field_0x5[3];
 } tGroove_funk_binding;
 
 typedef enum {

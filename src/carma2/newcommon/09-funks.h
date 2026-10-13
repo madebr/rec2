@@ -5,6 +5,8 @@
 #include "rec2_types.h"
 #include "brender/brender.h"
 
+extern tGroove_funk_binding gGroove_funk_bindings[1440];
+
 extern int gGroovidelics_array_size;
 extern tGroovidelic_spec* gGroovidelics_array;
 
@@ -14,13 +16,13 @@ extern tGroovidelic_spec* gGroovidelics_array;
 
 extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
-// AddFunkGrooveBinding
+extern void C2_HOOK_FASTCALL AddFunkGrooveBinding(int pSlot_number, float* pPeriod_address);
 
 // ControlBoundFunkGroove
 
 // ControlBoundFunkGroovePlus
 
-// ShiftBoundGrooveFunks
+extern void C2_HOOK_FASTCALL ShiftBoundGrooveFunks(char* pStart, char* pEnd, ptrdiff_t pDelta);
 
 // AddNewFunkotronic
 
