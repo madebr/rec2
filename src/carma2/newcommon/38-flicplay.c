@@ -916,6 +916,9 @@ void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 chu
 }
 
 // DoMini
+void C2_HOOK_FASTCALL DoMini(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    MemSkipBytes(&pFlic_info->data, (int)(chunk_length - 6));
+}
 
 // FUNCTION: CARMA2_HW 0x00462860
 void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
@@ -1007,6 +1010,9 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info) {
                     } else {
                         DoUncompressed(pFlic_info, chunk_length);
                     }
+                    break;
+                case 18:
+                    DoMini(pFlic_info, chunk_length);
                     break;
                 default:
                     MemSkipBytes(&pFlic_info->data, (int)(chunk_length - 6));
