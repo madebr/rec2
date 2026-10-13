@@ -808,7 +808,15 @@ void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
     gSound_detail_level = pLevel;
 }
 
-// ReallySetSoundDetailLevel
+// FUNCTION: CARMA2_HW 0x00456960
+void C2_HOOK_FASTCALL ReallySetSoundDetailLevel(int pLevel) {
+
+    DRS3StopAllOutletSoundsExceptCDA();
+    DisposeSoundSources();
+    gSound_detail_level = pLevel;
+    InitSound();
+    InitSoundSources();
+}
 
 // FUNCTION: CARMA2_HW 0x004569e0
 int C2_HOOK_FASTCALL GetSoundDetailLevel(void) {

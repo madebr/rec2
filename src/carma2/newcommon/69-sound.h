@@ -71,7 +71,7 @@ extern void C2_HOOK_FASTCALL StopMusic(void);
 
 extern void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
-// ReallySetSoundDetailLevel
+extern void C2_HOOK_FASTCALL ReallySetSoundDetailLevel(int pLevel);
 
 extern int C2_HOOK_FASTCALL GetSoundDetailLevel(void);
 
