@@ -93,7 +93,7 @@ extern void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
 extern void C2_HOOK_FASTCALL EarnCredits100(int pAmount);
 
-// SpendCredits
+extern int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
 // AwardTime
 

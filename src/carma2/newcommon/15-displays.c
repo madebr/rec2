@@ -694,7 +694,18 @@ void C2_HOOK_FASTCALL EarnCredits100(int pAmount) {
     EarnCredits((pAmount + 50) / 100 * 100);
 }
 
-// SpendCredits
+// FUNCTION: CARMA2_HW 0x0044b470
+int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
+    int remaining;
+
+    remaining = gProgram_state.credits - pAmount;
+    gProgram_state.credits = remaining;
+    if (remaining < 0) {
+        gProgram_state.credits = 0;
+        return remaining;
+    }
+    return 0;
+}
 
 // AwardTime
 
