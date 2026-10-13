@@ -1358,7 +1358,11 @@ int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel,
     }
 }
 
-// DistanceFromFace
+// FUNCTION: CARMA2_HW 0x00516090
+br_scalar C2_HOOK_FASTCALL DistanceFromFace(const br_vector3* pP, const tFace_ref* pFace) {
+
+    return BrVector3Dot(pP, &pFace->normal) - pFace->d;
+}
 
 // FUNCTION: CARMA2_HW 0x005160c0
 void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* pSrc) {
