@@ -83,7 +83,7 @@ extern intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, vo
 
 extern void C2_HOOK_FASTCALL LinkCarActorsToGroovidelics(br_actor* pActor);
 
-// ReadCarKeywordData
+extern void C2_HOOK_FASTCALL ReadCarKeywordData(tCar_spec* pCar_spec, FILE* pF);
 
 extern void C2_HOOK_FASTCALL TrashModelMaterialIdentifiers(tCar_spec* pCar_spec, tBrender_storage* pStorage_space);
 

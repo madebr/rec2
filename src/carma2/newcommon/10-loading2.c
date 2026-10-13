@@ -973,7 +973,32 @@ void C2_HOOK_FASTCALL LinkCarActorsToGroovidelics(br_actor* pActor) {
     DRActorEnumRecurse(pActor, LinkCarActorsToGroovidelicsCB, NULL);
 }
 
-// ReadCarKeywordData
+void C2_HOOK_FASTCALL ReadCarKeywordData(tCar_spec* pCar_spec, FILE* pF) {
+    int i;
+    int j;
+    char s[256];
+
+    while (!PFfeof(pF)) {
+        GetAString(pF, s);
+        if (DRStricmp(s, "END") == 0) {
+            break;
+        } else if (DRStricmp(s, "CAMERA_POSITIONS") == 0) {
+            GetAVector3(pF, &pCar_spec->camera_bumper_position);
+            GetAVector3(pF, &pCar_spec->camera_cockpit_position);
+        } else if (DRStricmp(s, "CAMERA_TURN_OFF_MATERIALS") == 0) {
+            pCar_spec->count_window_materials = GetAnInt(pF);
+            for (i = 0; i < pCar_spec->count_window_materials; i++) {
+                GetAString(pF, s);
+                pCar_spec->window_materials[i].material = BrMaterialFind(s);
+                pCar_spec->window_materials[i].count_maps = GetAnInt(pF);
+                for (j = 0; j < pCar_spec->window_materials[i].count_maps; j++) {
+                    GetAString(pF, s);
+                    pCar_spec->window_materials[i].maps[j] = BrMapFind(s);
+                }
+            }
+        }
+    }
+}
 
 void C2_HOOK_FASTCALL TrashModelMaterialIdentifiers(tCar_spec* pCar_spec, tBrender_storage* pStorage_space) {
     int i;
