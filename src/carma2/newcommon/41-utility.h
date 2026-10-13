@@ -186,7 +186,7 @@ extern void C2_HOOK_FASTCALL NobbleNonzeroBlacks(br_pixelmap* pPalette);
 
 extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading);
 
-// FindBestColourMatch
+extern int C2_HOOK_FASTCALL FindBestColourMatch(br_colour pColour);
 
 extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 

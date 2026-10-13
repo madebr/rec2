@@ -1814,7 +1814,15 @@ void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRen
     }
 }
 
-// FindBestColourMatch
+// FUNCTION: CARMA2_HW 0x005184c0
+int C2_HOOK_FASTCALL FindBestColourMatch(br_colour pColour) {
+    tRGB_colour rgb;
+
+    rgb.red = (pColour >> 16) & 0xff;
+    rgb.green = (pColour >> 8) & 0xff;
+    rgb.blue = pColour & 0xff;
+    return FindBestMatch(&rgb, gRender_palette);
+}
 
 // FUNCTION: CARMA2_HW 0x00518690
 void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount) {
