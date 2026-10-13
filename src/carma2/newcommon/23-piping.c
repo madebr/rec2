@@ -1164,7 +1164,22 @@ void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar 
 
 // PipeSingleScreenWobble
 
-// PipeSingleGrooveStop
+// FUNCTION: CARMA2_HW 0x004c80b0
+void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption) {
+    tU32 bits;
+
+    (void)pPath_interrupt;
+    (void)pObject_resumption;
+    memcpy(&bits, &pPath_resumption, sizeof(bits));
+    gUNK_0069410c = bits;
+    /* Both replay channels share this stop status and resumption. */
+    ARDoSingleVariedSession(13, (uintptr_t)(tU32)pGroove_index, 5,
+        4, 0, (uintptr_t)(tU32)pObject_interrupt,
+        4, 4, (uintptr_t)(tU32)pObject_interrupt,
+        4, 8, (uintptr_t)bits,
+        4, 12, (uintptr_t)bits,
+        48, 16, (uintptr_t)pMatrix);
+}
 
 // PipeSingleNonCar
 
