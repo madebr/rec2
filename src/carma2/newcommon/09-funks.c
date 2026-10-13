@@ -3,14 +3,22 @@
 #include "52-errors.h"
 #include "rec2_macros.h"
 
+#include "c2_string.h"
+
 // GLOBAL: CARMA2_HW 0x00688b30
 tGroove_funk_binding gGroove_funk_bindings[1440];
 
 // GLOBAL: CARMA2_HW 0x0068b840
 br_scalar gSight_distance_squared;
 
+// GLOBAL: CARMA2_HW 0x0068b844
+int gFunkotronics_array_size;
+
 // GLOBAL: CARMA2_HW 0x0068b848
 int gGroovidelics_array_size;
+
+// GLOBAL: CARMA2_HW 0x0068b84c
+tFunkotronic_spec* gFunkotronics_array;
 
 // GLOBAL: CARMA2_HW 0x0068b850
 tGroovidelic_spec* gGroovidelics_array;
@@ -57,7 +65,31 @@ void C2_HOOK_FASTCALL ShiftBoundGrooveFunks(char* pStart, char* pEnd, ptrdiff_t 
     }
 }
 
-// AddNewFunkotronic
+tFunkotronic_spec* C2_HOOK_FASTCALL AddNewFunkotronic(void) {
+    tFunkotronic_spec* new_array;
+    tFunkotronic_spec* old_array;
+    int i;
+
+    for (i = 0; i < gFunkotronics_array_size; i++) {
+        if (gFunkotronics_array[i].owner == -999) {
+            memset(&gFunkotronics_array[i], 0, sizeof(tFunkotronic_spec));
+            return &gFunkotronics_array[i];
+        }
+    }
+    gFunkotronics_array_size += 16;
+    new_array = BrMemCalloc(gFunkotronics_array_size, sizeof(tFunkotronic_spec), kMem_funk_spec);
+    if (gFunkotronics_array != NULL) {
+        memcpy(new_array, gFunkotronics_array, (gFunkotronics_array_size - 16) * sizeof(tFunkotronic_spec));
+        old_array = gFunkotronics_array;
+        ShiftBoundGrooveFunks((char*)old_array, (char*)&old_array[gFunkotronics_array_size - 16], (ptrdiff_t)((uintptr_t)new_array - (uintptr_t)old_array));
+        BrMemFree(old_array);
+    }
+    gFunkotronics_array = new_array;
+    for (i = 0; i < 16; i++) {
+        gFunkotronics_array[gFunkotronics_array_size - 16 + i].owner = -999;
+    }
+    return &gFunkotronics_array[gFunkotronics_array_size - 16];
+}
 
 // STUB: CARMA2_HW 0x00474950
 void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
@@ -79,7 +111,31 @@ void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
     NOT_IMPLEMENTED();
 }
 
-// AddNewGroovidelic
+tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void) {
+    tGroovidelic_spec* new_array;
+    tGroovidelic_spec* old_array;
+    int i;
+
+    for (i = 0; i < gGroovidelics_array_size; i++) {
+        if (gGroovidelics_array[i].owner == -999) {
+            memset(&gGroovidelics_array[i], 0, sizeof(tGroovidelic_spec));
+            return &gGroovidelics_array[i];
+        }
+    }
+    gGroovidelics_array_size += 16;
+    new_array = BrMemCalloc(gGroovidelics_array_size, sizeof(tGroovidelic_spec), kMem_groove_spec);
+    if (gGroovidelics_array != NULL) {
+        memcpy(new_array, gGroovidelics_array, (gGroovidelics_array_size - 16) * sizeof(tGroovidelic_spec));
+        old_array = gGroovidelics_array;
+        ShiftBoundGrooveFunks((char*)old_array, (char*)&old_array[gGroovidelics_array_size - 16], (ptrdiff_t)((uintptr_t)new_array - (uintptr_t)old_array));
+        BrMemFree(old_array);
+    }
+    gGroovidelics_array = new_array;
+    for (i = 0; i < 16; i++) {
+        gGroovidelics_array[gGroovidelics_array_size - 16 + i].owner = -999;
+    }
+    return &gGroovidelics_array[gGroovidelics_array_size - 16];
+}
 
 // AddGroovidelics
 

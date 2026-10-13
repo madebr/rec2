@@ -7,7 +7,9 @@
 
 extern tGroove_funk_binding gGroove_funk_bindings[1440];
 
+extern int gFunkotronics_array_size;
 extern int gGroovidelics_array_size;
+extern tFunkotronic_spec* gFunkotronics_array;
 extern tGroovidelic_spec* gGroovidelics_array;
 
 // CalculateTextureBitsValue
@@ -24,7 +26,7 @@ extern void C2_HOOK_FASTCALL AddFunkGrooveBinding(int pSlot_number, float* pPeri
 
 extern void C2_HOOK_FASTCALL ShiftBoundGrooveFunks(char* pStart, char* pEnd, ptrdiff_t pDelta);
 
-// AddNewFunkotronic
+extern tFunkotronic_spec* C2_HOOK_FASTCALL AddNewFunkotronic(void);
 
 extern void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
 
@@ -40,7 +42,7 @@ extern void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
 
 extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
-// AddNewGroovidelic
+extern tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void);
 
 // AddGroovidelics
 
