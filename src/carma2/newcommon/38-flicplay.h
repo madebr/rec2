@@ -49,7 +49,7 @@ extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 // DoColourMap
 
-// DoDifferenceX
+extern void C2_HOOK_FASTCALL DoDifferenceX(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
 extern void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
