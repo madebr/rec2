@@ -4,6 +4,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern const char* gAxis_names[3];
+extern tCar_spec* gCurrent_car_spec;
+
 extern tU32 gSimple_material_colours[12];
 extern br_material* gSimple_materials[32];
 

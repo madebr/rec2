@@ -5,6 +5,12 @@
 #include "rec2_types.h"
 #include "brender/brender.h"
 
+extern const char* gFunk_move_names[7];
+extern const char* gGroove_nature_names[2];
+extern const char* gLollipop_names[3];
+extern const char* gGroove_path_names[2];
+extern const char* gGroove_object_names[4];
+
 extern tGroove_funk_binding gGroove_funk_bindings[1440];
 extern tFunk_temp_buffer* gFunk_temp_vertices;
 
@@ -12,6 +18,7 @@ extern int gFunkotronics_array_size;
 extern int gGroovidelics_array_size;
 extern tFunkotronic_spec* gFunkotronics_array;
 extern tGroovidelic_spec* gGroovidelics_array;
+extern br_actor* gGroove_by_proxy_actor;
 
 // CalculateTextureBitsValue
 
@@ -45,7 +52,7 @@ extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
 extern tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void);
 
-// AddGroovidelics
+extern void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
 
 // KillGroovadelic
 

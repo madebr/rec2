@@ -47,6 +47,9 @@
 
 #define OPPONENT_APC_IDX 98
 
+// GLOBAL: CARMA2_HW 0x00594790
+const char* gAxis_names[3] = { "x", "y", "z" };
+
 // GLOBAL: CARMA2_HW 0x006572f0
 tU32 gSimple_material_colours[12] = {
     0x005d0303, 0x02a56e04, 0x03a9a905, 0x08006868,
@@ -191,6 +194,9 @@ int gGroove_funk_offset;
 
 // GLOBAL: CARMA2_HW 0x007638c0
 int gNet_score_targets[8];
+
+// GLOBAL: CARMA2_HW 0x0074b584
+tCar_spec* gCurrent_car_spec;
 
 // GLOBAL: CARMA2_HW 0x0074b58c
 int gDemo_race_rank_equivalent;
