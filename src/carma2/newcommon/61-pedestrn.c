@@ -6,6 +6,13 @@
 #include "27-powerup.h"
 #include "63-loading3.h"
 #include "69-sound.h"
+#include "rec2_macros.h"
+
+// GLOBAL: CARMA2_HW 0x00694140
+tProximity_ray gProximity_rays[20];
+
+// GLOBAL: CARMA2_HW 0x0069b9f0
+tNapalm_bolt gNapalm_bolts[5];
 
 // GLOBAL: CARMA2_HW 0x006a0414
 const char* gPedsFolder;
@@ -338,7 +345,18 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // ResetNapalmBolts
 
-// ARResetNapalmBolts
+// FUNCTION: CARMA2_HW 0x004d5b10
+void C2_HOOK_FASTCALL ARResetNapalmBolts(void) {
+    int i;
+    int j;
+
+    for (i = 0; i < (int)REC2_ASIZE(gNapalm_bolts); i++) {
+        gNapalm_bolts[i].ped = NULL;
+        for (j = 0; j < (int)REC2_ASIZE(gNapalm_bolts[i].actors); j++) {
+            gNapalm_bolts[i].actors[j]->render_style = BR_RSTYLE_NONE;
+        }
+    }
+}
 
 // AdjustNapalmBolt
 
@@ -348,7 +366,14 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // AdjustProxRay
 
-// ResetProxRay
+// FUNCTION: CARMA2_HW 0x004d61f0
+void C2_HOOK_FASTCALL ResetProxRay(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gProximity_rays); i++) {
+        gProximity_rays[i].start_time = 0;
+    }
+}
 
 // GetTestPed
 

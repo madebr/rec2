@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tProximity_ray gProximity_rays[20];
+extern tNapalm_bolt gNapalm_bolts[5];
 extern tPedestrian* gPedestrian_array;
 extern int gPed_count;
 extern float gPed_gravity_multiplier;
@@ -298,7 +300,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // ResetNapalmBolts
 
-// ARResetNapalmBolts
+extern void C2_HOOK_FASTCALL ARResetNapalmBolts(void);
 
 // AdjustNapalmBolt
 
@@ -308,7 +310,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // AdjustProxRay
 
-// ResetProxRay
+extern void C2_HOOK_FASTCALL ResetProxRay(void);
 
 // GetTestPed
 
