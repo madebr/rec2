@@ -85,15 +85,15 @@ extern void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* p
 
 extern void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 
-// DisableFunkotronic
+extern void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex);
 
-// EnableFunkotronic
+extern void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex);
 
-// MasterDisableFunkotronic
+extern void C2_HOOK_FASTCALL MasterDisableFunkotronic(int pIndex);
 
-// MasterEnableFunkotronic
+extern void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex);
 
-// AdjustFunkEnable
+extern void C2_HOOK_FASTCALL AdjustFunkEnable(int pIndex, tS16 pFlags);
 
 extern tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor);
 

@@ -2,6 +2,7 @@
 
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "23-piping.h"
 #include "38-flicplay.h"
 #include "41-utility.h"
 #include "52-errors.h"
@@ -1143,15 +1144,36 @@ void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
     }
 }
 
-// DisableFunkotronic
+// FUNCTION: CARMA2_HW 0x0047b250
+void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex) {
+    gFunkotronics_array[pIndex].flags |= 1u;
+    PipeSingleFunkEnable(pIndex, 0);
+}
 
-// EnableFunkotronic
+// FUNCTION: CARMA2_HW 0x0047b280
+void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex) {
+    gFunkotronics_array[pIndex].flags &= ~1u;
+    PipeSingleFunkEnable(pIndex, 1);
+}
 
-// MasterDisableFunkotronic
+// FUNCTION: CARMA2_HW 0x0047b2b0
+void C2_HOOK_FASTCALL MasterDisableFunkotronic(int pIndex) {
+    gFunkotronics_array[pIndex].flags |= 2u;
+}
 
-// MasterEnableFunkotronic
+// FUNCTION: CARMA2_HW 0x0047b2e0
+void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex) {
+    gFunkotronics_array[pIndex].flags &= ~2u;
+}
 
-// AdjustFunkEnable
+// FUNCTION: CARMA2_HW 0x0047b310
+void C2_HOOK_FASTCALL AdjustFunkEnable(int pIndex, tS16 pFlags) {
+    if (pFlags != 0) {
+        EnableFunkotronic(pIndex);
+    } else {
+        DisableFunkotronic(pIndex);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047b360
 tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor) {
