@@ -33,9 +33,9 @@ extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 extern void C2_HOOK_FASTCALL AddFunkGrooveBinding(int pSlot_number, float* pPeriod_address);
 
-// ControlBoundFunkGroove
+extern void C2_HOOK_FASTCALL ControlBoundFunkGroove(int pSlot_number, float pValue);
 
-// ControlBoundFunkGroovePlus
+extern float C2_HOOK_FASTCALL ControlBoundFunkGroovePlus(int pSlot_number, float pValue);
 
 extern void C2_HOOK_FASTCALL ShiftBoundGrooveFunks(char* pStart, char* pEnd, ptrdiff_t pDelta);
 
