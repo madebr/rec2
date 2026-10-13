@@ -622,7 +622,67 @@ void C2_HOOK_FASTCALL DoColour256(tFlic_descriptor* pFlic_info, tU32 chunk_lengt
     }
 }
 
-// DoDeltaTrans
+void C2_HOOK_FASTCALL DoDeltaTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int k;
+    int line_count;
+    int number_of_packets;
+    int skip_count;
+    int size_count;
+    int the_row_bytes;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU8 the_byte2;
+
+    (void)chunk_length;
+    line_count = MemReadU16(&pFlic_info->data);
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+    for (i = 0; i < line_count;) {
+        number_of_packets = MemReadS16(&pFlic_info->data);
+        if (number_of_packets < 0) {
+            pixel_ptr += the_row_bytes * -number_of_packets;
+        } else {
+            line_pixel_ptr = pixel_ptr;
+            for (j = 0; j < number_of_packets; j++) {
+                skip_count = MemReadU8(&pFlic_info->data);
+                size_count = MemReadS8(&pFlic_info->data);
+                line_pixel_ptr += (skip_count / 2) * 2;
+                if (size_count < 0) {
+                    the_byte = MemReadU8(&pFlic_info->data);
+                    the_byte2 = MemReadU8(&pFlic_info->data);
+                    for (k = 0; k < -size_count; k++) {
+                        if (the_byte != 0) {
+                            *line_pixel_ptr = the_byte;
+                        }
+                        line_pixel_ptr++;
+                        if (the_byte2 != 0) {
+                            *line_pixel_ptr = the_byte2;
+                        }
+                        line_pixel_ptr++;
+                    }
+                } else {
+                    for (k = 0; k < size_count; k++) {
+                        the_byte = MemReadU8(&pFlic_info->data);
+                        if (the_byte != 0) {
+                            *line_pixel_ptr = the_byte;
+                        }
+                        line_pixel_ptr++;
+                        the_byte2 = MemReadU8(&pFlic_info->data);
+                        if (the_byte2 != 0) {
+                            *line_pixel_ptr = the_byte2;
+                        }
+                        line_pixel_ptr++;
+                    }
+                }
+            }
+            pixel_ptr += the_row_bytes;
+            i++;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00462580
 void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
