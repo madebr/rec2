@@ -638,7 +638,9 @@ void C2_HOOK_FASTCALL MungeForwardSky(void) {
     gHas_sky_texture = gProgram_state.default_depth_effect.sky_texture != NULL;
 }
 
-// MungeRearviewSky
+// FUNCTION: CARMA2_HW 0x00447280
+void C2_HOOK_FASTCALL MungeRearviewSky(void) {
+}
 
 // FUNCTION: CARMA2_HW 0x00447290
 void C2_HOOK_FASTCALL SkyTextureChanged(void) {

@@ -125,9 +125,38 @@ void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void) {
     AssertYons();
 }
 
-// AllocateRearviewPixelmap
+// FUNCTION: CARMA2_HW 0x0047dab0
+void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
+    if (gRearview_screen != NULL) {
+        BrPixelmapFree(gRearview_screen);
+        gRearview_screen = NULL;
+    }
+    if (gProgram_state.mirror_on) {
+        gRearview_screen = BrPixelmapAllocateSub(
+            gBack_screen,
+            gProgram_state.current_car.mirror_left,
+            gProgram_state.current_car.mirror_top,
+            gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left,
+            gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top);
+        gRearview_depth_buffer = gDepth_buffer;
+        gRearview_screen->origin_x = (br_int_16)(gRearview_screen->width / 2);
+        gRearview_screen->origin_y = (br_int_16)(gRearview_screen->height / 2);
+    }
+}
 
-// ReinitialiseRearviewCamera
+// FUNCTION: CARMA2_HW 0x0047db30
+void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void) {
+    br_camera* camera_ptr;
+
+    camera_ptr = gRearview_camera->type_data;
+    camera_ptr->field_of_view = BrDegreeToAngle(gProgram_state.current_car.rearview_camera_angle);
+    camera_ptr->aspect = (gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left) / (float)(gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top);
+    gRearview_camera->t.t.mat.m[3][0] = gProgram_state.current_car.mirror_x_offset;
+    gRearview_camera->t.t.mat.m[3][1] = gProgram_state.current_car.mirror_y_offset;
+    gRearview_camera->t.t.mat.m[3][2] = gProgram_state.current_car.mirror_z_offset;
+    AllocateRearviewPixelmap();
+    MungeRearviewSky();
+}
 
 // FUNCTION: CARMA2_HW 0x0047dc30
 void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {

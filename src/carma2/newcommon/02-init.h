@@ -26,9 +26,9 @@ extern void C2_HOOK_FASTCALL AllocateCamera(void);
 
 extern void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void);
 
-// AllocateRearviewPixelmap
+extern void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void);
 
-// ReinitialiseRearviewCamera
+extern void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void);
 
 extern void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void);
 

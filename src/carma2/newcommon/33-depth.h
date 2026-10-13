@@ -98,7 +98,7 @@ extern void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
 
 extern void C2_HOOK_FASTCALL MungeForwardSky(void);
 
-// MungeRearviewSky
+extern void C2_HOOK_FASTCALL MungeRearviewSky(void);
 
 extern void C2_HOOK_FASTCALL SkyTextureChanged(void);
 
