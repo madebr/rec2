@@ -65,11 +65,11 @@ extern intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData
 
 extern intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData);
 
-// AddCarModelToList
+extern void C2_HOOK_FASTCALL AddCarModelToList(br_model** pModels, br_model* pModel, int pCount, int pIndex);
 
-// LinkCarModel
+extern intptr_t C2_HOOK_CDECL LinkCarModel(br_actor* pActor, void* pData);
 
-// LinkCarModelsToActor
+extern void C2_HOOK_FASTCALL LinkCarModelsToActor(br_actor* pActor, br_model** pModels, int pCount, int pCount_detail_levels);
 
 extern br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type);
 

@@ -43,6 +43,8 @@
 
 #include "c2_string.h"
 
+#include <ctype.h>
+
 #define OPPONENT_APC_IDX 98
 
 // GLOBAL: CARMA2_HW 0x006572f0
@@ -891,11 +893,88 @@ intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData) {
     return 0;
 }
 
-// AddCarModelToList
+void C2_HOOK_FASTCALL AddCarModelToList(br_model** pModels, br_model* pModel, int pCount, int pIndex) {
+    int i;
 
-// LinkCarModel
+    if (pIndex < 0) {
+        for (pIndex = 0; pIndex < pCount; pIndex++) {
+            if (pModels[pIndex] == NULL || pModels[pIndex]->nvertices < pModel->nvertices) {
+                break;
+            }
+        }
+        if (pIndex == pCount) {
+            return;
+        }
+    } else if (pIndex >= pCount) {
+        return;
+    }
+    if (pModels[pIndex] != NULL) {
+        // Fill the later slots with the displaced model.
+        for (i = pIndex; i < pCount - 1; i++) {
+            pModels[i + 1] = pModels[i];
+        }
+    }
+    pModels[pIndex] = pModel;
+}
 
-// LinkCarModelsToActor
+// FUNCTION: CARMA2_HW 0x0048bfa0
+intptr_t C2_HOOK_CDECL LinkCarModel(br_actor* pActor, void* pData) {
+    tCrush_model_pool* pool;
+    tUser_crush_data* user_crush_data;
+    br_model* model;
+    int len_actor_identifier;
+    int len_model_identifier;
+    int i;
+    int crush_idx;
+    const char* dot;
+
+    if (pActor == NULL || pActor->identifier == NULL) {
+        return 0;
+    }
+    user_crush_data = pActor->user;
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    pool = pData;
+    dot = strrchr(pActor->identifier, '.');
+    if (dot == NULL) {
+        len_actor_identifier = strlen(pActor->identifier);
+    } else {
+        len_actor_identifier = dot - pActor->identifier;
+    }
+    for (i = 0; i < pool->model_count; i++) {
+        model = pool->models[i];
+        if (model == NULL || model->identifier == NULL) {
+            continue;
+        }
+        dot = strrchr(model->identifier, '.');
+        if (dot == NULL) {
+            len_model_identifier = strlen(model->identifier);
+        } else {
+            len_model_identifier = dot - model->identifier;
+        }
+        if (len_actor_identifier != len_model_identifier
+            || strncmp(model->identifier, pActor->identifier, len_actor_identifier) != 0) {
+            continue;
+        }
+        if (dot != NULL && isdigit((unsigned char)dot[1])) {
+            crush_idx = dot[1] - '0';
+        } else {
+            crush_idx = -1;
+        }
+        AddCarModelToList(user_crush_data->models, model, pool->count_detail_levels, crush_idx);
+    }
+    return 0;
+}
+
+void C2_HOOK_FASTCALL LinkCarModelsToActor(br_actor* pActor, br_model** pModels, int pCount, int pCount_detail_levels) {
+    tCrush_model_pool pool;
+
+    pool.models = pModels;
+    pool.model_count = pCount;
+    pool.count_detail_levels = pCount_detail_levels;
+    DRActorEnumRecurse(pActor, LinkCarModel, &pool);
+}
 
 // FUNCTION: CARMA2_HW 0x00488dd0
 br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type) {
