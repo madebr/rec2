@@ -1010,7 +1010,11 @@ tS16 C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec
     return 255;
 }
 
-// InitOpponentPsyche
+// FUNCTION: CARMA2_HW 0x004aee90
+void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
+
+    gOpponents[pOpponent_index].psyche.grudge_against_player = 0;
+}
 
 // ClearTwattageOccurrenceVariables
 

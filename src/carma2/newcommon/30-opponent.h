@@ -188,7 +188,7 @@ extern tS16 C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOppone
 
 extern tS16 C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
 
-// InitOpponentPsyche
+extern void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index);
 
 // ClearTwattageOccurrenceVariables
 
