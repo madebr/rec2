@@ -9,6 +9,7 @@ extern br_material* gSimple_materials[32];
 
 extern tHeadup_info gHeadup_image_info[45];
 extern br_pixelmap* gHeadup_images[45];
+extern const char* gDamage_names[12];
 extern char* gRaces_file_names[9];
 extern const char* gNet_avail_names[4];
 extern int gCurrent_race_file_index;
@@ -58,7 +59,7 @@ extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 extern void C2_HOOK_FASTCALL AddRefOffset(int* pRef_holder);
 
-// GetDamageProgram
+extern void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_location pImpact_location);
 
 // AllocateCarActorData
 
