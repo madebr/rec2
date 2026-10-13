@@ -298,11 +298,11 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // ResetPedSystem
 
-// ResetNapalmBolts
+extern void C2_HOOK_FASTCALL ResetNapalmBolts(void);
 
 extern void C2_HOOK_FASTCALL ARResetNapalmBolts(void);
 
-// AdjustNapalmBolt
+extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3* pPositions);
 
 // InitPedsForRace
 

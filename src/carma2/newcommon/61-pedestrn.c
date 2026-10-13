@@ -343,10 +343,7 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // ResetPedSystem
 
-// ResetNapalmBolts
-
-// FUNCTION: CARMA2_HW 0x004d5b10
-void C2_HOOK_FASTCALL ARResetNapalmBolts(void) {
+void C2_HOOK_FASTCALL ResetNapalmBolts(void) {
     int i;
     int j;
 
@@ -358,7 +355,26 @@ void C2_HOOK_FASTCALL ARResetNapalmBolts(void) {
     }
 }
 
-// AdjustNapalmBolt
+// FUNCTION: CARMA2_HW 0x004d5b10
+void C2_HOOK_FASTCALL ARResetNapalmBolts(void) {
+    ResetNapalmBolts();
+}
+
+// FUNCTION: CARMA2_HW 0x004d5b40
+void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3* pPositions) {
+    int i;
+
+    gNapalm_bolts[pIndex].ped = pPed;
+    for (i = 0; i < (int)REC2_ASIZE(gNapalm_bolts[pIndex].actors); i++) {
+        if (pPositions[i].v[0] == 0.f && pPositions[i].v[1] == 0.f && pPositions[i].v[2] == 0.f) {
+            break;
+        }
+        gNapalm_bolts[pIndex].actors[i]->t.t.translate.t.v[0] = pPositions[i].v[0];
+        gNapalm_bolts[pIndex].actors[i]->t.t.translate.t.v[1] = pPositions[i].v[1];
+        gNapalm_bolts[pIndex].actors[i]->t.t.translate.t.v[2] = pPositions[i].v[2];
+        gNapalm_bolts[pIndex].actors[i]->render_style = BR_RSTYLE_FACES;
+    }
+}
 
 // InitPedsForRace
 
