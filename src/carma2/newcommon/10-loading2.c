@@ -41,6 +41,8 @@
 
 #include "c2_string.h"
 
+#define OPPONENT_APC_IDX 98
+
 // GLOBAL: CARMA2_HW 0x006572f0
 tU32 gSimple_material_colours[12] = {
     0x005d0303, 0x02a56e04, 0x03a9a905, 0x08006868,
@@ -590,7 +592,11 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
 // LoadGear
 
-// AddRefOffset
+void C2_HOOK_FASTCALL AddRefOffset(int* pRef_holder) {
+    if (*pRef_holder >= 0) {
+        *pRef_holder += gGroove_funk_offset;
+    }
+}
 
 // GetDamageProgram
 
@@ -666,7 +672,19 @@ void C2_HOOK_FASTCALL ReadShrapnelMaterials(FILE* pF, tCar_spec* pCar_spec) {
     }
 }
 
-// SetModelFlags
+void C2_HOOK_FASTCALL SetModelFlags(br_model* pModel, int pOwner) {
+    if (pModel != NULL && pModel->nfaces != 0) {
+        if (pOwner == OPPONENT_APC_IDX || gAusterity_mode) {
+            if (!(pModel->flags & BR_MODF_UPDATEABLE)) {
+                return;
+            }
+            pModel->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
+        } else {
+            pModel->flags |= BR_MODF_DONT_WELD | BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE;
+        }
+        BrModelUpdate(pModel, BR_MODU_ALL);
+    }
+}
 
 // FindCarShellModel
 

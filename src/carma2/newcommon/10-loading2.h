@@ -56,7 +56,7 @@ extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 // LoadGear
 
-// AddRefOffset
+extern void C2_HOOK_FASTCALL AddRefOffset(int* pRef_holder);
 
 // GetDamageProgram
 
@@ -74,7 +74,7 @@ extern br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererSha
 
 extern void C2_HOOK_FASTCALL ReadShrapnelMaterials(FILE* pF, tCar_spec* pCar_spec);
 
-// SetModelFlags
+extern void C2_HOOK_FASTCALL SetModelFlags(br_model* pModel, int pOwner);
 
 // FindCarShellModel
 
