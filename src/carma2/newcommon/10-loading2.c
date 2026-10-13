@@ -770,7 +770,31 @@ void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 
 // ReadNonCarMechanicsData
 
-// ReadPartHeader
+void C2_HOOK_FASTCALL ReadPartHeader(tPhysics_object* pPart, FILE* pF) {
+    tCar_spec* car_spec;
+    br_vector3 cmpos;
+    float ixp;
+    float iyp;
+    float izp;
+    char s[256];
+
+    car_spec = pPart->owner;
+    GetAString(pF, s);
+    GetAString(pF, s);
+    GetAString(pF, s);
+    pPart->actor = car_spec->car_master_actor;
+    GetAString(pF, s);
+    GetThreeFloats(pF, &cmpos.v[0], &cmpos.v[1], &cmpos.v[2]);
+    pPart->cmpos.v[0] = cmpos.v[0];
+    pPart->cmpos.v[1] = cmpos.v[1];
+    pPart->cmpos.v[2] = cmpos.v[2];
+    pPart->M = GetAScalar(pF);
+    GetThreeFloats(pF, &ixp, &iyp, &izp);
+    pPart->I.v[2] = (ixp * ixp + iyp * iyp) * pPart->M / 12.0f;
+    pPart->I.v[1] = (ixp * ixp + izp * izp) * pPart->M / 12.0f;
+    pPart->I.v[0] = (iyp * iyp + izp * izp) * pPart->M / 12.0f;
+    car_spec->downforce_to_weight = GetAScalar(pF);
+}
 
 // ReadMechanicsShapes
 
