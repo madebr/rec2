@@ -75,6 +75,9 @@ char gDefault_car[32];
 // GLOBAL: CARMA2_HW 0x00764ec0
 char gBasic_car_name[32];
 
+// GLOBAL: CARMA2_HW 0x0074b4a8
+int gGroove_funk_offset;
+
 // GLOBAL: CARMA2_HW 0x007638c0
 int gNet_score_targets[8];
 
@@ -549,7 +552,12 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
 // LoadOpponents
 
-// AboutToLoadFirstCar
+// FUNCTION: CARMA2_HW 0x0048cd80
+void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
+
+    InitFunkGrooveFlags();
+    gGroove_funk_offset = 0;
+}
 
 // LoadOpponentsCars
 
@@ -772,7 +780,15 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
     return 1;
 }
 
-// InitFunkGrooveFlags
+// FUNCTION: CARMA2_HW 0x0048e9e0
+void C2_HOOK_FASTCALL InitFunkGrooveFlags(void) {
+    int i;
+
+    /* Leave flag zero unchanged. */
+    for (i = 1; i < (int)REC2_ASIZE(gFunk_groove_flags); i++) {
+        gFunk_groove_flags[i] = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0048ea00
 void C2_HOOK_FASTCALL SetDefaultTextFileName(void) {

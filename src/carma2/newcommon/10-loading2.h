@@ -94,7 +94,7 @@ extern void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount,
 
 // LoadOpponents
 
-// AboutToLoadFirstCar
+extern void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
 
 // LoadOpponentsCars
 
@@ -110,11 +110,12 @@ extern int C2_HOOK_FASTCALL SaveOptions(void);
 
 extern int C2_HOOK_FASTCALL RestoreOptions(void);
 
-// InitFunkGrooveFlags
+extern void C2_HOOK_FASTCALL InitFunkGrooveFlags(void);
 
 extern void C2_HOOK_FASTCALL SetDefaultTextFileName(void);
 
 
+extern int gGroove_funk_offset;
 extern const char* gPedTextTxtPath;
 
 void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void);
