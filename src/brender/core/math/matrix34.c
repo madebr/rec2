@@ -1796,31 +1796,12 @@ void C2_HOOK_CDECL BrMatrix34PreTranslate(br_matrix34* mat, br_scalar x, br_scal
     BrMatrix34Copy(mat, &mattmp1);
 }
 
-/* Complete existing BrMatrix34PostTranslate533e60/45B. Original FADD32
- * chooses opposite-sign paired NaNs differently from modern SSE arithmetic. */
-static br_scalar C2_HOOK_CDECL MatrixPostTranslateAdd(br_scalar value, const br_scalar* existing) {
-    br_scalar result;
-#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
-    __asm {
-        mov eax, existing
-        fld value
-        fadd dword ptr [eax]
-        fstp result
-    }
-#elif defined(__GNUC__) && defined(__i386__)
-    __asm__ __volatile__("flds %1; fadds %2; fstps %0"
-        : "=m"(result) : "m"(value), "m"(*existing) : "st");
-#else
-    result = value + *existing;
-#endif
-    return result;
-}
-
 // FUNCTION: CARMA2_HW 0x00533e60
 void C2_HOOK_CDECL BrMatrix34PostTranslate(br_matrix34* mat, br_scalar x, br_scalar y, br_scalar z) {
-    br_scalar dx = MatrixPostTranslateAdd(x, &M(3, 0));
-    br_scalar dy = MatrixPostTranslateAdd(y, &M(3, 1));
-    br_scalar dz = MatrixPostTranslateAdd(z, &M(3, 2));
+    br_scalar dx = x + M(3, 0);
+    br_scalar dy = y + M(3, 1);
+    br_scalar dz = z + M(3, 2);
+
     M(3, 0) = dx;
     M(3, 1) = dy;
     M(3, 2) = dz;
