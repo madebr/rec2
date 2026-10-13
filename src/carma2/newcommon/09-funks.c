@@ -2,6 +2,8 @@
 
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "16-graphics1.h"
+#include "17-world2.h"
 #include "23-piping.h"
 #include "36-trig.h"
 #include "38-flicplay.h"
@@ -98,6 +100,9 @@ tGroove_funk_binding gGroove_funk_bindings[1440];
 
 // GLOBAL: CARMA2_HW 0x0068b830
 tFunk_temp_buffer* gFunk_temp_vertices;
+
+// GLOBAL: CARMA2_HW 0x0068b838
+tU32 gPrevious_groove_times[2];
 
 // GLOBAL: CARMA2_HW 0x0068b840
 br_scalar gSight_distance_squared;
@@ -1424,11 +1429,103 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
     }
 }
 
-// GrooveThisDelic
+// FUNCTION: CARMA2_HW 0x00478c80
+void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it) {
+    br_actor* the_actor;
+    br_vector3 actor_pos;
+    br_matrix34* the_mat;
+    tInterrupt_status old_path_interrupt;
+    tInterrupt_status old_object_interrupt;
 
-// GrooveThoseDelics
+    old_path_interrupt = pGroove->path_interrupt_status;
+    old_object_interrupt = pGroove->object_interrupt_status;
+    the_actor = pGroove->actor;
+    pGroove->done_this_frame = 1;
+    CalcActorGlobalPos(&actor_pos, the_actor);
+    if (PointOutOfSight(&actor_pos, 0, pGroove->mode == eGroove_mode_distance ? gYon_squared : 36.f)) {
+        return;
+    }
 
-// StopGroovidelic
+    the_mat = &the_actor->t.t.mat;
+    if ((!gAction_replay_mode
+        || !ARReplayIsReallyPaused()
+        || pGroove->path_mode == eMove_controlled
+        || pGroove->path_mode == eMove_absolute) && !(pGroove->block_flags & 0x1)) {
+        PathGrooveBastard(pGroove, pTime, the_mat, pInterrupt_it);
+    }
+    if (((pGroove->object_type != eGroove_object_none || pGroove->lollipop_mode != eLollipop_none)
+            && (!gAction_replay_mode
+                    || !ARReplayIsReallyPaused()
+                    || pGroove->object_mode == eMove_controlled
+                    || pGroove->object_mode == eMove_absolute)) && !(pGroove->block_flags & 0x2)) {
+        the_mat->m[0][0] = 1.0f;
+        the_mat->m[0][1] = 0.0f;
+        the_mat->m[0][2] = 0.0f;
+        the_mat->m[1][0] = 0.0f;
+        the_mat->m[1][1] = 1.0f;
+        the_mat->m[1][2] = 0.0f;
+        the_mat->m[2][0] = 0.0f;
+        the_mat->m[2][1] = 0.0f;
+        the_mat->m[2][2] = 1.0f;
+        the_mat->m[3][0] = -pGroove->object_centre.v[0];
+        the_mat->m[3][1] = -pGroove->object_centre.v[1];
+        the_mat->m[3][2] = -pGroove->object_centre.v[2];
+        ObjectGrooveBastard(pGroove, pTime, the_mat, pInterrupt_it);
+        the_mat->m[3][0] = pGroove->object_position.v[0] + the_mat->m[3][0] + pGroove->object_centre.v[0];
+        the_mat->m[3][1] = pGroove->object_position.v[1] + the_mat->m[3][1] + pGroove->object_centre.v[1];
+        the_mat->m[3][2] = pGroove->object_position.v[2] + the_mat->m[3][2] + pGroove->object_centre.v[2];
+        if (pGroove->lollipop_mode != eLollipop_none) {
+            LollipopizeActor(pGroove->actor, &gCamera_to_world, pGroove->lollipop_mode);
+        }
+    }
+    if (pGroove->path_interrupt_status != old_path_interrupt || pGroove->object_interrupt_status != old_object_interrupt) {
+        PipeSingleGrooveStop(
+            pGroove - gGroovidelics_array,
+            the_mat,
+            pGroove->path_interrupt_status,
+            pGroove->object_interrupt_status,
+            pGroove->path_resumption_value,
+            pGroove->object_resumption_value);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00478c00
+void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
+    tGroovidelic_spec* the_groove;
+    tU32 time;
+    int i;
+
+    if (gGroovidelics_array != NULL) {
+        time = GetTotalTime();
+        gPrevious_groove_times[1] = gPrevious_groove_times[0];
+        the_groove = gGroovidelics_array;
+        gPrevious_groove_times[0] = time;
+        for (i = 0; i < gGroovidelics_array_size; i++, the_groove++) {
+            if (the_groove->owner != -999 && !the_groove->done_this_frame) {
+                GrooveThisDelic(the_groove, time, 0);
+            }
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0047b0e0
+void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor) {
+    tGroovidelic_spec* the_groove;
+    int count;
+    int i;
+
+    the_groove = gGroovidelics_array;
+    count = gGroovidelics_array_size;
+    for (i = 0; i < count; i++, the_groove++) {
+        if (the_groove->actor == pActor) {
+            if (the_groove->path_interrupt_status == eInterrupt_none
+                && the_groove->object_interrupt_status == eInterrupt_none) {
+                GrooveThisDelic(the_groove, gPrevious_groove_times[1], 1);
+            }
+            return;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047b130
 void C2_HOOK_FASTCALL DisableGroovidelic(br_actor* pActor, tU32 pBlock_flags) {

@@ -18,6 +18,7 @@ extern const char* gCamera_animation_names[2];
 
 extern tGroove_funk_binding gGroove_funk_bindings[1440];
 extern tFunk_temp_buffer* gFunk_temp_vertices;
+extern tU32 gPrevious_groove_times[2];
 
 extern int gFunkotronics_array_size;
 extern int gGroovidelics_array_size;
@@ -71,11 +72,11 @@ extern void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 
 
 extern void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it);
 
-// GrooveThisDelic
+extern void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it);
 
-// GrooveThoseDelics
+extern void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 
-// StopGroovidelic
+extern void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL DisableGroovidelic(br_actor* pActor, tU32 pBlock_flags);
 

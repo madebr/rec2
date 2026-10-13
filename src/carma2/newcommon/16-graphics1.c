@@ -93,6 +93,9 @@ int gHud_actor_storage_size;
 // GLOBAL: CARMA2_HW 0x00704e60
 br_actor* gHud_actor_storage[128];
 
+// GLOBAL: CARMA2_HW 0x00762100
+br_scalar gYon_squared;
+
 // MungeClipPlane
 
 // TryThisEdge

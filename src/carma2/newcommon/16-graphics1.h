@@ -12,6 +12,7 @@ extern int gScreen_wobble_y;
 extern int gNumber_of_lollipops;
 extern int gHud_actor_storage_size;
 extern br_actor* gHud_actor_storage[128];
+extern br_scalar gYon_squared;
 extern tU8 gTemporary_physics_render_buffer[300000];
 
 extern tClip_details gShadow_clip_planes[8];
