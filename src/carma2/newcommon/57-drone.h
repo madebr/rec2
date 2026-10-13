@@ -3,6 +3,8 @@
 
 #include "c2_hooks.h"
 
+extern int gTraffic_disabled;
+
 // DoNotDprintf
 
 // CrappyLittleVector3DPrintf
@@ -129,7 +131,7 @@
 
 extern void C2_HOOK_FASTCALL SetTrafficOn(int pTraffic_on);
 
-// OtherPerambulatoryInstasificationIsEnablificated
+int C2_HOOK_FASTCALL GetDronesOn(void);
 
 // LoadPanGameDroneInfo
 

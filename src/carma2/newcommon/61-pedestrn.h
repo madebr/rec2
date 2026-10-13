@@ -8,6 +8,11 @@ extern tPedestrian* gPedestrian_array;
 extern int gPed_count;
 extern float gPed_gravity_multiplier;
 
+extern int gAnimalsOn;
+extern int gFlameThrowerOn;
+extern int gExplosives_on;
+extern int gGoreLevel;
+
 extern float gPedestrian_speed_factor;
 extern int gExploding_pedestrians;
 extern int gPed_dismemberfest;
@@ -359,13 +364,13 @@ extern void C2_HOOK_FASTCALL SetAlienPedFolderNames(void);
 
 // AddChangedPoint
 
-// GetHowMuchBloodAndSnotToSmearAbout
+int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void);
 
-// AreWeGoingToOutrageAnimalLoversAroundTheGlobe
+int C2_HOOK_FASTCALL GetAnimalsOn(void);
 
-// IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense
+int C2_HOOK_FASTCALL IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense(void);
 
-// IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
+int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void);
 
 extern void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn);
 

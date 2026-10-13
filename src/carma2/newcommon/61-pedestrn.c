@@ -20,7 +20,7 @@ int gPed_count;
 float gPed_gravity_multiplier;
 
 // GLOBAL: CARMA2_HW 0x0065d7d4
-int gGoreLevel = 1;
+int gGoreLevel = 2;
 
 // GLOBAL: CARMA2_HW 0x0065d7c8
 int gAnimalsOn = 1;
@@ -460,13 +460,26 @@ void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
 
 // AddChangedPoint
 
-// GetHowMuchBloodAndSnotToSmearAbout
+// FUNCTION: CARMA2_HW 0x004d6fc0
+int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void) {
+    tU32 level = (tU32)*(volatile int*)&gGoreLevel;
+    return (tS32)(2u - level);
+}
 
-// AreWeGoingToOutrageAnimalLoversAroundTheGlobe
+// FUNCTION: CARMA2_HW 0x004d6fd0
+int C2_HOOK_FASTCALL GetAnimalsOn(void) {
+    return *(volatile int*)&gAnimalsOn;
+}
 
-// IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense
+// FUNCTION: CARMA2_HW 0x004d6fe0
+int C2_HOOK_FASTCALL IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense(void) {
+    return *(volatile int*)&gFlameThrowerOn;
+}
 
-// IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
+// FUNCTION: CARMA2_HW 0x004d6ff0
+int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void) {
+    return *(volatile int*)&gExplosives_on;
+}
 
 // FUNCTION: CARMA2_HW 0x004d7000
 void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {

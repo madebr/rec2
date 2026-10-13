@@ -11,6 +11,18 @@
 #include "c2_stdio.h"
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x005964c8
+int gPending_flic = -1;
+
+// GLOBAL: CARMA2_HW 0x0068620c
+int gPending_pending_flic;
+
+// GLOBAL: CARMA2_HW 0x00686314
+int gPanel_flic_disable;
+
+// GLOBAL: CARMA2_HW 0x00686318
+int gPlay_from_disk;
+
 // GLOBAL: CARMA2_HW 0x0068b8b4
 float gFlic_sound_delay_pre_smack;
 
@@ -399,11 +411,25 @@ int C2_HOOK_FASTCALL TranslationMode(void) {
 
 // TurnFlicTransparencyOff
 
-// PlayFlicsFromDisk
+// FUNCTION: CARMA2_HW 0x00461a00
+void C2_HOOK_FASTCALL PlayFlicsFromDisk(void) {
+    *(volatile int*)&gPlay_from_disk = 1;
+}
 
-// TurnOffPanelFlics
+// FUNCTION: CARMA2_HW 0x00461a10
+void C2_HOOK_FASTCALL PlayFlicsFromMemory(void) {
+    *(volatile int*)&gPlay_from_disk = 0;
+}
 
-// TurnOnPanelFlics
+// FUNCTION: CARMA2_HW 0x00461a20
+void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
+    *(volatile int*)&gPanel_flic_disable = 1;
+}
+
+// FUNCTION: CARMA2_HW 0x00461a30
+void C2_HOOK_FASTCALL TurnOnPanelFlics(void) {
+    *(volatile int*)&gPanel_flic_disable = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00461a60
 void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
@@ -553,5 +579,16 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 
 }
 
-// SuspendPendingFlic
+// FUNCTION: CARMA2_HW 0x00463700
+void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
+    int pending = *(volatile int*)&gPending_flic;
+    *(volatile int*)&gPending_flic = -1;
+    *(volatile int*)&gPending_pending_flic = pending;
+}
+
+// FUNCTION: CARMA2_HW 0x00463720
+void C2_HOOK_FASTCALL ResumePendingFlic(void) {
+    int pending = *(volatile int*)&gPending_pending_flic;
+    *(volatile int*)&gPending_flic = pending;
+}
 
