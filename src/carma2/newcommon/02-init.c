@@ -19,6 +19,7 @@
 #include "29-raycast.h"
 #include "32-spark.h"
 #include "33-depth.h"
+#include "36-trig.h"
 #include "37-brucetrk.h"
 #include "38-flicplay.h"
 #include "39-oil.h"
@@ -86,7 +87,43 @@ tSlot_info gMax_APO[3];
 
 // AllocateCamera (see 02b-init.c)
 
-// ReinitialiseForwardCamera
+// FUNCTION: CARMA2_HW 0x0047d8d0
+void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void) {
+    br_camera* camera_ptr;
+    float the_angle;
+    float d;
+    float w;
+    int height;
+
+    camera_ptr = gCamera->type_data;
+    if (gProgram_state.cockpit_on) {
+        the_angle = gCamera_angle / 2.0f;
+        d = tandeg(the_angle);
+        d = (float)(atan((double)d * gRender_screen->height / (gProgram_state.current_car.render_bottom[0] - gProgram_state.current_car.render_top[0])) * (2.0 * 180.0 / REC2_PI));
+        camera_ptr->field_of_view = BrDegreeToAngle(d);
+        BrMatrix34Identity(&gCamera->t.t.mat);
+        gCamera->t.t.mat.m[3][0] = gProgram_state.current_car.driver_x_offset;
+        gCamera->t.t.mat.m[3][1] = gProgram_state.current_car.driver_y_offset;
+        gCamera->t.t.mat.m[3][2] = gProgram_state.current_car.driver_z_offset;
+        height = gRender_screen->height;
+        w = (float)(gRender_screen->base_y + height / 2 - (gProgram_state.current_car.render_bottom[0] + gProgram_state.current_car.render_top[0]) / 2);
+        the_angle = tandeg(d / 2.0f);
+        gCamera->t.t.mat.m[2][1] = the_angle * w * 2.0f / (float)height;
+        camera_ptr->aspect = (float)gWidth / (float)gHeight;
+        camera_ptr->yon_z = gYon_multiplier * gCamera_yon;
+        if (gProgram_state.which_view == eView_left) {
+            DRMatrix34PostRotateY(&gCamera->t.t.mat, BrDegreeToAngle(gProgram_state.current_car.head_left_angle));
+        } else if (gProgram_state.which_view == eView_right) {
+            DRMatrix34PostRotateY(&gCamera->t.t.mat, BrDegreeToAngle(gProgram_state.current_car.head_right_angle));
+        }
+        gCamera->t.t.mat.m[3][0] = gProgram_state.current_car.driver_x_offset;
+        gCamera->t.t.mat.m[3][1] = gProgram_state.current_car.driver_y_offset;
+        gCamera->t.t.mat.m[3][2] = gProgram_state.current_car.driver_z_offset;
+        SetSightDistance(camera_ptr->yon_z);
+        MungeForwardSky();
+    }
+    AssertYons();
+}
 
 // AllocateRearviewPixelmap
 
