@@ -8,6 +8,7 @@ extern tHeadup_info gHeadup_image_info[45];
 extern br_pixelmap* gHeadup_images[45];
 extern char* gRaces_file_names[9];
 extern int gCurrent_race_file_index;
+extern int gCountRaceGroups;
 
 extern void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
 

@@ -33,6 +33,7 @@
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "71-newgame.h"
+#include "72-interface.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
@@ -106,6 +107,9 @@ char* gRaces_file_names[9] = {
 
 // GLOBAL: CARMA2_HW 0x0068c6f4
 int gCurrent_race_file_index;
+
+// GLOBAL: CARMA2_HW 0x007634ec
+int gCountRaceGroups;
 
 // GLOBAL: CARMA2_HW 0x0068c6ec
 FILE* gTempFile;
@@ -634,9 +638,186 @@ FILE* C2_HOOK_FASTCALL OpenRaceFile(void) {
     return f;
 }
 
-// STUB: CARMA2_HW 0x0048c1c0
+// FUNCTION: CARMA2_HW 0x0048c1c0
 void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index) {
-    NOT_IMPLEMENTED();
+    FILE* f;
+    br_scalar opponent_count_first_race;
+    br_scalar opponent_count_last_race;
+    br_scalar opponent_softness_first_race;
+    br_scalar opponent_hardness_first_race;
+    br_scalar opponent_softness_last_race;
+    br_scalar opponent_hardness_last_race;
+    br_scalar opponent_nastiness_first_race;
+    br_scalar opponent_nastiness_last_race;
+    tTWTVFS twt;
+    int powerup_exclusions[50];
+    tRace_group_spec* current_group;
+    br_scalar factor;
+    br_scalar softness;
+    br_scalar hardness;
+    int hardness_oppo;
+    int count_opponents;
+    int i;
+    int j;
+    char s[256];
+    char* str;
+
+    C2_HOOK_BUG_ON(sizeof(tRace_list_spec) != 0x244);
+    C2_HOOK_BUG_ON(sizeof(tRace_group_spec) != 12);
+
+    twt = -1;
+    if (!gApplicationDataTwtMounted) {
+        twt = OpenPackFileAndSetTiffLoading(gApplication_path);
+    }
+    gCurrent_race_file_index = pRace_type_index + 1;
+    f = OpenRaceFile();
+
+    GetAnInt(f);
+    gDev_initial_race = 0;
+    opponent_count_first_race = GetAScalar(f);
+    opponent_count_last_race = GetAScalar(f);
+    GetPairOfFloats(f, &opponent_softness_first_race, &opponent_hardness_first_race);
+    GetPairOfFloats(f, &opponent_softness_last_race, &opponent_hardness_last_race);
+    opponent_nastiness_first_race = GetAScalar(f);
+    opponent_nastiness_last_race = GetAScalar(f);
+
+    gCountRaceGroups = 0;
+    i = 0;
+    for (;;) {
+        GetALineAndDontArgue(f, pRace_list[i].name);
+        if (strcmp(pRace_list[i].name, "END") == 0) {
+            break;
+        }
+        GetAString(f, pRace_list[i].file_name);
+        GetAString(f, pRace_list[i].interface_name);
+        pRace_list[i].count_opponents = GetAnInt(f);
+        pRace_list[i].count_explicit_opponents = GetAnInt(f);
+        for (j = 0; j < pRace_list[i].count_explicit_opponents; j++) {
+            pRace_list[i].explicit_opponents[j] = GetAnInt(f);
+        }
+        pRace_list[i].opponent_nastiness_level = GetAScalar(f);
+
+        GetALineAndDontArgue(f, s);
+        str = strtok(s, "\t ,/");
+        for (j = 0; str != NULL; j++) {
+            sscanf(str, "%d", &powerup_exclusions[j]);
+            if (powerup_exclusions[j] < 0) {
+                break;
+            }
+            str = strtok(NULL, "\t ,/");
+        }
+        pRace_list[i].count_powerup_exclusions = j;
+        if (pRace_list[i].count_powerup_exclusions != 0) {
+            pRace_list[i].powerup_exclusions = BrMemAllocate(pRace_list[i].count_powerup_exclusions * sizeof(int), kMem_misc);
+            memcpy(pRace_list[i].powerup_exclusions, powerup_exclusions, pRace_list[i].count_powerup_exclusions * sizeof(int));
+        }
+
+        pRace_list[i].no_time_awards = GetAnInt(f);
+        pRace_list[i].is_boundary = GetAnInt(f);
+        if (pRace_list[i].is_boundary) {
+            gCountRaceGroups++;
+        }
+        pRace_list[i].race_type = GetAnInt(f);
+        GetThreeInts(f, &pRace_list[i].initial_timer[0], &pRace_list[i].initial_timer[1], &pRace_list[i].initial_timer[2]);
+        switch (pRace_list[i].race_type) {
+        case kRaceType_Carma1:
+        case kRaceType_Checkpoints:
+            pRace_list[i].count_laps = GetAnInt(f);
+            break;
+        case kRaceType_Cars:
+            pRace_list[i].options.cars.count_opponents = GetAnInt(f);
+            for (j = 0; j < pRace_list[i].options.cars.count_opponents; j++) {
+                pRace_list[i].options.cars.opponents[j] = GetAnInt(f);
+            }
+            break;
+        case kRaceType_Peds:
+            pRace_list[i].options.peds.count_ped_groups = GetAnInt(f);
+            for (j = 0; j < pRace_list[i].options.peds.count_ped_groups; j++) {
+                pRace_list[i].options.peds.ped_groups[j] = GetAnInt(f);
+            }
+            break;
+        case kRaceType_Smash:
+            pRace_list[i].options.smash.var_smash_number = GetAnInt(f);
+            pRace_list[i].options.smash.var_smash_target = GetAnInt(f);
+            break;
+        case kRaceType_SmashNPed:
+            pRace_list[i].options.smash_and_peds.var_smash_number = GetAnInt(f);
+            pRace_list[i].options.smash_and_peds.var_smash_target = GetAnInt(f);
+            pRace_list[i].options.smash_and_peds.ped_group_index = GetAnInt(f);
+            break;
+        }
+        GetThreeInts(f, &pRace_list[i].completion_bonus[0], &pRace_list[i].completion_bonus[1], &pRace_list[i].completion_bonus[2]);
+        if (pRace_list[i].race_type == kRaceType_Carma1) {
+            GetThreeInts(f, &pRace_list[i].completion_bonus_peds[0], &pRace_list[i].completion_bonus_peds[1], &pRace_list[i].completion_bonus_peds[2]);
+            GetThreeInts(f, &pRace_list[i].completion_bonus_opponents[0], &pRace_list[i].completion_bonus_opponents[1], &pRace_list[i].completion_bonus_opponents[2]);
+        }
+        GetALineAndDontArgue(f, pRace_list[i].description);
+        if (DRStricmp(pRace_list[i].description, "none") == 0) {
+            pRace_list[i].description[0] = '\0';
+        }
+        pRace_list[i].expansion = GetAnInt(f) & 1;
+
+        if (pRace_type_index < 0 || pRace_list[i].race_type == kRaceType_Carma1) {
+            i++;
+        }
+    }
+    *pCount = i;
+    PFfclose(f);
+    if (gRace_groups != NULL) {
+        BrMemFree(gRace_groups);
+    }
+    gRace_groups = BrMemAllocate((gCountRaceGroups == 0 ? 1 : gCountRaceGroups) * sizeof(tRace_group_spec), kMem_misc);
+    gRace_groups[0].count_races = 0;
+    gRace_groups[0].races = pRace_list;
+    current_group = &gRace_groups[0];
+
+    for (i = 0; i < *pCount; i++) {
+        if (!(pRace_list[i].opponent_nastiness_level > 0.f)) {
+            pRace_list[i].opponent_nastiness_level = (br_scalar)(opponent_nastiness_first_race
+                + (br_scalar)i / ((br_scalar)*pCount - 1.0) * (opponent_nastiness_last_race - opponent_nastiness_first_race));
+        }
+        count_opponents = pRace_list[i].count_opponents;
+        if (count_opponents < 0) {
+            count_opponents = (int)(opponent_count_first_race
+                + (br_scalar)i / ((br_scalar)*pCount - 1.0) * (opponent_count_last_race - opponent_count_first_race));
+        }
+        pRace_list[i].count_opponents = 0;
+        /* Fill unspecified opponents with negative difficulty codes. */
+        if (pRace_list[i].count_explicit_opponents < count_opponents) {
+            factor = (br_scalar)((br_scalar)i / ((br_scalar)*pCount - 1.0));
+            softness = opponent_softness_first_race + factor * (opponent_softness_last_race - opponent_softness_first_race);
+            hardness = opponent_hardness_first_race + factor * (opponent_hardness_last_race - opponent_hardness_first_race) - softness;
+            for (j = pRace_list[i].count_explicit_opponents; j < count_opponents; j++) {
+                hardness_oppo = (int)(softness
+                    + (br_scalar)(j - pRace_list[i].count_explicit_opponents)
+                        / ((br_scalar)(count_opponents - pRace_list[i].count_explicit_opponents) - 1.0) * hardness);
+                if (hardness_oppo < 1) {
+                    pRace_list[i].explicit_opponents[j] = -1;
+                } else if (hardness_oppo > 5) {
+                    pRace_list[i].explicit_opponents[j] = -5;
+                } else {
+                    pRace_list[i].explicit_opponents[j] = -hardness_oppo;
+                }
+            }
+        }
+        pRace_list[i].count_explicit_opponents = count_opponents;
+        pRace_list[i].group = current_group;
+        /* A boundary race is the mission that ends the current group. */
+        if (pRace_list[i].is_boundary) {
+            current_group->mission = &pRace_list[i];
+            current_group++;
+            if (current_group - gRace_groups < gCountRaceGroups) {
+                current_group->count_races = 0;
+                current_group->races = &pRace_list[i + 1];
+            }
+        } else {
+            current_group->count_races++;
+        }
+    }
+    gCurrent_race_group = gRace_groups;
+    if (!gApplicationDataTwtMounted) {
+        ClosePackFileAndSetTiffLoading(twt);
+    }
 }
 
 // LoadRaceInfo
