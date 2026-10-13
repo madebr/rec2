@@ -10,6 +10,8 @@
 #include "globvrkm.h"
 #include "rec2_macros.h"
 
+#include <math.h>
+
 // GLOBAL: CARMA2_HW 0x00591188
 int gSky_on = 1;
 
@@ -103,7 +105,19 @@ static int C2_HOOK_FASTCALL Log2(int pNumber) {
     return 0;
 }
 
-// CalculateWrappingMultiplier
+br_scalar C2_HOOK_FASTCALL CalculateWrappingMultiplier(br_scalar pValue, br_scalar pYon) {
+    br_scalar k;
+    br_scalar trunc_k;
+    int int_k;
+
+    k = pYon * 1.3f * (br_scalar)REC2_TAU / pValue;
+    int_k = (int)k;
+    trunc_k = (br_scalar)int_k;
+    if (k - trunc_k > .5f) {
+        trunc_k += 1.f;
+    }
+    return trunc_k * (br_scalar)(1.0 / REC2_TAU) * pValue;
+}
 
 br_scalar C2_HOOK_FASTCALL DepthCueingShiftToDistance(int pDistance) {
 
@@ -265,9 +279,23 @@ void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* 
     }
 }
 
-// Tan
+br_scalar C2_HOOK_FASTCALL Tan(br_scalar pAngle) {
+    br_scalar radians;
 
-// EdgeU
+    radians = BrAngleToRadian(pAngle);
+    return (br_scalar)(sin(radians) / cos(radians));
+}
+
+br_scalar C2_HOOK_FASTCALL EdgeU(br_angle pSky, br_angle pView, br_angle pPerfect) {
+    br_scalar a;
+    br_scalar b;
+    br_scalar c;
+
+    a = (br_scalar)cos(BrAngleToRadian(pPerfect));
+    b = (br_scalar)sin(BrAngleToRadian(pView));
+    c = (br_scalar)cos(BrAngleToRadian(pView));
+    return b * a * a / (BrAngleToRadian(pSky) * (1.f + c));
+}
 
 // MungeSkyModel
 
