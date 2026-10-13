@@ -21,6 +21,7 @@
 
 #include <ctype.h>
 #include <float.h>
+#include <math.h>
 
 
 // GLOBAL: CARMA2_HW 0x006abef8
@@ -256,7 +257,13 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
     }
 }
 
-// tandeg
+// FUNCTION: CARMA2_HW 0x00513770
+float C2_HOOK_STDCALL tandeg(float pAngle) {
+    double radians;
+
+    radians = pAngle * (REC2_PI / 180.0);
+    return (float)(sin(radians) / cos(radians));
+}
 
 // FUNCTION: CARMA2_HW 0x00513790
 tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
