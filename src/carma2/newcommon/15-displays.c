@@ -7,6 +7,7 @@
 #include "70-packfile.h"
 #include "globvars.h"
 #include "globvrbm.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
@@ -23,6 +24,9 @@ tQueued_headup gQueued_headups[4];
 
 // GLOBAL: CARMA2_HW 0x0067fcd8
 br_font* gBR_fonts[4];
+
+// GLOBAL: CARMA2_HW 0x0067fcf8
+tU32 gLast_centre_headup;
 
 // GLOBAL: CARMA2_HW 0x0067fd00
 br_pixelmap* gRevs[13];
@@ -335,9 +339,81 @@ int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
     return width;
 }
 
-// NewTextHeadupSlot2
+// FUNCTION: CARMA2_HW 0x00449fd0
+int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it) {
+    int index;
+    int width;
+    tHeadup* the_headup;
+    tHeadup_slot* headup_slot;
+    tQueued_headup* queued_headup;
+    tU32 time;
 
-// NewTextHeadupSlot
+    time = PDGetTotalTime();
+    if (pQueue_it && pSlot_index == 4 && time - gLast_centre_headup < 1000) {
+        if (gQueued_headup_count == 4) {
+            KillOldestQueuedHeadup();
+        }
+        index = gQueued_headup_count;
+        queued_headup = &gQueued_headups[index];
+        queued_headup->flash_rate = pFlash_rate;
+        queued_headup->lifetime = pLifetime;
+        queued_headup->font_index = pFont_index;
+        strcpy(queued_headup->text, pText);
+        gQueued_headup_count = index + 1;
+        return -1;
+    }
+    index = FindAHeadupHoleWoofBarkSoundsABitRude(pSlot_index);
+    if (index < 0) {
+        return index;
+    }
+    if (pSlot_index == 4) {
+        gLast_centre_headup = time;
+    }
+    headup_slot = &gProgram_state.current_car.headup_slots[gProgram_state.cockpit_on][pSlot_index];
+    the_headup = &gHeadups[index];
+    the_headup->data.coloured_text_info.coloured_font = &gFonts[-pFont_index];
+    if (pSlot_index == 4) {
+        the_headup->type = eHeadup_box_text;
+    } else {
+        the_headup->type = eHeadup_coloured_text;
+    }
+    strcpy(the_headup->data.coloured_text_info.text, pText);
+    the_headup->slot_index = pSlot_index;
+    the_headup->justification = headup_slot->justification;
+    if (pSlot_index < 0) {
+        the_headup->cockpit_anchored = 0;
+    } else {
+        the_headup->cockpit_anchored = headup_slot->cockpit_anchored;
+    }
+    the_headup->field_0x3c = headup_slot->field_0x28;
+    the_headup->dimmed_background = headup_slot->dimmed_background;
+    the_headup->dim_left = headup_slot->dim_left;
+    the_headup->dim_top = headup_slot->dim_top;
+    the_headup->dim_right = headup_slot->dim_right;
+    the_headup->dim_bottom = headup_slot->dim_bottom;
+    the_headup->original_x = headup_slot->x;
+    width = MungeHeadupWidth(the_headup);
+    the_headup->right_edge = width + the_headup->x;
+    the_headup->y = headup_slot->y;
+    if (pFlash_rate) {
+        the_headup->flash_period = 1000 / pFlash_rate;
+    } else {
+        the_headup->flash_period = 0;
+    }
+    the_headup->last_flash = 0;
+    the_headup->flash_state = 0;
+    if (pLifetime) {
+        the_headup->end_time = GetTotalTime() + pLifetime;
+    } else {
+        the_headup->end_time = 0;
+    }
+    return index;
+}
+
+// FUNCTION: CARMA2_HW 0x0044a380
+int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText) {
+    return NewTextHeadupSlot2(pSlot_index, pFlash_rate, pLifetime, pFont_index, pText, 1);
+}
 
 // NewImageHeadupSlot
 

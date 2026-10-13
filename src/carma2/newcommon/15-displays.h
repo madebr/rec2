@@ -9,6 +9,7 @@ extern int gHeadup_detail_level;
 extern tHeadup gHeadups[37];
 extern int gQueued_headup_count;
 extern tQueued_headup gQueued_headups[4];
+extern tU32 gLast_centre_headup;
 extern br_font* gBR_fonts[4];
 extern br_pixelmap* gRevs[13];
 extern br_pixelmap* gArmour_colour_map;
@@ -56,9 +57,9 @@ extern int C2_HOOK_FASTCALL IsHeadupTextClever(char* pText);
 
 extern int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup);
 
-// NewTextHeadupSlot2
+extern int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it);
 
-// NewTextHeadupSlot
+extern int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText);
 
 // NewImageHeadupSlot
 
