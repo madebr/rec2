@@ -10,6 +10,7 @@
 #include "platform.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00703e24
 int gWidth;
@@ -80,6 +81,12 @@ br_model* gShadow_model;
 // GLOBAL: CARMA2_HW 0x006a2444
 br_actor* gShadow_actor;
 
+// GLOBAL: CARMA2_HW 0x006a2488
+tSaved_table gSaved_shade_tables[100];
+
+// GLOBAL: CARMA2_HW 0x006a27a8
+int gSaved_table_count;
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -126,13 +133,36 @@ void C2_HOOK_FASTCALL InitShadow(void) {
     BrActorAdd(gUniverse_actor, gShadow_actor);
 }
 
-// SaveShadeTable
+// FUNCTION: CARMA2_HW 0x004e9ae0
+void C2_HOOK_FASTCALL SaveShadeTables(void) {
+    PossibleService();
+    gSaved_table_count = 0;
+    BrTableEnum("*", SaveShadeTable, NULL);
+}
 
-// SaveShadeTables
+// FUNCTION: CARMA2_HW 0x004e9b10
+br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
+    br_pixelmap* copy;
 
-// STUB: CARMA2_HW 0x004e9b60
+    (void)pArg;
+    if (gSaved_table_count == (int)REC2_ASIZE(gSaved_shade_tables)) {
+        return 1;
+    }
+    gSaved_shade_tables[gSaved_table_count].original = pTable;
+    copy = BrMemAllocate(sizeof(br_pixelmap), kMem_misc);
+    gSaved_shade_tables[gSaved_table_count].copy = copy;
+    gSaved_table_count++;
+    memcpy(copy, pTable, sizeof(br_pixelmap));
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004e9b60
 void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < gSaved_table_count; i++) {
+        BrMemFree(gSaved_shade_tables[i].copy);
+    }
 }
 
 // ShadowMode

@@ -20,6 +20,8 @@ extern br_vector3 gShadow_light_z;
 extern br_vector3 gShadow_light_x;
 extern br_model* gShadow_model;
 extern br_actor* gShadow_actor;
+extern tSaved_table gSaved_shade_tables[100];
+extern int gSaved_table_count;
 
 // MungeClipPlane
 
@@ -37,9 +39,9 @@ extern tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void);
 
 extern void C2_HOOK_FASTCALL InitShadow(void);
 
-// SaveShadeTable
+extern void C2_HOOK_FASTCALL SaveShadeTables(void);
 
-// SaveShadeTables
+extern br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg);
 
 extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
