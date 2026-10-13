@@ -737,14 +737,13 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 
 // FUNCTION: CARMA2_HW 0x00463700
 void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
-    int pending = *(volatile int*)&gPending_flic;
-    *(volatile int*)&gPending_flic = -1;
-    *(volatile int*)&gPending_pending_flic = pending;
+    int pending = gPending_flic;
+    gPending_flic = -1;
+    gPending_pending_flic = pending;
 }
 
 // FUNCTION: CARMA2_HW 0x00463720
 void C2_HOOK_FASTCALL ResumePendingFlic(void) {
-    int pending = *(volatile int*)&gPending_pending_flic;
-    *(volatile int*)&gPending_flic = pending;
+    gPending_flic = gPending_pending_flic;
 }
 
