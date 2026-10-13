@@ -2,7 +2,11 @@
 #define GUARD_09_FUNKS_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 #include "brender/brender.h"
+
+extern int gGroovidelics_array_size;
+extern tGroovidelic_spec* gGroovidelics_array;
 
 // CalculateTextureBitsValue
 
@@ -74,6 +78,6 @@ extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
 // AdjustFunkEnable
 
-// ActorsGroove
+extern tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor);
 
 #endif // GUARD_09_FUNKS_H

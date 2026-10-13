@@ -5,6 +5,12 @@
 // GLOBAL: CARMA2_HW 0x0068b840
 br_scalar gSight_distance_squared;
 
+// GLOBAL: CARMA2_HW 0x0068b848
+int gGroovidelics_array_size;
+
+// GLOBAL: CARMA2_HW 0x0068b850
+tGroovidelic_spec* gGroovidelics_array;
+
 // CalculateTextureBitsValue
 
 // MapSawToTriangle
@@ -85,5 +91,19 @@ void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
 
 // AdjustFunkEnable
 
-// ActorsGroove
+// FUNCTION: CARMA2_HW 0x0047b360
+tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor) {
+    tGroovidelic_spec* groove;
+    int count;
+    int i;
+
+    groove = gGroovidelics_array;
+    count = gGroovidelics_array_size;
+    for (i = 0; i < count; i++, groove++) {
+        if (groove->actor == pActor) {
+            return groove;
+        }
+    }
+    return NULL;
+}
 
