@@ -636,32 +636,18 @@ void C2_HOOK_CDECL BrMatrix34Rotate(br_matrix34* mat, br_angle r, const br_vecto
 
 // FUNCTION: CARMA2_HW 0x00532a90
 void C2_HOOK_CDECL BrMatrix34Translate(br_matrix34* mat, br_scalar dx, br_scalar dy, br_scalar dz) {
-#if defined(__GNUC__)
-    typedef br_uint_32 tMatrix34_translate_word __attribute__((__may_alias__));
-#else
-    typedef br_uint_32 tMatrix34_translate_word;
-#endif
-    volatile tMatrix34_translate_word* output = (volatile tMatrix34_translate_word*)(void*)mat;
-    br_uint_32 bits_x, bits_y, bits_z;
-
-    /* Public float arguments are copied as DWORDs; FLD/FSTP would quiet sNaNs.
-     * The six zeros precede the first diagonal and translation writes, which
-     * also preserves original partial-write state on an inaccessible output. */
-    output[1] = 0;
-    output[2] = 0;
-    output[3] = 0;
-    output[5] = 0;
-    output[6] = 0;
-    output[7] = 0;
-    bits_x = *(volatile const tMatrix34_translate_word*)(const void*)&dx;
-    output[0] = 0x3f800000u;
-    output[4] = 0x3f800000u;
-    output[8] = 0x3f800000u;
-    bits_y = *(volatile const tMatrix34_translate_word*)(const void*)&dy;
-    output[9] = bits_x;
-    bits_z = *(volatile const tMatrix34_translate_word*)(const void*)&dz;
-    output[10] = bits_y;
-    output[11] = bits_z;
+    M(0, 1) = 0.f;
+    M(0, 2) = 0.f;
+    M(1, 0) = 0.f;
+    M(1, 2) = 0.f;
+    M(2, 0) = 0.f;
+    M(2, 1) = 0.f;
+    M(0, 0) = 1.f;
+    M(1, 1) = 1.f;
+    M(2, 2) = 1.f;
+    M(3, 0) = dx;
+    M(3, 1) = dy;
+    M(3, 2) = dz;
 }
 
 // FUNCTION: CARMA2_HW 0x00532ad0
