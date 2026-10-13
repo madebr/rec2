@@ -29,6 +29,9 @@ tHeadup gHeadups[37];
 // GLOBAL: CARMA2_HW 0x0067f874
 tU32 gLast_earn_time;
 
+// GLOBAL: CARMA2_HW 0x0067f878
+int gLast_credit_amount;
+
 // GLOBAL: CARMA2_HW 0x0067f888
 int gQueued_headup_count;
 
@@ -112,6 +115,9 @@ tU32 gLast_fancy_time;
 
 // GLOBAL: CARMA2_HW 0x0067fd40
 tHud_message gHud_messages[46];
+
+// GLOBAL: CARMA2_HW 0x00705be0
+int gCredit_multiplier;
 
 // GLOBAL: CARMA2_HW 0x0079eac0
 int gOld_times[10];
@@ -635,11 +641,58 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
 
 // ChangingView
 
-// EarnCredits2
+// FUNCTION: CARMA2_HW 0x0044b300
+void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text) {
+    char s[256];
+    int original_amount;
+    tU32 the_time;
+    const char* unit_text;
+    const char* lost_text;
 
-// EarnCredits
+    if (gRace_finished) {
+        return;
+    }
+    the_time = GetTotalTime();
+    if (pAmount == 0) {
+        return;
+    }
+    if (gCredit_multiplier != 0) {
+        pAmount *= gCredit_multiplier;
+    }
+    original_amount = pAmount;
+    if (gLast_credit_headup__displays >= 0 && the_time - gLast_earn_time < 2000) {
+        pAmount += gLast_credit_amount;
+    }
+    gLast_credit_amount = pAmount;
+    if (pAmount >= 2) {
+        unit_text = GetMiscString(eMiscString_credits);
+        sprintf(s, "%s%d %s", pPrefix_text, pAmount, unit_text);
+    } else if (pAmount == 1) {
+        unit_text = GetMiscString(eMiscString_credit);
+        sprintf(s, "%s1 %s", pPrefix_text, unit_text);
+    } else if (pAmount >= -1) {
+        unit_text = GetMiscString(eMiscString_credit);
+        lost_text = GetMiscString(eMiscString_lost_credits_prefix);
+        sprintf(s, "%s%s 1 %s", pPrefix_text, lost_text, unit_text);
+    } else {
+        unit_text = GetMiscString(eMiscString_credits);
+        lost_text = GetMiscString(eMiscString_lost_credits_prefix);
+        sprintf(s, "%s%s %d %s", lost_text, pPrefix_text, -pAmount, unit_text);
+    }
+    gProgram_state.credits += original_amount;
+    gLast_credit_headup__displays = NewTextHeadupSlot(4, 0, 2000, -4, s);
+    gLast_earn_time = the_time;
+}
 
-// EarnCredits100
+// FUNCTION: CARMA2_HW 0x0044b440
+void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
+    EarnCredits2(pAmount, "");
+}
+
+// FUNCTION: CARMA2_HW 0x0044b450
+void C2_HOOK_FASTCALL EarnCredits100(int pAmount) {
+    EarnCredits((pAmount + 50) / 100 * 100);
+}
 
 // SpendCredits
 

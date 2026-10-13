@@ -10,6 +10,8 @@ extern int gLast_fancy_index;
 extern int gLast_credit_headup__displays;
 extern int gLast_time_credit_headup;
 extern tU32 gLast_earn_time;
+extern int gLast_credit_amount;
+extern int gCredit_multiplier;
 extern tU32 gLast_time_earn_time;
 extern tU32 gLast_fancy_time;
 extern tU32 gLast_fancy_headup;
@@ -85,11 +87,11 @@ extern void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text
 
 // ChangingView
 
-// EarnCredits2
+extern void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text);
 
-// EarnCredits
+extern void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
-// EarnCredits100
+extern void C2_HOOK_FASTCALL EarnCredits100(int pAmount);
 
 // SpendCredits
 
