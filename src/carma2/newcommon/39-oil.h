@@ -28,9 +28,9 @@ extern void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model*
 
 // ProcessOilSpills
 
-// GetOilSpillCount
+extern int C2_HOOK_FASTCALL GetOilSpillCount(void);
 
-// GetOilSpillDetails
+extern void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize);
 
 // PointInSpill
 
@@ -40,6 +40,6 @@ extern void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model*
 
 // ReceivedOilSpill
 
-// RemoveCarsOilSlicks
+extern void C2_HOOK_FASTCALL RemoveCarsOilSlicks(tCar_spec* pCar);
 
 #endif // GUARD_39_OIL_H

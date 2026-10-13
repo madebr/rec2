@@ -122,9 +122,20 @@ void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel
 
 // ProcessOilSpills
 
-// GetOilSpillCount
+// FUNCTION: CARMA2_HW 0x004a74e0
+int C2_HOOK_FASTCALL GetOilSpillCount(void) {
+    return (int)REC2_ASIZE(gOily_spills);
+}
 
-// GetOilSpillDetails
+// FUNCTION: CARMA2_HW 0x004a74f0
+void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize) {
+    if (gOily_spills[pIndex].car_actor != NULL) {
+        *pActor = gOily_spills[pIndex].actor;
+        *pSize = gOily_spills[pIndex].full_size;
+    } else {
+        *pActor = NULL;
+    }
+}
 
 // PointInSpill
 
@@ -134,5 +145,15 @@ void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel
 
 // ReceivedOilSpill
 
-// RemoveCarsOilSlicks
+// FUNCTION: CARMA2_HW 0x004a7940
+void C2_HOOK_FASTCALL RemoveCarsOilSlicks(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gOily_spills); i++) {
+        if (gOily_spills[i].car_actor != NULL && gOily_spills[i].car == pCar) {
+            gOily_spills[i].car = NULL;
+            gOily_spills[i].car_actor = NULL;
+        }
+    }
+}
 
