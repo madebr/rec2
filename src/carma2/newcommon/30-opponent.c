@@ -795,7 +795,11 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
 
 // ResetPredominantJobbies
 
-// LoadCopCars
+// FUNCTION: CARMA2_HW 0x004a9600
+void C2_HOOK_FASTCALL LoadCopCars(void) {
+
+    gProgram_state.AI_vehicles.number_of_cops = 0;
+}
 
 // LoadInOppoPaths
 

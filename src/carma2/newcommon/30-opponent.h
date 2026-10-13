@@ -148,7 +148,7 @@ extern void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
 
 // ResetPredominantJobbies
 
-// LoadCopCars
+extern void C2_HOOK_FASTCALL LoadCopCars(void);
 
 // LoadInOppoPaths
 

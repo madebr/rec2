@@ -596,7 +596,11 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
     PFfclose(f);
 }
 
-// FillInRaceInfo
+// FUNCTION: CARMA2_HW 0x0048d0e0
+void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
+
+    strcpy(gProgram_state.track_file_name, pThe_race->race_spec->file_name);
+}
 
 // FUNCTION: CARMA2_HW 0x0048d110
 void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions) {
