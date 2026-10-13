@@ -35,9 +35,9 @@ extern br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material
 
 extern br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, void* pData);
 
-// TryThisFunkLink
+extern br_material* C2_HOOK_FASTCALL TryThisFunkLink(tCar_crush_buffer_entry* pFunk_link, const char* pStr, tFunkotronic_spec* pFunk);
 
-// FindSmashableMaterial
+extern br_material* C2_HOOK_FASTCALL FindSmashableMaterial(const char* pStr, tFunkotronic_spec* pFunk, tCar_crush_buffer* pCar_crush_datas);
 
 // AddFunkotronics
 

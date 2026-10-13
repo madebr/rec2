@@ -150,9 +150,33 @@ br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, 
     return 0;
 }
 
-// TryThisFunkLink
+br_material* C2_HOOK_FASTCALL TryThisFunkLink(tCar_crush_buffer_entry* pFunk_link, const char* pStr, tFunkotronic_spec* pFunk) {
+    int i;
 
-// FindSmashableMaterial
+    if (pFunk_link == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < pFunk_link->count_smashables; i++) {
+        if (strcmp(pFunk_link->smashables[i].material_name, pStr) == 0) {
+            pFunk_link->smashables[i].funk = pFunk - gFunkotronics_array;
+            return pFunk_link->smashables[i].funk_material;
+        }
+    }
+    return NULL;
+}
+
+br_material* C2_HOOK_FASTCALL FindSmashableMaterial(const char* pStr, tFunkotronic_spec* pFunk, tCar_crush_buffer* pCar_crush_datas) {
+    br_material* material;
+    int i;
+
+    for (i = 0; i < pCar_crush_datas->count_entries; i++) {
+        material = TryThisFunkLink(pCar_crush_datas->entries[i], pStr, pFunk);
+        if (material != NULL) {
+            return material;
+        }
+    }
+    return NULL;
+}
 
 // AddFunkotronics
 
