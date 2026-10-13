@@ -458,11 +458,30 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
     gPalette = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, gPalette_pixels, 0);
 }
 
-// AssertFlicPixelmap
+// FUNCTION: CARMA2_HW 0x00461aa0
+void C2_HOOK_FASTCALL AssertFlicPixelmap(tFlic_descriptor_ptr pFlic_info, br_pixelmap* pDest_pixelmap) {
+    if (pDest_pixelmap != NULL) {
+        pFlic_info->first_pixel = (tU8*)pDest_pixelmap->pixels
+            + (pFlic_info->x_offset + pFlic_info->y_offset * pDest_pixelmap->row_bytes);
+    }
+    pFlic_info->the_pixelmap = pDest_pixelmap;
+}
 
 // StartFlic
 
-// EndFlic
+// FUNCTION: CARMA2_HW 0x00461d60
+int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
+    if (pFlic_info->f != NULL) {
+        BrMemFree(pFlic_info->data_start);
+        pFlic_info->data_start = NULL;
+        PFfclose(pFlic_info->f);
+        pFlic_info->f = NULL;
+    }
+    if (pFlic_info->data != NULL) {
+        pFlic_info->data = NULL;
+    }
+    return 0;
+}
 
 void C2_HOOK_FASTCALL DoColourMap(tFlic_descriptor_ptr pFlic_info, tU32 chunk_length) {
     int i;

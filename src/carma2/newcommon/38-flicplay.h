@@ -43,11 +43,11 @@ void C2_HOOK_FASTCALL TurnOnPanelFlics(void);
 
 extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
-// AssertFlicPixelmap
+extern void C2_HOOK_FASTCALL AssertFlicPixelmap(tFlic_descriptor_ptr pFlic_info, br_pixelmap* pDest_pixelmap);
 
 // StartFlic
 
-// EndFlic
+extern int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
 
 extern void C2_HOOK_FASTCALL DoColourMap(tFlic_descriptor_ptr pFlic_info, tU32 chunk_length);
 
