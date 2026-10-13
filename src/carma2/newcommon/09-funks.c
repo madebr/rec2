@@ -1090,13 +1090,58 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
 
 // StopGroovidelic
 
-// DisableGroovidelic
+// FUNCTION: CARMA2_HW 0x0047b130
+void C2_HOOK_FASTCALL DisableGroovidelic(br_actor* pActor, tU32 pBlock_flags) {
+    tGroovidelic_spec* the_groove;
+    int i;
 
-// EnableGroovidelic
+    the_groove = gGroovidelics_array;
+    for (i = 0; i < gGroovidelics_array_size; i++, the_groove++) {
+        if (the_groove->actor == pActor) {
+            the_groove->block_flags |= pBlock_flags;
+            return;
+        }
+    }
+}
 
-// SetGrooveInterrupt
+// FUNCTION: CARMA2_HW 0x0047b160
+void C2_HOOK_FASTCALL EnableGroovidelic(br_actor* pActor, tU32 pBlock_flags) {
+    tGroovidelic_spec* the_groove;
+    int i;
 
-// ResetGrooveFlags
+    the_groove = gGroovidelics_array;
+    for (i = 0; i < gGroovidelics_array_size; i++, the_groove++) {
+        if (the_groove->actor == pActor) {
+            the_groove->block_flags &= ~pBlock_flags;
+            return;
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0047b1a0
+void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* pMatrix, tInterrupt_status pPath_interrupt_status, tInterrupt_status pObject_interrupt_status, float pPath_resumption_value, float pObject_resumption_value) {
+    tGroovidelic_spec* the_groove;
+    br_actor* actor;
+
+    the_groove = &gGroovidelics_array[pIndex];
+    actor = the_groove->actor;
+    the_groove->path_interrupt_status = pPath_interrupt_status;
+    the_groove->object_interrupt_status = pObject_interrupt_status;
+    the_groove->path_resumption_value = pPath_resumption_value;
+    the_groove->object_resumption_value = pObject_resumption_value;
+    BrMatrix34Copy(&actor->t.t.mat, pMatrix);
+}
+
+// FUNCTION: CARMA2_HW 0x0047b1e0
+void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
+    tGroovidelic_spec* the_groove;
+    int i;
+
+    the_groove = gGroovidelics_array;
+    for (i = 0; i < gGroovidelics_array_size; i++, the_groove++) {
+        the_groove->done_this_frame = 0;
+    }
+}
 
 // DisableFunkotronic
 

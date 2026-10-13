@@ -77,13 +77,13 @@ extern void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pPa
 
 // StopGroovidelic
 
-// DisableGroovidelic
+extern void C2_HOOK_FASTCALL DisableGroovidelic(br_actor* pActor, tU32 pBlock_flags);
 
-// EnableGroovidelic
+extern void C2_HOOK_FASTCALL EnableGroovidelic(br_actor* pActor, tU32 pBlock_flags);
 
-// SetGrooveInterrupt
+extern void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* pMatrix, tInterrupt_status pPath_interrupt_status, tInterrupt_status pObject_interrupt_status, float pPath_resumption_value, float pObject_resumption_value);
 
-// ResetGrooveFlags
+extern void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 
 // DisableFunkotronic
 
