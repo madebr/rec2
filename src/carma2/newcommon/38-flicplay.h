@@ -6,6 +6,7 @@
 
 extern int gPending_flic;
 extern int gPending_pending_flic;
+extern int gTransparency_on;
 extern int gPanel_flic_disable;
 extern int gPlay_from_disk;
 
@@ -70,7 +71,7 @@ extern void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, t
 
 extern void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info);
 
-// PlayNextFlicFrame
+extern int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info);
 
 extern void C2_HOOK_FASTCALL InitFlics(void);
 

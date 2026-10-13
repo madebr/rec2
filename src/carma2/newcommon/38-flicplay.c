@@ -4,6 +4,7 @@
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "41-utility.h"
+#include "46-win95sys.h"
 #include "52-errors.h"
 #include "70-packfile.h"
 #include "globvars.h"
@@ -17,6 +18,9 @@ int gPending_flic = -1;
 
 // GLOBAL: CARMA2_HW 0x0068620c
 int gPending_pending_flic;
+
+// GLOBAL: CARMA2_HW 0x00686310
+int gTransparency_on;
 
 // GLOBAL: CARMA2_HW 0x00686314
 int gPanel_flic_disable;
@@ -832,7 +836,101 @@ void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
     }
 }
 
-// PlayNextFlicFrame
+// FUNCTION: CARMA2_HW 0x00461da0
+int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info) {
+    tU32 frame_length;
+    tU32 chunk_length;
+    int magic_bytes;
+    int chunk_count;
+    int chunk_counter;
+    int chunk_type;
+    int finished;
+    int data_knocked_off;
+    int read_amount;
+
+    PossibleService();
+    frame_length = MemReadU32(&pFlic_info->data);
+    magic_bytes = MemReadU16(&pFlic_info->data);
+    chunk_count = MemReadU16(&pFlic_info->data);
+    MemSkipBytes(&pFlic_info->data, 8);
+    if (magic_bytes == 0xf1fa) {
+        for (chunk_counter = 0; chunk_counter < chunk_count; chunk_counter++) {
+            chunk_length = MemReadU32(&pFlic_info->data);
+            chunk_type = MemReadU16(&pFlic_info->data);
+            switch (chunk_type) {
+                case 4:
+                    DoColour256(pFlic_info, chunk_length);
+                    break;
+                case 7:
+                    if (gTransparency_on) {
+                        DoDeltaTrans(pFlic_info, chunk_length);
+                    } else {
+                        DoDeltaX(pFlic_info, chunk_length);
+                    }
+                    break;
+                case 11:
+                    DoColourMap(pFlic_info, chunk_length);
+                    break;
+                case 12:
+                    if (gTransparency_on) {
+                        DoDifferenceTrans(pFlic_info, chunk_length);
+                    } else {
+                        DoDifferenceX(pFlic_info, chunk_length);
+                    }
+                    break;
+                case 13:
+                    DoBlack(pFlic_info, chunk_length);
+                    break;
+                case 15:
+                    if (gTransparency_on) {
+                        DoRunLengthTrans(pFlic_info, chunk_length);
+                    } else {
+                        DoRunLengthX(pFlic_info, chunk_length);
+                    }
+                    break;
+                case 16:
+                    if (gTransparency_on) {
+                        DoUncompressedTrans(pFlic_info, chunk_length);
+                    } else {
+                        DoUncompressed(pFlic_info, chunk_length);
+                    }
+                    break;
+                default:
+                    MemSkipBytes(&pFlic_info->data, (int)(chunk_length - 6));
+                    break;
+            }
+            /* Advance to the next two-byte chunk boundary. */
+            pFlic_info->data = (char*)(((uintptr_t)pFlic_info->data + 1) & ~(uintptr_t)1);
+        }
+    } else {
+        MemSkipBytes(&pFlic_info->data, (int)(frame_length - 16));
+        pFlic_info->frames_left++;
+        pFlic_info->current_frame--;
+    }
+    pFlic_info->current_frame++;
+    pFlic_info->frames_left--;
+    finished = pFlic_info->frames_left == 0;
+    if (finished && gTranslation_count != 0) {
+        DrawTranslations(pFlic_info);
+    }
+    if (pFlic_info->f != NULL && pFlic_info->bytes_still_to_be_read != 0) {
+        data_knocked_off = (int)(pFlic_info->data - pFlic_info->data_start);
+        memmove(pFlic_info->data_start, pFlic_info->data, pFlic_info->bytes_in_buffer - data_knocked_off);
+        pFlic_info->data = pFlic_info->data_start;
+        pFlic_info->bytes_in_buffer -= data_knocked_off;
+        if (data_knocked_off < pFlic_info->bytes_still_to_be_read) {
+            read_amount = data_knocked_off;
+        } else {
+            read_amount = pFlic_info->bytes_still_to_be_read;
+        }
+        if (read_amount != 0) {
+            PFfread(pFlic_info->data_start + pFlic_info->bytes_in_buffer, 1, read_amount, pFlic_info->f);
+        }
+        pFlic_info->bytes_in_buffer += read_amount;
+        pFlic_info->bytes_still_to_be_read -= read_amount;
+    }
+    return finished;
+}
 
 // FUNCTION: CARMA2_HW 0x00462a40
 void C2_HOOK_FASTCALL InitFlics(void) {
