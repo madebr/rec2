@@ -83,7 +83,7 @@ extern void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text
 
 extern void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
 
-// DoInstruments
+extern void C2_HOOK_FASTCALL DoInstruments(void);
 
 // ChangingView
 

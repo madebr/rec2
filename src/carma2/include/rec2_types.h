@@ -2589,7 +2589,7 @@ typedef struct tCar_spec {
     undefined field_0x1348[12];
     float max_force_front;
     float max_force_rear;
-    float gear; /* FIXME: should be an int? */
+    int gear;
     int just_changed_gear;
     int max_gear;
     float speed_revs_ratio;

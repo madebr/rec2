@@ -15,6 +15,7 @@
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
+#include "c2_stdlib.h"
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x005913d4
@@ -684,7 +685,159 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     }
 }
 
-// DoInstruments
+// FUNCTION: CARMA2_HW 0x0044aad0
+void C2_HOOK_FASTCALL DoInstruments(void) {
+    char buffer[8];
+    br_pixelmap* speedo_image;
+    int cockpit;
+    int the_wobble_x;
+    int the_wobble_y;
+    int rev;
+    int rev_divisor;
+    int gear;
+    int gear_height;
+    double the_angle;
+    double the_angle2;
+    double sin_angle;
+    double cos_angle;
+    double speed_mph;
+
+    if (gCar_to_view == NULL || (int)gCar_to_view->driver < eDriver_oppo) {
+        return;
+    }
+    speed_mph = (double)gCar_to_view->speedo_speed * WORLD_SCALE * 2250.0;
+    if (!(speed_mph >= 0.0)) {
+        speed_mph = 0.0;
+    }
+    if (gHeadup_detail_level == 0 || gHeadup_detail_level == 3) {
+        if (!gAction_replay_mode) {
+            sprintf(buffer, "%03i", (int)speed_mph);
+            PolyFontText(buffer, 1, 1, kPolyfont_ingame_medium_green, eJust_left, 0);
+        }
+        return;
+    }
+
+    cockpit = gProgram_state.cockpit_on;
+    if (cockpit && gProgram_state.cockpit_image_index >= 0) {
+        if (gProgram_state.which_view != eView_forward) {
+            return;
+        }
+        the_wobble_x = gScreen_wobble_x;
+        the_wobble_y = gScreen_wobble_y;
+    } else {
+        the_wobble_x = 0;
+        the_wobble_y = 0;
+    }
+
+    if (gProgram_state.current_car.tacho_radius_2[cockpit] < 0) {
+        speedo_image = gRevs[div((int)gCar_to_view->revs, 11).quot];
+        BrPixelmapRectangleCopy(
+            gCurrent_rev,
+            gProgram_state.current_car.tacho_x[cockpit] + the_wobble_x,
+            gProgram_state.current_car.tacho_y[cockpit] + the_wobble_y,
+            speedo_image, 0, 0, speedo_image->width, speedo_image->height);
+    } else {
+        rev_divisor = div(gCar_to_view->red_line, 11).quot;
+        rev = div((int)gCar_to_view->revs, rev_divisor).quot;
+        if (rev < 0) {
+            rev = 0;
+        } else if (rev > 11) {
+            rev = 11;
+        }
+        gCurrent_rev = gRevs[rev];
+    }
+
+    cockpit = gProgram_state.cockpit_on;
+    if (!cockpit || gProgram_state.cockpit_image_index < 0 || gProgram_state.which_view == eView_forward) {
+        gear = gCar_to_view->gear;
+        if (gear < 0) {
+            gear = -1;
+        }
+        speedo_image = gProgram_state.current_car.gears_image;
+        gear_height = speedo_image->height / 8;
+        DRPixelmapRectangleMaskedCopy(
+            gCurrent_rev,
+            (br_int_16)(gProgram_state.current_car.gear_x[cockpit] + the_wobble_x),
+            (br_int_16)(gProgram_state.current_car.gear_y[cockpit] + the_wobble_y),
+            speedo_image, 0, (br_int_16)((gear + 1) * gear_height),
+            (br_int_16)speedo_image->width, (br_int_16)gear_height);
+        cockpit = gProgram_state.cockpit_on;
+    }
+
+    speedo_image = gProgram_state.current_car.speedo_image[cockpit];
+    if (gProgram_state.current_car.speedo_radius_2[cockpit] < 0) {
+        if (speedo_image != NULL) {
+            DrawNumberAt(
+                speedo_image, gCurrent_rev,
+                gProgram_state.current_car.speedo_x[cockpit] + the_wobble_x,
+                gProgram_state.current_car.speedo_y[cockpit] + the_wobble_y,
+                gProgram_state.current_car.speedo_x_pitch[cockpit],
+                gProgram_state.current_car.speedo_y_pitch[cockpit],
+                (int)speed_mph, 3, 1);
+        }
+        return;
+    }
+
+    if (speedo_image != NULL && (!cockpit || gProgram_state.cockpit_image_index < 0)) {
+        DRPixelmapRectangleMaskedCopy(
+            gCurrent_rev,
+            (br_int_16)(gProgram_state.current_car.speedo_x[cockpit] + the_wobble_x),
+            (br_int_16)(gProgram_state.current_car.speedo_y[cockpit] + the_wobble_y),
+            speedo_image, 0, 0,
+            (br_int_16)speedo_image->width, (br_int_16)speedo_image->height);
+        cockpit = gProgram_state.cockpit_on;
+    }
+    if (!(speed_mph > gProgram_state.current_car.max_speed)) {
+        the_angle = gProgram_state.current_car.speedo_start_angle[cockpit]
+            + (gProgram_state.current_car.speedo_end_angle[cockpit]
+                - gProgram_state.current_car.speedo_start_angle[cockpit]) * speed_mph
+                / gProgram_state.current_car.max_speed;
+    } else {
+        the_angle = gProgram_state.current_car.speedo_end_angle[cockpit];
+    }
+    the_angle *= REC2_PI / 180.0;
+    if (!(the_angle >= 0.0)) {
+        the_angle += REC2_TAU;
+    } else if (!(the_angle < REC2_TAU)) {
+        the_angle -= REC2_TAU;
+    }
+    the_angle2 = REC2_PI_OVER_2 - the_angle;
+    if (!(the_angle2 >= 0.0)) {
+        the_angle2 += REC2_TAU;
+    }
+
+    if (the_angle2 > REC2_3PI_OVER_2) {
+        cos_angle = gCosine_array[(int)((REC2_TAU - the_angle2) * (128.0 / REC2_PI))];
+    } else if (the_angle2 > REC2_PI) {
+        cos_angle = -gCosine_array[(int)((the_angle2 - REC2_PI) * (128.0 / REC2_PI))];
+    } else if (the_angle2 > REC2_PI_OVER_2) {
+        cos_angle = -gCosine_array[(int)((REC2_PI - the_angle2) * (128.0 / REC2_PI))];
+    } else {
+        cos_angle = gCosine_array[(int)(the_angle2 * (128.0 / REC2_PI))];
+    }
+    if (the_angle > REC2_3PI_OVER_2) {
+        sin_angle = gCosine_array[(int)((REC2_TAU - the_angle) * (128.0 / REC2_PI))];
+    } else if (the_angle > REC2_PI) {
+        sin_angle = -gCosine_array[(int)((the_angle - REC2_PI) * (128.0 / REC2_PI))];
+    } else if (the_angle > REC2_PI_OVER_2) {
+        sin_angle = -gCosine_array[(int)((REC2_PI - the_angle) * (128.0 / REC2_PI))];
+    } else {
+        sin_angle = gCosine_array[(int)(the_angle * (128.0 / REC2_PI))];
+    }
+
+    PoshDrawLine(
+        gBack_screen,
+        (int)(gProgram_state.current_car.speedo_radius_1[cockpit] * sin_angle
+            + the_wobble_x + gProgram_state.current_car.speedo_centre_x[cockpit]),
+        (br_scalar)the_angle,
+        (int)(gProgram_state.current_car.speedo_centre_y[cockpit]
+            - gProgram_state.current_car.speedo_radius_1[cockpit] * cos_angle + the_wobble_y),
+        (int)(gProgram_state.current_car.speedo_radius_2[cockpit] * sin_angle
+            + the_wobble_x + gProgram_state.current_car.speedo_centre_x[cockpit]),
+        (int)(gProgram_state.current_car.speedo_centre_y[cockpit] + (double)the_wobble_y
+            - gProgram_state.current_car.speedo_radius_2[cockpit] * cos_angle),
+        gProgram_state.current_car.speedo_needle_colour[cockpit]);
+}
 
 // ChangingView
 
