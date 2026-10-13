@@ -28,7 +28,15 @@ int gCurrent_skid;
 
 // MaterialFromIndex
 
-// AdjustSkid
+// FUNCTION: CARMA2_HW 0x004e9be0
+void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial) {
+    gSkids[pSkid_num].actor->t.t.mat = *pMatrix;
+    gSkids[pSkid_num].pos.v[0] = pMatrix->m[3][0];
+    gSkids[pSkid_num].pos.v[1] = pMatrix->m[3][1];
+    gSkids[pSkid_num].pos.v[2] = pMatrix->m[3][2];
+    gSkids[pSkid_num].actor->material = pMaterial;
+    gSkids[pSkid_num].actor->render_style = BR_RSTYLE_DEFAULT;
+}
 
 // FarFromLine2D
 
@@ -131,7 +139,29 @@ void C2_HOOK_FASTCALL HideSkids(void) {
 
 // SkidMark
 
-// InitCarSkidStuff
+// FUNCTION: CARMA2_HW 0x004ea700
+void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar) {
+    pCar->old_skidding = 0;
+    pCar->oil_remaining[0] = 0.0f;
+    pCar->oil_remaining[1] = 0.0f;
+    pCar->oil_remaining[2] = 0.0f;
+    pCar->oil_remaining[3] = 0.0f;
+}
 
-// SkidsPerFrame
+// FUNCTION: CARMA2_HW 0x004ea720
+void C2_HOOK_FASTCALL SkidsPerFrame(void) {
+    int i;
+    tSkid* skid;
+    br_actor* actor;
+
+    for (i = 0; i < 100; i++) {
+        skid = &gSkids[i];
+        actor = skid->actor;
+        if (actor->render_style != BR_RSTYLE_NONE) {
+            actor->t.t.translate.t.v[0] = skid->pos.v[0];
+            actor->t.t.translate.t.v[1] = skid->pos.v[1];
+            actor->t.t.translate.t.v[2] = skid->pos.v[2];
+        }
+    }
+}
 

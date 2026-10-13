@@ -14,7 +14,7 @@ extern int gCurrent_skid;
 
 // MaterialFromIndex
 
-// AdjustSkid
+extern void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
 
 // FarFromLine2D
 
@@ -36,8 +36,8 @@ extern void C2_HOOK_FASTCALL HideSkids(void);
 
 // SkidMark
 
-// InitCarSkidStuff
+extern void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar);
 
-// SkidsPerFrame
+extern void C2_HOOK_FASTCALL SkidsPerFrame(void);
 
 #endif // GUARD_20_SKIDMARK_H
