@@ -87,11 +87,11 @@ extern void C2_HOOK_FASTCALL ReadCarKeywordData(tCar_spec* pCar_spec, FILE* pF);
 
 extern void C2_HOOK_FASTCALL TrashModelMaterialIdentifiers(tCar_spec* pCar_spec, tBrender_storage* pStorage_space);
 
-// CentreModel
+extern void C2_HOOK_FASTCALL CentreModel(br_actor* pActor);
 
-// PivotizeWheel
+extern void C2_HOOK_FASTCALL PivotizeWheel(br_actor* pActor);
 
-// SetUpGraphicalWheelStuff
+extern void C2_HOOK_FASTCALL SetUpGraphicalWheelStuff(tCar_spec* pCar_spec);
 
 // LoadCar
 

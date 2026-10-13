@@ -1017,11 +1017,61 @@ void C2_HOOK_FASTCALL TrashModelMaterialIdentifiers(tCar_spec* pCar_spec, tBrend
     }
 }
 
-// CentreModel
+void C2_HOOK_FASTCALL CentreModel(br_actor* pActor) {
+    br_model* model;
+    br_vector3 avg;
+    int i;
 
-// PivotizeWheel
+    model = pActor->model;
+    if (model != NULL) {
+        avg.v[0] = 0.5f * (model->bounds.min.v[0] + model->bounds.max.v[0]);
+        avg.v[1] = 0.5f * (model->bounds.min.v[1] + model->bounds.max.v[1]);
+        avg.v[2] = 0.5f * (model->bounds.min.v[2] + model->bounds.max.v[2]);
+        /* Only an ordered nonzero centre component triggers adjustment. */
+        if (avg.v[0] < 0.0f || avg.v[0] > 0.0f
+                || avg.v[1] < 0.0f || avg.v[1] > 0.0f
+                || avg.v[2] < 0.0f || avg.v[2] > 0.0f) {
+            pActor->t.t.translate.t.v[0] += avg.v[0];
+            pActor->t.t.translate.t.v[1] += avg.v[1];
+            pActor->t.t.translate.t.v[2] += avg.v[2];
+            for (i = 0; i < model->nvertices; i++) {
+                model->vertices[i].p.v[0] += -avg.v[0];
+                model->vertices[i].p.v[1] += -avg.v[1];
+                model->vertices[i].p.v[2] += -avg.v[2];
+            }
+            BrModelUpdate(model, BR_MODU_VERTEX_POSITIONS);
+        }
+    }
+}
 
-// SetUpGraphicalWheelStuff
+void C2_HOOK_FASTCALL PivotizeWheel(br_actor* pActor) {
+    br_actor* child;
+
+    child = pActor->children;
+    if (child != NULL) {
+        pActor->t.t.translate.t.v[0] += child->t.t.translate.t.v[0];
+        pActor->t.t.translate.t.v[1] += child->t.t.translate.t.v[1];
+        pActor->t.t.translate.t.v[2] += child->t.t.translate.t.v[2];
+        child->t.t.translate.t.v[0] = 0.0f;
+        child->t.t.translate.t.v[1] = 0.0f;
+        child->t.t.translate.t.v[2] = 0.0f;
+    }
+}
+
+void C2_HOOK_FASTCALL SetUpGraphicalWheelStuff(tCar_spec* pCar_spec) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(pCar_spec->wheel_actors); i++) {
+        if (pCar_spec->wheel_actors[i] != NULL) {
+            CentreModel(pCar_spec->wheel_actors[i]);
+        }
+    }
+    for (i = 0; i < (int)REC2_ASIZE(pCar_spec->pivot_actors); i++) {
+        if (pCar_spec->pivot_actors[i] != NULL) {
+            PivotizeWheel(pCar_spec->pivot_actors[i]);
+        }
+    }
+}
 
 // LoadCar
 
