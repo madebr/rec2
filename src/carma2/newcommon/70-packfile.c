@@ -216,7 +216,7 @@ br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, vo
     tU8 *pos;
     tU8 *end;
 
-    if ((uintptr_t)f >= REC2_ASIZE(gTwatVfsFiles) + 1) {
+    if ((uintptr_t)f >= REC2_ASIZE(gTwatVfsFiles)) {
         return fread(buf, size, n, f);
     }
     read_size = size * n;
