@@ -79,6 +79,11 @@ br_pixelmap* gPalette_0074a670;
 // GLOBAL: CARMA2_HW 0x0074a660
 br_pixelmap* gMini_map_glowing_line_palettes[3];
 
+// GLOBAL: CARMA2_HW 0x006569b0
+const int gMini_map_glowing_line_animation_indices[5] = {
+    0, 1, 2, 1, 0
+};
+
 // GLOBAL: CARMA2_HW 0x0058fdc8
 int gCursor_tinted_top = -1;
 
@@ -876,9 +881,36 @@ void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, int pY1,
     DRDrawLine(pMap, pX1, pY1, pX2, pY2, (int)pColour);
 }
 
-// DR8BitFancyDrawLine
+// DR8BitFancyDrawLine is inlined in FancyDrawLine in the Windows original.
+void C2_HOOK_FASTCALL DR8BitFancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period) {
+    int delta_x;
+    int delta_y;
+    tU32 anim_index;
 
-// FancyDrawLine
+    delta_x = pX2 - pX1;
+    delta_y = pY2 - pY1;
+    anim_index = (PDGetTotalTime() / pTime_period) % REC2_ASIZE(gMini_map_glowing_line_animation_indices);
+    DRPixelmapBlendedLine(pMap, pX1, pY1, pX2, pY2, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+    if (fabs((double)delta_y) < fabs((double)delta_x)) {
+        DRPixelmapBlendedLine(pMap, pX1, pY1 - 1, pX2, pY2 - 1, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+        DRPixelmapBlendedLine(pMap, pX1, pY1 + 1, pX2, pY2 + 1, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+    } else {
+        DRPixelmapBlendedLine(pMap, pX1 - 1, pY1, pX2 - 1, pY2, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+        DRPixelmapBlendedLine(pMap, pX1 + 1, pY1, pX2 + 1, pY2, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0047d2b0
+void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period) {
+    tU16 colour;
+
+    if (pMap->type == BR_PMT_INDEX_8) {
+        DR8BitFancyDrawLine(pMap, pX1, pY1, pX2, pY2, pColour, pTime_period);
+    } else {
+        colour = PaletteEntry16Bit(gRender_palette, (int)pColour);
+        BrPixelmapLine(pMap, pX1, pY1, pX2, pY2, colour);
+    }
+}
 
 // DRPixelmapCopyMapBlack8Bit
 void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack8Bit(br_pixelmap* pDest, br_pixelmap* pSrc) {

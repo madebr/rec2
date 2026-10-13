@@ -12,6 +12,9 @@ extern br_pixelmap* gPalette_0074a604;
 extern br_pixelmap* gPalette_0074a600;
 extern br_pixelmap* gPalette_0074a5fc;
 
+extern const int gMini_map_glowing_line_animation_indices[5];
+extern br_pixelmap* gMini_map_glowing_line_palettes[3];
+
 extern int gNoTransients;
 extern br_pixelmap* gRender_palette;
 extern int gDim_amount;
@@ -115,9 +118,9 @@ extern void C2_HOOK_FASTCALL DR16BitPixelmapRotatedAndFeatheredCopy(br_matrix23*
 
 extern void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, br_pixelmap* pPalette);
 
-// DR8BitFancyDrawLine
+extern void C2_HOOK_FASTCALL DR8BitFancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period);
 
-// FancyDrawLine
+extern void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period);
 
 extern void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack8Bit(br_pixelmap* pDest, br_pixelmap* pSrc);
 
