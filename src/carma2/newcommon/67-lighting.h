@@ -2,6 +2,7 @@
 #define GUARD_67_LIGHTING_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // LoadTrackModels
 
@@ -11,9 +12,9 @@
 
 // LoadTrackMaterials
 
-// LoadCarMaterials
+extern void C2_HOOK_FASTCALL LoadCarMaterials(tBrender_storage* pStorage, const char* pPath, tCar_spec* pCar_spec);
 
-// SmoothlySetCarMaterialFlags
+extern void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStorage, tCar_spec* pCar_spec);
 
 // SmoothlySetWorldMaterialFlags
 
@@ -23,7 +24,7 @@
 
 // SmoothificateWorldMaterial
 
-// SmoothificateCarMaterial
+extern void C2_HOOK_FASTCALL SmoothificateCarMaterial(br_material* pMaterial);
 
 // MungeLightingEffects
 
