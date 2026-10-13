@@ -1060,9 +1060,11 @@ int C2_HOOK_FASTCALL LoadFlic(int pIndex) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x00462a70
+// FUNCTION: CARMA2_HW 0x00462a70
 void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
-    NOT_IMPLEMENTED();
+    if (pIndex >= 0 && gMain_flic_list[pIndex].data_ptr != NULL) {
+        MAMSUnlock((void**)&gMain_flic_list[pIndex].data_ptr);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00462a90
