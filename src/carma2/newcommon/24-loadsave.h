@@ -10,7 +10,7 @@ extern tSave_game* gSaved_games;
 
 extern void C2_HOOK_FASTCALL Encryptificate(tSave_game* pSave_games, int pCount);
 
-// MakeSavedGame
+extern void C2_HOOK_FASTCALL MakeSavedGame(tSave_game* pSave_game);
 
 extern void C2_HOOK_FASTCALL DoSaveGame(void);
 
