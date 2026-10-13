@@ -8,6 +8,9 @@
 extern tTransient_bm gTransient_bitmaps[50];
 extern tU32 gLast_palette_change;
 extern int gPalette_index;
+extern br_pixelmap* gPalette_0074a604;
+extern br_pixelmap* gPalette_0074a600;
+extern br_pixelmap* gPalette_0074a5fc;
 
 extern int gNoTransients;
 extern br_pixelmap* gRender_palette;
@@ -104,9 +107,9 @@ extern void C2_HOOK_CDECL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pT
 
 extern void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners);
 
-// DR8BitPixelmapRotatedAndFeatheredCopy
+extern void C2_HOOK_FASTCALL DR8BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans);
 
-// DRPixelmapRotatedAndFeatheredCopy
+extern void C2_HOOK_FASTCALL DRPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans);
 
 extern void C2_HOOK_FASTCALL DR16BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans);
 

@@ -741,9 +741,92 @@ void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLeft, int
     }
 }
 
-// DR8BitPixelmapRotatedAndFeatheredCopy
+void C2_HOOK_FASTCALL DR8BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans) {
+    int half_width;
+    int half_height;
+    int width_near1;
+    int width_near2;
+    int width_near3;
+    int height_near1;
+    int height_near2;
+    int height_near3;
+    int dx;
+    int dy;
+    int dest_y;
+    int src_x;
+    int src_y;
+    int src_row;
+    int adjusted_dx;
+    int adjusted_dy;
+    float row_start_x;
+    float row_start_y;
+    float half_src_height;
+    float src_f_x;
+    float src_f_y;
+    tU8* ptr_write;
+    tU8* ptr_read;
+    tU8 src_pixel;
+    tU8 dest_pixel;
 
-// DRPixelmapRotatedAndFeatheredCopy
+    half_width = pSrc_width / 2;
+    half_height = pSrc_height / 2;
+    width_near1 = half_width - pSrc_width / 24;
+    width_near2 = half_width - pSrc_width / 12;
+    width_near3 = half_width - pSrc_width * 3 / 24;
+    height_near1 = half_height - pSrc_height / 24;
+    height_near2 = half_height - pSrc_height / 12;
+    height_near3 = half_height - pSrc_height * 3 / 24;
+    half_src_height = pSrc_height * 0.5f;
+    row_start_x = -(pMat->m[0][0] * half_width);
+    row_start_y = -(pMat->m[1][0] * half_width);
+    dest_y = pDest_y;
+    for (dy = -half_height; dy < half_height; ++dy, ++dest_y) {
+        ptr_write = (tU8*)pDest->pixels + dest_y * pDest->row_bytes + pDest_x;
+        src_f_x = row_start_x - dy * pMat->m[0][1] + pSrc_x;
+        src_f_y = dy * pMat->m[1][1] - row_start_y + half_src_height + pSrc_y;
+        for (dx = -half_width; dx < half_width; ++dx) {
+            src_y = (int)src_f_y;
+            src_row = src_y * pSrc->row_bytes;
+            src_x = (int)src_f_x;
+            ptr_read = (tU8*)pSrc->pixels + src_row + half_width + src_x;
+            src_f_x += pMat->m[0][0];
+            src_f_y -= pMat->m[1][0];
+            src_pixel = *ptr_read;
+            dest_pixel = *ptr_write;
+            if (pTrans) {
+                *ptr_write = ((tU8*)gPalette_0074a600->pixels)[dest_pixel + 256 * src_pixel];
+            } else {
+                adjusted_dx = dx + (src_pixel & 1) - (dest_pixel & 1);
+                adjusted_dy = dy + ((src_pixel >> 1) & 1) - ((dest_pixel >> 1) & 1);
+                if (-half_width <= adjusted_dx && adjusted_dx <= half_width
+                    && -half_height <= adjusted_dy && adjusted_dy <= half_height) {
+                    if (adjusted_dx < -width_near1 || adjusted_dx > width_near1
+                        || adjusted_dy < -height_near1 || adjusted_dy > height_near1) {
+                        *ptr_write = ((tU8*)gPalette_0074a604->pixels)[dest_pixel + 256 * src_pixel];
+                    } else if (adjusted_dx < -width_near2 || adjusted_dx > width_near2
+                        || adjusted_dy < -height_near2 || adjusted_dy > height_near2) {
+                        *ptr_write = ((tU8*)gPalette_0074a600->pixels)[dest_pixel + 256 * src_pixel];
+                    } else if (adjusted_dx < -width_near3 || adjusted_dx > width_near3
+                        || adjusted_dy < -height_near3 || adjusted_dy > height_near3) {
+                        *ptr_write = ((tU8*)gPalette_0074a5fc->pixels)[dest_pixel + 256 * src_pixel];
+                    } else {
+                        *ptr_write = src_pixel;
+                    }
+                }
+            }
+            ++ptr_write;
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0047cd40
+void C2_HOOK_FASTCALL DRPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans) {
+    if (pDest->type == BR_PMT_INDEX_8) {
+        DR8BitPixelmapRotatedAndFeatheredCopy(pMat, pDest, pDest_x, pDest_y, pSrc, pSrc_x, pSrc_y, pSrc_width, pSrc_height, pTrans);
+    } else {
+        DR16BitPixelmapRotatedAndFeatheredCopy(pMat, pDest, pDest_x, pDest_y, pSrc, pSrc_x, pSrc_y, pSrc_width, pSrc_height, pTrans);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047d0d0
 void C2_HOOK_FASTCALL DR16BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans) {
