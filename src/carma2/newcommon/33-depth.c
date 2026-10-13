@@ -606,7 +606,20 @@ void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
     }
 }
 
-// ToggleSky
+// FUNCTION: CARMA2_HW 0x00446ee0
+void C2_HOOK_FASTCALL ToggleSky(void) {
+    int enabled;
+
+    enabled = GetSkyTextureOn();
+    SetSkyTextureOn(!enabled);
+    if (gProgram_state.current_depth_effect.sky_texture != NULL) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_on));
+    } else if (gSwap_sky_texture != NULL) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_off));
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_no_sky_texture_for_this_race));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00446f90
 int C2_HOOK_FASTCALL GetDepthCueingOn(void) {
@@ -654,7 +667,20 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
     gSwap_depth_effect_colour_blue = temp_blue;
 }
 
-// ToggleDepthCueing
+// FUNCTION: CARMA2_HW 0x00447110
+void C2_HOOK_FASTCALL ToggleDepthCueing(void) {
+    int enabled;
+
+    enabled = GetDepthCueingOn();
+    SetDepthCueingOn(!enabled);
+    if (gProgram_state.current_depth_effect.type != eDepth_effect_none) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_depth_cueing_on));
+    } else if (gSwap_depth_effect_type != eDepth_effect_none) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_depth_cueing_off));
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_there_is_no_depth_cueing_for_this_race));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00447220
 void C2_HOOK_FASTCALL ChangeDepthEffect(void) {
