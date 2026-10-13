@@ -6,6 +6,13 @@
 
 extern int gHeadup_detail_level;
 
+extern int gLast_fancy_index;
+extern int gLast_credit_headup__displays;
+extern int gLast_time_credit_headup;
+extern tU32 gLast_earn_time;
+extern tU32 gLast_time_earn_time;
+extern tU32 gLast_fancy_time;
+extern int gOld_times[10];
 extern tHeadup gHeadups[37];
 extern int gQueued_headup_count;
 extern tQueued_headup gQueued_headups[4];
@@ -35,15 +42,17 @@ extern tHud_message gHud_messages[46];
 
 extern void C2_HOOK_FASTCALL InitHeadups(void);
 
-// ClearHeadup
+extern void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
-// ClearHeadupSlot
+extern void C2_HOOK_FASTCALL ClearHeadupSlot(int pSlot_index);
 
-// ClearHeadups
+extern void C2_HOOK_FASTCALL ClearHeadups(void);
 
 // DimAFewBits
 
 extern void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void);
+
+extern void C2_HOOK_FASTCALL ClearQueuedHeadups(void);
 
 // DoTestPowerHeadup
 
