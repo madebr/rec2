@@ -1,6 +1,8 @@
 #include "39-oil.h"
 
+#include "34-finteray.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "63-loading3.h"
 #include "globvars.h"
 #include "rec2_macros.h"
@@ -154,6 +156,80 @@ void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar) {
 }
 
 // OKToSpillOil
+int C2_HOOK_FASTCALL OKToSpillOil(tOil_spill_info* pOil) {
+    tCar_spec* car;
+    tBounds kev_bounds;
+    tFace_ref the_list[10];
+    br_vector3 ray_pos;
+    br_vector3 ray_dir;
+    br_vector3 normal;
+    br_vector3 pos;
+    br_scalar distance;
+    br_scalar mr_dotty;
+    br_angle angle_to_rotate_by;
+    int face_count;
+    int found_one;
+    int i;
+
+    car = pOil->car;
+    if (car != NULL && (int)car->driver >= eDriver_net_human
+            && car->damage_units[eDamage_engine].damage_level < 99
+            && car->damage_units[eDamage_transmission].damage_level < 99) {
+        return 0;
+    }
+    angle_to_rotate_by = (br_angle)IRandomBetween(0, 0xffff);
+    BrVector3Set(&kev_bounds.original_bounds.min,
+        -pOil->full_size,
+        (br_scalar)(pOil->car_model->bounds.min.v[1] - 1.0 / 6.9),
+        -pOil->full_size);
+    BrVector3Set(&kev_bounds.original_bounds.max,
+        pOil->full_size,
+        pOil->car_model->bounds.max.v[1],
+        pOil->full_size);
+    BrMatrix34PreRotateY(&pOil->actor->t.t.mat, angle_to_rotate_by);
+    kev_bounds.mat = &pOil->car_actor->t.t.mat;
+    face_count = FindFacesInBox(&kev_bounds, the_list, (int)REC2_ASIZE(the_list), NULL);
+    BrVector3Set(&ray_pos,
+        pOil->car_actor->t.t.mat.m[3][0],
+        pOil->car_actor->t.t.mat.m[3][1] + .2f,
+        pOil->car_actor->t.t.mat.m[3][2]);
+    BrVector3Set(&ray_dir, 0.f, kev_bounds.original_bounds.min.v[1] - kev_bounds.original_bounds.max.v[1], 0.f);
+    BrVector3Normalise(&ray_dir, &ray_dir);
+    if (face_count == 0) {
+        return 0;
+    }
+    found_one = 0;
+    for (i = 0; i < face_count; i++) {
+        CheckSingleFace(&the_list[i], &ray_pos, &ray_dir, &normal, &distance, &pos);
+        if (!(distance >= 100.f)) {
+            found_one = 1;
+            /* Align the spill with the first surface hit by the ray. */
+            pOil->actor->t.t.mat.m[1][0] = normal.v[0];
+            pOil->actor->t.t.mat.m[1][1] = normal.v[1];
+            pOil->actor->t.t.mat.m[1][2] = normal.v[2];
+            pOil->actor->t.t.mat.m[0][0] = normal.v[1];
+            pOil->actor->t.t.mat.m[0][1] = -normal.v[0];
+            pOil->actor->t.t.mat.m[0][2] = 0.f;
+            pOil->actor->t.t.mat.m[2][0] = 0.f;
+            pOil->actor->t.t.mat.m[2][1] = -normal.v[2];
+            pOil->actor->t.t.mat.m[2][2] = normal.v[1];
+            BrVector3Copy(&pOil->position, &pos);
+            BrMatrix34PreRotateY(&pOil->actor->t.t.mat, angle_to_rotate_by);
+            break;
+        }
+    }
+    if (!found_one || !(normal.v[1] >= .97f)) {
+        return 0;
+    }
+    for (i = 0; i < face_count; i++) {
+        mr_dotty = BrVector3Dot(&the_list[i].normal, &normal);
+        if (!(mr_dotty >= .98f) && (mr_dotty > .8f
+                || !NormalSideOfPlane(&pOil->actor->t.t.translate.t, &the_list[i].normal, the_list[i].d))) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 // MungeOilsHeightAboveGround
 void C2_HOOK_FASTCALL MungeOilsHeightAboveGround(tOil_spill_info* pOil) {
