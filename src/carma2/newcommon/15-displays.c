@@ -14,6 +14,12 @@
 // GLOBAL: CARMA2_HW 0x0067c500
 tHeadup gHeadups[37];
 
+// GLOBAL: CARMA2_HW 0x0067f888
+int gQueued_headup_count;
+
+// GLOBAL: CARMA2_HW 0x0067f890
+tQueued_headup gQueued_headups[4];
+
 // GLOBAL: CARMA2_HW 0x0067fcd8
 br_font* gBR_fonts[4];
 
@@ -243,7 +249,12 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
 
 // DimAFewBits
 
-// KillOldestQueuedHeadup
+void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void) {
+    if (gQueued_headup_count != 0) {
+        gQueued_headup_count--;
+        memmove(&gQueued_headups[0], &gQueued_headups[1], gQueued_headup_count * sizeof(tQueued_headup));
+    }
+}
 
 // DoTestPowerHeadup
 
@@ -251,7 +262,24 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
 
 // DoHeadups
 
-// FindAHeadupHoleWoofBarkSoundsABitRude
+// FUNCTION: CARMA2_HW 0x00449fa0
+int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index) {
+    int i;
+    int empty_one;
+    tHeadup* the_headup;
+
+    empty_one = -1;
+    for (i = 0; i < (int)REC2_ASIZE(gHeadups); i++) {
+        the_headup = &gHeadups[i];
+        if (pSlot_index >= 0 && the_headup->slot_index == pSlot_index) {
+            return i;
+        }
+        if (the_headup->type == eHeadup_unused) {
+            empty_one = i;
+        }
+    }
+    return empty_one;
+}
 
 // IsHeadupTextClever
 
@@ -289,14 +317,32 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
 
 // DoTestHeadup
 
-// STUB: CARMA2_HW 0x0044ba60
+// FUNCTION: CARMA2_HW 0x0044ba60
 int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth) {
-    NOT_IMPLEMENTED();
+    int width;
+
+    if (gDevious_2d && gTexture_power_of_2) {
+        width = 1;
+        while (width < pWidth) {
+            width *= 2;
+        }
+        return width;
+    }
+    return pWidth;
 }
 
-// STUB: CARMA2_HW 0x0044ba90
+// FUNCTION: CARMA2_HW 0x0044ba90
 int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight) {
-    NOT_IMPLEMENTED();
+    int height;
+
+    if (gDevious_2d && gTexture_power_of_2) {
+        height = 1;
+        while (height < pHeight) {
+            height *= 2;
+        }
+        return height;
+    }
+    return pHeight;
 }
 
 // DrawThisCarIconNow

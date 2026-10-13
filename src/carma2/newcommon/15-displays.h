@@ -7,6 +7,8 @@
 extern int gHeadup_detail_level;
 
 extern tHeadup gHeadups[37];
+extern int gQueued_headup_count;
+extern tQueued_headup gQueued_headups[4];
 extern br_font* gBR_fonts[4];
 extern br_pixelmap* gRevs[13];
 extern br_pixelmap* gArmour_colour_map;
@@ -40,7 +42,7 @@ extern void C2_HOOK_FASTCALL InitHeadups(void);
 
 // DimAFewBits
 
-// KillOldestQueuedHeadup
+extern void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void);
 
 // DoTestPowerHeadup
 
@@ -48,7 +50,7 @@ extern void C2_HOOK_FASTCALL InitHeadups(void);
 
 // DoHeadups
 
-// FindAHeadupHoleWoofBarkSoundsABitRude
+extern int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index);
 
 // IsHeadupTextClever
 
