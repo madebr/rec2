@@ -5,6 +5,8 @@
 #include "globvars.h"
 #include "rec2_macros.h"
 
+#include <math.h>
+
 // GLOBAL: CARMA2_HW 0x0065a398
 const char* gOil_pixie_names[1] = {
     "OIL.PIX",
@@ -196,9 +198,90 @@ void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scala
     }
 }
 
-// PointInSpill
+// FUNCTION: CARMA2_HW 0x004a77d0
+int C2_HOOK_FASTCALL PointInSpill(br_vector3* pPoint, int pIndex) {
+    const br_scalar inverse_world_scale = 1.f / WORLD_SCALE;
+    tOil_spill_info* oil;
+    br_actor* actor;
+    br_scalar range_squared;
+    br_scalar delta;
 
-// GetOilFrictionFactors
+    oil = &gOily_spills[pIndex];
+    actor = oil->actor;
+    range_squared = oil->current_size * oil->current_size * 0.8f;
+    delta = pPoint->v[0] * inverse_world_scale - actor->t.t.mat.m[3][0];
+    if (delta * delta >= range_squared) {
+        return 0;
+    }
+    delta = pPoint->v[2] * inverse_world_scale - actor->t.t.mat.m[3][2];
+    if (delta * delta >= range_squared) {
+        return 0;
+    }
+    delta = pPoint->v[1] * inverse_world_scale - actor->t.t.mat.m[3][1];
+    if (fabs(delta) >= 0.1f) {
+        return 0;
+    }
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x004a7530
+void C2_HOOK_FASTCALL GetOilFrictionFactors(tCar_spec* pCar, br_scalar* pFactor_1, br_scalar* pFactor_2, br_scalar* pFactor_3, br_scalar* pFactor_4) {
+    const int wheel_order[4] = { 2, 3, 0, 1 };
+    br_scalar* factors[4];
+    br_vector3 world_pos;
+    tOil_spill_info* oil;
+    br_scalar min_remaining;
+    br_scalar max_remaining;
+    br_scalar min_friction;
+    br_scalar max_friction;
+    int i;
+    int j;
+    int wheel;
+
+    *pFactor_1 = 1.f;
+    *pFactor_2 = 1.f;
+    *pFactor_3 = 1.f;
+    *pFactor_4 = 1.f;
+    if (pCar == NULL || (int)pCar->driver < eDriver_oppo) {
+        return;
+    }
+    if (pCar->shadow_intersection_flags != 0) {
+        for (i = 0; i < (int)REC2_ASIZE(gOily_spills); i++) {
+            oil = &gOily_spills[i];
+            max_remaining = oil->field_0x4c;
+            min_remaining = oil->field_0x48;
+            /* Zero and NaN duration limits disable this spill. */
+            if (!(max_remaining > 0.f || max_remaining < 0.f)) {
+                continue;
+            }
+            if (((tU32)pCar->shadow_intersection_flags & (1u << i)) == 0) {
+                continue;
+            }
+            /* Keep the limits from this spill across all wheel callbacks. */
+            min_friction = oil->field_0x40;
+            max_friction = oil->field_0x44;
+            for (j = 0; j < (int)REC2_ASIZE(wheel_order); j++) {
+                wheel = wheel_order[j];
+                BrMatrix34ApplyP(&world_pos, &pCar->wpos[wheel], &pCar->car_master_actor->t.t.mat);
+                if (PointInSpill(&world_pos, i)) {
+                    pCar->oil_remaining[wheel] = (br_scalar)SRandomBetween(min_remaining, max_remaining);
+                    pCar->maybe_blood_remaining[wheel] = (br_scalar)SRandomBetween(min_friction, max_friction);
+                    pCar->field_0x16fc[wheel] = oil->field_0x50;
+                }
+            }
+        }
+    }
+    factors[0] = pFactor_1;
+    factors[1] = pFactor_2;
+    factors[2] = pFactor_3;
+    factors[3] = pFactor_4;
+    for (j = 0; j < (int)REC2_ASIZE(wheel_order); j++) {
+        wheel = wheel_order[j];
+        if (pCar->oil_remaining[wheel] > 0.f || pCar->oil_remaining[wheel] < 0.f) {
+            *factors[j] = pCar->maybe_blood_remaining[wheel];
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004a7860
 void C2_HOOK_FASTCALL AdjustOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap) {

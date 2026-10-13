@@ -32,9 +32,9 @@ extern int C2_HOOK_FASTCALL GetOilSpillCount(void);
 
 extern void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize);
 
-// PointInSpill
+extern int C2_HOOK_FASTCALL PointInSpill(br_vector3* pPoint, int pIndex);
 
-// GetOilFrictionFactors
+extern void C2_HOOK_FASTCALL GetOilFrictionFactors(tCar_spec* pCar, br_scalar* pFactor_1, br_scalar* pFactor_2, br_scalar* pFactor_3, br_scalar* pFactor_4);
 
 extern void C2_HOOK_FASTCALL AdjustOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap);
 
