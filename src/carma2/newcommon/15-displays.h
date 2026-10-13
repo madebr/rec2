@@ -109,6 +109,6 @@ extern int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth);
 
 extern int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight);
 
-// DrawThisCarIconNow
+extern void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY);
 
 #endif // GUARD_15_DISPLAYS_H

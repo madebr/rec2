@@ -5,6 +5,8 @@
 #include "rec2_types.h"
 
 extern int gMini_map_visible;
+extern tCar_icon gCar_icons[128];
+extern br_actor* gCar_icons_model_actor;
 
 // CarArrowColour
 
