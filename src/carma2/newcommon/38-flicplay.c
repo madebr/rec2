@@ -1,6 +1,7 @@
 #include "38-flicplay.h"
 
 #include "08-loading1.h"
+#include "18-graphics2.h"
 #include "19-font.h"
 #include "41-utility.h"
 #include "52-errors.h"
@@ -43,6 +44,9 @@ tFlic_descriptor* gFirst_flic;
 
 // GLOBAL: CARMA2_HW 0x006861d8
 void* gPalette_pixels;
+
+// GLOBAL: CARMA2_HW 0x00686308
+int gPalette_fuck_prevention;
 
 // GLOBAL: CARMA2_HW 0x00686208
 br_pixelmap* gPalette;
@@ -444,7 +448,44 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
 
 // EndFlic
 
-// DoColourMap
+void C2_HOOK_FASTCALL DoColourMap(tFlic_descriptor_ptr pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int packet_count;
+    int skip_count;
+    int change_count;
+    int current_colour;
+    tU8* palette_pixels;
+    tU8 red;
+    tU8 green;
+    tU8 blue;
+
+    (void)chunk_length;
+    current_colour = 0;
+    packet_count = MemReadU16(&pFlic_info->data);
+    for (i = 0; i < packet_count; i++) {
+        skip_count = MemReadU8(&pFlic_info->data);
+        change_count = MemReadU8(&pFlic_info->data);
+        if (change_count == 0) {
+            change_count = 256;
+        }
+        current_colour += skip_count;
+        palette_pixels = (tU8*)gPalette_pixels + current_colour * 4;
+        for (j = 0; j < change_count; j++) {
+            red = MemReadU8(&pFlic_info->data);
+            green = MemReadU8(&pFlic_info->data);
+            blue = MemReadU8(&pFlic_info->data);
+            palette_pixels[0] = (tU8)(blue * 4);
+            palette_pixels[1] = (tU8)(green * 4);
+            palette_pixels[2] = (tU8)(red * 4);
+            palette_pixels[3] = 0;
+            palette_pixels += 4;
+        }
+        if (!gPalette_fuck_prevention) {
+            DRSetPaletteEntries(gPalette, current_colour, change_count);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00462390
 void C2_HOOK_FASTCALL DoDifferenceX(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
@@ -542,7 +583,44 @@ void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 chunk
     }
 }
 
-// DoColour256
+void C2_HOOK_FASTCALL DoColour256(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int packet_count;
+    int skip_count;
+    int change_count;
+    int current_colour;
+    tU8* palette_pixels;
+    tU8 red;
+    tU8 green;
+    tU8 blue;
+
+    (void)chunk_length;
+    current_colour = 0;
+    packet_count = MemReadU16(&pFlic_info->data);
+    for (i = 0; i < packet_count; i++) {
+        skip_count = MemReadU8(&pFlic_info->data);
+        change_count = MemReadU8(&pFlic_info->data);
+        if (change_count == 0) {
+            change_count = 256;
+        }
+        current_colour += skip_count;
+        palette_pixels = (tU8*)gPalette_pixels + current_colour * 4;
+        for (j = 0; j < change_count; j++) {
+            red = MemReadU8(&pFlic_info->data);
+            green = MemReadU8(&pFlic_info->data);
+            blue = MemReadU8(&pFlic_info->data);
+            palette_pixels[0] = blue;
+            palette_pixels[1] = green;
+            palette_pixels[2] = red;
+            palette_pixels[3] = 0;
+            palette_pixels += 4;
+        }
+        if (!gPalette_fuck_prevention) {
+            DRSetPaletteEntries(gPalette, current_colour, change_count);
+        }
+    }
+}
 
 // DoDeltaTrans
 

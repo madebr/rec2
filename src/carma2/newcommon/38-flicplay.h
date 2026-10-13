@@ -15,6 +15,7 @@ extern float gFlic_sound_delay_not_in_demo;
 extern float gFlic_sound_delay_post_demo;
 
 extern void* gPalette_pixels;
+extern int gPalette_fuck_prevention;
 extern br_pixelmap* gPalette;
 extern tTranslation_record* gTranslations;
 extern tDR_font* gTrans_fonts[2];
@@ -47,13 +48,13 @@ extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 // EndFlic
 
-// DoColourMap
+extern void C2_HOOK_FASTCALL DoColourMap(tFlic_descriptor_ptr pFlic_info, tU32 chunk_length);
 
 extern void C2_HOOK_FASTCALL DoDifferenceX(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
 extern void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
-// DoColour256
+extern void C2_HOOK_FASTCALL DoColour256(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
 // DoDeltaTrans
 
