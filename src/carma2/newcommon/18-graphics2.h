@@ -116,9 +116,9 @@ extern void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLe
 
 // FancyDrawLine
 
-// DRPixelmapCopyMapBlack8Bit
+extern void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack8Bit(br_pixelmap* pDest, br_pixelmap* pSrc);
 
-// DRPixelmapCopyMapBlack
+extern void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack(br_pixelmap* pDest, br_pixelmap* pSrc);
 
 extern void C2_HOOK_FASTCALL DisableLights(void);
 

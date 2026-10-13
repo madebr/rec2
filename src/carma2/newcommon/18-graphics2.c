@@ -754,8 +754,47 @@ void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLeft, int
 // FancyDrawLine
 
 // DRPixelmapCopyMapBlack8Bit
+void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack8Bit(br_pixelmap* pDest, br_pixelmap* pSrc) {
+    int dest_row_wrap;
+    int src_row_wrap;
+    int src_width_dwords;
+    int dwords_remaining;
+    tU8* dest_pixels;
+    tU8* src_pixels;
+    int y;
 
-// DRPixelmapCopyMapBlack
+    dest_row_wrap = pDest->row_bytes - pDest->width;
+    src_row_wrap = pSrc->row_bytes - pSrc->width;
+    dest_pixels = pDest->pixels;
+    src_pixels = pSrc->pixels;
+    src_width_dwords = pSrc->width / 4;
+    for (y = 0; y < pSrc->height; y++) {
+        for (dwords_remaining = src_width_dwords; dwords_remaining != 0; dwords_remaining--) {
+            tU8 p0 = src_pixels[0];
+            tU8 p1 = src_pixels[1];
+            tU8 p2 = src_pixels[2];
+            tU8 p3 = src_pixels[3];
+
+            src_pixels += 4;
+            dest_pixels[0] = p0 != 0 ? p0 : 0xf0;
+            dest_pixels[1] = p1 != 0 ? p1 : 0xf0;
+            dest_pixels[2] = p2 != 0 ? p2 : 0xf0;
+            dest_pixels[3] = p3 != 0 ? p3 : 0xf0;
+            dest_pixels += 4;
+        }
+        src_pixels += src_row_wrap;
+        dest_pixels += dest_row_wrap;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0047d5b0
+void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack(br_pixelmap* pDest, br_pixelmap* pSrc) {
+    if (pDest->type == BR_PMT_INDEX_8) {
+        DRPixelmapCopyMapBlack8Bit(pDest, pSrc);
+    } else {
+        BrPixelmapCopy(pDest, pSrc);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047d6a0
 void C2_HOOK_FASTCALL DisableLights(void) {
