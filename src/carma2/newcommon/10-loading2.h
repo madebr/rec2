@@ -37,9 +37,9 @@ extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 // AdjustCarCoordinates
 
-// LoadSpeedo
+extern void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
-// LoadTacho
+extern void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
 // LoadHeadups
 
@@ -55,7 +55,7 @@ extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 // NewReadMechanicsData
 
-// LoadGear
+extern void C2_HOOK_FASTCALL LoadGear(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL AddRefOffset(int* pRef_holder);
 

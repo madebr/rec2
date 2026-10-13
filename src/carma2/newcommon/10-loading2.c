@@ -588,9 +588,95 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
 // AdjustCarCoordinates
 
-// LoadSpeedo
+// FUNCTION: CARMA2_HW 0x0048b560
+void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+    char the_char1;
 
-// LoadTacho
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%c", &the_char1);
+    if (the_char1 == 'd') {
+        pCar_spec->speedo_radius_2[pIndex] = -1;
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        pCar_spec->speedo_image[pIndex] = LoadPixelmap(str);
+        if (pCar_spec->speedo_image[pIndex] == NULL) {
+            FatalError(kFatalError_CannotLoadSpeedoImage);
+        }
+        pCar_spec->speedo_y_pitch[pIndex] = pCar_spec->speedo_image[pIndex]->height / 10;
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x_pitch[pIndex]);
+    } else {
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        pCar_spec->speedo_image[pIndex] = LoadPixelmap(str);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_centre_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_centre_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_radius_1[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_radius_2[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_start_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_end_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_needle_colour[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->max_speed);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0048b810
+void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+    char the_char1;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%c", &the_char1);
+    if (the_char1 == 'd') {
+        pCar_spec->tacho_radius_2[pIndex] = -1;
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        pCar_spec->tacho_image[pIndex] = LoadPixelmap(str);
+    } else {
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        pCar_spec->tacho_image[pIndex] = LoadPixelmap(str);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_centre_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_centre_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_radius_1[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_radius_2[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_start_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_end_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_needle_colour[pIndex]);
+    }
+}
 
 // LoadHeadups
 
@@ -606,7 +692,20 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
 // NewReadMechanicsData
 
-// LoadGear
+void C2_HOOK_FASTCALL LoadGear(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", &pCar_spec->gear_x[pIndex]);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", &pCar_spec->gear_y[pIndex]);
+    str = strtok(NULL, "\t ,/");
+    if (pIndex == 0) {
+        pCar_spec->gears_image = LoadPixelmap(str);
+    }
+}
 
 void C2_HOOK_FASTCALL AddRefOffset(int* pRef_holder) {
     if (*pRef_holder >= 0) {
