@@ -59,9 +59,9 @@ extern tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void);
 
 extern void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
 
-// KillGroovadelic
+extern void C2_HOOK_FASTCALL KillGroovadelic(int pOwner);
 
-// KillFunkotronic
+extern void C2_HOOK_FASTCALL KillFunkotronic(int pOwner);
 
 // NormaliseDegreeAngle
 
