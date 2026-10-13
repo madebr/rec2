@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tPowerup* gPowerup_array;
+
 extern tHeadup_icon gPickedup_powerups[20];
 extern tSlot_info gCost_APO;
 extern tSlot_info gTrade_in_value_APO;
@@ -195,7 +197,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // SetCopsSpeed
 
-// SetGravity
+extern int C2_HOOK_FASTCALL SetGravity(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPinball
 
@@ -273,7 +275,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // ResetCopsSpeed
 
-// ResetGravity
+extern void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetPinball
 
@@ -301,7 +303,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // SetPanickingPeds
 
-// SetLowGravityPeds
+int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPissedPeds
 
@@ -311,7 +313,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // ResetPanickingPeds
 
-// ResetLowGravityPeds
+void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetPissedPeds
 

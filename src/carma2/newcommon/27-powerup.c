@@ -1,8 +1,12 @@
 #include "27-powerup.h"
 
+#include "61-pedestrn.h"
+
 #include "16-graphics1.h"
 #include "32-spark.h"
 #include "globvrpb.h"
+#include "globvars.h"
+#include <stdint.h>
 #include "rec2_macros.h"
 
 #include "c2_string.h"
@@ -243,7 +247,25 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // SetCopsSpeed
 
-// SetGravity
+#if defined(__GNUC__)
+typedef tU32 tGravityWord __attribute__((__may_alias__));
+#else
+typedef tU32 tGravityWord;
+#endif
+
+// FUNCTION: CARMA2_HW 0x004dcda0
+int C2_HOOK_FASTCALL SetGravity(tPowerup* pPowerup, tCar_spec* pCar) {
+    tU32 value;
+    tU32 array;
+    tS32 offset;
+
+    (void)pCar;
+    value = *(const volatile tGravityWord*)pPowerup->float_params;
+    *(volatile tGravityWord*)&gGravity_multiplier = value;
+    array = *(const volatile tGravityWord*)&gPowerup_array;
+    offset = (tS32)((tU32)(uintptr_t)pPowerup - array);
+    return offset / (tS32)sizeof(tPowerup);
+}
 
 // SetPinball
 
@@ -321,7 +343,12 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // ResetCopsSpeed
 
-// ResetGravity
+// FUNCTION: CARMA2_HW 0x004de720
+void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar) {
+    (void)pPowerup;
+    (void)pCar;
+    *(volatile tGravityWord*)&gGravity_multiplier = *(const volatile tGravityWord*)&gDefault_gravity;
+}
 
 // ResetPinball
 
@@ -349,7 +376,19 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // SetPanickingPeds
 
-// SetLowGravityPeds
+// FUNCTION: CARMA2_HW 0x004de8d0
+int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+    tU32 value;
+    tU32 array;
+    tS32 offset;
+
+    (void)pCar;
+    value = *(const volatile tGravityWord*)pPowerup->float_params;
+    *(volatile tGravityWord*)&gPed_gravity_multiplier = value;
+    array = *(const volatile tGravityWord*)&gPowerup_array;
+    offset = (tS32)((tU32)(uintptr_t)pPowerup - array);
+    return offset / (tS32)sizeof(tPowerup);
+}
 
 // SetPissedPeds
 
@@ -359,7 +398,12 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // ResetPanickingPeds
 
-// ResetLowGravityPeds
+// FUNCTION: CARMA2_HW 0x004de980
+void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+    (void)pPowerup;
+    (void)pCar;
+    *(volatile tGravityWord*)&gPed_gravity_multiplier = 0x3f800000u;
+}
 
 // ResetPissedPeds
 

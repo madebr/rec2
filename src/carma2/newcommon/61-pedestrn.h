@@ -6,6 +6,7 @@
 
 extern tPedestrian* gPedestrian_array;
 extern int gPed_count;
+extern float gPed_gravity_multiplier;
 
 // OrientationChanged
 

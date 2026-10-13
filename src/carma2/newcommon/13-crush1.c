@@ -623,7 +623,33 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {
 
 // BattenDownTheObjects
 
-// CompletelyUnBendCollisionShape
+// FUNCTION: CARMA2_HW 0x00439fd0
+void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape) {
+    const volatile tCar_crush_shape_info* live = pShape;
+    tCar_crush_reordered_shape_info* points;
+    tU32 bits;
+    int count = pShape->original_count_points;
+    int i;
+
+    pShape->count_points = count;
+    if (count <= 0) {
+        return;
+    }
+    i = 0;
+    do {
+        /* Original reloads the array pointer after each raw coordinate store. */
+        points = live->field_0x18;
+        memcpy(&bits, &points[i].field_0x2c.v[0], sizeof(bits));
+        memcpy(&points[i].field_0x18.v[0], &bits, sizeof(bits));
+        points = live->field_0x18;
+        memcpy(&bits, &points[i].field_0x2c.v[1], sizeof(bits));
+        memcpy(&points[i].field_0x18.v[1], &bits, sizeof(bits));
+        points = live->field_0x18;
+        memcpy(&bits, &points[i].field_0x2c.v[2], sizeof(bits));
+        memcpy(&points[i].field_0x18.v[2], &bits, sizeof(bits));
+        i++;
+    } while (i < live->count_points);
+}
 
 // CompletelyUnBendCollisionShapes
 

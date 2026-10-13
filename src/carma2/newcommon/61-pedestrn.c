@@ -16,6 +16,9 @@ tPedestrian* gPedestrian_array;
 // GLOBAL: CARMA2_HW 0x007447d4
 int gPed_count;
 
+// GLOBAL: CARMA2_HW 0x007447dc
+float gPed_gravity_multiplier;
+
 // GLOBAL: CARMA2_HW 0x0065d7d4
 int gGoreLevel = 1;
 

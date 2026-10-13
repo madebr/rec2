@@ -381,7 +381,7 @@ extern int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pP
 
 // BattenDownTheObjects
 
-// CompletelyUnBendCollisionShape
+extern void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape);
 
 // CompletelyUnBendCollisionShapes
 
