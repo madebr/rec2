@@ -1,6 +1,7 @@
 #include "33-depth.h"
 
 #include "00-car.h"
+#include "15-displays.h"
 #include "17-world2.h"
 #include "32-spark.h"
 #include "37-brucetrk.h"
@@ -9,6 +10,8 @@
 #include "globvars.h"
 #include "globvrkm.h"
 #include "rec2_macros.h"
+
+#include "c2_stdio.h"
 
 #include <math.h>
 
@@ -524,9 +527,32 @@ void C2_HOOK_FASTCALL AssertYons(void) {
     }
 }
 
-// IncreaseYon
+// FUNCTION: CARMA2_HW 0x00446a40
+void C2_HOOK_FASTCALL IncreaseYon(void) {
+    char s[256];
+    int yon;
 
-// DecreaseYon
+    gCamera_yon += 5.f;
+    AssertYons();
+    yon = (int)((br_camera*)gCamera_list[1]->type_data)->yon_z;
+    sprintf(s, GetMiscString(eMiscString_yon_increased_to_D), yon);
+    NewTextHeadupSlot(4, 0, 2000, -4, s);
+}
+
+// FUNCTION: CARMA2_HW 0x00446ad0
+void C2_HOOK_FASTCALL DecreaseYon(void) {
+    char s[256];
+    int yon;
+
+    gCamera_yon -= 5.f;
+    if (!(gCamera_yon >= 5.f)) {
+        gCamera_yon = 5.f;
+    }
+    AssertYons();
+    yon = (int)((br_camera*)gCamera_list[1]->type_data)->yon_z;
+    sprintf(s, GetMiscString(eMiscString_yon_decreased_to_D), yon);
+    NewTextHeadupSlot(4, 0, 2000, -4, s);
+}
 
 // FUNCTION: CARMA2_HW 0x00446b70
 void C2_HOOK_STDCALL SetYon(br_scalar pYon) {
