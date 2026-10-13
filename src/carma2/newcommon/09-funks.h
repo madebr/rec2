@@ -25,9 +25,9 @@ extern tFunkotronic_spec* gFunkotronics_array;
 extern tGroovidelic_spec* gGroovidelics_array;
 extern br_actor* gGroove_by_proxy_actor;
 
-// CalculateTextureBitsValue
+extern int C2_HOOK_FASTCALL CalculateTextureBitsValue(tFunk_texturebits* pTexture_bits);
 
-// MapSawToTriangle
+extern float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber);
 
 extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
@@ -63,7 +63,7 @@ extern void C2_HOOK_FASTCALL KillGroovadelic(int pOwner);
 
 extern void C2_HOOK_FASTCALL KillFunkotronic(int pOwner);
 
-// NormaliseDegreeAngle
+extern br_scalar C2_HOOK_FASTCALL NormaliseDegreeAngle(br_scalar pAngle);
 
 // FunkThoseTronics
 

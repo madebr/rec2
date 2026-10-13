@@ -70,9 +70,32 @@ tGroovidelic_spec* gGroovidelics_array;
 // GLOBAL: CARMA2_HW 0x0068b854
 br_actor* gGroove_by_proxy_actor;
 
-// CalculateTextureBitsValue
+int C2_HOOK_FASTCALL CalculateTextureBitsValue(tFunk_texturebits* pTexture_bits) {
+    tU32 sum_flags;
+    tU32 car_flags;
+    int count;
+    int i;
 
-// MapSawToTriangle
+    sum_flags = 0;
+    count = pTexture_bits->count;
+    if (count != 0) {
+        car_flags = (tU32)pTexture_bits->car->field_0x18cc;
+        for (i = 0; i < count; i++) {
+            /* Texture flag indices wrap within their 32-bit word. */
+            if (car_flags & ((tU32)1 << (pTexture_bits->bits[i] & 31))) {
+                sum_flags += (tU32)1 << (i & 31);
+            }
+        }
+    }
+    return (int)sum_flags;
+}
+
+float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber) {
+    if (pNumber >= 0.5f) {
+        return 3.0f - pNumber * 4.0f;
+    }
+    return pNumber * 4.0f - 1.0f;
+}
 
 // FUNCTION: CARMA2_HW 0x00474880
 void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
@@ -1139,7 +1162,12 @@ void C2_HOOK_FASTCALL KillFunkotronic(int pOwner) {
     }
 }
 
-// NormaliseDegreeAngle
+br_scalar C2_HOOK_FASTCALL NormaliseDegreeAngle(br_scalar pAngle) {
+    while (!(pAngle >= 0.0f)) {
+        pAngle += 360.0f;
+    }
+    return pAngle;
+}
 
 // FunkThoseTronics
 
