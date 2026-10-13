@@ -25,13 +25,13 @@ extern tFlic_spec gMain_flic_list[372];
 
 extern int C2_HOOK_FASTCALL TranslationMode(void);
 
-// DontLetFlicFuckWithPalettes
+extern void C2_HOOK_FASTCALL DontLetFlicFuckWithPalettes(void);
 
-// LetFlicFuckWithPalettes
+extern void C2_HOOK_FASTCALL LetFlicFuckWithPalettes(void);
 
-// TurnFlicTransparencyOn
+extern void C2_HOOK_FASTCALL TurnFlicTransparencyOn(void);
 
-// TurnFlicTransparencyOff
+extern void C2_HOOK_FASTCALL TurnFlicTransparencyOff(void);
 
 void C2_HOOK_FASTCALL PlayFlicsFromDisk(void);
 
