@@ -630,7 +630,13 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
 
 // ToggleDepthCueing
 
-// ChangeDepthEffect
+// FUNCTION: CARMA2_HW 0x00447220
+void C2_HOOK_FASTCALL ChangeDepthEffect(void) {
+    gProgram_state.current_depth_effect.type = gProgram_state.default_depth_effect.type;
+    gProgram_state.current_depth_effect.sky_texture = gProgram_state.default_depth_effect.sky_texture;
+    gProgram_state.current_depth_effect.start = gProgram_state.default_depth_effect.start;
+    gProgram_state.current_depth_effect.end = gProgram_state.default_depth_effect.end;
+}
 
 // FUNCTION: CARMA2_HW 0x00447250
 void C2_HOOK_FASTCALL MungeForwardSky(void) {
