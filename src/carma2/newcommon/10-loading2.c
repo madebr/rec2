@@ -91,6 +91,22 @@ tHeadup_info gHeadup_image_info[45] = {
 // GLOBAL: CARMA2_HW 0x0079eb60
 br_pixelmap* gHeadup_images[45];
 
+// GLOBAL: CARMA2_HW 0x00657530
+char* gRaces_file_names[9] = {
+    "RACES.TXT",
+    "NETRACES.TXT",
+    "NETRACES.TXT",
+    "NETRACES.TXT",
+    "RACES.TXT",
+    "RACES.TXT",
+    "RACES.TXT",
+    "NETRACES.TXT",
+    "NETRACES.TXT",
+};
+
+// GLOBAL: CARMA2_HW 0x0068c6f4
+int gCurrent_race_file_index;
+
 // GLOBAL: CARMA2_HW 0x0068c6ec
 FILE* gTempFile;
 
@@ -606,7 +622,17 @@ void C2_HOOK_FASTCALL LoadHeadupImages(void) {
     }
 }
 
-// OpenRaceFile
+FILE* C2_HOOK_FASTCALL OpenRaceFile(void) {
+    FILE* f;
+    tPath_name the_path;
+
+    PathCat(the_path, gApplication_path, gRaces_file_names[gCurrent_race_file_index]);
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotOpenRacesFile);
+    }
+    return f;
+}
 
 // STUB: CARMA2_HW 0x0048c1c0
 void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index) {
