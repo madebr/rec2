@@ -89,10 +89,12 @@ jobs:
         gist-token: ${{ secrets.GIST_TOKEN }}
         comment-payload-path: comment_message.txt
     - name: Store pull request number as text file
+      if: ${{ github.event_name == 'pull_request' && matrix.platform.msvc5 }}
       shell: bash
       run: |
         echo "${{ github.event.number }}" >pr-number.txt
     - name: Upload PR Comment Payload
+      if: ${{ github.event_name == 'pull_request' && matrix.platform.msvc5 }}
       uses: actions/upload-artifact@main
       with:
         name: Pull Request Comment
