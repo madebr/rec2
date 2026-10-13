@@ -1,6 +1,8 @@
 #include "15-displays.h"
 
 #include "08-loading1.h"
+#include "16-graphics1.h"
+#include "18-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "41-utility.h"
@@ -8,6 +10,7 @@
 #include "70-packfile.h"
 #include "globvars.h"
 #include "globvrbm.h"
+#include "globvrkm.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -635,7 +638,51 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
     }
 }
 
-// DoDamageScreen
+// FUNCTION: CARMA2_HW 0x0044a9d0
+void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
+    int i;
+    int y_pitch;
+    int the_step;
+    int the_wobble_x;
+    int the_wobble_y;
+    tU32 phase;
+    br_pixelmap* the_image;
+    tDamage_unit* the_damage;
+
+    if (&gProgram_state.current_car != gCar_to_view) {
+        return;
+    }
+    if (gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0) {
+        if (gProgram_state.which_view != eView_forward) {
+            return;
+        }
+        the_wobble_x = gScreen_wobble_x;
+        the_wobble_y = gScreen_wobble_y;
+    } else {
+        the_wobble_x = gProgram_state.current_car.damage_x_offset;
+        the_wobble_y = gProgram_state.current_car.damage_y_offset;
+    }
+
+    DRPixelmapCopy(gDamage_hud, gGrey_top5);
+    for (i = 0; i < (int)REC2_ASIZE(gProgram_state.current_car.damage_units); ++i) {
+        the_damage = &gProgram_state.current_car.damage_units[i];
+        if (i != eDamage_driver) {
+            the_image = the_damage->images;
+            the_step = 5 * the_damage->damage_level / 100;
+            y_pitch = (the_image->height / 2) / 5;
+            phase = (pThe_time / (tU32)the_damage->periods[the_step]) & 1;
+            DRPixelmapRectangleMaskedCopy(
+                gDamage_hud,
+                (br_int_16)(the_wobble_x + the_damage->x_coord),
+                (br_int_16)(the_wobble_y + the_damage->y_coord),
+                the_image,
+                0,
+                (br_int_16)(y_pitch * (2 * the_step + phase)),
+                (br_int_16)the_image->width,
+                (br_int_16)y_pitch);
+        }
+    }
+}
 
 // DoInstruments
 
