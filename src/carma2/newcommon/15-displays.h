@@ -103,7 +103,7 @@ extern int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
 // AwardTime5
 
-// DoTestHeadup
+extern void C2_HOOK_FASTCALL DoTestHeadup(void);
 
 extern int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth);
 

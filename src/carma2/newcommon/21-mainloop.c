@@ -9,6 +9,9 @@ int gAuto_increase_credits_dt[3];
 // GLOBAL: CARMA2_HW 0x0074b720
 tU32 gNet_auto_increase_credits_dt[8];
 
+// GLOBAL: CARMA2_HW 0x0079eb00
+char gHeadup_oppo_ped_text[64];
+
 // CalculateFrameRate
 
 // LoseOldestWastedMassage
