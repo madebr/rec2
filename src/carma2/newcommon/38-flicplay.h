@@ -23,6 +23,7 @@ extern tTranslation_record* gTranslations;
 extern tDR_font* gTrans_fonts[2];
 extern int gTranslation_count;
 extern tFlic_spec gMain_flic_list[372];
+extern tFlic_descriptor* gFirst_flic;
 
 extern int C2_HOOK_FASTCALL TranslationMode(void);
 
@@ -84,9 +85,9 @@ extern void C2_HOOK_FASTCALL UnlockFlic(int pIndex);
 
 extern void C2_HOOK_FASTCALL InitFlicQueue(void);
 
-// FlicQueueFinished
+extern int C2_HOOK_FASTCALL FlicQueueFinished(void);
 
-// ProcessFlicQueue
+extern void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval);
 
 extern void C2_HOOK_FASTCALL FlushFlicQueue(void);
 

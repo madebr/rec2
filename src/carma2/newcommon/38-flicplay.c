@@ -8,6 +8,7 @@
 #include "52-errors.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
@@ -1072,9 +1073,59 @@ void C2_HOOK_FASTCALL InitFlicQueue(void) {
     gFirst_flic = NULL;
 }
 
-// FlicQueueFinished
+// FUNCTION: CARMA2_HW 0x00462cd0
+int C2_HOOK_FASTCALL FlicQueueFinished(void) {
+    tFlic_descriptor* the_flic;
 
-// ProcessFlicQueue
+    the_flic = gFirst_flic;
+    while (the_flic != NULL) {
+        if (the_flic->must_finish) {
+            return 0;
+        }
+        the_flic = the_flic->next;
+    }
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x00462d00
+void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
+    tFlic_descriptor* the_flic;
+    tFlic_descriptor* last_flic;
+    tFlic_descriptor* doomed_flic;
+    tU32 new_time;
+    int finished_playing;
+
+    (void)pInterval;
+    DontLetFlicFuckWithPalettes();
+    TurnFlicTransparencyOn();
+    the_flic = gFirst_flic;
+    last_flic = NULL;
+    new_time = PDGetTotalTime();
+    while (the_flic != NULL) {
+        if (new_time - the_flic->last_frame < the_flic->frame_period) {
+            finished_playing = 0;
+        } else {
+            the_flic->last_frame = new_time;
+            finished_playing = PlayNextFlicFrame(the_flic);
+        }
+        if (finished_playing) {
+            EndFlic(the_flic);
+            if (last_flic != NULL) {
+                last_flic->next = the_flic->next;
+            } else {
+                gFirst_flic = the_flic->next;
+            }
+            doomed_flic = the_flic;
+            the_flic = the_flic->next;
+            BrMemFree(doomed_flic);
+        } else {
+            last_flic = the_flic;
+            the_flic = the_flic->next;
+        }
+    }
+    TurnFlicTransparencyOff();
+    LetFlicFuckWithPalettes();
+}
 
 // STUB: CARMA2_HW 0x00462dc0
 void C2_HOOK_FASTCALL FlushFlicQueue(void) {
