@@ -1,6 +1,7 @@
 #include "15-displays.h"
 
 #include "08-loading1.h"
+#include "19-font.h"
 #include "41-utility.h"
 #include "63-loading3.h"
 #include "70-packfile.h"
@@ -281,9 +282,58 @@ int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index) {
     return empty_one;
 }
 
-// IsHeadupTextClever
+int C2_HOOK_FASTCALL IsHeadupTextClever(char* pText) {
+    while (*pText != '\0') {
+        if ((tS8)*pText < 0) {
+            return 1;
+        }
+        pText++;
+    }
+    return 0;
+}
 
-// MungeHeadupWidth
+// FUNCTION: CARMA2_HW 0x0044a220
+int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
+    int width;
+
+    width = 0;
+    if (pHeadup->type == eHeadup_box_text) {
+        return 0;
+    } else if (pHeadup->type == eHeadup_coloured_text) {
+        pHeadup->clever = IsHeadupTextClever(pHeadup->data.text_info.text);
+        if (pHeadup->justification == eJust_left) {
+            pHeadup->x = pHeadup->original_x;
+        } else if (pHeadup->justification == eJust_right) {
+            if (pHeadup->clever) {
+                width = DRTextCleverWidth(pHeadup->data.coloured_text_info.coloured_font, pHeadup->data.text_info.text);
+            } else {
+                width = DRTextWidth(pHeadup->data.coloured_text_info.coloured_font, pHeadup->data.text_info.text);
+            }
+            pHeadup->x = pHeadup->original_x - width;
+        } else if (pHeadup->justification == eJust_centre) {
+            if (pHeadup->clever) {
+                width = DRTextCleverWidth(pHeadup->data.coloured_text_info.coloured_font, pHeadup->data.text_info.text);
+            } else {
+                width = DRTextWidth(pHeadup->data.coloured_text_info.coloured_font, pHeadup->data.text_info.text);
+            }
+            pHeadup->x = pHeadup->original_x - width / 2;
+        }
+    } else if (pHeadup->type == eHeadup_fancy) {
+        return 0;
+    } else {
+        pHeadup->clever = 0;
+        if (pHeadup->justification == eJust_left) {
+            pHeadup->x = pHeadup->original_x;
+        } else if (pHeadup->justification == eJust_right) {
+            width = BrPixelmapTextWidth(gBack_screen, pHeadup->data.text_info.font, pHeadup->data.text_info.text);
+            pHeadup->x = pHeadup->original_x - width;
+        } else if (pHeadup->justification == eJust_centre) {
+            width = BrPixelmapTextWidth(gBack_screen, pHeadup->data.text_info.font, pHeadup->data.text_info.text);
+            pHeadup->x = pHeadup->original_x - width / 2;
+        }
+    }
+    return width;
+}
 
 // NewTextHeadupSlot2
 

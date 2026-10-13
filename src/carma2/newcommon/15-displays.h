@@ -52,9 +52,9 @@ extern void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void);
 
 extern int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index);
 
-// IsHeadupTextClever
+extern int C2_HOOK_FASTCALL IsHeadupTextClever(char* pText);
 
-// MungeHeadupWidth
+extern int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup);
 
 // NewTextHeadupSlot2
 
