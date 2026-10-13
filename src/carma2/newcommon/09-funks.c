@@ -8,6 +8,9 @@
 // GLOBAL: CARMA2_HW 0x00688b30
 tGroove_funk_binding gGroove_funk_bindings[1440];
 
+// GLOBAL: CARMA2_HW 0x0068b830
+tFunk_temp_buffer* gFunk_temp_vertices;
+
 // GLOBAL: CARMA2_HW 0x0068b840
 br_scalar gSight_distance_squared;
 
@@ -96,9 +99,56 @@ void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
     NOT_IMPLEMENTED();
 }
 
-// CalcProximities
+// FUNCTION: CARMA2_HW 0x004761e0
+br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData) {
+    tFunkotronic_spec* the_funk;
+    br_face* the_face;
+    int i;
 
-// AddProximities
+    (void)pMat;
+    the_funk = pData;
+    if (pActor->model != NULL) {
+        the_face = pActor->model->faces;
+        for (i = 0; i < pActor->model->nfaces; i++, the_face++) {
+            if (the_face->material == the_funk->material) {
+                the_funk->proximity_count++;
+            }
+        }
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00476230
+br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, void* pData) {
+    tFunkotronic_spec* the_funk;
+    br_face* the_face;
+    br_vector3 normal;
+    int i;
+    int j;
+
+    (void)pMat;
+    the_funk = pData;
+    if (pActor->model != NULL) {
+        the_face = pActor->model->faces;
+        for (i = 0; i < pActor->model->nfaces; i++, the_face++) {
+            if (the_face->material == the_funk->material) {
+                for (j = 0; j < 3; j++) {
+                    BrVector3Copy(&the_funk->proximity_array[the_funk->proximity_count].v[j],
+                        &pActor->model->vertices[the_face->vertices[j]].p);
+                    gFunk_temp_vertices[the_funk->proximity_count].vertices[j] =
+                        &pActor->model->vertices[the_face->vertices[j]];
+                }
+                normal.v[0] = the_face->n.v[0];
+                normal.v[1] = the_face->n.v[1];
+                normal.v[2] = the_face->n.v[2];
+                BrVector3Normalise(&the_funk->proximity_array[the_funk->proximity_count].n, &normal);
+                the_funk->proximity_array[the_funk->proximity_count].d = -the_face->d;
+                the_funk->proximity_count++;
+            }
+        }
+    }
+    return 0;
+}
 
 // TryThisFunkLink
 

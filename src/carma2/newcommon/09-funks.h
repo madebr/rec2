@@ -6,6 +6,7 @@
 #include "brender/brender.h"
 
 extern tGroove_funk_binding gGroove_funk_bindings[1440];
+extern tFunk_temp_buffer* gFunk_temp_vertices;
 
 extern int gFunkotronics_array_size;
 extern int gGroovidelics_array_size;
@@ -30,9 +31,9 @@ extern tFunkotronic_spec* C2_HOOK_FASTCALL AddNewFunkotronic(void);
 
 extern void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
 
-// CalcProximities
+extern br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData);
 
-// AddProximities
+extern br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, void* pData);
 
 // TryThisFunkLink
 
