@@ -2,6 +2,7 @@
 
 #include "08-loading1.h"
 #include "19-font.h"
+#include "25-grafdata.h"
 #include "41-utility.h"
 #include "63-loading3.h"
 #include "70-packfile.h"
@@ -33,6 +34,9 @@ int gQueued_headup_count;
 
 // GLOBAL: CARMA2_HW 0x0067f890
 tQueued_headup gQueued_headups[4];
+
+// GLOBAL: CARMA2_HW 0x0067fcc0
+tU32 gLast_fancy_headup;
 
 // GLOBAL: CARMA2_HW 0x0067fcc4
 tU32 gLast_time_earn_time;
@@ -478,9 +482,129 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLi
     return NewTextHeadupSlot2(pSlot_index, pFlash_rate, pLifetime, pFont_index, pText, 1);
 }
 
-// NewImageHeadupSlot
+// FUNCTION: CARMA2_HW 0x0044a3a0
+int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index) {
+    int index;
+    int width;
+    tHeadup* the_headup;
+    tHeadup_slot* headup_slot;
 
-// DoFancyHeadup
+    index = FindAHeadupHoleWoofBarkSoundsABitRude(pSlot_index);
+    if (index >= 0) {
+        headup_slot = &gProgram_state.current_car.headup_slots[gProgram_state.cockpit_on][pSlot_index];
+        the_headup = &gHeadups[index];
+        the_headup->type = eHeadup_image;
+        the_headup->slot_index = pSlot_index;
+        the_headup->justification = headup_slot->justification;
+        if (pSlot_index >= 0) {
+            the_headup->cockpit_anchored = headup_slot->cockpit_anchored;
+        } else {
+            the_headup->cockpit_anchored = 0;
+        }
+        the_headup->dimmed_background = headup_slot->dimmed_background;
+        the_headup->dim_left = headup_slot->dim_left;
+        the_headup->dim_top = headup_slot->dim_top;
+        the_headup->dim_right = headup_slot->dim_right;
+        the_headup->dim_bottom = headup_slot->dim_bottom;
+        the_headup->original_x = headup_slot->x;
+
+        switch (headup_slot->justification) {
+        case eJust_left:
+            the_headup->x = the_headup->original_x;
+            break;
+        case eJust_right:
+            width = DRTextWidth(&gFonts[gHud_messages[pImage_index].font1], gHud_messages[pImage_index].message);
+            the_headup->x = the_headup->original_x + width;
+            break;
+        case eJust_centre:
+            width = DRTextWidth(&gFonts[gHud_messages[pImage_index].font1], gHud_messages[pImage_index].message);
+            the_headup->x = the_headup->original_x + width / 2;
+            break;
+        }
+        the_headup->y = headup_slot->y;
+        if (pFlash_rate != 0) {
+            the_headup->flash_period = 1000 / pFlash_rate;
+        } else {
+            the_headup->flash_period = 0;
+        }
+        the_headup->last_flash = 0;
+        the_headup->flash_state = 0;
+        if (pLifetime != 0) {
+            the_headup->end_time = GetTotalTime() + pLifetime;
+        } else {
+            the_headup->end_time = 0;
+        }
+        strcpy(the_headup->data.image_info.text, gHud_messages[pImage_index].message);
+        the_headup->data.image_info.font_index = gHud_messages[pImage_index].font2;
+        the_headup->data.image_info.font = &gFonts[gHud_messages[pImage_index].font1];
+        switch (the_headup->justification) {
+        case eJust_left:
+            the_headup->data.image_info.field_0x104 = 0;
+            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x10c = -width;
+            break;
+        case eJust_right:
+            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x104 = width;
+            the_headup->data.image_info.field_0x10c = 0;
+            break;
+        case eJust_centre:
+            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x104 = width / 2;
+            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x10c = -(width / 2);
+            break;
+        }
+    }
+    return index;
+}
+
+// FUNCTION: CARMA2_HW 0x0044a600
+void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
+    tU32 the_time;
+    int temp_ref;
+    int center;
+    int width;
+    tHeadup* the_headup;
+
+    center = gCurrent_graf_data->width / 2;
+    the_time = GetTotalTime();
+    if (gMap_view == 2) {
+        return;
+    }
+    if (gLast_fancy_index >= 0 && the_time - gLast_fancy_time <= 2000 && pIndex < gLast_fancy_index) {
+        return;
+    }
+    temp_ref = NewImageHeadupSlot(6, 0, 2000, pIndex + 10);
+    if (temp_ref >= 0) {
+        gLast_fancy_index = pIndex;
+        gLast_fancy_headup = temp_ref;
+        gLast_fancy_time = the_time;
+
+        the_headup = &gHeadups[temp_ref];
+        the_headup->type = eHeadup_fancy;
+        the_headup->data.fancy_info.fancy_stage = 0;
+        the_headup->data.fancy_info.field_0x108 = 0;
+        switch (the_headup->justification) {
+        case eJust_left:
+            the_headup->data.fancy_info.offset = center;
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.end_offset = -width;
+            break;
+        case eJust_right:
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.end_offset = center;
+            the_headup->data.fancy_info.offset = center + width;
+            break;
+        case eJust_centre:
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.offset = center + width / 2;
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.end_offset = -center - width / 2;
+            break;
+        }
+    }
+}
 
 // MoveHeadupTo
 

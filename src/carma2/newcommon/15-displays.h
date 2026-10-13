@@ -12,6 +12,7 @@ extern int gLast_time_credit_headup;
 extern tU32 gLast_earn_time;
 extern tU32 gLast_time_earn_time;
 extern tU32 gLast_fancy_time;
+extern tU32 gLast_fancy_headup;
 extern int gOld_times[10];
 extern tHeadup gHeadups[37];
 extern int gQueued_headup_count;
@@ -70,9 +71,9 @@ extern int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate,
 
 extern int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText);
 
-// NewImageHeadupSlot
+extern int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index);
 
-// DoFancyHeadup
+extern void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
 // MoveHeadupTo
 
