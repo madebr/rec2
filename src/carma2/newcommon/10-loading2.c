@@ -820,7 +820,23 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
     }
 }
 
-// LoadRaceInfo
+// FUNCTION: CARMA2_HW 0x0048c860
+void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
+    int i;
+
+    pRace_info->index = pRace_index;
+    pRace_info->race_spec = &gRace_list[pRace_index];
+    if (gNet_mode == eNet_mode_none) {
+        pRace_info->number_of_racers = gRace_list[pRace_index].count_explicit_opponents;
+    }
+    pRace_info->total_laps = gRace_list[pRace_index].count_laps;
+    for (i = 0; i < 3; i++) {
+        pRace_info->initial_timer[i] = pRace_info->race_spec->initial_timer[i];
+        pRace_info->completion_bonus[i] = pRace_info->race_spec->completion_bonus[i];
+        pRace_info->completion_bonus_peds[i] = pRace_info->race_spec->completion_bonus_peds[i];
+        pRace_info->completion_bonus_opponents[i] = pRace_info->race_spec->completion_bonus_opponents[i];
+    }
+}
 
 // LoadOpponents
 
