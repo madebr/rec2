@@ -2,6 +2,8 @@
 
 #include "02-init.h"
 #include "19-font.h"
+#include "23-piping.h"
+#include "25-grafdata.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "63-loading3.h"
@@ -11,6 +13,9 @@
 #include "rec2_types.h"
 #include "rec2_macros.h"
 #include "c2_string.h"
+#include "c2_math.h"
+
+#include <limits.h>
 
 // GLOBAL: CARMA2_HW 0x00703e24
 int gWidth;
@@ -335,7 +340,27 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
     gEvalu = LoadPixelmap("Evalu01.PIX");
 }
 
-// NewScreenWobble
+// FUNCTION: CARMA2_HW 0x004e4db0
+void C2_HOOK_FASTCALL NewScreenWobble(double pAmplitude_x, double pAmplitude_y, double pPeriod) {
+    int i;
+    int index = -1;
+    int oldest_time = INT_MAX;
+
+    for (i = 0; i < (int)REC2_ASIZE(gWobble_array); ++i) {
+        if (gWobble_array[i].time_started == 0) {
+            index = i;
+            break;
+        }
+        if (gWobble_array[i].time_started < oldest_time) {
+            oldest_time = gWobble_array[i].time_started;
+            index = i;
+        }
+    }
+    gWobble_array[index].time_started = (int)GetTotalTime();
+    gWobble_array[index].amplitude_x = (float)pAmplitude_x;
+    gWobble_array[index].amplitude_y = (float)pAmplitude_y;
+    gWobble_array[index].period = (float)pPeriod;
+}
 
 // FUNCTION: CARMA2_HW 0x004e4e20
 void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY) {
@@ -349,7 +374,57 @@ void C2_HOOK_FASTCALL ResetScreenWobble(void) {
     gScreen_wobble_y = 0;
 }
 
-// CalculateWobblitude
+void C2_HOOK_FASTCALL CalculateWobblitude(tU32 pThe_time) {
+    int i;
+    tU32 time_going;
+    double mod_angle;
+    double cosine_over_angle;
+    double wobble_factor;
+    tWobble_spec* wobble;
+    tGraf_data* graf_data;
+
+    if (gProgram_state.new_view != eView_undefined) {
+        return;
+    }
+    gScreen_wobble_x = 0;
+    gScreen_wobble_y = 0;
+    for (i = 0; i < (int)REC2_ASIZE(gWobble_array); ++i) {
+        wobble = &gWobble_array[i];
+        if (wobble->time_started != 0) {
+            time_going = pThe_time - (tU32)wobble->time_started;
+            if (time_going > 1000) {
+                wobble->time_started = 0;
+            } else {
+                mod_angle = fmod((double)time_going / wobble->period, REC2_TAU);
+                if (mod_angle > REC2_3PI_OVER_2) {
+                    cosine_over_angle = gCosine_array[(int)((REC2_TAU - mod_angle) * (128.0 / REC2_PI))];
+                } else if (mod_angle > REC2_PI) {
+                    cosine_over_angle = -gCosine_array[(int)((mod_angle - REC2_PI) * (128.0 / REC2_PI))];
+                } else if (mod_angle > REC2_PI_OVER_2) {
+                    cosine_over_angle = -gCosine_array[(int)((REC2_PI - mod_angle) * (128.0 / REC2_PI))];
+                } else {
+                    cosine_over_angle = gCosine_array[(int)(mod_angle * (128.0 / REC2_PI))];
+                }
+                wobble_factor = cosine_over_angle / (1.0 + time_going * 0.0035);
+                /* Truncate the accumulated displacement after each contribution. */
+                gScreen_wobble_x = (int)(gScreen_wobble_x + wobble->amplitude_x * wobble_factor);
+                gScreen_wobble_y = (int)(gScreen_wobble_y + wobble->amplitude_y * wobble_factor);
+            }
+        }
+    }
+    graf_data = gCurrent_graf_data;
+    if (gScreen_wobble_x > graf_data->cock_margin_x) {
+        gScreen_wobble_x = graf_data->cock_margin_x;
+    } else if (gScreen_wobble_x < -graf_data->cock_margin_x) {
+        gScreen_wobble_x = -graf_data->cock_margin_x;
+    }
+    if (gScreen_wobble_y > graf_data->cock_margin_y) {
+        gScreen_wobble_y = graf_data->cock_margin_y;
+    } else if (gScreen_wobble_y < -graf_data->cock_margin_y) {
+        gScreen_wobble_y = -graf_data->cock_margin_y;
+    }
+    PipeSingleScreenWobble(gScreen_wobble_x, gScreen_wobble_y);
+}
 
 // ProcessNonTrackActors
 
