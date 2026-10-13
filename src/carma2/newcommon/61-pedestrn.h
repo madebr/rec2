@@ -8,6 +8,13 @@ extern tPedestrian* gPedestrian_array;
 extern int gPed_count;
 extern float gPed_gravity_multiplier;
 
+extern float gPedestrian_speed_factor;
+extern int gExploding_pedestrians;
+extern int gPed_dismemberfest;
+extern int gDancing_peds;
+extern int gPanicking_peds;
+extern int gDrunk_pedestrians;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix

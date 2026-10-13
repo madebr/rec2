@@ -143,15 +143,15 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // GainAPOPotential
 
-// SetPedSpeed
+extern int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* powerup, tCar_spec* car);
 
 // SetPedSize
 
 // SetPedHeadSize
 
-// SetPedExplode
+extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* powerup, tCar_spec* car);
 
-// SetPedBrittle
+extern int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* powerup, tCar_spec* car);
 
 // SetInvulnerability
 
@@ -171,15 +171,15 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // DoInstantRepair
 
-// ResetPedSpeed
+extern void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car);
 
 // ResetPedSize
 
 // ResetPedHeadSize
 
-// ResetPedExplode
+extern void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car);
 
-// ResetPedBrittle
+extern void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* powerup, tCar_spec* car);
 
 // SetEngineFactor
 
@@ -299,23 +299,23 @@ extern void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetInstantHandbrake
 
-// SetDancingPeds
+extern int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* powerup, tCar_spec* car);
 
-// SetPanickingPeds
+extern int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPissedPeds
+extern int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* powerup, tCar_spec* car);
 
 // SetGhostPeds
 
-// ResetDancingPeds
+extern void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* powerup, tCar_spec* car);
 
-// ResetPanickingPeds
+extern void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetPissedPeds
+extern void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* powerup, tCar_spec* car);
 
 // ResetGhostPeds
 

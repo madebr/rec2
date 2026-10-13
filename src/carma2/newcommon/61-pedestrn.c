@@ -31,6 +31,24 @@ int gFlameThrowerOn = 1;
 // GLOBAL: CARMA2_HW 0x0065d7d0
 int gExplosives_on = 1;
 
+// GLOBAL: CARMA2_HW 0x007447e0
+float gPedestrian_speed_factor;
+
+// GLOBAL: CARMA2_HW 0x007447b0
+int gExploding_pedestrians;
+
+// GLOBAL: CARMA2_HW 0x007447e4
+int gPed_dismemberfest;
+
+// GLOBAL: CARMA2_HW 0x007447a8
+int gDancing_peds;
+
+// GLOBAL: CARMA2_HW 0x007447f8
+int gPanicking_peds;
+
+// GLOBAL: CARMA2_HW 0x007447b8
+int gDrunk_pedestrians;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix

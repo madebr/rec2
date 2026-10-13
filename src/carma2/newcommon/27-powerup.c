@@ -193,15 +193,50 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // GainAPOPotential
 
-// SetPedSpeed
+#if defined(__GNUC__)
+typedef tU32 tPedPowerupWord __attribute__((__may_alias__));
+#else
+typedef tU32 tPedPowerupWord;
+#endif
+
+static int C2_HOOK_CDECL PedPowerupIndex(tPowerup* powerup, tPowerup* captured_array) {
+    tU32 delta = (tU32)(uintptr_t)powerup - (tU32)(uintptr_t)captured_array;
+    return (tS32)delta / 172;
+}
+
+// FUNCTION: CARMA2_HW 0x004dc720
+int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* powerup, tCar_spec* car) {
+    tU32 parameters = *(const volatile tPedPowerupWord*)(uintptr_t)((tU32)(uintptr_t)powerup + 0x48u);
+    tU32 speed = *(const volatile tPedPowerupWord*)(uintptr_t)parameters;
+    tPowerup* captured_array;
+
+    (void)car;
+    *(volatile tPedPowerupWord*)&gPedestrian_speed_factor = speed;
+    captured_array = *(tPowerup* volatile*)&gPowerup_array;
+    return PedPowerupIndex(powerup, captured_array);
+}
 
 // SetPedSize
 
 // SetPedHeadSize
 
-// SetPedExplode
+// FUNCTION: CARMA2_HW 0x004dc7d0
+int C2_HOOK_FASTCALL SetPedExplode(tPowerup* powerup, tCar_spec* car) {
+    tPowerup* captured_array = *(tPowerup* volatile*)&gPowerup_array;
 
-// SetPedBrittle
+    (void)car;
+    *(volatile int*)&gExploding_pedestrians = 1;
+    return PedPowerupIndex(powerup, captured_array);
+}
+
+// FUNCTION: CARMA2_HW 0x004dc800
+int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* powerup, tCar_spec* car) {
+    tPowerup* captured_array = *(tPowerup* volatile*)&gPowerup_array;
+
+    (void)car;
+    *(volatile int*)&gPed_dismemberfest = 1;
+    return PedPowerupIndex(powerup, captured_array);
+}
 
 // SetInvulnerability
 
@@ -221,15 +256,30 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // DoInstantRepair
 
-// ResetPedSpeed
+// FUNCTION: CARMA2_HW 0x004dc9c0
+void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    (void)car;
+    *(volatile tPedPowerupWord*)&gPedestrian_speed_factor = 0x3f800000u;
+}
 
 // ResetPedSize
 
 // ResetPedHeadSize
 
-// ResetPedExplode
+// FUNCTION: CARMA2_HW 0x004dca10
+void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    (void)car;
+    *(volatile int*)&gExploding_pedestrians = 0;
+}
 
-// ResetPedBrittle
+// FUNCTION: CARMA2_HW 0x004dca20
+void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    (void)car;
+    *(volatile int*)&gPed_dismemberfest = 0;
+}
 
 // SetEngineFactor
 
@@ -372,9 +422,23 @@ void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // ResetInstantHandbrake
 
-// SetDancingPeds
+// FUNCTION: CARMA2_HW 0x004de870
+int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* powerup, tCar_spec* car) {
+    tPowerup* captured_array = *(tPowerup* volatile*)&gPowerup_array;
 
-// SetPanickingPeds
+    (void)car;
+    *(volatile int*)&gDancing_peds = 1;
+    return PedPowerupIndex(powerup, captured_array);
+}
+
+// FUNCTION: CARMA2_HW 0x004de8a0
+int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* powerup, tCar_spec* car) {
+    tPowerup* captured_array = *(tPowerup* volatile*)&gPowerup_array;
+
+    (void)car;
+    *(volatile int*)&gPanicking_peds = 1;
+    return PedPowerupIndex(powerup, captured_array);
+}
 
 // FUNCTION: CARMA2_HW 0x004de8d0
 int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
@@ -390,13 +454,30 @@ int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return offset / (tS32)sizeof(tPowerup);
 }
 
-// SetPissedPeds
+// FUNCTION: CARMA2_HW 0x004de900
+int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* powerup, tCar_spec* car) {
+    tPowerup* captured_array = *(tPowerup* volatile*)&gPowerup_array;
+
+    (void)car;
+    *(volatile int*)&gDrunk_pedestrians = 1;
+    return PedPowerupIndex(powerup, captured_array);
+}
 
 // SetGhostPeds
 
-// ResetDancingPeds
+// FUNCTION: CARMA2_HW 0x004de960
+void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    (void)car;
+    *(volatile int*)&gDancing_peds = 0;
+}
 
-// ResetPanickingPeds
+// FUNCTION: CARMA2_HW 0x004de970
+void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    (void)car;
+    *(volatile int*)&gPanicking_peds = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004de980
 void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
@@ -405,7 +486,12 @@ void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     *(volatile tGravityWord*)&gPed_gravity_multiplier = 0x3f800000u;
 }
 
-// ResetPissedPeds
+// FUNCTION: CARMA2_HW 0x004de990
+void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* powerup, tCar_spec* car) {
+    (void)powerup;
+    (void)car;
+    *(volatile int*)&gDrunk_pedestrians = 0;
+}
 
 // ResetGhostPeds
 
