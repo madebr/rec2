@@ -1155,9 +1155,26 @@ void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
     LetFlicFuckWithPalettes();
 }
 
-// STUB: CARMA2_HW 0x00462dc0
+// FUNCTION: CARMA2_HW 0x00462dc0
 void C2_HOOK_FASTCALL FlushFlicQueue(void) {
-    NOT_IMPLEMENTED();
+    tFlic_descriptor* the_flic;
+    tFlic_descriptor* doomed_flic;
+
+    while (!FlicQueueFinished()) {
+        RemoveTransientBitmaps(1);
+        ProcessFlicQueue(gFrame_period);
+        DoMouseCursor();
+        PDScreenBufferSwap(0);
+    }
+    /* Optional animations can remain after all required ones have finished. */
+    the_flic = gFirst_flic;
+    while (the_flic != NULL) {
+        EndFlic(the_flic);
+        doomed_flic = the_flic;
+        the_flic = the_flic->next;
+        BrMemFree(doomed_flic);
+    }
+    gFirst_flic = NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x00463340
