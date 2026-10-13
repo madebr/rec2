@@ -57,13 +57,13 @@ extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 // DoDeltaTrans
 
-// DoBlack
+extern void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
 // DoRunLengthTrans
 
-// DoUncompressed
+extern void C2_HOOK_FASTCALL DoUncompressed(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
-// DoUncompressedTrans
+extern void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
 // DoMini
 

@@ -454,13 +454,79 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
 
 // DoDeltaTrans
 
-// DoBlack
+// FUNCTION: CARMA2_HW 0x00462580
+void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    int i;
+    int words_per_row;
+    int the_row_bytes;
+    tU8* pixel_ptr;
+
+    (void)chunk_length;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+    words_per_row = pFlic_info->width / 4;
+    for (i = 0; i < pFlic_info->height; i++) {
+        if (words_per_row > 0) {
+            memset(pixel_ptr, 0, words_per_row * sizeof(tU32));
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoRunLengthTrans
 
-// DoUncompressed
+// FUNCTION: CARMA2_HW 0x00462780
+void C2_HOOK_FASTCALL DoUncompressed(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int words_per_row;
+    int the_row_bytes;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU32 the_long;
 
-// DoUncompressedTrans
+    (void)chunk_length;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+    words_per_row = pFlic_info->width / 4;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = pixel_ptr;
+        for (j = 0; j < words_per_row; j++) {
+            the_long = MemReadU32(&pFlic_info->data);
+            memcpy(line_pixel_ptr, &the_long, sizeof(the_long));
+            line_pixel_ptr += sizeof(the_long);
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004627f0
+void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int the_row_bytes;
+    int width;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+
+    (void)chunk_length;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+    width = pFlic_info->width;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = pixel_ptr;
+        for (j = 0; j < width; j++) {
+            /* Transparent pixels use the low byte of each four-byte sample. */
+            the_byte = (tU8)MemReadU32(&pFlic_info->data);
+            if (the_byte != 0) {
+                *line_pixel_ptr = the_byte;
+            }
+            line_pixel_ptr++;
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoMini
 
