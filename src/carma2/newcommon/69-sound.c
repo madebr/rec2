@@ -780,7 +780,16 @@ void C2_HOOK_FASTCALL DRS3StopCDA(void) {
     }
 }
 
-// StartMusicTrack
+// FUNCTION: CARMA2_HW 0x00456840
+void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track) {
+
+    StopMusic();
+    if (!gINT_00595c44 || gProgram_state.music_volume >= 128) {
+        gNext_track_finished_check = PDGetTotalTime() + 10000;
+        dr_dprintf("CDINFO: StartMusicTrack(): New gNext_track_finished_check %d", (int)gNext_track_finished_check);
+        gINT_00684568 = DRS3StartCDA(pMusic_track);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004568c0
 void C2_HOOK_FASTCALL StartMusic(void) {

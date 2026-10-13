@@ -63,7 +63,7 @@ extern int C2_HOOK_FASTCALL DRS3StartCDA(int pSound);
 
 extern void C2_HOOK_FASTCALL DRS3StopCDA(void);
 
-// StartMusicTrack
+extern void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track);
 
 extern void C2_HOOK_FASTCALL StartMusic(void);
 
