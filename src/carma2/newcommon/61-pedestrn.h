@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern tPedestrian* gPedestrian_array;
+extern int gPed_count;
 
 // OrientationChanged
 
@@ -322,7 +323,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // MutatePed
 
-// FlushAllPedCaches
+extern void C2_HOOK_FASTCALL FlushAllPedCaches(void);
 
 // SavePedStuff
 

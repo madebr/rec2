@@ -1,5 +1,7 @@
 #include "61-pedestrn.h"
 
+#include <stdint.h>
+
 #include "10-loading2.h"
 #include "27-powerup.h"
 #include "63-loading3.h"
@@ -10,6 +12,9 @@ const char* gPedsFolder;
 
 // GLOBAL: CARMA2_HW 0x00744808
 tPedestrian* gPedestrian_array;
+
+// GLOBAL: CARMA2_HW 0x007447d4
+int gPed_count;
 
 // GLOBAL: CARMA2_HW 0x0065d7d4
 int gGoreLevel = 1;
@@ -346,7 +351,47 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // MutatePed
 
-// FlushAllPedCaches
+#if defined(__GNUC__)
+typedef tU32 tPedCacheWord __attribute__((__may_alias__));
+#else
+typedef tU32 tPedCacheWord;
+#endif
+
+static tU32 C2_HOOK_CDECL PedCacheRead(const void* base, tU32 offset) {
+    return *(const volatile tPedCacheWord*)(uintptr_t)((tU32)(uintptr_t)base + offset);
+}
+
+static void C2_HOOK_CDECL PedCacheWrite(void* base, tU32 offset, tU32 value) {
+    *(volatile tPedCacheWord*)(uintptr_t)((tU32)(uintptr_t)base + offset) = value;
+}
+
+// FUNCTION: CARMA2_HW 0x004d6c70
+void C2_HOOK_FASTCALL FlushAllPedCaches(void) {
+    tS32 count = *(volatile int*)&gPed_count;
+    tPedestrian* base = *(tPedestrian* volatile*)&gPedestrian_array;
+    tU32 row = (tU32)(uintptr_t)base + 0x0cu;
+    tU32 index = 0;
+    tU32 object;
+    tU32 cache;
+
+    if (count <= 0) {
+        return;
+    }
+    do {
+        object = PedCacheRead((void*)(uintptr_t)row, 0);
+        if (object != 0) {
+            cache = PedCacheRead((void*)(uintptr_t)object, 0xb0);
+            if (cache != 0) {
+                PedCacheWrite((void*)(uintptr_t)cache, 0x14, 0);
+                object = PedCacheRead((void*)(uintptr_t)row, 0);
+                PedCacheWrite((void*)(uintptr_t)object, 0xb0, 0);
+            }
+        }
+        count = *(volatile int*)&gPed_count;
+        index += 1u;
+        row += 0x54u;
+    } while ((tS32)index < count);
+}
 
 // SavePedStuff
 
