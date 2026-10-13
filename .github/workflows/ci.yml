@@ -56,7 +56,8 @@ jobs:
     - name: CMake (build)
       run: |
         cmake --build build ${{ matrix.platform.build-args }}
-    - name: Download binaries for reccmp
+    - name: Setup Python 3.x
+      if: ${{ matrix.platform.msvc5 }}
       uses: actions/setup-python@main
       with:
         python-version: 3.x
@@ -89,10 +90,12 @@ jobs:
         gist-token: ${{ secrets.GIST_TOKEN }}
         comment-payload-path: comment_message.txt
     - name: Store pull request number as text file
+      if: ${{ matrix.platform.msvc5 }}
       shell: bash
       run: |
         echo "${{ github.event.number }}" >pr-number.txt
     - name: Upload PR Comment Payload
+      if: ${{ matrix.platform.msvc5 }}
       uses: actions/upload-artifact@main
       with:
         name: Pull Request Comment

@@ -393,11 +393,11 @@ extern void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
 // NetSummary_MenuHandler
 
-// DisplayVolumeSettings
+extern void C2_HOOK_FASTCALL DisplayVolumeSettings(tFrontend_spec* pFrontend);
 
-// Slider_EffectsProc
+extern void C2_HOOK_FASTCALL Slider_EffectsProc(tFrontend_slider* pSlider);
 
-// Options_Infunc
+extern int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend);
 
 // Options_Outfunc
 
