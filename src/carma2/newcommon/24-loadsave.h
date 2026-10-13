@@ -24,6 +24,6 @@ extern int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game);
 
 extern int C2_HOOK_FASTCALL DoLoadGame(int pIndex);
 
-// DoLoadMostRecentGame
+extern void C2_HOOK_FASTCALL DoLoadMostRecentGame(void);
 
 #endif // GUARD_24_LOADSAVE_H

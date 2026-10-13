@@ -5,6 +5,7 @@
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
@@ -56,9 +57,36 @@ void C2_HOOK_FASTCALL MakeSavedGame(tSave_game* pSave_game) {
     }
 }
 
-// STUB: CARMA2_HW 0x00491ac0
+// FUNCTION: CARMA2_HW 0x00491ac0
 void C2_HOOK_FASTCALL DoSaveGame(void) {
-    NOT_IMPLEMENTED();
+    tPath_name the_path;
+    tSave_game save_game;
+    FILE* f;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tSave_game) != 0x328);
+
+    if (gNet_mode != eNet_mode_none) {
+        return;
+    }
+    PathCat(the_path, gApplication_path, "SAVEDGAMES.ARS");
+    PDFileUnlock(the_path);
+    f = DRfopen(the_path, "ab+");
+    if (f == NULL) {
+        return;
+    }
+    PFfseek(f, 0, SEEK_END);
+    for (i = 0; i < 3; i++) {
+        gCurrent_APO_potential_levels[i] = gProgram_state.current_car.power_up_slots[i];
+    }
+    for (i = 0; i < 3; i++) {
+        gCurrent_APO_levels[i] = gProgram_state.current_car.power_up_levels[i];
+    }
+    MakeSavedGame(&save_game);
+    Encryptificate(&save_game, 1);
+    PFfwrite(&save_game, 1, sizeof(save_game), f);
+    PFfclose(f);
+    gSave_game_out_of_sync = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00491bb0
@@ -146,5 +174,12 @@ int C2_HOOK_FASTCALL DoLoadGame(int pIndex) {
     return 0;
 }
 
-// DoLoadMostRecentGame
+// FUNCTION: CARMA2_HW 0x00491e50
+void C2_HOOK_FASTCALL DoLoadMostRecentGame(void) {
+
+    if (StartSavedGamesList()) {
+        DoLoadGame(0);
+        EndSavedGamesList();
+    }
+}
 
