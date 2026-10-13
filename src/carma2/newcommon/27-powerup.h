@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tPowerup* gPowerup_array;
+
 extern tHeadup_icon gPickedup_powerups[20];
 extern tSlot_info gCost_APO;
 extern tSlot_info gTrade_in_value_APO;
@@ -141,47 +143,47 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // GainAPOPotential
 
-// SetPedSpeed
+extern int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* powerup, tCar_spec* car);
 
 // SetPedSize
 
 // SetPedHeadSize
 
-// SetPedExplode
+extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* powerup, tCar_spec* car);
 
-// SetPedBrittle
+extern int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* powerup, tCar_spec* car);
 
 // SetInvulnerability
 
 // ResetInvulnerability
 
-// SetFreeRepairs
+int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* powerup, tCar_spec* car);
 
-// ResetFreeRepairs
+void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* powerup, tCar_spec* car);
 
-// SetStupidPedestrians
+int C2_HOOK_FASTCALL SetStupidPedestrians(tPowerup* powerup, tCar_spec* car);
 
-// ResetStupidPedestrians
+void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* powerup, tCar_spec* car);
 
-// FreezeTimer
+int C2_HOOK_FASTCALL FreezeTimer(tPowerup* powerup, tCar_spec* car);
 
-// UnfreezeTimer
+void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* powerup, tCar_spec* car);
 
 // DoInstantRepair
 
-// ResetPedSpeed
+extern void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car);
 
 // ResetPedSize
 
 // ResetPedHeadSize
 
-// ResetPedExplode
+extern void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car);
 
-// ResetPedBrittle
+extern void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* powerup, tCar_spec* car);
 
 // SetEngineFactor
 
-// SetUnderwater
+int C2_HOOK_FASTCALL SetUnderwater(tPowerup* powerup, tCar_spec* car);
 
 // TrashBodywork
 
@@ -193,29 +195,29 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // SetOpponentsSpeed
 
-// SetCopsSpeed
+int C2_HOOK_FASTCALL SetCopsSpeed(tPowerup* powerup, tCar_spec* car);
 
-// SetGravity
+extern int C2_HOOK_FASTCALL SetGravity(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPinball
+int C2_HOOK_FASTCALL SetPinball(tPowerup* powerup, tCar_spec* car);
 
-// SetWallclimb
+int C2_HOOK_FASTCALL SetWallclimb(tPowerup* powerup, tCar_spec* car);
 
-// SetBouncey
+int C2_HOOK_FASTCALL SetBouncey(tPowerup* powerup, tCar_spec* car);
 
 // SetSuspension
 
-// SetTyreGrip
+int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* powerup, tCar_spec* car);
 
-// SetImmortalPeds
+int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* powerup, tCar_spec* car);
 
-// ResetImmortalPeds
+void C2_HOOK_FASTCALL ResetImmortalPeds(tPowerup* powerup, tCar_spec* car);
 
-// SetSuicidalPeds
+int C2_HOOK_FASTCALL SetSuicidalPedestrians(tPowerup* powerup, tCar_spec* car);
 
-// ResetSuicidalPeds
+void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* powerup, tCar_spec* car);
 
-// SetDamageMultiplier
+int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* powerup, tCar_spec* car);
 
 // FillInMine
 
@@ -265,27 +267,27 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // ResetEngineFactor
 
-// ResetUnderwater
+void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* powerup, tCar_spec* car);
 
 // PukeDrugsBackUp
 
 // ResetOpponentsSpeed
 
-// ResetCopsSpeed
+void C2_HOOK_FASTCALL ResetCopsSpeed(tPowerup* powerup, tCar_spec* car);
 
-// ResetGravity
+extern void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetPinball
+void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car);
 
-// ResetWallclimb
+void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* powerup, tCar_spec* car);
 
-// ResetBouncey
+void C2_HOOK_FASTCALL ResetBouncey(tPowerup* powerup, tCar_spec* car);
 
 // ResetSuspension
 
-// ResetDamageMultiplier
+void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* powerup, tCar_spec* car);
 
-// ResetTyreGrip
+void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* powerup, tCar_spec* car);
 
 // PickAtRandom
 
@@ -293,27 +295,27 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // MungeVouchers
 
-// SetInstantHandbrake
+int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* powerup, tCar_spec* car);
 
-// ResetInstantHandbrake
+void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* powerup, tCar_spec* car);
 
-// SetDancingPeds
+extern int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* powerup, tCar_spec* car);
 
-// SetPanickingPeds
+extern int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* powerup, tCar_spec* car);
 
-// SetLowGravityPeds
+int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPissedPeds
+extern int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* powerup, tCar_spec* car);
 
 // SetGhostPeds
 
-// ResetDancingPeds
+extern void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* powerup, tCar_spec* car);
 
-// ResetPanickingPeds
+extern void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* powerup, tCar_spec* car);
 
-// ResetLowGravityPeds
+void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetPissedPeds
+extern void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* powerup, tCar_spec* car);
 
 // ResetGhostPeds
 
@@ -325,17 +327,17 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // ResetMassMultiplier
 
-// ShowPedestrians
+int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* powerup, tCar_spec* car);
 
-// HidePedestrians
+void C2_HOOK_FASTCALL HidePedestrians(tPowerup* powerup, tCar_spec* car);
 
-// SetElectroBastard
+int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* powerup, tCar_spec* car);
 
-// ResetElectroBastard
+void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* powerup, tCar_spec* car);
 
-// SetMutantCorpses
+int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* powerup, tCar_spec* car);
 
-// ResetMutantCorpses
+void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* powerup, tCar_spec* car);
 
 // ReceivedPowerup
 
@@ -404,5 +406,12 @@ extern int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar);
 extern void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* pPowerup, tCar_spec* pCar);
 
 // PeriodicCloaking
+
+
+extern const char* gPowerup_txt_path;
+
+void C2_HOOK_FASTCALL ConfigureZombiePedPowerupTxtPath(void);
+void C2_HOOK_FASTCALL ConfigureBloodPedPowerupTxtPath(void);
+void C2_HOOK_FASTCALL ConfigureAlienPedPowerupTxtPath(void);
 
 #endif // GUARD_27_POWERUP_H

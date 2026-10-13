@@ -2,6 +2,33 @@
 #define GUARD_61_PEDESTRN_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern tProximity_ray gProximity_rays[20];
+extern tNapalm_bolt gNapalm_bolts[5];
+extern tPedestrian* gPedestrian_array;
+extern int gPed_count;
+extern float gPed_gravity_multiplier;
+
+extern int gAnimalsOn;
+extern int gFlameThrowerOn;
+extern int gExplosives_on;
+extern int gGoreLevel;
+
+extern float gPedestrian_speed_factor;
+extern int gExploding_pedestrians;
+extern int gPed_dismemberfest;
+extern int gDancing_peds;
+extern int gPanicking_peds;
+extern int gDrunk_pedestrians;
+
+extern int gBlind_pedestrians;
+
+extern int gImmortal_peds;
+
+extern int gPeds_suicidal;
+
+extern float gMutant_speed;
 
 // OrientationChanged
 
@@ -271,11 +298,11 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // ResetPedSystem
 
-// ResetNapalmBolts
+extern void C2_HOOK_FASTCALL ResetNapalmBolts(void);
 
-// ARResetNapalmBolts
+extern void C2_HOOK_FASTCALL ARResetNapalmBolts(void);
 
-// AdjustNapalmBolt
+extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3* pPositions);
 
 // InitPedsForRace
 
@@ -283,7 +310,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // AdjustProxRay
 
-// ResetProxRay
+extern void C2_HOOK_FASTCALL ResetProxRay(void);
 
 // GetTestPed
 
@@ -319,7 +346,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // MutatePed
 
-// FlushAllPedCaches
+extern void C2_HOOK_FASTCALL FlushAllPedCaches(void);
 
 // SavePedStuff
 
@@ -339,13 +366,13 @@ extern void C2_HOOK_FASTCALL SetAlienPedFolderNames(void);
 
 // AddChangedPoint
 
-// GetHowMuchBloodAndSnotToSmearAbout
+int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void);
 
-// AreWeGoingToOutrageAnimalLoversAroundTheGlobe
+int C2_HOOK_FASTCALL GetAnimalsOn(void);
 
-// IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense
+int C2_HOOK_FASTCALL IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense(void);
 
-// IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
+int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void);
 
 extern void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn);
 
@@ -423,7 +450,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // GetBoneMatrixPtr
 
-// GetCharacterActorPtr
+extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
 
 // SetCharacterBonePositions
 
@@ -536,5 +563,9 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 // EnableRetainRootMode
 
 // DisableRetainRootMode
+
+
+extern const char* gPedsFolder;
+
 
 #endif // GUARD_61_PEDESTRN_H

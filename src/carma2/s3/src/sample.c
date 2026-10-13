@@ -20,6 +20,19 @@ tS3_error_codes gS3_last_error;
 // GLOBAL: CARMA2_HW 0x007a05c0
 char gS3_sound_dirname[256];
 
+// FUNCTION: CARMA2_HW 0x00564e5e
+int C2_HOOK_FASTCALL S3GetSampleDuration(int pSample_id) {
+    tS3_descriptor* descriptor;
+    int milliseconds;
+
+    descriptor = S3GetDescriptorByID(pSample_id);
+    if (descriptor == NULL) {
+        return 0;
+    }
+    milliseconds = (int)((tU32)descriptor->buffer_description->sample_size * 1000u);
+    return milliseconds / descriptor->buffer_description->sample_rate;
+}
+
 // FUNCTION: CARMA2_HW 0x005687ff
 tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
     tS3_descriptor* descriptor;

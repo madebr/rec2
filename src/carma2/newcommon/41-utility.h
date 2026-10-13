@@ -21,13 +21,13 @@ extern int C2_HOOK_FASTCALL PercentageChance(int pC);
 
 extern int C2_HOOK_FASTCALL IRandomPosNeg(int pN);
 
-extern float C2_HOOK_STDCALL FRandomBetween(float pA, float pB);
+extern double C2_HOOK_STDCALL FRandomBetween(float pA, float pB);
 
-extern float C2_HOOK_STDCALL FRandomPosNeg(float pN);
+extern double C2_HOOK_STDCALL FRandomPosNeg(float pN);
 
-extern br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB);
+extern double C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB);
 
-extern br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
+extern double C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
 
 extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
 
@@ -41,15 +41,18 @@ extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_
 
 extern br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* path);
 
-// DRPixelmapLoad
+extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name);
 
 extern void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath);
 
-// DRLoadMultiplePix
+extern char gCurrent_load_directory[256];
+extern char gCurrent_load_name[256];
+
+extern int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity);
 
 extern int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity);
 
-// WaitFor
+extern void C2_HOOK_FASTCALL WaitFor(tU32 pDelay);
 
 extern intptr_t DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
 
@@ -61,9 +64,9 @@ extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, b
 
 extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_matrix34* pMatrix, recurse_with_trans_cbfn* pCall_back, void* pArg);
 
-// DRActorEnumRecurseWithSnart
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithSnart(br_actor* pActor, br_matrix34* pMatrix, tDRActorEnumRecurseWithSnart_cbfn* pCall_back, void* pArg);
 
-// sign
+extern int C2_HOOK_FASTCALL sign(int pNumber);
 
 extern FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension);
 
@@ -103,7 +106,7 @@ extern void C2_HOOK_FASTCALL PossibleService(void);
 
 extern void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, const br_matrix34* pC);
 
-extern void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h);
+extern void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h);
 
 extern int C2_HOOK_FASTCALL NormalSideOfPlane(br_vector3* pPoint, br_vector3* pNormal, br_scalar pD);
 
@@ -145,7 +148,7 @@ extern int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
 extern void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale);
 
-extern float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF);
+extern double C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF);
 
 extern int C2_HOOK_FASTCALL DRVector3NonZero(const br_vector3* pV);
 
@@ -169,7 +172,7 @@ extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
 extern tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry);
 
-// Colour24BitTo16Bit
+extern tU16 C2_HOOK_FASTCALL Colour24BitTo16Bit(br_colour pColour);
 
 extern br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc);
 
@@ -191,13 +194,17 @@ extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
 
 extern void C2_HOOK_FASTCALL PrintScreen(void);
 
-// FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
+extern intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
+
+extern void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg);
+
+extern tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp);
 
 // GetBlenficatiousnessOfMaterialTablishly
 
 // GetBlenficatiousnessOfMaterialPrimitively
 
-// GetBlenficatiousnessOfMaterial
+extern int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material* pMaterial);
 
 extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
@@ -207,7 +214,7 @@ extern void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pMeta, ch
 
 extern void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum);
 
-extern void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h);
+extern void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h);
 
 extern void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap);
 

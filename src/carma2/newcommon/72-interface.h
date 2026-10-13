@@ -4,6 +4,10 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tFrontend_slider* gCurrent_frontend_scrollbars;
+extern int gFrontend_selected_item_index;
+extern tConnected_items* gConnected_items;
+
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
 
@@ -269,7 +273,7 @@ extern void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth);
 
 // GetActiveSlider
 
-// GetAnyActiveSlider
+extern tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void);
 
 // PrepareSliders
 
@@ -285,7 +289,7 @@ extern void C2_HOOK_FASTCALL Generic_LinkInEffect(void);
 
 extern void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
-// GetScrollSet
+extern tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem);
 
 // ScrollSet_DisplayEntry
 
@@ -293,7 +297,7 @@ extern void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
 // GetUpdown
 
-// ScrollSet_TranslateItemToIndex
+extern int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected, int pItem);
 
 // Generic_FindNextActiveItem
 

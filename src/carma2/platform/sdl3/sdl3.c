@@ -19,6 +19,7 @@
 
 #ifdef SDL_PLATFORM_WINDOWS
 #include <windows.h>
+#include <direct.h>
 #else
 #include <libgen.h>
 #include <sys/stat.h>
@@ -83,17 +84,6 @@ char gExtendedAsciiToNormalAscii[128] = {
     'd', '}',  'o',  'o', 'o',  'o', 'o', '/', '0', 'u', 'u', 'u', 'u', 'y', 'b', 'y',
 };
 
-static int find_gamepad_index(SDL_JoystickID which) {
-    int i;
-
-    for (i = 0; i < g_Count_Joystick_infos; i++) {
-        if (g_Joystick_infos[i].which == which) {
-            return i;
-        }
-    }
-    return -1;
-}
-
 void SDL3ServiceMessages(void) {
     SDL_Event event;
 
@@ -153,33 +143,8 @@ void SDL3ServiceMessages(void) {
             }
         } else if (event.type == SDL_EVENT_WINDOW_HIDDEN || event.type == SDL_EVENT_WINDOW_SHOWN) {
             gWindowShown = event.type == SDL_EVENT_WINDOW_SHOWN;
-        } else if (event.type == SDL_EVENT_GAMEPAD_ADDED) {
-            if (g_Count_Joystick_infos < SDL_arraysize(g_Joystick_infos)) {
-                SDL_memset(&g_Joystick_infos[g_Count_Joystick_infos], 0, sizeof(tJoystick_info));
-                g_Count_Joystick_infos += 1;
-                g_Joystick_infos[g_Count_Joystick_infos].which = event.gdevice.which;
-            }
-        } else if (event.type == SDL_EVENT_GAMEPAD_REMOVED) {
-            int index = find_gamepad_index(event.gdevice.which);
-            if (index >= 0) {
-                SDL_memmove(&g_Joystick_infos[index], &g_Joystick_infos[index + 1], sizeof(tJoystick_info) * (g_Count_Joystick_infos - index - 1));
-                g_Count_Joystick_infos -= 1;
-            }
-        } else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN) {
-            int index = find_gamepad_index(event.gdevice.which);
-            if (index >= 0 && event.gbutton.button < 4 * sizeof(g_Joystick_infos[index].buttons)) {
-                g_Joystick_infos[index].buttons |= 0x1 << event.gbutton.button;
-            }
-        } else if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP) {
-            int index = find_gamepad_index(event.gbutton.which);
-            if (index >= 0 && event.gbutton.button < 4 * sizeof(g_Joystick_infos[index].buttons)) {
-                g_Joystick_infos[index].buttons &= ~(0x1 << event.gbutton.button);
-            }
-        } else if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION) {
-            int index = find_gamepad_index(event.gaxis.which);
-            if (index >= 0) {
-                g_Joystick_infos[index].axis_motions[event.gaxis.axis] = event.gaxis.value;
-            }
+        } else {
+            SDL3HandleGamepadEvent(&event);
         }
     }
 }
@@ -464,7 +429,11 @@ void PDEnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
 }
 
 int PDmkdir(const char *path) {
+#ifdef SDL_PLATFORM_WINDOWS
+    return _mkdir(path);
+#else
     return mkdir(path, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+#endif
 }
 
 void MAMSUnlock(void **pPtr) {
@@ -548,8 +517,8 @@ int C2_HOOK_FASTCALL PDGetMouseClickPosition(int *pX_coord, int *pY_coord) {
     if (!gCursorPos_LastClick_Valid) {
         return 0;
     }
-    *pX_coord = gCursorPos_LastClick_x;
-    *pY_coord = gCursorPos_LastClick_y;
+    *pX_coord = (int)gCursorPos_LastClick_x;
+    *pY_coord = (int)gCursorPos_LastClick_y;
     return 1;
 }
 
@@ -673,8 +642,8 @@ int PDGetRegisterSourceLocation(char *buffer, int *buffer_size) {
 
 void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
     /* OG win32 calls GetCursorPos + ScreenToClient: does it get an updated position from the message pump? */
-    *pX = gPD_mouse_position_x;
-    *pY = gPD_mouse_position_y;
+    *pX = (int)gPD_mouse_position_x;
+    *pY = (int)gPD_mouse_position_y;
 }
 
 void PDRevertPalette(void) {

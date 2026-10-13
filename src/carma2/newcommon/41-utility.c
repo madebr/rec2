@@ -44,6 +44,12 @@ tU32 gLost_time;
 // GLOBAL: CARMA2_HW 0x0079efb0
 tU32 gLast_tick_count;
 
+// GLOBAL: CARMA2_HW 0x00762180
+char gCurrent_load_directory[256];
+
+// GLOBAL: CARMA2_HW 0x00761a80
+char gCurrent_load_name[256];
+
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     br_device *dev;
@@ -131,39 +137,113 @@ int C2_HOOK_FASTCALL IRandomPosNeg(int pN) {
     return IRandomBetween(-pN, pN);
 }
 
-// FUNCTION: CARMA2_HW 0x005135b0
-float C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
-
-#if RAND_MAX == 0x7fff
-    return (float)rand() * (pB - pA) / (float)RAND_MAX + pA;
+/* Preserve x87 load order, NaN selection and the PosNeg store before rand. */
+static void C2_HOOK_FASTCALL UtilityRandomNegative(float* output, const float* input) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, output
+        mov ecx, input
+        fld dword ptr [ecx]
+        fchs
+        fstp dword ptr [eax]
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile("flds %1; fchs; fstps %0" : "=m" (*output) : "m" (*input) : "memory", "st");
 #else
-    return (float)(rand() % 0x10000) * (pB - pA) / (float)(0x7fff + 1) + pA;
+    volatile double value = *input;
+
+    *output = (float)-value;
+#endif
+}
+
+static double C2_HOOK_FASTCALL UtilityRandomScalar(const float* pA, const float* pB, int number) {
+#if (defined(_MSC_VER) && defined(_M_IX86)) || (defined(__GNUC__) && defined(__i386__))
+    double result;
+    const float negative_inverse = -1.f / 32768.f;
+
+#if defined(_MSC_VER)
+    __asm {
+        mov ecx, pA
+        mov edx, pB
+        fld dword ptr [edx]
+        fsub dword ptr [ecx]
+        fild number
+        fxch st(1)
+        fmulp st(1), st(0)
+        fmul negative_inverse
+        fsubr dword ptr [ecx]
+        fstp result
+    }
+#else
+    __asm__ volatile("flds (%2); fsubs (%1); fildl %3; fxch %%st(1); fmulp %%st, %%st(1); fmuls %4; fsubrs (%1); fstpl %0"
+        : "=m" (result) : "r" (pA), "r" (pB), "m" (number), "m" (negative_inverse) : "memory", "st", "st(1)");
+#endif
+    return result;
+#else
+    return *pA - (((double)*pB - *pA) * number) * (-1.0 / 32768.0);
+#endif
+}
+
+// FUNCTION: CARMA2_HW 0x005135b0
+double C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
+    /* MSVC5 retains this arithmetic on x87 without a scalar return spill. */
+    return (float)rand() * (pB - pA) / 32768.f + pA;
+#else
+    int number = rand();
+
+    return UtilityRandomScalar(&pA, &pB, number);
 #endif
 }
 
 // FUNCTION: CARMA2_HW 0x005135e0
-float C2_HOOK_STDCALL FRandomPosNeg(float pN) {
-
+double C2_HOOK_STDCALL FRandomPosNeg(float pN) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
     return FRandomBetween(-pN, pN);
+#else
+    float negative;
+    int number;
+
+    UtilityRandomNegative(&negative, &pN);
+    number = rand();
+    return UtilityRandomScalar(&negative, &pN, number);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00513620
-br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
-
+double C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
     return FRandomBetween(pA, pB);
+#else
+    int number = rand();
+
+#if defined(__GNUC__) && defined(__i386__)
+    /* Prevent identical-function folding from reloading float arguments before rand. */
+    __asm__ volatile("" : : : "memory");
+#endif
+    return UtilityRandomScalar(&pA, &pB, number);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00513650
-br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
-
+double C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
+#if defined(_MSC_VER) && _MSC_VER < 1300
     return SRandomBetween(-pN, pN);
+#else
+    br_scalar negative;
+    int number;
+
+    UtilityRandomNegative(&negative, &pN);
+    number = rand();
+    return UtilityRandomScalar(&negative, &pN, number);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00513690
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2) {
 
-#ifdef REC2_FIX_BUGS
-    if (pDestn_str != pStr_1) { // Added to avoid strcpy overlap checks
+#if defined(REC2_FIX_BUGS) || !defined(REC2_MATCHING)
+    if (pDestn_str != pStr_1) {
         strcpy(pDestn_str, pStr_1);
     }
 #else
@@ -212,12 +292,51 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
     return the_map;
 }
 
-// STUB: CARMA2_HW 0x00513870
+// FUNCTION: CARMA2_HW 0x00513870
 br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* path) {
-    NOT_IMPLEMENTED();
+    tPath_name path_buffer;
+    tPath_name directory;
+    tPath_name name;
+    size_t length;
+    size_t start;
+    size_t i;
+    int error;
+
+    strcpy(path_buffer, path);
+    length = strlen(path_buffer);
+    start = 0;
+    for (i = length - 1; i != 0; i--) {
+        if (path_buffer[i] == gDir_separator[0]) {
+            start = i;
+            break;
+        }
+    }
+    memcpy(directory, path_buffer, start);
+    directory[start] = '\0';
+    if (directory[0] != '\0') {
+        start++;
+    }
+    for (i = 0; path_buffer[start + i] != '.' && start + i != length; i++) {
+        name[i] = path_buffer[start + i];
+    }
+    name[i] = '\0';
+    return DRLdImg(directory, name, gRender_palette, gPixelFlags, &error);
 }
 
-// DRPixelmapLoad
+// FUNCTION: CARMA2_HW 0x00513970
+br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name) {
+    br_pixelmap* the_map;
+    br_int_16 row_bytes;
+
+    the_map = BrPixelmapLoad(pFile_name);
+    if (the_map != NULL) {
+        row_bytes = the_map->row_bytes;
+        the_map->origin_x = 0;
+        the_map->row_bytes = (br_int_16)((row_bytes + sizeof(int32_t) - 1) & ~(sizeof(int32_t) - 1));
+        the_map->origin_y = 0;
+    }
+    return the_map;
+}
 
 // FUNCTION: CARMA2_HW 0x005139a0
 void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath) {
@@ -247,7 +366,57 @@ void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* s
     stemPath[i] = '\0';
 }
 
-// DRLoadMultiplePix
+// FUNCTION: CARMA2_HW 0x00513a30
+int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity) {
+    tPath_name path1;
+    tPath_name path2;
+    tPath_name path3;
+    tPath_name path4;
+    tName_list list;
+    const char* load_path;
+    int i;
+    int error;
+
+    (void)pCapacity;
+    list.size = 0;
+    pName[strlen(pName) - 4] = '\0';
+    PathCat(path1, gApplication_path, gCurrent_load_directory);
+    if (strcmp(gCurrent_load_directory, "COMMON") != 0 && strcmp(gCurrent_load_directory, "INTRFACE") != 0) {
+        PathCat(path1, path1, gCurrent_load_name);
+    }
+    PathCat(path1, path1, gGraf_specs[gGraf_spec_index].data_dir_name);
+    PathCat(path1, path1, pName);
+    PathCat(path3, gApplication_path, gCurrent_load_directory);
+    if (strcmp(gCurrent_load_directory, "COMMON") != 0 && strcmp(gCurrent_load_directory, "INTRFACE") != 0) {
+        PathCat(path3, path3, gCurrent_load_name);
+    }
+    PathCat(path3, path3, pName);
+
+    PathCat(path2, path1, "TIFFX");
+    PFForEveryFile2(path2, (tEnumPathCallback)GetFileName, &list);
+    PathCat(path4, path1, "PIX8");
+    PFForEveryFile2(path4, (tEnumPathCallback)GetAdditionalFileName, &list);
+    PathCat(path2, path1, "TIFFRGB");
+    PFForEveryFile2(path2, (tEnumPathCallback)GetAdditionalFileName, &list);
+    PathCat(path4, path1, "PIX16");
+    PFForEveryFile2(path4, (tEnumPathCallback)GetAdditionalFileName, &list);
+    load_path = path1;
+    if (list.size == 0) {
+        PathCat(path2, path3, "TIFFX");
+        PFForEveryFile2(path2, (tEnumPathCallback)GetFileName, &list);
+        PathCat(path4, path3, "PIX8");
+        PFForEveryFile2(path4, (tEnumPathCallback)GetAdditionalFileName, &list);
+        PathCat(path2, path3, "TIFFRGB");
+        PFForEveryFile2(path2, (tEnumPathCallback)GetAdditionalFileName, &list);
+        PathCat(path4, path3, "PIX16");
+        PFForEveryFile2(path4, (tEnumPathCallback)GetAdditionalFileName, &list);
+        load_path = path3;
+    }
+    for (i = 0; i < list.size; i++) {
+        pMaps[i] = DRLdImg(load_path, list.items[i], gRender_palette, gPixelFlags, &error);
+    }
+    return i;
+}
 
 // FUNCTION: CARMA2_HW 0x00514570
 int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity) {
@@ -266,7 +435,15 @@ int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelma
     return 1;
 }
 
-// WaitFor
+// FUNCTION: CARMA2_HW 0x005146c0
+void C2_HOOK_FASTCALL WaitFor(tU32 pDelay) {
+    tU32 end_time;
+
+    end_time = PDGetTotalTime() + pDelay;
+    while (PDGetTotalTime() < end_time && !AnyKeyDown()) {
+        SoundService();
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005146f0
 intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg) {
@@ -344,9 +521,36 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_mat
     return 0;
 }
 
-// DRActorEnumRecurseWithSnart
+// FUNCTION: CARMA2_HW 0x005148c0
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithSnart(br_actor* pActor, br_matrix34* pMatrix, tDRActorEnumRecurseWithSnart_cbfn* pCall_back, void* pArg) {
+    br_matrix34 combined_transform;
+    intptr_t result;
 
-// sign
+    if (pMatrix != NULL) {
+        BrMatrix34Mul(&combined_transform, &pActor->t.t.mat, pMatrix);
+    } else {
+        BrMatrix34Identity(&combined_transform);
+    }
+    result = pCall_back(pActor, &combined_transform, pArg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurseWithSnart(pActor, &combined_transform, pCall_back, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00514930
+int C2_HOOK_FASTCALL sign(int pNumber) {
+    if (pNumber > 0) {
+        return 1;
+    }
+    return pNumber < 0 ? -1 : 0;
+}
 
 // FUNCTION: CARMA2_HW 0x005149a0
 FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
@@ -747,23 +951,148 @@ void C2_HOOK_FASTCALL PossibleService(void) {
     }
 }
 
+/* Original PC53 grouping, NaN operands and sequential writes require x87 here. */
 // FUNCTION: CARMA2_HW 0x00515610
 void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, const br_matrix34* pC) {
-    br_scalar t1;
-    br_scalar t2;
-    br_scalar t3;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov ecx, pA
+        mov edx, pB
+        mov eax, pC
+        fld dword ptr [edx + 4]
+        fld dword ptr [edx + 8]
+        fld dword ptr [edx]
+        fxch st(2)
+        fsub dword ptr [eax + 0x28]
+        fxch st(1)
+        fsub dword ptr [eax + 0x2c]
+        fxch st(2)
+        fsub dword ptr [eax + 0x24]
+        fld dword ptr [eax + 8]
+        fld dword ptr [eax + 4]
+        fmul st(0), st(3)
+        fxch st(1)
+        fmul st(0), st(4)
+        fld st(2)
+        fmul dword ptr [eax]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [ecx]
+        fld dword ptr [eax + 0xc]
+        fld dword ptr [eax + 0x10]
+        fld dword ptr [eax + 0x14]
+        fxch st(2)
+        fmul st(0), st(3)
+        fxch st(1)
+        fmul st(0), st(4)
+        fxch st(2)
+        fmul st(0), st(5)
+        fxch st(2)
+        faddp st(1), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fstp dword ptr [ecx + 4]
+        fld dword ptr [eax + 0x18]
+        fld dword ptr [eax + 0x1c]
+        fld dword ptr [eax + 0x20]
+        fxch st(2)
+        fmul st(0), st(3)
+        fxch st(1)
+        fmul st(0), st(4)
+        fxch st(2)
+        fmul st(0), st(5)
+        fxch st(2)
+        faddp st(1), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fstp dword ptr [ecx + 8]
+        fstp st(0)
+        fxch st(1)
+        fstp st(0)
+        fstp st(0)
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ volatile(
+        ".intel_syntax noprefix\n\t"
+        "fld dword ptr [edx + 4]\n\t"
+        "fld dword ptr [edx + 8]\n\t"
+        "fld dword ptr [edx]\n\t"
+        "fxch st(2)\n\t"
+        "fsub dword ptr [eax + 0x28]\n\t"
+        "fxch st(1)\n\t"
+        "fsub dword ptr [eax + 0x2c]\n\t"
+        "fxch st(2)\n\t"
+        "fsub dword ptr [eax + 0x24]\n\t"
+        "fld dword ptr [eax + 8]\n\t"
+        "fld dword ptr [eax + 4]\n\t"
+        "fmul st(0), st(3)\n\t"
+        "fxch st(1)\n\t"
+        "fmul st(0), st(4)\n\t"
+        "fld st(2)\n\t"
+        "fmul dword ptr [eax]\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(2), st(0)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [ecx]\n\t"
+        "fld dword ptr [eax + 0xc]\n\t"
+        "fld dword ptr [eax + 0x10]\n\t"
+        "fld dword ptr [eax + 0x14]\n\t"
+        "fxch st(2)\n\t"
+        "fmul st(0), st(3)\n\t"
+        "fxch st(1)\n\t"
+        "fmul st(0), st(4)\n\t"
+        "fxch st(2)\n\t"
+        "fmul st(0), st(5)\n\t"
+        "fxch st(2)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [ecx + 4]\n\t"
+        "fld dword ptr [eax + 0x18]\n\t"
+        "fld dword ptr [eax + 0x1c]\n\t"
+        "fld dword ptr [eax + 0x20]\n\t"
+        "fxch st(2)\n\t"
+        "fmul st(0), st(3)\n\t"
+        "fxch st(1)\n\t"
+        "fmul st(0), st(4)\n\t"
+        "fxch st(2)\n\t"
+        "fmul st(0), st(5)\n\t"
+        "fxch st(2)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fxch st(1)\n\t"
+        "faddp st(1), st(0)\n\t"
+        "fstp dword ptr [ecx + 8]\n\t"
+        "fstp st(0)\n\t"
+        "fxch st(1)\n\t"
+        "fstp st(0)\n\t"
+        "fstp st(0)\n\t"
+        ".att_syntax prefix"
+        :
+        : "a" (pC), "c" (pA), "d" (pB)
+        : "memory", "st", "st(1)", "st(2)", "st(3)", "st(4)", "st(5)");
+#else
+    double x = (double)pB->v[0] - pC->m[3][0];
+    double y = (double)pB->v[1] - pC->m[3][1];
+    double z = (double)pB->v[2] - pC->m[3][2];
+    volatile double term_x;
+    volatile double term_y;
+    volatile double term_z;
+    volatile double first_sum;
+    int i;
 
-    t1 = pB->v[0] - pC->m[3][0];
-    t2 = pB->v[1] - pC->m[3][1];
-    t3 = pB->v[2] - pC->m[3][2];
-
-    pA->v[0] = pC->m[0][2] * t3 + pC->m[0][0] * t1 + pC->m[0][1] * t2;
-    pA->v[1] = pC->m[1][2] * t3 + pC->m[1][0] * t1 + pC->m[1][1] * t2;
-    pA->v[2] = pC->m[2][2] * t3 + pC->m[2][0] * t1 + pC->m[2][1] * t2;
+    for (i = 0; i < 3; i++) {
+        term_x = (double)pC->m[i][0] * x;
+        term_y = (double)pC->m[i][1] * y;
+        term_z = (double)pC->m[i][2] * z;
+        first_sum = i == 0 ? term_y + term_z : term_x + term_y;
+        pA->v[i] = (br_scalar)(first_sum + (i == 0 ? term_x : term_z));
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00515690
-void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h) {
+void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h) {
 
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
 }
@@ -1071,9 +1400,47 @@ void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale) {
 }
 
 // FUNCTION: CARMA2_HW 0x005162a0
-float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF) {
+double C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    double result;
 
-    return BrVector3Dot(pP, pN) - pF;
+    __asm {
+        mov ecx, pP
+        mov edx, pN
+        fld dword ptr [edx + 4]
+        fld dword ptr [edx + 8]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [ecx + 8]
+        fld dword ptr [edx]
+        fxch st(4)
+        fmulp st(2), st(0)
+        fxch st(2)
+        fmulp st(2), st(0)
+        fxch st(2)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fsub pF
+        fstp result
+    }
+    return result;
+#elif defined(__GNUC__) && defined(__i386__)
+    double result;
+
+    __asm__ volatile(
+        "flds 4(%%edx); flds 8(%%edx); flds 4(%%ecx); flds 8(%%ecx); flds (%%edx); "
+        "fxch %%st(4); fmulp %%st,%%st(2); fxch %%st(2); fmulp %%st,%%st(2); "
+        "fxch %%st(2); fmuls (%%ecx); fxch %%st(1); faddp %%st,%%st(2); "
+        "faddp %%st,%%st(1); fsubs %3; fstpl %0"
+        : "=m" (result) : "c" (pP), "d" (pN), "m" (pF)
+        : "st", "st(1)", "st(2)", "st(3)", "st(4)");
+    return result;
+#else
+    volatile double yz = (double)pP->v[1] * pN->v[1] + (double)pP->v[2] * pN->v[2];
+
+    return (yz + (double)pP->v[0] * pN->v[0]) - pF;
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00516350
@@ -1085,20 +1452,60 @@ int C2_HOOK_FASTCALL DRVector3NonZero(const br_vector3* pV) {
     }
 }
 
+#if defined(__GNUC__)
+typedef tU32 tDiminishRawWord __attribute__((__may_alias__));
+#else
+typedef tU32 tDiminishRawWord;
+#endif
+
+static double C2_HOOK_CDECL DiminishSubtractScalar(double left, volatile const br_scalar* right) {
+    double result;
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov edx, right
+        fld qword ptr left
+        fsub dword ptr [edx]
+        fstp qword ptr result
+    }
+#elif defined(__GNUC__) && defined(__i386__)
+    __asm__ __volatile__("fldl %1; fsubs %2; fstpl %0" : "=m"(result) : "m"(left), "m"(*right) : "st");
+#else
+    result = left - (double)*right;
+#endif
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x00516390
 void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3* pV2) {
-    br_vector3 v1 = *pV1;
+    volatile tU32 old_bits[3];
+    tU32 copied_bits[3];
+    br_vector3 old;
+    double difference, product;
 
-    BrVector3Sub(pV1, pV1, pV2);
-    if (v1.v[0] * pV1->v[0] <= 0.0f) {
-        pV1->v[0] = 0.0f;
-    }
-    if (v1.v[1] * pV1->v[1] <= 0.0f) {
-        pV1->v[1] = 0.0f;
-    }
-    if (v1.v[2] * pV1->v[2] <= 0.0f) {
-        pV1->v[2] = 0.0f;
-    }
+    /* Original computes X before its raw three-word snapshot, then stores X
+     * before loading Y/Z operands. These aliases and fault paths are live. */
+    difference = DiminishSubtractScalar((double)*(volatile const br_scalar*)&pV1->v[0], &pV2->v[0]);
+    old_bits[0] = *(volatile const tDiminishRawWord*)(const void*)&pV1->v[0];
+    old_bits[1] = *(volatile const tDiminishRawWord*)(const void*)&pV1->v[1];
+    old_bits[2] = *(volatile const tDiminishRawWord*)(const void*)&pV1->v[2];
+    *(volatile br_scalar*)&pV1->v[0] = (br_scalar)difference;
+    difference = DiminishSubtractScalar((double)*(volatile const br_scalar*)&pV1->v[1], &pV2->v[1]);
+    *(volatile br_scalar*)&pV1->v[1] = (br_scalar)difference;
+    difference = DiminishSubtractScalar((double)*(volatile const br_scalar*)&pV1->v[2], &pV2->v[2]);
+    *(volatile br_scalar*)&pV1->v[2] = (br_scalar)difference;
+
+    copied_bits[0] = old_bits[0];
+    copied_bits[1] = old_bits[1];
+    copied_bits[2] = old_bits[2];
+    memcpy(&old, copied_bits, sizeof(old));
+    /* The product remains wide at PC53; unordered, zero and negative clamp
+     * to raw positive zero, exactly as the original TEST AH,0x41. */
+    product = (double)old.v[0] * (double)*(volatile const br_scalar*)&pV1->v[0];
+    if (!(product > 0.0)) *(volatile br_scalar*)&pV1->v[0] = 0.0f;
+    product = (double)old.v[1] * (double)*(volatile const br_scalar*)&pV1->v[1];
+    if (!(product > 0.0)) *(volatile br_scalar*)&pV1->v[1] = 0.0f;
+    product = (double)old.v[2] * (double)*(volatile const br_scalar*)&pV1->v[2];
+    if (!(product > 0.0)) *(volatile br_scalar*)&pV1->v[2] = 0.0f;
 }
 
 // FUNCTION: CARMA2_HW 0x00516410
@@ -1165,7 +1572,8 @@ void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_mat
     BrVector3Normalise((br_vector3*)pMatrix->m[1], (br_vector3*)pMatrix->m[1]);
     BrVector3Cross((br_vector3*)pMatrix->m[2], (br_vector3*)pMatrix->m[0], (br_vector3*)pMatrix->m[1]);
     BrVector3Normalise((br_vector3*)pMatrix->m[2], (br_vector3*)pMatrix->m[2]);
-    ExpandVector3((br_vector3*)pMatrix->m[3], &pCompressed->p, 300.0f, 300.0f);
+    /* Restore the position range used when compressing the matrix. */
+    ExpandVector3((br_vector3*)pMatrix->m[3], &pCompressed->p, -300.0f, 300.0f);
     if (pInactive) {
         BrVector3Set((br_vector3*)pMatrix->m[3],
             pMatrix->m[3][0] + 1000.0f,
@@ -1217,7 +1625,24 @@ tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
     }
 }
 
-// Colour24BitTo16Bit
+// FUNCTION: CARMA2_HW 0x00517050
+tU16 C2_HOOK_FASTCALL Colour24BitTo16Bit(br_colour pColour) {
+    tU32 colour;
+
+    switch (gBack_screen->type) {
+    case BR_PMT_RGB_565:
+        colour = ((pColour >> 3) & 0x1f0000) | (pColour & 0xfc00);
+        colour = (colour >> 2) | (pColour & 0xf8);
+        return (tU16)(colour >> 3);
+    case BR_PMT_RGB_555:
+        colour = ((pColour >> 3) & 0x1f0000) | (pColour & 0xf800);
+        colour = (colour >> 3) | (pColour & 0xf8);
+        return (tU16)(colour >> 3);
+    default:
+        BrFailure("Unsupported back buffer type.");
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005170c0
 br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
@@ -1492,13 +1917,166 @@ void C2_HOOK_FASTCALL PrintScreen(void) {
     }
 }
 
-// FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
+// FUNCTION: CARMA2_HW 0x00518b00
+intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
+
+    if (pActor->render_style != BR_RSTYLE_NONE) {
+        const char* str;
+
+        switch (pActor->type) {
+        case BR_ACTOR_NONE:
+            str = "DUMMY ACTOR\n";
+            break;
+        case BR_ACTOR_MODEL:
+            str = "MODEL ACTOR\n";
+            break;
+        case BR_ACTOR_LIGHT:
+            str = "LIGHT ACTOR\n";
+            break;
+        case BR_ACTOR_CAMERA:
+            str = "CAMERA ACTOR\n";
+            break;
+        case BR_ACTOR_BOUNDS:
+            str = "BOUNDS ACTOR\n";
+            break;
+        case BR_ACTOR_BOUNDS_CORRECT:
+            str = "BOUNDS-CORRECT ACTOR\n";
+            break;
+        case BR_ACTOR_CLIP_PLANE:
+            str = "CLIP-PLANE ACTOR\n";
+            break;
+        default:
+            str = "******** UNKNOWN ********\n";
+            break;
+        }
+        printf(str);
+        str = pActor->identifier;
+        if (str == NULL) {
+            str = "No Identifier";
+        }
+        printf("\tName:\t\t\"%s\"\n", str);
+        printf("\tAddress:\t%08x\n", (unsigned int)(uintptr_t)pActor);
+        printf("\tParent:\t\t%08x\n", (unsigned int)(uintptr_t)pActor->parent);
+        printf("\tDepth:\t\t%i\n", pActor->depth);
+        printf("\tModelPtr:\t0x%08x", (unsigned int)(uintptr_t)pActor->model);
+        if (pActor->model == NULL) {
+            printf("\n");
+        } else {
+            str = pActor->model->identifier;
+            if (str == NULL) {
+                str = "No Identifier";
+            }
+            printf(" (\"%s\")\n", str);
+        }
+        printf("\tMaterialPtr:\t0x%08x", (unsigned int)(uintptr_t)pActor->material);
+        if (pActor->material == NULL) {
+            printf("\n");
+        } else {
+            str = pActor->material->identifier;
+            if (str == NULL) {
+                str = "No Identifier";
+            }
+            printf(" (\"%s\")\n", str);
+        }
+        switch (pActor->render_style) {
+        case BR_RSTYLE_DEFAULT:
+            str = "BR_RSTYLE_DEFAULT";
+            break;
+        case BR_RSTYLE_NONE:
+            str = "BR_RSTYLE_NONE";
+            break;
+        case BR_RSTYLE_POINTS:
+            str = "BR_RSTYLE_POINTS";
+            break;
+        case BR_RSTYLE_EDGES:
+            str = "BR_RSTYLE_EDGES";
+            break;
+        case BR_RSTYLE_FACES:
+            str = "BR_RSTYLE_FACES";
+            break;
+        case BR_RSTYLE_BOUNDING_POINTS:
+            str = "BR_RSTYLE_BOUNDING_POINTS";
+            break;
+        case BR_RSTYLE_BOUNDING_EDGES:
+            str = "BR_RSTYLE_BOUNDING_EDGES";
+            break;
+        case BR_RSTYLE_BOUNDING_FACES:
+            str = "BR_RSTYLE_BOUNDING_FACES";
+            break;
+        default:
+            str = "******** UNKNOWN ********";
+            break;
+        }
+        printf("\tRenderStyle:\t%s\n", str);
+        printf("\n");
+    }
+    return BrActorEnum(pActor, DumpVisibleActorsCB, pData);
+}
+
+// FUNCTION: CARMA2_HW 0x00518ac0
+void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg) {
+
+    printf("MSG:\"%s\"\n", pMsg);
+    BrActorEnum(pActor, DumpVisibleActorsCB, NULL);
+    printf("----------------------------------\n\n");
+    fflush(stdout);
+}
+
+// FUNCTION: CARMA2_HW 0x00518d60
+tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp) {
+    tU32 colour;
+
+    switch (pm->type) {
+    case BR_PMT_RGB_555:
+        colour = red & 0xf8;
+        break;
+    case BR_PMT_RGB_565:
+        return ((((red & 0xf8) << 5) | (grn & 0xfc)) << 3) | ((blu >> 3) & 0x1f);
+    case BR_PMT_RGBA_8888:
+        return (((((alp << 8) | red) << 8) | grn) << 8) | blu;
+    case BR_PMT_RGBA_4444:
+        /* The original masks AL only, retaining the upper alpha bits. */
+        return ((((alp & 0xfffffff0u) << 4) | (red & 0xfffffff0u)) << 4) | (blu >> 4) | (grn & 0xfffffff0u);
+    case BR_PMT_ARGB_1555:
+        colour = ((alp & 0xffffff80u) << 1) | (red & 0xf8);
+        break;
+    default:
+        return (((red << 8) | grn) << 8) | blu;
+    }
+    return (((colour << 5) | (grn & 0xf8)) << 2) | ((blu >> 3) & 0x1f);
+}
 
 // GetBlenficatiousnessOfMaterialTablishly
 
 // GetBlenficatiousnessOfMaterialPrimitively
 
-// GetBlenficatiousnessOfMaterial
+// FUNCTION: CARMA2_HW 0x00518e70
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material* pMaterial) {
+    br_token_value* prims;
+    br_pixelmap* table;
+
+    if (gScreen->type == BR_PMT_INDEX_8) {
+        table = BrTableFind("BLEND75.TAB");
+        if (pMaterial->index_blend == table) {
+            return 25;
+        }
+        table = BrTableFind("BLEND50.TAB");
+        if (pMaterial->index_blend == table) {
+            return 50;
+        }
+        table = BrTableFind("BLEND25.TAB");
+        if (pMaterial->index_blend == table) {
+            return 75;
+        }
+    } else {
+        prims = pMaterial->extra_prim;
+        if (prims != NULL && prims[0].t == BRT_BLEND_B && prims[0].v.b == 1 && prims[1].t == BRT_OPACITY_X) {
+            /* Integer division preserves truncation toward zero for negatives. */
+            return (100 * (prims[1].v.x >> 16)) / 256;
+        }
+    }
+    return 100;
+}
 
 // FUNCTION: CARMA2_HW 0x00518f20
 char* C2_HOOK_FASTCALL MungeCommas(int pValue) {
@@ -1560,15 +2138,10 @@ void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) 
     MungeMetaCharacters(pText, pMeta, text);
 }
 
-void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {
+// FUNCTION: CARMA2_HW 0x005191b0
+void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h) {
 
-    if (gLock_often) {
-        PossibleUnlock(0);
-    }
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
-    if (gLock_often) {
-        PossibleUnlock(0);
-    }
 }
 
 // FUNCTION: CARMA2_HW 0x005191f0

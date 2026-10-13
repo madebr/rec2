@@ -6,11 +6,11 @@
 extern int gASCII_table[151];
 extern int gASCII_shift_table[151];
 
-extern void Win32InitInputDevice(void);
+extern void C2_HOOK_FASTCALL Win32InitInputDevice(void);
 
 extern void KeyBegin(void);
 
-extern void CloseDirectInput(void);
+extern void C2_HOOK_FASTCALL CloseDirectInput(void);
 
 extern void PDSetKeyArray(int *pKeys, int pMark);
 
@@ -28,7 +28,7 @@ extern tU32 PDGetJoy1Button3(void);
 
 extern tU32 PDGetJoy1Button4(void);
 
-extern int PDGetJoy1X(void);
+extern int C2_HOOK_FASTCALL PDGetJoy1X(void);
 
 extern int PDGetJoy1Y(void);
 

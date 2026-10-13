@@ -4,6 +4,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tHeadup_info gHeadup_image_info[45];
+extern br_pixelmap* gHeadup_images[45];
+
 extern void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
 
 extern void C2_HOOK_FASTCALL LoadInRegistees(void);
@@ -94,13 +97,13 @@ extern void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount,
 
 // LoadOpponents
 
-// AboutToLoadFirstCar
+extern void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
 
 // LoadOpponentsCars
 
 extern void C2_HOOK_FASTCALL LoadMiscStrings(void);
 
-// FillInRaceInfo
+extern void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race);
 
 extern void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions);
 
@@ -110,8 +113,16 @@ extern int C2_HOOK_FASTCALL SaveOptions(void);
 
 extern int C2_HOOK_FASTCALL RestoreOptions(void);
 
-// InitFunkGrooveFlags
+extern void C2_HOOK_FASTCALL InitFunkGrooveFlags(void);
 
 extern void C2_HOOK_FASTCALL SetDefaultTextFileName(void);
+
+
+extern int gGroove_funk_offset;
+extern const char* gPedTextTxtPath;
+
+void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void);
+void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void);
+void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void);
 
 #endif // GUARD_10_LOADING2_H

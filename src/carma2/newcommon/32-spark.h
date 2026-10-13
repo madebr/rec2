@@ -4,21 +4,57 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gColumn_flags;
+extern int gColumn_next;
+extern tSmoke_column gSmoke_column[10];
+extern br_material* gBlack_material;
+extern br_model* gLollipop_model;
+extern br_pixelmap* gFlame_map[20];
+extern int gSplash_flags;
+extern br_model* gSplash_model;
+extern int gNum_splash_types;
+extern br_material* gSplash_material[20];
+extern tSplash gSplash[32];
+extern br_model* gShrapnel_model[2];
+extern int gShrapnel_flags;
+extern tShrapnel gShrapnel[30];
+extern int gSmoke_on;
+extern tSmoke gSmoke[25];
+extern int gSmoke_flags;
+extern int gSmoke_next;
+extern int gDust_rotate;
+extern int gShade_list[16];
+extern int* gShade_table;
+extern int gNum_dust_tables;
+extern int gSpark_flags;
+extern tSpark gSpark[32];
+extern br_camera* gSpark_cam;
+extern br_matrix4 gCameraToScreen;
+extern tReplay_splash gReplay_splashes[10];
+extern int gReplay_splash_flags;
+extern int gSplash_next;
+extern int gSpark_next;
+extern tU32 gNext_AFE_color_cycle;
+extern int gAFE_color_cycle;
+extern br_pixelmap* gIt_shade_table;
+extern tBRender_smoke* gBR_smoke_pointers[35];
+extern int gN_BR_smoke_structs;
+
 // DrawDot
 
 // SetWorldToScreen
 
 // DrawLine3DThroughBRender
 
-// DrawLine3D
+extern int C2_HOOK_FASTCALL DrawLine3D(const br_vector3* pStart, const br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_pixelmap* pShade);
 
-// DrawLine2D
+extern int C2_HOOK_FASTCALL DrawLine2D(br_vector3* pStart, br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_scalar pBrightness, br_pixelmap* pShade);
 
-// SetLineModelCols
+extern void C2_HOOK_FASTCALL SetLineModelCols(tU8 pWhite);
 
 // ReplaySparks
 
-// RenderSparks
+extern void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pScreen, br_pixelmap* pDepth, br_actor* pCamera, const br_matrix34* pCamera_to_world, tU32 pTime);
 
 // CreateSingleSpark
 
@@ -30,7 +66,7 @@
 
 // AdjustShrapnel
 
-// ResetSparks
+extern void C2_HOOK_FASTCALL ResetSparks(void);
 
 // ResetShrapnel
 
@@ -82,15 +118,15 @@ extern void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar);
 
-// MungeShrapnel
+extern void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime);
 
-// DrMatrix34Rotate
+extern void C2_HOOK_FASTCALL DrMatrix34Rotate(br_matrix34* pMat, br_angle pAngle, const br_vector3* pAxis);
 
-// CmpSmokeZ
+extern int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
 
 extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
-// RenderRecordedSmokeCircles
+extern void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
 
 // RecordSmokeCircle
 
@@ -98,45 +134,45 @@ extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
 // ReplaySmoke
 
-// GenerateContinuousSmoke
+extern void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 pTime);
 
-// RenderSmoke
+extern void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime);
 
-// CreatePuffOfSmoke
+extern void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
 
-// ResetSmoke
+extern void C2_HOOK_FASTCALL ResetSmoke(void);
 
-// AdjustSmoke
+extern void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength);
 
 // ActorError
 
-// AdjustSmokeColumn
+extern void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour);
 
-// CreateSmokeColumn2
+extern void C2_HOOK_FASTCALL CreateSmokeColumn2(int pType, br_actor* pActor, tCar_spec* pCar, tPhysics_object* pObject, int pColour, int pVertex, tU32 pLifetime);
 
-// CreateSmokeColumn
+extern void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec* pCar, int pColour, int pVertex, tU32 pLifetime);
 
-// GenerateSmokeShades
+extern void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 
 extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
-// AdjustFlame
+extern void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z);
 
 // ReplayFlame
 
-// FlameAnimate
+extern void C2_HOOK_FASTCALL FlameAnimate(int pColumn, const br_vector3* pPos, tU32 pTime);
 
-// DoSmokeColumn
+extern void C2_HOOK_FASTCALL DoSmokeColumn(int pColumn, tU32 pTime, br_vector3* pRet_car_pos);
 
 // ReplaySmokeColumn
 
-// MungeSmokeColumn
+extern void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime);
 
-// DisposeFlame
+extern void C2_HOOK_FASTCALL DisposeFlame(void);
 
-// InitFlame
+extern void C2_HOOK_FASTCALL InitFlame(void);
 
-// InitSplash
+extern void C2_HOOK_FASTCALL InitSplash(FILE* pF);
 
 // DisposeSplash
 
@@ -144,37 +180,37 @@ extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
 // PipeInstantUnSmudge
 
-// SmudgeCar
+extern void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int pFire_point);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
 extern int C2_HOOK_FASTCALL GetSmokeOn(void);
 
-// StopCarSmoking
+extern void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar);
 
-// StopCarSmokingInstantly
+extern void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar);
 
-// StopObjectSmokingInstantly
+extern void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject);
 
-// ConditionalSmokeColumn
+extern void C2_HOOK_FASTCALL ConditionalSmokeColumn(tCar_spec* pCar, int pFire_point, int pColour);
 
-// SingleSplash
+extern void C2_HOOK_FASTCALL SingleSplash(tPhysics_object* pObject, const br_matrix34* pMatrix, const br_vector3* pVelocity, const br_vector3* pNormal_velocity, const br_vector3* pOmega, const br_vector3* pPoint, const br_vector3* pNormal, tU32 pTime);
 
-// GeneralCreateSplash
+extern void C2_HOOK_FASTCALL GeneralCreateSplash(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, const br_vector3* pNormal, br_scalar pWater_distance, const br_bounds3* pBounds, const br_matrix34* pMatrix, tU32 pTime);
 
-// CreateSplash
+extern void C2_HOOK_FASTCALL CreateSplash(tPhysics_object* pObject, tU32 pTime);
 
-// GetVelocitiesFromMatrices
+extern void C2_HOOK_FASTCALL GetVelocitiesFromMatrices(br_vector3* pVelocity, br_vector3* pOmega, const br_matrix34* pMatrix, const br_matrix34* pNext_matrix, tU32 pTime);
 
 // MungeSplash
 
-// GetSmokeShadeTables
+extern void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* pF);
 
-// FreeSmokeShadeTables
+extern void C2_HOOK_FASTCALL FreeSmokeShadeTables(void);
 
 // LoadInKevStuff
 
-// DisposeKevStuff
+extern void C2_HOOK_FASTCALL DisposeKevStuff(void);
 
 // DisposeKevStuffCar
 
@@ -204,7 +240,7 @@ extern void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
-// IsCarSmoking
+extern int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar);
 
 // ClearSplashReplay
 

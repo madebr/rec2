@@ -2,41 +2,70 @@
 #define GUARD_23_PIPING_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 #include <s3/s3.h>
 
-// ARReplayForwards
+extern tU8* gPipe_buffer_start;
+extern int gReentrancy_count;
+extern tPipe_chunk_type gReentrancy_array[5];
+extern tU8* gLocal_buffer;
+extern tU32 gLocal_buffer_size;
+extern tU8* gMr_chunky;
+extern const tReplay_callback* gPipe_callbacks;
+extern tU8* gPipe_buffer_phys_end;
+extern tU8* gPipe_buffer_working_end;
+extern tU8* gPipe_buffer_oldest;
+extern tU8* gPipe_record_ptr;
+extern tU8* gPipe_play_ptr;
+extern int gPlay_direction;
+extern int gReplay_pause_state;
+extern float gReplay_rate;
+extern int gDisable_advance;
+extern tU8* gPipe_chunk_end;
 
-// ARReplayIsReallyPaused
+extern int gMax_previous_pipe_sessions;
 
-// ARReplayPauseState
+extern int gPipe_count_callbacks;
+extern int gDisable_piped_sounds;
+extern tU32 gPipe_sound_time;
+extern tU32 gPipe_sound_start_time;
+extern tU32 gPipe_sound_time_window;
+
+typedef void C2_HOOK_FASTCALL tReplay_session_callback(int pFrames);
+
+extern int C2_HOOK_FASTCALL ARReplayForwards(void);
+
+extern int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void);
+
+extern int C2_HOOK_FASTCALL ARReplayPauseState(void);
 
 extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
-// ARSetReplayRate
+extern void C2_HOOK_FASTCALL ARSetReplayRate(float pRate);
 
-// ARGetReplayDirection
+extern int C2_HOOK_FASTCALL ARGetReplayDirection(void);
 
-// ARSetReplayDirection
+extern void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection);
 
-// ARResetPiping
+extern void C2_HOOK_FASTCALL ARResetPiping(void);
 
 // ARInitialise
 
 // ARDispose
 
-// LengthOfChunk
+extern int C2_HOOK_FASTCALL LengthOfChunk(void* pChunk, int pType);
 
-// LengthOfSession
+extern tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession);
 
-// ARAdvanceChunkPtr
+extern void C2_HOOK_FASTCALL ARAdvanceChunkPtr(tU8** pChunk, int pType);
 
 // PipingFrameReset
 
-// ARPipeSearchForwards
+extern int C2_HOOK_FASTCALL ARPipeSearchForwards(void);
 
-// ARIsActionReplayAvailable
+extern int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
 
-// ARSomeReplayLeft
+extern int C2_HOOK_FASTCALL ARSomeReplayLeft(void);
 
 // DisablePipedSounds
 
@@ -44,69 +73,69 @@ extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
 // StartPipingSession2
 
-// ARStartPipingSession
+extern void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
 
-// EndPipingSession2
+extern void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
-// AREndPipingSession
+extern void C2_HOOK_FASTCALL AREndPipingSession(void);
 
-// ARAddDataToSession
+extern void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize);
 
-// ARAddVariedDataToSession
+extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
 
-// ARDoSingleSession
+extern void C2_HOOK_FASTCALL ARDoSingleSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize);
 
-// ARDoSingleVariedSession
+extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
 
 // ARResetPipePlayToEnd
 
-// ARGetPipePlayPtr
+extern tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void);
 
-// ARSetPipePlayPtr
+extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // ApplyPipedSession
 
-// MoveSessionPointerBackOne
+extern int C2_HOOK_FASTCALL MoveSessionPointerBackOne(tU8** pSession);
 
 // MoveSessionPointerForwardOne
 
-// FindPreviousChunk
+extern tPipe_chunk_data* C2_HOOK_FASTCALL FindPreviousChunk(tU8* pSession, int pType, uintptr_t pOwner);
 
 // UndoPipedSession
 
-// ARScanBuffer
+extern void C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDefault_time, tARScanBuffer_callback* pCallback, tARScanBuffer_time_check* pTime_check);
 
 // CheckSound
 
-// SoundTimeout
+extern int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime);
 
-// ScanAndPlaySoundsToBe
+extern void C2_HOOK_FASTCALL ScanAndPlaySoundsToBe(tU8* pSession, tU32 pTime, tU32 pStart_time);
 
-// ARGetStartTime
+extern tU32 C2_HOOK_FASTCALL ARGetStartTime(void);
 
-// ARDisableAdvance
+extern void C2_HOOK_FASTCALL ARDisableAdvance(void);
 
-// AREnableAdvance
+extern void C2_HOOK_FASTCALL AREnableAdvance(void);
 
-// FindNextChunk
+extern tPipe_chunk_data* C2_HOOK_FASTCALL FindNextChunk(tPipe_chunk_type pType, uintptr_t pOwner);
 
-// MoveReplayBuffer
+extern void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToEndOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToStartOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARDoActionReplay
+extern void C2_HOOK_FASTCALL ARDoActionReplay(int pUnused, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ReverseSound
+extern void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag pTag);
 
-// ARGoBackwards
+extern int C2_HOOK_FASTCALL ARGoBackwards(void);
 
-// ARGoForwards
+extern int C2_HOOK_FASTCALL ARGoForwards(void);
 
-// ARService
+extern void C2_HOOK_FASTCALL ARService(void);
 
-// ARMainLoopStart
+extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 // ARToggleReplay
 
@@ -142,17 +171,19 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 // AddSmudgeToPipingSession
 
-// AddSparkToPipingSession
+extern void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV);
 
-// AddShrapnelToPipingSession
+extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
 // AddNonCarToPipingSession
 
-// AddSmokeToPipingSession
+extern void C2_HOOK_FASTCALL AddSmokeToPipingSession(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength);
 
-// AddSmokeColumnToPipingSession
+extern tU32 gUNK_0069410c;
 
-// AddFlameToPipingSession
+extern void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour);
+
+extern void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z);
 
 // AddSplashToPipingSession
 
@@ -236,7 +267,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // PipeSinglePedModelChange
 
-// PipeSinglePHILObject
+extern void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* object);
 
 // PipeSingleGibShower
 
@@ -488,7 +519,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // CalcCrushLength
 
-// CalcShrapnelLength
+extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 
 // CalcSmudgeLength
 

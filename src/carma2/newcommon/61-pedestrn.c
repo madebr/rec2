@@ -1,15 +1,33 @@
 #include "61-pedestrn.h"
 
+#include <stdint.h>
+
 #include "10-loading2.h"
 #include "27-powerup.h"
 #include "63-loading3.h"
 #include "69-sound.h"
+#include "rec2_macros.h"
+
+// GLOBAL: CARMA2_HW 0x00694140
+tProximity_ray gProximity_rays[20];
+
+// GLOBAL: CARMA2_HW 0x0069b9f0
+tNapalm_bolt gNapalm_bolts[5];
 
 // GLOBAL: CARMA2_HW 0x006a0414
 const char* gPedsFolder;
 
+// GLOBAL: CARMA2_HW 0x00744808
+tPedestrian* gPedestrian_array;
+
+// GLOBAL: CARMA2_HW 0x007447d4
+int gPed_count;
+
+// GLOBAL: CARMA2_HW 0x007447dc
+float gPed_gravity_multiplier;
+
 // GLOBAL: CARMA2_HW 0x0065d7d4
-int gGoreLevel = 1;
+int gGoreLevel = 2;
 
 // GLOBAL: CARMA2_HW 0x0065d7c8
 int gAnimalsOn = 1;
@@ -19,6 +37,36 @@ int gFlameThrowerOn = 1;
 
 // GLOBAL: CARMA2_HW 0x0065d7d0
 int gExplosives_on = 1;
+
+// GLOBAL: CARMA2_HW 0x007447e0
+float gPedestrian_speed_factor;
+
+// GLOBAL: CARMA2_HW 0x007447b0
+int gExploding_pedestrians;
+
+// GLOBAL: CARMA2_HW 0x007447e4
+int gPed_dismemberfest;
+
+// GLOBAL: CARMA2_HW 0x007447a8
+int gDancing_peds;
+
+// GLOBAL: CARMA2_HW 0x007447f8
+int gPanicking_peds;
+
+// GLOBAL: CARMA2_HW 0x007447b8
+int gDrunk_pedestrians;
+
+// GLOBAL: CARMA2_HW 0x007447d0
+int gBlind_pedestrians;
+
+// GLOBAL: CARMA2_HW 0x00744810
+int gImmortal_peds;
+
+// GLOBAL: CARMA2_HW 0x007447ac
+int gPeds_suicidal;
+
+// GLOBAL: CARMA2_HW 0x007447a4
+float gMutant_speed;
 
 // OrientationChanged
 
@@ -295,11 +343,38 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // ResetPedSystem
 
-// ResetNapalmBolts
+void C2_HOOK_FASTCALL ResetNapalmBolts(void) {
+    int i;
+    int j;
 
-// ARResetNapalmBolts
+    for (i = 0; i < (int)REC2_ASIZE(gNapalm_bolts); i++) {
+        gNapalm_bolts[i].ped = NULL;
+        for (j = 0; j < (int)REC2_ASIZE(gNapalm_bolts[i].actors); j++) {
+            gNapalm_bolts[i].actors[j]->render_style = BR_RSTYLE_NONE;
+        }
+    }
+}
 
-// AdjustNapalmBolt
+// FUNCTION: CARMA2_HW 0x004d5b10
+void C2_HOOK_FASTCALL ARResetNapalmBolts(void) {
+    ResetNapalmBolts();
+}
+
+// FUNCTION: CARMA2_HW 0x004d5b40
+void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3* pPositions) {
+    int i;
+
+    gNapalm_bolts[pIndex].ped = pPed;
+    for (i = 0; i < (int)REC2_ASIZE(gNapalm_bolts[pIndex].actors); i++) {
+        if (pPositions[i].v[0] == 0.f && pPositions[i].v[1] == 0.f && pPositions[i].v[2] == 0.f) {
+            break;
+        }
+        gNapalm_bolts[pIndex].actors[i]->t.t.translate.t.v[0] = pPositions[i].v[0];
+        gNapalm_bolts[pIndex].actors[i]->t.t.translate.t.v[1] = pPositions[i].v[1];
+        gNapalm_bolts[pIndex].actors[i]->t.t.translate.t.v[2] = pPositions[i].v[2];
+        gNapalm_bolts[pIndex].actors[i]->render_style = BR_RSTYLE_FACES;
+    }
+}
 
 // InitPedsForRace
 
@@ -307,7 +382,14 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // AdjustProxRay
 
-// ResetProxRay
+// FUNCTION: CARMA2_HW 0x004d61f0
+void C2_HOOK_FASTCALL ResetProxRay(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gProximity_rays); i++) {
+        gProximity_rays[i].start_time = 0;
+    }
+}
 
 // GetTestPed
 
@@ -343,7 +425,47 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // MutatePed
 
-// FlushAllPedCaches
+#if defined(__GNUC__)
+typedef tU32 tPedCacheWord __attribute__((__may_alias__));
+#else
+typedef tU32 tPedCacheWord;
+#endif
+
+static tU32 C2_HOOK_CDECL PedCacheRead(const void* base, tU32 offset) {
+    return *(const volatile tPedCacheWord*)(uintptr_t)((tU32)(uintptr_t)base + offset);
+}
+
+static void C2_HOOK_CDECL PedCacheWrite(void* base, tU32 offset, tU32 value) {
+    *(volatile tPedCacheWord*)(uintptr_t)((tU32)(uintptr_t)base + offset) = value;
+}
+
+// FUNCTION: CARMA2_HW 0x004d6c70
+void C2_HOOK_FASTCALL FlushAllPedCaches(void) {
+    tS32 count = *(volatile int*)&gPed_count;
+    tPedestrian* base = *(tPedestrian* volatile*)&gPedestrian_array;
+    tU32 row = (tU32)(uintptr_t)base + 0x0cu;
+    tU32 index = 0;
+    tU32 object;
+    tU32 cache;
+
+    if (count <= 0) {
+        return;
+    }
+    do {
+        object = PedCacheRead((void*)(uintptr_t)row, 0);
+        if (object != 0) {
+            cache = PedCacheRead((void*)(uintptr_t)object, 0xb0);
+            if (cache != 0) {
+                PedCacheWrite((void*)(uintptr_t)cache, 0x14, 0);
+                object = PedCacheRead((void*)(uintptr_t)row, 0);
+                PedCacheWrite((void*)(uintptr_t)object, 0xb0, 0);
+            }
+        }
+        count = *(volatile int*)&gPed_count;
+        index += 1u;
+        row += 0x54u;
+    } while ((tS32)index < count);
+}
 
 // SavePedStuff
 
@@ -362,30 +484,55 @@ void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void) {
     SetDefaultPixelmapFolderName();
 }
 
-// STUB: CARMA2_HW 0x004d6f50
+// FUNCTION: CARMA2_HW 0x004d6f50
 void C2_HOOK_FASTCALL SetZombiePedFolderNames(void) {
-    NOT_IMPLEMENTED();
+    *(const char* volatile*)&gPedsFolder = "ZOMBIES";
+    ConfigureZombiePedSoundPath();
+    ConfigureZombiePedPowerupTxtPath();
+    ConfigureZombiePedTextTxtPath();
+    ConfigureZombiePedTexturePath(); /* genuine final tail edge */
 }
 
-// STUB: CARMA2_HW 0x004d6f30
+// FUNCTION: CARMA2_HW 0x004d6f30
 void C2_HOOK_FASTCALL SetBloodPedFolderNames(void) {
-    NOT_IMPLEMENTED();
+    *(const char* volatile*)&gPedsFolder = "PEDS";
+    ConfigureBloodPedSoundPath();
+    ConfigureBloodPedPowerupTxtPath();
+    ConfigureBloodPedTextTxtPath();
+    ConfigureBloodPedTexturePath(); /* genuine final tail edge */
 }
 
-// STUB: CARMA2_HW 0x004d6f70
+// FUNCTION: CARMA2_HW 0x004d6f70
 void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
-    NOT_IMPLEMENTED();
+    *(const char* volatile*)&gPedsFolder = "ALIENS";
+    ConfigureAlienPedSoundPath();
+    ConfigureAlienPedPowerupTxtPath();
+    ConfigureAlienPedTextTxtPath();
+    ConfigureAlienPedTexturePath(); /* genuine final tail edge */
 }
 
 // AddChangedPoint
 
-// GetHowMuchBloodAndSnotToSmearAbout
+// FUNCTION: CARMA2_HW 0x004d6fc0
+int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void) {
+    tU32 level = (tU32)*(volatile int*)&gGoreLevel;
+    return (tS32)(2u - level);
+}
 
-// AreWeGoingToOutrageAnimalLoversAroundTheGlobe
+// FUNCTION: CARMA2_HW 0x004d6fd0
+int C2_HOOK_FASTCALL GetAnimalsOn(void) {
+    return *(volatile int*)&gAnimalsOn;
+}
 
-// IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense
+// FUNCTION: CARMA2_HW 0x004d6fe0
+int C2_HOOK_FASTCALL IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense(void) {
+    return *(volatile int*)&gFlameThrowerOn;
+}
 
-// IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
+// FUNCTION: CARMA2_HW 0x004d6ff0
+int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void) {
+    return *(volatile int*)&gExplosives_on;
+}
 
 // FUNCTION: CARMA2_HW 0x004d7000
 void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {
@@ -479,7 +626,16 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // GetBoneMatrixPtr
 
-// GetCharacterActorPtr
+// FUNCTION: CARMA2_HW 0x00407b10
+br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter) {
+    int index;
+
+    index = pCharacter->field_0x4;
+    if (index < 0) {
+        return NULL;
+    }
+    return pCharacter->personality->form->actor_sets[index].actors[0];
+}
 
 // SetCharacterBonePositions
 

@@ -5,6 +5,9 @@
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
+// GLOBAL: CARMA2_HW 0x006abee8
+br_vector3 gZero_vector__smash;
+
 // GLOBAL: CARMA2_HW 0x006a55c8
 tExplosion gExplosions[50];
 
@@ -224,7 +227,25 @@ void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
     NOT_IMPLEMENTED();
 }
 
-// DisposeSmashData
+// FUNCTION: CARMA2_HW 0x004f0310
+void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
+    int i;
+
+    if (pCrush_data->smashables != NULL) {
+        for (i = 0; i < pCrush_data->count_smashables; i++) {
+            if (pCrush_data->smashables[i].field_0x70 != NULL) {
+                BrMemFree(pCrush_data->smashables[i].field_0x70);
+            }
+            if (pCrush_data->smashables[i].field_0x78 != NULL) {
+                BrMemFree(pCrush_data->smashables[i].field_0x78);
+            }
+            if (pCrush_data->smashables[i].levels != NULL) {
+                BrMemFree(pCrush_data->smashables[i].levels);
+            }
+        }
+        BrMemFree(pCrush_data->smashables);
+    }
+}
 
 // DoBackwardShrapnel
 

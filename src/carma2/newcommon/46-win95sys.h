@@ -2,16 +2,17 @@
 #define GUARD_46_WIN95SYS_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // FUN_100bf5a4
 
 // AsmDoDeltaX
 
-// DoDeltaX
+extern void C2_HOOK_FASTCALL DoDeltaX(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
 // FUN_100bf768
 
-// DoRunLengthX
+extern void C2_HOOK_FASTCALL DoRunLengthX(tFlic_descriptor* pFlic_info, tU32 chunk_length);
 
 // main
 

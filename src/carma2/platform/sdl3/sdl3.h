@@ -7,6 +7,10 @@
 
 typedef struct {
     SDL_JoystickID which;
+    SDL_Gamepad* gamepad;
+    SDL_Haptic* haptic;
+    tButtonJoystickInfo preferences;
+    int ffb_gain;
     Uint64 buttons;
     Sint16 axis_motions[SDL_GAMEPAD_AXIS_COUNT];
 } tJoystick_info;
@@ -115,5 +119,8 @@ extern void PDPageInProcessMemory(void);
 extern void PDDisposeActionReplayBuffer(void);
 
 extern void SDL3ServiceMessages(void);
+extern void C2_HOOK_FASTCALL SDL3AddGamepad(SDL_JoystickID which);
+extern void C2_HOOK_FASTCALL SDL3RemoveGamepad(SDL_JoystickID which);
+extern bool C2_HOOK_FASTCALL SDL3HandleGamepadEvent(const SDL_Event* pEvent);
 
 #endif /* REC2_SDL3_H */

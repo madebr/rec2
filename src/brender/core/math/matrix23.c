@@ -16,13 +16,20 @@ br_matrix23 mattmp2_23;
 
 // FUNCTION: CARMA2_HW 0x00534ae0
 void C2_HOOK_CDECL BrMatrix23Copy(br_matrix23* A, const br_matrix23* B) {
+#if defined(__GNUC__)
+    typedef br_uint_32 tMatrix23CopyWord __attribute__((__may_alias__));
+#else
+    typedef br_uint_32 tMatrix23CopyWord;
+#endif
+    volatile tMatrix23CopyWord* out = (volatile tMatrix23CopyWord*)A;
+    const volatile tMatrix23CopyWord* in = (const volatile tMatrix23CopyWord*)B;
 
-    A(0, 0) = B(0, 0);
-    A(0, 1) = B(0, 1);
-    A(1, 0) = B(1, 0);
-    A(1, 1) = B(1, 1);
-    A(2, 0) = B(2, 0);
-    A(2, 1) = B(2, 1);
+    out[0] = in[0];
+    out[1] = in[1];
+    out[2] = in[2];
+    out[3] = in[3];
+    out[4] = in[4];
+    out[5] = in[5];
 }
 
 // FUNCTION: CARMA2_HW 0x00534b10

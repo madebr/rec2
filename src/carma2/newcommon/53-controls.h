@@ -13,6 +13,8 @@ extern int gHeadup_map_y;
 extern int gHeadup_map_w;
 extern int gHeadup_map_h;
 
+extern int gInstant_handbrake;
+
 // CompleteRace
 
 // AbortRace

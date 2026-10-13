@@ -104,8 +104,9 @@ tS3_outlet* gMusic_outlet;
 // GLOBAL: CARMA2_HW 0x00684614
 tS3_outlet* gXXX_outlet;
 
+/* Lookup includes the trailing zero-initialized DWORD. */
 // GLOBAL: CARMA2_HW 0x0079e160
-tS3_outlet* gIndexed_outlets[6];
+tS3_outlet* gIndexed_outlets[7];
 
 // GLOBAL: CARMA2_HW 0x00595c38
 const char* gSound_generator_type_names[3] = {
@@ -809,7 +810,10 @@ void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
 // ReallySetSoundDetailLevel
 
-// GetSoundDetailLevel
+// FUNCTION: CARMA2_HW 0x004569e0
+int C2_HOOK_FASTCALL GetSoundDetailLevel(void) {
+    return gSound_detail_level;
+}
 
 // FUNCTION: CARMA2_HW 0x004569f0
 void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
@@ -955,3 +959,19 @@ void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void) {
     gPed_sound_path = NULL;
 }
 
+
+
+// FUNCTION: CARMA2_HW 0x00457590
+void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void) {
+    *(const char* volatile*)&gPed_sound_path = "ZOMSOUND";
+}
+
+// FUNCTION: CARMA2_HW 0x00457580
+void C2_HOOK_FASTCALL ConfigureBloodPedSoundPath(void) {
+    *(const char* volatile*)&gPed_sound_path = NULL;
+}
+
+// FUNCTION: CARMA2_HW 0x004575a0
+void C2_HOOK_FASTCALL ConfigureAlienPedSoundPath(void) {
+    *(const char* volatile*)&gPed_sound_path = "ALSOUND";
+}

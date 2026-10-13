@@ -6,6 +6,17 @@
 
 #include <stdio.h>
 
+extern undefined4 gCrush_array_0067a190[10];
+extern undefined4 gDAT_00679440;
+extern tCrush_info_buffer gDetached_bit_crush_info_buffer;
+extern tPhysics_object* gDetached_bit_collision_infos;
+extern tDriver gDetached_bit_driver;
+extern tPhysics_joint* gTrack_crush_joints[32];
+extern tCrush_info_buffer gSplit_car_crush_info_buffer;
+extern tPhysics_object* gSplit_car_collision_infos;
+extern tDriver gSplit_car_driver;
+extern tPhysics_shape* gGonad_sphere_collision_shape;
+
 extern void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF);
 
 // ClearCrushLists
@@ -92,9 +103,9 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 extern void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_spec* pCar);
 
-// DisposeCrushData
+extern void C2_HOOK_FASTCALL DisposeCrushData(tCar_crush_buffer_entry* pCrush_data);
 
-// DisposeVertexData
+extern void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data);
 
 // BuckleTheBugger
 
@@ -276,7 +287,7 @@ extern void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush,
 
 // MakeCarModelsMaterialsSingleSided
 
-// IsOnNonCarHalf
+extern int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos);
 
 // SplitCar
 
@@ -370,7 +381,7 @@ extern void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush,
 
 // BattenDownTheObjects
 
-// CompletelyUnBendCollisionShape
+extern void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape);
 
 // CompletelyUnBendCollisionShapes
 

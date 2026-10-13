@@ -34,9 +34,62 @@
 #include "70-packfile.h"
 #include "71-newgame.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+
+// GLOBAL: CARMA2_HW 0x00657320
+tHeadup_info gHeadup_image_info[45] = {
+    { "", eNot_ever_ever_ever },
+    { "", eNot_ever_ever_ever },
+    { "", eNot_ever_ever_ever },
+    { "", eNot_ever_ever_ever },
+    { "GO.PIX", eNet_or_otherwise },
+    { "NUMBER1.PIX", eNet_or_otherwise },
+    { "NUMBER2.PIX", eNet_or_otherwise },
+    { "NUMBER3.PIX", eNet_or_otherwise },
+    { "NUMBER4.PIX", eNet_or_otherwise },
+    { "NUMBER5.PIX", eNet_or_otherwise },
+    { "SPLATTER.PIX", eNet_or_otherwise },
+    { "PILEDRIV.PIX", eNet_or_otherwise },
+    { "EXTRASTY.PIX", eNet_or_otherwise },
+    { "ARTISTIC.PIX", eNet_or_otherwise },
+    { "PLAYWITH.PIX", eNet_or_otherwise },
+    { "PUNT.PIX", eNet_or_otherwise },
+    { "DROP.PIX", eNet_or_otherwise },
+    { "POLITE.PIX", eNet_or_otherwise },
+    { "2XCOMBO.PIX", eNet_or_otherwise },
+    { "3XCOMBO.PIX", eNet_or_otherwise },
+    { "4XCOMBO.PIX", eNet_or_otherwise },
+    { "5XCOMBO.PIX", eNet_or_otherwise },
+    { "6XCOMBO.PIX", eNet_or_otherwise },
+    { "7XCOMBO.PIX", eNet_or_otherwise },
+    { "8XCOMBO.PIX", eNet_or_otherwise },
+    { "9XCOMBO.PIX", eNet_or_otherwise },
+    { "10XCOMBO.PIX", eNet_or_otherwise },
+    { "BILLIARD.PIX", eNet_or_otherwise },
+    { "POLITE.PIX", eNet_or_otherwise },
+    { "HEADON.PIX", eNet_or_otherwise },
+    { "DESTROY.PIX", eNet_or_otherwise },
+    { "CHECKPNT.PIX", eNet_or_otherwise },
+    { "TIMEUP.PIX", eNot_net },
+    { "RACEOVER.PIX", eNet_or_otherwise },
+    { "UWASTED.PIX", eNet_or_otherwise },
+    { "MAD.PIX", eNet_only },
+    { "GAMEOVER.PIX", eNet_only },
+    { "UBROKE.PIX", eNet_only },
+    { "ULOST.PIX", eNet_only },
+    { "UWON.PIX", eNet_only },
+    { "BBQBON.PIX", eNet_or_otherwise },
+    { "TAILBON.PIX", eNet_or_otherwise },
+    { "DETTAILBON.PIX", eNet_or_otherwise },
+    { "MISSIONFAIL.PIX", eNet_or_otherwise },
+    { "MISSIONDONE.PIX", eNet_or_otherwise },
+};
+
+// GLOBAL: CARMA2_HW 0x0079eb60
+br_pixelmap* gHeadup_images[45];
 
 // GLOBAL: CARMA2_HW 0x0068c6ec
 FILE* gTempFile;
@@ -74,6 +127,9 @@ char gDefault_car[32];
 
 // GLOBAL: CARMA2_HW 0x00764ec0
 char gBasic_car_name[32];
+
+// GLOBAL: CARMA2_HW 0x0074b4a8
+int gGroove_funk_offset;
 
 // GLOBAL: CARMA2_HW 0x007638c0
 int gNet_score_targets[8];
@@ -533,9 +589,21 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
 // LoadCar
 
-// STUB: CARMA2_HW 0x0048c150
+// FUNCTION: CARMA2_HW 0x0048c150
 void C2_HOOK_FASTCALL LoadHeadupImages(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gHeadup_image_info); i++) {
+        PossibleService();
+        if (gHeadup_image_info[i].avail == eNet_or_otherwise
+                || (gHeadup_image_info[i].avail == eNot_net && gNet_mode == eNet_mode_none)
+                || (gHeadup_image_info[i].avail == eNet_only && gNet_mode != eNet_mode_none)) {
+            gHeadup_images[i] = LoadPixelmap(gHeadup_image_info[i].name);
+            BRPM_convert(gHeadup_images[i], gBack_screen->type);
+        } else {
+            gHeadup_images[i] = NULL;
+        }
+    }
 }
 
 // OpenRaceFile
@@ -549,7 +617,12 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
 // LoadOpponents
 
-// AboutToLoadFirstCar
+// FUNCTION: CARMA2_HW 0x0048cd80
+void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
+
+    InitFunkGrooveFlags();
+    gGroove_funk_offset = 0;
+}
 
 // LoadOpponentsCars
 
@@ -588,7 +661,11 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
     PFfclose(f);
 }
 
-// FillInRaceInfo
+// FUNCTION: CARMA2_HW 0x0048d0e0
+void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
+
+    strcpy(gProgram_state.track_file_name, pThe_race->race_spec->file_name);
+}
 
 // FUNCTION: CARMA2_HW 0x0048d110
 void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions) {
@@ -612,6 +689,7 @@ void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions)
 // STUB: CARMA2_HW 0x0048d190
 int C2_HOOK_FASTCALL SaveOptions(void) {
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0048d8f0
@@ -771,10 +849,34 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
     return 1;
 }
 
-// InitFunkGrooveFlags
+// FUNCTION: CARMA2_HW 0x0048e9e0
+void C2_HOOK_FASTCALL InitFunkGrooveFlags(void) {
+    int i;
+
+    /* Leave flag zero unchanged. */
+    for (i = 1; i < (int)REC2_ASIZE(gFunk_groove_flags); i++) {
+        gFunk_groove_flags[i] = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0048ea00
 void C2_HOOK_FASTCALL SetDefaultTextFileName(void) {
     gPedTextTxtPath = "TEXT.TXT";
 }
 
+
+
+// FUNCTION: CARMA2_HW 0x0048ea20
+void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void) {
+    *(const char* volatile*)&gPedTextTxtPath = "ZOMTEXT.TXT";
+}
+
+// FUNCTION: CARMA2_HW 0x0048ea10
+void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void) {
+    *(const char* volatile*)&gPedTextTxtPath = "TEXT.TXT";
+}
+
+// FUNCTION: CARMA2_HW 0x0048ea30
+void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void) {
+    *(const char* volatile*)&gPedTextTxtPath = "ALTEXT.TXT";
+}

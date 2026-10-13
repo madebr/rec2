@@ -404,7 +404,10 @@ void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel) {
     gRoad_texturing_level = pLevel;
 }
 
-// GetWallTexturingLevel
+// FUNCTION: CARMA2_HW 0x004488f0
+tWall_texturing_level C2_HOOK_FASTCALL GetWallTexturingLevel(void) {
+    return gWall_texturing_level;
+}
 
 // FUNCTION: CARMA2_HW 0x00448900
 void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel) {
@@ -488,7 +491,10 @@ void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {
     gCar_simplification_level = pLevel;
 }
 
-// GetCarSimplificationLevel
+// FUNCTION: CARMA2_HW 0x00448f20
+int C2_HOOK_FASTCALL GetCarSimplificationLevel(void) {
+    return gCar_simplification_level;
+}
 
 // FUNCTION: CARMA2_HW 0x00448f90
 intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, void* pContext) {

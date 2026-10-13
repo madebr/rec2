@@ -92,6 +92,8 @@ extern int C2_HOOK_FASTCALL S3UnbindChannels(tS3_outlet* pOutlet);
 
 extern tS3_channel* C2_HOOK_FASTCALL S3GetChannelForTag(int pTag);
 
+extern int C2_HOOK_FASTCALL nop0_FUN_00569f85(tS3_channel* pChannel);
+
 extern tS3_error_codes C2_HOOK_FASTCALL S3ClearBufferOfMidiChannel(int pTag);
 
 extern int C2_HOOK_FASTCALL S3ReleaseSound(int pSound_id);

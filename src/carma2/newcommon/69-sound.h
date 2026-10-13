@@ -73,7 +73,7 @@ extern void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
 // ReallySetSoundDetailLevel
 
-// GetSoundDetailLevel
+extern int C2_HOOK_FASTCALL GetSoundDetailLevel(void);
 
 extern void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
@@ -96,5 +96,12 @@ extern void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE*
 extern void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
 extern void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void);
+
+
+extern const char* gPed_sound_path;
+
+void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void);
+void C2_HOOK_FASTCALL ConfigureBloodPedSoundPath(void);
+void C2_HOOK_FASTCALL ConfigureAlienPedSoundPath(void);
 
 #endif // GUARD_69_SOUND_H

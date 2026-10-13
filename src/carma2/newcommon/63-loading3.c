@@ -3,6 +3,7 @@
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "69-sound.h"
 #include "70-packfile.h"
 #include "rec2_types.h"
 #include "globvars.h"
@@ -307,9 +308,40 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x0048f6a0
+int C2_HOOK_FASTCALL OriginalCarmaCDinDrive(void) {
+
+    return gCD_is_in_drive;
+}
+
+// FUNCTION: CARMA2_HW 0x0048f6b0
+int C2_HOOK_FASTCALL CarmaCDinDriveOrFullGameInstalled(void) {
+
+    if (gCD_fully_installed) {
+        return 1;
+    }
+    return OriginalCarmaCDinDrive();
+}
+
 // FUNCTION: CARMA2_HW 0x0048f7f0
 void C2_HOOK_FASTCALL SetDefaultPixelmapFolderName(void) {
 
     gPedTexturePath = "PIXELMAP";
 }
 
+
+
+// FUNCTION: CARMA2_HW 0x0048f810
+void C2_HOOK_FASTCALL ConfigureZombiePedTexturePath(void) {
+    *(char* volatile*)&gPedTexturePath = "ZOMPIXELMAP";
+}
+
+// FUNCTION: CARMA2_HW 0x0048f800
+void C2_HOOK_FASTCALL ConfigureBloodPedTexturePath(void) {
+    *(char* volatile*)&gPedTexturePath = "PIXELMAP";
+}
+
+// FUNCTION: CARMA2_HW 0x0048f820
+void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void) {
+    *(char* volatile*)&gPedTexturePath = "ALPIXELMAP";
+}

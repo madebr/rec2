@@ -3,8 +3,10 @@
 
 #include "c2_hooks.h"
 #include "brender/brender.h"
+#include "rec2_types.h"
 
 extern br_material* gDefault_track_material;
+extern int gCount_track_non_cars;
 
 // AssertNoncars
 
@@ -14,9 +16,9 @@ extern br_material* gDefault_track_material;
 
 // DisposeRuntimeBuiltModels
 
-// DisposeColumns
+extern void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec);
 
-// XZToColumnXZ
+extern void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX, br_scalar pZ, tTrack_spec* pTrack_spec);
 
 // FindNonCarsCB
 
@@ -30,7 +32,7 @@ extern br_material* gDefault_track_material;
 
 // RenderTrack
 
-// GetYonFactor
+extern br_scalar C2_HOOK_STDCALL GetYonFactor(void);
 
 extern void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew);
 

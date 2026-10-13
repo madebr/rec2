@@ -9,6 +9,9 @@ jobs:
     environment:
       name: gist-environment
       deployment: false
+    permissions:
+      actions: read
+      pull-requests: write
     strategy:
       fail-fast: false
       matrix:
@@ -73,6 +76,7 @@ jobs:
         python .github/binendec.py -D -i carma2.exe.txt -o originals/carma2.exe
     - name: Run reccmp
       uses: ./.github/actions/reccmp
+      id: reccmp
       if: ${{ matrix.platform.msvc5 }}
       with:
         root-repo: madebr/rec2
@@ -83,3 +87,17 @@ jobs:
         original-search-path: '${{ github.workspace }}/originals'
         working-directory: '${{ github.workspace }}/build'
         gist-token: ${{ secrets.GIST_TOKEN }}
+        comment-payload-path: comment_message.txt
+    - name: Store pull request number as text file
+      if: ${{ github.event_name == 'pull_request' && matrix.platform.msvc5 }}
+      shell: bash
+      run: |
+        echo "${{ github.event.number }}" >pr-number.txt
+    - name: Upload PR Comment Payload
+      if: ${{ github.event_name == 'pull_request' && matrix.platform.msvc5 }}
+      uses: actions/upload-artifact@main
+      with:
+        name: Pull Request Comment
+        path: |
+          comment_message.txt
+          pr-number.txt

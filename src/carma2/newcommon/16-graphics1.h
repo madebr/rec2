@@ -7,6 +7,23 @@
 extern int gRender_indent;
 extern int gWidth;
 extern int gHeight;
+extern int gScreen_wobble_x;
+extern int gScreen_wobble_y;
+extern int gNumber_of_lollipops;
+extern int gHud_actor_storage_size;
+extern br_actor* gHud_actor_storage[128];
+extern tU8 gTemporary_physics_render_buffer[300000];
+
+extern tClip_details gShadow_clip_planes[8];
+extern int gFancy_shadow;
+extern br_material* gShadow_material;
+extern br_vector3 gShadow_light_ray;
+extern br_vector3 gShadow_light_z;
+extern br_vector3 gShadow_light_x;
+extern br_model* gShadow_model;
+extern br_actor* gShadow_actor;
+extern tSaved_table gSaved_shade_tables[100];
+extern int gSaved_table_count;
 
 // MungeClipPlane
 
@@ -18,15 +35,15 @@ extern int gHeight;
 
 extern void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel);
 
-// GetShadowLevel
+extern tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void);
 
 // ToggleShadow
 
 extern void C2_HOOK_FASTCALL InitShadow(void);
 
-// SaveShadeTable
+extern void C2_HOOK_FASTCALL SaveShadeTables(void);
 
-// SaveShadeTables
+extern br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg);
 
 extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
@@ -34,7 +51,7 @@ extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
 // LollipopizeActor
 
-// ResetLollipopQueue
+extern void C2_HOOK_FASTCALL ResetLollipopQueue(void);
 
 // RenderLollipops
 
@@ -54,9 +71,9 @@ extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 // NewScreenWobble
 
-// SetScreenWobble
+extern void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY);
 
-// ResetScreenWobble
+extern void C2_HOOK_FASTCALL ResetScreenWobble(void);
 
 // CalculateWobblitude
 
@@ -72,11 +89,11 @@ extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 // RenderAFrame
 
-// StartRenderingHeadups
+extern void C2_HOOK_FASTCALL StartRenderingHeadups(void);
 
 extern void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor);
 
-// StopRenderingHeadups
+extern void C2_HOOK_FASTCALL StopRenderingHeadups(void);
 
 extern void C2_HOOK_FASTCALL CleanPolyFontDanglers(void);
 

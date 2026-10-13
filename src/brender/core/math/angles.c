@@ -1,4 +1,5 @@
 #include "angles.h"
+#include "c2_math.h"
 
 #include "matrix34.h"
 #include "matrix4.h"
@@ -39,84 +40,126 @@ order_info OrderAxes[32] = {
     { 0, 0, 0, },
 };
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(off)
+#endif
+static double C2_HOOK_CDECL ActivationEulerScalar(double value) {
+    union { br_scalar scalar; br_uint_32 bits; } rounded;
+    volatile br_uint_32 stored;
+
+    rounded.scalar = (br_scalar)value;
+    stored = rounded.bits;
+    rounded.bits = stored;
+    return rounded.scalar;
+}
+
+/* C-first physical evidence euler-c-first-focus retains five modern-only
+ * quarter-turn differences. The original FSIN/FCOS tiny residue differs
+ * from the modern CRT. Keep only these elementary transcendental operations. */
+static double C2_HOOK_CDECL ActivationEulerCosine(double radians) {
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+    double result;
+    __asm {
+        fld qword ptr radians
+        fcos
+        fstp qword ptr result
+    }
+    return result;
+#else
+    return cos(radians);
+#endif
+}
+
+static double C2_HOOK_CDECL ActivationEulerSine(double radians) {
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+    double result;
+    __asm {
+        fld qword ptr radians
+        fsin
+        fstp qword ptr result
+    }
+    return result;
+#else
+    return sin(radians);
+#endif
+}
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#pragma auto_inline(on)
+#endif
+
 // FUNCTION: CARMA2_HW 0x00531de0
 br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* euler) {
-    br_uint_8 o;
-    br_angle ti;
-    br_angle tj;
-    br_angle th;
-    br_scalar ci;
-    br_scalar cj;
-    br_scalar ch;
-    br_scalar si;
-    br_scalar sj;
-    br_scalar sh;
-    br_scalar cc;
-    br_scalar cs;
-    br_scalar sc;
-    br_scalar ss;
-    int a0;
-    int a1;
-    int a2;
+    const volatile br_euler* input = euler;
+    volatile br_matrix34* output = mat;
+    unsigned order = input->order;
+    unsigned i, j, h;
+    unsigned a0, a1, a2;
+    double ri, rj, rh;
+    double ci, cj, ch, si, sj, sh;
+    double ci_wide, ch_wide, si_wide, sh_wide;
+    double cc, cs, sc, ss;
+    const double radians_per_angle = 9.587379924285257e-5;
 
-    o = euler->order;
-    if (o & 0x10) {
-        ti = euler->c;
-        tj = euler->b;;
-        th = euler->a;
+    if (order & 0x10) {
+        i = input->c;
+        j = input->b;
+        h = input->a;
     } else {
-        ti = euler->c;
-        tj = euler->b;
-        th = euler->a;
+        i = input->a;
+        j = input->b;
+        h = input->c;
     }
-    if (o & 0x4) {
-        ti = -ti;
-        tj = -tj;
-        th = -th;
+    if (order & 4) {
+        i = (0u - i) & 0xffffu;
+        j = (0u - j) & 0xffffu;
+        h = (0u - h) & 0xffffu;
     }
-    ci = BR_COS(ti);
-    cj = BR_COS(tj);
-    ch = BR_COS(th);
-
-    si = BR_SIN(ti);
-    sj = BR_SIN(tj);
-    sh = BR_SIN(th);
-
-    cc = ci * ch;
-    cs = ci * sh;
-    sc = si * ch;
-    ss = si * sh;
-
-    a0 = OrderAxes[o].a0;
-    a1 = OrderAxes[o].a1;
-    a2 = OrderAxes[o].a2;
-
-    if (o & 0x8) {
-        mat->m[a0][a0] =              cj;
-        mat->m[a1][a0] =   sj * si;
-        mat->m[a2][a0] =   sj * ci;
-        mat->m[a0][a1] =   sj * sh;
-        mat->m[a1][a1] = -(cj * ss) + cc;
-        mat->m[a2][a1] = -(cj * cs) - sc;
-        mat->m[a0][a2] = -(sj * ch);
-        mat->m[a1][a2] =   cj * sc + cs;
-        mat->m[a2][a2] =   cj * cc - ss;
+    ri = i * radians_per_angle;
+    rh = h * radians_per_angle;
+    rj = j * radians_per_angle;
+    ch_wide = ActivationEulerCosine(rh);
+    si_wide = ActivationEulerSine(ri);
+    sh_wide = ActivationEulerSine(rh);
+    ci_wide = ActivationEulerCosine(ActivationEulerScalar(ri));
+    cj = ActivationEulerScalar(ActivationEulerCosine(rj));
+    sj = ActivationEulerScalar(ActivationEulerSine(ActivationEulerScalar(rj)));
+    ci = ActivationEulerScalar(ci_wide);
+    ch = ActivationEulerScalar(ch_wide);
+    si = ActivationEulerScalar(si_wide);
+    sh = ActivationEulerScalar(sh_wide);
+    cc = ActivationEulerScalar(ch_wide * ci_wide);
+    cs = ActivationEulerScalar(sh_wide * ci_wide);
+    sc = ActivationEulerScalar(si_wide * ch);
+    ss = ActivationEulerScalar(sh * si);
+    /* ci's scalar spill is dead, while its wide register value remains live. */
+    (void)ci;
+    a0 = OrderAxes[order].a0;
+    a1 = OrderAxes[order].a1;
+    a2 = OrderAxes[order].a2;
+    if (order & 8) {
+        output->m[a0][a0] = (br_scalar)cj;
+        output->m[a1][a0] = (br_scalar)(sj * si);
+        output->m[a2][a0] = (br_scalar)(sj * ci_wide);
+        output->m[a0][a1] = (br_scalar)(sh * sj);
+        output->m[a1][a1] = (br_scalar)(cc - ss * cj);
+        output->m[a2][a1] = (br_scalar)(-(cs * cj) - sc);
+        output->m[a0][a2] = (br_scalar)(-(sj * ch));
+        output->m[a1][a2] = (br_scalar)(sc * cj + cs);
+        output->m[a2][a2] = (br_scalar)(cc * cj - ss);
     } else {
-        mat->m[a0][a0] =  cj * ch;
-        mat->m[a1][a0] =  sj * sc - cs;
-        mat->m[a2][a0] =  sj * cc + ss;
-        mat->m[a0][a1] =  cj * sh;
-        mat->m[a1][a1] =  sj * ss + cc;
-        mat->m[a2][a1] =  sj * cs - sc;
-        mat->m[a0][a2] =          - sj;
-        mat->m[a1][a2] =  cj * si;
-        mat->m[a2][a2] =  cj * ci;
+        output->m[a0][a0] = (br_scalar)(ch * cj);
+        output->m[a1][a0] = (br_scalar)(sc * sj - cs);
+        output->m[a2][a0] = (br_scalar)(cc * sj + ss);
+        output->m[a0][a1] = (br_scalar)(sh * cj);
+        output->m[a1][a1] = (br_scalar)(ss * sj + cc);
+        output->m[a2][a1] = (br_scalar)(cs * sj - sc);
+        output->m[a0][a2] = (br_scalar)(-sj);
+        output->m[a1][a2] = (br_scalar)(si * cj);
+        output->m[a2][a2] = (br_scalar)(cj * ci_wide);
     }
-
-    mat->m[3][0] = 0.f;
-    mat->m[3][1] = 0.f;
-    mat->m[3][2] = 0.f;
-
+    output->m[3][2] = 0.f;
+    output->m[3][1] = 0.f;
+    output->m[3][0] = 0.f;
     return mat;
 }
 

@@ -2,12 +2,19 @@
 #define GUARD_20_SKIDMARK_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern char* gBoring_material_names[2];
+extern char* gMaterial_names[2];
+extern br_material* gMaterial[2];
+extern tSkid gSkids[100];
+extern int gCurrent_skid;
 
 // StretchMark
 
 // MaterialFromIndex
 
-// AdjustSkid
+extern void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
 
 // FarFromLine2D
 
@@ -15,9 +22,9 @@
 
 extern void C2_HOOK_FASTCALL InitSkids(void);
 
-// HideSkid
+extern void C2_HOOK_FASTCALL HideSkid(int pSkid_num);
 
-// HideSkids
+extern void C2_HOOK_FASTCALL HideSkids(void);
 
 // SkidLen
 
@@ -29,8 +36,8 @@ extern void C2_HOOK_FASTCALL InitSkids(void);
 
 // SkidMark
 
-// InitCarSkidStuff
+extern void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar);
 
-// SkidsPerFrame
+extern void C2_HOOK_FASTCALL SkidsPerFrame(void);
 
 #endif // GUARD_20_SKIDMARK_H

@@ -10,6 +10,7 @@
 #include "platform.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00703e24
 int gWidth;
@@ -23,6 +24,12 @@ int gX_offset;
 // GLOBAL: CARMA2_HW 0x006baa2c
 int gY_offset;
 
+// GLOBAL: CARMA2_HW 0x00705188
+int gScreen_wobble_x;
+
+// GLOBAL: CARMA2_HW 0x00705184
+int gScreen_wobble_y;
+
 // GLOBAL: CARMA2_HW 0x0068be30
 int gBrZb_initialized;
 
@@ -31,6 +38,9 @@ br_pixelmap* gRear_pixelmap;
 
 // GLOBAL: CARMA2_HW 0x006a22b8
 br_pixelmap* gEvalu;
+
+// GLOBAL: CARMA2_HW 0x006a22c4
+int gNumber_of_lollipops;
 
 // GLOBAL: CARMA2_HW 0x006a22f8
 tWobble_spec gWobble_array[5];
@@ -47,6 +57,42 @@ int gRender_indent;
 // GLOBAL: CARMA2_HW 0x006baa40
 tU8 gTemporary_physics_render_buffer[300000];
 
+// GLOBAL: CARMA2_HW 0x006a2448
+tClip_details gShadow_clip_planes[8];
+
+// GLOBAL: CARMA2_HW 0x006a23d8
+int gFancy_shadow;
+
+// GLOBAL: CARMA2_HW 0x006a27e0
+br_material* gShadow_material;
+
+// GLOBAL: CARMA2_HW 0x006a27d0
+br_vector3 gShadow_light_ray;
+
+// GLOBAL: CARMA2_HW 0x006a27c0
+br_vector3 gShadow_light_z;
+
+// GLOBAL: CARMA2_HW 0x006a27b0
+br_vector3 gShadow_light_x;
+
+// GLOBAL: CARMA2_HW 0x006a27e4
+br_model* gShadow_model;
+
+// GLOBAL: CARMA2_HW 0x006a2444
+br_actor* gShadow_actor;
+
+// GLOBAL: CARMA2_HW 0x006a2488
+tSaved_table gSaved_shade_tables[100];
+
+// GLOBAL: CARMA2_HW 0x006a27a8
+int gSaved_table_count;
+
+// GLOBAL: CARMA2_HW 0x00703e28
+int gHud_actor_storage_size;
+
+// GLOBAL: CARMA2_HW 0x00704e60
+br_actor* gHud_actor_storage[128];
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -61,29 +107,78 @@ void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel) {
     gShadow_level = pLevel;
 }
 
-// GetShadowLevel
+// FUNCTION: CARMA2_HW 0x004e9950
+tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void) {
+    return gShadow_level;
+}
 
 // ToggleShadow
 
-// STUB: CARMA2_HW 0x004e99d0
+// FUNCTION: CARMA2_HW 0x004e99d0
 void C2_HOOK_FASTCALL InitShadow(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(gShadow_clip_planes[0]) != 8);
+
+    for (i = 0; i < (int)REC2_ASIZE(gShadow_clip_planes); i++) {
+        gShadow_clip_planes[i].clip = BrActorAllocate(BR_ACTOR_CLIP_PLANE, NULL);
+        BrActorAdd(gUniverse_actor, gShadow_clip_planes[i].clip);
+        BrClipPlaneDisable(gShadow_clip_planes[i].clip);
+        BrMatrix34Identity(&gShadow_clip_planes[i].clip->t.t.mat);
+    }
+    gFancy_shadow = 1;
+    gShadow_material = BrMaterialFind("SHADOW.MAT");
+    BrVector3Set(&gShadow_light_ray, 0.f, -1.f, 0.f);
+    BrVector3Set(&gShadow_light_z, 0.f, 0.f, -1.f);
+    BrVector3Set(&gShadow_light_x, 1.f, 0.f, 0.f);
+
+    gShadow_model = BrModelAllocate("", 0, 0);
+    gShadow_model->flags = BR_MODF_GENERATE_TAGS | BR_MODF_KEEP_ORIGINAL;
+    gShadow_actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    gShadow_actor->model = gShadow_model;
+    BrActorAdd(gUniverse_actor, gShadow_actor);
 }
 
-// SaveShadeTable
+// FUNCTION: CARMA2_HW 0x004e9ae0
+void C2_HOOK_FASTCALL SaveShadeTables(void) {
+    PossibleService();
+    gSaved_table_count = 0;
+    BrTableEnum("*", SaveShadeTable, NULL);
+}
 
-// SaveShadeTables
+// FUNCTION: CARMA2_HW 0x004e9b10
+br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
+    br_pixelmap* copy;
 
-// STUB: CARMA2_HW 0x004e9b60
+    (void)pArg;
+    if (gSaved_table_count == (int)REC2_ASIZE(gSaved_shade_tables)) {
+        return 1;
+    }
+    gSaved_shade_tables[gSaved_table_count].original = pTable;
+    copy = BrMemAllocate(sizeof(br_pixelmap), kMem_misc);
+    gSaved_shade_tables[gSaved_table_count].copy = copy;
+    gSaved_table_count++;
+    memcpy(copy, pTable, sizeof(br_pixelmap));
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004e9b60
 void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < gSaved_table_count; i++) {
+        BrMemFree(gSaved_shade_tables[i].copy);
+    }
 }
 
 // ShadowMode
 
 // LollipopizeActor
 
-// ResetLollipopQueue
+// FUNCTION: CARMA2_HW 0x004e4900
+void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
+    gNumber_of_lollipops = 0;
+}
 
 // RenderLollipops
 
@@ -99,7 +194,7 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
     if (pHeight == 0) {
         pHeight = gBack_screen->height;
     }
-    gRender_screen = DRPixelmapAllocateSub(gBack_screen, pX_offset, pY_offset, pWidth, pHeight);
+    gRender_screen = DRPixelmapAllocateSub(gBack_screen, (br_uint_16)pX_offset, (br_uint_16)pY_offset, (br_uint_16)pWidth, (br_uint_16)pHeight);
     gWidth = pWidth;
     gHeight = pHeight;
     gX_offset = pX_offset;
@@ -162,9 +257,17 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
 
 // NewScreenWobble
 
-// SetScreenWobble
+// FUNCTION: CARMA2_HW 0x004e4e20
+void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY) {
+    gScreen_wobble_x = pX;
+    gScreen_wobble_y = pY;
+}
 
-// ResetScreenWobble
+// FUNCTION: CARMA2_HW 0x004e4e30
+void C2_HOOK_FASTCALL ResetScreenWobble(void) {
+    gScreen_wobble_x = 0;
+    gScreen_wobble_y = 0;
+}
 
 // CalculateWobblitude
 
@@ -180,14 +283,66 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
 
 // RenderAFrame
 
-// StartRenderingHeadups
-
-// STUB: CARMA2_HW 0x004e5ad0
-void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x004e5a70
+void C2_HOOK_FASTCALL StartRenderingHeadups(void) {
+    CleanPolyFontDanglers();
+    gHud_actor_storage_size = 0;
+    gRender_poly_text = 0;
 }
 
-// StopRenderingHeadups
+// FUNCTION: CARMA2_HW 0x004e5ad0
+void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor) {
+    if (gHud_actor_storage_size >= (int)REC2_ASIZE(gHud_actor_storage)) {
+        BrFailure("Not enough HUD actor storage");
+    }
+    gHud_actor_storage[gHud_actor_storage_size] = pActor;
+    gHud_actor_storage_size++;
+}
+
+// FUNCTION: CARMA2_HW 0x004e5b00
+void C2_HOOK_FASTCALL StopRenderingHeadups(void) {
+    br_int_16 original_origin_x;
+    br_int_16 original_origin_y;
+    br_uint_16 original_base_x;
+    br_uint_16 original_base_y;
+    br_actor* actor;
+    int i;
+
+    if (gCount_polyfont_glyph_actors != 0) {
+        BrActorAdd(gHUD_root, gString_root_actor);
+    }
+    for (i = 0; i < gHud_actor_storage_size; i++) {
+        actor = gHud_actor_storage[i];
+        if (actor != NULL && actor->prev == NULL) {
+            BrActorAdd(gHUD_root, actor);
+        }
+    }
+    original_origin_x = gRender_screen->origin_x;
+    original_origin_y = gRender_screen->origin_y;
+    original_base_x = gRender_screen->base_x;
+    original_base_y = gRender_screen->base_y;
+    gRender_screen->origin_x = 0;
+    gRender_screen->origin_y = 0;
+    gRender_screen->base_x = 0;
+    gRender_screen->base_y = 0;
+    BrZbSceneRender(gHUD_root, gHUD_camera, gRender_screen, gDepth_buffer);
+    gRender_screen->origin_x = original_origin_x;
+    gRender_screen->origin_y = original_origin_y;
+    gRender_screen->base_x = original_base_x;
+    gRender_screen->base_y = original_base_y;
+    if (gString_root_actor->parent != NULL) {
+        BrActorRemove(gString_root_actor);
+    }
+    for (i = 0; i < gHud_actor_storage_size; i++) {
+        actor = gHud_actor_storage[i];
+        if (actor != NULL && actor->parent != NULL) {
+            BrActorRemove(actor);
+        }
+    }
+    gHud_actor_storage_size = 0;
+    CleanPolyFontDanglers();
+    gRender_poly_text = 1;
+}
 
 // FUNCTION: CARMA2_HW 0x004e5c70
 void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {
