@@ -20,7 +20,7 @@ extern FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode);
 
 extern int C2_HOOK_FASTCALL PFfgetc(FILE* pFile);
 
-// PFgetc
+extern int C2_HOOK_FASTCALL PFgetc(FILE* pFile);
 
 extern char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile);
 

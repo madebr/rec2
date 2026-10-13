@@ -149,12 +149,15 @@ int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
         return EOF;
     }
     twtFile->error = 0;
-    result = *twtFile->pos;
+    result = (tS8)*twtFile->pos;
     twtFile->pos++;
     return result;
 }
 
-// PFgetc
+// FUNCTION: CARMA2_HW 0x004b48c0
+int C2_HOOK_FASTCALL PFgetc(FILE* pFile) {
+    return PFfgetc(pFile);
+}
 
 // FUNCTION: CARMA2_HW 0x004b4900
 char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
@@ -169,7 +172,7 @@ char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
     twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
     writePtr = buffer;
     for (i = 0; i < (int)size - 1; i++) {
-        c = (int)*twtFile->pos++;
+        c = (tS8)*twtFile->pos++;
         if (c == -1) {
             *writePtr = '\0';
             twtFile->error = -1;
