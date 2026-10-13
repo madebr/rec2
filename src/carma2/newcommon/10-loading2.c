@@ -860,9 +860,36 @@ void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_l
     }
 }
 
-// AllocateCarActorData
+// FUNCTION: CARMA2_HW 0x0048bf20
+intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData) {
 
-// AllocateCarModelData
+    (void)pData;
+    if (pActor->type == BR_ACTOR_MODEL) {
+        pActor->user = BrMemAllocate(sizeof(tUser_crush_data), kMem_crush_data);
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0048bf50
+intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush;
+    tCar_spec* car_spec;
+    tUser_detail_level_model* model_data;
+    int i;
+
+    car_spec = pData;
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 0;
+    }
+    for (i = 0; i < car_spec->count_detail_levels; i++) {
+        if (user_crush->models[i] != NULL) {
+            model_data = BrMemAllocate(sizeof(tUser_detail_level_model), kMem_crush_data);
+            user_crush->models[i]->user = model_data;
+        }
+    }
+    return 0;
+}
 
 // AddCarModelToList
 

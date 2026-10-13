@@ -61,9 +61,9 @@ extern void C2_HOOK_FASTCALL AddRefOffset(int* pRef_holder);
 
 extern void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_location pImpact_location);
 
-// AllocateCarActorData
+extern intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData);
 
-// AllocateCarModelData
+extern intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData);
 
 // AddCarModelToList
 
