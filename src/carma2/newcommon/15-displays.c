@@ -606,9 +606,28 @@ void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
     }
 }
 
-// MoveHeadupTo
+// FUNCTION: CARMA2_HW 0x0044a860
+void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pX, int pY) {
+    int delta_x;
 
-// ChangeHeadupText
+    if (pHeadup_index >= 0) {
+        delta_x = gHeadups[pHeadup_index].x - gHeadups[pHeadup_index].original_x;
+        gHeadups[pHeadup_index].original_x = pX;
+        gHeadups[pHeadup_index].x = delta_x + pX;
+        gHeadups[pHeadup_index].y = pY;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0044a8d0
+void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
+    tHeadup* the_headup;
+
+    if (pHeadup_index >= 0) {
+        the_headup = &gHeadups[pHeadup_index];
+        strcpy(the_headup->data.text_info.text, pNew_text);
+        MungeHeadupWidth(the_headup);
+    }
+}
 
 // DoDamageScreen
 
