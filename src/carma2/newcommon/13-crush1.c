@@ -234,9 +234,39 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // LinkCrushDataToActors
 
-// AccumulateSquashVertices
+// FUNCTION: CARMA2_HW 0x0042ac70
+intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData) {
+    tAccumulateSquashVertices_UserData* context = pData;
+    tUser_crush_data* crush_data = actor->user;
 
-// InitModelMasterCrushData
+    if (crush_data != NULL && crush_data->crush_data != NULL) {
+        int i;
+
+        for (i = 0; i < REC2_ASIZE(crush_data->models); i++) {
+            if (crush_data->models[i] != NULL) {
+                context->count_vertices += crush_data->models[i]->nvertices;
+            }
+        }
+    }
+    return 0;
+}
+
+void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec) {
+    tCar_crush_spec* car_crush = pCar_spec->car_crush_spec;
+
+    if (car_crush != NULL) {
+        tAccumulateSquashVertices_UserData data;
+        tCar_crush_vertex_data* vertices;
+
+        data.count_vertices = 0;
+        data.bens_z_min = car_crush->bend_z_min;
+        data.bens_z_max = car_crush->bend_z_max;
+        DRActorEnumRecurse(pCar_spec->car_model_actor, AccumulateSquashVertices, &data);
+        vertices = BrMemAllocate(data.count_vertices * sizeof(tCar_crush_vertex_data), kMem_crush_data);
+        car_crush->field_0x1cc = vertices;
+        BrMatrix34Copy(&car_crush->model_actor->t.t.mat, &pCar_spec->car_model_actor->t.t.mat);
+    }
+}
 
 // InitNetworkShapesStuff
 

@@ -41,9 +41,9 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 // LinkCrushDataToActors
 
-// AccumulateSquashVertices
+extern intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData);
 
-// InitModelMasterCrushData
+extern void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec);
 
 // InitNetworkShapesStuff
 
