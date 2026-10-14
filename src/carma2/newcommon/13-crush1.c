@@ -700,7 +700,17 @@ void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_
     }
 }
 
-// InitPhysCrushData
+void C2_HOOK_FASTCALL InitPhysCrushData(tCar_spec* pCar_spec) {
+    tPhysics_object* collision_info = pCar_spec->collision_info;
+    tInitPhysCrushDataCB_Data data;
+
+    data.car = pCar_spec;
+    data.value = collision_info->M /
+                 ((collision_info->bb2.max.v[0] - collision_info->bb2.min.v[0]) *
+                  (collision_info->bb2.max.v[1] - collision_info->bb2.min.v[1]) *
+                  (collision_info->bb2.max.v[2] - collision_info->bb2.min.v[2]));
+    DRActorEnumRecurse(pCar_spec->car_model_actor, InitPhysCrushDataCB, &data);
+}
 
 void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor) {
     int i;
@@ -761,7 +771,9 @@ intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data) {
     return 0;
 }
 
-// InitModelCrushData
+void C2_HOOK_FASTCALL InitModelCrushData(tCar_spec* pCar_spec) {
+    DRActorEnumRecurse(pCar_spec->car_model_actor, InitModelCrushDataCB, pCar_spec);
+}
 
 // FUNCTION: CARMA2_HW 0x0042c0e0
 void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data* pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data) {

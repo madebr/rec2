@@ -79,13 +79,13 @@ extern tU16 C2_HOOK_FASTCALL FindNearestParentVertex(br_actor* pActor, br_vector
 
 extern void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_data, const br_model* pModel, const br_bounds3* pBounds);
 
-// InitPhysCrushData
+extern void C2_HOOK_FASTCALL InitPhysCrushData(tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor);
 
 extern intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data);
 
-// InitModelCrushData
+extern void C2_HOOK_FASTCALL InitModelCrushData(tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data* pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data);
 
