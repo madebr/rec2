@@ -47,9 +47,9 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 // InitNetworkShapesStuff
 
-// IncreasingCompare
+extern int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2);
 
-// DecreasingCompare
+extern int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
 
 extern tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid);
 

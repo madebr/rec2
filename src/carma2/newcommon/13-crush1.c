@@ -238,9 +238,33 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // InitNetworkShapesStuff
 
-// IncreasingCompare
+// FUNCTION: CARMA2_HW 0x0042acb0
+int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2) {
+    float v1 = *(const float*)pValue1;
+    float v2 = *(const float*)pValue2;
 
-// DecreasingCompare
+    if (!(v1 >= v2)) {
+        return -1;
+    } else if (v1 == v2) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0042ace0
+int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
+    float v1 = *(const float*)pValue1;
+    float v2 = *(const float*)pValue2;
+
+    if (v1 > v2) {
+        return -1;
+    } else if (!(v1 < v2)) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042b4c0
 tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid) {
