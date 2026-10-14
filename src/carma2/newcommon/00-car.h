@@ -181,7 +181,7 @@ extern int C2_HOOK_FASTCALL FUN_0041e480(br_vector3* pPosition, br_vector3* pDir
 
 extern float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar);
 
-// SetCarSuspGiveAndHeight
+extern void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height);
 
 // TestForCarInSensiblePlace
 

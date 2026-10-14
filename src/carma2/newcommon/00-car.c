@@ -5,6 +5,8 @@
 #include "globvars.h"
 #include "rec2_macros.h"
 
+#include <math.h>
+
 // GLOBAL: CARMA2_HW 0x0079eda0
 tNon_car_spec* gActive_non_car_list[99];
 
@@ -288,7 +290,37 @@ float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar) {
     return min_value;
 }
 
-// SetCarSuspGiveAndHeight
+// FUNCTION: CARMA2_HW 0x0041fc60
+void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height) {
+    tPhysics_object* collision_info = pCar->collision_info;
+    float ratio;
+    float rear_divisor;
+    double front_divisor;
+    float front_give;
+    float rear_give;
+    float damping;
+    float root_stiffness;
+
+    ratio = (float)fabs((pCar->wpos[0].v[2] - pCar->centre_of_mass_world_scale.v[2])
+        / (pCar->wpos[2].v[2] - pCar->centre_of_mass_world_scale.v[2]));
+    rear_divisor = ratio + 1.0f;
+    rear_give = pCar->steerable_suspension_give * pRear_give_factor * WORLD_SCALE;
+    pCar->sk[0] = (collision_info->M / rear_divisor) * 5.0f / rear_give;
+    root_stiffness = (float)sqrt(5.0);
+    pCar->sb[0] = (float)((collision_info->M / rear_divisor) * root_stiffness / sqrt(rear_give));
+
+    front_give = pCar->susp_give * pFront_give_factor * WORLD_SCALE;
+    damping = pCar->damping * pDamping_factor;
+    front_divisor = 1.0 / ratio + 1.0;
+    pCar->sk[1] = (float)((collision_info->M / front_divisor) * 5.0f / front_give);
+    pCar->sb[1] = (float)((collision_info->M / front_divisor) * root_stiffness / sqrt(front_give));
+
+    pCar->sb[0] *= damping;
+    pCar->sb[1] *= damping;
+    pCar->susp_height[0] = rear_give + pExtra_rear_height + pCar->ride_height;
+    pCar->susp_height[1] = front_give + pExtra_front_height + pCar->ride_height;
+    collision_info->bb2.min.v[1] = GetCarOverallBoundsMinY(pCar);
+}
 
 // TestForCarInSensiblePlace
 
