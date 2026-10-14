@@ -18,7 +18,7 @@ extern void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStor
 
 extern void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage);
 
-// SmoothificatePowerups
+extern void C2_HOOK_FASTCALL SmoothificatePowerups(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial);
 
