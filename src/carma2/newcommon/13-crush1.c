@@ -1,6 +1,9 @@
 #include "13-crush1.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
+#include "09-funks.h"
+#include "23-piping.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
@@ -1428,7 +1431,42 @@ void C2_HOOK_FASTCALL CompletelyUnBendCollisionShapes(tCar_spec* pCar_spec) {
     pCar_spec->car_crush_spec->expand_bounding_box = 3;
 }
 
-// CompletelyUnBendWheels
+// FUNCTION: CARMA2_HW 0x0043a010
+void C2_HOOK_FASTCALL CompletelyUnBendWheels(tCar_spec* pCar_spec) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(pCar_spec->wheel_actors); i++) {
+        br_actor* actor = pCar_spec->pivot_actors[i];
+        tGroovidelic_spec* groove;
+
+        if (actor == NULL) {
+            actor = pCar_spec->wheel_actors[i];
+        }
+        if (actor == NULL) {
+            continue;
+        }
+        groove = ActorsGroove(actor);
+        if (groove != NULL && groove->path_type == eGroove_path_straight) {
+            br_vector3* centre = &groove->path_data.straight_info.centre;
+            br_vector3 delta;
+
+            delta.v[0] = -centre->v[0];
+            delta.v[1] = -centre->v[1];
+            delta.v[2] = -centre->v[2];
+            memcpy(centre, &pCar_spec->car_crush_spec->field_0x1ec[i], sizeof(*centre));
+            delta.v[0] += centre->v[0];
+            delta.v[1] += centre->v[1];
+            delta.v[2] += centre->v[2];
+            PipeSingleVector3(centre, &delta);
+        }
+    }
+
+    for (i = 0; i < (int)REC2_ASIZE(pCar_spec->wpos); i++) {
+        memcpy(&pCar_spec->wpos[i], &pCar_spec->car_crush_spec->field_0x234[i], sizeof(pCar_spec->wpos[i]));
+    }
+    SetCarSuspGiveAndHeight(pCar_spec, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
+    pCar_spec->field_0x1260 = 0.0f;
+}
 
 // CompletelyUnBendOtherThings
 
