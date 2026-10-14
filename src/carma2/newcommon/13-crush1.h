@@ -125,7 +125,7 @@ extern float C2_HOOK_FASTCALL PointSimplexDistSq(const br_vector3* pP, int pCoun
 
 extern int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq);
 
-// NearestAxis
+extern int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector);
 
 // CrushModel
 

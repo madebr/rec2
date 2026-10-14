@@ -1078,7 +1078,15 @@ int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_
     return DistSq(&pModel->bounds.max, pCount, pVertices) > threshold;
 }
 
-// NearestAxis
+int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
+    if (fabs(pVector->v[0]) > 0.707107f) {
+        return 0;
+    }
+    if (fabs(pVector->v[1]) > 0.707107f) {
+        return 1;
+    }
+    return 2;
+}
 
 // CrushModel
 
