@@ -7,7 +7,7 @@
 extern br_vector3 gPhysics_reference_normal_comparison;
 extern tCollision_shape_polyhedron_data* gPolyhedron_to_sort;
 
-// ConvexHull2D
+extern tPhysicsError C2_HOOK_FASTCALL ConvexHull2D(tCollision_shape_polyhedron_data* pPolyhedron);
 
 extern br_scalar C2_HOOK_FASTCALL SignedTwiceAreaOf3DTriangle(const br_vector3* pV1, const br_vector3* pV2);
 
