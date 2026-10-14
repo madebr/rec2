@@ -1,6 +1,7 @@
 #include "13-crush1.h"
 
 #include "08-loading1.h"
+#include "49-physics.h"
 #include "51-smash.h"
 #include "platform.h"
 #include "rec2_macros.h"
@@ -66,6 +67,36 @@ br_scalar gChance_of_inverse_buckle;
 
 // GLOBAL: CARMA2_HW 0x0067be78
 br_vector3 gBatty_gravity;
+
+// GLOBAL: CARMA2_HW 0x0067a190
+undefined4 gCrush_array_0067a190[10];
+
+// GLOBAL: CARMA2_HW 0x00679440
+undefined4 gDAT_00679440;
+
+// GLOBAL: CARMA2_HW 0x006796a0
+tCrush_info_buffer gDetached_bit_crush_info_buffer;
+
+// GLOBAL: CARMA2_HW 0x00679448
+tPhysics_object* gDetached_bit_collision_infos;
+
+// GLOBAL: CARMA2_HW 0x006796ac
+tDriver gDetached_bit_driver;
+
+// GLOBAL: CARMA2_HW 0x0067bd68
+tPhysics_joint* gTrack_crush_joints[32];
+
+// GLOBAL: CARMA2_HW 0x0067b7b8
+tCrush_info_buffer gSplit_car_crush_info_buffer;
+
+// GLOBAL: CARMA2_HW 0x0067a188
+tPhysics_object* gSplit_car_collision_infos;
+
+// GLOBAL: CARMA2_HW 0x0067b7c4
+tDriver gSplit_car_driver;
+
+// GLOBAL: CARMA2_HW 0x006796b4
+tPhysics_shape* gGonad_sphere_collision_shape;
 
 // FUNCTION: CARMA2_HW 0x00429bb0
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
@@ -136,9 +167,50 @@ void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
 
 // RemoveCarFromCrushLists
 
-// STUB: CARMA2_HW 0x00429fa0
+// FUNCTION: CARMA2_HW 0x00429fa0
 void C2_HOOK_FASTCALL InitCrushSystems(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    memset(gCrush_array_0067a190, 0, sizeof(gCrush_array_0067a190));
+    gDAT_00679440 = 0;
+    gDetached_bit_crush_info_buffer.capacity = 16;
+    gDetached_bit_crush_info_buffer.crush_infos = BrMemAllocate(gDetached_bit_crush_info_buffer.capacity * sizeof(tCrush_info), kMem_crush_data);
+    gDetached_bit_collision_infos = BrMemAllocate(gDetached_bit_crush_info_buffer.capacity * sizeof(tPhysics_object), kMem_crush_data);
+    for (i = 0; i < gDetached_bit_crush_info_buffer.capacity; i++) {
+        gDetached_bit_crush_info_buffer.crush_infos[i].field_0xdc = 1.f;
+        gDetached_bit_crush_info_buffer.crush_infos[i].field_0xe0 = 0.28985506f;
+        gDetached_bit_crush_info_buffer.crush_infos[i].collision_object = &gDetached_bit_collision_infos[i];
+        gDetached_bit_collision_infos[i].shape = (tPhysics_shape*)AllocateShapePolyhedron(16, kMem_crush_data);
+    }
+    gDetached_bit_driver = eDriver_detached_bit;
+    for (i = 0; i < (int)REC2_ASIZE(gTrack_crush_joints); i++) {
+        gTrack_crush_joints[i] = AllocatePhysicsJoint(3, kMem_crush_data);
+    }
+    gSplit_car_crush_info_buffer.capacity = 3;
+    gSplit_car_crush_info_buffer.crush_infos = BrMemAllocate(gSplit_car_crush_info_buffer.capacity * sizeof(tCrush_info), kMem_crush_data);
+    gSplit_car_collision_infos = BrMemAllocate(gSplit_car_crush_info_buffer.capacity * sizeof(tPhysics_object), kMem_crush_data);
+    for (i = 0; i < gSplit_car_crush_info_buffer.capacity; i++) {
+        int j;
+        tPhysics_shape* shape = NULL;
+
+        gSplit_car_crush_info_buffer.crush_infos[i].field_0xdc = 0.f;
+        gSplit_car_crush_info_buffer.crush_infos[i].collision_object = &gSplit_car_collision_infos[i];
+        for (j = 0; j < 4; j++) {
+            tPhysics_shape* polyhedron = (tPhysics_shape*)AllocateShapePolyhedron(16, kMem_crush_data);
+
+            if (shape != NULL) {
+                shape->common.next = polyhedron;
+            } else {
+                gSplit_car_collision_infos[i].shape = polyhedron;
+            }
+            shape = polyhedron;
+        }
+        if (shape != NULL) {
+            shape->common.next = NULL;
+        }
+    }
+    gSplit_car_driver = eDriver_split_car;
+    gGonad_sphere_collision_shape = (tPhysics_shape*)AllocateShapeSphere(kMem_crush_data);
 }
 
 // ResetCrushSystems

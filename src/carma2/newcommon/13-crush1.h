@@ -6,6 +6,17 @@
 
 #include <stdio.h>
 
+extern undefined4 gCrush_array_0067a190[10];
+extern undefined4 gDAT_00679440;
+extern tCrush_info_buffer gDetached_bit_crush_info_buffer;
+extern tPhysics_object* gDetached_bit_collision_infos;
+extern tDriver gDetached_bit_driver;
+extern tPhysics_joint* gTrack_crush_joints[32];
+extern tCrush_info_buffer gSplit_car_crush_info_buffer;
+extern tPhysics_object* gSplit_car_collision_infos;
+extern tDriver gSplit_car_driver;
+extern tPhysics_shape* gGonad_sphere_collision_shape;
+
 extern void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF);
 
 // ClearCrushLists
