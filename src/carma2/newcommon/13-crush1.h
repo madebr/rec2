@@ -87,9 +87,9 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 // InitModelCrushData
 
-// PointEdgeDistSq
-
 // SetFlapCheckVertices
+
+extern float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB);
 
 // InitModelVertexData
 

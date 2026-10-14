@@ -8,6 +8,8 @@
 
 #include "c2_string.h"
 
+#include "brender/brender.h"
+
 // GLOBAL: CARMA2_HW 0x00679698
 br_scalar gDistortion_factor;
 
@@ -275,9 +277,28 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // InitModelCrushData
 
-// PointEdgeDistSq
-
 // SetFlapCheckVertices
+
+// FUNCTION: CARMA2_HW 0x0042c300
+float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB) {
+    br_vector3 pAB;
+    br_vector3 pAP;
+    br_vector3 pProj;
+    float proj;
+
+    BrVector3Sub(&pAB, pB, pA);
+    BrVector3Sub(&pAP, pP, pA);
+    proj = BrVector3Dot(&pAP, &pAB) / BrVector3Dot(&pAB, &pAB);
+    if (!(proj >= 0.0f)) {
+        proj = 0.0f;
+    } else if (proj > 1.0f) {
+        proj = 1.0f;
+    }
+    BrVector3Scale(&pProj, &pAB, proj);
+    BrVector3Add(&pProj, &pProj, pA);
+    BrVector3Sub(&pProj, pP, &pProj);
+    return BrVector3LengthSquared(&pProj);
+}
 
 // InitModelVertexData
 
