@@ -4,11 +4,11 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-// LoadTrackModels
+extern void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage* pStorage, const char* pPath);
 
-// SmoothlyLoadIfItsAModel
+extern void C2_HOOK_FASTCALL SmoothlyLoadIfItsAModel(const char* pPath);
 
-// AddSmoothModels
+extern int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const char* pPath);
 
 // LoadTrackMaterials
 
