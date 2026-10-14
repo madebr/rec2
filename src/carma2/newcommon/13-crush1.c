@@ -1,6 +1,7 @@
 #include "13-crush1.h"
 
 #include "08-loading1.h"
+#include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
 #include "platform.h"
@@ -724,7 +725,21 @@ float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* p
     return BrVector3LengthSquared(&pProj);
 }
 
-// InitModelVertexData
+void C2_HOOK_FASTCALL InitModelVertexData(tModel_detail_vertex_data* pVertex_data, br_model* pModel, int pDetail_level, tCar_crush_buffer_entry* pCrush_data, tCar_crush_spec* pCar_crush_spec) {
+    int i;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        int invalid;
+        tU16 number;
+
+        CompressVector3(&pVertex_data[i].p, &pModel->vertices[i].p, -10.0f, 10.0f);
+        number = CrushLimitNumber(&pModel->vertices[i].p, &pCar_crush_spec->limits, &pCar_crush_spec->count_limits, &invalid);
+        pVertex_data[i].limit_number = (tS16)number;
+    }
+    if (pDetail_level == 0 && pCrush_data != NULL && pCrush_data->flap_data != NULL) {
+        SetFlapCheckVertices(pCrush_data->flap_data, pModel, pVertex_data);
+    }
+}
 
 // InitVertexDataCB
 
