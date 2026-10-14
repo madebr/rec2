@@ -324,9 +324,41 @@ intptr_t C2_HOOK_FASTCALL SoftnessOfNearestPointCB(br_actor* pActor, br_vector3*
     return 0;
 }
 
-// DRActorEnumRecurseWithTranslation
+// FUNCTION: CARMA2_HW 0x0042b760
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* cbfn, void* pContext) {
+    br_vector3 delta;
+    intptr_t result;
+    br_actor* a;
 
-// SoftnessOfNearestPoint
+    if (pDelta == NULL) {
+        BrVector3Set(&delta, 0.0f, 0.0f, 0.0f);
+    } else {
+        delta.v[0] = pActor->t.t.mat.m[3][0] + pDelta->v[0];
+        delta.v[1] = pActor->t.t.mat.m[3][1] + pDelta->v[1];
+        delta.v[2] = pActor->t.t.mat.m[3][2] + pDelta->v[2];
+    }
+    result = cbfn(pActor, &delta, pContext);
+    if (result != 0) {
+        return result;
+    }
+    for (a = pActor->children; a != NULL; a = a->next) {
+        result = DRActorEnumRecurseWithTranslation(a, &delta, cbfn, pContext);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+
+float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* pPoint) {
+    tSoftnessOfNearestPointCB_Context softcb_data;
+
+    softcb_data.point = pPoint;
+    softcb_data.distance = BR_SCALAR_MAX;
+    softcb_data.softness_factor = 1.0f;
+    DRActorEnumRecurseWithTranslation(pCar_spec->car_model_actor, NULL, SoftnessOfNearestPointCB, &softcb_data);
+    return softcb_data.softness_factor;
+}
 
 // SetUpShapeLimitingStuff
 

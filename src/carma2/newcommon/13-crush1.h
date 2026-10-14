@@ -55,9 +55,9 @@ extern tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tC
 
 extern intptr_t C2_HOOK_FASTCALL SoftnessOfNearestPointCB(br_actor* pActor, br_vector3* pPoint, void* pData);
 
-// DRActorEnumRecurseWithTranslation
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* cbfn, void* pContext);
 
-// SoftnessOfNearestPoint
+extern float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* pPoint);
 
 // SetUpShapeLimitingStuff
 
