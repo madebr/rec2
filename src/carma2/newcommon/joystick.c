@@ -6,6 +6,7 @@
 #include "platform.h"
 
 #include "c2_stdio.h"
+#include "c2_stdlib.h"
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00595f84
@@ -22,6 +23,17 @@ float gJoystick_y_throttle = 1.f;
 
 // GLOBAL: CARMA2_HW 0x00596310
 int gINT_00596310 = 50;
+
+// GLOBAL: CARMA2_HW 0x00686184
+int gJoystick_preferences_backup_valid;
+
+// GLOBAL: CARMA2_HW 0x0079d8c0
+tButtonJoystickInfo gJoystick_preferences_backup;
+
+typedef struct tJoystick_preference_node {
+    tButtonJoystickInfo* info;
+    struct tJoystick_preference_node* next;
+} tJoystick_preference_node;
 
 // FUNCTION: CARMA2_HW 0x0045a0f0
 int C2_HOOK_FASTCALL HasCurrentJoystick(void) {
@@ -152,6 +164,124 @@ int C2_HOOK_FASTCALL CountJoystickPreferences(FILE* pF) {
     return count;
 }
 
+// FUNCTION: CARMA2_HW 0x0045bd90
+int C2_HOOK_FASTCALL SaveJoystickPreferences(void) {
+    tPath_name path;
+    char error[256];
+    int original_index;
+    int count;
+    int i;
+    int result;
+    FILE* f;
+    tJoystick_preference_node* list;
+    tJoystick_preference_node* node;
+    tJoystick_preference_node* tail;
+    tJoystick_preference_node* match;
+    tButtonJoystickInfo* info;
+
+    original_index = gJoystick_index;
+    PathCat(path, gApplication_path, "JOYSTICK.TXT");
+    f = fopen(path, "rt");
+    if (f == NULL) {
+        f = fopen(path, "wt");
+        if (f != NULL) {
+            for (i = 0; i < 16; i++) {
+                if (PDIsJoystickAvailable(i)) {
+                    gJoystick_index = i;
+                    info = PDGetCurrentJoystickData();
+                    if (info != NULL) {
+                        WriteJoystickPreferences(f, info);
+                    }
+                }
+            }
+            fclose(f);
+        }
+        gJoystick_index = original_index;
+        return 1;
+    }
+    count = CountJoystickPreferences(f);
+    if (count == 0) {
+        return 1;
+    }
+    list = malloc(sizeof(*list));
+    if (list == NULL) {
+        fclose(f);
+        gJoystick_index = original_index;
+        return 0;
+    }
+    node = list;
+    for (i = 0; i < count; i++) {
+        node->next = NULL;
+        node->info = malloc(sizeof(*node->info));
+        if (node->info != NULL) {
+            ReadJoystickPreferences(f, node->info);
+        }
+        if (i != count - 1) {
+            node->next = malloc(sizeof(*node));
+            node = node->next;
+        }
+        tail = node;
+    }
+    fclose(f);
+    for (i = 0; i < 16; i++) {
+        if (PDIsJoystickAvailable(i)) {
+            gJoystick_index = i;
+            info = PDGetCurrentJoystickData();
+            if (info == NULL) {
+                continue;
+            }
+            match = NULL;
+            for (node = list; node != NULL; node = node->next) {
+                if (match != NULL) {
+                    break;
+                }
+                if (strcmp(node->info->productName, GetCurrentJoystickName()) == 0) {
+                    match = node;
+                }
+            }
+            if (match != NULL) {
+                *match->info = *info;
+            } else {
+                node = malloc(sizeof(*node));
+                if (node == NULL) {
+                    return 0;
+                }
+                tail->next = node;
+                tail = node;
+                node->info = malloc(sizeof(*node->info));
+                if (node->info == NULL) {
+                    return 0;
+                }
+                node->next = NULL;
+                *node->info = *info;
+            }
+        }
+    }
+    PathCat(path, gApplication_path, "JOYSTICK.TXT");
+    f = fopen(path, "wt");
+    if (f == NULL) {
+        sprintf(error, "Cant open %s", path);
+        return 0;
+    }
+    node = list;
+    do {
+        if (node->info != NULL) {
+            WriteJoystickPreferences(f, node->info);
+        }
+        tail = node;
+        node = node->next;
+        if (tail->info != NULL) {
+            free(tail->info);
+        }
+        if (tail != NULL) {
+            free(tail);
+        }
+    } while (node != NULL);
+    result = fclose(f);
+    gJoystick_index = original_index;
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x0045bd50
 void C2_HOOK_FASTCALL EnableJoysticks(void) {
     tButtonJoystickInfo* info;
@@ -211,6 +341,29 @@ int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
         DisableJoysticks();
     }
     return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0045c1e0
+void C2_HOOK_FASTCALL BackupJoystickPreferences(void) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        gJoystick_preferences_backup = *info;
+        gJoystick_preferences_backup_valid = 1;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0045c210
+void C2_HOOK_FASTCALL RestoreJoystickPreferences(void) {
+    tButtonJoystickInfo* info;
+
+    if (gJoystick_preferences_backup_valid) {
+        info = PDGetCurrentJoystickData();
+        if (info != NULL) {
+            *info = gJoystick_preferences_backup;
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x0045c460
