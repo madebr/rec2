@@ -178,4 +178,37 @@ if(REC2_MATCHING)
     reccmp_add_target(carma2 ID LAUNCHER)
 
     reccmp_configure()
+
+    set(FUNCTION_TOTAL_CARMA2_HW 5162)
+
+    set(base_url "https://gist.githubusercontent.com/madebr/92b121cfd427c51b771fb614b4c893f4/raw/")
+    add_custom_target(download-master-progress)
+    add_custom_target(show-progress)
+
+    get_property(RECCMP_TARGETS GLOBAL PROPERTY RECCMP_TARGETS)
+    foreach(target ${RECCMP_TARGETS})
+        get_property(reccmp_id TARGET "${target}" PROPERTY INTERFACE_RECCMP_ID)
+
+        set(progress_local "${PROJECT_BINARY_DIR}/${reccmp_id}-progress-master.json")
+        set(download_command COMMAND "${CMAKE_COMMAND}"
+                "-DURL=${base_url}"
+                "-DFILENAME_ONLINE=${reccmp_id}.json"
+                "-DFILENAME_LOCAL=${progress_local}"
+                "-P" "${PROJECT_SOURCE_DIR}/cmake/download-file.cmake"
+        )
+        add_custom_target(download-master-progress-${reccmp_id} ${download_command})
+        add_dependencies(download-master-progress download-master-progress-${reccmp_id})
+        add_custom_command(OUTPUT "${progress_local}" COMMAND ${download_command})
+
+        set(reccmp_cmd reccmp-reccmp --target ${reccmp_id} --diff "${progress_local}")
+        if(FUNCTION_TOTAL_${reccmp_id})
+            list(APPEND reccmp_cmd --total ${FUNCTION_TOTAL_${reccmp_id}})
+        endif()
+        add_custom_target(show-progress-${reccmp_id}
+                COMMENT "Compare progress of ${reccmp_id} with current git master"
+                COMMAND ${reccmp_cmd}
+                DEPENDS "${progress_local}"
+        )
+        add_dependencies(show-progress show-progress-${reccmp_id})
+    endforeach()
 endif()
