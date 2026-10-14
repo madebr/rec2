@@ -259,7 +259,29 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // CheckHingePointOrder
 
-// FindNearestVertex
+// FUNCTION: CARMA2_HW 0x0042bb00
+tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_model* pModel) {
+    tU16 closest_vertex = 0;
+    br_scalar closest_dist = BR_SCALAR_MAX;
+    tU16 count;
+    const br_vertex* vertices;
+    tU16 i;
+    br_scalar d;
+
+    count = pModel->nvertices;
+    if (count == 0) {
+        return closest_vertex;
+    }
+    vertices = pModel->vertices;
+    for (i = 0; i < count; i++) {
+        d = Vector3DistanceSquared(pPoint, &vertices[i].p);
+        if (!(d >= closest_dist)) {
+            closest_dist = d;
+            closest_vertex = i;
+        }
+    }
+    return closest_vertex;
+}
 
 // DistanceToBounds
 

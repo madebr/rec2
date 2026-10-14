@@ -69,7 +69,7 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 // CheckHingePointOrder
 
-// FindNearestVertex
+extern tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_model* pModel);
 
 // DistanceToBounds
 
