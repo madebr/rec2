@@ -224,7 +224,25 @@ void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
     NOT_IMPLEMENTED();
 }
 
-// DisposeSmashData
+// FUNCTION: CARMA2_HW 0x004f0310
+void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
+    int i;
+
+    if (pCrush_data->smashables != NULL) {
+        for (i = 0; i < pCrush_data->count_smashables; i++) {
+            if (pCrush_data->smashables[i].field_0x70 != NULL) {
+                BrMemFree(pCrush_data->smashables[i].field_0x70);
+            }
+            if (pCrush_data->smashables[i].field_0x78 != NULL) {
+                BrMemFree(pCrush_data->smashables[i].field_0x78);
+            }
+            if (pCrush_data->smashables[i].levels != NULL) {
+                BrMemFree(pCrush_data->smashables[i].levels);
+            }
+        }
+        BrMemFree(pCrush_data->smashables);
+    }
+}
 
 // DoBackwardShrapnel
 

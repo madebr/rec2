@@ -13,7 +13,7 @@ extern br_vector3 gZero_v__car;
 
 // DamageUnit
 
-// SwitchCarModel
+extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
 extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
