@@ -486,7 +486,25 @@ float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* 
 
 // InitShapeStuff
 
-// CheckHingePointOrder
+void C2_HOOK_FASTCALL CheckHingePointOrder(tCar_crush_flap_data* pHinge, br_model* pModel, br_vector3* pPos) {
+    const br_vertex* vertices = pModel->vertices;
+    br_vector3 hinge01;
+    br_vector3 hinge02;
+    br_vector3 normal;
+    br_vector3 center_offset;
+
+    BrVector3Sub(&hinge01, &vertices[pHinge->hinge1].p, &vertices[pHinge->hinge0].p);
+    BrVector3Sub(&hinge02, &vertices[pHinge->hinge2].p, &vertices[pHinge->hinge0].p);
+    BrVector3Cross(&normal, &hinge02, &hinge01);
+    Vector3Average(&center_offset, &pModel->bounds.min, &pModel->bounds.max);
+    BrVector3Sub(&center_offset, &center_offset, pPos);
+    if (BrVector3Dot(&center_offset, &normal) > 0.0f) {
+        tU16 hinge1 = pHinge->hinge1;
+
+        pHinge->hinge1 = pHinge->hinge0;
+        pHinge->hinge0 = hinge1;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042bb00
 tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_model* pModel) {
@@ -531,7 +549,24 @@ float C2_HOOK_FASTCALL DistanceToBounds(const br_vector3* pPoint, const br_bound
     return closest_distance;
 }
 
-// FindNearestParentVertex
+tU16 C2_HOOK_FASTCALL FindNearestParentVertex(br_actor* pActor, br_vector3* pPos) {
+    br_actor* parent = pActor->parent;
+    tUser_crush_data* parent_user;
+    br_model* parent_model = NULL;
+    br_vector3 point;
+
+    if (parent != NULL) {
+        parent_user = parent->user;
+        if (parent_user != NULL) {
+            parent_model = parent_user->models[0];
+        }
+    }
+    if (parent_model == NULL) {
+        PDFatalError("I can't cope flapping bit doesn't have a valid parent");
+    }
+    BrMatrix34ApplyP(&point, pPos, &pActor->t.t.mat);
+    return FindNearestVertex(&point, parent_model);
+}
 
 // FUNCTION: CARMA2_HW 0x0042bb90
 void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_data, const br_model* pModel, const br_bounds3* pBounds) {
