@@ -30,7 +30,11 @@ br_material* gDefault_track_material;
 
 // RenderTrack
 
-// GetYonFactor
+// FUNCTION: CARMA2_HW 0x0040dfe0
+br_scalar C2_HOOK_STDCALL GetYonFactor(void) {
+
+    return gYon_factor;
+}
 
 // FUNCTION: CARMA2_HW 0x0040dff0
 void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew) {

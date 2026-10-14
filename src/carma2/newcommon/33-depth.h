@@ -59,9 +59,9 @@ extern void C2_HOOK_FASTCALL InitDepthEffects(void);
 
 extern void C2_HOOK_STDCALL SetYon(br_scalar pYon);
 
-// GetYon
+extern br_scalar C2_HOOK_STDCALL GetYon(void);
 
-// GetSkyTextureOn
+extern int C2_HOOK_FASTCALL GetSkyTextureOn(void);
 
 extern void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn);
 
@@ -69,7 +69,7 @@ extern void C2_HOOK_FASTCALL ToggleSkyQuietly(void);
 
 // ToggleSky
 
-// GetDepthCueingOn
+extern int C2_HOOK_FASTCALL GetDepthCueingOn(void);
 
 extern void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn);
 
@@ -83,8 +83,8 @@ extern void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
 
 // MungeRearviewSky
 
-// SkyTextureChanged
+extern void C2_HOOK_FASTCALL SkyTextureChanged(void);
 
-// SetSkyColour
+extern void C2_HOOK_FASTCALL SetSkyColour(br_colour c);
 
 #endif // GUARD_33_DEPTH_H
