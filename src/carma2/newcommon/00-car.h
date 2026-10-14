@@ -179,7 +179,7 @@ extern int C2_HOOK_FASTCALL FUN_0041e480(br_vector3* pPosition, br_vector3* pDir
 
 // FlyCar
 
-// GetCarOverallBoundsMinY
+extern float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar);
 
 // SetCarSuspGiveAndHeight
 

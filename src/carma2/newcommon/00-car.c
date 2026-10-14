@@ -3,6 +3,7 @@
 #include "41-utility.h"
 #include "34-finteray.h"
 #include "globvars.h"
+#include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0079eda0
 tNon_car_spec* gActive_non_car_list[99];
@@ -272,7 +273,20 @@ int C2_HOOK_FASTCALL FUN_0041e480(br_vector3* pPosition, br_vector3* pDirection,
 
 // FlyCar
 
-// GetCarOverallBoundsMinY
+// FUNCTION: CARMA2_HW 0x0041fbe0
+float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar) {
+    float rear_min = (pCar->wpos[0].v[1] - pCar->susp_height[0]) * (1.0f / WORLD_SCALE);
+    float front_min = (pCar->wpos[2].v[1] - pCar->susp_height[1]) * (1.0f / WORLD_SCALE);
+    float min_value = pCar->collision_info->bb1.min.v[1];
+
+    if (!(rear_min >= front_min) && !(rear_min >= min_value)) {
+        return rear_min;
+    }
+    if (!(front_min >= min_value)) {
+        return front_min;
+    }
+    return min_value;
+}
 
 // SetCarSuspGiveAndHeight
 
