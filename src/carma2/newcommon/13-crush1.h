@@ -51,6 +51,10 @@ extern int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pVal
 
 extern int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
 
+// InitPhysMasterCrushData
+
+extern void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);
+
 extern tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid);
 
 extern intptr_t C2_HOOK_FASTCALL SoftnessOfNearestPointCB(br_actor* pActor, br_vector3* pPoint, void* pData);
@@ -59,13 +63,9 @@ extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pAc
 
 extern float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* pPoint);
 
-// SetUpShapeLimitingStuff
-
 // CopyShapePolyhedron
 
 // InitShapeStuff
-
-// InitPhysMasterCrushData
 
 // CheckHingePointOrder
 
