@@ -1065,7 +1065,18 @@ float C2_HOOK_FASTCALL PointSimplexDistSq(const br_vector3* pP, int pCount, cons
 
 // GetImpactScale
 
-// TooFarToCrush
+// FUNCTION: CARMA2_HW 0x0042d0e0
+int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq) {
+    br_vector3 diagonal;
+    float threshold;
+
+    BrVector3Sub(&diagonal, &pModel->bounds.max, &pModel->bounds.min);
+    threshold = BrVector3LengthSquared(&diagonal) + pMax_dist_sq;
+    if (DistSq(&pModel->bounds.min, pCount, pVertices) > threshold) {
+        return 1;
+    }
+    return DistSq(&pModel->bounds.max, pCount, pVertices) > threshold;
+}
 
 // NearestAxis
 
