@@ -4,6 +4,7 @@
 #include "41-utility.h"
 #include "52-errors.h"
 #include "70-packfile.h"
+#include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -89,9 +90,48 @@ void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStorage, tC
 
 // SmoothificatePowerups
 
-// SmoothificatePowerupMaterial
+// FUNCTION: CARMA2_HW 0x004f6a20
+void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
+    int need_update;
 
-// SmoothificateWorldMaterial
+    need_update = !(pMaterial->ka > 0.9999);
+    pMaterial->user = (void*)(uintptr_t)0x5ba0;
+    pMaterial->ka = 1.0f;
+    pMaterial->kd = 1.0f;
+    if (!(pMaterial->flags & BR_MATF_SMOOTH)) {
+        need_update = 1;
+    }
+    pMaterial->flags |= BR_MATF_SMOOTH;
+    if (!(pMaterial->flags & BR_MATF_LIGHT)) {
+        need_update = 1;
+    }
+    pMaterial->flags |= BR_MATF_LIGHT;
+    if (pMaterial->flags & BR_MATF_PRELIT) {
+        need_update = 1;
+    }
+    pMaterial->flags &= ~BR_MATF_PRELIT;
+    if (need_update) {
+        BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004f6a90
+void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial) {
+    if (gNbPixelBits != 16) {
+        return;
+    }
+    if ((uintptr_t)pMaterial->user == 0x5ba0) {
+        SmoothificatePowerupMaterial(pMaterial);
+    } else {
+        pMaterial->user = NULL;
+        pMaterial->ka = gLighting_data.ambient_else;
+        pMaterial->kd = gLighting_data.diffuse_else;
+        pMaterial->ks = 0.0f;
+        pMaterial->flags &= ~BR_MATF_PRELIT;
+        pMaterial->flags |= BR_MATF_LIGHT | BR_MATF_SMOOTH;
+        BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
+    }
+}
 
 void C2_HOOK_FASTCALL SmoothificateCarMaterial(br_material* pMaterial) {
     if (gNbPixelBits == 16) {
