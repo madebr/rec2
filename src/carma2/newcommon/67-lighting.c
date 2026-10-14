@@ -61,7 +61,11 @@ int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const char* pPa
     return new_ones;
 }
 
-// LoadTrackMaterials
+// FUNCTION: CARMA2_HW 0x004f6640
+void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath) {
+    LoadAllMaterialsInDirectory(pStorage, pPath, kRendererShadingType_Default);
+    SmoothlySetWorldMaterialFlags(pStorage);
+}
 
 // FUNCTION: CARMA2_HW 0x004f6740
 void C2_HOOK_FASTCALL LoadCarMaterials(tBrender_storage* pStorage, const char* pPath, tCar_spec* pCar_spec) {
@@ -86,7 +90,16 @@ void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStorage, tC
     }
 }
 
-// SmoothlySetWorldMaterialFlags
+// FUNCTION: CARMA2_HW 0x004f6820
+void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage) {
+    int i;
+    br_material* material;
+
+    for (i = 0; i < pStorage->materials_count; ++i) {
+        material = pStorage->materials[i];
+        SmoothificateWorldMaterial(material);
+    }
+}
 
 // SmoothificatePowerups
 
