@@ -978,7 +978,48 @@ int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3*
     return !(BrVector3Dot(&offset, &inside_offset) >= 0.0f);
 }
 
-// PointRectDistSq
+// FUNCTION: CARMA2_HW 0x0042ce00
+float C2_HOOK_FASTCALL PointRectDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB, const br_vector3* pC) {
+    const br_vector3* origin = pA;
+    br_vector3 u;
+    br_vector3 v;
+    br_vector3 offset;
+    br_vector3 projected;
+    br_vector3 residual;
+    float u_scale;
+    float v_scale;
+
+    BrVector3Sub(&u, pC, pA);
+    BrVector3Sub(&v, pB, pA);
+    if (fabs(BrVector3Dot(&u, &v)) > 0.001f) {
+        origin = pB;
+        BrVector3Sub(&u, pC, pB);
+        BrVector3Sub(&v, pA, pB);
+        if (fabs(BrVector3Dot(&u, &v)) > 0.001f) {
+            origin = pC;
+            BrVector3Sub(&u, pB, pC);
+            BrVector3Sub(&v, pA, pC);
+        }
+    }
+    BrVector3Sub(&offset, pP, origin);
+    v_scale = BrVector3Dot(&offset, &v) / BrVector3LengthSquared(&v);
+    u_scale = BrVector3Dot(&offset, &u) / BrVector3LengthSquared(&u);
+    if (!(v_scale >= 0.0f)) {
+        v_scale = 0.0f;
+    } else if (v_scale > 1.0f) {
+        v_scale = 1.0f;
+    }
+    if (!(u_scale >= 0.0f)) {
+        u_scale = 0.0f;
+    } else if (u_scale > 1.0f) {
+        u_scale = 1.0f;
+    }
+    projected.v[0] = u_scale * u.v[0] + v_scale * v.v[0] + origin->v[0];
+    projected.v[1] = u_scale * u.v[1] + v_scale * v.v[1] + origin->v[1];
+    projected.v[2] = u_scale * u.v[2] + v_scale * v.v[2] + origin->v[2];
+    BrVector3Sub(&residual, &projected, pP);
+    return BrVector3LengthSquared(&residual);
+}
 
 // PointSimplexDistSq
 

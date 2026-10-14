@@ -113,7 +113,7 @@ extern float C2_HOOK_FASTCALL PointTriangleDistSq(const br_vector3* pP, const br
 
 extern int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3* pA, const br_vector3* pDirection, const br_vector3* pInside);
 
-// PointRectDistSq
+extern float C2_HOOK_FASTCALL PointRectDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB, const br_vector3* pC);
 
 // PointSimplexDistSq
 
