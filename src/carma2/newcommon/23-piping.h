@@ -273,7 +273,7 @@ extern void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* object);
 
 // PipeSingleBloodSpurt
 
-// PipeSingleGrooveOnOff
+extern void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBlock_flags);
 
 // PipeSinglePowerupGot
 
@@ -299,7 +299,7 @@ extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pV
 
 // PipeSingleEndShitMine
 
-// PipeSingleTransformType
+extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_type);
 
 // PipeSingleOppoRenderage
 

@@ -1287,7 +1287,12 @@ void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* object) {
 
 // PipeSingleBloodSpurt
 
-// PipeSingleGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004c8d80
+void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBlock_flags) {
+    ARDoSingleVariedSession(ePipe_single_groove_on_off, (uintptr_t)pActor, 2,
+        4, 0, (uintptr_t)(tU32)pOn,
+        4, 4, (uintptr_t)(tU32)pBlock_flags);
+}
 
 // PipeSinglePowerupGot
 
@@ -1319,7 +1324,14 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 
 // PipeSingleEndShitMine
 
-// PipeSingleTransformType
+// FUNCTION: CARMA2_HW 0x004c8ff0
+void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_type) {
+    tU16 type_from = pActor->t.type;
+
+    ARDoSingleVariedSession(ePipe_single_transform_type, (uintptr_t)pActor, 2,
+        1, 0, (uintptr_t)type_from,
+        1, 1, (uintptr_t)(tU16)pTransform_type);
+}
 
 // PipeSingleOppoRenderage
 
