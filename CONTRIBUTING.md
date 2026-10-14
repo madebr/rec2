@@ -7,6 +7,9 @@ Documenting a complete game is no easy task. So every little help is much apprec
 This projects uses [reccmp](https://github.com/isledecomp/reccmp).
 This collection of tools allows writing equivalent C code for every function.
 
+To import reconstructed symbols into Ghidra, use [reccmp-ghidra-import](https://github.com/isledecomp/reccmp/blob/master/reccmp/ghidra/README.md).
+With that command on `PATH`, configure `RECCMP_<ID>_GHIDRA_LOCAL_PROJECT_PATH` and `RECCMP_<ID>_GHIDRA_FILE`, then build the `reccmp-import-ghidra-<ID>` target.
+
 ## Code conventions
 
 - No hard tabs, only soft tabs. Indentation if 4 characters.
