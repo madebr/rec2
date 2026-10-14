@@ -87,7 +87,7 @@ extern tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_mode
 
 // InitModelCrushData
 
-// SetFlapCheckVertices
+extern void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data* pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data);
 
 extern float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB);
 

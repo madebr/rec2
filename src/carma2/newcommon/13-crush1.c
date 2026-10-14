@@ -299,7 +299,36 @@ tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_model* pMod
 
 // InitModelCrushData
 
-// SetFlapCheckVertices
+// FUNCTION: CARMA2_HW 0x0042c0e0
+void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data* pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data) {
+    const br_vector3 *p0, *p1, *p2;
+    br_vector3 hinge01;
+    br_vector3 hinge02;
+    br_vector3 hinge_normal;
+    br_scalar hinge_dot;
+    br_scalar distance;
+    br_scalar plane;
+    int i;
+
+    p0 = &pModel->vertices[pFlap_data->hinge0].p;
+    p1 = &pModel->vertices[pFlap_data->hinge1].p;
+    p2 = &pModel->vertices[pFlap_data->hinge2].p;
+    BrVector3Sub(&hinge02, p2, p0);
+    BrVector3Sub(&hinge01, p1, p0);
+    BrVector3Cross(&hinge_normal, &hinge01, &hinge02);
+    BrVector3Normalise(&hinge_normal, &hinge_normal);
+    hinge_dot = BrVector3Dot(&hinge_normal, p0);
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        distance = PointEdgeDistSq(&pModel->vertices[i].p, &pModel->vertices[pFlap_data->hinge0].p, &pModel->vertices[pFlap_data->hinge1].p);
+        plane = BrVector3Dot(&hinge_normal, &pModel->vertices[i].p) - hinge_dot;
+        if (distance > 0.00021003991f && plane > -0.0014492754f) {
+            pVertex_data[i].flags |= 0x2;
+        } else {
+            pVertex_data[i].flags &= ~0x2;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042c300
 float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB) {
