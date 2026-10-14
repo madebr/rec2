@@ -1492,7 +1492,13 @@ br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle) {
     return BrFixedToScalar(pAngle);
 }
 
-// CalculateAmountRepairedFraction
+br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOriginal_x, br_angle pOriginal_y, br_angle pOriginal_z, br_angle pRepair_x, br_angle pRepair_y, br_angle pRepair_z, br_scalar* pOriginal_amount) {
+    br_scalar original_amount = NormalizedAngle(pOriginal_x) + NormalizedAngle(pOriginal_y) + NormalizedAngle(pOriginal_z);
+    br_scalar repaired_amount = NormalizedAngle(pRepair_x) + NormalizedAngle(pRepair_y) + NormalizedAngle(pRepair_z);
+
+    *pOriginal_amount = 2.0f * original_amount;
+    return repaired_amount;
+}
 
 // UnBendCar
 
