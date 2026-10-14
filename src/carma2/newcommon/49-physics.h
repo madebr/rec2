@@ -440,7 +440,7 @@ extern void C2_HOOK_FASTCALL FreeShapeList(tPhysics_shape *pShape);
 
 extern void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint);
 
-// GetBoundsFromPointList
+extern void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds);
 
 // FillInShape
 
