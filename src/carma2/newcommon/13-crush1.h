@@ -71,11 +71,11 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 extern tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_model* pModel);
 
-// DistanceToBounds
+extern float C2_HOOK_FASTCALL DistanceToBounds(const br_vector3* pPoint, const br_bounds3* pBounds);
 
 // FindNearestParentVertex
 
-// SetUpSemiDetachJointStuff
+extern void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_data, const br_model* pModel, const br_bounds3* pBounds);
 
 // InitPhysCrushDataCB
 
