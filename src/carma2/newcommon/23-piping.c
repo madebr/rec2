@@ -1302,7 +1302,10 @@ void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
 
 // PipeSingleDSModel
 
-// PipeSingleVector3
+// FUNCTION: CARMA2_HW 0x004c8e80
+void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
+    ARDoSingleVariedSession(ePipe_single_vector3, (uintptr_t)pDest, 1, 12, 0, (uintptr_t)pValue);
+}
 
 // PipeSingleDroneRender
 
