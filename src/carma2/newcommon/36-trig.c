@@ -97,6 +97,12 @@ float gFloat_sine_table[91] = {
     1.0f,
 };
 
+// GLOBAL: CARMA2_HW 0x006ab950
+br_matrix23 mat23tmp1;
+
+// GLOBAL: CARMA2_HW 0x006ab968
+br_matrix23 mat23tmp2;
+
 // GLOBAL: CARMA2_HW 0x006ab980
 br_matrix34 mattmp1__trig;
 
@@ -383,5 +389,21 @@ void C2_HOOK_FASTCALL DRMatrix23Rotate(br_matrix23* mat, br_angle rz) {
     mat->m[2][1] = 0.f;
 }
 
-// DRMatrix23PostRotate
+// FUNCTION: CARMA2_HW 0x00513140
+void C2_HOOK_FASTCALL DRMatrix23PreRotate(br_matrix23* mat, br_angle rz) {
+
+    /* Rotation is applied on the left of the existing 2D transform. */
+    DRMatrix23Rotate(&mat23tmp2, rz);
+    BrMatrix23Mul(&mat23tmp1, &mat23tmp2, mat);
+    BrMatrix23Copy(mat, &mat23tmp1);
+}
+
+// FUNCTION: CARMA2_HW 0x005132a0
+void C2_HOOK_FASTCALL DRMatrix23PostRotate(br_matrix23* mat, br_angle rz) {
+
+    /* Rotation is applied on the right of the existing 2D transform. */
+    DRMatrix23Rotate(&mat23tmp2, rz);
+    BrMatrix23Mul(&mat23tmp1, mat, &mat23tmp2);
+    BrMatrix23Copy(mat, &mat23tmp1);
+}
 

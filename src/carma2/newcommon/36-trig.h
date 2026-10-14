@@ -5,6 +5,8 @@
 #include "c2_hooks.h"
 
 extern float gFloat_sine_table[91];
+extern br_matrix23 mat23tmp1;
+extern br_matrix23 mat23tmp2;
 extern br_matrix34 mattmp1__trig;
 extern br_matrix34 mattmp2__trig;
 
@@ -48,6 +50,8 @@ extern void C2_HOOK_FASTCALL DRMatrix34PostRotateZ(br_matrix34* mat, br_angle rz
 
 extern void C2_HOOK_FASTCALL DRMatrix23Rotate(br_matrix23* mat, br_angle rz);
 
-// DRMatrix23PostRotate
+extern void C2_HOOK_FASTCALL DRMatrix23PreRotate(br_matrix23* mat, br_angle rz);
+
+extern void C2_HOOK_FASTCALL DRMatrix23PostRotate(br_matrix23* mat, br_angle rz);
 
 #endif // GUARD_36_TRIG_H
