@@ -3,6 +3,8 @@
 
 #include "rec2_types.h"
 
+extern br_actor* gY_picking_camera;
+
 // DRActorToRoot
 
 extern void C2_HOOK_FASTCALL InitRayCasting(void);

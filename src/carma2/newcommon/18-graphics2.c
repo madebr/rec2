@@ -4,9 +4,19 @@
 #include "52-errors.h"
 #include "globvars.h"
 #include "platform.h"
+#include "rec2_macros.h"
 #include "rec2_types.h"
 
 #include <string.h>
+
+// GLOBAL: CARMA2_HW 0x0067be98
+tTransient_bm gTransient_bitmaps[50];
+
+// GLOBAL: CARMA2_HW 0x006923a4
+tU32 gLast_palette_change;
+
+// GLOBAL: CARMA2_HW 0x006923b4
+int gPalette_index;
 
 // GLOBAL: CARMA2_HW 0x0074ca28
 int gNoTransients;
@@ -145,9 +155,11 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     gPalette_0074a670 = NULL;
 }
 
-// STUB: CARMA2_HW 0x004b52a0
+// FUNCTION: CARMA2_HW 0x004b52a0
 void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
-    NOT_IMPLEMENTED();
+
+    gLast_palette_change = 0;
+    gPalette_index = 0;
 }
 
 // RevertPalette
@@ -168,9 +180,14 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 
 // EnsureRenderPalette
 
-// STUB: CARMA2_HW 0x0043dff0
+// FUNCTION: CARMA2_HW 0x0043dff0
 void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gTransient_bitmaps); i++) {
+        gTransient_bitmaps[i].pixmap = NULL;
+        gTransient_bitmaps[i].in_use = 0;
+    }
 }
 
 // DeallocateTransientBitmap
