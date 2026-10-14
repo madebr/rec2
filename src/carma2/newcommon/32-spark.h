@@ -4,6 +4,12 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gShade_list[16];
+extern int* gShade_table;
+extern int gNum_dust_tables;
+extern int gSpark_flags;
+extern br_pixelmap* gIt_shade_table;
+
 // DrawDot
 
 // SetWorldToScreen
@@ -30,7 +36,7 @@
 
 // AdjustShrapnel
 
-// ResetSparks
+extern void C2_HOOK_FASTCALL ResetSparks(void);
 
 // ResetShrapnel
 
@@ -116,7 +122,7 @@ extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
 // CreateSmokeColumn
 
-// GenerateSmokeShades
+extern void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 
 extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
@@ -168,9 +174,9 @@ extern int C2_HOOK_FASTCALL GetSmokeOn(void);
 
 // MungeSplash
 
-// GetSmokeShadeTables
+extern void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* pF);
 
-// FreeSmokeShadeTables
+extern void C2_HOOK_FASTCALL FreeSmokeShadeTables(void);
 
 // LoadInKevStuff
 
