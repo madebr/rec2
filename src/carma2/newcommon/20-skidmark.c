@@ -7,6 +7,8 @@
 #include "rec2_macros.h"
 #include "c2_string.h"
 
+#include "brender/brender.h"
+
 /* The original names occupy writable data; both tables share OILSMEAR. */
 // GLOBAL: CARMA2_HW 0x0065fe38
 static char gOil_smear_material_name[] = "OILSMEAR.MAT";
@@ -24,7 +26,56 @@ tSkid gSkids[100];
 // GLOBAL: CARMA2_HW 0x006a27e8
 int gCurrent_skid;
 
-// StretchMark
+// FUNCTION: CARMA2_HW 0x004ea2c0
+void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* pTo, br_scalar pTexture_start, br_scalar pTexture_step) {
+    br_vector3 temp;
+    br_vector3 average;
+    br_scalar len;
+    br_scalar length_scale;
+    br_scalar texture_scale;
+    br_matrix34* mat;
+    br_model* model;
+
+    mat = &pMark->actor->t.t.mat;
+    BrVector3Sub(&temp, pTo, pFrom);
+    len = BrVector3Length(&temp);
+    if (!(len >= 0.001f)) {
+        BrMatrix34Scale(mat, 0.001f, 1.0f, 0.001f);
+        return;
+    }
+
+    texture_scale = pTexture_step / len;
+    mat->m[1][0] = pMark->normal.v[0];
+    mat->m[1][1] = pMark->normal.v[1];
+    mat->m[1][2] = pMark->normal.v[2];
+    length_scale = len / len;
+    mat->m[2][0] = temp.v[1] * pMark->normal.v[2] - temp.v[2] * pMark->normal.v[1];
+    mat->m[2][1] = temp.v[2] * pMark->normal.v[0] - temp.v[0] * pMark->normal.v[2];
+    mat->m[2][2] = temp.v[0] * pMark->normal.v[1] - temp.v[1] * pMark->normal.v[0];
+    mat->m[2][0] *= texture_scale;
+    mat->m[2][1] *= texture_scale;
+    mat->m[2][2] *= texture_scale;
+    mat->m[0][0] = temp.v[0] * length_scale;
+    mat->m[0][1] = temp.v[1] * length_scale;
+    mat->m[0][2] = temp.v[2] * length_scale;
+
+    average.v[0] = (pFrom->v[0] + pTo->v[0]) * 0.5f;
+    average.v[1] = (pFrom->v[1] + pTo->v[1]) * 0.5f;
+    average.v[2] = (pFrom->v[2] + pTo->v[2]) * 0.5f;
+    pMark->pos.v[0] = average.v[0];
+    pMark->pos.v[1] = average.v[1];
+    pMark->pos.v[2] = average.v[2];
+    mat->m[3][0] = pMark->pos.v[0];
+    mat->m[3][1] = pMark->pos.v[1];
+    mat->m[3][2] = pMark->pos.v[2];
+
+    model = pMark->actor->model;
+    model->vertices[1].map.v[0] = pTexture_start / pTexture_step;
+    model->vertices[0].map.v[0] = model->vertices[1].map.v[0];
+    model->vertices[3].map.v[0] = (pTexture_start + len) / pTexture_step;
+    model->vertices[2].map.v[0] = model->vertices[3].map.v[0];
+    BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
+}
 
 // MaterialFromIndex
 
