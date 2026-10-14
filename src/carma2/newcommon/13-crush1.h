@@ -147,9 +147,9 @@ extern int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector);
 
 // SendCrush
 
-// CompressCrush
+extern void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc);
 
-// ExpandCrush
+extern void C2_HOOK_FASTCALL ExpandCrush(tCar_crush* pDest, const tCompressed_car_crush* pSrc);
 
 // RemoveDuplicatePoints
 

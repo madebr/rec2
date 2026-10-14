@@ -1108,9 +1108,39 @@ int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
 
 // SendCrush
 
-// CompressCrush
+// FUNCTION: CARMA2_HW 0x00436940
+void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc) {
+    int i;
 
-// ExpandCrush
+    pDest->count = (tU8)pSrc->count;
+    for (i = 0; i < pSrc->count; i++) {
+        CompressVector3(&pDest->vectors[i], &pSrc->vectors[i], -2.5f, 2.5f);
+    }
+    pDest->field_0x1a = DRScalarToU16(pSrc->field_0x40, 0.0f, 10.0f);
+    CompressVector3(&pDest->field_0x1c, &pSrc->field_0x44, -1.0f, 1.0f);
+    pDest->field_0x24 = pSrc->field_0x50;
+}
+
+// FUNCTION: CARMA2_HW 0x004369c0
+void C2_HOOK_FASTCALL ExpandCrush(tCar_crush* pDest, const tCompressed_car_crush* pSrc) {
+    tU8 i;
+    int count;
+
+    pDest->count = pSrc->count;
+    ExpandVector3(&pDest->vectors[0], &pSrc->vectors[0], -2.5f, 2.5f);
+    BrVector3Copy(&pDest->field_0x34, &pDest->vectors[0]);
+    for (i = 1; i < pSrc->count; i++) {
+        ExpandVector3(&pDest->vectors[i], &pSrc->vectors[i], -2.5f, 2.5f);
+        BrVector3Accumulate(&pDest->field_0x34, &pDest->vectors[i]);
+    }
+    count = pDest->count;
+    pDest->field_0x34.v[0] /= (float)count;
+    pDest->field_0x34.v[1] /= (float)count;
+    pDest->field_0x34.v[2] /= (float)count;
+    pDest->field_0x40 = DRU16ToScalar(pSrc->field_0x1a, 0.0f, 10.0f);
+    ExpandVector3(&pDest->field_0x44, &pSrc->field_0x1c, -1.0f, 1.0f);
+    pDest->field_0x50 = pSrc->field_0x24;
+}
 
 // RemoveDuplicatePoints
 
