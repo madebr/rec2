@@ -930,6 +930,24 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // BuckleTheBugger
 
+// FUNCTION: CARMA2_HW 0x0042c8b0
+float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_vector3* pVertices) {
+    switch (pCount) {
+    case 0:
+        return 0.0f;
+    case 1:
+        return Vector3DistanceSquared(pP, &pVertices[0]);
+    case 2:
+        return PointEdgeDistSq(pP, &pVertices[0], &pVertices[1]);
+    case 3:
+        return PointTriangleDistSq(pP, &pVertices[0], &pVertices[1], &pVertices[2]);
+    case 4:
+        return PointRectDistSq(pP, &pVertices[0], &pVertices[1], &pVertices[2]);
+    default:
+        return PointSimplexDistSq(pP, pCount, pVertices);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x0042ca30
 float C2_HOOK_FASTCALL PointTriangleDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB, const br_vector3* pC) {
     br_vector3 ab;
@@ -1021,9 +1039,27 @@ float C2_HOOK_FASTCALL PointRectDistSq(const br_vector3* pP, const br_vector3* p
     return BrVector3LengthSquared(&residual);
 }
 
-// PointSimplexDistSq
+float C2_HOOK_FASTCALL PointSimplexDistSq(const br_vector3* pP, int pCount, const br_vector3* pVertices) {
+    float closest_distance = BR_SCALAR_MAX;
+    int i;
 
-// DistSq
+    for (i = 0; i < pCount; i++) {
+        int j;
+
+        for (j = i + 1; j < pCount; j++) {
+            int k;
+
+            for (k = j + 1; k < pCount; k++) {
+                float distance = PointTriangleDistSq(pP, &pVertices[i], &pVertices[j], &pVertices[k]);
+
+                if (!(distance >= closest_distance)) {
+                    closest_distance = distance;
+                }
+            }
+        }
+    }
+    return closest_distance;
+}
 
 // LimitImpactScale
 
