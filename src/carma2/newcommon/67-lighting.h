@@ -26,13 +26,13 @@ extern void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL SmoothificateCarMaterial(br_material* pMaterial);
 
-// MungeLightingEffects
+extern void C2_HOOK_FASTCALL MungeLightingEffects(void);
 
 extern void C2_HOOK_FASTCALL KillLightingEffects(void);
 
 extern void C2_HOOK_FASTCALL InitLightingEffects(void);
 
-// LoadStaticLightingForRace
+extern void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* race_lighting_path);
 
 extern void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF);
 

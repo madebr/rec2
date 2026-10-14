@@ -176,7 +176,11 @@ void C2_HOOK_FASTCALL SmoothificateCarMaterial(br_material* pMaterial) {
     }
 }
 
-// MungeLightingEffects
+// FUNCTION: CARMA2_HW 0x00486d60
+void C2_HOOK_FASTCALL MungeLightingEffects(void) {
+
+    // empty
+}
 
 // FUNCTION: CARMA2_HW 0x00486d70
 void C2_HOOK_FASTCALL KillLightingEffects(void) {
@@ -190,7 +194,11 @@ void C2_HOOK_FASTCALL InitLightingEffects(void) {
     // empty
 }
 
-// LoadStaticLightingForRace
+// FUNCTION: CARMA2_HW 0x00486db0
+void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* race_lighting_path) {
+
+    // empty
+}
 
 // FUNCTION: CARMA2_HW 0x00486dc0
 void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF) {
