@@ -12,10 +12,37 @@ extern int gINT_00595f84;
 extern int gINT_00596310;
 
 extern int C2_HOOK_FASTCALL FindJoystickPreferences(FILE* pF, const char* pJoystick_name);
+
 extern int C2_HOOK_FASTCALL ReadJoystickPreferences(FILE* pF, tButtonJoystickInfo* pInfo);
+
 extern void C2_HOOK_FASTCALL EnableJoysticks(void);
+
 extern void C2_HOOK_FASTCALL DisableJoysticks(void);
 
 extern int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
+
+extern int C2_HOOK_FASTCALL HasCurrentJoystick(void);
+
+extern int C2_HOOK_FASTCALL WriteJoystickPreferences(FILE* pF, const tButtonJoystickInfo* pInfo);
+
+extern int C2_HOOK_FASTCALL CountJoystickPreferences(FILE* pF);
+
+extern int C2_HOOK_FASTCALL ToggleJoystickThrottle(void);
+
+extern void C2_HOOK_FASTCALL SetJoystickDPadEnabled(int pEnabled);
+
+extern int C2_HOOK_FASTCALL CycleJoystickFFBGain(void);
+
+extern void C2_HOOK_FASTCALL SetJoystickFFBGain(int pValue);
+
+extern int C2_HOOK_FASTCALL GetJoystickFBBGain(void);
+
+extern void C2_HOOK_FASTCALL SetJoystickX(float pValue);
+
+extern void C2_HOOK_FASTCALL SetJoystickY(float pValue);
+
+extern float C2_HOOK_FASTCALL GetJoystickX(void);
+
+extern float C2_HOOK_FASTCALL GetJoystickY(void);
 
 #endif /* REC2_JOYSTICK_H */

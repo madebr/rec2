@@ -23,6 +23,46 @@ float gJoystick_y_throttle = 1.f;
 // GLOBAL: CARMA2_HW 0x00596310
 int gINT_00596310 = 50;
 
+// FUNCTION: CARMA2_HW 0x0045a0f0
+int C2_HOOK_FASTCALL HasCurrentJoystick(void) {
+    return gJoystick_index != -1;
+}
+
+// FUNCTION: CARMA2_HW 0x0045b920
+int C2_HOOK_FASTCALL WriteJoystickPreferences(FILE* pF, const tButtonJoystickInfo* pInfo) {
+    char s[256];
+    char joystick_name[256];
+    size_t i;
+
+    strcpy(joystick_name, pInfo->productName);
+    for (i = 0; i < strlen(joystick_name); i++) {
+        if (joystick_name[i] == ' ') {
+            joystick_name[i] = '_';
+        }
+    }
+    sprintf(s, "&%s\n", joystick_name);
+    fwrite(s, 1, strlen(s), pF);
+    sprintf(s, "%d\n", 32);
+    fwrite(s, 1, strlen(s), pF);
+    for (i = 0; i < 32; i++) {
+        sprintf(s, "%d\n", pInfo->buttons[i]);
+        fwrite(s, 1, strlen(s), pF);
+    }
+    sprintf(s, "%d\n", pInfo->field_0xd4);
+    fwrite(s, 1, strlen(s), pF);
+    sprintf(s, "%.3f, %.3f\n", pInfo->field_0xd8, pInfo->field_0xdc);
+    fwrite(s, 1, strlen(s), pF);
+    sprintf(s, "%d\n", pInfo->field_0xe0);
+    fwrite(s, 1, strlen(s), pF);
+    sprintf(s, "%d\n", pInfo->field_0xe4);
+    fwrite(s, 1, strlen(s), pF);
+    sprintf(s, "%d\n", pInfo->field_0xe8);
+    fwrite(s, 1, strlen(s), pF);
+    sprintf(s, "\n");
+    fwrite(s, 1, strlen(s), pF);
+    return 1;
+}
+
 // FUNCTION: CARMA2_HW 0x0045b7e0
 int C2_HOOK_FASTCALL FindJoystickPreferences(FILE* pF, const char* pJoystick_name) {
     fpos_t position;
@@ -89,6 +129,29 @@ int C2_HOOK_FASTCALL ReadJoystickPreferences(FILE* pF, tButtonJoystickInfo* pInf
     return 1;
 }
 
+// FUNCTION: CARMA2_HW 0x0045bcc0
+int C2_HOOK_FASTCALL CountJoystickPreferences(FILE* pF) {
+    char s[256];
+    int count = 0;
+    long start;
+
+    rewind(pF);
+    start = ftell(pF);
+    fseek(pF, 0, SEEK_END);
+    if (ftell(pF) - start < 32) {
+        return 0;
+    }
+    rewind(pF);
+    while (!feof(pF)) {
+        GetAString(pF, s);
+        if (s[0] == '&') {
+            count++;
+        }
+    }
+    rewind(pF);
+    return count;
+}
+
 // FUNCTION: CARMA2_HW 0x0045bd50
 void C2_HOOK_FASTCALL EnableJoysticks(void) {
     tButtonJoystickInfo* info;
@@ -148,4 +211,123 @@ int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
         DisableJoysticks();
     }
     return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0045c460
+int C2_HOOK_FASTCALL ToggleJoystickThrottle(void) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        info->field_0xd4 = !info->field_0xd4;
+        gINT_00595f9c = info->field_0xd4;
+        return gINT_00595f9c;
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0045c570
+void C2_HOOK_FASTCALL SetJoystickDPadEnabled(int pEnabled) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        info->field_0xe0 = pEnabled;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0045c780
+int C2_HOOK_FASTCALL CycleJoystickFFBGain(void) {
+
+    gINT_00596310 += 25;
+    if (gINT_00596310 > 100) {
+        gINT_00596310 = 0;
+    }
+    PDSetJoystickFFBGain(gINT_00596310);
+    return gINT_00596310;
+}
+
+// FUNCTION: CARMA2_HW 0x0045c7b0
+void C2_HOOK_FASTCALL SetJoystickFFBGain(int pValue) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        if (pValue < 0) {
+            pValue = 0;
+        }
+        if (pValue > 100) {
+            pValue = 100;
+        }
+        info->field_0xe4 = pValue;
+        gINT_00596310 = pValue;
+        PDSetJoystickFFBGain(pValue);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0045c7f0
+int C2_HOOK_FASTCALL GetJoystickFBBGain(void) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        return info->field_0xe4;
+    }
+    return gINT_00596310;
+}
+
+// FUNCTION: CARMA2_HW 0x0045c810
+void C2_HOOK_FASTCALL SetJoystickX(float pValue) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        info->field_0xd8 = pValue;
+        if (info->field_0xd8 > 2.0) {
+            info->field_0xd8 = 2.f;
+        }
+        if (info->field_0xd8 < 0.0) {
+            info->field_0xd8 = 0.f;
+        }
+        gJoystick_x_steering = info->field_0xd8;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0045c870
+void C2_HOOK_FASTCALL SetJoystickY(float pValue) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        info->field_0xdc = pValue;
+        if (info->field_0xdc > 2.0) {
+            info->field_0xdc = 2.f;
+        }
+        if (info->field_0xdc < 0.0) {
+            info->field_0xdc = 0.f;
+        }
+        gJoystick_y_throttle = info->field_0xdc;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0045c8d0
+float C2_HOOK_FASTCALL GetJoystickX(void) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        return info->field_0xd8;
+    }
+    return gJoystick_x_steering;
+}
+
+// FUNCTION: CARMA2_HW 0x0045c8f0
+float C2_HOOK_FASTCALL GetJoystickY(void) {
+    tButtonJoystickInfo* info;
+
+    info = PDGetCurrentJoystickData();
+    if (info != NULL) {
+        return info->field_0xdc;
+    }
+    return gJoystick_y_throttle;
 }
