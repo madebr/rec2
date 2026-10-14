@@ -17,6 +17,7 @@
 
 #if defined(_MSC_VER) && _MSC_VER < 1300
 #define C2_FUNCTION "<unknown>"
+#define inline __inline
 #else
 #define C2_FUNCTION __FUNCTION__
 #endif
