@@ -34,6 +34,6 @@ extern void C2_HOOK_FASTCALL InitLightingEffects(void);
 
 // LoadStaticLightingForRace
 
-// ReadGlobalLightingInfo
+extern void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF);
 
 #endif // GUARD_67_LIGHTING_H
