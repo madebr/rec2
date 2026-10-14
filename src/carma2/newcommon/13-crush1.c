@@ -1142,7 +1142,29 @@ void C2_HOOK_FASTCALL ExpandCrush(tCar_crush* pDest, const tCompressed_car_crush
     pDest->field_0x50 = pSrc->field_0x24;
 }
 
-// RemoveDuplicatePoints
+void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* pPoints_out, int pCount_in, const br_vector3* pPoints_in) {
+    int i;
+
+    BrVector3Copy(&pPoints_out[0], &pPoints_in[0]);
+    *pCount_out = 1;
+    for (i = 1; i < pCount_in; i++) {
+        int j;
+        int duplicate = 0;
+
+        for (j = 0; j < *pCount_out; j++) {
+            if (!(fabs(pPoints_out[j].v[0] - pPoints_in[i].v[0]) >= 0.005f)
+                && !(fabs(pPoints_out[j].v[1] - pPoints_in[i].v[1]) >= 0.005f)
+                && !(fabs(pPoints_out[j].v[2] - pPoints_in[i].v[2]) >= 0.005f)) {
+                duplicate = 1;
+                break;
+            }
+        }
+        if (!duplicate) {
+            BrVector3Copy(&pPoints_out[*pCount_out], &pPoints_in[i]);
+            *pCount_out += 1;
+        }
+    }
+}
 
 // SimpleCrushModel
 
