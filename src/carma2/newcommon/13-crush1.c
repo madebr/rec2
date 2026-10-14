@@ -930,6 +930,37 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // BuckleTheBugger
 
+// FUNCTION: CARMA2_HW 0x0042ca30
+float C2_HOOK_FASTCALL PointTriangleDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB, const br_vector3* pC) {
+    br_vector3 ab;
+    br_vector3 bc;
+    br_vector3 ca;
+    br_vector3 normal;
+    br_vector3 offset;
+    br_vector3 projected;
+    float distance;
+
+    BrVector3Sub(&ab, pB, pA);
+    BrVector3Sub(&bc, pC, pB);
+    BrVector3Sub(&ca, pA, pC);
+    BrVector3Cross(&normal, &ab, &bc);
+    BrVector3Normalise(&normal, &normal);
+    BrVector3Sub(&offset, pP, pA);
+    distance = BrVector3Dot(&offset, &normal);
+    BrVector3Scale(&projected, &normal, distance);
+    BrVector3Sub(&projected, pP, &projected);
+    if (OutsideEdgeLine(&projected, pA, &ab, pC)) {
+        return PointEdgeDistSq(pP, pA, pB);
+    }
+    if (OutsideEdgeLine(&projected, pB, &bc, pA)) {
+        return PointEdgeDistSq(pP, pB, pC);
+    }
+    if (OutsideEdgeLine(&projected, pA, &ca, pB)) {
+        return PointEdgeDistSq(pP, pA, pC);
+    }
+    return distance * distance;
+}
+
 // FUNCTION: CARMA2_HW 0x0042cc40
 int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3* pA, const br_vector3* pDirection, const br_vector3* pInside) {
     br_vector3 direction;
@@ -946,8 +977,6 @@ int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3*
     BrVector3Sub(&inside_offset, pInside, pA);
     return !(BrVector3Dot(&offset, &inside_offset) >= 0.0f);
 }
-
-// PointTriangleDistSq
 
 // PointRectDistSq
 
