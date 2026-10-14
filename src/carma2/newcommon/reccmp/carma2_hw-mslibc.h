@@ -267,6 +267,15 @@
 // LIBRARY: CARMA2_HW 0x00576ec0
 // _fseek
 
+// LIBRARY: CARMA2_HW 0x00580120
+// __fseeki64
+
+// LIBRARY: CARMA2_HW 0x00584de0
+// __lseeki64
+
+// LIBRARY: CARMA2_HW 0x005801d0
+// __ftelli64
+
 // LIBRARY: CARMA2_HW 0x005770e0
 // _rewind
 
@@ -289,10 +298,10 @@
 // _fputs
 
 // LIBRARY: CARMA2_HW 0x005772c0
-// fgetpos
+// _fgetpos
 
 // LIBRARY: CARMA2_HW 0x005772a0
-// fsetpos
+// _fsetpos
 
 // LIBRARY: CARMA2_HW 0x00577930
 // _printf

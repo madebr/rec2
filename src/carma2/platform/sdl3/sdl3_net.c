@@ -9,7 +9,10 @@
 #include <SDL3/SDL.h>
 
 #ifdef SDL_PLATFORM_WINDOWS
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #include <windows.h>
+typedef int tSDL_socket_len;
 #else
 #include <arpa/inet.h>
 #include <errno.h>
@@ -17,6 +20,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 typedef struct {} WSADATA;
+typedef socklen_t tSDL_socket_len;
 #endif
 
 #ifndef INVALID_SOCKET
@@ -54,8 +58,9 @@ void PDNetObtainSystemUserName(char *pName, int pMax_length) {
     DWORD size;
 
     size = SDL_arraysize(buffer);
-    if (!GetComputerNameExAComputerNameDnsHostname, buffer, &size)) {
+    if (!GetComputerNameExA(ComputerNameDnsHostname, buffer, &size)) {
         SDL_strlcpy(pName, "<unknown>", pMax_length);
+        return;
     }
     SDL_strlcpy(pName, buffer, pMax_length);
 #else
@@ -226,7 +231,7 @@ int ReceiveHostResponses(void) {
     int i;
     int already_registered;
     char addr_string[32];
-    unsigned int sa_len;
+    tSDL_socket_len sa_len;
     int wsa_error;
 
     sa_len = sizeof(gListen_address);
@@ -342,7 +347,7 @@ int PDNetGetHeaderSize(void) {
 
 tNet_message *PDNetGetNextMessage(tNet_game_details *pDetails, void **pSender_address) {
     char addr_str[32];
-    unsigned int sa_len;
+    tSDL_socket_len sa_len;
     int res;
     tNet_message* msg;
     char* receive_buffer;

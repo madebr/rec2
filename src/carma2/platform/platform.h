@@ -12,6 +12,7 @@ extern tGraf_spec gGraf_specs[2];
 extern int gMsg_header_strlen;
 extern tPD_S3_config gPD_S3_config;
 extern int gJoystick_deadzone;
+extern int gINT_00595f9c;
 extern void* gHWnd;
 extern void* gPDActionReplayBuffer;
 extern int gPDActionReplayBufferSize;
@@ -154,6 +155,10 @@ extern int C2_HOOK_FASTCALL PDGetJoy2X(void);
 extern int C2_HOOK_FASTCALL PDGetJoy2Y(void);
 
 extern tButtonJoystickInfo* C2_HOOK_FASTCALL PDGetCurrentJoystickData(void);
+extern const char* C2_HOOK_FASTCALL GetCurrentJoystickName(void);
+extern void C2_HOOK_FASTCALL PDSetJoystickFFBGain(int pGain);
+extern int C2_HOOK_FASTCALL PDEnableJoysticks(void);
+extern int C2_HOOK_FASTCALL PDDisableJoysticks(void);
 
 extern int C2_HOOK_FASTCALL PDS3Init(void);
 
