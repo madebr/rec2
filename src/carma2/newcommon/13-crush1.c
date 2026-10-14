@@ -486,6 +486,63 @@ float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* 
 
 // InitShapeStuff
 
+// FUNCTION: CARMA2_HW 0x0042b7f0
+intptr_t C2_HOOK_CDECL InitPhysCrushDataCB(br_actor* actor, void* data) {
+    tInitPhysCrushDataCB_Data* context = data;
+    tUser_crush_data* user_crush_data;
+    tCar_crush_buffer_entry* crush_data;
+    br_model* model;
+    tCar_crush_flap_data* flap_data;
+    tCar_crush_detach_data* detach_data;
+    double volume;
+
+    user_crush_data = actor->user;
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    crush_data = user_crush_data->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
+    model = user_crush_data->models[0];
+    if (model == NULL) {
+        return 0;
+    }
+    volume = ((double)model->bounds.max.v[0] - model->bounds.min.v[0])
+           * ((double)model->bounds.max.v[1] - model->bounds.min.v[1])
+           * ((double)model->bounds.max.v[2] - model->bounds.min.v[2])
+           * context->value;
+    crush_data->field_0x24 = (float)volume;
+    if (!(volume >= 0.01f)) {
+        crush_data->field_0x24 = 0.01f;
+    }
+    flap_data = crush_data->flap_data;
+    if (flap_data != NULL) {
+        br_vector3 tv;
+        const br_vertex* vertices;
+        tCar_crush_flap_data* current_flap;
+        tU16 parent_vertex;
+
+        if ((flap_data->kev_o_flap & 0x2) == 0) {
+            CheckHingePointOrder(flap_data, model, &context->car->collision_info->cmpos);
+        }
+        parent_vertex = FindNearestParentVertex(actor, &model->vertices[crush_data->flap_data->hinge0].p);
+        crush_data->flap_data->field_0xc = parent_vertex;
+        parent_vertex = FindNearestParentVertex(actor, &model->vertices[crush_data->flap_data->hinge2].p);
+        crush_data->flap_data->field_0x12 = parent_vertex;
+        vertices = model->vertices;
+        BrVector3Sub(&tv, &vertices[flap_data->hinge2].p, &vertices[flap_data->hinge1].p);
+        current_flap = crush_data->flap_data;
+        current_flap->field_0x1c = BrVector3Length(&tv) * 0.5f;
+    }
+    detach_data = crush_data->detach_data;
+    if (detach_data != NULL) {
+        detach_data->field_0x2c = context->car;
+        SetUpSemiDetachJointStuff(detach_data, model, &context->car->collision_info->bb1);
+    }
+    return 0;
+}
+
 void C2_HOOK_FASTCALL CheckHingePointOrder(tCar_crush_flap_data* pHinge, br_model* pModel, br_vector3* pPos) {
     const br_vertex* vertices = pModel->vertices;
     br_vector3 hinge01;
@@ -642,8 +699,6 @@ void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_
         pDetach_data->field_0x33 = (tU8)closest_side;
     }
 }
-
-// InitPhysCrushDataCB
 
 // InitPhysCrushData
 
