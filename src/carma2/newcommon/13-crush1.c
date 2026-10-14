@@ -611,9 +611,64 @@ void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_
 
 // InitPhysCrushData
 
-// CalculateReferencePoints
+void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor) {
+    int i;
+    float d_min, d_max;
+    br_vector3 min_v, max_v;
 
-// InitModelCrushDataCB
+    if (pModel == NULL && pParent_model == NULL) {
+        return;
+    }
+    d_max = d_min = BR_SCALAR_MAX;
+    BrMatrix34ApplyP(&min_v, &pModel->bounds.min, &pActor->t.t.mat);
+    BrMatrix34ApplyP(&max_v, &pModel->bounds.max, &pActor->t.t.mat);
+    for (i = 0; i < pParent_model->nvertices; i++) {
+        float d;
+
+        d = Vector3DistanceSquared(&min_v, &pParent_model->vertices[i].p);
+        if (!(d >= d_min)) {
+            d_min = d;
+            pDetach_data->min_vertex = (tU16)i;
+        }
+        d = Vector3DistanceSquared(&max_v, &pParent_model->vertices[i].p);
+        if (!(d >= d_max)) {
+            d_max = d;
+            pDetach_data->max_vertex = (tU16)i;
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0042be20
+intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data) {
+    tUser_crush_data* user_crush_data;
+    tUser_crush_data* parent_user_crush_data;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_crush_detach_data* detach_data;
+    br_model* model;
+    br_model* parent_model;
+
+    (void)data;
+    user_crush_data = actor->user;
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    model = user_crush_data->models[0];
+    if (model == NULL) {
+        return 0;
+    }
+    crush_data = user_crush_data->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
+    detach_data = crush_data->detach_data;
+    if (detach_data == NULL) {
+        return 0;
+    }
+    parent_user_crush_data = actor->parent->user;
+    parent_model = parent_user_crush_data->models[0];
+    CalculateReferencePoints(model, parent_model, detach_data, actor);
+    return 0;
+}
 
 // InitModelCrushData
 

@@ -81,9 +81,9 @@ extern void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* p
 
 // InitPhysCrushData
 
-// CalculateReferencePoints
+extern void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor);
 
-// InitModelCrushDataCB
+extern intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data);
 
 // InitModelCrushData
 
