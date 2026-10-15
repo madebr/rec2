@@ -12,6 +12,8 @@
 
 #include "brender/brender.h"
 
+static intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser);
+
 // GLOBAL: CARMA2_HW 0x006abee8
 br_vector3 gZero_vector__smash;
 
@@ -639,9 +641,25 @@ void C2_HOOK_FASTCALL InitRepairAnimations(void) {
 
 // LinkSmashies
 
-// RepairModels
+// FUNCTION: CARMA2_HW 0x004f5a00
+intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec) {
+    return DRActorEnumRecurse(pCar_spec->car_master_actor, RepairModels, pCar_spec);
+}
 
-// RepairAllSmashes
+// FUNCTION: CARMA2_HW 0x004f5a10
+static intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
+    tUser_crush_data* user_crush = pActor->user;
+    tCar_crush_buffer_entry* crush_data;
+
+    if (user_crush == NULL) {
+        return 0;
+    }
+    crush_data = user_crush->crush_data;
+    if (crush_data != NULL) {
+        TotallyRepairSmash(pUser, crush_data);
+    }
+    return 0;
+}
 
 // SmashEverythingCB
 

@@ -262,9 +262,7 @@ extern void C2_HOOK_FASTCALL InitRepairAnimations(void);
 
 // LinkSmashies
 
-// RepairModels
-
-// RepairAllSmashes
+extern intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec);
 
 // SmashEverythingCB
 
