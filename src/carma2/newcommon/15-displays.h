@@ -35,7 +35,7 @@ extern tHud_message gHud_messages[46];
 
 extern void C2_HOOK_FASTCALL InitHeadups(void);
 
-// ClearHeadup
+extern void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
 // ClearHeadupSlot
 
