@@ -438,7 +438,7 @@ extern void C2_HOOK_FASTCALL UnBendCollisionShapes(tCar_spec* pCar_spec, const t
 
 extern void C2_HOOK_FASTCALL UnBendWheels(tCar_spec* pCar_spec, const tBend_point_context* pContext);
 
-// UnBendOtherThings
+extern void C2_HOOK_FASTCALL UnBendOtherThings(tCar_spec* pCar_spec, tCar_bend_data* bend);
 
 extern br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle);
 

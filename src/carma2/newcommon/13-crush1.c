@@ -2108,7 +2108,29 @@ void C2_HOOK_FASTCALL UnBendWheels(tCar_spec* pCar_spec, const tBend_point_conte
     }
 }
 
-// UnBendOtherThings
+void C2_HOOK_FASTCALL UnBendOtherThings(tCar_spec* pCar_spec, tCar_bend_data* bend) {
+    tBend_point_context context;
+
+    context.car = pCar_spec;
+    context.bend = bend;
+    BrMatrix34Translate(&context.matrix,
+        -bend->field_0x18.v[0], -bend->field_0x18.v[1], -bend->field_0x18.v[2]);
+    if (bend->field_0x3e != 0) {
+        BrMatrix34PostRotateY(&context.matrix, bend->field_0x3e);
+    }
+    if (bend->field_0x3c != 0) {
+        BrMatrix34PostRotateX(&context.matrix, bend->field_0x3c);
+    }
+    if (bend->field_0x40 != 0) {
+        BrMatrix34PostRotateZ(&context.matrix, bend->field_0x40);
+    }
+    BrMatrix34PostTranslate(&context.matrix,
+        bend->field_0x18.v[0], bend->field_0x18.v[1], bend->field_0x18.v[2]);
+    UnBendCollisionShapes(pCar_spec, &context);
+    UnBendWheels(pCar_spec, &context);
+    memcpy(&pCar_spec->collision_info->cmpos, &pCar_spec->car_crush_spec->field_0x264, sizeof(pCar_spec->collision_info->cmpos));
+    BendPoint(&pCar_spec->collision_info->cmpos, &context);
+}
 
 // FUNCTION: CARMA2_HW 0x0043ac90
 br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle) {
