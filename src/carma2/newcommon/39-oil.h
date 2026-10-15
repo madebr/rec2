@@ -28,7 +28,7 @@ extern void C2_HOOK_FASTCALL ResetOilSpills(void);
 
 // ProcessOilSpills
 
-// GetOilSpillCount
+extern int C2_HOOK_FASTCALL GetOilSpillCount(void);
 
 // GetOilSpillDetails
 

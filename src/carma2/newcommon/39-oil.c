@@ -108,7 +108,10 @@ void C2_HOOK_FASTCALL ResetOilSpills(void) {
 
 // ProcessOilSpills
 
-// GetOilSpillCount
+// FUNCTION: CARMA2_HW 0x004a74e0
+int C2_HOOK_FASTCALL GetOilSpillCount(void) {
+    return (int)REC2_ASIZE(gOily_spills);
+}
 
 // GetOilSpillDetails
 
