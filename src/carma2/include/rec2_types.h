@@ -3750,6 +3750,21 @@ typedef struct {
     float value;
 } tInitPhysCrushDataCB_Data;
 
+/* Inferred contexts for repair and deflection accounting. */
+typedef struct {
+    tCar_spec* car;
+    br_scalar repair_step;
+    br_scalar* total_deflection;
+    br_scalar repaired_amount;
+} tRepair_context;
+
+typedef struct {
+    tCar_spec* car;
+    br_scalar repair_step;
+    br_scalar repaired_amount;
+    br_scalar* total_deflection;
+} tRepair_model_context;
+
 typedef struct {
     br_vector3* point;
     float distance;

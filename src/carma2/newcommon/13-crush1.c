@@ -2074,8 +2074,6 @@ void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflec
 
 // AddTotalDeflection
 
-// RepairModel
-
 // RepairModels
 
 // FUNCTION: CARMA2_HW 0x0043a150
@@ -2400,6 +2398,89 @@ br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOriginal_x,
 // ReAttachBits
 
 // RepairObject
+
+// FUNCTION: CARMA2_HW 0x0043b510
+int C2_HOOK_FASTCALL RepairModel(br_model* pModel, tRepair_model_context* pContext) {
+    tUser_detail_level_model* user_detail_model;
+    tModel_detail_vertex_data* vertex_detail_data;
+    br_vertex* vertices;
+    br_vector3 vector_mash[1024];
+    br_scalar repaired_amount = 0.0f;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tRepair_context) != 0x10);
+    C2_HOOK_BUG_ON(sizeof(tRepair_model_context) != 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepair_context, car, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepair_context, repair_step, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepair_context, total_deflection, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepair_context, repaired_amount, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepair_model_context, car, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepair_model_context, repair_step, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepair_model_context, repaired_amount, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepair_model_context, total_deflection, 0xc);
+
+    if (pModel == NULL) {
+        return 0;
+    }
+    user_detail_model = pModel->user;
+    if (user_detail_model == NULL) {
+        return 0;
+    }
+    vertex_detail_data = user_detail_model->field_0x4;
+    if (vertex_detail_data == NULL) {
+        return 0;
+    }
+    if (pModel->nvertices > REC2_ASIZE(vector_mash)) {
+        PDFatalError("Dog gone it, there's a lot of vertices on that model.");
+    }
+    vertices = pModel->vertices;
+    for (i = 0; i < pModel->nvertices; i++) {
+        br_vector3 pos;
+        br_vector3 old_pos;
+        int j;
+
+        ExpandVector3(&pos, &vertex_detail_data[i].p, -10.0f, 10.0f);
+        BrVector3Copy(&old_pos, &vertices[i].p);
+        for (j = 0; j < 3; j++) {
+            br_scalar deflection;
+            br_scalar delta;
+
+            deflection = (br_scalar)fabs(pos.v[j] - old_pos.v[j]);
+            if (deflection > 0.0f) {
+                /* Account for the damage before applying this repair step. */
+                *pContext->total_deflection += deflection;
+                if (pos.v[j] < old_pos.v[j]) {
+                    vertices[i].p.v[j] -= pContext->repair_step;
+                    if (!(vertices[i].p.v[j] >= pos.v[j])) {
+                        vertices[i].p.v[j] = pos.v[j];
+                    }
+                    delta = vertices[i].p.v[j] - old_pos.v[j];
+                    repaired_amount -= delta;
+                } else {
+                    vertices[i].p.v[j] += pContext->repair_step;
+                    if (vertices[i].p.v[j] > pos.v[j]) {
+                        vertices[i].p.v[j] = pos.v[j];
+                    }
+                    delta = vertices[i].p.v[j] - old_pos.v[j];
+                    repaired_amount += delta;
+                }
+                vector_mash[i].v[j] = delta;
+                vertex_detail_data[i].flags &= ~0x4;
+            } else {
+                vector_mash[i].v[j] = 0.0f;
+            }
+        }
+    }
+
+    /* A zero step can account for damage without producing an update. */
+    if (!(repaired_amount < 0.0f || repaired_amount > 0.0f)) {
+        return 1;
+    }
+    SetModelForUpdate(pModel);
+    AddModelMashToPipingSession(pModel, vector_mash);
+    pContext->repaired_amount += repaired_amount;
+    return 0;
+}
 
 // RepairCarCollisionShapes
 

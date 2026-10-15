@@ -426,8 +426,6 @@ extern void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* 
 
 // AddTotalDeflection
 
-// RepairModel
-
 // RepairModels
 
 extern void C2_HOOK_FASTCALL UnBendActor(br_actor* pActor, tCar_bend_data* bend, br_angle pRepair_x, br_angle pRepair_y, br_angle pRepair_z, tCar_spec* pCar_spec);
@@ -451,6 +449,8 @@ extern br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOrig
 // ReAttachBits
 
 // RepairObject
+
+extern int C2_HOOK_FASTCALL RepairModel(br_model* pModel, tRepair_model_context* pContext);
 
 // RepairCarCollisionShapes
 
