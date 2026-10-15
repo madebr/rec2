@@ -460,7 +460,27 @@ void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
     prev_glass_munge = the_time;
 }
 
-// MungeAnimationRepairs
+void C2_HOOK_FASTCALL MungeAnimationRepairs(void) {
+    tU32 the_time;
+    tRepair_animation* animation;
+    tCar_crush_smashable_part* smashable;
+    int i;
+
+    the_time = GetTotalTime();
+    for (i = 0; i < (int)REC2_ASIZE(gRepair_animations); i++) {
+        animation = &gRepair_animations[i];
+        smashable = animation->field_0x0;
+        if (smashable != NULL && the_time - animation->field_0x4 >= 150) {
+            if (smashable->field_0x4c != 0) {
+                ActuallyRepairSmash(animation->field_0x8, smashable, smashable->field_0x4c - 1);
+                animation->field_0x4 += 150;
+            }
+            if (smashable->field_0x4c == 0) {
+                animation->field_0x0 = NULL;
+            }
+        }
+    }
+}
 
 // MungeGlassFragments
 
