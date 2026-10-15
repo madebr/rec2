@@ -195,7 +195,7 @@ extern void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFro
 
 // CheckForDeAttachmentOfNonCars
 
-// AdjustNonCar
+extern void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix);
 
 // GetPrecalculatedFacesUnderCar
 
