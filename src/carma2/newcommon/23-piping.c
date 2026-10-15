@@ -3,6 +3,7 @@
 #include "09-funks.h"
 #include "13-crush1.h"
 #include "16-graphics1.h"
+#include "22-replay.h"
 #include "41-utility.h"
 #include "51-smash.h"
 #include "69-sound.h"
@@ -1450,7 +1451,14 @@ void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk) {
 
 // ApplyOilSpill
 
-// ApplyFrameBoundary
+// FUNCTION: CARMA2_HW 0x004c9360
+void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    tU32 time;
+
+    memcpy(&time, chunk + 4, sizeof(time));
+    ApplyTime(time);
+}
 
 // ApplySound
 

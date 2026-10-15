@@ -331,7 +331,7 @@ extern void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk);
 
 // ApplyOilSpill
 
-// ApplyFrameBoundary
+extern void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk);
 
 // ApplySound
 
