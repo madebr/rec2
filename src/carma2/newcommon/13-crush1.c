@@ -2028,7 +2028,78 @@ void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflec
 
 // RepairModels
 
-// UnBendActor
+// FUNCTION: CARMA2_HW 0x0043a150
+void C2_HOOK_FASTCALL UnBendActor(br_actor* pActor, tCar_bend_data* bend, br_angle pRepair_x, br_angle pRepair_y, br_angle pRepair_z, tCar_spec* pCar_spec) {
+    tUnbend_model_context context;
+    br_vector3 transformed;
+    int i;
+
+    bend->field_0x3c += pRepair_x;
+    bend->field_0x3e += pRepair_y;
+    bend->field_0x40 += pRepair_z;
+    context.bend = bend;
+    context.car = pCar_spec;
+
+    BrMatrix34Translate(&context.matrix,
+        -bend->field_0x18.v[0], -bend->field_0x18.v[1], -bend->field_0x18.v[2]);
+    if (bend->field_0x3e != 0) {
+        BrMatrix34PostRotateY(&context.matrix, bend->field_0x3e);
+    }
+    if (bend->field_0x3c != 0) {
+        BrMatrix34PostRotateX(&context.matrix, bend->field_0x3c);
+    }
+    if (bend->field_0x40 != 0) {
+        BrMatrix34PostRotateZ(&context.matrix, bend->field_0x40);
+    }
+    BrMatrix34PostTranslate(&context.matrix,
+        bend->field_0x18.v[0], bend->field_0x18.v[1], bend->field_0x18.v[2]);
+
+    /* Find the displacement at each corner of the bend plane. */
+    BrVector3Set(&context.field_0x30, bend->field_0xc, bend->field_0x10, bend->field_0x18.v[2]);
+    BrVector3Set(&context.field_0x3c, bend->field_0xc, bend->field_0x4, bend->field_0x18.v[2]);
+    BrVector3Set(&context.field_0x48, bend->field_0x0, bend->field_0x10, bend->field_0x18.v[2]);
+    BrVector3Set(&context.field_0x54, bend->field_0x0, bend->field_0x4, bend->field_0x18.v[2]);
+    BrMatrix34ApplyP(&transformed, &context.field_0x30, &context.matrix);
+    BrVector3Sub(&context.field_0x30, &transformed, &context.field_0x30);
+    BrMatrix34ApplyP(&transformed, &context.field_0x3c, &context.matrix);
+    BrVector3Sub(&context.field_0x3c, &transformed, &context.field_0x3c);
+    BrMatrix34ApplyP(&transformed, &context.field_0x48, &context.matrix);
+    BrVector3Sub(&context.field_0x48, &transformed, &context.field_0x48);
+    BrMatrix34ApplyP(&transformed, &context.field_0x54, &context.matrix);
+    BrVector3Sub(&context.field_0x54, &transformed, &context.field_0x54);
+
+    /* Convert corner displacements to bilinear coefficients for the model. */
+    for (i = 0; i < 3; i++) {
+        context.field_0x30.v[i] = ((context.field_0x30.v[i] - context.field_0x3c.v[i])
+            - context.field_0x48.v[i]) + context.field_0x54.v[i];
+        context.field_0x3c.v[i] -= context.field_0x54.v[i];
+        context.field_0x48.v[i] -= context.field_0x54.v[i];
+    }
+
+    /* Rigid points use this repair step's rotation about the same pivot. */
+    BrMatrix34Translate(&context.matrix,
+        -bend->field_0x18.v[0], -bend->field_0x18.v[1], -bend->field_0x18.v[2]);
+    if (pRepair_y != 0) {
+        BrMatrix34PostRotateY(&context.matrix, pRepair_y);
+    }
+    if (pRepair_x != 0) {
+        BrMatrix34PostRotateX(&context.matrix, pRepair_x);
+    }
+    if (pRepair_z != 0) {
+        BrMatrix34PostRotateZ(&context.matrix, pRepair_z);
+    }
+    BrMatrix34PostTranslate(&context.matrix,
+        bend->field_0x18.v[0], bend->field_0x18.v[1], bend->field_0x18.v[2]);
+
+    ARStartPipingSession(ePipe_model_mash);
+    DRActorEnumRecurseWithTranslation(pActor, NULL, UnBendModels, &context);
+    AREndPipingSession();
+
+    memcpy(&bend->field_0x44, &context.field_0x30, sizeof(bend->field_0x44));
+    memcpy(&bend->field_0x50, &context.field_0x3c, sizeof(bend->field_0x50));
+    memcpy(&bend->field_0x5c, &context.field_0x48, sizeof(bend->field_0x5c));
+    memcpy(&bend->field_0x68, &context.field_0x54, sizeof(bend->field_0x68));
+}
 
 // FUNCTION: CARMA2_HW 0x0043a560
 intptr_t C2_HOOK_FASTCALL UnBendModels(br_actor* pActor, br_vector3* pTranslation, void* pUser) {
