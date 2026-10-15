@@ -1644,7 +1644,14 @@ void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
 
 // ApplySmashRemoveFaces
 
-// ApplySmashDecal
+// FUNCTION: CARMA2_HW 0x004c9a20
+void C2_HOOK_FASTCALL ApplySmashDecal(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    int index;
+
+    memcpy(&index, chunk, sizeof(index));
+    TurnOnSmashDecal(index);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9a30
 void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
@@ -1897,7 +1904,15 @@ void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pP
 
 // UndoSmashRemoveFaces
 
-// UndoSmashDecal
+// FUNCTION: CARMA2_HW 0x004ca150
+void C2_HOOK_FASTCALL UndoSmashDecal(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    int index;
+
+    (void)pPrev_chunk;
+    memcpy(&index, chunk, sizeof(index));
+    TurnOffSmashDecal(index);
+}
 
 // FUNCTION: CARMA2_HW 0x004ca160
 void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {

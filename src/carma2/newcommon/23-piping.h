@@ -373,7 +373,7 @@ extern void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk);
 
 // ApplySmashRemoveFaces
 
-// ApplySmashDecal
+extern void C2_HOOK_FASTCALL ApplySmashDecal(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
@@ -475,7 +475,7 @@ extern void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_ch
 
 // UndoSmashRemoveFaces
 
-// UndoSmashDecal
+extern void C2_HOOK_FASTCALL UndoSmashDecal(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 extern void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
