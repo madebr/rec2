@@ -1555,7 +1555,16 @@ void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk) {
 
 // ApplyEndShitMine
 
-// ApplyTransformType
+// FUNCTION: CARMA2_HW 0x004c9d70
+void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_actor* actor;
+    tU8 type;
+
+    type = chunk[5];
+    memcpy(&actor, chunk, sizeof(actor));
+    actor->t.type = type;
+}
 
 // ApplyOppoRenderage
 
@@ -1651,7 +1660,17 @@ void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk
 
 // UndoEndShitMine
 
-// UndoTransformType
+// FUNCTION: CARMA2_HW 0x004ca3e0
+void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_actor* actor;
+    tU8 type;
+
+    (void)pPrev_chunk;
+    type = chunk[4];
+    memcpy(&actor, chunk, sizeof(actor));
+    actor->t.type = type;
+}
 
 // CalcCrushLength
 

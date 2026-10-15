@@ -435,7 +435,7 @@ extern void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk);
 
 // ApplyEndShitMine
 
-// ApplyTransformType
+extern void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk);
 
 // ApplyOppoRenderage
 
@@ -517,7 +517,7 @@ extern void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPre
 
 // UndoEndShitMine
 
-// UndoTransformType
+extern void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // CalcCrushLength
 
