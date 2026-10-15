@@ -1475,7 +1475,123 @@ int C2_HOOK_FASTCALL WithinBounds(br_scalar pValue, br_scalar pMin, br_scalar pM
     return pValue >= pMin && !(pValue > pMax);
 }
 
-// SplitCheck
+// FUNCTION: CARMA2_HW 0x004307e0
+int C2_HOOK_FASTCALL SplitCheck(tCar_spec* pCar, int pMode, const br_vector3* pLine, br_scalar pHeight, br_vector4* pPlane) {
+    tCar_crush_spec* crush;
+    const br_bounds3* bounds;
+    br_vector3 size;
+    br_vector3 normal;
+    br_vector3 point;
+    br_scalar min_x;
+    br_scalar max_x;
+    br_scalar min_z;
+    br_scalar max_z;
+    br_scalar first;
+    br_scalar second;
+    br_scalar distance;
+    int axis;
+    int next_axis;
+    int last_axis;
+    int i;
+
+    if (pCar->invulnerable_no_crushage != 0 && pCar->knackered == 0) {
+        return 0;
+    }
+    if (pCar->field_0x4c8 < 1.f || pCar->field_0x4c8 > 1.f) {
+        return 0;
+    }
+    crush = pCar->car_crush_spec;
+    if (crush == NULL || crush->field_0x144 != 0 || crush->field_0x4b8 != 0) {
+        return 0;
+    }
+
+    bounds = &pCar->collision_info->bb1;
+    BrVector3Sub(&size, &bounds->max, &bounds->min);
+    /* Keep vertical cuts within the middle half of the collision bounds. */
+    min_x = bounds->min.v[0] + 0.25f * size.v[0];
+    max_x = bounds->max.v[0] - 0.25f * size.v[0];
+    min_z = bounds->min.v[2] + 0.25f * size.v[2];
+    max_z = bounds->max.v[2] - 0.25f * size.v[2];
+
+    if (pMode == 1) {
+        pPlane->v[0] = 0.f;
+        pPlane->v[1] = 1.f;
+        pPlane->v[2] = 0.f;
+        pPlane->v[3] = pHeight;
+        if (!QuantizeWithinBounds(0.02f, bounds->min.v[1], bounds->max.v[1], &pPlane->v[3])) {
+            return 0;
+        }
+    } else if (pMode == 0) {
+        if (fabs(pLine->v[0]) > 0.001f) {
+            first = (pLine->v[2] - bounds->min.v[1] * pLine->v[1]) / pLine->v[0];
+            second = (pLine->v[2] - bounds->max.v[1] * pLine->v[1]) / pLine->v[0];
+            if (QuantizeWithinBounds(0.02f, bounds->min.v[0], bounds->max.v[0], &first)
+                    && QuantizeWithinBounds(0.02f, bounds->min.v[0], bounds->max.v[0], &second)
+                    && WithinBounds(0.5f * (first + second), min_x, max_x)) {
+                normal.v[0] = -size.v[1];
+                normal.v[1] = 0.f;
+                normal.v[2] = second - first;
+                BrVector3Normalise(&normal, &normal);
+                pPlane->v[0] = normal.v[0];
+                pPlane->v[1] = normal.v[1];
+                pPlane->v[2] = normal.v[2];
+                pPlane->v[3] = pPlane->v[0] * first + pPlane->v[2] * bounds->min.v[1];
+                goto check_plane;
+            }
+        }
+        if (!(fabs(pLine->v[1]) > 0.001f)) {
+            return 0;
+        }
+        first = (pLine->v[2] - bounds->min.v[0] * pLine->v[0]) / pLine->v[1];
+        second = (pLine->v[2] - bounds->max.v[0] * pLine->v[0]) / pLine->v[1];
+        if (!QuantizeWithinBounds(0.02f, bounds->min.v[2], bounds->max.v[2], &first)
+                || !QuantizeWithinBounds(0.02f, bounds->min.v[2], bounds->max.v[2], &second)
+                || !WithinBounds(0.5f * (first + second), min_z, max_z)) {
+            return 0;
+        }
+        normal.v[0] = second - first;
+        normal.v[1] = 0.f;
+        normal.v[2] = -size.v[0];
+        BrVector3Normalise(&normal, &normal);
+        pPlane->v[0] = normal.v[0];
+        pPlane->v[1] = normal.v[1];
+        pPlane->v[2] = normal.v[2];
+        pPlane->v[3] = pPlane->v[0] * bounds->min.v[0] + pPlane->v[2] * first;
+    } else {
+        return 0;
+    }
+
+check_plane:
+    bounds = &pCar->car_actor->model->bounds;
+    normal.v[0] = pPlane->v[0];
+    normal.v[1] = pPlane->v[1];
+    normal.v[2] = pPlane->v[2];
+    axis = NearestAxis(&normal);
+    next_axis = (axis + 1) % 3;
+    last_axis = (axis + 2) % 3;
+    point.v[axis] = 0.f;
+    point.v[next_axis] = 0.5f * (bounds->min.v[next_axis] + bounds->max.v[next_axis]);
+    point.v[last_axis] = 0.5f * (bounds->min.v[last_axis] + bounds->max.v[last_axis]);
+    /* Leave clearance where the plane crosses the centre of the model. */
+    distance = -(((point.v[1] * pPlane->v[1] + point.v[2] * pPlane->v[2])
+            + point.v[0] * pPlane->v[0] - pPlane->v[3]) / pPlane->v[axis]);
+    if (!(distance >= bounds->min.v[axis] + 0.057971016f)
+            || distance > bounds->max.v[axis] - 0.057971016f) {
+        return 0;
+    }
+
+    /* Keep the driver on the positive side of the plane. */
+    distance = (crush->driver_position.v[1] * pPlane->v[1]
+            + crush->driver_position.v[2] * pPlane->v[2])
+            + crush->driver_position.v[0] * pPlane->v[0] - pPlane->v[3];
+    if (!(distance >= 0.f)) {
+        for (i = 0; i < 4; i++) {
+            pPlane->v[i] = -pPlane->v[i];
+        }
+    }
+    QuantizePlane(pPlane);
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00430d80
 int C2_HOOK_FASTCALL QuantizeWithinBounds(br_scalar pQuant, br_scalar pMin, br_scalar pMax, br_scalar* pValue) {
