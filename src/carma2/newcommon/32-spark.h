@@ -68,7 +68,7 @@ extern void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pScreen, br_pixelmap* pDe
 
 extern void C2_HOOK_FASTCALL ResetSparks(void);
 
-// ResetShrapnel
+extern void C2_HOOK_FASTCALL ResetShrapnel(void);
 
 // CreateShrapnelShower2
 
