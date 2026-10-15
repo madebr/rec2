@@ -313,7 +313,7 @@ extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTra
 
 // ApplyShrapnel
 
-// ApplyScreenWobble
+extern void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk);
 
 // ApplyGrooveStop
 
@@ -447,7 +447,7 @@ extern void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk);
 
 // UndoSpecial
 
-// UndoScreenWobble
+extern void C2_HOOK_FASTCALL UndoScreenWobble(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoSplash
 

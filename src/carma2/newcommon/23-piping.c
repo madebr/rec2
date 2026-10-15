@@ -2,6 +2,7 @@
 
 #include "09-funks.h"
 #include "13-crush1.h"
+#include "16-graphics1.h"
 #include "41-utility.h"
 #include "51-smash.h"
 #include "69-sound.h"
@@ -1424,7 +1425,14 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyShrapnel
 
-// ApplyScreenWobble
+// FUNCTION: CARMA2_HW 0x004c9180
+void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    tPipe_chunk_screen_wobble wobble;
+
+    memcpy(&wobble, chunk + 4, sizeof(wobble));
+    SetScreenWobble(wobble.wobble_x, wobble.wobble_y);
+}
 
 // ApplyGrooveStop
 
@@ -1643,7 +1651,17 @@ void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk) {
 
 // UndoSpecial
 
-// UndoScreenWobble
+// FUNCTION: CARMA2_HW 0x004c9e50
+void C2_HOOK_FASTCALL UndoScreenWobble(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    (void)pChunk;
+    ARDisableAdvance();
+    if (pPrev_chunk != NULL) {
+        ApplyScreenWobble(&pPrev_chunk);
+    } else {
+        SetScreenWobble(0, 0);
+    }
+    AREnableAdvance();
+}
 
 // UndoSplash
 
