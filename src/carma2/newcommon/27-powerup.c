@@ -2,6 +2,7 @@
 
 #include "16-graphics1.h"
 #include "32-spark.h"
+#include "61-pedestrn.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
 
@@ -217,13 +218,21 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // DoInstantRepair
 
-// ResetPedSpeed
+// FUNCTION: CARMA2_HW 0x004dc9c0
+void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car) {
+
+    gPedestrian_speed_factor = 1.f;
+}
 
 // ResetPedSize
 
 // ResetPedHeadSize
 
-// ResetPedExplode
+// FUNCTION: CARMA2_HW 0x004dca10
+void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
+
+    gExploding_pedestrians = 0;
+}
 
 // ResetPedBrittle
 
