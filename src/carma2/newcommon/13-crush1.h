@@ -323,7 +323,7 @@ extern int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pP
 
 // BendPoint
 
-// EdgeCrossesZPlane
+extern int C2_HOOK_FASTCALL EdgeCrossesZPlane(br_scalar pZ, const br_vector3* pPoint1, const br_vector3* pPoint2);
 
 // BendCollisionShape
 

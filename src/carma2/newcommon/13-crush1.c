@@ -1352,7 +1352,12 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {
 
 // BendPoint
 
-// EdgeCrossesZPlane
+int C2_HOOK_FASTCALL EdgeCrossesZPlane(br_scalar pZ, const br_vector3* pPoint1, const br_vector3* pPoint2) {
+    if (pPoint1->v[2] >= pZ) {
+        return !(pPoint2->v[2] >= pZ);
+    }
+    return pPoint2->v[2] > pZ;
+}
 
 // BendCollisionShape
 
