@@ -148,14 +148,7 @@ float C2_HOOK_FASTCALL ARGetReplayRate(void) {
 
 // FUNCTION: CARMA2_HW 0x004023a0
 void C2_HOOK_FASTCALL ARSetReplayRate(float pRate) {
-    tU32 bits;
-    volatile tU32 stored_bits;
-
-    /* MOV copies preserve signaling NaNs in the stored replay rate. */
-    memcpy(&bits, &pRate, sizeof(bits));
-    stored_bits = bits;
-    bits = stored_bits;
-    memcpy(&gReplay_rate, &bits, sizeof(bits));
+    memcpy(&gReplay_rate, &pRate, sizeof(gReplay_rate));
 }
 
 // FUNCTION: CARMA2_HW 0x004023b0
