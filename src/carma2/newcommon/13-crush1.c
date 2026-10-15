@@ -1650,6 +1650,30 @@ int C2_HOOK_FASTCALL QuantizeWithinBounds(br_scalar pQuant, br_scalar pMin, br_s
 }
 
 // FindForceEdge
+int C2_HOOK_FASTCALL FindForceEdge(const br_vector3* pPoint, const tPhysics_object* pObject, br_vector3* pEdge, br_scalar* pNormal_dot) {
+    int faces[2];
+    int count = 0;
+    int i;
+    int j;
+    tFace_ref* face;
+
+    /* Keep the first qualifying edge from each of two faces. */
+    for (i = pObject->box_face_start; i < pObject->box_face_end && count < 2; i++) {
+        face = &gFace_list__car[i];
+        for (j = 0; j < 3; j++) {
+            if (!(PointEdgeDistSq(pPoint, &face->v[j], &face->v[(j + 1) % 3]) >= BR_SCALAR_EPSILON)) {
+                faces[count++] = i;
+                BrVector3Sub(pEdge, &face->v[j], &face->v[(j + 1) % 3]);
+                break;
+            }
+        }
+    }
+    if (count < 2) {
+        return 0;
+    }
+    *pNormal_dot = BrVector3Dot(&gFace_list__car[faces[0]].normal, &gFace_list__car[faces[1]].normal);
+    return 1;
+}
 
 // DoXZSplitting
 

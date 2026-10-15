@@ -304,7 +304,7 @@ extern int C2_HOOK_FASTCALL SplitCheck(tCar_spec* pCar, int pMode, const br_vect
 
 extern int C2_HOOK_FASTCALL QuantizeWithinBounds(br_scalar pQuant, br_scalar pMin, br_scalar pMax, br_scalar* pValue);
 
-// FindForceEdge
+extern int C2_HOOK_FASTCALL FindForceEdge(const br_vector3* pPoint, const tPhysics_object* pObject, br_vector3* pEdge, br_scalar* pNormal_dot);
 
 // DoXZSplitting
 
