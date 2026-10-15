@@ -8,7 +8,7 @@ extern int gHud_tinted2;
 extern int gHud_tinted3;
 extern int gCredits_checkpoint[3];
 
-// NumberOfOpponentsLeft
+extern int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
 
 // RaceCompleted
 
