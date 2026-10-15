@@ -251,7 +251,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // PipeSingleSmashDecal
 
-// PipeSingleSmashTextureChange
+extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture);
 
 // PipeSinglePedStatus
 

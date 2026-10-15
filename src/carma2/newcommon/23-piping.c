@@ -1262,7 +1262,15 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
 
 // PipeSingleSmashDecal
 
-// PipeSingleSmashTextureChange
+// FUNCTION: CARMA2_HW 0x004c8a10
+void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture) {
+    br_pixelmap* old_texture = pMaterial->colour_map;
+
+    ARDoSingleVariedSession(ePipe_smash_texture_change, (uintptr_t)pMaterial, 3,
+        4, 0, (uintptr_t)pCar_spec,
+        4, 8, (uintptr_t)old_texture,
+        4, 12, (uintptr_t)pTexture);
+}
 
 // PipeSinglePedStatus
 
