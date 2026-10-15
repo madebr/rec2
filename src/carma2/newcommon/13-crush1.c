@@ -1534,7 +1534,37 @@ void C2_HOOK_FASTCALL DoCompletelyUnBentThings(tCar_spec* pCar_spec) {
     DRActorEnumRecurse(pCar_spec->car_model_actor, EnableGroovers, NULL);
 }
 
-// TotallyRepairModel
+void C2_HOOK_FASTCALL TotallyRepairModel(br_model* pModel) {
+    tUser_detail_level_model* user_detail_model;
+    tModel_detail_vertex_data* vertex_detail_data;
+    br_vector3 vector_mash[1024];
+    int i;
+
+    if (pModel == NULL) {
+        return;
+    }
+    user_detail_model = pModel->user;
+    if (user_detail_model == NULL) {
+        return;
+    }
+    vertex_detail_data = user_detail_model->field_0x4;
+    if (vertex_detail_data == NULL) {
+        return;
+    }
+    if (pModel->nvertices > REC2_ASIZE(vector_mash)) {
+        PDFatalError("Holy polygons Batman! There's a lot of vertices on that model.");
+    }
+    for (i = 0; i < pModel->nvertices; i++) {
+        br_vector3 pos;
+
+        ExpandVector3(&pos, &vertex_detail_data[i].p, -10.0f, 10.0f);
+        BrVector3Sub(&vector_mash[i], &pos, &pModel->vertices[i].p);
+        BrVector3Copy(&pModel->vertices[i].p, &pos);
+        vertex_detail_data[i].flags &= ~0x4;
+    }
+    AddModelMashToPipingSession(pModel, vector_mash);
+    SetModelForUpdate(pModel);
+}
 
 // TotallyRepairModels
 

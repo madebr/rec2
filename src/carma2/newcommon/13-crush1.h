@@ -395,7 +395,7 @@ extern void C2_HOOK_FASTCALL CompletelyUnBendOtherThings(tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL DoCompletelyUnBentThings(tCar_spec* pCar_spec);
 
-// TotallyRepairModel
+extern void C2_HOOK_FASTCALL TotallyRepairModel(br_model* pModel);
 
 // TotallyRepairModels
 
