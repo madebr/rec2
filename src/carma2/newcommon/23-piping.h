@@ -347,7 +347,7 @@ extern void C2_HOOK_FASTCALL ApplySound(tPipe_chunk** pChunk);
 
 // ApplySkidAdjustment
 
-// ApplyFlap
+extern void C2_HOOK_FASTCALL ApplyFlap(tPipe_chunk** pChunk);
 
 // ApplyModelMash
 
@@ -455,7 +455,7 @@ extern void C2_HOOK_FASTCALL UndoScreenWobble(tPipe_chunk** pChunk, tPipe_chunk*
 
 // UndoSkidAdjustment
 
-// UndoFlap
+extern void C2_HOOK_FASTCALL UndoFlap(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoModelMash
 

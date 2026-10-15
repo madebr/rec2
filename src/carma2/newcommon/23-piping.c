@@ -1553,7 +1553,16 @@ void C2_HOOK_FASTCALL ApplySound(tPipe_chunk** pChunk) {
 
 // ApplySkidAdjustment
 
-// ApplyFlap
+// FUNCTION: CARMA2_HW 0x004c9830
+void C2_HOOK_FASTCALL ApplyFlap(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_actor* actor;
+    br_angle angle;
+
+    memcpy(&angle, chunk + 8, sizeof(angle));
+    memcpy(&actor, chunk + 4, sizeof(actor));
+    ARApplyFlap(actor, angle);
+}
 
 // ApplyModelMash
 
@@ -1756,7 +1765,17 @@ void C2_HOOK_FASTCALL UndoScreenWobble(tPipe_chunk** pChunk, tPipe_chunk* pPrev_
 
 // UndoSkidAdjustment
 
-// UndoFlap
+// FUNCTION: CARMA2_HW 0x004c9f60
+void C2_HOOK_FASTCALL UndoFlap(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_actor* actor;
+    br_angle angle;
+
+    (void)pPrev_chunk;
+    memcpy(&angle, chunk + 8, sizeof(angle));
+    memcpy(&actor, chunk + 4, sizeof(actor));
+    ARApplyFlap(actor, (br_angle)-angle);
+}
 
 // UndoModelMash
 
