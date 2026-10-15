@@ -298,8 +298,6 @@ void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, const br_matrix34*
     case BR_TRANSFORM_TRANSLATION:
         BrVector3Copy(&xform->t.quat.t, (br_vector3*)mat->m[3]);
         break;
-    default:
-        abort();
     }
 }
 
