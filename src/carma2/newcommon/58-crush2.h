@@ -44,7 +44,7 @@ extern void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar);
 
 // CrashEarnings
 
-// PercentageCarHealth
+extern int C2_HOOK_FASTCALL PercentageCarHealth(tCar_spec* pCar);
 
 // ChristmasLights
 
