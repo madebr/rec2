@@ -1268,7 +1268,12 @@ void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor) {
     ARDoSingleVariedSession(26, (uintptr_t)pActor, 1, 4, 0, (uintptr_t)pActor);
 }
 
-// PipeSingleSplitWeld
+// FUNCTION: CARMA2_HW 0x004c86f0
+void C2_HOOK_FASTCALL PipeSingleSplitWeld(uintptr_t pId, const br_vector4* pPlane, int pSplit) {
+    ARDoSingleVariedSession(27, pId, 2,
+        16, 0, (uintptr_t)pPlane,
+        4, 16, (uintptr_t)pSplit);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8870
 void C2_HOOK_FASTCALL PipeSingleShrapnelShower(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, br_vector3* pArg5, br_vector3* pArg6, float pArg7, br_vector3* pArg8, br_vector3* pArg9, undefined4 pArg10, br_bounds3* pArg11, undefined4 pArg12, br_matrix34* pArg13, br_vector3* pArg14, void* pArg15) {

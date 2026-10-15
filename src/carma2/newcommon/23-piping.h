@@ -237,7 +237,7 @@ extern void C2_HOOK_FASTCALL PipeSingleRelink(br_actor* pParent, br_actor* pActo
 
 extern void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor);
 
-// PipeSingleSplitWeld
+extern void C2_HOOK_FASTCALL PipeSingleSplitWeld(uintptr_t pId, const br_vector4* pPlane, int pSplit);
 
 extern void C2_HOOK_FASTCALL PipeSingleShrapnelShower(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, br_vector3* pArg5, br_vector3* pArg6, float pArg7, br_vector3* pArg8, br_vector3* pArg9, undefined4 pArg10, br_bounds3* pArg11, undefined4 pArg12, br_matrix34* pArg13, br_vector3* pArg14, void* pArg15);
 
