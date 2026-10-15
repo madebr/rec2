@@ -8,11 +8,13 @@ extern br_vector3 gZero_vector__smash;
 
 extern tExplosion gExplosions[50];
 
+extern tSmash_explosion gSmash_explosions[20];
+
 extern tRepair_animation gRepair_animations[25];
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
-// ResetExplosions
+extern void C2_HOOK_FASTCALL ResetExplosions(void);
 
 // RemoveAllExplosionettes
 

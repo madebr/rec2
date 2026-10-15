@@ -17,6 +17,9 @@ br_vector3 gZero_vector__smash;
 // GLOBAL: CARMA2_HW 0x006a55c8
 tExplosion gExplosions[50];
 
+// GLOBAL: CARMA2_HW 0x006a6d40
+tSmash_explosion gSmash_explosions[20];
+
 // GLOBAL: CARMA2_HW 0x006a7fc8
 tRepair_animation gRepair_animations[25];
 
@@ -64,7 +67,18 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
     }
 }
 
-// ResetExplosions
+// FUNCTION: CARMA2_HW 0x004eaac0
+void C2_HOOK_FASTCALL ResetExplosions(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gExplosions); i++) {
+        gExplosions[i].start = 0;
+        gExplosions[i].finished = 0;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gSmash_explosions); i++) {
+        gSmash_explosions[i].active = 0;
+    }
+}
 
 // RemoveAllExplosionettes
 
