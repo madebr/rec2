@@ -470,9 +470,9 @@ extern void C2_HOOK_FASTCALL RepairCarCollisionShapes(tCar_spec* pCar_spec, br_s
 
 extern void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* pModel, br_vector3* pSrc);
 
-// ARApplyModelMash
+extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, const tCompressed_vector3* pMash);
 
-// ARUndoModelMash
+extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, const tCompressed_vector3* pMash);
 
 // ARApplyFlap
 

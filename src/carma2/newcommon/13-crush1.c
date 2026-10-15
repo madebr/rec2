@@ -2614,9 +2614,35 @@ void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* 
     }
 }
 
-// ARApplyModelMash
+// FUNCTION: CARMA2_HW 0x0043bf80
+void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, const tCompressed_vector3* pMash) {
+    int i;
 
-// ARUndoModelMash
+    for (i = 0; i < pModel->nvertices; i++) {
+        br_vector3 pos;
+
+        ExpandVector3(&pos, &pMash[i], -10.0f, 10.0f);
+        pModel->vertices[i].p.v[0] = pos.v[0] + pModel->vertices[i].p.v[0];
+        pModel->vertices[i].p.v[1] = pos.v[1] + pModel->vertices[i].p.v[1];
+        pModel->vertices[i].p.v[2] = pos.v[2] + pModel->vertices[i].p.v[2];
+    }
+    SetModelForUpdate(pModel);
+}
+
+// FUNCTION: CARMA2_HW 0x0043c030
+void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, const tCompressed_vector3* pMash) {
+    int i;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        br_vector3 pos;
+
+        ExpandVector3(&pos, &pMash[i], -10.0f, 10.0f);
+        pModel->vertices[i].p.v[0] -= pos.v[0];
+        pModel->vertices[i].p.v[1] -= pos.v[1];
+        pModel->vertices[i].p.v[2] -= pos.v[2];
+    }
+    SetModelForUpdate(pModel);
+}
 
 // ARApplyFlap
 
