@@ -1642,7 +1642,16 @@ void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
     }
 }
 
-// ApplySmashRemoveFaces
+// FUNCTION: CARMA2_HW 0x004c9a10
+void C2_HOOK_FASTCALL ApplySmashRemoveFaces(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    tS16 count;
+    br_model* model;
+
+    memcpy(&count, chunk + 8, sizeof(count));
+    memcpy(&model, chunk, sizeof(model));
+    SmashRemoveSomeFaces(model, count);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9a20
 void C2_HOOK_FASTCALL ApplySmashDecal(tPipe_chunk** pChunk) {
@@ -1902,7 +1911,19 @@ void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pP
     }
 }
 
-// UndoSmashRemoveFaces
+// FUNCTION: CARMA2_HW 0x004ca130
+void C2_HOOK_FASTCALL UndoSmashRemoveFaces(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_material* material;
+    br_model* model;
+    int count;
+
+    (void)pPrev_chunk;
+    memcpy(&material, chunk + 4, sizeof(material));
+    memcpy(&model, chunk, sizeof(model));
+    memcpy(&count, chunk + 8, sizeof(count));
+    SmashRestoreSomeFaces(model, count, chunk + 12, material);
+}
 
 // FUNCTION: CARMA2_HW 0x004ca150
 void C2_HOOK_FASTCALL UndoSmashDecal(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
