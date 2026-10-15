@@ -282,8 +282,6 @@ extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // SplitCarCollisionShapes
 
-// QuantizeWithinBounds
-
 extern void C2_HOOK_FASTCALL SaveVitalBitsOfObject(tSaved_vital_bits* pDest, const tPhysics_object* pSrc, const tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pCollision_shape);
@@ -303,6 +301,8 @@ extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsDoubleSided(br_actor* pActor
 extern int C2_HOOK_FASTCALL WithinBounds(br_scalar pValue, br_scalar pMin, br_scalar pMax);
 
 // SplitCheck
+
+extern int C2_HOOK_FASTCALL QuantizeWithinBounds(br_scalar pQuant, br_scalar pMin, br_scalar pMax, br_scalar* pValue);
 
 // FindForceEdge
 

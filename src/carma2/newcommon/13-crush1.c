@@ -1376,8 +1376,6 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 
 // SplitCarCollisionShapes
 
-// QuantizeWithinBounds
-
 // SaveVitalBitsOfObject
 void C2_HOOK_FASTCALL SaveVitalBitsOfObject(tSaved_vital_bits* pDest, const tPhysics_object* pSrc, const tCar_spec* pCar_spec) {
     C2_HOOK_BUG_ON(sizeof(tSaved_vital_bits) != 0x74);
@@ -1472,6 +1470,52 @@ int C2_HOOK_FASTCALL WithinBounds(br_scalar pValue, br_scalar pMin, br_scalar pM
 }
 
 // SplitCheck
+
+// FUNCTION: CARMA2_HW 0x00430d80
+int C2_HOOK_FASTCALL QuantizeWithinBounds(br_scalar pQuant, br_scalar pMin, br_scalar pMax, br_scalar* pValue) {
+    br_scalar range = pMax - pMin;
+    br_scalar rounded;
+    br_scalar step;
+    int64_t integral;
+    tS32 count;
+    tS32 index;
+
+    /* Choose a whole number of cells spanning the bounds. */
+    rounded = range / pQuant;
+    rounded += rounded > 0.f ? 0.5f : -0.5f;
+    /* Counts and indices wrap to signed 32 bits after truncation. */
+    if (rounded >= -9223372036854775808.0 && rounded < 9223372036854775808.0) {
+        integral = (tU32)(int64_t)rounded;
+    } else {
+        integral = 0;
+    }
+    if (integral > 0x7fffffff) {
+        integral -= (int64_t)0xffffffffu + 1;
+    }
+    count = (tS32)integral;
+    if (count == 0) {
+        count = 1;
+    }
+    step = range / (br_scalar)count;
+
+    /* Snap to the grid only when the selected cell is within the bounds. */
+    rounded = (*pValue - pMin) / step;
+    rounded += rounded > 0.f ? 0.5f : -0.5f;
+    if (rounded >= -9223372036854775808.0 && rounded < 9223372036854775808.0) {
+        integral = (tU32)(int64_t)rounded;
+    } else {
+        integral = 0;
+    }
+    if (integral > 0x7fffffff) {
+        integral -= (int64_t)0xffffffffu + 1;
+    }
+    index = (tS32)integral;
+    if (index < 0 || index > count) {
+        return 0;
+    }
+    *pValue = (br_scalar)index * step + pMin;
+    return 1;
+}
 
 // FindForceEdge
 
