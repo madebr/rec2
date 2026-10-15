@@ -285,7 +285,7 @@ extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
 // PipeSingleVanishedDismembered
 
-// PipeSingleDSModel
+extern void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, void* pThing);
 
 extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue);
 

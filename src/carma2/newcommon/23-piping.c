@@ -1363,7 +1363,11 @@ void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
 
 // PipeSingleVanishedDismembered
 
-// PipeSingleDSModel
+// FUNCTION: CARMA2_HW 0x004c8e30
+void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, void* pThing) {
+    /* A zero value identifies a car; a nonzero value identifies a model. */
+    ARDoSingleVariedSession(ePipe_single_ds_model, (uintptr_t)pThing, 1, 2, 0, (uintptr_t)pArg1);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8e80
 void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
