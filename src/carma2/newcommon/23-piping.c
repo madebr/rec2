@@ -1564,7 +1564,14 @@ void C2_HOOK_FASTCALL ApplyFlap(tPipe_chunk** pChunk) {
     ARApplyFlap(actor, angle);
 }
 
-// ApplyModelMash
+// FUNCTION: CARMA2_HW 0x004c9840
+void C2_HOOK_FASTCALL ApplyModelMash(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_model* model;
+
+    memcpy(&model, chunk + 4, sizeof(model));
+    ARApplyModelMash(model, chunk + 8);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9850
 void C2_HOOK_FASTCALL ApplyRelink(tPipe_chunk** pChunk) {
@@ -1777,7 +1784,15 @@ void C2_HOOK_FASTCALL UndoFlap(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
     ARApplyFlap(actor, (br_angle)-angle);
 }
 
-// UndoModelMash
+// FUNCTION: CARMA2_HW 0x004c9f80
+void C2_HOOK_FASTCALL UndoModelMash(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_model* model;
+
+    (void)pPrev_chunk;
+    memcpy(&model, chunk + 4, sizeof(model));
+    ARUndoModelMash(model, chunk + 8);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9f90
 void C2_HOOK_FASTCALL UndoRelink(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
