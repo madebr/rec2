@@ -8,6 +8,8 @@ extern br_vector3 gZero_vector__smash;
 
 extern tExplosion gExplosions[50];
 
+extern tRepair_animation gRepair_animations[25];
+
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // ResetExplosions
@@ -146,9 +148,9 @@ extern void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crus
 
 // KillFragment
 
-// AddRepairAnimationToQueue
+extern void C2_HOOK_FASTCALL AddRepairAnimationToQueue(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable);
 
-// RepairSmash
+extern void C2_HOOK_FASTCALL RepairSmash(tCar_spec* pCar_spec, tCar_crush_buffer_entry* pSmash_data);
 
 extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer_entry* pSmash_data);
 
