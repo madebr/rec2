@@ -180,7 +180,7 @@ extern void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race);
 
 // MungeGlassFragments
 
-// KillAllGlassFragments
+extern void C2_HOOK_FASTCALL KillAllGlassFragments(void);
 
 extern void C2_HOOK_FASTCALL CleanUpSmashStuff(void);
 

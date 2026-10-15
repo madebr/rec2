@@ -464,11 +464,15 @@ void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
 
 // MungeGlassFragments
 
-// KillAllGlassFragments
+void C2_HOOK_FASTCALL KillAllGlassFragments(void) {
+    MungeGlassFragments2(1);
+}
 
-// STUB: CARMA2_HW 0x004f02b0
+// FUNCTION: CARMA2_HW 0x004f02b0
 void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
-    NOT_IMPLEMENTED();
+    KillAllGlassFragments();
+    RemoveAllDecals();
+    RemoveAllExplosionettes();
 }
 
 // FUNCTION: CARMA2_HW 0x004f0310
