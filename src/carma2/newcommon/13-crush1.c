@@ -1845,6 +1845,49 @@ void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec* pCar_spec) {
     pCar_spec->car_crush_spec->expand_bounding_box = 3;
 }
 
+// FUNCTION: CARMA2_HW 0x00439c30
+br_scalar C2_HOOK_FASTCALL UnBendCar(tCar_spec* pCar_spec, tU32 pDelta_time, br_scalar* pOriginal_amount) {
+    tCar_crush_spec* car_crush;
+    br_angle original_angles[3];
+    br_angle repair_angles[3];
+    br_angle angle_step;
+    br_scalar repaired_amount;
+    int i;
+
+    car_crush = pCar_spec->car_crush_spec;
+    angle_step = (br_angle)(pDelta_time * 8u);
+    original_angles[0] = car_crush->field_0x154.field_0x3c;
+    original_angles[1] = car_crush->field_0x154.field_0x3e;
+    original_angles[2] = car_crush->field_0x154.field_0x40;
+    for (i = 0; i < 3; i++) {
+        if (original_angles[i] < BR_ANGLE_DEG(90)) {
+            if (original_angles[i] < angle_step) {
+                repair_angles[i] = (br_angle)-original_angles[i];
+            } else {
+                repair_angles[i] = (br_angle)-angle_step;
+            }
+        } else {
+            repair_angles[i] = (br_angle)-original_angles[i];
+            if (repair_angles[i] >= angle_step) {
+                repair_angles[i] = angle_step;
+            }
+        }
+    }
+
+    repaired_amount = CalculateAmountRepairedFraction(
+        original_angles[0], original_angles[1], original_angles[2],
+        repair_angles[0], repair_angles[1], repair_angles[2], pOriginal_amount);
+    UnBendActor(pCar_spec->car_master_actor, &car_crush->field_0x154,
+        repair_angles[0], repair_angles[1], repair_angles[2], pCar_spec);
+    UnBendOtherThings(pCar_spec, &car_crush->field_0x154);
+    if (car_crush->field_0x154.field_0x3c == 0
+        && car_crush->field_0x154.field_0x3e == 0
+        && car_crush->field_0x154.field_0x40 == 0) {
+        DoCompletelyUnBentThings(pCar_spec);
+    }
+    return repaired_amount;
+}
+
 // FUNCTION: CARMA2_HW 0x00439fd0
 void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape) {
     int i;
@@ -2346,8 +2389,6 @@ br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOriginal_x,
     *pOriginal_amount = 2.0f * original_amount;
     return repaired_amount;
 }
-
-// UnBendCar
 
 // CompletelyUnBendCar
 
