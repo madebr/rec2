@@ -6,6 +6,7 @@
 #include "59-camera.h"
 #include "69-sound.h"
 #include "c2_math.h"
+#include "c2_string.h"
 #include "globvars.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
@@ -687,9 +688,40 @@ void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor) {
     pActor->render_style = BR_RSTYLE_NONE;
 }
 
-// SmashRemoveSomeFaces
+// FUNCTION: CARMA2_HW 0x004f5f90
+void C2_HOOK_FASTCALL SmashRemoveSomeFaces(br_model* pModel, tS16 pCount) {
+    pModel->nfaces -= pCount;
+    DRModelUpdateAndKevificateMaterials(pModel, BR_MODU_ALL);
+}
 
-// SmashRestoreSomeFaces
+// FUNCTION: CARMA2_HW 0x004f5fa0
+void C2_HOOK_FASTCALL SmashRestoreSomeFaces(br_model* pModel, int pCount, const void* pFaces, br_material* pMaterial) {
+    int i;
+    br_face* face;
+    const tU8* source;
+    br_uint_16 value;
+
+    if (pCount > 0) {
+        face = pModel->faces + pModel->nfaces;
+        source = pFaces;
+        for (i = 0; i < pCount; i++) {
+            face->material = pMaterial;
+            memcpy(&value, source, sizeof(value));
+            face->vertices[0] = value;
+            memcpy(&value, source + 2, sizeof(value));
+            face->vertices[1] = value;
+            memcpy(&value, source + 4, sizeof(value));
+            face->vertices[2] = value;
+            memcpy(&value, source + 6, sizeof(value));
+            face->smoothing = value;
+            face->flags = 0;
+            face++;
+            source += 8;
+        }
+    }
+    pModel->nfaces += pCount;
+    DRModelUpdateAndKevificateMaterials(pModel, BR_MODU_ALL);
+}
 
 // FUNCTION: CARMA2_HW 0x004f6020
 void C2_HOOK_FASTCALL TurnOnSmashDecal(int pIndex) {
