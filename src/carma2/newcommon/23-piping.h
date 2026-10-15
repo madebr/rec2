@@ -247,7 +247,7 @@ extern void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* p
 
 extern void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOld_model, br_model* pNew_model);
 
-// PipeSingleSmashRemoveFaces
+extern void C2_HOOK_FASTCALL PipeSingleSmashRemoveFaces(br_model* pModel, int pCount, const void* pFaces, br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex);
 

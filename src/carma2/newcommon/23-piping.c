@@ -1312,7 +1312,26 @@ void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOl
         4, 4, (uintptr_t)pNew_model);
 }
 
-// PipeSingleSmashRemoveFaces
+// FUNCTION: CARMA2_HW 0x004c8980
+void C2_HOOK_FASTCALL PipeSingleSmashRemoveFaces(br_model* pModel, int pCount, const void* pFaces, br_material* pMaterial) {
+    tU8* crush_space;
+    tU32 size;
+
+    crush_space = (tU8*)gCrush_space;
+    if (crush_space == NULL) {
+        return;
+    }
+    size = (tU32)pCount * 8u;
+    /* Keep the material and packed face data so replay can restore the removed faces. */
+    memcpy(crush_space + 4, &pCount, sizeof(pCount));
+    memcpy(crush_space, &pMaterial, sizeof(pMaterial));
+    ReplayCopyForward(crush_space + 8, pFaces, size);
+    size += 8;
+    if (size > CRUSH_SPACE_SIZE) {
+        FatalError(kFatalError_ChunkIsTooLargeToPipe);
+    }
+    ARDoSingleSession(34, (uintptr_t)pModel, crush_space, size);
+}
 
 // FUNCTION: CARMA2_HW 0x004c89f0
 void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex) {
