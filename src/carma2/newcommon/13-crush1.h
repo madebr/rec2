@@ -407,7 +407,7 @@ extern void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 // TotallyRepairCar
 
-// AddTotalDeflectionOfModel
+extern void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflection);
 
 // AddTotalDeflection
 

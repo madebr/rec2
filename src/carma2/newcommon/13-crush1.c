@@ -1612,7 +1612,34 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 
 // TotallyRepairCar
 
-// AddTotalDeflectionOfModel
+void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflection) {
+    tUser_detail_level_model* user_detail_model;
+    tModel_detail_vertex_data* vertex_detail_data;
+    float deflection = 0.0f;
+    int i;
+
+    if (pModel == NULL) {
+        return;
+    }
+    user_detail_model = pModel->user;
+    if (user_detail_model == NULL) {
+        return;
+    }
+    vertex_detail_data = user_detail_model->field_0x4;
+    if (vertex_detail_data == NULL) {
+        return;
+    }
+    for (i = 0; i < pModel->nvertices; i++) {
+        br_vector3 pos;
+
+        ExpandVector3(&pos, &vertex_detail_data[i].p, -10.0f, 10.0f);
+        deflection = (float)(deflection
+            + fabs(pos.v[0] - pModel->vertices[i].p.v[0])
+            + fabs(pos.v[1] - pModel->vertices[i].p.v[1])
+            + fabs(pos.v[2] - pModel->vertices[i].p.v[2]));
+    }
+    *pDeflection += deflection;
+}
 
 // AddTotalDeflection
 
