@@ -3893,9 +3893,14 @@ typedef struct tCar_bit_spec {
     tU32 field_0x10;
 } tCar_bit_spec;
 
-/* Inferred type names for the bend data and point-transform context. */
+/* Inferred types for bend data and its transformation contexts. */
 typedef struct {
-    undefined field_0x0[0x18];
+    br_scalar field_0x0;
+    br_scalar field_0x4;
+    undefined field_0x8[4];
+    br_scalar field_0xc;
+    br_scalar field_0x10;
+    undefined field_0x14[4];
     br_vector3 field_0x18;
     br_vector3 field_0x24;
     br_vector3 field_0x30;
@@ -3908,6 +3913,7 @@ typedef struct {
     br_vector3 field_0x5c;
     br_vector3 field_0x68;
     int field_0x74;
+    tCar_crush_vertex_data* field_0x78;
 } tCar_bend_data;
 
 typedef struct {
@@ -3915,6 +3921,16 @@ typedef struct {
     br_matrix34 matrix;
     tCar_bend_data* bend;
 } tBend_point_context;
+
+typedef struct {
+    br_matrix34 matrix;
+    br_vector3 field_0x30;
+    br_vector3 field_0x3c;
+    br_vector3 field_0x48;
+    br_vector3 field_0x54;
+    tCar_bend_data* bend;
+    tCar_spec* car;
+} tUnbend_model_context;
 
 typedef struct tCar_crush_spec {
     int count_shapes;
@@ -3941,7 +3957,6 @@ typedef struct tCar_crush_spec {
     float bend_z_min;
     float bend_z_max;
     tCar_bend_data field_0x154;
-    tCar_crush_vertex_data* field_0x1cc;
     undefined field_0x1d0[28];
     br_vector3 field_0x1ec[6];
     br_vector3 field_0x234[4];
@@ -4153,7 +4168,8 @@ typedef struct {
 typedef struct {
     undefined field_0x0[4];
     tModel_detail_vertex_data* field_0x4;
-    undefined field_0x8[4];
+    tU16 field_0x8;
+    undefined field_0xa[2];
 } tUser_detail_level_model;
 
 typedef struct {

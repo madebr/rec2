@@ -69,7 +69,7 @@ typedef char check_model_offsets[offsetof(br_model,user)==0x28 ? 1 : -1];
 typedef char check_car_offsets[offsetof(tCar_spec,car_model_actor)==0xe0c && offsetof(tCar_spec,count_detail_levels)==0xe14 && offsetof(tCar_spec,field_0xe18)==0xe18 ? 1 : -1];
 typedef char check_crush_offsets[offsetof(tCar_crush_buffer_entry,flap_data)==0x30 && offsetof(tCar_crush_buffer_entry,detach_data)==0x34 && offsetof(tCar_crush_buffer_entry,count_smashables)==0x38 && offsetof(tCar_crush_buffer_entry,smashables)==0x3c ? 1 : -1];
 typedef char check_smash_offsets[sizeof(tCar_crush_smashable_part)==0x7c && offsetof(tCar_crush_smashable_part,levels)==0x50 && offsetof(tCar_crush_smashable_part,field_0x70)==0x70 && offsetof(tCar_crush_smashable_part,field_0x78)==0x78 ? 1 : -1];
-typedef char check_master_offsets[offsetof(tCar_crush_spec,actor)==0x4cc && offsetof(tCar_crush_spec,model_actor)==0x4d0 && offsetof(tCar_crush_spec,field_0x1cc)==0x1cc && offsetof(tCar_crush_spec,network_stuff)==0x20 && offsetof(tCar_crush_spec,field_0x564)==0x564 ? 1 : -1];
+typedef char check_master_offsets[offsetof(tCar_crush_spec,actor)==0x4cc && offsetof(tCar_crush_spec,model_actor)==0x4d0 && offsetof(tCar_crush_spec,field_0x154)+offsetof(tCar_bend_data,field_0x78)==0x1cc && offsetof(tCar_crush_spec,network_stuff)==0x20 && offsetof(tCar_crush_spec,field_0x564)==0x564 ? 1 : -1];
 typedef char check_shape_record[sizeof(tCar_crush_shape_info)==0x1c && offsetof(tCar_crush_shape_info,field_0x18)==0x18 && offsetof(tPhysics_object,shape)==0x20 ? 1 : -1];
 static br_actor actors[3];
 static br_model models[2];
@@ -149,16 +149,16 @@ int main(int argc,char**argv) {
         registry[95]=&original_shape;registry[96]=&collision;registry[97]=&replacement_shape;
         car.collision_info=&collision;collision.shape=&replacement_shape;
         master.count_shapes=2;master.field_0x4=shape_infos;master.field_0xc=&original_shape;
-        master.field_0x1cc=(tCar_crush_vertex_data*)master_buffers[0];
+        master.field_0x154.field_0x78=(tCar_crush_vertex_data*)master_buffers[0];
         master.actor=&actors[1];master.model_actor=&actors[2];master.network_stuff=(tCar_crush_network_shapes*)master_buffers[7];
         for(i=0;i<2;i++){shape_infos[i].field_0x0=(tCollision_shape_polyhedron*)master_buffers[1+3*i];shape_infos[i].field_0x4=(tCollision_shape_polyhedron*)master_buffers[2+3*i];shape_infos[i].field_0x18=(tCar_crush_reordered_shape_info*)master_buffers[3+3*i];}
         for(i=0;i<4;i++)master.field_0x564[i]=(tCollision_shape_wireframe*)master_buffers[8+i];
-        if(scenario==1){master.count_shapes=0;master.field_0x4=NULL;master.field_0x1cc=NULL;master.network_stuff=NULL;for(i=0;i<4;i++)master.field_0x564[i]=NULL;}
-        if(scenario==3){master.field_0x1cc=NULL;master.network_stuff=NULL;shape_infos[0].field_0x0=NULL;shape_infos[1].field_0x18=NULL;master.field_0x564[2]=NULL;}
+        if(scenario==1){master.count_shapes=0;master.field_0x4=NULL;master.field_0x154.field_0x78=NULL;master.network_stuff=NULL;for(i=0;i<4;i++)master.field_0x564[i]=NULL;}
+        if(scenario==3){master.field_0x154.field_0x78=NULL;master.network_stuff=NULL;shape_infos[0].field_0x0=NULL;shape_infos[1].field_0x18=NULL;master.field_0x564[2]=NULL;}
         if(scenario==4)master.count_shapes=-1;
         if(scenario==5){master.count_shapes=1;master.field_0xc=NULL;}
         DisposeMasterCrushData(scenario==0?NULL:&master,scenario==0?NULL:&car);
-        printf("{\"result\":0,\"state\":[%d,%d,%d,%d,%d,%d,%d",id(collision.shape),id(master.actor),id(master.model_actor),id(master.field_0x4),id(master.field_0xc),id(master.field_0x1cc),id(master.network_stuff));
+        printf("{\"result\":0,\"state\":[%d,%d,%d,%d,%d,%d,%d",id(collision.shape),id(master.actor),id(master.model_actor),id(master.field_0x4),id(master.field_0xc),id(master.field_0x154.field_0x78),id(master.network_stuff));
         for(i=0;i<4;i++)printf(",%d",id(master.field_0x564[i]));
     }
     printf("],\"frees\":[");

@@ -972,7 +972,8 @@ void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec) {
     tCar_crush_spec* car_crush;
 
     C2_HOOK_BUG_ON(sizeof(tCar_crush_vertex_data) != 0x6);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x1cc, 0x1cc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x154, 0x154);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x78, 0x78);
 
     car_crush = pCar_spec->car_crush_spec;
     if (car_crush != NULL) {
@@ -981,7 +982,7 @@ void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec) {
         data.bens_z_min = car_crush->bend_z_min;
         data.bens_z_max = car_crush->bend_z_max;
         DRActorEnumRecurse(pCar_spec->car_model_actor, AccumulateSquashVertices, &data);
-        car_crush->field_0x1cc = BrMemAllocate(data.count_vertices * sizeof(tCar_crush_vertex_data), kMem_crush_data);
+        car_crush->field_0x154.field_0x78 = BrMemAllocate(data.count_vertices * sizeof(tCar_crush_vertex_data), kMem_crush_data);
         BrMatrix34Copy(&car_crush->model_actor->t.t.mat ,&pCar_spec->car_model_actor->t.t.mat);
     }
 }

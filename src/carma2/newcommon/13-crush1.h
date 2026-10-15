@@ -426,11 +426,11 @@ extern void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* 
 
 // RepairModels
 
-// UnBendModel
+// UnBendActor
 
 // UnBendModels
 
-// UnBendActor
+extern void C2_HOOK_FASTCALL UnBendModel(br_model* pModel, const br_vector3* pTranslation, const tUnbend_model_context* pContext);
 
 extern void C2_HOOK_FASTCALL UnBendCollisionShape(tCar_crush_shape_info* pShape, const tBend_point_context* pContext);
 

@@ -325,7 +325,7 @@ void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec) {
         data.bens_z_max = car_crush->bend_z_max;
         DRActorEnumRecurse(pCar_spec->car_model_actor, AccumulateSquashVertices, &data);
         vertices = BrMemAllocate(data.count_vertices * sizeof(tCar_crush_vertex_data), kMem_crush_data);
-        car_crush->field_0x1cc = vertices;
+        car_crush->field_0x154.field_0x78 = vertices;
         BrMatrix34Copy(&car_crush->model_actor->t.t.mat, &pCar_spec->car_model_actor->t.t.mat);
     }
 }
@@ -949,8 +949,8 @@ void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_s
 
     if (pCar_crush != NULL) {
         BrActorFree(pCar_crush->actor);
-        if (pCar_crush->field_0x1cc != NULL) {
-            BrMemFree(pCar_crush->field_0x1cc);
+        if (pCar_crush->field_0x154.field_0x78 != NULL) {
+            BrMemFree(pCar_crush->field_0x154.field_0x78);
         }
         for (i = 0; i < pCar_crush->count_shapes; i++) {
             BrMemFree(pCar_crush->field_0x4[i].field_0x18);
@@ -1532,7 +1532,7 @@ void C2_HOOK_FASTCALL BendPoint(br_vector3* pPoint, const tBend_point_context* p
     int direction;
     int i;
 
-    C2_HOOK_BUG_ON(sizeof(tCar_bend_data) != 0x78);
+    C2_HOOK_BUG_ON(sizeof(tCar_bend_data) != 0x7c);
     C2_HOOK_BUG_ON(sizeof(tBend_point_context) != 0x38);
     C2_HOOK_BUG_ON(sizeof(tCar_crush_spec) != 0x57c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x18, 0x18);
@@ -1551,7 +1551,8 @@ void C2_HOOK_FASTCALL BendPoint(br_vector3* pPoint, const tBend_point_context* p
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tBend_point_context, matrix, 0x4);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tBend_point_context, bend, 0x34);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x154, 0x154);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x1cc, 0x1cc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x78, 0x78);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x1d0, 0x1d0);
 
     bend = pContext->bend;
     direction = bend->field_0x74;
@@ -2027,11 +2028,123 @@ void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflec
 
 // RepairModels
 
-// UnBendModel
+// UnBendActor
 
 // UnBendModels
 
-// UnBendActor
+// FUNCTION: CARMA2_HW 0x0043a5b0
+void C2_HOOK_FASTCALL UnBendModel(br_model* pModel, const br_vector3* pTranslation, const tUnbend_model_context* pContext) {
+    tUser_detail_level_model* user_detail_model;
+    tModel_detail_vertex_data* vertex_detail_data;
+    const tCar_bend_data* bend;
+    br_vector3 vector_mash[1024];
+    tU32 point_index;
+    int changed;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tUnbend_model_context) != 0x68);
+    C2_HOOK_BUG_ON(sizeof(tUser_detail_level_model) != 12);
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_vertex_data) != 6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUnbend_model_context, matrix, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUnbend_model_context, field_0x30, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUnbend_model_context, field_0x3c, 0x3c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUnbend_model_context, field_0x48, 0x48);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUnbend_model_context, field_0x54, 0x54);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUnbend_model_context, bend, 0x60);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUnbend_model_context, car, 0x64);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUser_detail_level_model, field_0x4, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUser_detail_level_model, field_0x8, 0x8);
+
+    if (pModel == NULL) {
+        return;
+    }
+    user_detail_model = pModel->user;
+    if (user_detail_model == NULL) {
+        return;
+    }
+    vertex_detail_data = user_detail_model->field_0x4;
+    if (vertex_detail_data == NULL) {
+        return;
+    }
+    if (pModel->nvertices > REC2_ASIZE(vector_mash)) {
+        PDFatalError("My Lord! There's a lot of vertices on that model.");
+    }
+
+    point_index = user_detail_model->field_0x8;
+    bend = pContext->bend;
+    changed = 0;
+    for (i = 0; i < pModel->nvertices; i++) {
+        tU8 flags = vertex_detail_data[i].flags;
+        br_vertex* vertex;
+
+        if (!(flags & 0x8)) {
+            BrVector3Set(&vector_mash[i], 0.0f, 0.0f, 0.0f);
+            continue;
+        }
+        vertex = &pModel->vertices[i];
+        if (flags & 0x10) {
+            br_vector3 pos;
+            br_vector3 transformed;
+
+            BrVector3Negate(&vector_mash[i], &vertex->p);
+            BrVector3Add(&pos, &vertex->p, pTranslation);
+            BrMatrix34ApplyP(&transformed, &pos, &pContext->matrix);
+            BrVector3Sub(&vertex->p, &transformed, pTranslation);
+        } else {
+            const tCar_crush_vertex_data* point;
+            tCompressed_vector3 compressed;
+            br_vector3 pos;
+            br_vector3 relative;
+            br_vector3 new_displacement;
+            br_vector3 old_displacement;
+            br_vector3 deformation;
+            br_scalar x;
+            br_scalar y;
+            br_scalar z;
+            br_scalar xy;
+            int j;
+
+            point = &bend->field_0x78[(tU16)point_index];
+            compressed.v[0] = point->field_0x0[0];
+            compressed.v[1] = point->field_0x0[1];
+            compressed.v[2] = point->field_0x0[2];
+            ExpandVector3(&pos, &compressed, -10.0f, 10.0f);
+            point_index++;
+
+            BrVector3Sub(&relative, &pos, &bend->field_0x24);
+            x = relative.v[0] / bend->field_0x30.v[0];
+            y = relative.v[1] / bend->field_0x30.v[1];
+            z = relative.v[2] / bend->field_0x30.v[2];
+            xy = x * y;
+            for (j = 0; j < 3; j++) {
+                new_displacement.v[j] = (((pContext->field_0x30.v[j] * xy
+                    + pContext->field_0x3c.v[j] * x)
+                    + pContext->field_0x48.v[j] * y)
+                    + pContext->field_0x54.v[j]) * z;
+            }
+            for (j = 0; j < 3; j++) {
+                old_displacement.v[j] = (((bend->field_0x44.v[j] * xy
+                    + bend->field_0x50.v[j] * x)
+                    + bend->field_0x5c.v[j] * y)
+                    + bend->field_0x68.v[j]) * z;
+            }
+
+            /* Replace the bend contribution while preserving local damage. */
+            BrVector3Sub(&relative, &pos, pTranslation);
+            BrVector3Sub(&deformation, &vertex->p, &relative);
+            BrVector3Sub(&deformation, &deformation, &old_displacement);
+            BrVector3Negate(&vector_mash[i], &vertex->p);
+            BrVector3Add(&vertex->p, &relative, &new_displacement);
+            BrVector3Add(&vertex->p, &vertex->p, &deformation);
+        }
+        BrVector3Add(&vector_mash[i], &vector_mash[i], &vertex->p);
+        changed = 1;
+    }
+    if (changed) {
+        SetModelForUpdate(pModel);
+        AddModelMashToPipingSession(pModel, vector_mash);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0043aa20
 void C2_HOOK_FASTCALL UnBendCollisionShape(tCar_crush_shape_info* pShape, const tBend_point_context* pContext) {
