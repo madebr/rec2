@@ -262,8 +262,8 @@ void C2_HOOK_FASTCALL ARAdvanceChunkPtr(tU8** pChunk, int pType) {
     const tReplay_callback* callbacks;
 
     disabled = gDisable_advance;
-    /* The original reads the pointer even when advancement is disabled. */
-    old_chunk = *(tU8* volatile*)pChunk;
+    /* Save the starting chunk so an advance past the end can be undone. */
+    old_chunk = *pChunk;
     if (disabled) {
         return;
     }
@@ -276,7 +276,7 @@ void C2_HOOK_FASTCALL ARAdvanceChunkPtr(tU8** pChunk, int pType) {
         length = callbacks[pType].length + 4;
     }
     *pChunk = (tU8*)((uintptr_t)*pChunk + length);
-    /* This particular original boundary comparison is signed. */
+    /* Restore the starting chunk if the advance reaches the session end. */
     if ((intptr_t)*pChunk >= (intptr_t)gPipe_chunk_end) {
         *pChunk = old_chunk;
     }
