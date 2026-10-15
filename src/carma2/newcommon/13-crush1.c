@@ -2030,7 +2030,22 @@ void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflec
 
 // UnBendActor
 
-// UnBendModels
+// FUNCTION: CARMA2_HW 0x0043a560
+intptr_t C2_HOOK_FASTCALL UnBendModels(br_actor* pActor, br_vector3* pTranslation, void* pUser) {
+    tUser_crush_data* user_crush;
+    const tUnbend_model_context* context;
+    int i;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL || user_crush->crush_data == NULL) {
+        return 0;
+    }
+    context = pUser;
+    for (i = 0; i < context->car->count_detail_levels; i++) {
+        UnBendModel(user_crush->models[i], pTranslation, context);
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0043a5b0
 void C2_HOOK_FASTCALL UnBendModel(br_model* pModel, const br_vector3* pTranslation, const tUnbend_model_context* pContext) {

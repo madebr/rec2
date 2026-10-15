@@ -428,7 +428,7 @@ extern void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* 
 
 // UnBendActor
 
-// UnBendModels
+extern intptr_t C2_HOOK_FASTCALL UnBendModels(br_actor* pActor, br_vector3* pTranslation, void* pUser);
 
 extern void C2_HOOK_FASTCALL UnBendModel(br_model* pModel, const br_vector3* pTranslation, const tUnbend_model_context* pContext);
 
