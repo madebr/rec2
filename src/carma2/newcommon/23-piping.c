@@ -1258,7 +1258,10 @@ void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor) {
 
 // PipeSingleShrapnelShower
 
-// PipeSingleExplosion
+// FUNCTION: CARMA2_HW 0x004c8920
+void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData) {
+    ARDoSingleVariedSession(31, (uintptr_t)pIndex, 1, 120, 0, (uintptr_t)pData);
+}
 
 // PipeSingleNonCarCreation
 

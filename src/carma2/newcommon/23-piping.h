@@ -241,7 +241,7 @@ extern void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor);
 
 // PipeSingleShrapnelShower
 
-// PipeSingleExplosion
+extern void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData);
 
 // PipeSingleNonCarCreation
 
