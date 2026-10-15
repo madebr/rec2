@@ -19,6 +19,8 @@ extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
 extern float gMass_mine;
 
+extern tRepulse_link gRepulse_links[6];
+
 // GetNextGoodyTime
 
 // DoPowerupTextHeadup
@@ -85,7 +87,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // AdjustRepulseRay
 
-// ResetRepulseRay
+extern void C2_HOOK_FASTCALL ResetRepulseRay(void);
 
 // DrawSinglePowerupIcon
 

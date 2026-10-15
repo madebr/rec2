@@ -58,6 +58,9 @@ int gCount_cloaked_cars;
 // GLOBAL: CARMA2_HW 0x006a0910
 tCar_spec* gCloaked_cars[12];
 
+// GLOBAL: CARMA2_HW 0x006a0960
+tRepulse_link gRepulse_links[6];
+
 // GLOBAL: CARMA2_HW 0x006a0a54
 tPowerup* gPowerup_array;
 
@@ -137,7 +140,19 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // AdjustRepulseRay
 
-// ResetRepulseRay
+// FUNCTION: CARMA2_HW 0x004da990
+void C2_HOOK_FASTCALL ResetRepulseRay(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gRepulse_links); i++) {
+        tRepulse_link* link = &gRepulse_links[i];
+
+        if (link->actor->parent == gNon_track_actor) {
+            BrActorRemove(link->actor);
+        }
+        link->time = 0;
+    }
+}
 
 // DrawSinglePowerupIcon
 
