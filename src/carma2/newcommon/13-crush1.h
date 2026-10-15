@@ -245,8 +245,6 @@ extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // ToggleFlaps
 
-// BitObjectIsSufficientlyOutsideCarObjectToDetach
-
 // FullyDetachBit
 
 // SendFullyDetachBit
@@ -354,6 +352,8 @@ extern void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_
 extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 extern intptr_t C2_HOOK_CDECL CheckFlapAngles(br_actor* pActor, void* pArg);
+
+extern int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_object* pObject);
 
 // RandomlyXZSplitCar
 

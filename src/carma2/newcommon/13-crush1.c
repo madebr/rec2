@@ -1291,8 +1291,6 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 
 // ToggleFlaps
 
-// BitObjectIsSufficientlyOutsideCarObjectToDetach
-
 // FullyDetachBit
 
 // SendFullyDetachBit
@@ -1631,6 +1629,27 @@ intptr_t C2_HOOK_CDECL CheckFlapAngles(br_actor* pActor, void* pArg) {
     parent_user = pActor->parent->user;
     parent_point = &parent_user->models[0]->vertices[flap->field_0xc].p;
     BrMatrix34PostTranslate(&pActor->t.t.mat, parent_point->v[0], parent_point->v[1], parent_point->v[2]);
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00434910
+int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_object* pObject) {
+    br_vector3 world_direction;
+    br_vector3 parent_direction;
+    const br_vector3* limit_direction;
+    br_scalar alignment;
+    int i;
+
+    for (i = 0; i < pObject->physics_joint1->count_limits; i++) {
+        BrMatrix34ApplyV(&world_direction, &pObject->physics_joint1->limits[i].child, &pObject->actor->t.t.mat);
+        BrMatrix34TApplyV(&parent_direction, &world_direction, &pObject->parent->actor->t.t.mat);
+        limit_direction = &pObject->physics_joint1->limits[i].parent;
+        alignment = limit_direction->v[2] * parent_direction.v[2] + limit_direction->v[1] * parent_direction.v[1];
+        alignment += limit_direction->v[0] * parent_direction.v[0];
+        if (alignment > 0.707107f) {
+            return 1;
+        }
+    }
     return 0;
 }
 
