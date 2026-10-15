@@ -1424,6 +1424,26 @@ intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00439960
+void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec* pCar_spec) {
+    int i;
+
+    for (i = 0; i < pCar_spec->car_crush_spec->count_shapes; i++) {
+        tCar_crush_shape_info* shape_info = &pCar_spec->car_crush_spec->field_0x4[i];
+        int j;
+
+        for (j = 0; j < shape_info->count_points; j++) {
+            tCar_crush_reordered_shape_info* point = &shape_info->field_0x18[j];
+
+            memcpy(&point->field_0x18, &point->field_0x0, sizeof(point->field_0x18));
+            if (DRVector3TestForNan(&shape_info->field_0x18[j].field_0x18)) {
+                PDEnterDebugger("NaN");
+            }
+        }
+    }
+    pCar_spec->car_crush_spec->expand_bounding_box = 3;
+}
+
 // FUNCTION: CARMA2_HW 0x00439fd0
 void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape) {
     int i;
@@ -1493,8 +1513,6 @@ void C2_HOOK_FASTCALL DoCompletelyUnBentThings(tCar_spec* pCar_spec) {
     CompletelyUnBendOtherThings(pCar_spec);
     DRActorEnumRecurse(pCar_spec->car_model_actor, EnableGroovers, NULL);
 }
-
-// TotallyRepairCarCollisionShapes
 
 // TotallyRepairModel
 
