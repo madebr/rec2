@@ -1410,6 +1410,20 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {
 
 // BattenDownTheObjects
 
+// FUNCTION: CARMA2_HW 0x00439910
+intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush = pActor->user;
+
+    (void)pData;
+    if (user_crush != NULL && user_crush->groove != NULL) {
+        PipeSingleGrooveOnOff(1, pActor, 3);
+        EnableGroovidelic(pActor, 3);
+        PipeSingleTransformType(pActor, BR_TRANSFORM_MATRIX34_LP);
+        pActor->t.type = BR_TRANSFORM_MATRIX34_LP;
+    }
+    return 0;
+}
+
 // FUNCTION: CARMA2_HW 0x00439fd0
 void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape) {
     int i;
@@ -1473,8 +1487,6 @@ void C2_HOOK_FASTCALL CompletelyUnBendOtherThings(tCar_spec* pCar_spec) {
     CompletelyUnBendWheels(pCar_spec);
     memcpy(&pCar_spec->collision_info->cmpos, &pCar_spec->car_crush_spec->field_0x264, sizeof(pCar_spec->collision_info->cmpos));
 }
-
-// EnableGroovers
 
 // DoCompletelyUnBentThings
 
