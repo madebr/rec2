@@ -1380,9 +1380,29 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {
 
 // DoBending
 
-// JitModelUpdate
+// FUNCTION: CARMA2_HW 0x00431590
+void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
+    int on_screen;
 
-// SetModelForUpdate
+    (void)pOn_screen;
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+    pModel->flags &= ~BR_MODF_CUSTOM;
+    on_screen = (int)BrOnScreenCheck(&pModel->bounds);
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, on_screen, 0);
+}
+
+// FUNCTION: CARMA2_HW 0x004315e0
+void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
+    if ((pModel->flags & BR_MODF_CUSTOM) && pModel->user != NULL) {
+        tU32 pending = 1;
+
+        /* Existing custom models mark their metadata as dirty. */
+        memcpy(pModel->user, &pending, sizeof(pending));
+    } else {
+        pModel->custom = JitModelUpdate;
+        pModel->flags |= BR_MODF_CUSTOM;
+    }
+}
 
 // RandomlyXZSplitCar
 

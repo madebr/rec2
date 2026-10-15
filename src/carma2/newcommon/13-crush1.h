@@ -351,9 +351,9 @@ extern int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pP
 
 // DoBending
 
-// JitModelUpdate
+extern void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
-// SetModelForUpdate
+extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // RandomlyXZSplitCar
 
