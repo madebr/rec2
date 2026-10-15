@@ -2,6 +2,8 @@
 
 #include "rec2_macros.h"
 
+#include "brender/brender.h"
+
 // GLOBAL: CARMA2_HW 0x0074d3b0
 int gCredits_wasting_car[3];
 
@@ -33,9 +35,24 @@ int gTime_per_ped_kill[3];
 
 // DamageUnit2
 
-// RecordLastDamage
-
 // DoDamage
+
+// FUNCTION: CARMA2_HW 0x0043f9f0
+void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(pCar->damage_units); i++) {
+        pCar->damage_units[i].last_level = pCar->damage_units[i].damage_level;
+    }
+    pCar->damage_magnitude_accumulator = 0.f;
+    pCar->last_impact_location = eImpact_unknown;
+    pCar->pre_car_col_mat = pCar->car_master_actor->t.t.mat;
+    pCar->pre_car_col_knackered = pCar->knackered;
+    pCar->pre_car_col_speed = pCar->speed;
+    BrVector3Copy(&pCar->pre_car_col_direction, &pCar->direction);
+    BrVector3Copy(&pCar->pre_car_col_velocity, &pCar->collision_info->v);
+    BrVector3Copy(&pCar->pre_car_col_velocity_car_space, &pCar->collision_info->velocity_car_space);
+}
 
 // CalcModifiedLocation
 

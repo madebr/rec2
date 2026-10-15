@@ -22,9 +22,9 @@ extern int gTime_per_ped_kill[3];
 
 // DamageUnit2
 
-// RecordLastDamage
-
 // DoDamage
+
+extern void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar);
 
 // CalcModifiedLocation
 
