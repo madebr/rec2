@@ -80,7 +80,17 @@ void C2_HOOK_FASTCALL ResetExplosions(void) {
     }
 }
 
-// RemoveAllExplosionettes
+void C2_HOOK_FASTCALL RemoveAllExplosionettes(void) {
+    int i;
+    br_actor* actor;
+
+    for (i = 0; i < (int)REC2_ASIZE(gExplosions); i++) {
+        actor = gExplosions[i].actor;
+        if (actor->parent != NULL) {
+            BrActorRemove(actor);
+        }
+    }
+}
 
 // MungeExplosions
 
@@ -90,7 +100,21 @@ void C2_HOOK_FASTCALL ResetExplosions(void) {
 
 // Explode
 
-// RemoveExplosions
+// FUNCTION: CARMA2_HW 0x004eb020
+void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec) {
+    int i;
+    tExplosion* explosion;
+
+    for (i = 0; i < (int)REC2_ASIZE(gExplosions); i++) {
+        explosion = &gExplosions[i];
+        if (explosion->start != 0 && explosion->collision_actor == pCar_spec->collision_info->actor) {
+            if (explosion->actor->parent != NULL) {
+                BrActorRemove(explosion->actor);
+            }
+            explosion->finished = 1;
+        }
+    }
+}
 
 // CalcRandomPointBetween
 

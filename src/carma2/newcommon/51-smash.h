@@ -16,7 +16,7 @@ extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 extern void C2_HOOK_FASTCALL ResetExplosions(void);
 
-// RemoveAllExplosionettes
+extern void C2_HOOK_FASTCALL RemoveAllExplosionettes(void);
 
 // MungeExplosions
 
@@ -26,7 +26,7 @@ extern void C2_HOOK_FASTCALL ResetExplosions(void);
 
 // Explode
 
-// RemoveExplosions
+extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
 // CalcRandomPointBetween
 
