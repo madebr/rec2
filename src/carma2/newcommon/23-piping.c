@@ -2074,7 +2074,13 @@ void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev
     actor->t.type = type;
 }
 
-// CalcCrushLength
+// FUNCTION: CARMA2_HW 0x004ca3f0
+int C2_HOOK_FASTCALL CalcCrushLength(tPipe_chunk* pChunk) {
+    br_model* model;
+
+    memcpy(&model, (const tU8*)pChunk + 4, sizeof(model));
+    return 10 + 2 * model->nvertices;
+}
 
 // FUNCTION: CARMA2_HW 0x004ca400
 int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {

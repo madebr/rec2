@@ -519,7 +519,7 @@ extern void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPre
 
 extern void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
-// CalcCrushLength
+extern int C2_HOOK_FASTCALL CalcCrushLength(tPipe_chunk* pChunk);
 
 extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 
