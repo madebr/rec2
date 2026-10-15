@@ -41,6 +41,9 @@ tTranslation_record* gTranslations;
 // GLOBAL: CARMA2_HW 0x006861e0
 tDR_font* gTrans_fonts[2];
 
+// GLOBAL: CARMA2_HW 0x00686308
+int gPalette_fuck_prevention;
+
 // GLOBAL: CARMA2_HW 0x005964d0
 tFlic_spec gMain_flic_list[372] = {
     { "MAINSTIL.FLI", 1, 0, 0, 0, 0, 25, },
@@ -391,9 +394,15 @@ int C2_HOOK_FASTCALL TranslationMode(void) {
     return gTranslation_count;
 }
 
-// DontLetFlicFuckWithPalettes
+// FUNCTION: CARMA2_HW 0x004619a0
+void C2_HOOK_FASTCALL DontLetFlicFuckWithPalettes(void) {
+    gPalette_fuck_prevention = 1;
+}
 
-// LetFlicFuckWithPalettes
+// FUNCTION: CARMA2_HW 0x004619b0
+void C2_HOOK_FASTCALL LetFlicFuckWithPalettes(void) {
+    gPalette_fuck_prevention = 0;
+}
 
 // TurnFlicTransparencyOn
 
