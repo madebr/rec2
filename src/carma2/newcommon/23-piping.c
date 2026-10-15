@@ -1202,7 +1202,12 @@ void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatr
         48, 16, (uintptr_t)pMatrix);
 }
 
-// PipeSingleNonCar
+// FUNCTION: CARMA2_HW 0x004c80f0
+void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
+    ARDoSingleVariedSession(ePipe_chunk_non_car, pId, 2,
+        4, 0, (uintptr_t)pActor,
+        48, 4, (uintptr_t)&pActor->t.t.mat);
+}
 
 // PipeSingleOilSpill
 
