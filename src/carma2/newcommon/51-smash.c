@@ -673,9 +673,15 @@ static intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
 
 // ChangeSmashModel
 
-// TurnOnSmashModel
+// FUNCTION: CARMA2_HW 0x004f5f70
+void C2_HOOK_FASTCALL TurnOnSmashModel(br_actor* pActor) {
+    pActor->render_style = BR_RSTYLE_FACES;
+}
 
-// TurnOffSmashModel
+// FUNCTION: CARMA2_HW 0x004f5f80
+void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor) {
+    pActor->render_style = BR_RSTYLE_NONE;
+}
 
 // SmashRemoveSomeFaces
 
