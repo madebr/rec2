@@ -5,9 +5,9 @@
 
 extern void C2_HOOK_FASTCALL ChangeAmbientPratcam(int pIndex);
 
-// PratcamEvent
+extern void C2_HOOK_FASTCALL PratcamEvent(int pIndex);
 
-// InitPratcam
+extern void C2_HOOK_FASTCALL InitPratcam(void);
 
 extern void C2_HOOK_FASTCALL DisposePratcam(void);
 
