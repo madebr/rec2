@@ -397,9 +397,9 @@ extern void C2_HOOK_FASTCALL DoCompletelyUnBentThings(tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL TotallyRepairModel(br_model* pModel);
 
-// TotallyRepairModels
+extern int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void* pUser_data);
 
-// TotallyRepairObject
+extern intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser);
 
 // SendReAttachAllBits
 
