@@ -2026,9 +2026,26 @@ void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflec
 
 // UnBendActor
 
-// UnBendCollisionShape
+// FUNCTION: CARMA2_HW 0x0043aa20
+void C2_HOOK_FASTCALL UnBendCollisionShape(tCar_crush_shape_info* pShape, const tBend_point_context* pContext) {
+    int i;
 
-// UnBendCollisionShapes
+    for (i = 0; i < pShape->count_points; i++) {
+        tCar_crush_reordered_shape_info* point = &pShape->field_0x18[i];
+
+        memcpy(&point->field_0x18, &point->field_0x2c, sizeof(point->field_0x18));
+        BendPoint(&point->field_0x18, pContext);
+    }
+}
+
+void C2_HOOK_FASTCALL UnBendCollisionShapes(tCar_spec* pCar_spec, const tBend_point_context* pContext) {
+    int i;
+
+    for (i = 0; i < pCar_spec->car_crush_spec->count_shapes; i++) {
+        UnBendCollisionShape(&pCar_spec->car_crush_spec->field_0x4[i], pContext);
+    }
+    pCar_spec->car_crush_spec->expand_bounding_box = 3;
+}
 
 // UnBendWheels
 
