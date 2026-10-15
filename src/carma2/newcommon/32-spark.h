@@ -242,7 +242,7 @@ extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar);
 
-// ClearSplashReplay
+extern void C2_HOOK_FASTCALL ClearSplashReplay(uintptr_t pObject);
 
 // GetSplashIndex
 
