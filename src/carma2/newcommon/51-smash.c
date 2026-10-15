@@ -264,7 +264,10 @@ void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smash
     }
 }
 
-// KillFragment
+void C2_HOOK_FASTCALL KillFragment(tSmash_vertex* pFragment) {
+    BrActorRemove(pFragment->actor);
+    pFragment->end_time = 0;
+}
 
 void C2_HOOK_FASTCALL AddRepairAnimationToQueue(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable) {
     int i;
