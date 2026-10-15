@@ -1481,7 +1481,14 @@ void C2_HOOK_FASTCALL ApplyRelink(tPipe_chunk** pChunk) {
     }
 }
 
-// ApplyIdentity
+// FUNCTION: CARMA2_HW 0x004c9890
+void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_actor* actor;
+
+    memcpy(&actor, chunk + 4, sizeof(actor));
+    BrMatrix34Identity(&actor->t.t.mat);
+}
 
 // ApplySplitWeld
 
