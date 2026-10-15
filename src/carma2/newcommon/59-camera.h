@@ -29,7 +29,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // IsCameraTypeAllowed
 
-// MungeCarMaterials
+extern void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_cam);
 
 // SetCameraType
 
