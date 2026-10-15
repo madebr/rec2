@@ -2395,7 +2395,24 @@ br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOriginal_x,
 
 // ReAttachBits
 
-// RepairObject
+// FUNCTION: CARMA2_HW 0x0043b400
+int C2_HOOK_FASTCALL RepairObject(tPhysics_object* pCollision_info, void* pUser_data) {
+    tRepair_context* repair_context;
+    tRepair_model_context model_context;
+
+    repair_context = pUser_data;
+    model_context.repaired_amount = 0.0f;
+    model_context.repair_step = repair_context->repair_step;
+    model_context.car = repair_context->car;
+    model_context.total_deflection = repair_context->total_deflection;
+
+    ARStartPipingSession(ePipe_model_mash);
+    DRActorEnumRecurse(pCollision_info->actor, RepairModels, &model_context);
+    AREndPipingSession();
+    DRActorEnumRecurse(pCollision_info->actor, CheckFlapAngles, NULL);
+    repair_context->repaired_amount = model_context.repaired_amount + repair_context->repaired_amount;
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0043b470
 intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {

@@ -446,7 +446,7 @@ extern br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOrig
 
 // ReAttachBits
 
-// RepairObject
+extern int C2_HOOK_FASTCALL RepairObject(tPhysics_object* pCollision_info, void* pUser_data);
 
 extern intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser);
 
