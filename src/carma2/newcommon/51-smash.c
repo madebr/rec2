@@ -23,6 +23,9 @@ tSmash_explosion gSmash_explosions[20];
 // GLOBAL: CARMA2_HW 0x006a7fc8
 tRepair_animation gRepair_animations[25];
 
+// GLOBAL: CARMA2_HW 0x006a80f8
+tDecal gDecals[50];
+
 // FUNCTION: CARMA2_HW 0x004ea880
 void C2_HOOK_FASTCALL InitExplosions(void) {
     int i;
@@ -318,7 +321,16 @@ void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer
 
 // InitDecals
 
-// RemoveAllDecals
+void C2_HOOK_FASTCALL RemoveAllDecals(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gDecals); i++) {
+        if (gDecals[i].time != 0) {
+            BrActorRemove(gDecals[i].actor);
+        }
+        gDecals[i].time = 0;
+    }
+}
 
 // ReadPowerupSmash
 

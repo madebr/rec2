@@ -12,6 +12,8 @@ extern tSmash_explosion gSmash_explosions[20];
 
 extern tRepair_animation gRepair_animations[25];
 
+extern tDecal gDecals[50];
+
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 extern void C2_HOOK_FASTCALL ResetExplosions(void);
@@ -160,7 +162,7 @@ extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush
 
 // InitDecals
 
-// RemoveAllDecals
+extern void C2_HOOK_FASTCALL RemoveAllDecals(void);
 
 // ReadPowerupSmash
 
