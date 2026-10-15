@@ -30,6 +30,9 @@ tRepair_animation gRepair_animations[25];
 // GLOBAL: CARMA2_HW 0x006a80f8
 tDecal gDecals[50];
 
+// GLOBAL: CARMA2_HW 0x006a828c
+int gCount_queued_smashes;
+
 // GLOBAL: CARMA2_HW 0x006b78e0
 tSmash_vertex gSmash_glass_fragments[200];
 
@@ -192,7 +195,10 @@ void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec) {
 
 // SmashItIntoVerySmallPiecesIndeed
 
-// InitSmashQueue
+// FUNCTION: CARMA2_HW 0x004ecfa0
+void C2_HOOK_FASTCALL InitSmashQueue(void) {
+    gCount_queued_smashes = 0;
+}
 
 // FlushPowerupQueue
 

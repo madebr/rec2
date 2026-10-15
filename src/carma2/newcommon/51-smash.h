@@ -14,6 +14,8 @@ extern tRepair_animation gRepair_animations[25];
 
 extern tDecal gDecals[50];
 
+extern int gCount_queued_smashes;
+
 extern tSmash_vertex gSmash_glass_fragments[200];
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
@@ -94,7 +96,7 @@ extern void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec);
 
 // SmashItIntoVerySmallPiecesIndeed
 
-// InitSmashQueue
+extern void C2_HOOK_FASTCALL InitSmashQueue(void);
 
 // FlushPowerupQueue
 
