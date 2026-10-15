@@ -333,7 +333,7 @@ extern void C2_HOOK_FASTCALL ApplyGrooveStop(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk);
 
-// ApplySound
+extern void C2_HOOK_FASTCALL ApplySound(tPipe_chunk** pChunk);
 
 // ApplyCar
 

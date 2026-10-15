@@ -10,6 +10,7 @@
 #include "42-input.h"
 #include "52-errors.h"
 #include "globvars.h"
+#include "c2_math.h"
 #include "c2_string.h"
 #include "platform.h"
 
@@ -1477,7 +1478,58 @@ void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk) {
     ApplyTime(time);
 }
 
-// ApplySound
+// FUNCTION: CARMA2_HW 0x004c9370
+void C2_HOOK_FASTCALL ApplySound(tPipe_chunk** pChunk) {
+    const tU8* chunk;
+    tU16 packed_volume;
+    tU16 outlet_index;
+    int sound;
+    int recorded_pitch;
+    int pitch;
+    int default_volume;
+    int spatial;
+    int64_t pitch_value;
+    double scaled_pitch;
+    double length_squared;
+    br_vector3 position;
+    tS3_outlet* outlet;
+
+    if (gDisable_piped_sounds) {
+        return;
+    }
+    chunk = (const tU8*)*pChunk;
+    memcpy(&packed_volume, chunk + 22, sizeof(packed_volume));
+    default_volume = packed_volume == 0;
+    spatial = 0;
+    if (default_volume) {
+        scaled_pitch = fabs((double)ARGetReplayRate()) * 65536.0;
+    } else {
+        memcpy(&position, chunk + 8, sizeof(position));
+        length_squared = ((double)position.v[0] * position.v[0] + (double)position.v[1] * position.v[1])
+            + (double)position.v[2] * position.v[2];
+        spatial = length_squared > 0.0;
+        chunk = (const tU8*)*pChunk;
+        memcpy(&recorded_pitch, chunk + 4, sizeof(recorded_pitch));
+        memcpy(&packed_volume, chunk + 22, sizeof(packed_volume));
+        scaled_pitch = fabs((double)ARGetReplayRate()) * recorded_pitch;
+    }
+    pitch_value = ReplayFtolLow(scaled_pitch);
+    /* Interpret the converted pitch's low word as a signed value. */
+    if (pitch_value > 0x7fffffff) {
+        pitch_value -= (int64_t)0xffffffffu + 1;
+    }
+    pitch = (int)pitch_value;
+    memcpy(&sound, chunk, sizeof(sound));
+    memcpy(&outlet_index, chunk + 20, sizeof(outlet_index));
+    outlet = GetOutletFromIndex(outlet_index);
+    if (default_volume) {
+        DRS3StartSound2(outlet, sound, 1, -1, -1, pitch, 0x10000);
+    } else if (!spatial) {
+        DRS3StartSound2(outlet, sound, 1, packed_volume & 0xff, packed_volume >> 8, pitch, 0x10000);
+    } else {
+        DRS3StartSound3D(outlet, sound, &position, &gZero_vector__smash, 1, packed_volume, pitch, 0x10000);
+    }
+}
 
 // ApplyCar
 
