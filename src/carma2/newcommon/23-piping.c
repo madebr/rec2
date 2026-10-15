@@ -1314,7 +1314,10 @@ void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOl
 
 // PipeSingleSmashRemoveFaces
 
-// PipeSingleSmashDecal
+// FUNCTION: CARMA2_HW 0x004c89f0
+void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex) {
+    ARDoSingleSession(35, (uintptr_t)pIndex, &gZero_vector__smash, 4);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8a10
 void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture) {
