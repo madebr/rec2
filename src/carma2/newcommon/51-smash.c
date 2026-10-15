@@ -1,10 +1,15 @@
 #include "51-smash.h"
 
+#include "09-funks.h"
+#include "23-piping.h"
 #include "41-utility.h"
 #include "59-camera.h"
+#include "69-sound.h"
 #include "globvars.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
+
+#include "brender/brender.h"
 
 // GLOBAL: CARMA2_HW 0x006abee8
 br_vector3 gZero_vector__smash;
@@ -192,7 +197,28 @@ void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec) {
 
 // ReadSmashableData
 
-// ActuallyRepairSmash
+// FUNCTION: CARMA2_HW 0x004ef840
+void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel) {
+    br_pixelmap* texture;
+    int texture_index;
+
+    pSmashable->field_0x4c = pLevel;
+    texture_index = IRandomBetween(0, pSmashable->levels[pLevel].count_pixelmaps - 1);
+    texture = pSmashable->levels[pLevel].pixelmaps[texture_index];
+    PipeSingleSmashTextureChange(pCar_spec, pSmashable->funk_material, texture);
+    pSmashable->funk_material->user = texture;
+    if (pCar_spec->field_0x1960 == NULL) {
+        pSmashable->funk_material->colour_map = texture;
+    }
+    BrMaterialUpdate(pSmashable->funk_material, BR_MATU_COLOURMAP);
+    MungeInternalCarGlass(pCar_spec);
+    if (pLevel == 0 && pSmashable->funk >= 0) {
+        EnableFunkotronic(pSmashable->funk);
+    }
+    if (pCar_spec != NULL && pCar_spec->driver == eDriver_local_human && gProgram_state.racing) {
+        DRS3StartSound(gCar_outlet, eSoundId_SmashRepair);
+    }
+}
 
 // KillFragment
 
@@ -200,7 +226,17 @@ void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec) {
 
 // RepairSmash
 
-// TotallyRepairSmash
+// FUNCTION: CARMA2_HW 0x004ef9c0
+void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer_entry* pSmash_data) {
+    tCar_crush_smashable_part* smashable = pSmash_data->smashables;
+    int i;
+
+    for (i = 0; i < pSmash_data->count_smashables; i++, smashable++) {
+        if (smashable->field_0x4c != 0) {
+            ActuallyRepairSmash(pCar_Spec, smashable, 0);
+        }
+    }
+}
 
 // InitGlassFragments
 
