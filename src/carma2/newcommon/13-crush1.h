@@ -474,7 +474,7 @@ extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, const tCompresse
 
 extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, const tCompressed_vector3* pMash);
 
-// ARApplyFlap
+extern void C2_HOOK_FASTCALL ARApplyFlap(br_actor* pActor, br_angle pAngle);
 
 // ARApplySplitWeld
 
