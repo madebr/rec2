@@ -201,8 +201,6 @@ extern void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* 
 
 extern void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel);
 
-// CheckFlapAngles
-
 extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // ReAttachBit
@@ -354,6 +352,8 @@ extern int C2_HOOK_FASTCALL EdgeCrossesZPlane(br_scalar pZ, const br_vector3* pP
 extern void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
 extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
+
+extern intptr_t C2_HOOK_CDECL CheckFlapAngles(br_actor* pActor, void* pArg);
 
 // RandomlyXZSplitCar
 

@@ -1232,8 +1232,6 @@ void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel) {
     }
 }
 
-// CheckFlapAngles
-
 // FUNCTION: CARMA2_HW 0x0042d9b0
 void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
     int g;
@@ -1520,6 +1518,120 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
         pModel->custom = JitModelUpdate;
         pModel->flags |= BR_MODF_CUSTOM;
     }
+}
+
+// FUNCTION: CARMA2_HW 0x00434320
+intptr_t C2_HOOK_CDECL CheckFlapAngles(br_actor* pActor, void* pArg) {
+    tUser_crush_data* user;
+    tUser_crush_data* parent_user;
+    tCar_crush_flap_data* flap;
+    tUser_detail_level_model* detail;
+    tModel_detail_vertex_data* vertex_data;
+    br_model* model;
+    br_vertex* vertices;
+    const br_vector3* hinge;
+    const br_vector3* parent_point;
+    br_vector3 hinge01;
+    br_vector3 hinge02;
+    br_vector3 hinge_normal;
+    br_vector3 perpendicular;
+    br_vector3 offset;
+    br_scalar projection;
+    double angle_radians;
+    br_angle reference_angle;
+    br_angle min_angle;
+    br_angle max_angle;
+    br_angle angle;
+    br_angle current_angle;
+    tU16 i;
+
+    (void)pArg;
+    user = pActor->user;
+    if (user == NULL || user->crush_data == NULL) {
+        return 0;
+    }
+    flap = user->crush_data->flap_data;
+    if (flap == NULL || flap->kev_o_flap || !flap->field_0x0 || !flap->field_0x15) {
+        return 0;
+    }
+    model = user->models[0];
+    if (model == NULL || model->user == NULL) {
+        return 0;
+    }
+    detail = model->user;
+    vertex_data = detail->field_0x4;
+    if (vertex_data == NULL) {
+        return 0;
+    }
+    vertices = model->vertices;
+    hinge = &vertices[flap->hinge0].p;
+    BrVector3Sub(&hinge01, &vertices[flap->hinge1].p, hinge);
+    BrVector3Normalise(&hinge01, &hinge01);
+    BrVector3Sub(&hinge02, &vertices[flap->hinge2].p, hinge);
+    BrVector3Normalise(&hinge02, &hinge02);
+    BrVector3Cross(&hinge_normal, &hinge01, &hinge02);
+    BrVector3Normalise(&hinge_normal, &hinge_normal);
+    projection = BrVector3Dot(&hinge02, &hinge01);
+    BrVector3Scale(&perpendicular, &hinge01, projection);
+    BrVector3Sub(&perpendicular, &hinge02, &perpendicular);
+    BrVector3Normalise(&perpendicular, &perpendicular);
+
+    parent_user = pActor->parent->user;
+    parent_point = &parent_user->models[0]->vertices[flap->field_0x12].p;
+    DrMatrix34ApplyLPInverse(&offset, parent_point, &pActor->t.t.mat);
+    BrVector3Sub(&offset, &offset, hinge);
+    projection = BrVector3Dot(&offset, &perpendicular);
+    reference_angle = 0;
+    if (projection < 0.f || projection > 0.f) {
+        angle_radians = atan2(BrVector3Dot(&offset, &hinge_normal), projection);
+        if (!isnan(angle_radians)) {
+            reference_angle = BrRadianToAngle(angle_radians);
+        }
+    }
+
+    // Find the angular limits of vertices marked for flap clearance.
+    min_angle = 0x3ffc;
+    max_angle = 0xc004;
+    for (i = 0; i < model->nvertices; i++) {
+        if (vertex_data[i].flags & 2) {
+            BrVector3Sub(&offset, &vertices[i].p, hinge);
+            projection = BrVector3Dot(&offset, &perpendicular);
+            if (projection < 0.f || projection > 0.f) {
+                angle = 0;
+                angle_radians = atan2(BrVector3Dot(&offset, &hinge_normal), projection);
+                if (!isnan(angle_radians)) {
+                    angle = BrRadianToAngle(angle_radians);
+                }
+                if ((br_angle)(angle - max_angle) < 0x7ff8) {
+                    max_angle = angle;
+                }
+                if ((br_angle)(min_angle - angle) < 0x7ff8) {
+                    min_angle = angle;
+                }
+            }
+        }
+    }
+    current_angle = flap->field_0x4;
+    flap->field_0x2 = (br_angle)(current_angle + reference_angle - min_angle);
+    flap->field_0x6 = (br_angle)(current_angle + reference_angle + 0x3ffc - max_angle);
+    flap->field_0x8 = (br_angle)(flap->field_0x6 - flap->field_0x2);
+    if ((br_angle)(current_angle - flap->field_0x2) > flap->field_0x8) {
+        if ((br_angle)(current_angle - flap->field_0x6) < 0x7ff8) {
+            PipeSingleFlap(pActor, (br_angle)(flap->field_0x6 - current_angle));
+            flap->field_0x4 = flap->field_0x6;
+        } else {
+            PipeSingleFlap(pActor, (br_angle)(flap->field_0x2 - current_angle));
+            flap->field_0x4 = flap->field_0x2;
+        }
+    }
+
+    // Keep the flap's hinge aligned with its attachment point on the parent.
+    BrMatrix34Translate(&pActor->t.t.mat, -hinge->v[0], -hinge->v[1], -hinge->v[2]);
+    BrMatrix34PostRotate(&pActor->t.t.mat, flap->field_0x4, &hinge01);
+    parent_user = pActor->parent->user;
+    parent_point = &parent_user->models[0]->vertices[flap->field_0xc].p;
+    BrMatrix34PostTranslate(&pActor->t.t.mat, parent_point->v[0], parent_point->v[1], parent_point->v[2]);
+    return 0;
 }
 
 // RandomlyXZSplitCar
