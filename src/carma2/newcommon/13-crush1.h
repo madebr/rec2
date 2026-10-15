@@ -536,9 +536,9 @@ extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, const tCompressed
 
 // Vector4Equal
 
-// CompressPlane
+extern void C2_HOOK_FASTCALL CompressPlane(tU16 pDest[4], const br_vector4* pSrc);
 
-// ExpandPlane
+extern void C2_HOOK_FASTCALL ExpandPlane(br_vector4* pDest, const tU16 pSrc[4]);
 
 // CopySplitInMessage
 
