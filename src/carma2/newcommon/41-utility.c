@@ -1377,12 +1377,14 @@ void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* pSrc) {
 
 // FUNCTION: CARMA2_HW 0x005160f0
 int C2_HOOK_FASTCALL TestForNan(const float* f) {
+    tU32 bits;
 
-    if (f != NULL) {
-        return ((~*(tU32*)f) & 0x7f800000) == 0;
-    } else {
+    if (f == NULL) {
         return 0;
     }
+    memcpy(&bits, f, sizeof(bits));
+    /* This diagnostic reports infinity as well as NaN. */
+    return (bits & 0x7f800000u) == 0x7f800000u;
 }
 
 // FUNCTION: CARMA2_HW 0x00516160
