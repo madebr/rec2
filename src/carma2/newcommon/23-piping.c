@@ -1305,7 +1305,12 @@ void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData) {
 
 // PipeSingleNonCarCreation
 
-// PipeSingleSmashModelChange
+// FUNCTION: CARMA2_HW 0x004c8960
+void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOld_model, br_model* pNew_model) {
+    ARDoSingleVariedSession(33, (uintptr_t)pActor, 2,
+        4, 0, (uintptr_t)pOld_model,
+        4, 4, (uintptr_t)pNew_model);
+}
 
 // PipeSingleSmashRemoveFaces
 
