@@ -2,6 +2,8 @@
 
 #include "rec2_macros.h"
 
+#include "c2_math.h"
+
 #include "brender/brender.h"
 
 // GLOBAL: CARMA2_HW 0x0074d3b0
@@ -76,6 +78,33 @@ tImpact_location C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar) {
 // DamageSystems
 
 // GetDirection
+tImpact_location C2_HOOK_FASTCALL GetDirection(br_vector3* pVelocity) {
+    double abs_x;
+    double abs_y;
+    double abs_z;
+
+    abs_x = fabs(pVelocity->v[0]);
+    abs_y = fabs(pVelocity->v[1]);
+    abs_z = fabs(pVelocity->v[2]);
+
+    if (abs_x > abs_y && abs_x > abs_z) {
+        if (!(pVelocity->v[0] >= 0.f)) {
+            return eImpact_left;
+        }
+        return eImpact_right;
+    }
+    if (abs_y > abs_x && abs_y > abs_z) {
+        if (!(pVelocity->v[1] >= 0.f)) {
+            return eImpact_bottom;
+        }
+        return eImpact_top;
+    }
+    /* Ties fall back to the Z direction. */
+    if (!(pVelocity->v[2] >= 0.f)) {
+        return eImpact_front;
+    }
+    return eImpact_back;
+}
 
 // FUNCTION: CARMA2_HW 0x00440210
 void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {

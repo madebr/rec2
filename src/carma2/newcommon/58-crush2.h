@@ -32,7 +32,7 @@ extern tImpact_location C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar);
 
 // DamageSystems
 
-// GetDirection
+extern tImpact_location C2_HOOK_FASTCALL GetDirection(br_vector3* pVelocity);
 
 extern void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar);
 
