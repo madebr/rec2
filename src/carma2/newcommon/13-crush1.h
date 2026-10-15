@@ -296,7 +296,7 @@ extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsDoubleSided(br_actor* pActor
 
 // SplitCar
 
-// QuantizePlane
+extern void C2_HOOK_FASTCALL QuantizePlane(br_vector4* pPlane);
 
 extern int C2_HOOK_FASTCALL WithinBounds(br_scalar pValue, br_scalar pMin, br_scalar pMax);
 

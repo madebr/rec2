@@ -1463,6 +1463,12 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsDoubleSided(br_actor* pActor, void*
 // SplitCar
 
 // QuantizePlane
+void C2_HOOK_FASTCALL QuantizePlane(br_vector4* pPlane) {
+    tU16 compressed[4];
+
+    CompressPlane(compressed, pPlane);
+    ExpandPlane(pPlane, compressed);
+}
 
 // WithinBounds
 int C2_HOOK_FASTCALL WithinBounds(br_scalar pValue, br_scalar pMin, br_scalar pMax) {
