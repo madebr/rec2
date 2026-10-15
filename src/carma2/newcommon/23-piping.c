@@ -1505,7 +1505,22 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyVanishDismembered
 
-// ApplyDSModel
+// FUNCTION: CARMA2_HW 0x004c9c40
+void C2_HOOK_FASTCALL ApplyDSModel(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    tU16 type;
+    void* thing;
+
+    memcpy(&type, chunk + 4, sizeof(type));
+    memcpy(&thing, chunk, sizeof(thing));
+    if (type != 0) {
+        MakeModelMaterialsDoubleSided(thing);
+    } else {
+        tCar_spec* car_spec = thing;
+
+        DRActorEnumRecurse(car_spec->car_model_actor, MakeCarModelsMaterialsSingleSided, car_spec);
+    }
+}
 
 // ApplyPedDiagnostics
 
