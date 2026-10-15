@@ -5,6 +5,7 @@
 #include "41-utility.h"
 #include "59-camera.h"
 #include "69-sound.h"
+#include "c2_math.h"
 #include "globvars.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
@@ -344,7 +345,57 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 
 // VerySimpleRotate
 
-// DoFragMovement
+// FUNCTION: CARMA2_HW 0x004eff30
+void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float pDelta_time) {
+    float f_dt;
+    double omega;
+    br_vector3 pos;
+    br_vector3 axis;
+    br_actor* actor;
+    double angle;
+    br_angle rotation;
+
+    f_dt = pDelta_time * 0.001f;
+    if ((pDelta_time < 0.f || pDelta_time > 0.f) && !pFragment->field_0x34) {
+        pFragment->actor->t.t.translate.t.v[0] = (br_scalar)(pFragment->actor->t.t.translate.t.v[0]
+            - ((double)pFragment->v.v[0] * f_dt) * (-1.0 / 6.9));
+        pFragment->actor->t.t.translate.t.v[1] = (br_scalar)(pFragment->actor->t.t.translate.t.v[1]
+            - ((double)pFragment->v.v[1] * f_dt
+                - ((double)gGravity_multiplier * f_dt) * f_dt * 4.9) * (-1.0 / 6.9));
+        pFragment->actor->t.t.translate.t.v[2] = (br_scalar)(pFragment->actor->t.t.translate.t.v[2]
+            - ((double)pFragment->v.v[2] * f_dt) * (-1.0 / 6.9));
+        actor = pFragment->actor;
+        pFragment->v.v[1] = (br_scalar)(pFragment->v.v[1]
+            - ((double)f_dt * gGravity_multiplier) * 9.8);
+
+        omega = sqrt(((double)pFragment->omega.v[1] * pFragment->omega.v[1]
+            + (double)pFragment->omega.v[2] * pFragment->omega.v[2])
+            + (double)pFragment->omega.v[0] * pFragment->omega.v[0]);
+        axis.v[0] = (br_scalar)(pFragment->omega.v[0] / omega);
+        axis.v[1] = (br_scalar)(pFragment->omega.v[1] / omega);
+        axis.v[2] = (br_scalar)(pFragment->omega.v[2] / omega);
+        angle = omega * f_dt;
+        if (fabs(angle) >= 0.0001) {
+            angle *= 32768.0 / PI;
+            if (angle >= -9223372036854775808.0 && angle < 9223372036854775808.0) {
+                rotation = (br_angle)(int64_t)angle;
+            } else {
+                rotation = 0;
+            }
+
+            /* Rotate around the fragment's origin without changing its position. */
+            BrVector3Copy(&pos, &actor->t.t.translate.t);
+            BrVector3Set(&actor->t.t.translate.t, 0.f, 0.f, 0.f);
+            BrMatrix34PostRotate(&actor->t.t.mat, rotation, &axis);
+            BrVector3Copy(&actor->t.t.translate.t, &pos);
+        }
+    }
+    if (pTime < pFragment->field_0x10) {
+        pFragment->actor->render_style = BR_RSTYLE_FACES;
+    } else {
+        pFragment->actor->render_style = BR_RSTYLE_NONE;
+    }
+}
 
 // MungeGlassFragments2
 
