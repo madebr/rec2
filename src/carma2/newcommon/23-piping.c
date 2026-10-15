@@ -1251,7 +1251,10 @@ void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle) {
 
 // PipeSingleRelink
 
-// PipeSingleIdentity
+// FUNCTION: CARMA2_HW 0x004c86d0
+void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor) {
+    ARDoSingleVariedSession(26, (uintptr_t)pActor, 1, 4, 0, (uintptr_t)pActor);
+}
 
 // PipeSingleSplitWeld
 

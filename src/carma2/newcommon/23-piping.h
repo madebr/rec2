@@ -235,7 +235,7 @@ extern void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle);
 
 // PipeSingleRelink
 
-// PipeSingleIdentity
+extern void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor);
 
 // PipeSingleSplitWeld
 
