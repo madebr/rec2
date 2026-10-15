@@ -1297,7 +1297,11 @@ void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* pPoints
 
 // MakeCarModelsMaterialsDoubleSided
 
-// SwapCarShapes
+void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pCollision_shape) {
+    pCar_spec->collision_info->shape = pCollision_shape;
+    UpdateCollisionObject(pCar_spec->collision_info);
+    pCar_spec->collision_info->bb2.min.v[1] = GetCarOverallBoundsMinY(pCar_spec);
+}
 
 // IsAWheelOrPivotActor
 

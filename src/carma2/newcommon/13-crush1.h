@@ -281,7 +281,7 @@ extern void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* 
 
 // MakeCarModelsMaterialsDoubleSided
 
-// SwapCarShapes
+extern void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pCollision_shape);
 
 // IsAWheelOrPivotActor
 
