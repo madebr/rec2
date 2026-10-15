@@ -2072,8 +2072,6 @@ void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflec
     *pDeflection += deflection;
 }
 
-// AddTotalDeflection
-
 // FUNCTION: CARMA2_HW 0x0043a150
 void C2_HOOK_FASTCALL UnBendActor(br_actor* pActor, tCar_bend_data* bend, br_angle pRepair_x, br_angle pRepair_y, br_angle pRepair_z, tCar_spec* pCar_spec) {
     tUnbend_model_context context;
@@ -2394,6 +2392,28 @@ br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOriginal_x,
 }
 
 // ReAttachBits
+
+// FUNCTION: CARMA2_HW 0x0043b2e0
+intptr_t C2_HOOK_CDECL AddTotalDeflection(br_actor* pActor, void* pUser) {
+    tUser_crush_data* user_crush;
+    tCar_crush_buffer_entry* crush_data;
+    const tRepair_context* context;
+    int i;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 0;
+    }
+    crush_data = user_crush->crush_data;
+    if (crush_data == NULL || !crush_data->field_0x2c) {
+        return 0;
+    }
+    context = pUser;
+    for (i = 0; i < context->car->count_detail_levels; i++) {
+        AddTotalDeflectionOfModel(user_crush->models[i], context->total_deflection);
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0043b400
 int C2_HOOK_FASTCALL RepairObject(tPhysics_object* pCollision_info, void* pUser_data) {
