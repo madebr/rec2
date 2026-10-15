@@ -1,5 +1,6 @@
 #include "23-piping.h"
 
+#include "00-car.h"
 #include "09-funks.h"
 #include "13-crush1.h"
 #include "16-graphics1.h"
@@ -1455,7 +1456,16 @@ void C2_HOOK_FASTCALL ApplyGrooveStop(tPipe_chunk** pChunk) {
     SetGrooveInterrupt(index, &matrix, path_interrupt_status, object_interrupt_status, path_resumption_value, object_resumption_value);
 }
 
-// ApplyNonCar
+// FUNCTION: CARMA2_HW 0x004c91b0
+void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_actor* actor;
+    br_matrix34 matrix;
+
+    memcpy(&actor, chunk + 4, sizeof(actor));
+    memcpy(&matrix, chunk + 8, sizeof(matrix));
+    AdjustNonCar(actor, &matrix);
+}
 
 // ApplySmoke
 

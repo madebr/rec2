@@ -317,7 +317,7 @@ extern void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyGrooveStop(tPipe_chunk** pChunk);
 
-// ApplyNonCar
+extern void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk);
 
 // ApplySmoke
 
