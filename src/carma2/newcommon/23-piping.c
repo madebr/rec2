@@ -1242,7 +1242,12 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
 
 // PipeSingleSkidAdjustment
 
-// PipeSingleFlap
+// FUNCTION: CARMA2_HW 0x004c8620
+void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle) {
+    ARDoSingleVariedSession(ePipe_chunk_flap_bits, (uintptr_t)pActor, 2,
+        4, 0, (uintptr_t)pActor,
+        2, 4, (uintptr_t)pAngle);
+}
 
 // PipeSingleRelink
 

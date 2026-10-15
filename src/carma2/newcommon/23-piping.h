@@ -231,7 +231,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // PipeSingleSkidAdjustment
 
-// PipeSingleFlap
+extern void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle);
 
 // PipeSingleRelink
 
