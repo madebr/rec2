@@ -286,7 +286,7 @@ extern void C2_HOOK_FASTCALL SaveVitalBitsOfObject(tSaved_vital_bits* pDest, con
 
 extern void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pCollision_shape);
 
-// IsAWheelOrPivotActor
+extern int C2_HOOK_FASTCALL IsAWheelOrPivotActor(br_actor* pActor, tCar_spec* pCar);
 
 extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg);
 
