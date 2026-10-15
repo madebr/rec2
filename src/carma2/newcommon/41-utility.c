@@ -1465,60 +1465,23 @@ int C2_HOOK_FASTCALL DRVector3NonZero(const br_vector3* pV) {
     }
 }
 
-#if defined(__GNUC__)
-typedef tU32 tDiminishRawWord __attribute__((__may_alias__));
-#else
-typedef tU32 tDiminishRawWord;
-#endif
-
-static double C2_HOOK_CDECL DiminishSubtractScalar(double left, volatile const br_scalar* right) {
-    double result;
-#if defined(_MSC_VER) && defined(_M_IX86)
-    __asm {
-        mov edx, right
-        fld qword ptr left
-        fsub dword ptr [edx]
-        fstp qword ptr result
-    }
-#elif defined(__GNUC__) && defined(__i386__)
-    __asm__ __volatile__("fldl %1; fsubs %2; fstpl %0" : "=m"(result) : "m"(left), "m"(*right) : "st");
-#else
-    result = left - (double)*right;
-#endif
-    return result;
-}
-
 // FUNCTION: CARMA2_HW 0x00516390
 void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3* pV2) {
-    volatile tU32 old_bits[3];
-    tU32 copied_bits[3];
-    br_vector3 old;
-    double difference, product;
+    br_vector3 old = *pV1;
 
-    /* Original computes X before its raw three-word snapshot, then stores X
-     * before loading Y/Z operands. These aliases and fault paths are live. */
-    difference = DiminishSubtractScalar((double)*(volatile const br_scalar*)&pV1->v[0], &pV2->v[0]);
-    old_bits[0] = *(volatile const tDiminishRawWord*)(const void*)&pV1->v[0];
-    old_bits[1] = *(volatile const tDiminishRawWord*)(const void*)&pV1->v[1];
-    old_bits[2] = *(volatile const tDiminishRawWord*)(const void*)&pV1->v[2];
-    *(volatile br_scalar*)&pV1->v[0] = (br_scalar)difference;
-    difference = DiminishSubtractScalar((double)*(volatile const br_scalar*)&pV1->v[1], &pV2->v[1]);
-    *(volatile br_scalar*)&pV1->v[1] = (br_scalar)difference;
-    difference = DiminishSubtractScalar((double)*(volatile const br_scalar*)&pV1->v[2], &pV2->v[2]);
-    *(volatile br_scalar*)&pV1->v[2] = (br_scalar)difference;
+    pV1->v[0] -= pV2->v[0];
+    pV1->v[1] -= pV2->v[1];
+    pV1->v[2] -= pV2->v[2];
 
-    copied_bits[0] = old_bits[0];
-    copied_bits[1] = old_bits[1];
-    copied_bits[2] = old_bits[2];
-    memcpy(&old, copied_bits, sizeof(old));
-    /* The product remains wide at PC53; unordered, zero and negative clamp
-     * to raw positive zero, exactly as the original TEST AH,0x41. */
-    product = (double)old.v[0] * (double)*(volatile const br_scalar*)&pV1->v[0];
-    if (!(product > 0.0)) *(volatile br_scalar*)&pV1->v[0] = 0.0f;
-    product = (double)old.v[1] * (double)*(volatile const br_scalar*)&pV1->v[1];
-    if (!(product > 0.0)) *(volatile br_scalar*)&pV1->v[1] = 0.0f;
-    product = (double)old.v[2] * (double)*(volatile const br_scalar*)&pV1->v[2];
-    if (!(product > 0.0)) *(volatile br_scalar*)&pV1->v[2] = 0.0f;
+    if (!((double)old.v[0] * pV1->v[0] > 0.0)) {
+        pV1->v[0] = 0.0f;
+    }
+    if (!((double)old.v[1] * pV1->v[1] > 0.0)) {
+        pV1->v[1] = 0.0f;
+    }
+    if (!((double)old.v[2] * pV1->v[2] > 0.0)) {
+        pV1->v[2] = 0.0f;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00516410
