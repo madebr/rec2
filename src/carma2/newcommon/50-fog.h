@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include <brender/brender.h>
 
+extern int gAllow_material_adapt;
+
 extern void C2_HOOK_FASTCALL InitFogificateMaterials(void);
 
 // FogificateMaterials
@@ -12,7 +14,7 @@ extern void C2_HOOK_FASTCALL InitFogificateMaterials(void);
 
 // AddFogificateMaterial
 
-// EnableAutoFogification
+extern void C2_HOOK_FASTCALL EnableAutoFogification(void);
 
 extern void C2_HOOK_FASTCALL DisableAutoFogification(void);
 
