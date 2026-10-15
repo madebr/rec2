@@ -3,7 +3,7 @@
 
 #include "c2_hooks.h"
 
-// ChangeAmbientPratcam
+extern void C2_HOOK_FASTCALL ChangeAmbientPratcam(int pIndex);
 
 // PratcamEvent
 
