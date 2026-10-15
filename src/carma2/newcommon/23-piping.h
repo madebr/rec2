@@ -379,7 +379,7 @@ extern void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk);
 
 // ApplyRepulseRay
 
-// ApplyActorTrans
+extern void C2_HOOK_FASTCALL ApplyActorTrans(tPipe_chunk** pChunk);
 
 // ApplyPedStatus
 
@@ -479,7 +479,7 @@ extern void C2_HOOK_FASTCALL UndoRelink(tPipe_chunk** pChunk, tPipe_chunk* pPrev
 
 // UndoSmashTextureChange
 
-// UndoActorTrans
+extern void C2_HOOK_FASTCALL UndoActorTrans(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoPedStatus
 

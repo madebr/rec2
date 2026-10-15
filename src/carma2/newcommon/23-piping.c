@@ -1625,7 +1625,20 @@ void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk) {
 
 // ApplyRepulseRay
 
-// ApplyActorTrans
+// FUNCTION: CARMA2_HW 0x004c9a70
+void C2_HOOK_FASTCALL ApplyActorTrans(tPipe_chunk** pChunk) {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        const tU8* chunk = (const tU8*)*pChunk;
+        br_actor* actor;
+        br_scalar value;
+
+        memcpy(&actor, chunk + 4, sizeof(actor));
+        memcpy(&value, chunk + 8 + i * sizeof(value), sizeof(value));
+        actor->t.t.mat.m[3][i] = value + actor->t.t.mat.m[3][i];
+    }
+}
 
 // ApplyPedStatus
 
@@ -1832,7 +1845,21 @@ void C2_HOOK_FASTCALL UndoRelink(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk)
 
 // UndoSmashTextureChange
 
-// UndoActorTrans
+// FUNCTION: CARMA2_HW 0x004ca180
+void C2_HOOK_FASTCALL UndoActorTrans(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    int i;
+
+    (void)pPrev_chunk;
+    for (i = 0; i < 3; i++) {
+        const tU8* chunk = (const tU8*)*pChunk;
+        br_actor* actor;
+        br_scalar value;
+
+        memcpy(&actor, chunk + 4, sizeof(actor));
+        memcpy(&value, chunk + 8 + i * sizeof(value), sizeof(value));
+        actor->t.t.mat.m[3][i] = actor->t.t.mat.m[3][i] - value;
+    }
+}
 
 // UndoPedStatus
 
