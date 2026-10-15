@@ -1452,7 +1452,24 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyModelMash
 
-// ApplyRelink
+// FUNCTION: CARMA2_HW 0x004c9850
+void C2_HOOK_FASTCALL ApplyRelink(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_actor* actor;
+    br_actor* parent;
+
+    memcpy(&actor, chunk + 4, sizeof(actor));
+    memcpy(&parent, chunk + 12, sizeof(parent));
+    if (actor->parent != NULL) {
+        if (parent != NULL) {
+            BrActorRelink(parent, actor);
+        } else {
+            BrActorRemove(actor);
+        }
+    } else if (parent != NULL) {
+        BrActorAdd(parent, actor);
+    }
+}
 
 // ApplyIdentity
 
@@ -1621,7 +1638,25 @@ void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk) {
 
 // UndoModelMash
 
-// UndoRelink
+// FUNCTION: CARMA2_HW 0x004c9f90
+void C2_HOOK_FASTCALL UndoRelink(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_actor* actor;
+    br_actor* parent;
+
+    (void)pPrev_chunk;
+    memcpy(&actor, chunk + 4, sizeof(actor));
+    memcpy(&parent, chunk + 8, sizeof(parent));
+    if (actor->parent != NULL) {
+        if (parent != NULL) {
+            BrActorRelink(parent, actor);
+        } else {
+            BrActorRemove(actor);
+        }
+    } else if (parent != NULL) {
+        BrActorAdd(parent, actor);
+    }
+}
 
 // UndoSplitWeld
 
