@@ -1338,7 +1338,23 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {
 
 // PointIsOutsideShape
 
-// PointIsOutsideLimits
+int C2_HOOK_FASTCALL PointIsOutsideLimits(tCar_crush_shape_info* pShape, int pPoint_index, tCar_crush_limits* pLimits) {
+    int i;
+    tU16 flags = pShape->field_0x18[pPoint_index].field_0x28;
+
+    for (i = 0; i < 3; i++) {
+        br_scalar value = pShape->field_0x18[pPoint_index].field_0x18.v[i];
+
+        if (!(value >= pLimits->limits[i][0].values[flags & 0x3])) {
+            return 1;
+        }
+        if (value > pLimits->limits[i][1].values[(flags >> 2) & 0x3]) {
+            return 1;
+        }
+        flags >>= 4;
+    }
+    return 0;
+}
 
 // ClipPointToPolyhedron
 

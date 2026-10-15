@@ -309,7 +309,7 @@ extern int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pP
 
 // PointIsOutsideShape
 
-// PointIsOutsideLimits
+extern int C2_HOOK_FASTCALL PointIsOutsideLimits(tCar_crush_shape_info* pShape, int pPoint_index, tCar_crush_limits* pLimits);
 
 // ClipPointToPolyhedron
 
