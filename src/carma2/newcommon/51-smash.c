@@ -324,7 +324,24 @@ void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer
     }
 }
 
-// InitGlassFragments
+void C2_HOOK_FASTCALL InitGlassFragments(void) {
+    int i;
+    tSmash_vertex* smash_vertex;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmash_glass_fragments); i++) {
+        smash_vertex = &gSmash_glass_fragments[i];
+        smash_vertex->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        smash_vertex->actor->model = BrModelAllocate(NULL, 3, 1);
+        smash_vertex->actor->model->faces[0].vertices[0] = 0;
+        smash_vertex->actor->model->faces[0].vertices[1] = 1;
+        smash_vertex->actor->model->faces[0].vertices[2] = 2;
+        smash_vertex->actor->model->flags |= BR_MODF_UPDATEABLE;
+        BrModelAdd(smash_vertex->actor->model);
+        smash_vertex->model = smash_vertex->actor->model;
+        smash_vertex->actor->render_style = BR_RSTYLE_FACES;
+        smash_vertex->end_time = 0;
+    }
+}
 
 // InitDecals
 

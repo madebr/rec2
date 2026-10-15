@@ -160,7 +160,7 @@ extern void C2_HOOK_FASTCALL RepairSmash(tCar_spec* pCar_spec, tCar_crush_buffer
 
 extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer_entry* pSmash_data);
 
-// InitGlassFragments
+extern void C2_HOOK_FASTCALL InitGlassFragments(void);
 
 // InitDecals
 
