@@ -1643,7 +1643,20 @@ void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
 
 // ApplySmashDecal
 
-// ApplySmashTextureChange
+// FUNCTION: CARMA2_HW 0x004c9a30
+void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_pixelmap* new_texture;
+    br_pixelmap* old_texture;
+    br_material* material;
+    tCar_spec* car_spec;
+
+    memcpy(&new_texture, chunk + 16, sizeof(new_texture));
+    memcpy(&old_texture, chunk + 12, sizeof(old_texture));
+    memcpy(&material, chunk, sizeof(material));
+    memcpy(&car_spec, chunk + 4, sizeof(car_spec));
+    ChangeSmashTexture(material, car_spec, old_texture, new_texture);
+}
 
 // ApplyRepulseRay
 
@@ -1883,7 +1896,21 @@ void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pP
 
 // UndoSmashDecal
 
-// UndoSmashTextureChange
+// FUNCTION: CARMA2_HW 0x004ca160
+void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_pixelmap* old_texture;
+    br_pixelmap* new_texture;
+    br_material* material;
+    tCar_spec* car_spec;
+
+    (void)pPrev_chunk;
+    memcpy(&old_texture, chunk + 12, sizeof(old_texture));
+    memcpy(&new_texture, chunk + 16, sizeof(new_texture));
+    memcpy(&material, chunk, sizeof(material));
+    memcpy(&car_spec, chunk + 4, sizeof(car_spec));
+    ChangeSmashTexture(material, car_spec, new_texture, old_texture);
+}
 
 // FUNCTION: CARMA2_HW 0x004ca180
 void C2_HOOK_FASTCALL UndoActorTrans(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
