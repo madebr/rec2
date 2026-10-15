@@ -36,7 +36,7 @@ extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // ShatterObject
 
-// MungeInternalCarGlass
+extern void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec);
 
 // ActuallySmashPart
 

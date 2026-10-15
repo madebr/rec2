@@ -1,6 +1,7 @@
 #include "51-smash.h"
 
 #include "41-utility.h"
+#include "59-camera.h"
 #include "globvars.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
@@ -81,7 +82,11 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
 
 // ShatterObject
 
-// MungeInternalCarGlass
+void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec) {
+    if (pCar_spec == &gProgram_state.current_car && gAction_replay_camera_mode == kActionReplayCameraMode_Internal) {
+        MungeCarMaterials(pCar_spec, 1);
+    }
+}
 
 // ActuallySmashPart
 
