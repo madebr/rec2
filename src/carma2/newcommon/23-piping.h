@@ -31,6 +31,8 @@ extern tU32 gPipe_sound_time;
 extern tU32 gPipe_sound_start_time;
 extern tU32 gPipe_sound_time_window;
 
+extern undefined4* gCrush_space;
+
 typedef void C2_HOOK_FASTCALL tReplay_session_callback(int pFrames);
 
 extern int C2_HOOK_FASTCALL ARReplayForwards(void);
@@ -197,7 +199,7 @@ extern void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_
 
 // AddFlapToPipingSession
 
-// AddModelMashToPipingSession
+extern void C2_HOOK_FASTCALL AddModelMashToPipingSession(br_model* pModel, br_vector3* pMash);
 
 // AddRepulseRayToPipingSession
 

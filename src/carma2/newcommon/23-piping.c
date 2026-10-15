@@ -1,5 +1,6 @@
 #include "23-piping.h"
 
+#include "13-crush1.h"
 #include "41-utility.h"
 #include "51-smash.h"
 #include "69-sound.h"
@@ -80,8 +81,13 @@ tU32 gPipe_sound_start_time;
 // GLOBAL: CARMA2_HW 0x006768a8
 tU32 gPipe_sound_time_window;
 
+// GLOBAL: CARMA2_HW 0x00694104
+undefined4* gCrush_space;
+
 // GLOBAL: CARMA2_HW 0x0069410c
 tU32 gUNK_0069410c;
+
+#define CRUSH_SPACE_SIZE 0x4000
 
 /* The original inline memcpy copies forward in four-byte groups, then bytes. */
 static void C2_HOOK_CDECL ReplayCopyForward(void* pDest, const void* pSource, tU32 pSize) {
@@ -1154,7 +1160,23 @@ void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar 
 
 // AddFlapToPipingSession
 
-// AddModelMashToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7550
+void C2_HOOK_FASTCALL AddModelMashToPipingSession(br_model* pModel, br_vector3* pMash) {
+    size_t size;
+    tPipe_model_mash* pipe_model_mash;
+
+    pipe_model_mash = (tPipe_model_mash*)gCrush_space;
+    if (pipe_model_mash == NULL) {
+        return;
+    }
+    size = pModel->nvertices * sizeof(tCompressed_vector3) + sizeof(br_model*);
+    if (size > CRUSH_SPACE_SIZE) {
+        FatalError(kFatalError_ChunkIsTooLargeToPipe);
+    }
+    pipe_model_mash->model = pModel;
+    ARCompressModelMash(pipe_model_mash->vectors, pModel, pMash);
+    ARAddDataToSession(ePipe_model_mash, (uintptr_t)-1, pipe_model_mash, (tU32)size);
+}
 
 // AddRepulseRayToPipingSession
 
