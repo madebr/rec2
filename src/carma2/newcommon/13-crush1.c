@@ -2862,13 +2862,15 @@ void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* 
 }
 
 // FUNCTION: CARMA2_HW 0x0043bf80
-void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, const tCompressed_vector3* pMash) {
+void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, const void* pMash) {
     int i;
 
     for (i = 0; i < pModel->nvertices; i++) {
         br_vector3 pos;
+        tCompressed_vector3 compressed;
 
-        ExpandVector3(&pos, &pMash[i], -10.0f, 10.0f);
+        memcpy(&compressed, (const tU8*)pMash + i * sizeof(compressed), sizeof(compressed));
+        ExpandVector3(&pos, &compressed, -10.0f, 10.0f);
         pModel->vertices[i].p.v[0] = pos.v[0] + pModel->vertices[i].p.v[0];
         pModel->vertices[i].p.v[1] = pos.v[1] + pModel->vertices[i].p.v[1];
         pModel->vertices[i].p.v[2] = pos.v[2] + pModel->vertices[i].p.v[2];
@@ -2877,13 +2879,15 @@ void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, const tCompressed_vecto
 }
 
 // FUNCTION: CARMA2_HW 0x0043c030
-void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, const tCompressed_vector3* pMash) {
+void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, const void* pMash) {
     int i;
 
     for (i = 0; i < pModel->nvertices; i++) {
         br_vector3 pos;
+        tCompressed_vector3 compressed;
 
-        ExpandVector3(&pos, &pMash[i], -10.0f, 10.0f);
+        memcpy(&compressed, (const tU8*)pMash + i * sizeof(compressed), sizeof(compressed));
+        ExpandVector3(&pos, &compressed, -10.0f, 10.0f);
         pModel->vertices[i].p.v[0] -= pos.v[0];
         pModel->vertices[i].p.v[1] -= pos.v[1];
         pModel->vertices[i].p.v[2] -= pos.v[2];

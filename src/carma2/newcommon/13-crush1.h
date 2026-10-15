@@ -470,9 +470,9 @@ extern void C2_HOOK_FASTCALL RestoreVitalBitsOfObject(tPhysics_object* pDest, co
 
 extern void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* pModel, br_vector3* pSrc);
 
-extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, const tCompressed_vector3* pMash);
+extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, const void* pMash);
 
-extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, const tCompressed_vector3* pMash);
+extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, const void* pMash);
 
 extern void C2_HOOK_FASTCALL ARApplyFlap(br_actor* pActor, br_angle pAngle);
 
