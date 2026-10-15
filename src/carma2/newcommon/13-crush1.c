@@ -1215,7 +1215,22 @@ void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* pPoints
 
 // SetUpFlapJoint
 
-// MakeModelMaterialsDoubleSided
+// FUNCTION: CARMA2_HW 0x0042d950
+void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel) {
+    int g;
+
+    if (pModel == NULL) {
+        return;
+    }
+    for (g = 0; g < pModel->prepared->ngroups; g++) {
+        br_material* material = pModel->faces[*pModel->prepared->groups[g].face_user].material;
+
+        if (material != NULL && !(material->flags & BR_MATF_TWO_SIDED)) {
+            material->flags |= BR_MATF_TWO_SIDED;
+            BrMaterialUpdate(material, BR_MATU_RENDERING);
+        }
+    }
+}
 
 // CheckFlapAngles
 
@@ -1310,8 +1325,6 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 
 // SaveVitalBitsOfObject
 
-// MakeCarModelsMaterialsDoubleSided
-
 void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pCollision_shape) {
     pCar_spec->collision_info->shape = pCollision_shape;
     UpdateCollisionObject(pCar_spec->collision_info);
@@ -1349,6 +1362,22 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {
     distance += (double)crush->field_0x548.v[0] * pPos->v[0];
     distance -= crush->field_0x554;
     return !(distance >= 0.0f);
+}
+
+// FUNCTION: CARMA2_HW 0x00430730
+intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsDoubleSided(br_actor* pActor, void* pArg) {
+    tUser_crush_data* user_crush = pActor->user;
+    tCar_spec* car_spec = pArg;
+    int i;
+
+    if (user_crush != NULL) {
+        for (i = 0; i < car_spec->count_detail_levels; i++) {
+            if (user_crush->models[i] != NULL) {
+                MakeModelMaterialsDoubleSided(user_crush->models[i]);
+            }
+        }
+    }
+    return 0;
 }
 
 // SplitCar
