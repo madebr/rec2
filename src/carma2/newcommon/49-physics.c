@@ -2252,7 +2252,63 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 
 // DoInterGroupCollisions
 
-// ReduceEffectOfForces
+// FUNCTION: CARMA2_HW 0x004ba550
+int C2_HOOK_FASTCALL ReduceEffectOfForces(tPhysics_joint_force* records, br_scalar* impulses, int count, const int* indices, int selected_count, br_scalar maximum) {
+    double sum = 0.0;
+    br_scalar ratio;
+    br_scalar loaded;
+    tPhysics_joint_force* record;
+    int i;
+    int j;
+
+    C2_HOOK_BUG_ON(sizeof(br_scalar) != 4);
+    C2_HOOK_BUG_ON(sizeof(tPhysics_joint_force) != 0x60);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, object_b, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, field_44, 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPhysics_joint_force, field_44, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, type, 0x5c);
+
+    for (i = 0; i < selected_count; i++) {
+        sum += impulses[indices[i]];
+    }
+    if (!(sum > maximum)) {
+        return 0;
+    }
+
+    ratio = (br_scalar)((double)maximum / sum);
+    gPhysics_joints_changed_692dc8 = 1;
+    for (i = 0; i < count; i++) {
+        impulses[i] = -impulses[i];
+    }
+    /* Duplicate selections apply the reduction repeatedly. */
+    for (i = 0; i < selected_count; i++) {
+        impulses[indices[i]] *= -ratio;
+        if ((records[indices[i]].type & 0x100) != 0) {
+            for (j = 0; j < 3; j++) {
+                record = &records[indices[i]];
+                memcpy(&loaded, &record->field_44[j * sizeof(loaded)], sizeof(loaded));
+                loaded *= ratio;
+                memcpy(&record->field_44[j * sizeof(loaded)], &loaded, sizeof(loaded));
+            }
+            /* A force with a second object scales the same stored vector again. */
+            if (records[indices[i]].object_b != NULL) {
+                for (j = 0; j < 3; j++) {
+                    record = &records[indices[i]];
+                    memcpy(&loaded, &record->field_44[j * sizeof(loaded)], sizeof(loaded));
+                    loaded *= ratio;
+                    memcpy(&record->field_44[j * sizeof(loaded)], &loaded, sizeof(loaded));
+                }
+            }
+        }
+    }
+    for (i = 0; i < count; i++) {
+        if (!(impulses[i] >= 0.f)) {
+            impulses[i] = 0.f;
+        }
+        records[i].type = 9;
+    }
+    return 1;
+}
 
 // DoCollisions
 
@@ -7639,73 +7695,6 @@ void C2_HOOK_FASTCALL PrepareObject(tPhysics_object* object, tPhysics_object** l
         PrepareWriteWord(object, 0x234, (tU32)(uintptr_t)before);
         PrepareWriteWord(reduced, 0, (tU32)(uintptr_t)object);
     }
-}
-
-static volatile br_scalar* C2_HOOK_CDECL ClampScalar(void* base, tU32 offset) {
-    return (volatile br_scalar*)(uintptr_t)((tU32)(uintptr_t)base + offset);
-}
-static volatile tU32* C2_HOOK_CDECL ClampWord(void* base, tU32 offset) {
-    return (volatile tU32*)(uintptr_t)((tU32)(uintptr_t)base + offset);
-}
-static void* C2_HOOK_CDECL ClampRecord(tPhysics_joint_force* records, const volatile tU32* index) {
-    return (void*)(uintptr_t)((tU32)(uintptr_t)records + *index * 96u);
-}
-static void C2_HOOK_CDECL ClampScale(void* record, tU32 offset, const volatile br_scalar* ratio) {
-    volatile double loaded = (double)*ClampScalar(record, offset);
-    *ClampScalar(record, offset) = (br_scalar)(loaded * (double)*ratio);
-}
-
-// FUNCTION: CARMA2_HW 0x004ba550
-int C2_HOOK_FASTCALL FUN_004ba550(tPhysics_joint_force* records, br_scalar* impulses, int count, const int* indices, int selected_count, br_scalar maximum) {
-    const volatile tU32* index = (const volatile tU32*)indices;
-    volatile double sum = 0.0;
-    volatile double loaded;
-    volatile br_scalar ratio;
-    volatile double negative_ratio;
-    volatile double wide_ratio;
-    volatile br_scalar* impulse;
-    void* record;
-    int i;
-
-    for (i = 0; i < selected_count; ++i) {
-        sum = sum + (double)*ClampScalar(impulses, index[i] * 4u);
-    }
-    if (PhysicsWallNaN(sum) || PhysicsWallNaN((double)maximum) || !(sum > (double)maximum)) return 0;
-
-    wide_ratio = (double)maximum / sum;
-    *(volatile tU32*)&gPhysics_joints_changed_692dc8 = 1;
-    ratio = (br_scalar)wide_ratio;
-    for (i = 0; i < count; ++i) {
-        impulse = ClampScalar(impulses, (tU32)i * 4u);
-        loaded = (double)*impulse;
-        *impulse = (br_scalar)-loaded;
-    }
-    negative_ratio = -(double)ratio;
-    for (i = 0; i < selected_count; ++i) {
-        impulse = ClampScalar(impulses, *index * 4u);
-        loaded = (double)*impulse;
-        *impulse = (br_scalar)(loaded * negative_ratio);
-        record = ClampRecord(records, index);
-        if ((*ClampWord(record, 0x5c) & 0x100u) != 0) {
-            ClampScale(record, 0x44, &ratio);
-            ClampScale(ClampRecord(records, index), 0x48, &ratio);
-            ClampScale(ClampRecord(records, index), 0x4c, &ratio);
-            record = ClampRecord(records, index);
-            if (*ClampWord(record, 8) != 0) {
-                ClampScale(record, 0x44, &ratio);
-                ClampScale(ClampRecord(records, index), 0x48, &ratio);
-                ClampScale(ClampRecord(records, index), 0x4c, &ratio);
-            }
-        }
-        ++index;
-    }
-    for (i = 0; i < count; ++i) {
-        impulse = ClampScalar(impulses, (tU32)i * 4u);
-        loaded = (double)*impulse;
-        if (loaded < 0.0 || PhysicsWallNaN(loaded)) *ClampWord(impulses, (tU32)i * 4u) = 0;
-        *ClampWord(records, (tU32)i * 96u + 0x5c) = 9;
-    }
-    return 1;
 }
 
 static double C2_HOOK_CDECL PhysicsJointScalar(double value);

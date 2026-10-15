@@ -286,7 +286,7 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject);
 
 // DoInterGroupCollisions
 
-// ReduceEffectOfForces
+extern int C2_HOOK_FASTCALL ReduceEffectOfForces(tPhysics_joint_force* records, br_scalar* impulses, int count, const int* indices, int selected_count, br_scalar maximum);
 
 // DoCollisions
 
@@ -523,7 +523,6 @@ extern tU32 gPhysics_stationary_filter_6940ac;
 int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tPhysics_object* object, tPhysics_object* other, tPhysics_object* original_list);
 void C2_HOOK_FASTCALL InternalPrepareObject(tPhysics_object* object);
 void C2_HOOK_FASTCALL PrepareObject(tPhysics_object* object, tPhysics_object** list_head);
-int C2_HOOK_FASTCALL FUN_004ba550(tPhysics_joint_force* records, br_scalar* impulses, int count, const int* indices, int selected_count, br_scalar maximum);
 
 void C2_HOOK_FAKE_THISCALL FUN_004c2670(tPhysics_object* object, undefined4 unused_edx, br_scalar time);
 void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* object, undefined4 unused_edx, br_scalar time);
