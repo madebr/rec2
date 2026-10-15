@@ -436,7 +436,7 @@ extern void C2_HOOK_FASTCALL UnBendCollisionShape(tCar_crush_shape_info* pShape,
 
 extern void C2_HOOK_FASTCALL UnBendCollisionShapes(tCar_spec* pCar_spec, const tBend_point_context* pContext);
 
-// UnBendWheels
+extern void C2_HOOK_FASTCALL UnBendWheels(tCar_spec* pCar_spec, const tBend_point_context* pContext);
 
 // UnBendOtherThings
 
