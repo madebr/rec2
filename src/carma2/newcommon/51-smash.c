@@ -671,7 +671,11 @@ static intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
 
 // LoadWastedExplosion
 
-// ChangeSmashModel
+// FUNCTION: CARMA2_HW 0x004f5f60
+void C2_HOOK_FASTCALL ChangeSmashModel(br_actor* pActor, br_model* pOld_model, br_model* pNew_model) {
+    (void)pOld_model;
+    pActor->model = pNew_model;
+}
 
 // FUNCTION: CARMA2_HW 0x004f5f70
 void C2_HOOK_FASTCALL TurnOnSmashModel(br_actor* pActor) {

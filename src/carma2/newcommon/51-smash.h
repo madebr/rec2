@@ -274,7 +274,7 @@ extern intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec);
 
 // LoadWastedExplosion
 
-// ChangeSmashModel
+extern void C2_HOOK_FASTCALL ChangeSmashModel(br_actor* pActor, br_model* pOld_model, br_model* pNew_model);
 
 extern void C2_HOOK_FASTCALL TurnOnSmashModel(br_actor* pActor);
 
