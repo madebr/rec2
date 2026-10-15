@@ -457,7 +457,7 @@ extern br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOrig
 
 // ARUndoCrush
 
-// ARCompressModelMash
+extern void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* pModel, br_vector3* pSrc);
 
 // ARApplyModelMash
 
