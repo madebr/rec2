@@ -16,10 +16,11 @@ extern tCrush_info_buffer gSplit_car_crush_info_buffer;
 extern tPhysics_object* gSplit_car_collision_infos;
 extern tDriver gSplit_car_driver;
 extern tPhysics_shape* gGonad_sphere_collision_shape;
+extern tCrush_list_item gCrush_lists[8];
 
 extern void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF);
 
-// ClearCrushLists
+extern void C2_HOOK_FASTCALL ClearCrushLists(void);
 
 // RemoveCarFromCrushLists
 

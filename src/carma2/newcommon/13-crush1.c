@@ -106,6 +106,9 @@ tDriver gSplit_car_driver;
 // GLOBAL: CARMA2_HW 0x006796b4
 tPhysics_shape* gGonad_sphere_collision_shape;
 
+// GLOBAL: CARMA2_HW 0x006796c8
+tCrush_list_item gCrush_lists[8];
+
 // FUNCTION: CARMA2_HW 0x00429bb0
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
     char s[256];
@@ -171,7 +174,13 @@ void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
     }
 }
 
-// ClearCrushLists
+void C2_HOOK_FASTCALL ClearCrushLists(void) {
+    int i;
+
+    for (i = 0; gCrush_lists[i].car_spec != NULL; i++) {
+        gCrush_lists[i].car_spec = NULL;
+    }
+}
 
 // RemoveCarFromCrushLists
 
