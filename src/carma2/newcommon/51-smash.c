@@ -400,6 +400,12 @@ void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004f00f0
+void C2_HOOK_FASTCALL MungeGlassFragments(void) {
+    MungeGlassFragments2(0);
+    MungeAnimationRepairs();
+}
+
 // FUNCTION: CARMA2_HW 0x004f0150
 void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
     // GLOBAL: CARMA2_HW 0x006a7fc0
@@ -481,8 +487,6 @@ void C2_HOOK_FASTCALL MungeAnimationRepairs(void) {
         }
     }
 }
-
-// MungeGlassFragments
 
 void C2_HOOK_FASTCALL KillAllGlassFragments(void) {
     MungeGlassFragments2(1);
