@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include <s3/s3.h>
 
+extern float gReplay_rate;
+
 // ARReplayForwards
 
 // ARReplayIsReallyPaused
@@ -12,7 +14,7 @@
 
 extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
-// ARSetReplayRate
+extern void C2_HOOK_FASTCALL ARSetReplayRate(float pRate);
 
 // ARGetReplayDirection
 
