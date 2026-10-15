@@ -343,7 +343,26 @@ void C2_HOOK_FASTCALL InitGlassFragments(void) {
     }
 }
 
-// InitDecals
+void C2_HOOK_FASTCALL InitDecals(void) {
+    int i;
+    tDecal* smash_quad;
+
+    for (i = 0; i < (int)REC2_ASIZE(gDecals); i++) {
+        smash_quad = &gDecals[i];
+        smash_quad->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        smash_quad->actor->model = BrModelAllocate(NULL, 4, 2);
+        smash_quad->actor->model->faces[0].vertices[0] = 0;
+        smash_quad->actor->model->faces[0].vertices[1] = 1;
+        smash_quad->actor->model->faces[0].vertices[2] = 3;
+        smash_quad->actor->model->faces[1].vertices[0] = 0;
+        smash_quad->actor->model->faces[1].vertices[1] = 3;
+        smash_quad->actor->model->faces[1].vertices[2] = 2;
+        smash_quad->actor->model->flags |= BR_MODF_UPDATEABLE;
+        BrModelAdd(smash_quad->actor->model);
+        smash_quad->actor->render_style = BR_RSTYLE_FACES;
+        smash_quad->time = 0;
+    }
+}
 
 void C2_HOOK_FASTCALL RemoveAllDecals(void) {
     int i;
