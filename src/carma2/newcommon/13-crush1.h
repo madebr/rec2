@@ -17,6 +17,16 @@ extern tPhysics_object* gSplit_car_collision_infos;
 extern tDriver gSplit_car_driver;
 extern tPhysics_shape* gGonad_sphere_collision_shape;
 extern tCrush_list_item gCrush_lists[8];
+extern int gCount_queued_drone_crushes;
+extern int gCount_crush_detach_list;
+extern int gINT_0067bdfc;
+extern int gCount_toggled_doors;
+extern tU8 gCrush_data_entry_counter;
+extern int gCount_net_crush_detach_list;
+extern int gCount_net_crush_semi_detach_bit_list;
+extern int gCount_net_crush_full_detach_bit_list;
+extern int gCount_net_crush_reattach_bit_list;
+extern int gCount_car_damage_crush_list;
 
 extern void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF);
 
@@ -26,7 +36,7 @@ extern void C2_HOOK_FASTCALL ClearCrushLists(void);
 
 extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
-// ResetCrushSystems
+extern void C2_HOOK_FASTCALL ResetCrushSystems(void);
 
 // ReadCrushData
 

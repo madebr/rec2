@@ -109,6 +109,36 @@ tPhysics_shape* gGonad_sphere_collision_shape;
 // GLOBAL: CARMA2_HW 0x006796c8
 tCrush_list_item gCrush_lists[8];
 
+// GLOBAL: CARMA2_HW 0x006796bc
+int gCount_queued_drone_crushes;
+
+// GLOBAL: CARMA2_HW 0x0067bad0
+int gCount_crush_detach_list;
+
+// GLOBAL: CARMA2_HW 0x0067bdfc
+int gINT_0067bdfc;
+
+// GLOBAL: CARMA2_HW 0x0067bd58
+int gCount_toggled_doors;
+
+// GLOBAL: CARMA2_HW 0x0067be08
+tU8 gCrush_data_entry_counter;
+
+// GLOBAL: CARMA2_HW 0x0067bdf0
+int gCount_net_crush_detach_list;
+
+// GLOBAL: CARMA2_HW 0x0067b838
+int gCount_net_crush_semi_detach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067bd60
+int gCount_net_crush_full_detach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067b7c8
+int gCount_net_crush_reattach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067b7cc
+int gCount_car_damage_crush_list;
+
 // FUNCTION: CARMA2_HW 0x00429bb0
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
     char s[256];
@@ -230,7 +260,27 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
     gGonad_sphere_collision_shape = (tPhysics_shape*)AllocateShapeSphere(kMem_crush_data);
 }
 
-// ResetCrushSystems
+// FUNCTION: CARMA2_HW 0x0042a190
+void C2_HOOK_FASTCALL ResetCrushSystems(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gTrack_crush_joints); i++) {
+        gTrack_crush_joints[i]->type = eJoint_none;
+    }
+    gDetached_bit_crush_info_buffer.field_0x8 = 0;
+    gSplit_car_crush_info_buffer.field_0x8 = 0;
+    ClearCrushLists();
+    gCount_queued_drone_crushes = 0;
+    gCount_crush_detach_list = 0;
+    gINT_0067bdfc = 0;
+    gCount_toggled_doors = 0;
+    gCrush_data_entry_counter = 0;
+    gCount_net_crush_detach_list = 0;
+    gCount_net_crush_semi_detach_bit_list = 0;
+    gCount_net_crush_full_detach_bit_list = 0;
+    gCount_net_crush_reattach_bit_list = 0;
+    gCount_car_damage_crush_list = 0;
+}
 
 // ReadCrushData
 
