@@ -1219,7 +1219,22 @@ void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* pPoints
 
 // CheckFlapAngles
 
-// MakeModelMaterialsSingleSided
+// FUNCTION: CARMA2_HW 0x0042d9b0
+void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
+    int g;
+
+    if (pModel == NULL) {
+        return;
+    }
+    for (g = 0; g < pModel->prepared->ngroups; g++) {
+        br_material* mat = pModel->faces[*pModel->prepared->groups[g].face_user].material;
+
+        if (mat != NULL && (mat->flags & BR_MATF_TWO_SIDED) && mat->identifier != NULL && mat->identifier[0] == 'S') {
+            mat->flags &= ~BR_MATF_TWO_SIDED;
+            BrMaterialUpdate(mat, BR_MATU_RENDERING);
+        }
+    }
+}
 
 // ReAttachBit
 
@@ -1305,7 +1320,21 @@ void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pColli
 
 // IsAWheelOrPivotActor
 
-// MakeCarModelsMaterialsSingleSided
+// FUNCTION: CARMA2_HW 0x0042deb0
+intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg) {
+    tUser_crush_data* user_crush = pActor->user;
+    tCar_spec* car_spec = pArg;
+    int i;
+
+    if (user_crush != NULL) {
+        for (i = 0; i < car_spec->count_detail_levels; i++) {
+            if (user_crush->models[i] != NULL) {
+                MakeModelMaterialsSingleSided(user_crush->models[i]);
+            }
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0042df70
 int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {

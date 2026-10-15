@@ -203,7 +203,7 @@ extern void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* 
 
 // CheckFlapAngles
 
-// MakeModelMaterialsSingleSided
+extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // ReAttachBit
 
@@ -285,7 +285,7 @@ extern void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape*
 
 // IsAWheelOrPivotActor
 
-// MakeCarModelsMaterialsSingleSided
+extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg);
 
 extern int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos);
 
