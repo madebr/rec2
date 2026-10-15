@@ -1524,7 +1524,20 @@ void C2_HOOK_FASTCALL ApplyDSModel(tPipe_chunk** pChunk) {
 
 // ApplyPedDiagnostics
 
-// ApplyVector3
+// FUNCTION: CARMA2_HW 0x004c9c90
+void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk) {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        const tU8* chunk = (const tU8*)*pChunk;
+        br_vector3* vector;
+        br_scalar value;
+
+        memcpy(&vector, chunk, sizeof(vector));
+        memcpy(&value, chunk + 4 + i * sizeof(value), sizeof(value));
+        vector->v[i] = value + vector->v[i];
+    }
+}
 
 // ApplyDroneRender
 
@@ -1614,7 +1627,21 @@ void C2_HOOK_FASTCALL ApplyDSModel(tPipe_chunk** pChunk) {
 
 // UndoVanishDismembered
 
-// UndoVector3
+// FUNCTION: CARMA2_HW 0x004ca360
+void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    int i;
+
+    (void)pPrev_chunk;
+    for (i = 0; i < 3; i++) {
+        const tU8* chunk = (const tU8*)*pChunk;
+        br_vector3* vector;
+        br_scalar value;
+
+        memcpy(&vector, chunk, sizeof(vector));
+        memcpy(&value, chunk + 4 + i * sizeof(value), sizeof(value));
+        vector->v[i] = vector->v[i] - value;
+    }
+}
 
 // UndoNapalmBolt
 

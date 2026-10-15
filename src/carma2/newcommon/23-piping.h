@@ -417,7 +417,7 @@ extern void C2_HOOK_FASTCALL ApplyDSModel(tPipe_chunk** pChunk);
 
 // ApplyPedDiagnostics
 
-// ApplyVector3
+extern void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk);
 
 // ApplyDroneRender
 
@@ -507,7 +507,7 @@ extern void C2_HOOK_FASTCALL ApplyDSModel(tPipe_chunk** pChunk);
 
 // UndoVanishDismembered
 
-// UndoVector3
+extern void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoNapalmBolt
 
