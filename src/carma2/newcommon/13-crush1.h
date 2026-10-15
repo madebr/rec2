@@ -531,6 +531,6 @@ extern void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_
 
 // CopySplitInMessage
 
-// SetAllShapeStatusFlags
+extern void C2_HOOK_FASTCALL SetAllShapeStatusFlags(tCar_crush_network_shapes* pShapes);
 
 #endif // GUARD_13_CRUSH1_H
