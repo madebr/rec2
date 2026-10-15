@@ -1,5 +1,6 @@
 #include "58-crush2.h"
 
+#include "43-pratcam.h"
 #include "rec2_macros.h"
 
 #include "c2_math.h"
@@ -73,7 +74,35 @@ tImpact_location C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar) {
     return location;
 }
 
-// DoPratcamHit
+// FUNCTION: CARMA2_HW 0x0043faa0
+void C2_HOOK_FASTCALL DoPratcamHit(br_vector3* pVelocity) {
+    br_scalar magnitude_squared;
+    int offset;
+
+    magnitude_squared = (pVelocity->v[1] * pVelocity->v[1]
+        + pVelocity->v[2] * pVelocity->v[2])
+        + pVelocity->v[0] * pVelocity->v[0];
+    offset = 0;
+    if (magnitude_squared > 0.2f) {
+        offset = 8;
+    } else if (magnitude_squared > 0.015f) {
+        offset = 4;
+    } else if (!(magnitude_squared >= 0.001f)) {
+        return;
+    }
+
+    if (fabs(pVelocity->v[0]) <= fabs(pVelocity->v[2])) {
+        if (!(pVelocity->v[2] >= 0.f)) {
+            PratcamEvent(offset + 13);
+        } else {
+            PratcamEvent(offset + 14);
+        }
+    } else if (!(pVelocity->v[0] >= 0.f)) {
+        PratcamEvent(offset + 16);
+    } else {
+        PratcamEvent(offset + 15);
+    }
+}
 
 // DamageSystems
 
