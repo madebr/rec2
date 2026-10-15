@@ -396,6 +396,8 @@ extern intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData);
 
 extern void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec* pCar_spec);
 
+extern void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec);
+
 extern br_scalar C2_HOOK_FASTCALL UnBendCar(tCar_spec* pCar_spec, tU32 pDelta_time, br_scalar* pOriginal_amount);
 
 extern void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape);
@@ -445,8 +447,6 @@ extern void C2_HOOK_FASTCALL UnBendOtherThings(tCar_spec* pCar_spec, tCar_bend_d
 extern br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle);
 
 extern br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOriginal_x, br_angle pOriginal_y, br_angle pOriginal_z, br_angle pRepair_x, br_angle pRepair_y, br_angle pRepair_z, br_scalar* pOriginal_amount);
-
-// CompletelyUnBendCar
 
 // ReAttachBits
 

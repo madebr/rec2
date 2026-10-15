@@ -1845,6 +1845,13 @@ void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec* pCar_spec) {
     pCar_spec->car_crush_spec->expand_bounding_box = 3;
 }
 
+// FUNCTION: CARMA2_HW 0x00439c10
+void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec) {
+    br_scalar original_amount;
+
+    UnBendCar(pCar_spec, 2000, &original_amount);
+}
+
 // FUNCTION: CARMA2_HW 0x00439c30
 br_scalar C2_HOOK_FASTCALL UnBendCar(tCar_spec* pCar_spec, tU32 pDelta_time, br_scalar* pOriginal_amount) {
     tCar_crush_spec* car_crush;
@@ -2389,8 +2396,6 @@ br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOriginal_x,
     *pOriginal_amount = 2.0f * original_amount;
     return repaired_amount;
 }
-
-// CompletelyUnBendCar
 
 // ReAttachBits
 
