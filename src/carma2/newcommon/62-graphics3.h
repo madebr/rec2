@@ -7,6 +7,7 @@
 extern int gMini_map_visible;
 extern tCar_icon gCar_icons[128];
 extern br_actor* gCar_icons_model_actor;
+extern int gCount_smashable_race_targets;
 
 // CarArrowColour
 
@@ -82,7 +83,7 @@ extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 
 // CheckMapMoveKeys
 
-// InitSmashTargets
+extern void C2_HOOK_FASTCALL InitSmashTargets(void);
 
 // AddSmashTarget
 

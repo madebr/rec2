@@ -52,6 +52,9 @@ int gINT_0074ab94;
 // GLOBAL: CARMA2_HW 0x0074ab98
 int gHeadup_map_half_height;
 
+// GLOBAL: CARMA2_HW 0x0074abe0
+int gCount_smashable_race_targets;
+
 // GLOBAL: CARMA2_HW 0x0074abe4
 int gHeadup_map_half_width;
 
@@ -419,7 +422,10 @@ void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0) {
     }
 }
 
-// InitSmashTargets
+// FUNCTION: CARMA2_HW 0x004977e0
+void C2_HOOK_FASTCALL InitSmashTargets(void) {
+    gCount_smashable_race_targets = 0;
+}
 
 // AddSmashTarget
 
