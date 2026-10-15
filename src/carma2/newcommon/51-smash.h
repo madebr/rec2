@@ -268,9 +268,9 @@ extern void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_da
 
 // ChangeSmashModel
 
-// TurnOnSmashModel
+extern void C2_HOOK_FASTCALL TurnOnSmashModel(br_actor* pActor);
 
-// TurnOffSmashModel
+extern void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor);
 
 // SmashRemoveSomeFaces
 
