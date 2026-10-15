@@ -1,6 +1,9 @@
 #include "07-structur.h"
 
+#include "15-displays.h"
 #include "30-opponent.h"
+#include "43-pratcam.h"
+#include "69-sound.h"
 #include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x00655e48
@@ -36,7 +39,16 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
 
 // RaceCompleted
 
-// Checkpoint
+// FUNCTION: CARMA2_HW 0x00503270
+void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
+    (void)pCheckpoint_index;
+
+    PratcamEvent(33);
+    DoFancyHeadup(21);
+    if (pDo_sound) {
+        DRS3StartSound(gPedestrians_outlet, eSoundId_Checkpoint);
+    }
+}
 
 // IncrementCheckpoint
 

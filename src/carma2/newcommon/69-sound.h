@@ -13,6 +13,8 @@ extern tS3_outlet* gEffects_outlet;
 
 extern tS3_outlet* gCar_outlet;
 
+extern tS3_outlet* gPedestrians_outlet;
+
 extern int gCD_fully_installed;
 
 extern void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size);
