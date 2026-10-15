@@ -403,7 +403,7 @@ extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTra
 
 // ApplyBloodSpurt
 
-// ApplyGrooveOnOff
+extern void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk);
 
 // ApplyPowerupGot
 
@@ -497,7 +497,7 @@ extern void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk);
 
 // UndoBloodSpurt
 
-// UndoGrooveOnOff
+extern void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoPowerupGot
 

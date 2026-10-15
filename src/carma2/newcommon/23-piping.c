@@ -1496,7 +1496,22 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyBloodSpurt
 
-// ApplyGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004c9be0
+void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    int on;
+    tU32 block_flags;
+    br_actor* actor;
+
+    memcpy(&on, chunk + 4, sizeof(on));
+    memcpy(&block_flags, chunk + 8, sizeof(block_flags));
+    memcpy(&actor, chunk, sizeof(actor));
+    if (on != 0) {
+        EnableGroovidelic(actor, block_flags);
+    } else {
+        DisableGroovidelic(actor, block_flags);
+    }
+}
 
 // ApplyPowerupGot
 
@@ -1636,7 +1651,23 @@ void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk) {
 
 // UndoBloodSpurt
 
-// UndoGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004ca2d0
+void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    int on;
+    tU32 block_flags;
+    br_actor* actor;
+
+    (void)pPrev_chunk;
+    memcpy(&on, chunk + 4, sizeof(on));
+    memcpy(&block_flags, chunk + 8, sizeof(block_flags));
+    memcpy(&actor, chunk, sizeof(actor));
+    if (on != 0) {
+        DisableGroovidelic(actor, block_flags);
+    } else {
+        EnableGroovidelic(actor, block_flags);
+    }
+}
 
 // UndoPowerupGot
 
