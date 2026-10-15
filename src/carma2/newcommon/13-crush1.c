@@ -2558,7 +2558,38 @@ int C2_HOOK_FASTCALL RepairModel(br_model* pModel, tRepair_model_context* pConte
     return 0;
 }
 
-// RepairCarCollisionShapes
+// FUNCTION: CARMA2_HW 0x0043b740
+void C2_HOOK_FASTCALL RepairCarCollisionShapes(tCar_spec* pCar_spec, br_scalar pRepair_step) {
+    int i;
+
+    for (i = 0; i < pCar_spec->car_crush_spec->count_shapes; i++) {
+        tCar_crush_shape_info* shape_info = &pCar_spec->car_crush_spec->field_0x4[i];
+        int j;
+
+        for (j = 0; j < shape_info->count_points; j++) {
+            tCar_crush_reordered_shape_info* point = &shape_info->field_0x18[j];
+            int k;
+
+            for (k = 0; k < 3; k++) {
+                if (point->field_0x18.v[k] > point->field_0x0.v[k]) {
+                    point->field_0x18.v[k] -= pRepair_step;
+                    if (!(point->field_0x18.v[k] >= point->field_0x0.v[k])) {
+                        point->field_0x18.v[k] = point->field_0x0.v[k];
+                    }
+                } else if (!(point->field_0x18.v[k] >= point->field_0x0.v[k])) {
+                    point->field_0x18.v[k] += pRepair_step;
+                    if (point->field_0x18.v[k] > point->field_0x0.v[k]) {
+                        point->field_0x18.v[k] = point->field_0x0.v[k];
+                    }
+                }
+            }
+            if (DRVector3TestForNan(&point->field_0x18)) {
+                PDEnterDebugger("NaN");
+            }
+        }
+    }
+    pCar_spec->car_crush_spec->expand_bounding_box = 3;
+}
 
 // RepairCar2
 

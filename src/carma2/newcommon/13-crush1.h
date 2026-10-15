@@ -452,7 +452,7 @@ extern intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser);
 
 extern int C2_HOOK_FASTCALL RepairModel(br_model* pModel, tRepair_model_context* pContext);
 
-// RepairCarCollisionShapes
+extern void C2_HOOK_FASTCALL RepairCarCollisionShapes(tCar_spec* pCar_spec, br_scalar pRepair_step);
 
 // RepairCar2
 
