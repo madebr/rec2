@@ -19,6 +19,9 @@
 // GLOBAL: CARMA2_HW 0x00655dfc
 int gMini_map_visible = 2;
 
+// GLOBAL: CARMA2_HW 0x0068c898
+tSmashable_race_target gSmashable_race_targets[300];
+
 // GLOBAL: CARMA2_HW 0x0074a780
 tCar_icon gCar_icons[128];
 
@@ -427,7 +430,18 @@ void C2_HOOK_FASTCALL InitSmashTargets(void) {
     gCount_smashable_race_targets = 0;
 }
 
-// AddSmashTarget
+// FUNCTION: CARMA2_HW 0x004977f0
+void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown) {
+    int index;
+
+    index = gCount_smashable_race_targets;
+    if (index < (int)REC2_ASIZE(gSmashable_race_targets)) {
+        gSmashable_race_targets[index].model = pModel;
+        gSmashable_race_targets[index].actor = pActor;
+        gSmashable_race_targets[index].field_0x8 = pUnknown;
+        gCount_smashable_race_targets = index + 1;
+    }
+}
 
 int NearestPowerOfTwo(int pValue) {
     int power;

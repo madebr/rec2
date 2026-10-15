@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern int gMini_map_visible;
+extern tSmashable_race_target gSmashable_race_targets[300];
 extern tCar_icon gCar_icons[128];
 extern br_actor* gCar_icons_model_actor;
 extern int gCount_smashable_race_targets;
@@ -85,7 +86,7 @@ extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 
 extern void C2_HOOK_FASTCALL InitSmashTargets(void);
 
-// AddSmashTarget
+extern void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 
 extern int NearestPowerOfTwo(int pValue) ;
 
