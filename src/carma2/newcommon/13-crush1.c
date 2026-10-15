@@ -2074,8 +2074,6 @@ void C2_HOOK_FASTCALL AddTotalDeflectionOfModel(br_model* pModel, float* pDeflec
 
 // AddTotalDeflection
 
-// RepairModels
-
 // FUNCTION: CARMA2_HW 0x0043a150
 void C2_HOOK_FASTCALL UnBendActor(br_actor* pActor, tCar_bend_data* bend, br_angle pRepair_x, br_angle pRepair_y, br_angle pRepair_z, tCar_spec* pCar_spec) {
     tUnbend_model_context context;
@@ -2398,6 +2396,47 @@ br_scalar C2_HOOK_FASTCALL CalculateAmountRepairedFraction(br_angle pOriginal_x,
 // ReAttachBits
 
 // RepairObject
+
+// FUNCTION: CARMA2_HW 0x0043b470
+intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
+    tRepair_model_context* context;
+    tUser_crush_data* user_crush;
+    tCar_crush_buffer_entry* crush_data;
+    int i;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 0;
+    }
+    crush_data = user_crush->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
+    context = pUser;
+    if (RepairModel(user_crush->models[0], context) != 0) {
+        tCar_crush_flap_data* flap_data;
+        tCar_crush_detach_data* detach_data;
+
+        RepairSmash(context->car, user_crush->crush_data);
+        flap_data = crush_data->flap_data;
+        crush_data->field_0x2c = 0;
+        if (flap_data != NULL && !flap_data->kev_o_flap) {
+            flap_data->field_0x15 = 0;
+            crush_data->flap_data->field_0x14 = 1;
+            crush_data->flap_data->field_0x18 = 0.0f;
+        }
+        detach_data = crush_data->detach_data;
+        if (detach_data != NULL) {
+            detach_data->field_0x0 = 0.0f;
+        }
+    } else {
+        /* The first model has already received its repair step. */
+        for (i = 1; i < context->car->count_detail_levels; i++) {
+            RepairModel(user_crush->models[i], context);
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0043b510
 int C2_HOOK_FASTCALL RepairModel(br_model* pModel, tRepair_model_context* pContext) {
