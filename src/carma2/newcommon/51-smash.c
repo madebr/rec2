@@ -695,7 +695,17 @@ void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor) {
 
 // TurnOffSmashDecal
 
-// ChangeSmashTexture
+// FUNCTION: CARMA2_HW 0x004f6060
+void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture) {
+    (void)pOld_texture;
+    if (pCar_spec != NULL && pCar_spec->field_0x1960 != NULL) {
+        pMaterial->user = pNew_texture;
+    } else {
+        pMaterial->colour_map = pNew_texture;
+    }
+    BrMaterialUpdate(pMaterial, BR_MATU_COLOURMAP);
+    MungeInternalCarGlass(pCar_spec);
+}
 
 // DoNetSmash
 

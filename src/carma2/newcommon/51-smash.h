@@ -288,7 +288,7 @@ extern void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor);
 
 // TurnOffSmashDecal
 
-// ChangeSmashTexture
+extern void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture);
 
 // DoNetSmash
 
