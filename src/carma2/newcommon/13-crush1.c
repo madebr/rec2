@@ -7,6 +7,7 @@
 #include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
+#include "60-phil.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -1258,7 +1259,29 @@ void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* pPoints
 
 // RemoveNonCarChildren
 
-// RemoveNonCar
+void C2_HOOK_FASTCALL RemoveNonCar(tNon_car_spec* pNon_car) {
+    br_actor* actor;
+    int count;
+    int i;
+
+    count = gNum_active_non_cars;
+    for (i = 0; i < count; i++) {
+        if (gActive_non_car_list[i] == pNon_car) {
+            break;
+        }
+    }
+    if (i != count) {
+        count--;
+        gNum_active_non_cars = count;
+        for (; i < count; i++) {
+            gActive_non_car_list[i] = gActive_non_car_list[i + 1];
+        }
+    }
+    actor = pNon_car->actor;
+    pNon_car->driver = eDriver_non_car_unused_slot;
+    actor->type_data = NULL;
+    PHILRemoveObject(pNon_car->collision_info);
+}
 
 // GetNonCar
 

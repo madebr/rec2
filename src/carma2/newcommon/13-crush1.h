@@ -194,7 +194,7 @@ extern void C2_HOOK_FASTCALL RemoveDuplicatePoints(int* pCount_out, br_vector3* 
 
 // RemoveNonCarChildren
 
-// RemoveNonCar
+extern void C2_HOOK_FASTCALL RemoveNonCar(tNon_car_spec* pNon_car);
 
 // GetNonCar
 
