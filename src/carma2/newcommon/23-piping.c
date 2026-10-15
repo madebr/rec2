@@ -1,5 +1,6 @@
 #include "23-piping.h"
 
+#include "09-funks.h"
 #include "13-crush1.h"
 #include "41-utility.h"
 #include "51-smash.h"
@@ -1501,7 +1502,16 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyPowerupLose
 
-// ApplyFunkEnable
+// FUNCTION: CARMA2_HW 0x004c9c20
+void C2_HOOK_FASTCALL ApplyFunkEnable(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    tS16 flags;
+    int index;
+
+    memcpy(&flags, chunk + 4, sizeof(flags));
+    memcpy(&index, chunk, sizeof(index));
+    AdjustFunkEnable(index, flags);
+}
 
 // ApplyVanishDismembered
 
@@ -1632,7 +1642,17 @@ void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk) {
 
 // UndoPowerupLose
 
-// UndoFunkEnable
+// FUNCTION: CARMA2_HW 0x004ca310
+void C2_HOOK_FASTCALL UndoFunkEnable(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    tS16 flags;
+    int index;
+
+    (void)pPrev_chunk;
+    memcpy(&flags, chunk + 4, sizeof(flags));
+    memcpy(&index, chunk, sizeof(index));
+    AdjustFunkEnable(index, (tS16)(flags == 0));
+}
 
 // UndoVanishDismembered
 

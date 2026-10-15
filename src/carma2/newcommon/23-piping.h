@@ -409,7 +409,7 @@ extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTra
 
 // ApplyPowerupLose
 
-// ApplyFunkEnable
+extern void C2_HOOK_FASTCALL ApplyFunkEnable(tPipe_chunk** pChunk);
 
 // ApplyVanishDismembered
 
@@ -503,7 +503,7 @@ extern void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk);
 
 // UndoPowerupLose
 
-// UndoFunkEnable
+extern void C2_HOOK_FASTCALL UndoFunkEnable(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoVanishDismembered
 
