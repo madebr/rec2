@@ -1248,7 +1248,15 @@ void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle) {
         2, 4, (uintptr_t)pAngle);
 }
 
-// PipeSingleRelink
+// FUNCTION: CARMA2_HW 0x004c86b0
+void C2_HOOK_FASTCALL PipeSingleRelink(br_actor* pParent, br_actor* pActor) {
+    br_actor* old_parent = pActor->parent;
+
+    ARDoSingleVariedSession(25, (uintptr_t)pActor, 3,
+        4, 0, (uintptr_t)pActor,
+        4, 4, (uintptr_t)old_parent,
+        4, 8, (uintptr_t)pParent);
+}
 
 // FUNCTION: CARMA2_HW 0x004c86d0
 void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor) {
