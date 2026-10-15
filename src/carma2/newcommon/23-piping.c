@@ -2065,7 +2065,13 @@ int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
     return (owner & 0x8000) ? 20 : 12;
 }
 
-// CalcSmudgeLength
+// FUNCTION: CARMA2_HW 0x004ca420
+int C2_HOOK_FASTCALL CalcSmudgeLength(tPipe_chunk* pChunk) {
+    tU16 count;
+
+    memcpy(&count, (const tU8*)pChunk + 4, sizeof(count));
+    return 8 + 4 * count;
+}
 
 // FUNCTION: CARMA2_HW 0x004ca430
 int C2_HOOK_FASTCALL CalcModelMashLength(tPipe_chunk* pChunk) {
