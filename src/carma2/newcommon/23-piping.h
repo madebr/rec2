@@ -369,7 +369,7 @@ extern void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk);
 
 // ApplyNonCarCreation
 
-// ApplySmashModelChange
+extern void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk);
 
 // ApplySmashRemoveFaces
 
@@ -471,7 +471,7 @@ extern void C2_HOOK_FASTCALL UndoRelink(tPipe_chunk** pChunk, tPipe_chunk* pPrev
 
 // UndoNonCarCreation
 
-// UndoSmashModelChange
+extern void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoSmashRemoveFaces
 

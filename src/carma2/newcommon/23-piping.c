@@ -1620,7 +1620,24 @@ void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk) {
 
 // ApplyNonCarCreation
 
-// ApplySmashModelChange
+// FUNCTION: CARMA2_HW 0x004c99f0
+void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_model* new_model;
+    br_actor* actor;
+
+    memcpy(&new_model, chunk + 8, sizeof(new_model));
+    if (new_model != NULL) {
+        br_model* old_model;
+
+        memcpy(&old_model, chunk + 4, sizeof(old_model));
+        memcpy(&actor, chunk, sizeof(actor));
+        ChangeSmashModel(actor, old_model, new_model);
+    } else {
+        memcpy(&actor, chunk, sizeof(actor));
+        TurnOffSmashModel(actor);
+    }
+}
 
 // ApplySmashRemoveFaces
 
@@ -1842,7 +1859,25 @@ void C2_HOOK_FASTCALL UndoRelink(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk)
 
 // UndoNonCarCreation
 
-// UndoSmashModelChange
+// FUNCTION: CARMA2_HW 0x004ca110
+void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    br_model* new_model;
+    br_actor* actor;
+
+    (void)pPrev_chunk;
+    memcpy(&new_model, chunk + 8, sizeof(new_model));
+    if (new_model != NULL) {
+        br_model* old_model;
+
+        memcpy(&old_model, chunk + 4, sizeof(old_model));
+        memcpy(&actor, chunk, sizeof(actor));
+        ChangeSmashModel(actor, new_model, old_model);
+    } else {
+        memcpy(&actor, chunk, sizeof(actor));
+        TurnOnSmashModel(actor);
+    }
+}
 
 // UndoSmashRemoveFaces
 
