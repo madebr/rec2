@@ -55,6 +55,21 @@ void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar) {
 }
 
 // CalcModifiedLocation
+tImpact_location C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar) {
+    tImpact_location location;
+
+    location = pCar->last_impact_location;
+    if (location == eImpact_left || location == eImpact_right
+            || location == eImpact_top || location == eImpact_bottom) {
+        if (!(pCar->field_0x13e0 >= 0.25)) {
+            return eImpact_front;
+        }
+        if (pCar->field_0x13e0 > 0.75) {
+            return eImpact_back;
+        }
+    }
+    return location;
+}
 
 // DoPratcamHit
 
