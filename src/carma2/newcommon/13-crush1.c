@@ -1371,7 +1371,22 @@ int C2_HOOK_FASTCALL PointIsOutsideLimits(tCar_crush_shape_info* pShape, int pPo
     return 0;
 }
 
-// ClipPointToPolyhedron
+void C2_HOOK_FASTCALL ClipPointToPolyhedron(br_vector3* pPoint, tCollision_shape_polyhedron_data* pPolyhedron) {
+    int i;
+
+    for (i = 0; i < pPolyhedron->count_planes; i++) {
+        br_vector4* plane = &pPolyhedron->planes[i];
+        br_scalar proj_factor;
+
+        proj_factor = BrVector3Dot(plane, pPoint) + plane->v[3];
+        if (!(proj_factor >= 0.f)) {
+            br_vector3 proj;
+
+            BrVector3Scale(&proj, plane, -proj_factor);
+            BrVector3Accumulate(pPoint, &proj);
+        }
+    }
+}
 
 void C2_HOOK_FASTCALL QuantizeVector3(br_vector3* pV) {
     tCompressed_vector3 cv3;
