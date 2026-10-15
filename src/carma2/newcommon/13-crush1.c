@@ -1600,7 +1600,14 @@ int C2_HOOK_FASTCALL EdgeCrossesZPlane(br_scalar pZ, const br_vector3* pPoint1, 
 
 // BendModels
 
-// BrAngleToSignedDegree
+br_scalar C2_HOOK_FASTCALL BrAngleToSignedDegree(br_angle pAngle) {
+    br_scalar degrees = pAngle * (360.f / 65536.f);
+
+    if (degrees >= 180.f) {
+        degrees -= 360.f;
+    }
+    return degrees;
+}
 
 // BendWheels
 

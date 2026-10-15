@@ -340,7 +340,7 @@ extern int C2_HOOK_FASTCALL EdgeCrossesZPlane(br_scalar pZ, const br_vector3* pP
 
 // BendModels
 
-// BrAngleToSignedDegree
+extern br_scalar C2_HOOK_FASTCALL BrAngleToSignedDegree(br_angle pAngle);
 
 // BendWheels
 
