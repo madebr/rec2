@@ -14,6 +14,8 @@ extern tRepair_animation gRepair_animations[25];
 
 extern tDecal gDecals[50];
 
+extern tSmash_vertex gSmash_glass_fragments[200];
+
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 extern void C2_HOOK_FASTCALL ResetExplosions(void);
@@ -172,7 +174,7 @@ extern void C2_HOOK_FASTCALL InitSmashing(void);
 
 extern void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float pDelta_time);
 
-// MungeGlassFragments2
+extern void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race);
 
 // MungeAnimationRepairs
 

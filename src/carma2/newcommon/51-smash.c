@@ -27,6 +27,9 @@ tRepair_animation gRepair_animations[25];
 // GLOBAL: CARMA2_HW 0x006a80f8
 tDecal gDecals[50];
 
+// GLOBAL: CARMA2_HW 0x006b78e0
+tSmash_vertex gSmash_glass_fragments[200];
+
 // FUNCTION: CARMA2_HW 0x004ea880
 void C2_HOOK_FASTCALL InitExplosions(void) {
     int i;
@@ -397,7 +400,65 @@ void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float
     }
 }
 
-// MungeGlassFragments2
+// FUNCTION: CARMA2_HW 0x004f0150
+void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
+    // GLOBAL: CARMA2_HW 0x006a7fc0
+    static tU32 prev_glass_munge;
+    tU32 the_time;
+    int64_t previous_time;
+    float delta_time;
+    tSmash_vertex* fragment;
+    tU32 field_0x18;
+    int i;
+    int j;
+
+    the_time = GetTotalTime();
+    if (prev_glass_munge != 0) {
+        /* Interpret the previous tick as signed 32-bit, then round the elapsed time once. */
+        previous_time = prev_glass_munge;
+        if (prev_glass_munge & 0x80000000u) {
+            previous_time -= (int64_t)0xffffffffu + 1;
+        }
+        delta_time = (float)((int64_t)the_time - previous_time);
+
+        for (i = 0; i < (int)REC2_ASIZE(gSmash_glass_fragments); i++) {
+            fragment = &gSmash_glass_fragments[i];
+            if (fragment->end_time != 0) {
+                if (!pEnd_race
+                    && (the_time < fragment->end_time
+                        || (gAction_replay_mode && !(ARGetReplayRate() > 0.f)))
+                    && the_time >= fragment->field_0xc) {
+                    DoFragMovement(fragment, the_time, delta_time);
+                    if (fragment->field_0x34) {
+                        fragment->field_0x34 = 0;
+                    }
+                    fragment->time_last_move = the_time;
+                } else {
+                    field_0x18 = fragment->field_0x18;
+                    if (the_time >= fragment->end_time) {
+                        if (!(field_0x18 & 0x80000000u)) {
+                            PipeSingleShrapnelShower(field_0x18, fragment->time_last_move, 0, 0,
+                                NULL, NULL, 0.f, NULL, NULL, 0, NULL, 0, NULL, NULL, NULL);
+                        } else if (field_0x18 & 0x40000000u) {
+                            PipeSingleGibShower(field_0x18, fragment->time_last_move, 0, 0, 0,
+                                NULL, NULL, NULL);
+                        } else {
+                            PipeSingleBloodSpurt(field_0x18, fragment->time_last_move, 0,
+                                NULL, NULL, NULL);
+                        }
+                    }
+                    for (j = 0; j < (int)REC2_ASIZE(gSmash_glass_fragments); j++) {
+                        if (gSmash_glass_fragments[j].end_time != 0
+                            && gSmash_glass_fragments[j].field_0x18 == field_0x18) {
+                            KillFragment(&gSmash_glass_fragments[j]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    prev_glass_munge = the_time;
+}
 
 // MungeAnimationRepairs
 
