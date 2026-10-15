@@ -1,5 +1,7 @@
 #include "58-crush2.h"
 
+#include "rec2_macros.h"
+
 // GLOBAL: CARMA2_HW 0x0074d3b0
 int gCredits_wasting_car[3];
 
@@ -43,7 +45,14 @@ int gTime_per_ped_kill[3];
 
 // GetDirection
 
-// SetSmokeLastDamageLevel
+// FUNCTION: CARMA2_HW 0x00440210
+void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(pCar->damage_units); i++) {
+        pCar->damage_units[i].smoke_last_level = pCar->damage_units[i].damage_level;
+    }
+}
 
 // SortOutSmoke
 
