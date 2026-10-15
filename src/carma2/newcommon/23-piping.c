@@ -1576,7 +1576,13 @@ int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
 
 // CalcSmudgeLength
 
-// CalcModelMashLength
+// FUNCTION: CARMA2_HW 0x004ca430
+int C2_HOOK_FASTCALL CalcModelMashLength(tPipe_chunk* pChunk) {
+    br_model* model;
+
+    memcpy(&model, (const tU8*)pChunk + sizeof(tU32), sizeof(model));
+    return (int)(model->nvertices * sizeof(tCompressed_vector3) + sizeof(model));
+}
 
 // CalcEndMyBendLength
 

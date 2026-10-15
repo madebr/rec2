@@ -525,7 +525,7 @@ extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 
 // CalcSmudgeLength
 
-// CalcModelMashLength
+extern int C2_HOOK_FASTCALL CalcModelMashLength(tPipe_chunk* pChunk);
 
 // CalcEndMyBendLength
 
