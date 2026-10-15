@@ -691,9 +691,15 @@ void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor) {
 
 // SmashRestoreSomeFaces
 
-// TurnOnSmashDecal
+// FUNCTION: CARMA2_HW 0x004f6020
+void C2_HOOK_FASTCALL TurnOnSmashDecal(int pIndex) {
+    BrActorAdd(gOther_selfs[0], gDecals[pIndex].actor);
+}
 
-// TurnOffSmashDecal
+// FUNCTION: CARMA2_HW 0x004f6040
+void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex) {
+    BrActorRemove(gDecals[pIndex].actor);
+}
 
 // FUNCTION: CARMA2_HW 0x004f6060
 void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture) {

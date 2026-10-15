@@ -284,9 +284,9 @@ extern void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor);
 
 // SmashRestoreSomeFaces
 
-// TurnOnSmashDecal
+extern void C2_HOOK_FASTCALL TurnOnSmashDecal(int pIndex);
 
-// TurnOffSmashDecal
+extern void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex);
 
 extern void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture);
 
