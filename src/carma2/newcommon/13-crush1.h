@@ -352,7 +352,7 @@ extern br_scalar C2_HOOK_FASTCALL BrAngleToSignedDegree(br_angle pAngle);
 
 // BendCar
 
-// QuantizeAngle
+extern br_angle C2_HOOK_FASTCALL QuantizeAngle(br_angle pAngle, br_angle pMax, br_angle pMin, br_angle pQuant);
 
 // BendCarOneForce
 

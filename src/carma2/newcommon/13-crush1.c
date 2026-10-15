@@ -1621,6 +1621,15 @@ br_scalar C2_HOOK_FASTCALL BrAngleToSignedDegree(br_angle pAngle) {
 // BendCar
 
 // QuantizeAngle
+br_angle C2_HOOK_FASTCALL QuantizeAngle(br_angle pAngle, br_angle pMax, br_angle pMin, br_angle pQuant) {
+    if (pAngle < 0x7ff8 && pAngle > pMin) {
+        return pMin;
+    }
+    if (pAngle > 0x7ff8 && pAngle < pMax) {
+        return pMax;
+    }
+    return (br_angle)(pQuant * (pAngle / pQuant));
+}
 
 // BendCarOneForce
 
