@@ -1435,7 +1435,24 @@ void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk) {
     SetScreenWobble(wobble.wobble_x, wobble.wobble_y);
 }
 
-// ApplyGrooveStop
+// FUNCTION: CARMA2_HW 0x004c9190
+void C2_HOOK_FASTCALL ApplyGrooveStop(tPipe_chunk** pChunk) {
+    const tU8* chunk = (const tU8*)*pChunk;
+    int index;
+    tInterrupt_status path_interrupt_status;
+    tInterrupt_status object_interrupt_status;
+    float path_resumption_value;
+    float object_resumption_value;
+    br_matrix34 matrix;
+
+    memcpy(&index, chunk, sizeof(index));
+    memcpy(&path_interrupt_status, chunk + 4, sizeof(path_interrupt_status));
+    memcpy(&object_interrupt_status, chunk + 8, sizeof(object_interrupt_status));
+    memcpy(&path_resumption_value, chunk + 12, sizeof(path_resumption_value));
+    memcpy(&object_resumption_value, chunk + 16, sizeof(object_resumption_value));
+    memcpy(&matrix, chunk + 20, sizeof(matrix));
+    SetGrooveInterrupt(index, &matrix, path_interrupt_status, object_interrupt_status, path_resumption_value, object_resumption_value);
+}
 
 // ApplyNonCar
 
