@@ -273,7 +273,7 @@ extern void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* object);
 
 // PipeSingleGibShower
 
-// PipeSingleBloodSpurt
+extern void C2_HOOK_FASTCALL PipeSingleBloodSpurt(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6);
 
 extern void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBlock_flags);
 
