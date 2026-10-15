@@ -1315,7 +1315,18 @@ void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* object) {
     ARDoSingleVariedSession(0x30, (uintptr_t)object, 1, 0x30, 0, (uintptr_t)matrix);
 }
 
-// PipeSingleGibShower
+// FUNCTION: CARMA2_HW 0x004c8ce0
+void C2_HOOK_FASTCALL PipeSingleGibShower(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, undefined4 pArg5, br_vector3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
+    gUNK_0069410c = pArg4;
+    ARDoSingleVariedSession(49, pId, 7,
+        4, 8, (uintptr_t)pArg2,
+        4, 4, (uintptr_t)pArg3,
+        4, 12, (uintptr_t)gUNK_0069410c,
+        4, 0, (uintptr_t)pArg5,
+        12, 16, (uintptr_t)pArg6,
+        12, 28, (uintptr_t)pArg7,
+        12, 40, (uintptr_t)pArg8);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8d40
 void C2_HOOK_FASTCALL PipeSingleBloodSpurt(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6) {
