@@ -1214,15 +1214,13 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
     tU32 packed_volume;
     int outlet_index;
 
-    if (*(const volatile int*)&gAction_replay_mode != 0
-        || !((const volatile tProgram_state*)&gProgram_state)->racing) {
+    if (gAction_replay_mode != 0 || !gProgram_state.racing) {
         return;
     }
     if (pPosition == NULL) {
         pPosition = &gZero_vector__smash;
     }
-    /* Original SHL/ADD wraps32 bits, including negative/out-of-range ints.
-     * The varied writer stores the low16 bits of this raw DWORD. */
+    /* Pack the channel volumes for the replay record's 16-bit volume field. */
     packed_volume = ((tU32)pR_volume << 8) + (tU32)pL_volume;
     outlet_index = GetIndexFromOutlet(pOutlet);
     ARDoSingleVariedSession(2, (uintptr_t)(tU32)pSound, 4,
