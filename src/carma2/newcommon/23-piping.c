@@ -2062,4 +2062,14 @@ int C2_HOOK_FASTCALL CalcEndMyBendLength(tPipe_chunk* pChunk) {
     return length;
 }
 
-// CalcRemoveFacesLength
+// FUNCTION: CARMA2_HW 0x004ca460
+int C2_HOOK_FASTCALL CalcRemoveFacesLength(tPipe_chunk* pChunk) {
+    tU32 count;
+    tU32 length;
+    int result;
+
+    memcpy(&count, (const tU8*)pChunk + 8, sizeof(count));
+    length = count * 8u + 8u;
+    memcpy(&result, &length, sizeof(result));
+    return result;
+}
