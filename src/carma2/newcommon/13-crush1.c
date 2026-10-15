@@ -1518,7 +1518,72 @@ void C2_HOOK_FASTCALL QuantizeVector3(br_vector3* pV) {
 
 // DoShapeSwapping
 
-// BendPoint
+// FUNCTION: CARMA2_HW 0x00434f60
+void C2_HOOK_FASTCALL BendPoint(br_vector3* pPoint, const tBend_point_context* pContext) {
+    const tCar_bend_data* bend;
+    br_vector3 transformed;
+    br_vector3 relative;
+    br_vector3 displacement;
+    br_scalar distance;
+    br_scalar x;
+    br_scalar y;
+    br_scalar z;
+    br_scalar xy;
+    int direction;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_bend_data) != 0x78);
+    C2_HOOK_BUG_ON(sizeof(tBend_point_context) != 0x38);
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_spec) != 0x57c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x18, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x24, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x30, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x3c, 0x3c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x3e, 0x3e);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x40, 0x40);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x42, 0x42);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x44, 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x50, 0x50);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x5c, 0x5c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x68, 0x68);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x74, 0x74);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tBend_point_context, car, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tBend_point_context, matrix, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tBend_point_context, bend, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x154, 0x154);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x1cc, 0x1cc);
+
+    bend = pContext->bend;
+    direction = bend->field_0x74;
+    distance = pPoint->v[2] - bend->field_0x18.v[2];
+    if ((direction != 0 && !(distance > 0.f))
+        || (direction == 0 && distance >= 0.f)) {
+        BrMatrix34ApplyP(&transformed, pPoint, &pContext->matrix);
+        BrVector3Copy(pPoint, &transformed);
+        return;
+    }
+
+    BrVector3Sub(&relative, pPoint, &bend->field_0x24);
+    if ((direction != 0 && relative.v[2] > 0.f)
+        || (direction == 0 && !(relative.v[2] >= 0.f))) {
+        return;
+    }
+
+    x = relative.v[0] / bend->field_0x30.v[0];
+    y = relative.v[1] / bend->field_0x30.v[1];
+    z = relative.v[2] / bend->field_0x30.v[2];
+    xy = x * y;
+    for (i = 0; i < 3; i++) {
+        displacement.v[i] = (((bend->field_0x44.v[i] * xy
+            + bend->field_0x50.v[i] * x)
+            + bend->field_0x5c.v[i] * y)
+            + bend->field_0x68.v[i]) * z;
+    }
+    /* Finish the displacement before changing the point it was derived from. */
+    for (i = 0; i < 3; i++) {
+        pPoint->v[i] += displacement.v[i];
+    }
+}
 
 int C2_HOOK_FASTCALL EdgeCrossesZPlane(br_scalar pZ, const br_vector3* pPoint1, const br_vector3* pPoint2) {
     if (pPoint1->v[2] >= pZ) {

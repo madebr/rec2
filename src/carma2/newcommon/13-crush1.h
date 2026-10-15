@@ -328,7 +328,7 @@ extern void C2_HOOK_FASTCALL QuantizeVector3(br_vector3* pV);
 
 // DoShapeSwapping
 
-// BendPoint
+extern void C2_HOOK_FASTCALL BendPoint(br_vector3* pPoint, const tBend_point_context* pContext);
 
 extern int C2_HOOK_FASTCALL EdgeCrossesZPlane(br_scalar pZ, const br_vector3* pPoint1, const br_vector3* pPoint2);
 

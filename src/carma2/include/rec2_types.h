@@ -3893,6 +3893,29 @@ typedef struct tCar_bit_spec {
     tU32 field_0x10;
 } tCar_bit_spec;
 
+/* Inferred type names for the bend data and point-transform context. */
+typedef struct {
+    undefined field_0x0[0x18];
+    br_vector3 field_0x18;
+    br_vector3 field_0x24;
+    br_vector3 field_0x30;
+    br_angle field_0x3c;
+    br_angle field_0x3e;
+    br_angle field_0x40;
+    undefined field_0x42[2];
+    br_vector3 field_0x44;
+    br_vector3 field_0x50;
+    br_vector3 field_0x5c;
+    br_vector3 field_0x68;
+    int field_0x74;
+} tCar_bend_data;
+
+typedef struct {
+    tCar_spec* car;
+    br_matrix34 matrix;
+    tCar_bend_data* bend;
+} tBend_point_context;
+
 typedef struct tCar_crush_spec {
     int count_shapes;
     tCar_crush_shape_info* field_0x4;
@@ -3917,11 +3940,7 @@ typedef struct tCar_crush_spec {
     float bendability_factor;
     float bend_z_min;
     float bend_z_max;
-    undefined field_0x154[0x174 - 0x154];
-    float field_0x174;
-    undefined field_0x178[0x180 - 0x178];
-    float field_0x180;
-    undefined field_0x184[0x1cc - 0x184];
+    tCar_bend_data field_0x154;
     tCar_crush_vertex_data* field_0x1cc;
     undefined field_0x1d0[28];
     br_vector3 field_0x1ec[6];

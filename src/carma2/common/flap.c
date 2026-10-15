@@ -95,8 +95,9 @@ void C2_HOOK_FASTCALL SendDetachBit(tCar_spec* pCar, br_actor* pActor) {
 // FUNCTION: CARMA2_HW 0x00436ad0
 void C2_HOOK_FASTCALL DoDetaching(void) {
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x174, 0x174);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x180, 0x180);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x154, 0x154);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x18, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_bend_data, field_0x24, 0x24);
 
     if (gNet_mode == eNet_mode_none || gNet_mode == eNet_mode_host) {
         int new_count_crush_detach_list;
@@ -116,8 +117,8 @@ void C2_HOOK_FASTCALL DoDetaching(void) {
 
                 if (!((detach_list_item->car->car_crush_spec->field_0x144
                             && BitIsInBentPartOfCar(detach_list_item->actor,
-                                   detach_list_item->car->car_crush_spec->field_0x174,
-                                   detach_list_item->car->car_crush_spec->field_0x180))
+                                   detach_list_item->car->car_crush_spec->field_0x154.field_0x18.v[2],
+                                   detach_list_item->car->car_crush_spec->field_0x154.field_0x24.v[2]))
                         || detach_list_item->car->car_crush_spec->field_0x4b8)) {
 
                     if (gNet_mode == eNet_mode_none) {
