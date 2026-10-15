@@ -1358,7 +1358,12 @@ int C2_HOOK_FASTCALL PointIsOutsideLimits(tCar_crush_shape_info* pShape, int pPo
 
 // ClipPointToPolyhedron
 
-// QuantizeVector3
+void C2_HOOK_FASTCALL QuantizeVector3(br_vector3* pV) {
+    tCompressed_vector3 cv3;
+
+    CompressVector3(&cv3, pV, -2.5f, 2.5f);
+    ExpandVector3(pV, &cv3, -2.5f, 2.5f);
+}
 
 // MoveCarToSensiblePlace
 
