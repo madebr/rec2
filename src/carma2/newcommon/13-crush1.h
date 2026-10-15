@@ -307,7 +307,7 @@ extern int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pP
 
 // DoJointSnapping
 
-// PointIsOutsideShape
+extern int C2_HOOK_FASTCALL PointIsOutsideShape(br_vector3* pPoint, tCollision_shape_polyhedron_data* pPolyhedron);
 
 extern int C2_HOOK_FASTCALL PointIsOutsideLimits(tCar_crush_shape_info* pShape, int pPoint_index, tCar_crush_limits* pLimits);
 

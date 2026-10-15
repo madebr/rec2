@@ -1336,7 +1336,22 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, const br_vector3* pPos) {
 
 // DoJointSnapping
 
-// PointIsOutsideShape
+int C2_HOOK_FASTCALL PointIsOutsideShape(br_vector3* pPoint, tCollision_shape_polyhedron_data* pPolyhedron) {
+    int i;
+    int count = pPolyhedron->count_planes;
+    br_vector4* plane;
+
+    if (count <= 0) {
+        return 0;
+    }
+    plane = pPolyhedron->planes;
+    for (i = 0; i < count; i++, plane++) {
+        if (!(BrVector3Dot(plane, pPoint) + plane->v[3] >= -1e-5)) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 int C2_HOOK_FASTCALL PointIsOutsideLimits(tCar_crush_shape_info* pShape, int pPoint_index, tCar_crush_limits* pLimits) {
     int i;
