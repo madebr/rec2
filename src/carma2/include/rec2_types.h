@@ -3947,6 +3947,19 @@ typedef struct {
     tCar_spec* car;
 } tUnbend_model_context;
 
+/* Inferred record used by SaveVitalBitsOfObject and RestoreVitalBitsOfObject. */
+typedef struct {
+    br_actor* actor;
+    float M;
+    br_vector3 I;
+    br_vector3 cmpos;
+    br_bounds3 bb1;
+    br_bounds3 bb2;
+    br_vector3 field_0x50; /* Saved tPhysics_object.field_0x54. */
+    br_vector3 v;
+    br_vector3 omega;
+} tSaved_vital_bits;
+
 typedef struct tCar_crush_spec {
     int count_shapes;
     tCar_crush_shape_info* field_0x4;
@@ -3988,7 +4001,7 @@ typedef struct tCar_crush_spec {
     undefined field_0x4c4[8];
     br_actor* actor; /* ->user is tCar_spec pointer */
     br_actor* model_actor;
-    undefined field_0x4d4[0x548 - 0x4d4];
+    tSaved_vital_bits field_0x4d4;
     br_vector3 field_0x548;
     float field_0x554;
     br_vector3 driver_position;

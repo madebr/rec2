@@ -284,7 +284,7 @@ extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // QuantizeWithinBounds
 
-// SaveVitalBitsOfObject
+extern void C2_HOOK_FASTCALL SaveVitalBitsOfObject(tSaved_vital_bits* pDest, const tPhysics_object* pSrc, const tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pCollision_shape);
 
@@ -458,7 +458,7 @@ extern void C2_HOOK_FASTCALL RepairCarCollisionShapes(tCar_spec* pCar_spec, br_s
 
 // RepairCar
 
-// RestoreVitalBitsOfObject
+extern void C2_HOOK_FASTCALL RestoreVitalBitsOfObject(tPhysics_object* pDest, const tSaved_vital_bits* pSrc);
 
 // WeldCar
 

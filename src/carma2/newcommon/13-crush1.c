@@ -1379,6 +1379,33 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 // QuantizeWithinBounds
 
 // SaveVitalBitsOfObject
+void C2_HOOK_FASTCALL SaveVitalBitsOfObject(tSaved_vital_bits* pDest, const tPhysics_object* pSrc, const tCar_spec* pCar_spec) {
+    C2_HOOK_BUG_ON(sizeof(tSaved_vital_bits) != 0x74);
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_spec) != 0x57c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, actor, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, M, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, I, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, cmpos, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, bb1, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, bb2, 0x38);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, field_0x50, 0x50);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, v, 0x5c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSaved_vital_bits, omega, 0x68);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x4d4, 0x4d4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x548, 0x548);
+
+    pDest->actor = pSrc->actor;
+    pDest->M = pSrc->M / pCar_spec->field_0x4c8;
+    pDest->I.v[0] = pSrc->I.v[0] / pCar_spec->field_0x4c8;
+    pDest->I.v[1] = pSrc->I.v[1] / pCar_spec->field_0x4c8;
+    pDest->I.v[2] = pSrc->I.v[2] / pCar_spec->field_0x4c8;
+    memcpy(&pDest->cmpos, &pSrc->cmpos, sizeof(pDest->cmpos));
+    DRBoundsCopy(&pDest->bb1, &pSrc->bb1);
+    DRBoundsCopy(&pDest->bb2, &pSrc->bb2);
+    memcpy(&pDest->field_0x50, &pSrc->field_0x54, sizeof(pDest->field_0x50));
+    memcpy(&pDest->v, &pSrc->v, sizeof(pDest->v));
+    memcpy(&pDest->omega, &pSrc->omega, sizeof(pDest->omega));
+}
 
 void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pCollision_shape) {
     pCar_spec->collision_info->shape = pCollision_shape;
@@ -2605,6 +2632,14 @@ void C2_HOOK_FASTCALL RepairCarCollisionShapes(tCar_spec* pCar_spec, br_scalar p
 // RepairCar
 
 // RestoreVitalBitsOfObject
+void C2_HOOK_FASTCALL RestoreVitalBitsOfObject(tPhysics_object* pDest, const tSaved_vital_bits* pSrc) {
+    /* Bounds and velocities stay with the current object. */
+    pDest->actor = pSrc->actor;
+    memcpy(&pDest->M, &pSrc->M, sizeof(pDest->M));
+    memcpy(&pDest->I, &pSrc->I, sizeof(pDest->I));
+    memcpy(&pDest->cmpos, &pSrc->cmpos, sizeof(pDest->cmpos));
+    memcpy(&pDest->field_0x54, &pSrc->field_0x50, sizeof(pDest->field_0x54));
+}
 
 // WeldCar
 
