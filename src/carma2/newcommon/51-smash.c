@@ -377,9 +377,10 @@ void C2_HOOK_FASTCALL RemoveAllDecals(void) {
 
 // ReadPowerupSmash
 
-// STUB: CARMA2_HW 0x004efe00
+// FUNCTION: CARMA2_HW 0x004efe00
 void C2_HOOK_FASTCALL InitSmashing(void) {
-    NOT_IMPLEMENTED();
+    InitGlassFragments();
+    InitDecals();
 }
 
 // VerySimpleRotate
