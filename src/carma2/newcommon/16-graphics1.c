@@ -71,6 +71,12 @@ br_model* gShadow_model;
 // GLOBAL: CARMA2_HW 0x006a2444
 br_actor* gShadow_actor;
 
+// GLOBAL: CARMA2_HW 0x00705188
+int gScreen_wobble_x;
+
+// GLOBAL: CARMA2_HW 0x00705184
+int gScreen_wobble_y;
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -210,9 +216,17 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
 
 // NewScreenWobble
 
-// SetScreenWobble
+// FUNCTION: CARMA2_HW 0x004e4e20
+void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY) {
+    gScreen_wobble_x = pX;
+    gScreen_wobble_y = pY;
+}
 
-// ResetScreenWobble
+// FUNCTION: CARMA2_HW 0x004e4e30
+void C2_HOOK_FASTCALL ResetScreenWobble(void) {
+    gScreen_wobble_x = 0;
+    gScreen_wobble_y = 0;
+}
 
 // CalculateWobblitude
 

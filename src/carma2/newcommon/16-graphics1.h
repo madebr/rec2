@@ -17,6 +17,8 @@ extern br_vector3 gShadow_light_z;
 extern br_vector3 gShadow_light_x;
 extern br_model* gShadow_model;
 extern br_actor* gShadow_actor;
+extern int gScreen_wobble_x;
+extern int gScreen_wobble_y;
 
 // MungeClipPlane
 
@@ -64,9 +66,9 @@ extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 // NewScreenWobble
 
-// SetScreenWobble
+extern void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY);
 
-// ResetScreenWobble
+extern void C2_HOOK_FASTCALL ResetScreenWobble(void);
 
 // CalculateWobblitude
 
