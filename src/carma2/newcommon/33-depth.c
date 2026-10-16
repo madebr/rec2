@@ -43,6 +43,9 @@ int gSwap_depth_effect_colour_red;
 // GLOBAL: CARMA2_HW 0x0079ec40
 int gSwap_depth_effect_colour_green;
 
+// GLOBAL: CARMA2_HW 0x0067c4a8
+int gHas_sky_texture;
+
 static void C2_HOOK_FASTCALL FrobFog(void);
 
 // Log2
@@ -213,8 +216,6 @@ void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* 
 
 // EdgeU
 
-// MungeSkyModel
-
 // CreateHorizonModel
 
 // LoadDepthTable
@@ -355,9 +356,28 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
 
 // ChangeDepthEffect
 
-// MungeForwardSky
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// MungeRearviewSky
+// STUB: CARMA2_HW 0x00445e20
+void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00447250
+void C2_HOOK_FASTCALL MungeForwardSky(void) {
+    MungeSkyModel(gCamera, gForward_sky_model);
+    gHas_sky_texture = gProgram_state.default_depth_effect.sky_texture != NULL;
+}
+
+// FUNCTION: CARMA2_HW 0x00447280
+void C2_HOOK_FASTCALL MungeRearviewSky(void) {
+}
 
 // FUNCTION: CARMA2_HW 0x00447290
 void C2_HOOK_FASTCALL SkyTextureChanged(void) {
