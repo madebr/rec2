@@ -1,6 +1,9 @@
 #ifndef GUARD_36_TRIG_H
 #define GUARD_36_TRIG_H
 
+#include "brender/brender.h"
+#include "c2_hooks.h"
+
 // FastFloatSin
 
 // FastFloatCos
@@ -13,13 +16,13 @@
 
 // FastScalarCosAngle
 
-// FastFloatArcTan2
+extern float C2_HOOK_STDCALL FastFloatArcTan2(float pY, float pX);
 
-// FastScalarArcTan2
+extern br_scalar C2_HOOK_STDCALL FastScalarArcTan2(br_scalar pY, br_scalar pX);
 
-// FastFloatArcTan2Angle
+extern br_angle C2_HOOK_STDCALL FastFloatArcTan2Angle(float pY, float pX);
 
-// FastScalarArcTan2Angle
+extern br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX);
 
 // DRMatrix34RotateX
 
