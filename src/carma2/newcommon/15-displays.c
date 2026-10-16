@@ -1,6 +1,8 @@
 #include "15-displays.h"
 
 #include "08-loading1.h"
+#include "19-font.h"
+#include "25-grafdata.h"
 #include "41-utility.h"
 #include "63-loading3.h"
 #include "70-packfile.h"
@@ -82,6 +84,15 @@ tHud_message gHud_messages[46];
 
 // GLOBAL: CARMA2_HW 0x00655e54
 int gHeadup_detail_level = 5;
+
+// GLOBAL: CARMA2_HW 0x0067fcc0
+tU32 gLast_fancy_headup;
+
+// GLOBAL: CARMA2_HW 0x005913d4
+int gLast_fancy_index = -1;
+
+// GLOBAL: CARMA2_HW 0x0067fd34
+tU32 gLast_fancy_time;
 
 
 static void C2_HOOK_FASTCALL LoadHeadupMessageFile(void) {
@@ -267,11 +278,64 @@ void C2_HOOK_FASTCALL ClearHeadup(int pIndex) {
 
 // NewTextHeadupSlot
 
-// NewImageHeadupSlot
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// STUB: CARMA2_HW 0x0044a600
-void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
+// STUB: CARMA2_HW 0x0044a3a0
+int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index) {
     NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x0044a600
+void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
+    tU32 the_time;
+    int temp_ref;
+    int center;
+    int width;
+    tHeadup* the_headup;
+
+    center = gCurrent_graf_data->width / 2;
+    the_time = GetTotalTime();
+    if (gMap_view == 2) {
+        return;
+    }
+    if (gLast_fancy_index >= 0 && the_time - gLast_fancy_time <= 2000 && gLast_fancy_index > pIndex) {
+        return;
+    }
+    temp_ref = NewImageHeadupSlot(6, 0, 2000, pIndex + 10);
+    if (temp_ref >= 0) {
+        gLast_fancy_index = pIndex;
+        gLast_fancy_headup = temp_ref;
+        gLast_fancy_time = the_time;
+
+        the_headup = &gHeadups[temp_ref];
+        the_headup->type = eHeadup_fancy;
+        the_headup->data.fancy_info.fancy_stage = 0;
+        the_headup->data.fancy_info.field_0x108 = 0;
+        switch (the_headup->justification) {
+        case eJust_left:
+            the_headup->data.fancy_info.offset = center;
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.end_offset = -width;
+            break;
+        case eJust_right:
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.end_offset = center;
+            the_headup->data.fancy_info.offset = center + width;
+            break;
+        case eJust_centre:
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.offset = center + width / 2;
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.end_offset = -center - width / 2;
+            break;
+        }
+    }
 }
 
 // MoveHeadupTo

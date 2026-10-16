@@ -29,6 +29,9 @@ extern br_pixelmap* gIcon_greyBloc1;
 extern br_pixelmap* gIcon_litBloc1;
 extern br_pixelmap* gIcon_grnBlock1;
 extern tHud_message gHud_messages[46];
+extern tU32 gLast_fancy_headup;
+extern int gLast_fancy_index;
+extern tU32 gLast_fancy_time;
 
 
 // static void C2_HOOK_FASTCALL LoadHeadupMessageFile(void);
@@ -61,7 +64,7 @@ extern void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
 // NewTextHeadupSlot
 
-// NewImageHeadupSlot
+extern int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index);
 
 extern void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
