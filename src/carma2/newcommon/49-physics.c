@@ -30,7 +30,13 @@ void* gPhysics_other_buffer;
 
 // count
 
-// DrMatrix34ApplyLPInverse
+// FUNCTION: CARMA2_HW 0x004225b0
+void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector3* source, const br_matrix34* matrix) {
+    br_vector3 relative;
+
+    BrVector3Sub(&relative, source, (br_vector3*)matrix->m[3]);
+    BrMatrix34TApplyV(dest, &relative, matrix);
+}
 
 // AddObjectWallForce
 

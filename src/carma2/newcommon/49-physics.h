@@ -13,7 +13,7 @@ extern void* gPhysics_other_buffer;
 
 // count
 
-// DrMatrix34ApplyLPInverse
+void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector3* source, const br_matrix34* matrix);
 
 // AddObjectWallForce
 
