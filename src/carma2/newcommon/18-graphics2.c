@@ -179,13 +179,22 @@ void C2_HOOK_FASTCALL ResetPalette(void) {
 
 // SetFadedPalette
 
-// FadePaletteDown
+// FUNCTION: CARMA2_HW 0x004b5460
+void C2_HOOK_FASTCALL FadePaletteDown(void) {
+}
 
 // FadePaletteUp
 
 // EnsurePaletteUp
 
-// EnsureRenderPalette
+// FUNCTION: CARMA2_HW 0x004b5770
+void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
+
+    if (gPalette_munged) {
+        ResetPalette();
+        gPalette_munged = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0043dff0
 void C2_HOOK_FASTCALL InitTransientBitmaps(void) {

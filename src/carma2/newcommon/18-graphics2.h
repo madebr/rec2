@@ -37,13 +37,13 @@ extern void C2_HOOK_FASTCALL ResetPalette(void);
 
 // SetFadedPalette
 
-// FadePaletteDown
+extern void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 // FadePaletteUp
 
 // EnsurePaletteUp
 
-// EnsureRenderPalette
+extern void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
 extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 
