@@ -29,9 +29,9 @@ extern void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
 // RevertPalette
 
-// MungePalette
+extern void C2_HOOK_FASTCALL MungePalette(void);
 
-// ResetPalette
+extern void C2_HOOK_FASTCALL ResetPalette(void);
 
 // Darken
 
