@@ -479,7 +479,17 @@ void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn) {
 
 // RepositionAndOrientateChildren
 
-// PhysicsAddObject
+// FUNCTION: CARMA2_HW 0x004c63b0
+void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics_object* pChild) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, next, 0x220);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, child, 0x224);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, parent, 0x228);
+
+    pChild->next = pParent->child;
+    pParent->child = pChild;
+    pChild->parent = pParent;
+}
 
 // PhysicsAddObjectList
 
