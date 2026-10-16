@@ -63,7 +63,7 @@ extern void C2_HOOK_FASTCALL InitHeadups(void);
 
 // NewImageHeadupSlot
 
-// DoFancyHeadup
+extern void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
 // MoveHeadupTo
 

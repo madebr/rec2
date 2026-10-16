@@ -266,7 +266,10 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
 
 // NewImageHeadupSlot
 
-// DoFancyHeadup
+// STUB: CARMA2_HW 0x0044a600
+void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
+    NOT_IMPLEMENTED();
+}
 
 // MoveHeadupTo
 
