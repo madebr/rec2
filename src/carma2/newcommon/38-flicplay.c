@@ -425,7 +425,19 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
 
 // StartFlic
 
-// EndFlic
+// FUNCTION: CARMA2_HW 0x00461d60
+int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
+    if (pFlic_info->f != NULL) {
+        BrMemFree(pFlic_info->data_start);
+        pFlic_info->data_start = NULL;
+        PFfclose(pFlic_info->f);
+        pFlic_info->f = NULL;
+    }
+    if (pFlic_info->data != NULL) {
+        pFlic_info->data = NULL;
+    }
+    return 0;
+}
 
 // DoColourMap
 
@@ -479,7 +491,19 @@ void C2_HOOK_FASTCALL InitFlicQueue(void) {
     gFirst_flic = NULL;
 }
 
-// FlicQueueFinished
+// FUNCTION: CARMA2_HW 0x00462cd0
+int C2_HOOK_FASTCALL FlicQueueFinished(void) {
+    tFlic_descriptor* the_flic;
+
+    the_flic = gFirst_flic;
+    while (the_flic != NULL) {
+        if (the_flic->must_finish) {
+            return 0;
+        }
+        the_flic = the_flic->next;
+    }
+    return 1;
+}
 
 // ProcessFlicQueue
 

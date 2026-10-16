@@ -39,7 +39,7 @@ extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 // StartFlic
 
-// EndFlic
+extern int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
 
 // DoColourMap
 
@@ -75,7 +75,7 @@ extern void C2_HOOK_FASTCALL UnlockFlic(int pIndex);
 
 extern void C2_HOOK_FASTCALL InitFlicQueue(void);
 
-// FlicQueueFinished
+extern int C2_HOOK_FASTCALL FlicQueueFinished(void);
 
 // ProcessFlicQueue
 
