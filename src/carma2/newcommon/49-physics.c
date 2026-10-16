@@ -34,9 +34,7 @@ void* gPhysics_other_buffer;
 void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector3* source, const br_matrix34* matrix) {
     br_vector3 relative;
 
-    relative.v[0] = source->v[0] - matrix->m[3][0];
-    relative.v[1] = source->v[1] - matrix->m[3][1];
-    relative.v[2] = source->v[2] - matrix->m[3][2];
+    BrVector3Sub(&relative, source, (br_vector3*)matrix->m[3]);
     BrMatrix34TApplyV(dest, &relative, matrix);
 }
 
