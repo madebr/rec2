@@ -5,6 +5,8 @@
 #include "rec2_types.h"
 
 extern int gMini_map_visible;
+extern int gCount_smashable_race_targets;
+extern tSmashable_race_target gSmashable_race_targets[300];
 
 // CarArrowColour
 
@@ -80,9 +82,9 @@ extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 
 // CheckMapMoveKeys
 
-// InitSmashTargets
+extern void C2_HOOK_FASTCALL InitSmashTargets(void);
 
-// AddSmashTarget
+extern void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 
 extern int NearestPowerOfTwo(int pValue) ;
 
