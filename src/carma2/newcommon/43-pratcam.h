@@ -5,7 +5,7 @@
 
 // ChangeAmbientPratcam
 
-// PratcamEvent
+extern void C2_HOOK_FASTCALL PratcamEvent(int pIndex);
 
 // InitPratcam
 
