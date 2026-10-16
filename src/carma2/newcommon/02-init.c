@@ -88,7 +88,24 @@ tSlot_info gMax_APO[3];
 
 // ReinitialiseForwardCamera
 
-// AllocateRearviewPixelmap
+// FUNCTION: CARMA2_HW 0x0047dab0
+void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
+    if (gRearview_screen != NULL) {
+        BrPixelmapFree(gRearview_screen);
+        gRearview_screen = NULL;
+    }
+    if (gProgram_state.mirror_on) {
+        gRearview_screen = BrPixelmapAllocateSub(
+            gBack_screen,
+            gProgram_state.current_car.mirror_left,
+            gProgram_state.current_car.mirror_top,
+            gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left,
+            gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top);
+        gRearview_depth_buffer = gDepth_buffer;
+        gRearview_screen->origin_x = (br_int_16)(gRearview_screen->width / 2);
+        gRearview_screen->origin_y = (br_int_16)(gRearview_screen->height / 2);
+    }
+}
 
 // ReinitialiseRearviewCamera
 
