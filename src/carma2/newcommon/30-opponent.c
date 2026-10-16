@@ -1,6 +1,7 @@
 #include "30-opponent.h"
 
 #include <c2_hooks.h>
+#include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x0065a3cc
 float gOpponent_nastyness_frigger = 1.0f;
@@ -146,7 +147,11 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
 
 // ResetPredominantJobbies
 
-// LoadCopCars
+// FUNCTION: CARMA2_HW 0x004a9600
+void C2_HOOK_FASTCALL LoadCopCars(void) {
+
+    gProgram_state.AI_vehicles.number_of_cops = 0;
+}
 
 // LoadInOppoPaths
 
@@ -192,7 +197,11 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
 
 // GetOpponentsSectionMaxSpeed
 
-// InitOpponentPsyche
+// FUNCTION: CARMA2_HW 0x004aee90
+void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
+
+    gOpponents[pOpponent_index].psyche.grudge_against_player = 0;
+}
 
 // ClearTwattageOccurrenceVariables
 
