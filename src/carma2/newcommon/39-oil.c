@@ -113,7 +113,15 @@ int C2_HOOK_FASTCALL GetOilSpillCount(void) {
     return (int)REC2_ASIZE(gOily_spills);
 }
 
-// GetOilSpillDetails
+// FUNCTION: CARMA2_HW 0x004a74f0
+void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize) {
+    if (gOily_spills[pIndex].car_actor != NULL) {
+        *pActor = gOily_spills[pIndex].actor;
+        *pSize = gOily_spills[pIndex].full_size;
+    } else {
+        *pActor = NULL;
+    }
+}
 
 // PointInSpill
 
