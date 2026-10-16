@@ -37,6 +37,10 @@ extern void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArc
 
 extern int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void);
 
+extern int C2_HOOK_FASTCALL OriginalCarmaCDinDrive(void);
+
+extern int C2_HOOK_FASTCALL CarmaCDinDriveOrFullGameInstalled(void);
+
 extern void C2_HOOK_FASTCALL SetDefaultPixelmapFolderName(void);
 
 extern char* gPedTexturePath;
