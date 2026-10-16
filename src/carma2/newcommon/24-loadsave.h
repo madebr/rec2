@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern int gSave_game_out_of_sync;
+extern int gCount_saved_games;
 
 // Encryptificate
 
@@ -18,7 +19,7 @@ extern void C2_HOOK_FASTCALL EndSavedGamesList(void);
 
 extern tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN);
 
-// DoLoadGame2
+extern int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game);
 
 extern int C2_HOOK_FASTCALL DoLoadGame(int pIndex);
 
