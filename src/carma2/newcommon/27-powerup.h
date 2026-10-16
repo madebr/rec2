@@ -169,13 +169,13 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // DoInstantRepair
 
-// ResetPedSpeed
+extern void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car);
 
 // ResetPedSize
 
 // ResetPedHeadSize
 
-// ResetPedExplode
+extern void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car);
 
 // ResetPedBrittle
 

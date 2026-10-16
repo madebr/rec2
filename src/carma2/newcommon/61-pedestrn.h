@@ -3,6 +3,9 @@
 
 #include "c2_hooks.h"
 
+extern float gPedestrian_speed_factor;
+extern int gExploding_pedestrians;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix
