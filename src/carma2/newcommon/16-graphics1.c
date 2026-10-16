@@ -141,7 +141,17 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
 
 // RenderLollipops
 
-// SetupDepthBuffer
+// FUNCTION: CARMA2_HW 0x004e4940
+void C2_HOOK_FASTCALL SetupDepthBuffer(void) {
+    if (gDepth_buffer != NULL) {
+        BrPixelmapFree(gDepth_buffer);
+        gDepth_buffer = NULL;
+    }
+    gDepth_buffer = BrPixelmapMatch(gBack_screen, BR_PMMATCH_DEPTH_16);
+    if (gDepth_buffer == NULL) {
+        FatalError(kFatalError_AllocateZBuffer);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e4980
 void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight) {
