@@ -1,6 +1,9 @@
 #ifndef GUARD_58_CRUSH2_H
 #define GUARD_58_CRUSH2_H
 
+#include "c2_hooks.h"
+#include "rec2_types.h"
+
 extern int gCredits_wasting_car[3];
 extern float gCredits_per_unit_car_damage[3];
 extern int gTime_rolling_car[3];
@@ -31,7 +34,7 @@ extern int gTime_per_ped_kill[3];
 
 // GetDirection
 
-// SetSmokeLastDamageLevel
+extern void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar);
 
 // SortOutSmoke
 
