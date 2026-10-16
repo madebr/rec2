@@ -497,9 +497,21 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
 
 // UndoTransformType
 
-// CalcCrushLength
+// FUNCTION: CARMA2_HW 0x004ca3f0
+int C2_HOOK_FASTCALL CalcCrushLength(tPipe_chunk* pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_crush, model, 0x0);
 
-// CalcShrapnelLength
+    return 10 + 2 * ((tPipe_chunk_data*)pChunk)->data.crush.model->nvertices;
+}
+
+// FUNCTION: CARMA2_HW 0x004ca400
+int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
+    if (((tPipe_chunk_data*)pChunk)->subject_index & 0x8000) {
+        return 20;
+    } else {
+        return 12;
+    }
+}
 
 // CalcSmudgeLength
 
@@ -507,5 +519,10 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
 
 // CalcEndMyBendLength
 
-// CalcRemoveFacesLength
+// FUNCTION: CARMA2_HW 0x004ca460
+int C2_HOOK_FASTCALL CalcRemoveFacesLength(tPipe_chunk* pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smash_remove_faces, count, 0x4);
+
+    return ((tPipe_chunk_data*)pChunk)->data.smash_remove_faces.count * 8 + 8;
+}
 
