@@ -1,17 +1,23 @@
 #include "23-piping.h"
 
+// GLOBAL: CARMA2_HW 0x00676900
+float gReplay_rate;
+
 // ARReplayForwards
 
 // ARReplayIsReallyPaused
 
 // ARReplayPauseState
 
-// STUB: CARMA2_HW 0x00402390
+// FUNCTION: CARMA2_HW 0x00402390
 float C2_HOOK_FASTCALL ARGetReplayRate(void) {
-    NOT_IMPLEMENTED();
+    return gReplay_rate;
 }
 
-// ARSetReplayRate
+// FUNCTION: CARMA2_HW 0x004023a0
+void C2_HOOK_FASTCALL ARSetReplayRate(float pRate) {
+    gReplay_rate = pRate;
+}
 
 // ARGetReplayDirection
 
