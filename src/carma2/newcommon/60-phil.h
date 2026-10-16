@@ -4,6 +4,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gPHIL_disabled;
+extern tPhysics_object* gPHIL_list_collision_infos;
+
 // ScalarToFraction
 
 // FractionToScalar
@@ -48,7 +51,7 @@ extern void C2_HOOK_FASTCALL PHILDisable(void);
 
 extern int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject);
 
-// PHILGetFirstObject
+extern tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void);
 
 // PHILGetNextObject
 

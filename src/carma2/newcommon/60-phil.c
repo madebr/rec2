@@ -1,5 +1,11 @@
 #include "60-phil.h"
 
+// GLOBAL: CARMA2_HW 0x0065d004
+int gPHIL_disabled = 1;
+
+// GLOBAL: CARMA2_HW 0x0074a5f0
+tPhysics_object* gPHIL_list_collision_infos;
+
 // ScalarToFraction
 
 // FractionToScalar
@@ -38,9 +44,9 @@
 
 // PHILInit
 
-// STUB: CARMA2_HW 0x004b5d20
+// FUNCTION: CARMA2_HW 0x004b5d20
 void C2_HOOK_FASTCALL PHILDisable(void) {
-    NOT_IMPLEMENTED();
+    gPHIL_disabled = 1;
 }
 
 // PHILAddObject
@@ -52,7 +58,14 @@ int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject) {
     return 0;
 }
 
-// PHILGetFirstObject
+// FUNCTION: CARMA2_HW 0x004b5fd0
+tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
+    if (gPHIL_disabled) {
+        return NULL;
+    } else {
+        return gPHIL_list_collision_infos;
+    }
+}
 
 // PHILGetNextObject
 
