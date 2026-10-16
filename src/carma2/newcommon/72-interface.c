@@ -1570,7 +1570,26 @@ void C2_HOOK_FASTCALL Generic_LinkOutEffect(void) {
     DRS3StartSound(gEffects_outlet, eSoundId_Swingout);
 }
 
-// GetScrollSet
+// FUNCTION: CARMA2_HW 0x00471d30
+tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem) {
+    tConnected_items* scrollset;
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnected_items, range_length, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnected_items, count_ranges, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnected_items, range_starts, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnected_items, next, 0x2c);
+
+    for (scrollset = gConnected_items; scrollset != NULL; scrollset = scrollset->next) {
+        for (i = 0; i < scrollset->count_ranges; i++) {
+            if (pItem >= scrollset->range_starts[i]
+                    && pItem < scrollset->range_starts[i] + scrollset->range_length) {
+                return scrollset;
+            }
+        }
+    }
+    return NULL;
+}
 
 // ScrollSet_DisplayEntry
 
@@ -1578,7 +1597,29 @@ void C2_HOOK_FASTCALL Generic_LinkOutEffect(void) {
 
 // GetUpdown
 
-// ScrollSet_TranslateItemToIndex
+// FUNCTION: CARMA2_HW 0x00471d70
+int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected, int pItem) {
+    int offset;
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnected_items, range_length, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnected_items, field_0x8, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnected_items, count_ranges, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnected_items, range_starts, 0x10);
+
+    offset = -1;
+    for (i = 0; i < pConnected->count_ranges; i++) {
+        if (pItem >= pConnected->range_starts[i]
+                && pItem < pConnected->range_starts[i] + pConnected->range_length) {
+            offset = pItem - pConnected->range_starts[i];
+            break;
+        }
+    }
+    if (offset == -1) {
+        return -1;
+    }
+    return pConnected->field_0x8 + offset;
+}
 
 // Generic_FindNextActiveItem
 

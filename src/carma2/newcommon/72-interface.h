@@ -285,7 +285,7 @@ extern void C2_HOOK_FASTCALL Generic_LinkInEffect(void);
 
 extern void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
-// GetScrollSet
+extern tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem);
 
 // ScrollSet_DisplayEntry
 
@@ -293,7 +293,7 @@ extern void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
 // GetUpdown
 
-// ScrollSet_TranslateItemToIndex
+extern int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected, int pItem);
 
 // Generic_FindNextActiveItem
 
