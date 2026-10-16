@@ -2,7 +2,11 @@
 #define GUARD_09_FUNKS_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
 #include "brender/brender.h"
+
+extern tFunkotronic_spec* gFunkotronics_array;
 
 // CalculateTextureBitsValue
 
@@ -68,9 +72,9 @@ extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
 // EnableFunkotronic
 
-// MasterDisableFunkotronic
+extern void C2_HOOK_FASTCALL MasterDisableFunkotronic(int pIndex);
 
-// MasterEnableFunkotronic
+extern void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex);
 
 // AdjustFunkEnable
 
