@@ -184,7 +184,18 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
 
 // ReadSmashableData
 
-// ActuallyRepairSmash
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004ef840
+void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // KillFragment
 
@@ -192,7 +203,17 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
 
 // RepairSmash
 
-// TotallyRepairSmash
+// FUNCTION: CARMA2_HW 0x004ef9c0
+void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer_entry* pSmash_data) {
+    tCar_crush_smashable_part* smashable = pSmash_data->smashables;
+    int i;
+
+    for (i = 0; i < pSmash_data->count_smashables; i++, smashable++) {
+        if (smashable->field_0x4c != 0) {
+            ActuallyRepairSmash(pCar_Spec, smashable, 0);
+        }
+    }
+}
 
 // InitGlassFragments
 
@@ -320,9 +341,24 @@ void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
 
 // LinkSmashies
 
-// RepairModels
+// FUNCTION: CARMA2_HW 0x004f5a00
+intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec) {
+    return DRActorEnumRecurse(pCar_spec->car_master_actor, RepairModels, pCar_spec);
+}
 
-// RepairAllSmashes
+// FUNCTION: CARMA2_HW 0x004f5a10
+intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
+    tUser_crush_data* user_crush = pActor->user;
+    tCar_crush_buffer_entry* crush_data;
+
+    if (user_crush != NULL) {
+        crush_data = user_crush->crush_data;
+        if (crush_data != NULL) {
+            TotallyRepairSmash(pUser, crush_data);
+        }
+    }
+    return 0;
+}
 
 // SmashEverythingCB
 
