@@ -1,6 +1,9 @@
 #ifndef GUARD_22_REPLAY_H
 #define GUARD_22_REPLAY_H
 
+#include "c2_hooks.h"
+#include "rec2_types.h"
+
 extern int gAR_camera_type;
 
 // ActualActionReplayHeadups
@@ -41,7 +44,7 @@ extern int gAR_camera_type;
 
 // DisplayMovieStatusPanel
 
-// ApplyTime
+extern void C2_HOOK_FASTCALL ApplyTime(tU32 pTime);
 
 // ARSetPause
 
