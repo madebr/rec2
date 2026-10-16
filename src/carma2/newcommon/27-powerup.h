@@ -271,11 +271,11 @@ extern void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car);
 
 // ResetOpponentsSpeed
 
-// ResetCopsSpeed
+extern void C2_HOOK_FASTCALL ResetCopsSpeed(tPowerup* powerup, tCar_spec* car);
 
-// ResetGravity
+extern void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetPinball
+extern void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car);
 
 // ResetWallclimb
 
