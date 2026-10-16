@@ -84,12 +84,12 @@ void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
 
 // FUNCTION: CARMA2_HW 0x0047b2b0
 void C2_HOOK_FASTCALL MasterDisableFunkotronic(int pIndex) {
-    gFunkotronics_array[pIndex].flags |= 2u;
+    gFunkotronics_array[pIndex].flags |= 0x2;
 }
 
 // FUNCTION: CARMA2_HW 0x0047b2e0
 void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex) {
-    gFunkotronics_array[pIndex].flags &= ~2u;
+    gFunkotronics_array[pIndex].flags &= ~0x2;
 }
 
 // AdjustFunkEnable
