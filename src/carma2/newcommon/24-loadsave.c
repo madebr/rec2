@@ -8,6 +8,9 @@ int gSave_game_out_of_sync;
 // GLOBAL: CARMA2_HW 0x0068c72c
 tSave_game* gSaved_games;
 
+// GLOBAL: CARMA2_HW 0x0068c728
+int gCount_saved_games;
+
 // Encryptificate
 
 // MakeSavedGame
@@ -28,16 +31,35 @@ void C2_HOOK_FASTCALL EndSavedGamesList(void) {
     gSaved_games = NULL;
 }
 
-// STUB: CARMA2_HW 0x00491cb0
+// FUNCTION: CARMA2_HW 0x00491cb0
 tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
+
+    if (gSaved_games != NULL && pN < gCount_saved_games) {
+        return &gSaved_games[gCount_saved_games - pN - 1];
+    }
+    return NULL;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00491ce0
+int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game) {
     NOT_IMPLEMENTED();
 }
 
-// DoLoadGame2
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
-// STUB: CARMA2_HW 0x00491e20
+// FUNCTION: CARMA2_HW 0x00491e20
 int C2_HOOK_FASTCALL DoLoadGame(int pIndex) {
-    NOT_IMPLEMENTED();
+
+    if (gSaved_games != NULL && pIndex >= 0 && pIndex < gCount_saved_games) {
+        return DoLoadGame2(GetNthSavedGame(pIndex));
+    }
+    return 0;
 }
 
 // DoLoadMostRecentGame
