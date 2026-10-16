@@ -60,7 +60,11 @@ int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject) {
 
 // FUNCTION: CARMA2_HW 0x004b5fd0
 tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
-    return gPHIL_disabled == 0 ? gPHIL_list_collision_infos : NULL;
+    if (gPHIL_disabled) {
+        return NULL;
+    } else {
+        return gPHIL_list_collision_infos;
+    }
 }
 
 // PHILGetNextObject
