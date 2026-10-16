@@ -15,12 +15,13 @@ extern tTranslation_record* gTranslations;
 extern tDR_font* gTrans_fonts[2];
 extern int gTranslation_count;
 extern tFlic_spec gMain_flic_list[372];
+extern int gPalette_fuck_prevention;
 
 extern int C2_HOOK_FASTCALL TranslationMode(void);
 
-// DontLetFlicFuckWithPalettes
+extern void C2_HOOK_FASTCALL DontLetFlicFuckWithPalettes(void);
 
-// LetFlicFuckWithPalettes
+extern void C2_HOOK_FASTCALL LetFlicFuckWithPalettes(void);
 
 // TurnFlicTransparencyOn
 
