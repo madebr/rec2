@@ -3,6 +3,7 @@
 #include "16-graphics1.h"
 #include "32-spark.h"
 #include "61-pedestrn.h"
+#include "globvars.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
 
@@ -328,11 +329,23 @@ void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
 
 // ResetOpponentsSpeed
 
-// ResetCopsSpeed
+// FUNCTION: CARMA2_HW 0x004de710
+void C2_HOOK_FASTCALL ResetCopsSpeed(tPowerup* powerup, tCar_spec* car) {
 
-// ResetGravity
+    gCop_speed_factor = 1.f;
+}
 
-// ResetPinball
+// FUNCTION: CARMA2_HW 0x004de720
+void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gGravity_multiplier = gDefault_gravity;
+}
+
+// FUNCTION: CARMA2_HW 0x004de730
+void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car) {
+
+    gPinball_factor = 0.f;
+}
 
 // ResetWallclimb
 
