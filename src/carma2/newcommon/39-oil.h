@@ -30,7 +30,7 @@ extern void C2_HOOK_FASTCALL ResetOilSpills(void);
 
 extern int C2_HOOK_FASTCALL GetOilSpillCount(void);
 
-// GetOilSpillDetails
+extern void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize);
 
 // PointInSpill
 
