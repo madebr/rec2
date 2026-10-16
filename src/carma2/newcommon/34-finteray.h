@@ -1,6 +1,10 @@
 #ifndef GUARD_34_FINTERAY_H
 #define GUARD_34_FINTERAY_H
 
+#include "c2_hooks.h"
+
+extern int gPling_materials;
+
 // BadDiv
 
 // DRVector2AccumulateScale
@@ -19,9 +23,9 @@
 
 // ActorFindFace
 
-// EnablePlingMaterials
+extern void C2_HOOK_FASTCALL EnablePlingMaterials(void);
 
-// DisablePlingMaterials
+extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // StationarySphereSphereCollide
 

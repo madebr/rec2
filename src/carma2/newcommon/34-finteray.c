@@ -1,5 +1,8 @@
 #include "34-finteray.h"
 
+// GLOBAL: CARMA2_HW 0x005964c0
+int gPling_materials = 1;
+
 // BadDiv
 
 // DRVector2AccumulateScale
@@ -18,9 +21,17 @@
 
 // ActorFindFace
 
-// EnablePlingMaterials
+// FUNCTION: CARMA2_HW 0x0045d5c0
+void C2_HOOK_FASTCALL EnablePlingMaterials(void) {
 
-// DisablePlingMaterials
+    gPling_materials = 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0045d5d0
+void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
+
+    gPling_materials = 0;
+}
 
 // StationarySphereSphereCollide
 
