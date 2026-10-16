@@ -5,6 +5,8 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+extern int gHas_sky_texture;
+
 // Log2
 
 // CalculateWrappingMultiplier
@@ -25,7 +27,7 @@ extern void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pix
 
 // EdgeU
 
-// MungeSkyModel
+extern void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel);
 
 // CreateHorizonModel
 
@@ -79,9 +81,9 @@ extern void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
 
 // ChangeDepthEffect
 
-// MungeForwardSky
+extern void C2_HOOK_FASTCALL MungeForwardSky(void);
 
-// MungeRearviewSky
+extern void C2_HOOK_FASTCALL MungeRearviewSky(void);
 
 extern void C2_HOOK_FASTCALL SkyTextureChanged(void);
 
