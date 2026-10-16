@@ -778,3 +778,18 @@ void C2_HOOK_FASTCALL SetDefaultTextFileName(void) {
     gPedTextTxtPath = "TEXT.TXT";
 }
 
+// FUNCTION: CARMA2_HW 0x0048ea10
+void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void) {
+    gPedTextTxtPath = "TEXT.TXT";
+}
+
+// FUNCTION: CARMA2_HW 0x0048ea20
+void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void) {
+    gPedTextTxtPath = "ZOMTEXT.TXT";
+}
+
+// FUNCTION: CARMA2_HW 0x0048ea30
+void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void) {
+    gPedTextTxtPath = "ALTEXT.TXT";
+}
+

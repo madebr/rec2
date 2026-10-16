@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern const char* gPedTextTxtPath;
+
 extern void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
 
 extern void C2_HOOK_FASTCALL LoadInRegistees(void);
@@ -113,5 +115,11 @@ extern int C2_HOOK_FASTCALL RestoreOptions(void);
 // InitFunkGrooveFlags
 
 extern void C2_HOOK_FASTCALL SetDefaultTextFileName(void);
+
+extern void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void);
+
+extern void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void);
+
+extern void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void);
 
 #endif // GUARD_10_LOADING2_H
