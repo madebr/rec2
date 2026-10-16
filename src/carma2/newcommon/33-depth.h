@@ -79,7 +79,7 @@ extern void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
 
 // ToggleDepthCueing
 
-// ChangeDepthEffect
+extern void C2_HOOK_FASTCALL ChangeDepthEffect(void);
 
 extern void C2_HOOK_FASTCALL MungeForwardSky(void);
 
