@@ -164,9 +164,16 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 
 // RevertPalette
 
-// MungePalette
+// FUNCTION: CARMA2_HW 0x004b5320
+void C2_HOOK_FASTCALL MungePalette(void) {
+}
 
-// ResetPalette
+// FUNCTION: CARMA2_HW 0x004b5330
+void C2_HOOK_FASTCALL ResetPalette(void) {
+
+    InitPaletteAnimate();
+    DRSetPalette(gRender_palette);
+}
 
 // Darken
 
