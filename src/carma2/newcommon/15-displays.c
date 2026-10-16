@@ -238,7 +238,10 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     LoadHeadupMessageFile();
 }
 
-// ClearHeadup
+// FUNCTION: CARMA2_HW 0x00449630
+void C2_HOOK_FASTCALL ClearHeadup(int pIndex) {
+    gHeadups[pIndex].type = eHeadup_unused;
+}
 
 // ClearHeadupSlot
 
