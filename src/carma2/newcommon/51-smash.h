@@ -140,7 +140,7 @@ extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // ReadSmashableData
 
-// ActuallyRepairSmash
+extern void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel);
 
 // KillFragment
 
@@ -148,7 +148,7 @@ extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // RepairSmash
 
-// TotallyRepairSmash
+extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer_entry* pSmash_data);
 
 // InitGlassFragments
 
@@ -254,7 +254,7 @@ extern void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_da
 
 // RepairModels
 
-// RepairAllSmashes
+extern intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec);
 
 // SmashEverythingCB
 
