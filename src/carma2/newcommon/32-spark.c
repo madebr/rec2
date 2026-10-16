@@ -230,7 +230,11 @@ void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
 
 // PipeInstantUnSmudge
 
-// SmudgeCar
+// FUNCTION: CARMA2_HW 0x004fc9c0
+void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int pFire_point) {
+    (void)pCar;
+    (void)pFire_point;
+}
 
 // FUNCTION: CARMA2_HW 0x004fc9d0
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {

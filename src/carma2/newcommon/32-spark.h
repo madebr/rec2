@@ -151,7 +151,7 @@ extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
 // PipeInstantUnSmudge
 
-// SmudgeCar
+extern void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int pFire_point);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
