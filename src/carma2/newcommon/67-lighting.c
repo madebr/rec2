@@ -1,5 +1,8 @@
 #include "67-lighting.h"
 
+#include "08-loading1.h"
+#include "globvars.h"
+
 // LoadTrackModels
 
 // SmoothlyLoadIfItsAModel
@@ -22,7 +25,11 @@
 
 // SmoothificateCarMaterial
 
-// MungeLightingEffects
+// FUNCTION: CARMA2_HW 0x00486d60
+void C2_HOOK_FASTCALL MungeLightingEffects(void) {
+
+    // empty
+}
 
 // FUNCTION: CARMA2_HW 0x00486d70
 void C2_HOOK_FASTCALL KillLightingEffects(void) {
@@ -38,5 +45,11 @@ void C2_HOOK_FASTCALL InitLightingEffects(void) {
 
 // LoadStaticLightingForRace
 
-// ReadGlobalLightingInfo
+// FUNCTION: CARMA2_HW 0x00486dc0
+void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF) {
+    GetThreeInts(pF, &gLighting_data.directional.red, &gLighting_data.directional.green, &gLighting_data.directional.blue);
+    GetPairOfScalars(pF, &gLighting_data.ambient_0, &gLighting_data.diffuse_0);
+    GetPairOfScalars(pF, &gLighting_data.ambient_1, &gLighting_data.diffuse_1);
+    GetPairOfScalars(pF, &gLighting_data.ambient_else, &gLighting_data.diffuse_else);
+}
 
