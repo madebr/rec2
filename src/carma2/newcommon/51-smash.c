@@ -5,8 +5,6 @@
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
-static intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser);
-
 // GLOBAL: CARMA2_HW 0x006a55c8
 tExplosion gExplosions[50];
 
@@ -349,7 +347,7 @@ intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x004f5a10
-static intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
+intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
     tUser_crush_data* user_crush = pActor->user;
     tCar_crush_buffer_entry* crush_data;
 
