@@ -199,11 +199,11 @@ extern void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVerte
 
 // SetUpFlapJoint
 
-// MakeModelMaterialsDoubleSided
+extern void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel);
 
 // CheckFlapAngles
 
-// MakeModelMaterialsSingleSided
+extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // ReAttachBit
 
@@ -279,13 +279,13 @@ extern void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVerte
 
 // SaveVitalBitsOfObject
 
-// MakeCarModelsMaterialsDoubleSided
+extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsDoubleSided(br_actor* pActor, void* pArg);
 
 // SwapCarShapes
 
 // IsAWheelOrPivotActor
 
-// MakeCarModelsMaterialsSingleSided
+extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg);
 
 // IsOnNonCarHalf
 

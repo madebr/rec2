@@ -430,11 +430,41 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // SetUpFlapJoint
 
-// MakeModelMaterialsDoubleSided
+// FUNCTION: CARMA2_HW 0x0042d950
+void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel) {
+    int g;
+
+    if (pModel == NULL) {
+        return;
+    }
+    for (g = 0; g < pModel->prepared->ngroups; g++) {
+        br_material* material = pModel->faces[*pModel->prepared->groups[g].face_user].material;
+
+        if (material != NULL && !(material->flags & BR_MATF_TWO_SIDED)) {
+            material->flags |= BR_MATF_TWO_SIDED;
+            BrMaterialUpdate(material, BR_MATU_RENDERING);
+        }
+    }
+}
 
 // CheckFlapAngles
 
-// MakeModelMaterialsSingleSided
+// FUNCTION: CARMA2_HW 0x0042d9b0
+void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
+    int g;
+
+    if (pModel == NULL) {
+        return;
+    }
+    for (g = 0; g < pModel->prepared->ngroups; g++) {
+        br_material* mat = pModel->faces[*pModel->prepared->groups[g].face_user].material;
+
+        if (mat != NULL && (mat->flags & BR_MATF_TWO_SIDED) && mat->identifier != NULL && mat->identifier[0] == 'S') {
+            mat->flags &= ~BR_MATF_TWO_SIDED;
+            BrMaterialUpdate(mat, BR_MATU_RENDERING);
+        }
+    }
+}
 
 // ReAttachBit
 
@@ -510,13 +540,41 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // SaveVitalBitsOfObject
 
-// MakeCarModelsMaterialsDoubleSided
+// FUNCTION: CARMA2_HW 0x00430730
+intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsDoubleSided(br_actor* pActor, void* pArg) {
+    tUser_crush_data* user_crush = pActor->user;
+    tCar_spec* car_spec = pArg;
+    int i;
+
+    if (user_crush != NULL) {
+        for (i = 0; i < car_spec->count_detail_levels; i++) {
+            if (user_crush->models[i] != NULL) {
+                MakeModelMaterialsDoubleSided(user_crush->models[i]);
+            }
+        }
+    }
+    return 0;
+}
 
 // SwapCarShapes
 
 // IsAWheelOrPivotActor
 
-// MakeCarModelsMaterialsSingleSided
+// FUNCTION: CARMA2_HW 0x0042deb0
+intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg) {
+    tUser_crush_data* user_crush = pActor->user;
+    tCar_spec* car_spec = pArg;
+    int i;
+
+    if (user_crush != NULL) {
+        for (i = 0; i < car_spec->count_detail_levels; i++) {
+            if (user_crush->models[i] != NULL) {
+                MakeModelMaterialsSingleSided(user_crush->models[i]);
+            }
+        }
+    }
+    return 0;
+}
 
 // IsOnNonCarHalf
 
