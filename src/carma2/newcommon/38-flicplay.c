@@ -44,6 +44,12 @@ tDR_font* gTrans_fonts[2];
 // GLOBAL: CARMA2_HW 0x00686308
 int gPalette_fuck_prevention;
 
+// GLOBAL: CARMA2_HW 0x00686310
+int gTransparency_on;
+
+// GLOBAL: CARMA2_HW 0x00686318
+int gPlay_from_disk;
+
 // GLOBAL: CARMA2_HW 0x005964d0
 tFlic_spec gMain_flic_list[372] = {
     { "MAINSTIL.FLI", 1, 0, 0, 0, 0, 25, },
@@ -404,11 +410,20 @@ void C2_HOOK_FASTCALL LetFlicFuckWithPalettes(void) {
     gPalette_fuck_prevention = 0;
 }
 
-// TurnFlicTransparencyOn
+// FUNCTION: CARMA2_HW 0x004619e0
+void C2_HOOK_FASTCALL TurnFlicTransparencyOn(void) {
+    gTransparency_on = 1;
+}
 
-// TurnFlicTransparencyOff
+// FUNCTION: CARMA2_HW 0x004619f0
+void C2_HOOK_FASTCALL TurnFlicTransparencyOff(void) {
+    gTransparency_on = 0;
+}
 
-// PlayFlicsFromDisk
+// FUNCTION: CARMA2_HW 0x00461a00
+void C2_HOOK_FASTCALL PlayFlicsFromDisk(void) {
+    gPlay_from_disk = 1;
+}
 
 // TurnOffPanelFlics
 
