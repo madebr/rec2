@@ -161,11 +161,11 @@ extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pInde
 
 // GetOpponentSpecFromCarSpec
 
-// GetCarSpecFromGlobalOppoIndex
+extern tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex);
 
 // GetOpponentsRealSection
 
-// GetOpponentsFirstSection
+extern int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec);
 
 // GetOpponentsNextSection
 
