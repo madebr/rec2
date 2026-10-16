@@ -2,6 +2,7 @@
 #define GUARD_23_PIPING_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 #include <s3/s3.h>
 
 extern float gReplay_rate;
@@ -488,9 +489,9 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // UndoTransformType
 
-// CalcCrushLength
+extern int C2_HOOK_FASTCALL CalcCrushLength(tPipe_chunk* pChunk);
 
-// CalcShrapnelLength
+extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 
 // CalcSmudgeLength
 
@@ -498,6 +499,6 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // CalcEndMyBendLength
 
-// CalcRemoveFacesLength
+extern int C2_HOOK_FASTCALL CalcRemoveFacesLength(tPipe_chunk* pChunk);
 
 #endif // GUARD_23_PIPING_H

@@ -453,6 +453,16 @@ typedef struct {
     br_matrix34 m;
 } tPipe_chunk_end_shit_mine;
 
+typedef struct {
+    br_model* model;
+} tPipe_chunk_crush;
+
+typedef struct {
+    br_material* material;
+    int count;
+    tU8 faces[];
+} tPipe_chunk_smash_remove_faces;
+
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
@@ -496,9 +506,11 @@ typedef enum {
 } tPipe_chunk_type;
 
 typedef struct tPipe_chunk_data {
-    tU32 count;
+    tU32 subject_index;
     union {
         tPipe_chunk_non_car non_car;
+        tPipe_chunk_crush crush;
+        tPipe_chunk_smash_remove_faces smash_remove_faces;
         tPipe_ped_physics_data ped_physics;
         tPipe_phil_object phil_object;
         char raw_data[0];
