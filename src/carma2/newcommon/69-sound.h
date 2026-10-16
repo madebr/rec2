@@ -97,4 +97,12 @@ extern void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx
 
 extern void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void);
 
+extern const char* gPed_sound_path;
+
+extern void C2_HOOK_FASTCALL ConfigureBloodPedSoundPath(void);
+
+extern void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void);
+
+extern void C2_HOOK_FASTCALL ConfigureAlienPedSoundPath(void);
+
 #endif // GUARD_69_SOUND_H
