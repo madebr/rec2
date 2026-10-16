@@ -11,13 +11,19 @@
 // GLOBAL: CARMA2_HW 0x00761b80
 tSpecial_volume gDefault_default_water_spec_vol;
 
+// GLOBAL: CARMA2_HW 0x00761f44
+tSpecial_volume* gDefault_water_spec_vol_real;
+
 // GLOBAL: CARMA2_HW 0x00660268
 const char* gSoundType_choices[2] = {
     "SATURATED",
     "SCATTERED"
 };
 
-// GetDefaultSpecialVolumeForWater
+// FUNCTION: CARMA2_HW 0x004ff110
+tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
+    return gDefault_water_spec_vol_real;
+}
 
 // FindSpecialVolume
 
