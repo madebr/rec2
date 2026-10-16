@@ -143,6 +143,7 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
 
 // FUNCTION: CARMA2_HW 0x004e4940
 void C2_HOOK_FASTCALL SetupDepthBuffer(void) {
+
     if (gDepth_buffer != NULL) {
         BrPixelmapFree(gDepth_buffer);
         gDepth_buffer = NULL;
@@ -182,14 +183,7 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
         FatalError(kFatalError_AllocateOffScreenBuffer);
     }
 
-    if (gDepth_buffer != NULL) {
-        BrPixelmapFree(gDepth_buffer);
-        gDepth_buffer = NULL;
-    }
-    gDepth_buffer = BrPixelmapMatch(gBack_screen, BR_PMMATCH_DEPTH_16);
-    if (gDepth_buffer == NULL) {
-        FatalError(kFatalError_AllocateZBuffer);
-    }
+    SetupDepthBuffer();
 
     BrZbsBegin(gRender_screen->type, gDepth_buffer->type, gTemporary_physics_render_buffer, sizeof(gTemporary_physics_render_buffer));
     gBrZb_initialized = 1;
