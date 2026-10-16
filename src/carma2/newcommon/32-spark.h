@@ -9,6 +9,7 @@ extern int* gShade_table;
 extern int gNum_dust_tables;
 extern int gSpark_flags;
 extern br_pixelmap* gIt_shade_table;
+extern int gSmoke_flags;
 
 // DrawDot
 
@@ -110,7 +111,7 @@ extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
 // CreatePuffOfSmoke
 
-// ResetSmoke
+extern void C2_HOOK_FASTCALL ResetSmoke(void);
 
 // AdjustSmoke
 

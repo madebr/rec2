@@ -22,6 +22,9 @@ int gSpark_flags;
 // GLOBAL: CARMA2_HW 0x006aa5ac
 br_pixelmap* gIt_shade_table;
 
+// GLOBAL: CARMA2_HW 0x006aa590
+int gSmoke_flags;
+
 // DrawDot
 
 // SetWorldToScreen
@@ -140,7 +143,10 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
 
 // CreatePuffOfSmoke
 
-// ResetSmoke
+// FUNCTION: CARMA2_HW 0x004fb510
+void C2_HOOK_FASTCALL ResetSmoke(void) {
+    gSmoke_flags = 0;
+}
 
 // AdjustSmoke
 
