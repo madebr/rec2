@@ -3,11 +3,11 @@
 
 #include "c2_hooks.h"
 
-// ChangeAmbientPratcam
+extern void C2_HOOK_FASTCALL ChangeAmbientPratcam(int pIndex);
 
 extern void C2_HOOK_FASTCALL PratcamEvent(int pIndex);
 
-// InitPratcam
+extern void C2_HOOK_FASTCALL InitPratcam(void);
 
 extern void C2_HOOK_FASTCALL DisposePratcam(void);
 
