@@ -33,7 +33,7 @@ extern void C2_HOOK_FASTCALL KillLightingEffects(void);
 
 extern void C2_HOOK_FASTCALL InitLightingEffects(void);
 
-// LoadStaticLightingForRace
+extern void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* pRace_lighting_path);
 
 extern void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF);
 
