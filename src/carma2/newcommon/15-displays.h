@@ -79,7 +79,7 @@ extern void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
 // ChangeHeadupText
 
-// DoDamageScreen
+extern void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
 
 // DoInstruments
 
