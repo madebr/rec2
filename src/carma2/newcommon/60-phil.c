@@ -95,7 +95,17 @@ tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
 
 // ProcessDrag
 
-// MarkObjectAndChildrenAsPassive
+// FUNCTION: CARMA2_HW 0x004b6e90
+void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tPhysics_object* pObject) {
+    tPhysics_object* child;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0xf0, 0xf0);
+
+    pObject->field_0xf0 = 2;
+    for (child = pObject->child; child != NULL; child = child->next) {
+        MarkObjectAndChildrenAsPassive(child);
+    }
+}
 
 // SetStandardGravity
 

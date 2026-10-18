@@ -81,7 +81,7 @@ extern tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void);
 
 // ProcessDrag
 
-// MarkObjectAndChildrenAsPassive
+extern void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tPhysics_object* pObject);
 
 // SetStandardGravity
 
