@@ -347,7 +347,14 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
 
 // DRPixelmapCopyMapBlack
 
-// DisableLights
+// FUNCTION: CARMA2_HW 0x0047d6a0
+void C2_HOOK_FASTCALL DisableLights(void) {
+    int i;
+
+    for (i = 0; i < gNumber_of_lights; i++) {
+        BrLightDisable(gLight_array[i]);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047d6d0
 void C2_HOOK_FASTCALL EnableLights(void) {

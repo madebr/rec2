@@ -107,7 +107,7 @@ extern void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, b
 
 // DRPixelmapCopyMapBlack
 
-// DisableLights
+extern void C2_HOOK_FASTCALL DisableLights(void);
 
 extern void C2_HOOK_FASTCALL EnableLights(void);
 
