@@ -1,7 +1,14 @@
 #include "23-piping.h"
 
+#include <stddef.h>
+
+#define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
+
 // GLOBAL: CARMA2_HW 0x00676900
 float gReplay_rate;
+
+// GLOBAL: CARMA2_HW 0x006768e8
+const tReplay_callback* gPipe_callbacks;
 
 // ARReplayForwards
 
@@ -29,7 +36,15 @@ void C2_HOOK_FASTCALL ARSetReplayRate(float pRate) {
 
 // ARDispose
 
-// LengthOfChunk
+// FUNCTION: CARMA2_HW 0x00403720
+int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType) {
+
+    if (gPipe_callbacks[pType].calc_length != NULL) {
+        return gPipe_callbacks[pType].calc_length(pChunk) + gPipe_callbacks[pType].length + sizeof(pChunk->subject_index);
+    } else {
+        return gPipe_callbacks[pType].length + sizeof(pChunk->subject_index);
+    }
+}
 
 // LengthOfSession
 
@@ -57,7 +72,10 @@ void C2_HOOK_FASTCALL ARSetReplayRate(float pRate) {
 
 // ARAddDataToSession
 
-// ARAddVariedDataToSession
+// STUB: CARMA2_HW 0x00402930
+void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...) {
+    NOT_IMPLEMENTED();
+}
 
 // ARDoSingleSession
 
@@ -152,7 +170,25 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 
 // AddSparkToPipingSession
 
-// AddShrapnelToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6f40
+void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_shrapnel, pos, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_shrapnel, pos, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_shrapnel, age, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_shrapnel, age, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_shrapnel, material, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_shrapnel, material, 0x4);
+
+    if (pShrapnel_index & 0x8000) {
+        ARAddVariedDataToSession(ePipe_chunk_shrapnel, pShrapnel_index, 3,
+            SIZE_OFFSET_PIPING(tPipe_chunk_shrapnel, pos), pPos,
+            SIZE_OFFSET_PIPING(tPipe_chunk_shrapnel, age), pAge,
+            SIZE_OFFSET_PIPING(tPipe_chunk_shrapnel, material), pMaterial);
+    } else {
+        ARAddVariedDataToSession(ePipe_chunk_shrapnel, pShrapnel_index, 1,
+            SIZE_OFFSET_PIPING(tPipe_chunk_shrapnel, pos), pPos);
+    }
+}
 
 // AddNonCarToPipingSession
 
@@ -499,7 +535,18 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
 
 // CalcCrushLength
 
-// CalcShrapnelLength
+// FUNCTION: CARMA2_HW 0x004ca400
+int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
+    C2_HOOK_BUG_ON(sizeof(tPipe_chunk_shrapnel) != 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_shrapnel, age, 0xc);
+
+    /* AddShrapnelToPipingSession only stores age and material for new shrapnel (0x8000 in the index) */
+    if (pChunk->subject_index & 0x8000) {
+        return sizeof(tPipe_chunk_shrapnel);
+    } else {
+        return offsetof(tPipe_chunk_shrapnel, age);
+    }
+}
 
 // CalcSmudgeLength
 
