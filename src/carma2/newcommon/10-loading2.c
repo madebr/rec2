@@ -478,7 +478,54 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
 // AdjustCarCoordinates
 
-// LoadSpeedo
+// FUNCTION: CARMA2_HW 0x0048b560
+void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+    char the_char1;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%c", &the_char1);
+    if (the_char1 == 'd') {
+        pCar_spec->speedo_radius_2[pIndex] = -1;
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        pCar_spec->speedo_image[pIndex] = LoadPixelmap(str);
+        if (pCar_spec->speedo_image[pIndex] == NULL) {
+            FatalError(kFatalError_CannotLoadSpeedoImage);
+        }
+        pCar_spec->speedo_y_pitch[pIndex] = pCar_spec->speedo_image[pIndex]->height / 10;
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x_pitch[pIndex]);
+    } else {
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        pCar_spec->speedo_image[pIndex] = LoadPixelmap(str);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_centre_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_centre_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_radius_1[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_radius_2[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_start_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_end_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_needle_colour[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->max_speed);
+    }
+}
 
 // LoadTacho
 
