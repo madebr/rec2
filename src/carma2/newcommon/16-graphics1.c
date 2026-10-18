@@ -77,6 +77,12 @@ int gScreen_wobble_x;
 // GLOBAL: CARMA2_HW 0x00705184
 int gScreen_wobble_y;
 
+// GLOBAL: CARMA2_HW 0x00703e28
+int gHud_actor_storage_size;
+
+// GLOBAL: CARMA2_HW 0x00704e60
+br_actor* gHud_actor_storage[128];
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -246,11 +252,20 @@ void C2_HOOK_FASTCALL ResetScreenWobble(void) {
 
 // RenderAFrame
 
-// StartRenderingHeadups
+// FUNCTION: CARMA2_HW 0x004e5a70
+void C2_HOOK_FASTCALL StartRenderingHeadups(void) {
+    CleanPolyFontDanglers();
+    gHud_actor_storage_size = 0;
+    gRender_poly_text = 0;
+}
 
-// STUB: CARMA2_HW 0x004e5ad0
+// FUNCTION: CARMA2_HW 0x004e5ad0
 void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor) {
-    NOT_IMPLEMENTED();
+    if (gHud_actor_storage_size >= (int)REC2_ASIZE(gHud_actor_storage)) {
+        BrFailure("Not enough HUD actor storage");
+    }
+    gHud_actor_storage[gHud_actor_storage_size] = pActor;
+    gHud_actor_storage_size += 1;
 }
 
 // StopRenderingHeadups
