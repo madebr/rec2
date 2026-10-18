@@ -32,6 +32,13 @@ extern tHud_message gHud_messages[46];
 extern tU32 gLast_fancy_headup;
 extern int gLast_fancy_index;
 extern tU32 gLast_fancy_time;
+extern tU32 gLast_centre_headup;
+extern int gLast_credit_headup__displays;
+extern tU32 gLast_earn_time;
+extern int gLast_time_credit_headup;
+extern tU32 gLast_time_earn_time;
+extern int gOld_times[10];
+extern int gQueued_headup_count;
 
 
 // static void C2_HOOK_FASTCALL LoadHeadupMessageFile(void);
@@ -42,7 +49,7 @@ extern void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
 // ClearHeadupSlot
 
-// ClearHeadups
+extern void C2_HOOK_FASTCALL ClearHeadups(void);
 
 // DimAFewBits
 
