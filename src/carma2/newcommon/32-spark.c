@@ -25,6 +25,9 @@ br_pixelmap* gIt_shade_table;
 // GLOBAL: CARMA2_HW 0x006aa590
 int gSmoke_flags;
 
+// GLOBAL: CARMA2_HW 0x006a8ce0
+tSmoke gSmoke[25];
+
 // DrawDot
 
 // SetWorldToScreen
@@ -148,7 +151,14 @@ void C2_HOOK_FASTCALL ResetSmoke(void) {
     gSmoke_flags = 0;
 }
 
-// AdjustSmoke
+// FUNCTION: CARMA2_HW 0x004fb520
+void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength) {
+    gSmoke[pIndex].type = pType;
+    gSmoke[pIndex].radius = pRadius;
+    gSmoke[pIndex].strength = pStrength;
+    BrVector3Copy(&gSmoke[pIndex].pos, pPos);
+    gSmoke_flags |= 1 << pIndex;
+}
 
 // ActorError
 
