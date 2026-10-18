@@ -18,6 +18,7 @@ extern tFlic_spec gMain_flic_list[372];
 extern int gPalette_fuck_prevention;
 extern int gTransparency_on;
 extern int gPlay_from_disk;
+extern int gPanel_flic_disable;
 
 extern int C2_HOOK_FASTCALL TranslationMode(void);
 
@@ -31,9 +32,9 @@ extern void C2_HOOK_FASTCALL TurnFlicTransparencyOff(void);
 
 extern void C2_HOOK_FASTCALL PlayFlicsFromDisk(void);
 
-// TurnOffPanelFlics
+extern void C2_HOOK_FASTCALL TurnOffPanelFlics(void);
 
-// TurnOnPanelFlics
+extern void C2_HOOK_FASTCALL TurnOnPanelFlics(void);
 
 extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
