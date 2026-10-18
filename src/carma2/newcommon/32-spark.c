@@ -122,7 +122,21 @@ void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
 
 // DrMatrix34Rotate
 
-// CmpSmokeZ
+// FUNCTION: CARMA2_HW 0x004fb2f0
+int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2) {
+    tBRender_smoke* const* a;
+    tBRender_smoke* const* b;
+
+    a = (tBRender_smoke* const*)p1;
+    b = (tBRender_smoke* const*)p2;
+    if ((*a)->pos.v[2] < (*b)->pos.v[2]) {
+        return -1;
+    } else if ((*a)->pos.v[2] > (*b)->pos.v[2]) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // STUB: CARMA2_HW 0x004f9fc0
 void C2_HOOK_FASTCALL InitSmokeStuff(void) {

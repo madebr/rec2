@@ -93,7 +93,7 @@ extern void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar);
 
 // DrMatrix34Rotate
 
-// CmpSmokeZ
+extern int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
 
 extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
