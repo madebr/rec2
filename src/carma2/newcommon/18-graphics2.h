@@ -14,6 +14,7 @@ extern br_pixelmap* gRender_palette;
 extern int gDim_amount;
 extern int gPalette_changed;
 extern br_pixelmap* gCurrent_palette;
+extern br_pixelmap* gCurrent_splash;
 
 extern void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount);
 

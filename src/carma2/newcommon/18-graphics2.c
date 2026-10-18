@@ -72,6 +72,9 @@ br_pixelmap* gPalette_0074a670;
 // GLOBAL: CARMA2_HW 0x0074a660
 br_pixelmap* gMini_map_glowing_line_palettes[3];
 
+// GLOBAL: CARMA2_HW 0x0068be20
+br_pixelmap* gCurrent_splash;
+
 // FUNCTION: CARMA2_HW 0x004b4fd0
 void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount) {
 
@@ -245,16 +248,28 @@ void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2,
     BrPixelmapLine(pDestn, pX1, pY1, pX2, pY2, pColour);
 }
 
-// STUB: CARMA2_HW 0x0047b880
+// FUNCTION: CARMA2_HW 0x0047b880
 void C2_HOOK_FASTCALL ClearEntireScreen(void) {
-    NOT_IMPLEMENTED();
+
+    if (gScreen != NULL) {
+        BrPixelmapFill(gScreen, gGraf_specs[gGraf_spec_index].black_value);
+    }
+    BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
+    BrPixelmapFill(gDepth_buffer, 0xffffffff);
+    PDScreenBufferSwap(0);
+    BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
 }
 
 // DistanceFromPlane
 
-// STUB: CARMA2_HW 0x0047b960
+// FUNCTION: CARMA2_HW 0x0047b960
 void C2_HOOK_FASTCALL KillSplashScreen(void) {
-    NOT_IMPLEMENTED();
+
+    if (gCurrent_splash != NULL) {
+        BrMapRemove(gCurrent_splash);
+        BrPixelmapFree(gCurrent_splash);
+        gCurrent_splash = NULL;
+    }
 }
 
 // SplashScreenWith
