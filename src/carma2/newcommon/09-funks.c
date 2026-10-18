@@ -1,6 +1,7 @@
 #include "09-funks.h"
 
 #include "23-piping.h"
+#include "41-utility.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0068b840
@@ -8,6 +9,12 @@ br_scalar gSight_distance_squared;
 
 // GLOBAL: CARMA2_HW 0x0068b84c
 tFunkotronic_spec* gFunkotronics_array;
+
+// GLOBAL: CARMA2_HW 0x0068b850
+tGroovidelic_spec* gGroovidelics_array;
+
+// GLOBAL: CARMA2_HW 0x0068b848
+int gGroovidelics_array_size;
 
 // CalculateTextureBitsValue
 
@@ -64,9 +71,19 @@ br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat,
 
 // AddFunkotronics
 
-// STUB: CARMA2_HW 0x00476430
+// FUNCTION: CARMA2_HW 0x00476430
 void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
-    NOT_IMPLEMENTED();
+    tGroovidelic_spec* the_groove;
+    int i;
+
+    if (gGroovidelics_array != NULL) {
+        for (i = 0, the_groove = gGroovidelics_array; i < gGroovidelics_array_size; i++, the_groove++) {
+            PossibleService();
+            if (the_groove->owner == pOwner) {
+                the_groove->owner = -999;
+            }
+        }
+    }
 }
 
 // AddNewGroovidelic
