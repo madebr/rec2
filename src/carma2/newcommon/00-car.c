@@ -1,6 +1,10 @@
 #include "00-car.h"
 
+#include "34-finteray.h"
+#include "37-brucetrk.h"
 #include "41-utility.h"
+#include "brender/brender.h"
+#include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x00763500
 int gCunning_stunt_bonus[3];
@@ -178,7 +182,11 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // MultiFindFloorInBoxBU
 
-// FindFace
+// FUNCTION: CARMA2_HW 0x0041e340
+void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vector3* nor, br_scalar* t, br_material** material) {
+
+    ActorFindFace(pPosition, pDir, gTrack_actor, nor, t, material, NULL);
+}
 
 // findfloor
 
@@ -220,7 +228,23 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // CheckForDeAttachmentOfNonCars
 
-// AdjustNonCar
+// FUNCTION: CARMA2_HW 0x004207e0
+void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix) {
+    tU8 column_x;
+    tU8 column_z;
+    br_actor* parent;
+
+    BrMatrix34Copy(&pActor->t.t.mat, pMatrix);
+    if (pActor->parent == gNon_track_actor) {
+        return;
+    }
+    XZToColumnXZ(&column_x, &column_z, pActor->t.t.mat.m[3][0], pActor->t.t.mat.m[3][2], &gProgram_state.track_spec);
+    parent = gProgram_state.track_spec.columns[column_z][column_x].actor_0x0;
+    if (parent != pActor->parent && parent != NULL) {
+        BrActorRemove(pActor);
+        BrActorAdd(gProgram_state.track_spec.columns[column_z][column_x].actor_0x0, pActor);
+    }
+}
 
 // GetPrecalculatedFacesUnderCar
 

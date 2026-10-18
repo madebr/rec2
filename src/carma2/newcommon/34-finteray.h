@@ -2,6 +2,7 @@
 #define GUARD_34_FINTERAY_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 extern int gPling_materials;
 
@@ -21,7 +22,7 @@ extern int gPling_materials;
 
 // FindHighestCallBack
 
-// ActorFindFace
+extern void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* nor, br_scalar* t, br_material** material, br_actor** actor);
 
 extern void C2_HOOK_FASTCALL EnablePlingMaterials(void);
 
