@@ -236,7 +236,14 @@ void C2_HOOK_FASTCALL EndMouseCursor(void) {
     NOT_IMPLEMENTED();
 }
 
-// DRDrawLine
+// FUNCTION: CARMA2_HW 0x0047b450
+void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2, int pY2, int pColour) {
+
+    if (gBack_screen->type != BR_PMT_INDEX_8) {
+        pColour = PaletteEntry16Bit(gRender_palette, pColour);
+    }
+    BrPixelmapLine(pDestn, pX1, pY1, pX2, pY2, pColour);
+}
 
 // STUB: CARMA2_HW 0x0047b880
 void C2_HOOK_FASTCALL ClearEntireScreen(void) {
@@ -337,7 +344,11 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
 
 // DRPixelmapRotatedAndFeatheredCopy
 
-// DRPixelmapBlendedLine
+// FUNCTION: CARMA2_HW 0x0047d260
+void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, br_pixelmap* pPalette) {
+    (void)pPalette;
+    DRDrawLine(pMap, pX1, pY1, pX2, pY2, (int)pColour);
+}
 
 // DR8BitFancyDrawLine
 
