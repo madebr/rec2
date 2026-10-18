@@ -1508,7 +1508,26 @@ void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
 
 // GetActiveSlider
 
-// GetAnyActiveSlider
+// FUNCTION: CARMA2_HW 0x00471cf0
+tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void) {
+    tFrontend_slider* slider;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_slider, itemid_left_reference, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_slider, itemid_start, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_slider, next, 0x20);
+
+    for (slider = gCurrent_frontend_scrollbars; slider != NULL; slider = slider->next) {
+        if (gFrontend_selected_item_index >= slider->itemid_left_reference
+                && gFrontend_selected_item_index < slider->itemid_left_reference + 3) {
+            return slider;
+        }
+        if (gFrontend_selected_item_index >= slider->itemid_start
+                && gFrontend_selected_item_index < slider->itemid_start + 3) {
+            return slider;
+        }
+    }
+    return NULL;
+}
 
 // PrepareSliders
 
