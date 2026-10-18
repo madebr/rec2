@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern const char* gPedTextTxtPath;
+extern int gGroove_funk_offset;
 
 extern void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
 
@@ -96,7 +97,7 @@ extern void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount,
 
 // LoadOpponents
 
-// AboutToLoadFirstCar
+extern void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
 
 // LoadOpponentsCars
 
@@ -112,7 +113,7 @@ extern int C2_HOOK_FASTCALL SaveOptions(void);
 
 extern int C2_HOOK_FASTCALL RestoreOptions(void);
 
-// InitFunkGrooveFlags
+extern void C2_HOOK_FASTCALL InitFunkGrooveFlags(void);
 
 extern void C2_HOOK_FASTCALL SetDefaultTextFileName(void);
 

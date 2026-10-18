@@ -90,6 +90,9 @@ int gDemo_opponents[15];
 // GLOBAL: CARMA2_HW 0x00679308
 int gCamera_type;
 
+// GLOBAL: CARMA2_HW 0x0074b4a8
+int gGroove_funk_offset;
+
 void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes) {
     tPath_name the_path;
     tPath_name the_path2;
@@ -549,7 +552,12 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
 // LoadOpponents
 
-// AboutToLoadFirstCar
+// FUNCTION: CARMA2_HW 0x0048cd80
+void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
+
+    InitFunkGrooveFlags();
+    gGroove_funk_offset = 0;
+}
 
 // LoadOpponentsCars
 
@@ -771,7 +779,17 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
     return 1;
 }
 
-// InitFunkGrooveFlags
+// FUNCTION: CARMA2_HW 0x0048e9e0
+void C2_HOOK_FASTCALL InitFunkGrooveFlags(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFunk_groove_flags) != 30);
+
+    // Starting from 1
+    for (i = 1; i < REC2_ASIZE(gFunk_groove_flags); i++) {
+        gFunk_groove_flags[i] = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0048ea00
 void C2_HOOK_FASTCALL SetDefaultTextFileName(void) {

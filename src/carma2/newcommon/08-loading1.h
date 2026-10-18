@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 extern int gDecode_thing;
+extern int gFunk_groove_flags[30];
 
 extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
