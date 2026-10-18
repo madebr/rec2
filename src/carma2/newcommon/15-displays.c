@@ -354,7 +354,19 @@ void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
 
 // EarnCredits100
 
-// SpendCredits
+// FUNCTION: CARMA2_HW 0x0044b470
+int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
+    int amount;
+
+    amount = gProgram_state.credits - pAmount;
+    gProgram_state.credits = amount;
+    if (amount < 0) {
+        gProgram_state.credits = 0;
+        return amount;
+    } else {
+        return 0;
+    }
+}
 
 // AwardTime
 
