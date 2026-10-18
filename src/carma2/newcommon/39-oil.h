@@ -24,7 +24,7 @@ extern void C2_HOOK_FASTCALL ResetOilSpills(void);
 
 // MungeIndexedOilsHeightAboveGround
 
-// SetInitialOilStuff
+extern void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel);
 
 // ProcessOilSpills
 
