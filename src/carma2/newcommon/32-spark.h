@@ -10,6 +10,7 @@ extern int gNum_dust_tables;
 extern int gSpark_flags;
 extern br_pixelmap* gIt_shade_table;
 extern int gSmoke_flags;
+extern tSmoke gSmoke[25];
 
 // DrawDot
 
@@ -113,7 +114,7 @@ extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
 extern void C2_HOOK_FASTCALL ResetSmoke(void);
 
-// AdjustSmoke
+extern void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength);
 
 // ActorError
 
