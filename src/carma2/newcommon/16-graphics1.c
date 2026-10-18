@@ -268,7 +268,50 @@ void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor) {
     gHud_actor_storage_size += 1;
 }
 
-// StopRenderingHeadups
+// FUNCTION: CARMA2_HW 0x004e5b00
+void C2_HOOK_FASTCALL StopRenderingHeadups(void) {
+    int original_origin_x;
+    int original_origin_y;
+    int original_base_x;
+    int original_base_y;
+    br_actor* actor;
+    int i;
+
+    if (gCount_polyfont_glyph_actors != 0) {
+        BrActorAdd(gHUD_root, gString_root_actor);
+    }
+    for (i = 0; i < gHud_actor_storage_size; i++) {
+        actor = gHud_actor_storage[i];
+        if (actor != NULL && actor->prev == NULL) {
+            BrActorAdd(gHUD_root, actor);
+        }
+    }
+    original_origin_x = gRender_screen->origin_x;
+    original_origin_y = gRender_screen->origin_y;
+    original_base_x = gRender_screen->base_x;
+    original_base_y = gRender_screen->base_y;
+    gRender_screen->origin_x = 0;
+    gRender_screen->origin_y = 0;
+    gRender_screen->base_x = 0;
+    gRender_screen->base_y = 0;
+    BrZbSceneRender(gHUD_root, gHUD_camera, gRender_screen, gDepth_buffer);
+    gRender_screen->origin_x = original_origin_x;
+    gRender_screen->origin_y = original_origin_y;
+    gRender_screen->base_x = original_base_x;
+    gRender_screen->base_y = original_base_y;
+    if (gString_root_actor->parent != NULL) {
+        BrActorRemove(gString_root_actor);
+    }
+    for (i = 0; i < gHud_actor_storage_size; i++) {
+        actor = gHud_actor_storage[i];
+        if (actor != NULL && actor->parent != NULL) {
+            BrActorRemove(actor);
+        }
+    }
+    gHud_actor_storage_size = 0;
+    CleanPolyFontDanglers();
+    gRender_poly_text = 1;
+}
 
 // FUNCTION: CARMA2_HW 0x004e5c70
 void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {

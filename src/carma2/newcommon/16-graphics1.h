@@ -90,7 +90,7 @@ extern void C2_HOOK_FASTCALL StartRenderingHeadups(void);
 
 extern void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor);
 
-// StopRenderingHeadups
+extern void C2_HOOK_FASTCALL StopRenderingHeadups(void);
 
 extern void C2_HOOK_FASTCALL CleanPolyFontDanglers(void);
 
