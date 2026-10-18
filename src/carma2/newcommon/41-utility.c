@@ -346,7 +346,17 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_mat
 
 // DRActorEnumRecurseWithSnart
 
-// sign
+// FUNCTION: CARMA2_HW 0x00514930
+int C2_HOOK_FASTCALL sign(int pNumber) {
+
+    if (pNumber > 0) {
+        return 1;
+    } else if (pNumber < 0) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005149a0
 FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
