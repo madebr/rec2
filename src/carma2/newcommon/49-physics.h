@@ -235,7 +235,7 @@ extern void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysic
 
 // MakeMatrix
 
-// RestoreListOmega
+extern void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject);
 
 // RestoreGroupOmegas
 
