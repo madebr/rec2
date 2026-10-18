@@ -433,9 +433,9 @@ extern void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 // CalculateAmountRepairedFraction
 
-// UnBendCar
+extern br_scalar C2_HOOK_FASTCALL UnBendCar(tCar_spec* pCar_spec, tU32 pDelta_time, br_scalar* pOriginal_amount);
 
-// CompletelyUnBendCar
+extern void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec);
 
 // ReAttachBits
 
