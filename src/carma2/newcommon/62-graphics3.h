@@ -7,6 +7,8 @@
 extern int gMini_map_visible;
 extern int gCount_smashable_race_targets;
 extern tSmashable_race_target gSmashable_race_targets[300];
+extern tCar_icon gCar_icons[128];
+extern br_actor* gCar_icons_model_actor;
 
 // CarArrowColour
 
