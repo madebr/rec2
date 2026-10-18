@@ -251,11 +251,26 @@ void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
 
 // SetOpponentsSpeed
 
-// SetCopsSpeed
+// FUNCTION: CARMA2_HW 0x004dcd70
+int C2_HOOK_FASTCALL SetCopsSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// SetGravity
+    gCop_speed_factor = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
-// SetPinball
+// FUNCTION: CARMA2_HW 0x004dcda0
+int C2_HOOK_FASTCALL SetGravity(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gGravity_multiplier = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
+
+// FUNCTION: CARMA2_HW 0x004dcdd0
+int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPinball_factor = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // SetWallclimb
 
