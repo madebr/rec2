@@ -5,6 +5,13 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+extern int gCursor_tinted_top;
+extern int gCursor_tinted_left;
+extern int gCursor_tinted_bottom;
+extern int gCursor_tinted_right;
+extern int gCursor_tinted_center;
+extern int gCursor_line_width;
+
 extern tTransient_bm gTransient_bitmaps[50];
 extern tU32 gLast_palette_change;
 extern int gPalette_index;
@@ -58,7 +65,7 @@ extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them
 
 extern int C2_HOOK_FASTCALL DoMouseCursor(void);
 
-// AllocateCursorTransient
+extern void C2_HOOK_FASTCALL AllocateCursorTransient(void);
 
 // InitMouseTargetLines
 

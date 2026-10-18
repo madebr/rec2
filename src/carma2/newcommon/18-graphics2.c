@@ -1,13 +1,33 @@
 #include "18-graphics2.h"
 
+#include "25-grafdata.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "66-tintedpoly.h"
 #include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
 #include <string.h>
+
+// GLOBAL: CARMA2_HW 0x0058fdc8
+int gCursor_tinted_top = -1;
+
+// GLOBAL: CARMA2_HW 0x0058fdd0
+int gCursor_tinted_left = -1;
+
+// GLOBAL: CARMA2_HW 0x0058fdcc
+int gCursor_tinted_bottom = -1;
+
+// GLOBAL: CARMA2_HW 0x0058fdd4
+int gCursor_tinted_right = -1;
+
+// GLOBAL: CARMA2_HW 0x0058fdd8
+int gCursor_tinted_center = -1;
+
+// GLOBAL: CARMA2_HW 0x0058fde0
+int gCursor_line_width = 5;
 
 // GLOBAL: CARMA2_HW 0x0067be98
 tTransient_bm gTransient_bitmaps[50];
@@ -225,7 +245,37 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
     NOT_IMPLEMENTED();
 }
 
-// AllocateCursorTransient
+// FUNCTION: CARMA2_HW 0x0043e3f0
+void C2_HOOK_FASTCALL AllocateCursorTransient(void) {
+    br_pixelmap* cross;
+    br_pixelmap* line;
+
+    BrMapFind("mse_corn");
+    cross = BrMapFind("mse_cros");
+    line = BrMapFind("mse_line");
+    gCursor_tinted_top = CreateTintedPoly(0, 0, gCursor_line_width, gCurrent_graf_data->height, 1, 127, 192, 0);
+    gCursor_tinted_left = CreateTintedPoly(0, 0, gCurrent_graf_data->width, gCursor_line_width, 1, 127, 192, 0);
+    gCursor_tinted_bottom = CreateTintedPoly(0, 0, gCursor_line_width, gCurrent_graf_data->height, 1, 127, 192, 0);
+    gCursor_tinted_right = CreateTintedPoly(0, 0, gCurrent_graf_data->width, gCursor_line_width, 1, 127, 192, 0);
+    gCursor_tinted_center = CreateTintedPoly(0, 0, 16, 16, 1, 127, 192, 0);
+    if (line != NULL) {
+        gTintedPolys[gCursor_tinted_left].material->colour_map = line;
+        gTintedPolys[gCursor_tinted_left].material->ka = 1.0f;
+        BrMaterialUpdate(gTintedPolys[gCursor_tinted_left].material, BR_MATU_ALL);
+        gTintedPolys[gCursor_tinted_right].material->colour_map = line;
+        BrMaterialUpdate(gTintedPolys[gCursor_tinted_right].material, BR_MATU_ALL);
+        gTintedPolys[gCursor_tinted_top].material->colour_map = line;
+        BrMatrix23Rotate(&gTintedPolys[gCursor_tinted_top].material->map_transform, BR_ANGLE_DEG(90));
+        BrMaterialUpdate(gTintedPolys[gCursor_tinted_top].material, BR_MATU_ALL);
+        gTintedPolys[gCursor_tinted_bottom].material->colour_map = line;
+        BrMatrix23Rotate(&gTintedPolys[gCursor_tinted_bottom].material->map_transform, BR_ANGLE_DEG(90));
+        BrMaterialUpdate(gTintedPolys[gCursor_tinted_bottom].material, BR_MATU_ALL);
+    }
+    if (cross != NULL) {
+        gTintedPolys[gCursor_tinted_center].material->colour_map = cross;
+        BrMaterialUpdate(gTintedPolys[gCursor_tinted_center].material, BR_MATU_ALL);
+    }
+}
 
 // InitMouseTargetLines
 
