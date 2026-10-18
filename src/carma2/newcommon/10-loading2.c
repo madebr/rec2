@@ -502,7 +502,16 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
 // GetDamageProgram
 
-// AllocateCarActorData
+// FUNCTION: CARMA2_HW 0x0048bf20
+intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData) {
+
+    C2_HOOK_BUG_ON(sizeof(tUser_crush_data) != 0x10);
+
+    if (pActor->type == BR_ACTOR_MODEL) {
+        pActor->user = BrMemAllocate(sizeof(tUser_crush_data), kMem_crush_data);
+    }
+    return 0;
+}
 
 // AllocateCarModelData
 
