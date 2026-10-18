@@ -403,7 +403,28 @@ void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject) {
 
 // MatrixProcess
 
-// RqBackSub
+// FUNCTION: CARMA2_HW 0x004c5b60
+void C2_HOOK_FASTCALL RqBackSub(br_scalar* pMatrix, br_scalar* pOrthogonal, const br_scalar* pRhs, br_scalar* pResult, int pSize) {
+    br_scalar intermediate[100];
+    br_scalar sum;
+    int i;
+    int j;
+
+    intermediate[0] = pRhs[0] / pMatrix[0];
+    for (i = 1; i < pSize; i++) {
+        sum = 0.0f;
+        for (j = 0; j < i; j++) {
+            sum += intermediate[j] * pMatrix[i * pSize + j];
+        }
+        intermediate[i] = (pRhs[i] - sum) / pMatrix[i * pSize + i];
+    }
+    for (i = 0; i < pSize; i++) {
+        pResult[i] = pOrthogonal[i] * intermediate[0];
+        for (j = 1; j < pSize; j++) {
+            pResult[i] += intermediate[j] * pOrthogonal[j * pSize + i];
+        }
+    }
+}
 
 // GetPhysicsScratchPointer
 
