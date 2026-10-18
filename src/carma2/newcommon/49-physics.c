@@ -329,7 +329,35 @@ void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject) {
 
 // RotateObjectSecondOrder
 
-// RotateObjectFirstOrder
+// FUNCTION: CARMA2_HW 0x004c1f10
+void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {
+    br_matrix34 rotation;
+    br_vector3 axis;
+    br_vector3 momentum;
+    br_vector3 rotated;
+    br_scalar length;
+    br_scalar angle;
+
+    length = BrVector3Length(&pObject->omega);
+    angle = length * pTime;
+    if (angle < 0.0001) {
+        return;
+    }
+    axis.v[0] = pObject->omega.v[0] / length;
+    axis.v[1] = pObject->omega.v[1] / length;
+    axis.v[2] = pObject->omega.v[2] / length;
+    momentum.v[0] = pObject->I.v[0] * pObject->omega.v[0];
+    momentum.v[1] = pObject->I.v[1] * pObject->omega.v[1];
+    momentum.v[2] = pObject->I.v[2] * pObject->omega.v[2];
+    BrMatrix34Rotate(&rotation, BrRadianToAngle(angle), &axis);
+    BrMatrix34TApplyV(&rotated, &momentum, &rotation);
+    BrMatrix34PreTranslate(&rotation, -pObject->cmpos.v[0], -pObject->cmpos.v[1], -pObject->cmpos.v[2]);
+    BrMatrix34PostTranslate(&rotation, pObject->cmpos.v[0], pObject->cmpos.v[1], pObject->cmpos.v[2]);
+    BrMatrix34Pre(&pObject->actor->t.t.mat, &rotation);
+    pObject->omega.v[0] = rotated.v[0] / pObject->I.v[0];
+    pObject->omega.v[1] = rotated.v[1] / pObject->I.v[1];
+    pObject->omega.v[2] = rotated.v[2] / pObject->I.v[2];
+}
 
 // RotateObject
 

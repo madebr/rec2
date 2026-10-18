@@ -257,7 +257,7 @@ extern void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject);
 
 // RotateObjectSecondOrder
 
-// RotateObjectFirstOrder
+extern void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime);
 
 // RotateObject
 
