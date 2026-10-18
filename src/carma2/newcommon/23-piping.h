@@ -60,7 +60,7 @@ extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, 
 
 // ARDoSingleSession
 
-// ARDoSingleVariedSession
+extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
 
 // ARResetPipePlayToEnd
 
@@ -216,7 +216,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // PipeSingleNonCarCreation
 
-// PipeSingleSmashModelChange
+extern void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOld_model, br_model* pNew_model);
 
 // PipeSingleSmashRemoveFaces
 
@@ -442,7 +442,7 @@ extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
 // UndoNonCarCreation
 
-// UndoSmashModelChange
+extern void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoSmashRemoveFaces
 

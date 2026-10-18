@@ -1,5 +1,6 @@
 #include "23-piping.h"
 
+#include "51-smash.h"
 #include "globvars.h"
 #include "platform.h"
 
@@ -85,7 +86,10 @@ void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCo
 
 // ARDoSingleSession
 
-// ARDoSingleVariedSession
+// STUB: CARMA2_HW 0x00402bd0
+void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...) {
+    NOT_IMPLEMENTED();
+}
 
 // ARResetPipePlayToEnd
 
@@ -271,7 +275,16 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
 
 // PipeSingleNonCarCreation
 
-// PipeSingleSmashModelChange
+// FUNCTION: CARMA2_HW 0x004c8960
+void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOld_model, br_model* pNew_model) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smash_model_change, old_model, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smash_model_change, new_model, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smash_model_change, new_model, 0x4);
+
+    ARDoSingleVariedSession(33, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smash_model_change, old_model), pOld_model,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smash_model_change, new_model), pNew_model);
+}
 
 // PipeSingleSmashRemoveFaces
 
@@ -500,7 +513,20 @@ void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
 
 // UndoNonCarCreation
 
-// UndoSmashModelChange
+// FUNCTION: CARMA2_HW 0x004ca110
+void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smash_model_change, new_model, 0x4);
+
+    (void)pPrev_chunk;
+    chunk = *pChunk;
+    if (chunk->data.smash_model_change.new_model != NULL) {
+        ChangeSmashModel((br_actor*)chunk->subject_index, chunk->data.smash_model_change.new_model, chunk->data.smash_model_change.old_model);
+    } else {
+        TurnOnSmashModel((br_actor*)chunk->subject_index);
+    }
+}
 
 // UndoSmashRemoveFaces
 
