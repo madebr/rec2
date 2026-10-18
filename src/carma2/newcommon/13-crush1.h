@@ -147,7 +147,7 @@ extern void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVerte
 
 // SendCrush
 
-// CompressCrush
+extern void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc);
 
 // ExpandCrush
 

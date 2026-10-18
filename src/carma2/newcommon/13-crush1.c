@@ -1,6 +1,7 @@
 #include "13-crush1.h"
 
 #include "08-loading1.h"
+#include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
 #include "platform.h"
@@ -378,7 +379,18 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // SendCrush
 
-// CompressCrush
+// FUNCTION: CARMA2_HW 0x00436940
+void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc) {
+    int i;
+
+    pDest->count = (tU8)pSrc->count;
+    for (i = 0; i < pSrc->count; i++) {
+        CompressVector3(&pDest->vectors[i], &pSrc->vectors[i], -2.5f, 2.5f);
+    }
+    pDest->field_0x1a = DRScalarToU16(pSrc->field_0x40, 0.0f, 10.0f);
+    CompressVector3(&pDest->field_0x1c, &pSrc->field_0x44, -1.0f, 1.0f);
+    pDest->field_0x24 = pSrc->field_0x50;
+}
 
 // ExpandCrush
 
