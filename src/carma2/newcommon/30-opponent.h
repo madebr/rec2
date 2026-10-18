@@ -7,7 +7,7 @@ extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
 
-// DoNotDprintf
+extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // ProcessCurrentObjective
 

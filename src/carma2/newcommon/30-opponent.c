@@ -12,7 +12,10 @@ int gMinTimeOpponentRepair;
 // GLOBAL: CARMA2_HW 0x0074a688
 int gMaxTimeOpponentRepair;
 
-// DoNotDprintf
+// FUNCTION: CARMA2_HW 0x004a8160
+void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
+
+}
 
 // ProcessCurrentObjective
 
