@@ -84,7 +84,7 @@ extern void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
 // EarnCredits100
 
-// SpendCredits
+extern int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
 // AwardTime
 
