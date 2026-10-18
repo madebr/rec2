@@ -7,6 +7,8 @@
 #include "brender/brender.h"
 
 extern tFunkotronic_spec* gFunkotronics_array;
+extern tGroovidelic_spec* gGroovidelics_array;
+extern int gGroovidelics_array_size;
 
 // CalculateTextureBitsValue
 
@@ -78,6 +80,6 @@ extern void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex);
 
 extern void C2_HOOK_FASTCALL AdjustFunkEnable(int pIndex, tS16 pFlags);
 
-// ActorsGroove
+extern tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor);
 
 #endif // GUARD_09_FUNKS_H
