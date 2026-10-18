@@ -10,7 +10,7 @@ extern const tReplay_callback* gPipe_callbacks;
 
 // ARReplayForwards
 
-// ARReplayIsReallyPaused
+extern int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void);
 
 // ARReplayPauseState
 
@@ -108,9 +108,9 @@ extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, 
 
 // ARGoForwards
 
-// ARService
+extern void C2_HOOK_FASTCALL ARService(void);
 
-// ARMainLoopStart
+extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 // ARToggleReplay
 
