@@ -52,7 +52,7 @@ extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 // GetDamageProgram
 
-// AllocateCarActorData
+extern intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData);
 
 // AllocateCarModelData
 
