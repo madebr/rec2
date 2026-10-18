@@ -315,7 +315,7 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
     gNapalm_bolts[pIndex].ped = pPed;
     for (i = 0; i < (int)REC2_ASIZE(gNapalm_bolts[pIndex].actors); i++) {
-        if (pPositions[i].v[0] == 0.f && pPositions[i].v[1] == 0.f && pPositions[i].v[2] == 0.f) {
+        if (Vector3IsZero(&pPositions[i])) {
             break;
         }
         BrVector3Copy(&gNapalm_bolts[pIndex].actors[i]->t.t.translate.t, &pPositions[i]);
