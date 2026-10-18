@@ -235,7 +235,7 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 
 // MakeMatrix
 
-// RestoreListOmega
+extern void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject);
 
 // RestoreGroupOmegas
 

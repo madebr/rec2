@@ -258,7 +258,19 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 
 // MakeMatrix
 
-// RestoreListOmega
+// FUNCTION: CARMA2_HW 0x004c03f0
+void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, rotate_omega, 0x1c0);
+
+    while (pObject != NULL) {
+        BrVector3Copy(&pObject->omega, &pObject->rotate_omega);
+        if (pObject->child != NULL) {
+            RestoreListOmega(pObject->child);
+        }
+        pObject = pObject->next;
+    }
+}
 
 // RestoreGroupOmegas
 
