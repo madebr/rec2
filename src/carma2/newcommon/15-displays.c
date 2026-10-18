@@ -94,6 +94,27 @@ int gLast_fancy_index = -1;
 // GLOBAL: CARMA2_HW 0x0067fd34
 tU32 gLast_fancy_time;
 
+// GLOBAL: CARMA2_HW 0x0067fcf8
+tU32 gLast_centre_headup;
+
+// GLOBAL: CARMA2_HW 0x005913d8
+int gLast_credit_headup__displays = -1;
+
+// GLOBAL: CARMA2_HW 0x0067f874
+tU32 gLast_earn_time;
+
+// GLOBAL: CARMA2_HW 0x005913dc
+int gLast_time_credit_headup = -1;
+
+// GLOBAL: CARMA2_HW 0x0067fcc4
+tU32 gLast_time_earn_time;
+
+// GLOBAL: CARMA2_HW 0x0079eac0
+int gOld_times[10];
+
+// GLOBAL: CARMA2_HW 0x0067f888
+int gQueued_headup_count;
+
 
 static void C2_HOOK_FASTCALL LoadHeadupMessageFile(void) {
     FILE* f;
@@ -256,7 +277,30 @@ void C2_HOOK_FASTCALL ClearHeadup(int pIndex) {
 
 // ClearHeadupSlot
 
-// ClearHeadups
+// FUNCTION: CARMA2_HW 0x00449690
+void C2_HOOK_FASTCALL ClearHeadups(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gHeadups) != 37);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gOld_times) != 10);
+
+    for (i = 0; i < (int)REC2_ASIZE(gHeadups); i++) {
+        if (gHeadups[i].type != eHeadup_unused) {
+            ClearHeadup(i);
+        }
+    }
+    gLast_fancy_index = -1;
+    gLast_credit_headup__displays = -1;
+    gLast_time_credit_headup = -1;
+    gLast_earn_time = 0;
+    for (i = 0; i < (int)REC2_ASIZE(gOld_times); i++) {
+        gOld_times[i] = 0;
+    }
+    gLast_fancy_time = 0;
+    gLast_time_earn_time = 0;
+    gQueued_headup_count = 0;
+    gLast_centre_headup = 0;
+}
 
 // DimAFewBits
 
