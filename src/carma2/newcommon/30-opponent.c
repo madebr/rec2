@@ -179,11 +179,31 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
 
 // GetOpponentSpecFromCarSpec
 
-// GetCarSpecFromGlobalOppoIndex
+// FUNCTION: CARMA2_HW 0x004ae970
+tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
+    int i;
+
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++) {
+        if (gProgram_state.AI_vehicles.opponents[i].index == pIndex) {
+            return gProgram_state.AI_vehicles.opponents[i].car_spec;
+        }
+    }
+    return NULL;
+}
 
 // GetOpponentsRealSection
 
-// GetOpponentsFirstSection
+// FUNCTION: CARMA2_HW 0x004aea00
+int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
+    if (pOpponent_spec->current_objective == eOOT_pursue_and_twat) {
+        if (pOpponent_spec->pursue_car_data.state == ePCS_following_trail) {
+            return pOpponent_spec->follow_path_data.section_no;
+        } else if (pOpponent_spec->pursue_car_data.state == ePCS_following_line_of_sight) {
+            return 10000;
+        }
+    }
+    return 20000;
+}
 
 // GetOpponentsNextSection
 
