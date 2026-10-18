@@ -737,9 +737,25 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 
 // CalculateAmountRepairedFraction
 
-// UnBendCar
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// CompletelyUnBendCar
+// STUB: CARMA2_HW 0x00439c30
+br_scalar C2_HOOK_FASTCALL UnBendCar(tCar_spec* pCar_spec, tU32 pDelta_time, br_scalar* pOriginal_amount) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00439c10
+void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec) {
+    br_scalar original_amount;
+
+    UnBendCar(pCar_spec, 2000, &original_amount);
+}
 
 // ReAttachBits
 
