@@ -4179,6 +4179,21 @@ typedef struct tPhysics_joint {
     tPhysics_joint_limit limits[];
 } tPhysics_joint;
 
+typedef struct {
+    br_scalar field_0x0;
+    tPhysics_object* object_a;
+    tPhysics_object* object_b;
+    void* field_0xc;
+    br_scalar field_0x10;
+    br_vector3 point_a;
+    br_vector3 point_b;
+    br_vector3 direction_a;
+    br_vector3 direction_b;
+    br_vector3 field_0x44;
+    br_vector3 field_0x50;
+    int type;
+} tPhysics_joint_force;
+
 typedef struct tPhysics_object {
     br_actor* actor;
     float M;

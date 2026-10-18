@@ -130,9 +130,46 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 
 // CheckForTwang
 
-// CreateJointForce
+// FUNCTION: CARMA2_HW 0x004b8c20
+void C2_HOOK_FASTCALL CreateJointForce(tPhysics_object* pObject, tPhysics_object* pPartner, tPhysics_joint_force* pForce, const br_vector3* pDirection) {
+    br_vector3 direction;
 
-// CreateJointTorque
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, field_0x0, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, object_a, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, object_b, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, field_0xc, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, point_a, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, point_b, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, direction_a, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, direction_b, 0x38);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint_force, type, 0x5c);
+
+    pForce->field_0x0 = 0.f;
+    pForce->object_a = pObject;
+    pForce->object_b = pPartner;
+    pForce->field_0xc = NULL;
+    BrVector3Sub(&pForce->point_a, &pObject->physics_joint1->field_0x08, &pObject->cmpos);
+    BrVector3Sub(&pForce->point_b, &pObject->physics_joint1->field_0x14, &pPartner->cmpos);
+    BrVector3Copy(&pForce->direction_a, pDirection);
+    BrMatrix34ApplyV(&direction, pDirection, &pObject->transform_matrix);
+    BrMatrix34TApplyV(&pForce->direction_b, &direction, &pPartner->transform_matrix);
+    pForce->type = 10;
+}
+
+// FUNCTION: CARMA2_HW 0x004b8e10
+void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_object* pPartner, tPhysics_joint_force* pForce, const br_vector3* pDirection) {
+    br_vector3 direction;
+
+    pForce->field_0x0 = 0.f;
+    pForce->object_a = pObject;
+    pForce->object_b = pPartner;
+    BrVector3Sub(&pForce->point_a, &pObject->physics_joint1->field_0x08, &pObject->cmpos);
+    BrVector3Sub(&pForce->point_b, &pObject->physics_joint1->field_0x14, &pPartner->cmpos);
+    BrVector3Copy(&pForce->direction_a, pDirection);
+    BrMatrix34ApplyV(&direction, &pForce->direction_a, &pObject->transform_matrix);
+    BrMatrix34TApplyV(&pForce->direction_b, &direction, &pPartner->transform_matrix);
+    pForce->type = 11;
+}
 
 // AllocateObjectWorkspace
 
