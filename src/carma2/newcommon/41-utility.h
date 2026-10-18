@@ -63,7 +63,7 @@ extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor,
 
 // DRActorEnumRecurseWithSnart
 
-// sign
+extern int C2_HOOK_FASTCALL sign(int pNumber);
 
 extern FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension);
 
