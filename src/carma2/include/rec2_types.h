@@ -51,7 +51,7 @@ typedef struct tPath_node tPath_node;
 typedef struct tNet_game_details tNet_game_details;
 typedef struct tNet_message tNet_message;
 typedef struct tPipe_chunk tPipe_chunk;
-typedef struct tPipe_chunk_data tPipe_chunk_data;
+typedef struct tPipe_session tPipe_session;
 typedef struct tNet_stored_smash tNet_stored_smash;
 typedef struct tPhysics_joint tPhysics_joint;
 typedef struct tPed_personality tPed_personality;
@@ -495,21 +495,22 @@ typedef enum {
     ePipe_chunk_single_oppo_renderage = 69,
 } tPipe_chunk_type;
 
-typedef struct tPipe_chunk_data {
-    tU32 count;
+typedef struct tPipe_chunk {
+    tU32 subject_index;
     union {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
         tPipe_phil_object phil_object;
+        tPipe_chunk_shrapnel shrapnel;
         char raw_data[0];
     } data;
-} tPipe_chunk_data;
+} tPipe_chunk;
 
-typedef struct tPipe_chunk {
+typedef struct tPipe_session {
     tPipe_chunk_type type;
     tU32 count;
     char data[];
-} tPipe_chunk;
+} tPipe_session;
 
 typedef struct {
     tCar_spec* car_spec;

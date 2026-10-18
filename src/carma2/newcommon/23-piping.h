@@ -2,9 +2,11 @@
 #define GUARD_23_PIPING_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 #include <s3/s3.h>
 
 extern float gReplay_rate;
+extern const tReplay_callback* gPipe_callbacks;
 
 // ARReplayForwards
 
@@ -26,7 +28,7 @@ extern void C2_HOOK_FASTCALL ARSetReplayRate(float pRate);
 
 // ARDispose
 
-// LengthOfChunk
+extern int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType);
 
 // LengthOfSession
 
@@ -54,7 +56,7 @@ extern void C2_HOOK_FASTCALL ARSetReplayRate(float pRate);
 
 // ARAddDataToSession
 
-// ARAddVariedDataToSession
+extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
 
 // ARDoSingleSession
 
@@ -146,7 +148,7 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 // AddSparkToPipingSession
 
-// AddShrapnelToPipingSession
+extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
 // AddNonCarToPipingSession
 
@@ -490,7 +492,7 @@ extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
 // CalcCrushLength
 
-// CalcShrapnelLength
+extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 
 // CalcSmudgeLength
 
