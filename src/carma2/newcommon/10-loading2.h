@@ -102,7 +102,7 @@ extern void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount,
 
 extern void C2_HOOK_FASTCALL LoadMiscStrings(void);
 
-// FillInRaceInfo
+extern void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race);
 
 extern void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions);
 
