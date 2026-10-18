@@ -385,11 +385,23 @@ void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
 
 // AddChangedPoint
 
-// GetHowMuchBloodAndSnotToSmearAbout
+// FUNCTION: CARMA2_HW 0x004d6fc0
+int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void) {
 
-// AreWeGoingToOutrageAnimalLoversAroundTheGlobe
+    return 2 - gGoreLevel;
+}
 
-// IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense
+// FUNCTION: CARMA2_HW 0x004d6fd0
+int C2_HOOK_FASTCALL AreWeGoingToOutrageAnimalLoversAroundTheGlobe(void) {
+
+    return gAnimalsOn;
+}
+
+// FUNCTION: CARMA2_HW 0x004d6fe0
+int C2_HOOK_FASTCALL IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense(void) {
+
+    return gFlameThrowerOn;
+}
 
 // IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
 
