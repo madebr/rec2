@@ -65,7 +65,7 @@ extern void C2_HOOK_FASTCALL StartMouseCursor(void);
 
 extern void C2_HOOK_FASTCALL EndMouseCursor(void);
 
-// DRDrawLine
+extern void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2, int pY2, int pColour);
 
 extern void C2_HOOK_FASTCALL ClearEntireScreen(void);
 
@@ -97,7 +97,7 @@ extern void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, b
 
 // DRPixelmapRotatedAndFeatheredCopy
 
-// DRPixelmapBlendedLine
+extern void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, br_pixelmap* pPalette);
 
 // DR8BitFancyDrawLine
 
