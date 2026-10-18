@@ -4,6 +4,7 @@
 #include "27-powerup.h"
 #include "63-loading3.h"
 #include "69-sound.h"
+#include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x006a0414
 const char* gPedsFolder;
@@ -25,6 +26,9 @@ float gPedestrian_speed_factor;
 
 // GLOBAL: CARMA2_HW 0x007447b0
 int gExploding_pedestrians;
+
+// GLOBAL: CARMA2_HW 0x0069b9f0
+tNapalm_bolt gNapalm_bolts[5];
 
 // OrientationChanged
 
@@ -305,7 +309,19 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // ARResetNapalmBolts
 
-// AdjustNapalmBolt
+// FUNCTION: CARMA2_HW 0x004d5b40
+void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3* pPositions) {
+    int i;
+
+    gNapalm_bolts[pIndex].ped = pPed;
+    for (i = 0; i < (int)REC2_ASIZE(gNapalm_bolts[pIndex].actors); i++) {
+        if (pPositions[i].v[0] == 0.f && pPositions[i].v[1] == 0.f && pPositions[i].v[2] == 0.f) {
+            break;
+        }
+        BrVector3Copy(&gNapalm_bolts[pIndex].actors[i]->t.t.translate.t, &pPositions[i]);
+        gNapalm_bolts[pIndex].actors[i]->render_style = BR_RSTYLE_FACES;
+    }
+}
 
 // InitPedsForRace
 

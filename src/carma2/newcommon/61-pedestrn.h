@@ -2,9 +2,11 @@
 #define GUARD_61_PEDESTRN_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 extern float gPedestrian_speed_factor;
 extern int gExploding_pedestrians;
+extern tNapalm_bolt gNapalm_bolts[5];
 
 // OrientationChanged
 
@@ -278,7 +280,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // ARResetNapalmBolts
 
-// AdjustNapalmBolt
+extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3* pPositions);
 
 // InitPedsForRace
 
