@@ -258,9 +258,24 @@ int C2_HOOK_FASTCALL GetSmokeOn(void) {
 
 // SingleSplash
 
-// GeneralCreateSplash
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// CreateSplash
+// STUB: CARMA2_HW 0x004fcbb0
+void C2_HOOK_FASTCALL GeneralCreateSplash(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, const br_vector3* pNormal, br_scalar pWater_distance, const br_bounds3* pBounds, const br_matrix34* pMatrix, tU32 pTime) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004fda40
+void C2_HOOK_FASTCALL CreateSplash(tPhysics_object* pObject, tU32 pTime) {
+    GeneralCreateSplash(pObject, &pObject->v, &pObject->omega, &pObject->water_normal,
+        pObject->water_d, &pObject->bb1, &pObject->actor->t.t.mat, pTime);
+}
 
 // GetVelocitiesFromMatrices
 
