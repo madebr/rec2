@@ -26,7 +26,7 @@ extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 extern void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
 
-// CalcProximities
+extern br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData);
 
 // AddProximities
 

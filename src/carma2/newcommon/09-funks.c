@@ -33,7 +33,27 @@ void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
     NOT_IMPLEMENTED();
 }
 
-// CalcProximities
+// FUNCTION: CARMA2_HW 0x004761e0
+br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData) {
+    tFunkotronic_spec* the_funk;
+    br_face* the_face;
+    int i;
+
+    (void)pMat;
+    the_funk = pData;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, material, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, proximity_count, 0x150);
+
+    if (pActor->model != NULL) {
+        for (i = 0, the_face = pActor->model->faces; i < pActor->model->nfaces; i++, the_face++) {
+            if (the_face->material == the_funk->material) {
+                the_funk->proximity_count++;
+            }
+        }
+    }
+    return 0;
+}
 
 // AddProximities
 
