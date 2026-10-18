@@ -40,9 +40,9 @@ void C2_HOOK_FASTCALL ARSetReplayRate(float pRate) {
 int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType) {
 
     if (gPipe_callbacks[pType].calc_length != NULL) {
-        return gPipe_callbacks[pType].calc_length(pChunk) + gPipe_callbacks[pType].length + sizeof(pChunk->subject_index);
+        return gPipe_callbacks[pType].calc_length(pChunk) + gPipe_callbacks[pType].length + offsetof(tPipe_chunk, data);
     } else {
-        return gPipe_callbacks[pType].length + sizeof(pChunk->subject_index);
+        return gPipe_callbacks[pType].length + offsetof(tPipe_chunk, data);
     }
 }
 
