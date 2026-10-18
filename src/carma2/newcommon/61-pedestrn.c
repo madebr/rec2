@@ -391,7 +391,11 @@ void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
 
 // IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense
 
-// IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
+// FUNCTION: CARMA2_HW 0x004d6ff0
+int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void) {
+
+    return gExplosives_on;
+}
 
 // FUNCTION: CARMA2_HW 0x004d7000
 void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {
