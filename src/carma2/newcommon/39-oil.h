@@ -14,9 +14,9 @@ extern void C2_HOOK_FASTCALL InitOilSpills(void);
 
 extern void C2_HOOK_FASTCALL ResetOilSpills(void);
 
-// QueueOilSpill2
+extern void C2_HOOK_FASTCALL QueueOilSpill2(tCar_spec* pCar, br_actor* pCar_actor, br_model* pCar_model, tU32 pTime_delay, br_scalar pMin_size, br_scalar pMax_size, br_scalar pMin_grow_rate, br_scalar pMax_grow_rate, br_scalar pInitial_size, br_scalar pField_0x48, br_scalar pField_0x4c, br_scalar pField_0x40, br_scalar pField_0x44, br_material* pMaterial, br_material* pField_0x50);
 
-// QueueOilSpill
+extern void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar);
 
 // OKToSpillOil
 

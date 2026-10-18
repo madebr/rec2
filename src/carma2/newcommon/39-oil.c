@@ -94,9 +94,25 @@ void C2_HOOK_FASTCALL ResetOilSpills(void) {
     }
 }
 
-// QueueOilSpill2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// QueueOilSpill
+// STUB: CARMA2_HW 0x004a6c80
+void C2_HOOK_FASTCALL QueueOilSpill2(tCar_spec* pCar, br_actor* pCar_actor, br_model* pCar_model, tU32 pTime_delay, br_scalar pMin_size, br_scalar pMax_size, br_scalar pMin_grow_rate, br_scalar pMax_grow_rate, br_scalar pInitial_size, br_scalar pField_0x48, br_scalar pField_0x4c, br_scalar pField_0x40, br_scalar pField_0x44, br_material* pMaterial, br_material* pField_0x50) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004a6dd0
+void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar) {
+    QueueOilSpill2(pCar, pCar->car_master_actor, pCar->car_actor->model, 500,
+        0.35f, 0.6f, 0.00003f, 0.0001f, 0.1f, 1.5f, 2.5f, 0.01f, 0.15f,
+        oily_material, NULL);
+}
 
 // OKToSpillOil
 
