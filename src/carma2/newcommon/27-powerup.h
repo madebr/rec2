@@ -395,6 +395,12 @@ extern br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pTexture);
 
 extern void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
+extern void C2_HOOK_FASTCALL ConfigureBloodPedPowerupTxtPath(void);
+
+extern void C2_HOOK_FASTCALL ConfigureZombiePedPowerupTxtPath(void);
+
+extern void C2_HOOK_FASTCALL ConfigureAlienPedPowerupTxtPath(void);
+
 extern int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar);
