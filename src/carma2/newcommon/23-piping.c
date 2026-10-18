@@ -259,7 +259,10 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
 
 // PipeSinglePowerupLose
 
-// PipeSingleFunkEnable
+// STUB: CARMA2_HW 0x004c8de0
+void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
+    NOT_IMPLEMENTED();
+}
 
 // PipeSingleVanishedDismembered
 

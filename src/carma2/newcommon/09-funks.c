@@ -1,5 +1,6 @@
 #include "09-funks.h"
 
+#include "23-piping.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0068b840
@@ -78,9 +79,17 @@ void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
 
 // ResetGrooveFlags
 
-// DisableFunkotronic
+// FUNCTION: CARMA2_HW 0x0047b250
+void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex) {
+    gFunkotronics_array[pIndex].flags |= 0x1;
+    PipeSingleFunkEnable(pIndex, 0);
+}
 
-// EnableFunkotronic
+// FUNCTION: CARMA2_HW 0x0047b280
+void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex) {
+    gFunkotronics_array[pIndex].flags &= ~0x1;
+    PipeSingleFunkEnable(pIndex, 1);
+}
 
 // FUNCTION: CARMA2_HW 0x0047b2b0
 void C2_HOOK_FASTCALL MasterDisableFunkotronic(int pIndex) {
@@ -92,7 +101,14 @@ void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex) {
     gFunkotronics_array[pIndex].flags &= ~0x2;
 }
 
-// AdjustFunkEnable
+// FUNCTION: CARMA2_HW 0x0047b310
+void C2_HOOK_FASTCALL AdjustFunkEnable(int pIndex, tS16 pFlags) {
+    if (pFlags != 0) {
+        EnableFunkotronic(pIndex);
+    } else {
+        DisableFunkotronic(pIndex);
+    }
+}
 
 // ActorsGroove
 

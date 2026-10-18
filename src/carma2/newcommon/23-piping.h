@@ -250,7 +250,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS
 
 // PipeSinglePowerupLose
 
-// PipeSingleFunkEnable
+extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
 // PipeSingleVanishedDismembered
 

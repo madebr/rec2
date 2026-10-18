@@ -68,15 +68,15 @@ extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
 // ResetGrooveFlags
 
-// DisableFunkotronic
+extern void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex);
 
-// EnableFunkotronic
+extern void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex);
 
 extern void C2_HOOK_FASTCALL MasterDisableFunkotronic(int pIndex);
 
 extern void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex);
 
-// AdjustFunkEnable
+extern void C2_HOOK_FASTCALL AdjustFunkEnable(int pIndex, tS16 pFlags);
 
 // ActorsGroove
 
