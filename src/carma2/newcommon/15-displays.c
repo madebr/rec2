@@ -4,6 +4,7 @@
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "41-utility.h"
+#include "62-graphics3.h"
 #include "63-loading3.h"
 #include "70-packfile.h"
 #include "globvars.h"
@@ -384,5 +385,14 @@ int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight) {
     NOT_IMPLEMENTED();
 }
 
-// DrawThisCarIconNow
+// FUNCTION: CARMA2_HW 0x0044bac0
+void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY) {
+    gCar_icons_model_actor->material->colour_map = gTexture_maps[gCar_icons[pCar_index].index];
+    BrMaterialUpdate(gCar_icons_model_actor->material, BR_MATU_COLOURMAP);
+    gCar_icons_model_actor->model = gCar_icons[pCar_index].model;
+    BrMatrix34Translate(&gCar_icons_model_actor->t.t.mat, (br_scalar)pX, (br_scalar)-pY, 0.f);
+    BrActorAdd(g2d_camera, gCar_icons_model_actor);
+    BrZbsSceneRender(g2d_camera, g2d_camera, gBack_screen, gDepth_buffer);
+    BrActorRemove(gCar_icons_model_actor);
+}
 
