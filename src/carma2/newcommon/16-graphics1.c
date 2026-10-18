@@ -11,6 +11,8 @@
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
+#include <string.h>
+
 // GLOBAL: CARMA2_HW 0x00703e24
 int gWidth;
 
@@ -77,6 +79,12 @@ int gScreen_wobble_x;
 // GLOBAL: CARMA2_HW 0x00705184
 int gScreen_wobble_y;
 
+// GLOBAL: CARMA2_HW 0x006a2488
+tSaved_table gSaved_shade_tables[100];
+
+// GLOBAL: CARMA2_HW 0x006a27a8
+int gSaved_table_count;
+
 // GLOBAL: CARMA2_HW 0x00703e28
 int gHud_actor_storage_size;
 
@@ -130,13 +138,40 @@ void C2_HOOK_FASTCALL InitShadow(void) {
     BrActorAdd(gUniverse_actor, gShadow_actor);
 }
 
-// SaveShadeTable
+// FUNCTION: CARMA2_HW 0x004e9b10
+br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
+    br_pixelmap* copy;
 
-// SaveShadeTables
+    (void)pArg;
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSaved_shade_tables) != 100);
+    C2_HOOK_BUG_ON(sizeof(br_pixelmap) != 0x44);
 
-// STUB: CARMA2_HW 0x004e9b60
+    if (gSaved_table_count == (int)REC2_ASIZE(gSaved_shade_tables)) {
+        return 1;
+    } else {
+        gSaved_shade_tables[gSaved_table_count].original = pTable;
+        copy = BrMemAllocate(sizeof(br_pixelmap), kMem_misc);
+        gSaved_shade_tables[gSaved_table_count].copy = copy;
+        gSaved_table_count++;
+        memcpy(copy, pTable, sizeof(br_pixelmap));
+        return 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004e9ae0
+void C2_HOOK_FASTCALL SaveShadeTables(void) {
+    PossibleService();
+    gSaved_table_count = 0;
+    BrTableEnum("*", SaveShadeTable, NULL);
+}
+
+// FUNCTION: CARMA2_HW 0x004e9b60
 void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < gSaved_table_count; i++) {
+        BrMemFree(gSaved_shade_tables[i].copy);
+    }
 }
 
 // ShadowMode
