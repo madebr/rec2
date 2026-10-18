@@ -661,10 +661,7 @@ void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_materia
 void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
     tUser_detail_level_model* user_detail_model;
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tUser_detail_level_model, field_0x0, 0x0);
-
     if ((pModel->flags & BR_MODF_CUSTOM) != 0 && pModel->user != NULL) {
-        /* Existing custom models mark their metadata as dirty. */
         user_detail_model = pModel->user;
         user_detail_model->field_0x0 = 1;
     } else {
