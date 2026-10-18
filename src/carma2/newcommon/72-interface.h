@@ -269,7 +269,7 @@ extern void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth);
 
 // GetActiveSlider
 
-// GetAnyActiveSlider
+extern tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void);
 
 // PrepareSliders
 
