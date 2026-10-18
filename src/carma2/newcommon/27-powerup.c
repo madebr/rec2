@@ -191,13 +191,23 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // GainAPOPotential
 
-// SetPedSpeed
+// FUNCTION: CARMA2_HW 0x004dc720
+int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPedestrian_speed_factor = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // SetPedSize
 
 // SetPedHeadSize
 
-// SetPedExplode
+// FUNCTION: CARMA2_HW 0x004dc7d0
+int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gExploding_pedestrians = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // SetPedBrittle
 

@@ -141,13 +141,13 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // GainAPOPotential
 
-// SetPedSpeed
+extern int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPedSize
 
 // SetPedHeadSize
 
-// SetPedExplode
+extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPedBrittle
 
