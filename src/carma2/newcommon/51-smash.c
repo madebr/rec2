@@ -8,6 +8,9 @@
 // GLOBAL: CARMA2_HW 0x006a55c8
 tExplosion gExplosions[50];
 
+// GLOBAL: CARMA2_HW 0x006a80f8
+tDecal gDecals[50];
+
 // FUNCTION: CARMA2_HW 0x004ea880
 void C2_HOOK_FASTCALL InitExplosions(void) {
     int i;
@@ -386,9 +389,15 @@ void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor) {
 
 // SmashRestoreSomeFaces
 
-// TurnOnSmashDecal
+// FUNCTION: CARMA2_HW 0x004f6020
+void C2_HOOK_FASTCALL TurnOnSmashDecal(int pIndex) {
+    BrActorAdd(gOther_selfs[0], gDecals[pIndex].actor);
+}
 
-// TurnOffSmashDecal
+// FUNCTION: CARMA2_HW 0x004f6040
+void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex) {
+    BrActorRemove(gDecals[pIndex].actor);
+}
 
 // ChangeSmashTexture
 

@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern tExplosion gExplosions[50];
+extern tDecal gDecals[50];
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
@@ -276,9 +277,9 @@ extern void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor);
 
 // SmashRestoreSomeFaces
 
-// TurnOnSmashDecal
+extern void C2_HOOK_FASTCALL TurnOnSmashDecal(int pIndex);
 
-// TurnOffSmashDecal
+extern void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex);
 
 // ChangeSmashTexture
 
