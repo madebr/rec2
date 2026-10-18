@@ -71,7 +71,33 @@ int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const char* pPa
 
 // SmoothificatePowerups
 
-// SmoothificatePowerupMaterial
+// FUNCTION: CARMA2_HW 0x004f6a20
+void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
+    int need_update;
+
+    need_update = 0;
+    pMaterial->user = (void*)(uintptr_t)0x5ba0;
+    if (pMaterial->ka <= 0.9999) {
+        need_update = 1;
+    }
+    pMaterial->ka = 1.0f;
+    pMaterial->kd = 1.0f;
+    if (!(pMaterial->flags & BR_MATF_SMOOTH)) {
+        need_update = 1;
+    }
+    pMaterial->flags |= BR_MATF_SMOOTH;
+    if (!(pMaterial->flags & BR_MATF_LIGHT)) {
+        need_update = 1;
+    }
+    pMaterial->flags |= BR_MATF_LIGHT;
+    if (pMaterial->flags & BR_MATF_PRELIT) {
+        need_update = 1;
+    }
+    pMaterial->flags &= ~BR_MATF_PRELIT;
+    if (need_update) {
+        BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
+    }
+}
 
 // SmoothificateWorldMaterial
 
