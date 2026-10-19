@@ -39,9 +39,9 @@ extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint
 
 extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16 pX, br_uint_16 pY, br_uint_16 pW, br_uint_16 pH);
 
-extern br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* path);
+extern br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* pPath);
 
-// DRPixelmapLoad
+extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name);
 
 extern void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath);
 
