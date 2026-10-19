@@ -213,6 +213,19 @@ tFrontend_slider gOptions_sound_slider;
 // GLOBAL: CARMA2_HW 0x00688ae4
 int gValid_stashed_save_game; // FIXME: rename variable?
 
+// GLOBAL: CARMA2_HW 0x00688408
+tConnected_items gControls_scroller;
+
+// GLOBAL: CARMA2_HW 0x00688458
+char* gKey_names[153];
+
+// GLOBAL: CARMA2_HW 0x00604888
+const int gControls_frontend_to_key_mapping_lut[29] = {
+    49, 50, 47, 48, 54, 45, 60, 58, 56, 46,
+    57, 67, 68, 69, 71, 61, 62, 63, 64, 74,
+    59, 70, 72, 73, 75, 76, 35, 65, 66,
+};
+
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
@@ -1673,7 +1686,28 @@ int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected
 
 // DisposeKeyNames
 
-// RefreshScrollSet
+// FUNCTION: CARMA2_HW 0x004720e0
+void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < gControls_scroller.range_length; i++) {
+
+        strcpy(pFrontend->items[43 + i].text, GetMiscString(i + 140 + gControls_scroller.field_0x8));
+        strcpy(pFrontend->items[53 + i].text, gKey_names[gKey_mapping[gControls_frontend_to_key_mapping_lut[i + gControls_scroller.field_0x8]] + 2]);
+    }
+    if (gControls_scroller.field_0x8) {
+        pFrontend->items[63].visible = 1;
+    } else {
+        pFrontend->items[63].visible = 0;
+    }
+    if (gControls_scroller.field_0x8 == gControls_scroller.field_0x0 - gControls_scroller.range_length) {
+        pFrontend->items[64].visible = 0;
+    } else {
+        pFrontend->items[64].visible = 1;
+    }
+
+    FuckWithWidths(pFrontend);
+}
 
 // DetermineKeyArrayIndex
 

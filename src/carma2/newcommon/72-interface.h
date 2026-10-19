@@ -21,7 +21,7 @@ extern void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pI
 
 extern void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend);
 
-extern void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) ;
+extern void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend);
 
 extern br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* pFolder, const char* pName);
 
@@ -313,7 +313,7 @@ extern int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pCo
 
 // DisposeKeyNames
 
-// RefreshScrollSet
+extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 // DetermineKeyArrayIndex
 
