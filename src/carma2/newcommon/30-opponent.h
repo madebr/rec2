@@ -6,6 +6,7 @@
 extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
+extern int gNumber_of_cops_before_faffage;
 
 extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
