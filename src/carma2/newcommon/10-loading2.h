@@ -32,7 +32,7 @@ extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 extern void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
-// LoadTacho
+extern void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
 // LoadHeadups
 
