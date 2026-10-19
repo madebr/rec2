@@ -69,7 +69,7 @@ extern int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend);
 
 // NetGameToggleTyping
 
-// ChooseSkill
+extern int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend);
 
 // NewGameOutfunc
 

@@ -628,7 +628,26 @@ int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
 
 // NetGameToggleTyping
 
-// ChooseSkill
+// FUNCTION: CARMA2_HW 0x00467130
+int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend) {
+
+    (void)pFrontend;
+    switch (gFrontend_selected_item_index) {
+    case 2:
+        gProgram_state.skill_level = 0;
+        InitGameAccordingToSkillLevel();
+        break;
+    case 3:
+        gProgram_state.skill_level = 1;
+        InitGameAccordingToSkillLevel();
+        break;
+    case 4:
+        gProgram_state.skill_level = 2;
+        InitGameAccordingToSkillLevel();
+        break;
+    }
+    return 0;
+}
 
 // NewGameOutfunc
 
