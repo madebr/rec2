@@ -403,7 +403,41 @@ void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject) {
 
 // MatrixProcess
 
-// RqBackSub
+// FUNCTION: CARMA2_HW 0x004c5b60
+void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const br_scalar* pRhs, br_scalar* pX, int pDim) {
+    br_scalar intermediate[100];
+    br_scalar sum;
+    int i;
+    int j;
+
+    /* Solve Ax = b, with A represented by its RQ decomposition, where:
+     * - R is a lower-diagonal matrix
+     * - Q is an orthonormal matrix
+     * with:
+     * - all matrices (A, Q, R) are of size N x N (with N = pDim)
+     * - vectors x, t are of size N x 1
+     * A, Q, R matrices are of size [pDim x pDim]
+     */
+
+    C2_HOOK_ASSERT(pDim > 0 && pDim <= (int)REC2_ASIZE(intermediate));
+
+    /* Use back substitution to solve Ry = b, with R a lower-diagonal matrix */
+    intermediate[0] = pRhs[0] / pR[0 * pDim + 0];             /*  T[0] = B[0] / R[0, 0] */
+    for (i = 1; i < pDim; i++) {
+        sum = 0.0f;
+        for (j = 0; j < i; j++) {
+            sum += intermediate[j] * pR[i * pDim + j];        /*  sum += T[j] * R[i, j] */
+        }
+        intermediate[i] = (pRhs[i] - sum) / pR[i * pDim + i]; /*  T[i] = (B[i] - sum) / R[i, i] */
+    }
+    /* Solve Qx = T, by multiplying both sides with Q transposed */
+    for (i = 0; i < pDim; i++) {
+        pX[i] = pQ[0 * pDim + i] * intermediate[0];           /*  X[i]  = Q[0, i] * T[0] */
+        for (j = 1; j < pDim; j++) {
+            pX[i] += intermediate[j] * pQ[j * pDim + i];      /*  X[i] += Q[j, i] * T[j] */
+        }
+    }
+}
 
 // GetPhysicsScratchPointer
 
