@@ -22,7 +22,7 @@ extern int gPling_materials;
 
 // FindHighestCallBack
 
-// ActorFindFace
+extern void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* nor, br_scalar* t, br_material** material, br_actor** actor);
 
 extern void C2_HOOK_FASTCALL EnablePlingMaterials(void);
 

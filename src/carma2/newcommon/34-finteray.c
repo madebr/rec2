@@ -19,7 +19,10 @@ int gPling_materials = 1;
 
 // FindHighestCallBack
 
-// ActorFindFace
+// STUB: CARMA2_HW 0x0045ca60
+void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* nor, br_scalar* t, br_material** material, br_actor** actor) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x0045d5c0
 void C2_HOOK_FASTCALL EnablePlingMaterials(void) {
