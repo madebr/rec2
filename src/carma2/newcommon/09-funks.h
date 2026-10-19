@@ -7,6 +7,8 @@
 #include "brender/brender.h"
 
 extern tFunkotronic_spec* gFunkotronics_array;
+extern tGroovidelic_spec* gGroovidelics_array;
+extern int gGroovidelics_array_size;
 
 // CalculateTextureBitsValue
 
