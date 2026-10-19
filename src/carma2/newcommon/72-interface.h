@@ -407,7 +407,7 @@ extern int C2_HOOK_FASTCALL Options_MusicOff(tFrontend_spec* pFrontend);
 
 // Options_Ok
 
-// Options_AbortRace
+extern int C2_HOOK_FASTCALL Options_AbortRace(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend);
 

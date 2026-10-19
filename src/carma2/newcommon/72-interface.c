@@ -1826,7 +1826,17 @@ int C2_HOOK_FASTCALL Options_MusicOff(tFrontend_spec* pFrontend) {
 
 // Options_Ok
 
-// Options_AbortRace
+// FUNCTION: CARMA2_HW 0x00474730
+int C2_HOOK_FASTCALL Options_AbortRace(tFrontend_spec* pFrontend) {
+
+    if (gProgram_state.racing) {
+        gAbandon_game = 1;
+        if (gNet_mode != eNet_mode_host) {
+            gProgram_state.prog_status = eProg_idling;
+        }
+    }
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00474760
 int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend) {
