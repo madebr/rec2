@@ -6,6 +6,7 @@
 
 extern tExplosion gExplosions[50];
 extern tDecal gDecals[50];
+extern int gCount_queued_smashes;
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
@@ -85,7 +86,7 @@ extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // SmashItIntoVerySmallPiecesIndeed
 
-// InitSmashQueue
+extern void C2_HOOK_FASTCALL InitSmashQueue(void);
 
 // FlushPowerupQueue
 

@@ -11,6 +11,9 @@ tExplosion gExplosions[50];
 // GLOBAL: CARMA2_HW 0x006a80f8
 tDecal gDecals[50];
 
+// GLOBAL: CARMA2_HW 0x006a828c
+int gCount_queued_smashes;
+
 // FUNCTION: CARMA2_HW 0x004ea880
 void C2_HOOK_FASTCALL InitExplosions(void) {
     int i;
@@ -131,7 +134,10 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
 
 // SmashItIntoVerySmallPiecesIndeed
 
-// InitSmashQueue
+// FUNCTION: CARMA2_HW 0x004ecfa0
+void C2_HOOK_FASTCALL InitSmashQueue(void) {
+    gCount_queued_smashes = 0;
+}
 
 // FlushPowerupQueue
 
