@@ -6,6 +6,7 @@
 
 extern const char* gPedTextTxtPath;
 extern int gGroove_funk_offset;
+extern const char* gNet_avail_names[4];
 
 extern void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
 
@@ -95,7 +96,7 @@ extern void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount,
 
 // LoadRaceInfo
 
-// LoadOpponents
+extern void C2_HOOK_FASTCALL LoadOpponents(void);
 
 extern void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
 
