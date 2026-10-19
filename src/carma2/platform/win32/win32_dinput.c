@@ -620,6 +620,7 @@ int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, size
 
 // FUNCTION: CARMA2_HW 0x00458060
 int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
+    int i;
 
     for (i = 0; i < gCount_joystick_effects; i++) {
         if (strcmp(gJoystick_effects[i].name, name) == 0) {
