@@ -1868,7 +1868,13 @@ int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend) {
     }
 }
 
-// Options_Quit
+// FUNCTION: CARMA2_HW 0x004747d0
+int C2_HOOK_FASTCALL Options_Quit(tFrontend_spec* pFrontend) {
+
+    PDInitJoysticks();
+    QuitGame();
+    return 2;
+}
 
 // Graphics_Infunc
 
