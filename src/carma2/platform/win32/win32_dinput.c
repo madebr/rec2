@@ -637,7 +637,6 @@ int C2_HOOK_FASTCALL ResetForceFeedback(void) {
 
     result = 0;
     if (gJoystickFFB != 0) {
-        int i;
         for (i = 0; i < MAX_COUNT_JOYSTICKS; i++) {
             IDirectInputDevice2A *device = gDirectInputJoystickDevices[i];
             if (device != NULL && (gJoystickFFB & (1 << i))) {
