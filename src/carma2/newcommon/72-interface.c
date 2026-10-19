@@ -1678,7 +1678,27 @@ int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected
 
 // Generic_MenuHandler
 
-// StripControls
+// FUNCTION: CARMA2_HW 0x004b4020
+void C2_HOOK_FASTCALL StripControls(char* pStr) {
+    int i;
+    int len;
+
+    len = strlen(pStr);
+    for (i = 0; i < len; i++) {
+        if ((tU8)pStr[i] < 0x20 /* ' ' */) {
+#ifdef REC2_FIX_BUGS
+            memmove(&pStr[i], &pStr[i + 1], (len - i) * sizeof(char));
+#else
+            memcpy(&pStr[i], &pStr[i + 1], (len - i) * sizeof(char));
+#endif
+            len--;
+#ifdef REC2_FIX_BUGS
+            /* correctly handle stripping consecutive control characters */
+            i--;
+#endif
+        }
+    }
+}
 
 // BackupKeyMappings
 

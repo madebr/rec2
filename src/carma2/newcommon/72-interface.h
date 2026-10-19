@@ -305,7 +305,7 @@ extern int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pCo
 
 // Generic_MenuHandler
 
-// StripControls
+extern void C2_HOOK_FASTCALL StripControls(char* pStr);
 
 // BackupKeyMappings
 
