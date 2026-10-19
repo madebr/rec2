@@ -535,7 +535,25 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 
 // ToggleFlaps
 
-// BitObjectIsSufficientlyOutsideCarObjectToDetach
+// FUNCTION: CARMA2_HW 0x00434910
+int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_object* pObject) {
+    br_vector3 world_direction;
+    br_vector3 parent_direction;
+    const br_vector3* limit_direction;
+    br_scalar alignment;
+    int i;
+
+    for (i = 0; i < pObject->physics_joint1->count_limits; i++) {
+        BrMatrix34ApplyV(&world_direction, &pObject->physics_joint1->limits[i].child, &pObject->actor->t.t.mat);
+        BrMatrix34TApplyV(&parent_direction, &world_direction, &pObject->parent->actor->t.t.mat);
+        limit_direction = &pObject->physics_joint1->limits[i].parent;
+        alignment = BrVector3Dot(limit_direction, &parent_direction);
+        if (alignment > 0.707107f) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // FullyDetachBit
 

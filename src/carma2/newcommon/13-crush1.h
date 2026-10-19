@@ -247,7 +247,7 @@ extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // ToggleFlaps
 
-// BitObjectIsSufficientlyOutsideCarObjectToDetach
+extern int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_object* pObject);
 
 // FullyDetachBit
 
