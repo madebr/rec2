@@ -22,7 +22,7 @@ extern int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const ch
 
 // SmoothificatePowerups
 
-// SmoothificatePowerupMaterial
+extern void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial);
 
 // SmoothificateWorldMaterial
 
