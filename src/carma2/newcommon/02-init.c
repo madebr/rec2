@@ -77,8 +77,22 @@ tSlot_info gInitial_APO_potential[3];
 // GLOBAL: CARMA2_HW 0x0074cfa0
 tSlot_info gMax_APO[3];
 
+// GLOBAL: CARMA2_HW 0x0068d8e0
+br_pixelmap* gLit_up_stat;
 
-// Modify2DCopyPixelmaps
+
+// FUNCTION: CARMA2_HW 0x0047d880
+void C2_HOOK_FASTCALL Modify2DCopyPixelmaps(void) {
+    int i;
+    int pixel_type;
+
+    pixel_type = gBack_screen->type;
+    for (i = 0; i < (int)REC2_ASIZE(gFonts); i++) {
+        BRPM_convert(gFonts[i].images, pixel_type);
+    }
+    BRPM_convert(gIcons_pix, pixel_type);
+    BRPM_convert(gLit_up_stat, pixel_type);
+}
 
 // SetupFFBValues
 
