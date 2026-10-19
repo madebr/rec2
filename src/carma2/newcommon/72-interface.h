@@ -399,7 +399,7 @@ extern void C2_HOOK_FASTCALL Slider_EffectsProc(tFrontend_slider* pSlider);
 
 extern int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend);
 
-// Options_Outfunc
+extern int C2_HOOK_FASTCALL Options_Outfunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Options_MusicOn(tFrontend_spec* pFrontend);
 
