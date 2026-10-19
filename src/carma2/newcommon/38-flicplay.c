@@ -48,6 +48,9 @@ int gPalette_fuck_prevention;
 // GLOBAL: CARMA2_HW 0x00686310
 int gTransparency_on;
 
+// GLOBAL: CARMA2_HW 0x00686314
+int gPanel_flic_disable;
+
 // GLOBAL: CARMA2_HW 0x00686318
 int gPlay_from_disk;
 
@@ -426,9 +429,15 @@ void C2_HOOK_FASTCALL PlayFlicsFromDisk(void) {
     gPlay_from_disk = 1;
 }
 
-// TurnOffPanelFlics
+// FUNCTION: CARMA2_HW 0x00461a20
+void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
+    gPanel_flic_disable = 1;
+}
 
-// TurnOnPanelFlics
+// FUNCTION: CARMA2_HW 0x00461a30
+void C2_HOOK_FASTCALL TurnOnPanelFlics(void) {
+    gPanel_flic_disable = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00461a60
 void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
