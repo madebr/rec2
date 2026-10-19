@@ -331,7 +331,7 @@ extern void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject);
 
 // MatrixProcess
 
-extern void C2_HOOK_FASTCALL RqBackSub(br_scalar* pMatrix, br_scalar* pOrthogonal, const br_scalar* pRhs, br_scalar* pResult, int pSize);
+extern void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const br_scalar* pRhs, br_scalar* pX, int pDim);
 
 // GetPhysicsScratchPointer
 

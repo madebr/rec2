@@ -404,24 +404,37 @@ void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject) {
 // MatrixProcess
 
 // FUNCTION: CARMA2_HW 0x004c5b60
-void C2_HOOK_FASTCALL RqBackSub(br_scalar* pMatrix, br_scalar* pOrthogonal, const br_scalar* pRhs, br_scalar* pResult, int pSize) {
+void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const br_scalar* pRhs, br_scalar* pX, int pDim) {
     br_scalar intermediate[100];
     br_scalar sum;
     int i;
     int j;
 
-    intermediate[0] = pRhs[0] / pMatrix[0];
-    for (i = 1; i < pSize; i++) {
+    /* Solve Ax = b, with A represented by its RQ decomposition, where:
+     * - R is a lower-diagonal matrix
+     * - Q is an orthonormal matrix
+     * with:
+     * - all matrices (A, Q, R) are of size N x N (with N = pDim)
+     * - vectors x, t are of size N x 1
+     * A, Q, R matrices are of size [pDim x pDim]
+     */
+
+    C2_HOOK_ASSERT(pDim > 0 && pDim <= (int)REC2_ASIZE(intermediate));
+
+    /* Use back substitution to solve Ry = b, with R a lower-diagonal matrix */
+    intermediate[0] = pRhs[0] / pR[0 * pDim + 0];             /*  T[0] = B[0] / R[0, 0] */
+    for (i = 1; i < pDim; i++) {
         sum = 0.0f;
         for (j = 0; j < i; j++) {
-            sum += intermediate[j] * pMatrix[i * pSize + j];
+            sum += intermediate[j] * pR[i * pDim + j];        /*  sum += T[j] * R[i, j] */
         }
-        intermediate[i] = (pRhs[i] - sum) / pMatrix[i * pSize + i];
+        intermediate[i] = (pRhs[i] - sum) / pR[i * pDim + i]; /*  T[i] = (B[i] - sum) / R[i, i] */
     }
-    for (i = 0; i < pSize; i++) {
-        pResult[i] = pOrthogonal[i] * intermediate[0];
-        for (j = 1; j < pSize; j++) {
-            pResult[i] += intermediate[j] * pOrthogonal[j * pSize + i];
+    /* Solve Qx = T, by multiplying both sides with Q transposed */
+    for (i = 0; i < pDim; i++) {
+        pX[i] = pQ[0 * pDim + i] * intermediate[0];           /*  X[i]  = Q[0, i] * T[0] */
+        for (j = 1; j < pDim; j++) {
+            pX[i] += intermediate[j] * pQ[j * pDim + i];      /*  X[i] += Q[j, i] * T[j] */
         }
     }
 }
