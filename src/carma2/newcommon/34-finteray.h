@@ -66,7 +66,7 @@ extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // LineBoxColl
 
-extern int C2_HOOK_FASTCALL SphereBoxIntersection(br_bounds* pBounds, br_vector3* pPoint, br_scalar pRadius_squared, br_vector3* pClosest);
+extern int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_vector3* pCenter, br_scalar pRadius_squared, br_vector3* pClosest);
 
 // LineBoxCollWithSphere
 

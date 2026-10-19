@@ -72,22 +72,22 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 // LineBoxColl
 
 // FUNCTION: CARMA2_HW 0x00460da0
-int C2_HOOK_FASTCALL SphereBoxIntersection(br_bounds* pBounds, br_vector3* pPoint, br_scalar pRadius_squared, br_vector3* pClosest) {
+int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_vector3* pCenter, br_scalar pRadius_squared, br_vector3* pClosest) {
     int axis;
     br_scalar closest;
     br_scalar distance;
 
     distance = 0.f;
     for (axis = 0; axis < 3; axis++) {
-        if (pPoint->v[axis] <= pBounds->min.v[axis]) {
+        if (pCenter->v[axis] <= pBounds->min.v[axis]) {
             closest = pBounds->min.v[axis];
-        } else if (pPoint->v[axis] >= pBounds->max.v[axis]) {
+        } else if (pCenter->v[axis] >= pBounds->max.v[axis]) {
             closest = pBounds->max.v[axis];
         } else {
-            closest = pPoint->v[axis];
+            closest = pCenter->v[axis];
         }
         pClosest->v[axis] = closest;
-        distance += (pPoint->v[axis] - closest) * (pPoint->v[axis] - closest);
+        distance += (pCenter->v[axis] - closest) * (pCenter->v[axis] - closest);
     }
     return distance <= pRadius_squared;
 }
