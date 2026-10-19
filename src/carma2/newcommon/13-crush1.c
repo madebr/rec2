@@ -652,9 +652,23 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 
 // DoBending
 
-// JitModelUpdate
+// STUB: CARMA2_HW 0x00431590
+void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
+    NOT_IMPLEMENTED();
+}
 
-// SetModelForUpdate
+// FUNCTION: CARMA2_HW 0x004315e0
+void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
+    tUser_detail_level_model* user_detail_model;
+
+    if ((pModel->flags & BR_MODF_CUSTOM) != 0 && pModel->user != NULL) {
+        user_detail_model = pModel->user;
+        user_detail_model->field_0x0 = 1;
+    } else {
+        pModel->custom = JitModelUpdate;
+        pModel->flags |= BR_MODF_CUSTOM;
+    }
+}
 
 // RandomlyXZSplitCar
 

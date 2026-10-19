@@ -351,9 +351,9 @@ extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor
 
 // DoBending
 
-// JitModelUpdate
+extern void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
-// SetModelForUpdate
+extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // RandomlyXZSplitCar
 
