@@ -80,6 +80,6 @@ extern void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex);
 
 extern void C2_HOOK_FASTCALL AdjustFunkEnable(int pIndex, tS16 pFlags);
 
-// ActorsGroove
+extern tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor);
 
 #endif // GUARD_09_FUNKS_H

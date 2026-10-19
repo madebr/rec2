@@ -147,5 +147,19 @@ void C2_HOOK_FASTCALL AdjustFunkEnable(int pIndex, tS16 pFlags) {
     }
 }
 
-// ActorsGroove
+// FUNCTION: CARMA2_HW 0x0047b360
+tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor) {
+    tGroovidelic_spec* groove;
+    int count;
+    int i;
+
+    groove = gGroovidelics_array;
+    count = gGroovidelics_array_size;
+    for (i = 0; i < count; i++, groove++) {
+        if (groove->actor == pActor) {
+            return groove;
+        }
+    }
+    return NULL;
+}
 
