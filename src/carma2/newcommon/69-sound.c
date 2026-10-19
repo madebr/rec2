@@ -779,7 +779,16 @@ void C2_HOOK_FASTCALL DRS3StopCDA(void) {
     }
 }
 
-// StartMusicTrack
+// FUNCTION: CARMA2_HW 0x00456840
+void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track) {
+
+    StopMusic();
+    if (!gINT_00595c44 || gProgram_state.music_volume >= 128) {
+        gNext_track_finished_check = PDGetTotalTime() + 10000;
+        dr_dprintf("CDINFO: StartMusicTrack(): New gNext_track_finished_check %d", (int)gNext_track_finished_check);
+        gINT_00684568 = DRS3StartCDA(pMusic_track);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004568c0
 void C2_HOOK_FASTCALL StartMusic(void) {
@@ -807,7 +816,15 @@ void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
     gSound_detail_level = pLevel;
 }
 
-// ReallySetSoundDetailLevel
+// FUNCTION: CARMA2_HW 0x00456960
+void C2_HOOK_FASTCALL ReallySetSoundDetailLevel(int pLevel) {
+
+    DRS3StopAllOutletSoundsExceptCDA();
+    DisposeSoundSources();
+    gSound_detail_level = pLevel;
+    InitSound();
+    InitSoundSources();
+}
 
 // FUNCTION: CARMA2_HW 0x004569e0
 int C2_HOOK_FASTCALL GetSoundDetailLevel(void) {
