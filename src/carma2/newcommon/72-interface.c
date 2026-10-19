@@ -1,5 +1,7 @@
 #include "72-interface.h"
 
+#include "01-network.h"
+#include "02-init.h"
 #include "05-drmem.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
@@ -207,6 +209,9 @@ int gFrontend_interpolate_steps_left;
 
 // GLOBAL: CARMA2_HW 0x00763820
 tFrontend_slider gOptions_sound_slider;
+
+// GLOBAL: CARMA2_HW 0x00688ae4
+int gValid_stashed_save_game; // FIXME: rename variable?
 
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
@@ -1806,7 +1811,25 @@ int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend) {
 
 // Options_AbortRace
 
-// Options_AbortGame
+// FUNCTION: CARMA2_HW 0x00474760
+int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend) {
+
+    if (gProgram_state.racing || gNet_mode != eNet_mode_none) {
+        if (gProgram_state.racing) {
+            gAbandon_game = 1;
+        }
+        gProgram_state.prog_status = eProg_idling;
+        gNo_current_game = 1;
+        return 1;
+    } else {
+        gValid_stashed_save_game = gProgram_state.racing;
+        ShutdownNetIfRequired();
+        LoadRaces(gRace_list, &gNumber_of_races, -1);
+        InitGame(gDev_initial_race);
+        gFrontend_next_menu = kFrontend_menu_main;
+        return 3;
+    }
+}
 
 // Options_Quit
 
