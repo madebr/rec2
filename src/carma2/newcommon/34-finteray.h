@@ -2,6 +2,7 @@
 #define GUARD_34_FINTERAY_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 extern int gPling_materials;
 
@@ -65,7 +66,7 @@ extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // LineBoxColl
 
-// SphereBoxIntersection
+extern int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_vector3* pCenter, br_scalar pRadius_squared, br_vector3* pClosest);
 
 // LineBoxCollWithSphere
 
