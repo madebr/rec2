@@ -1824,7 +1824,11 @@ int C2_HOOK_FASTCALL Options_MusicOff(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// Options_Ok
+// FUNCTION: CARMA2_HW 0x00474720
+int C2_HOOK_FASTCALL Options_Ok(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00474730
 int C2_HOOK_FASTCALL Options_AbortRace(tFrontend_spec* pFrontend) {

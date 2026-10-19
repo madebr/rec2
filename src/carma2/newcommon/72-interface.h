@@ -405,7 +405,7 @@ extern int C2_HOOK_FASTCALL Options_MusicOn(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Options_MusicOff(tFrontend_spec* pFrontend);
 
-// Options_Ok
+extern int C2_HOOK_FASTCALL Options_Ok(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Options_AbortRace(tFrontend_spec* pFrontend);
 
