@@ -601,15 +601,22 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
         GetALineAndDontArgue(f, s);
         strcpy(gOpponents[i].abbrev_name, strtok(s, "\t ,/"));
         GetALineAndDontArgue(f, gOpponents[i].car_name);
+        /* Strength rating (1-5) */
         gOpponents[i].strength_rating = GetAnInt(f);
+        /* Cost to buy it */
         gOpponents[i].price = GetAnInt(f);
+        /* Network availability ('eagle', or 'all') */
         gOpponents[i].network_availability = GetALineAndInterpretCommand(f, gNet_avail_names, REC2_ASIZE(gNet_avail_names));
 
         gOpponents[i].mug_shot_image_data = NULL;
         gOpponents[i].grid_icon_image = NULL;
         gOpponents[i].stolen_car_image_data = NULL;
+
+        /* vehicle filename */
         GetALineAndDontArgue(f, s);
         strcpy(gOpponents[i].car_file_name, strtok(s, "\t ,/"));
+
+        /* vehicle description */
         GetALineAndDontArgue(f, gOpponents[i].line1_topspeed);
         GetALineAndDontArgue(f, gOpponents[i].line2_weight);
         GetALineAndDontArgue(f, gOpponents[i].line3_acceleration);
