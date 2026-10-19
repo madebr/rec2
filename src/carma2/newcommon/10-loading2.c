@@ -486,6 +486,7 @@ void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char* str;
     char the_char1;
 
+    /* tacho type, x, y, filename, x-pitch */
     GetALineAndDontArgue(pF, s);
     str = strtok(s, "\t ,/");
     sscanf(str, "%c", &the_char1);
