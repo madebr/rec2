@@ -1,7 +1,12 @@
 #include "49-physics.h"
 
 #include "16-graphics1.h"
+#include "28-world3.h"
+#include "32-spark.h"
+#include "34-finteray.h"
+#include "37-brucetrk.h"
 #include "52-errors.h"
+#include "globvars.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
 
@@ -654,7 +659,49 @@ void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize) {
     gPhysics_other_buffer = pBuffer;
 }
 
-// FindFacesInBox
+// FUNCTION: CARMA2_HW 0x004b57d0
+int C2_HOOK_FASTCALL FindFacesInBox(tBounds* pBounds, tFace_ref* pFace_list, int pMax_face, tWorld_callbacks* pWorld_callbacks) {
+    tU8 cx_min;
+    tU8 cz_min;
+    tU8 cx_max;
+    tU8 cz_max;
+    int x;
+    int z;
+    int emitted;
+    tTrack_spec* track_spec;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tTrack_spec, ncolumns_x, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tTrack_spec, ncolumns_z, 0x1);
+
+    emitted = 0;
+    track_spec = &gProgram_state.track_spec;
+    FillInBounds(pBounds);
+    XZToColumnXZ(&cx_min, &cz_min, pBounds->real_bounds.min.v[0], pBounds->real_bounds.min.v[2], track_spec);
+    XZToColumnXZ(&cx_max, &cz_max, pBounds->real_bounds.max.v[0], pBounds->real_bounds.max.v[2], track_spec);
+    if (cx_min > 0) {
+        cx_min--;
+    }
+    if (cz_min > 0) {
+        cz_min--;
+    }
+    if (cx_max + 1 < track_spec->ncolumns_x) {
+        cx_max++;
+    }
+    if (cz_max + 1 < track_spec->ncolumns_z) {
+        cz_max++;
+    }
+    for (x = cx_min; x <= cx_max; x++) {
+        for (z = cz_min; z <= cz_max; z++) {
+            if (track_spec->columns[z][x].actor_0x0 != NULL) {
+                emitted = pMax_face - ActorBoxPick(pBounds, track_spec->columns[z][x].actor_0x0, NULL, gBlack_material, &pFace_list[emitted], pMax_face - emitted, NULL, pWorld_callbacks);
+            }
+        }
+    }
+    if (gAdditional_actors != NULL) {
+        emitted = pMax_face - ActorBoxPick(pBounds, gAdditional_actors, NULL, gBlack_material, &pFace_list[emitted], pMax_face - emitted, NULL, pWorld_callbacks);
+    }
+    return emitted;
+}
 
 // GetFrictionFromFace
 

@@ -28,6 +28,9 @@ int gSmoke_flags;
 // GLOBAL: CARMA2_HW 0x006a8ce0
 tSmoke gSmoke[25];
 
+// GLOBAL: CARMA2_HW 0x006b7880
+br_material* gBlack_material;
+
 // DrawDot
 
 // SetWorldToScreen

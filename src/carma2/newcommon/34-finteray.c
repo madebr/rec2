@@ -55,9 +55,15 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // GetNewBoundingBox
 
-// FillInBounds
+// STUB: CARMA2_HW 0x0045f690
+void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
+    NOT_IMPLEMENTED();
+}
 
-// ActorBoxPick
+// STUB: CARMA2_HW 0x0045f8c0
+int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, br_material* material, tFace_ref* face_list, int max_face, br_matrix34* pMat, tWorld_callbacks* pWorld_callbacks) {
+    NOT_IMPLEMENTED();
+}
 
 // ModelPickBox
 

@@ -50,9 +50,9 @@ extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // GetNewBoundingBox
 
-// FillInBounds
+extern void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds);
 
-// ActorBoxPick
+extern int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, br_material* material, tFace_ref* face_list, int max_face, br_matrix34* pMat, tWorld_callbacks* pWorld_callbacks);
 
 // ModelPickBox
 

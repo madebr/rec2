@@ -11,6 +11,7 @@ extern int gSpark_flags;
 extern br_pixelmap* gIt_shade_table;
 extern int gSmoke_flags;
 extern tSmoke gSmoke[25];
+extern br_material* gBlack_material;
 
 // DrawDot
 
