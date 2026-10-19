@@ -54,7 +54,6 @@ extern void C2_HOOK_FASTCALL DoDevelopmentThings(void);
 
 extern void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv);
 
-
 extern void C2_HOOK_FASTCALL InitGameAccordingToSkillLevel(void);
 
 extern void C2_HOOK_FASTCALL InitGame(int pStart_race);
