@@ -596,7 +596,17 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// NewGameToggleTyping
+// FUNCTION: CARMA2_HW 0x00467050
+int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
+
+    ToggleTyping(pFrontend);
+    if (!gTyping && strlen(pFrontend->items[gFrontend_selected_item_index].text) != 0) {
+
+        strcpy(gProgram_state.player_name, pFrontend->items[gFrontend_selected_item_index].text);
+        SaveOptions();
+    }
+    return 0;
+}
 
 // NetGameToggleTyping
 
