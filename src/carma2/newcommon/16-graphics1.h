@@ -21,6 +21,8 @@ extern int gScreen_wobble_x;
 extern int gScreen_wobble_y;
 extern int gHud_actor_storage_size;
 extern br_actor* gHud_actor_storage[128];
+extern int gSaved_table_count;
+extern tSaved_table gSaved_shade_tables[100];
 
 // MungeClipPlane
 
@@ -38,9 +40,9 @@ extern tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void);
 
 extern void C2_HOOK_FASTCALL InitShadow(void);
 
-// SaveShadeTable
+extern br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg);
 
-// SaveShadeTables
+extern void C2_HOOK_FASTCALL SaveShadeTables(void);
 
 extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
