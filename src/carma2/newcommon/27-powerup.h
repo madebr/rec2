@@ -285,7 +285,7 @@ extern void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car);
 
 // ResetDamageMultiplier
 
-// ResetTyreGrip
+extern void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 // PickAtRandom
 
@@ -327,11 +327,11 @@ extern void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car);
 
 // ShowPedestrians
 
-// HidePedestrians
+extern void C2_HOOK_FASTCALL HidePedestrians(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetElectroBastard
 
-// ResetElectroBastard
+extern void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetMutantCorpses
 

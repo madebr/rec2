@@ -380,7 +380,13 @@ void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car) {
 
 // ResetDamageMultiplier
 
-// ResetTyreGrip
+// FUNCTION: CARMA2_HW 0x004de790
+void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, grip_multiplier, 0x4d0);
+
+    pCar->grip_multiplier = 1.f;
+}
 
 // PickAtRandom
 
@@ -422,11 +428,23 @@ void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car) {
 
 // ShowPedestrians
 
-// HidePedestrians
+// FUNCTION: CARMA2_HW 0x004dec40
+void C2_HOOK_FASTCALL HidePedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gShow_peds_on_map = 0;
+    }
+}
 
 // SetElectroBastard
 
-// ResetElectroBastard
+// FUNCTION: CARMA2_HW 0x004dec90
+void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, proxy_ray_distance, 0x170c);
+
+    pCar->proxy_ray_distance = 0.f;
+}
 
 // SetMutantCorpses
 
