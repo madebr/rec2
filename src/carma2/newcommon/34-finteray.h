@@ -5,6 +5,12 @@
 #include "rec2_types.h"
 
 extern int gPling_materials;
+extern br_scalar gNearest_T;
+extern br_actor* gNearest_actor;
+extern int gNearest_face;
+extern int gNearest_face_group;
+extern br_model* gNearest_model;
+extern br_matrix34 gPick_model_to_view__finteray;
 
 // BadDiv
 
@@ -12,7 +18,7 @@ extern int gPling_materials;
 
 // PickBoundsTestRay
 
-// ActorRayPick2D
+extern int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* pActor, br_vector3* pPosition, br_vector3* pDir, br_model* pModel, br_material* pMaterial, dr_pick2d_cbfn* pCallback);
 
 // DRSceneRayPick2D
 
@@ -20,9 +26,9 @@ extern int gPling_materials;
 
 // FindHighestPolyCallBack
 
-// FindHighestCallBack
+extern int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg);
 
-extern void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* nor, br_scalar* t, br_material** material, br_actor** actor);
+extern void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* pNormal, br_scalar* pT, br_material** pMaterial, br_actor** pActor);
 
 extern void C2_HOOK_FASTCALL EnablePlingMaterials(void);
 
