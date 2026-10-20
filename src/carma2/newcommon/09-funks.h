@@ -9,6 +9,7 @@
 extern tFunkotronic_spec* gFunkotronics_array;
 extern tGroovidelic_spec* gGroovidelics_array;
 extern int gGroovidelics_array_size;
+extern tU32 gPrevious_groove_times[2];
 
 // CalculateTextureBitsValue
 
@@ -56,11 +57,11 @@ extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
 // ObjectGrooveBastard
 
-// GrooveThisDelic
+extern void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it);
 
 // GrooveThoseDelics
 
-// StopGroovidelic
+extern void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor);
 
 // DisableGroovidelic
 

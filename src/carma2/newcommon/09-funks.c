@@ -16,6 +16,9 @@ tGroovidelic_spec* gGroovidelics_array;
 // GLOBAL: CARMA2_HW 0x0068b848
 int gGroovidelics_array_size;
 
+// GLOBAL: CARMA2_HW 0x0068b838
+tU32 gPrevious_groove_times[2];
+
 // CalculateTextureBitsValue
 
 // MapSawToTriangle
@@ -102,11 +105,36 @@ void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
 
 // ObjectGrooveBastard
 
-// GrooveThisDelic
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00478c80
+void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // GrooveThoseDelics
 
-// StopGroovidelic
+// FUNCTION: CARMA2_HW 0x0047b0e0
+void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor) {
+    tGroovidelic_spec* the_groove;
+    int i;
+
+    for (i = 0, the_groove = gGroovidelics_array; i < gGroovidelics_array_size; i++, the_groove++) {
+        if (the_groove->actor == pActor) {
+            if (the_groove->path_interrupt_status == eInterrupt_none
+                && the_groove->object_interrupt_status == eInterrupt_none) {
+                GrooveThisDelic(the_groove, gPrevious_groove_times[1], 1);
+            }
+            return;
+        }
+    }
+}
 
 // DisableGroovidelic
 
