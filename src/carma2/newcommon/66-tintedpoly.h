@@ -43,7 +43,6 @@ extern void C2_HOOK_FASTCALL GetUniqueFileName(const char *pDirectory, const cha
 
 extern void C2_HOOK_FASTCALL UpdateFirePoly(int pIndex);
 
-extern void C2_HOOK_FASTCALL UpdatePulsePoly(int pIndex);
 
 extern void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex);
 

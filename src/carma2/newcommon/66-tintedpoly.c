@@ -354,29 +354,6 @@ br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int h
     return model;
 }
 
-// FUNCTION: CARMA2_HW 0x004d82b0
-void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {
-    int changed;
-
-    changed = 0;
-    if (gTintedPolys[pTintedIndex].color_red != (br_uint_32)pRed) {
-        gTintedPolys[pTintedIndex].color_red = pRed;
-        changed = 1;
-    }
-    if (gTintedPolys[pTintedIndex].color_grn != (br_uint_32)pGreen) {
-        gTintedPolys[pTintedIndex].color_grn = pGreen;
-        changed = 1;
-    }
-    if (gTintedPolys[pTintedIndex].color_blu != (br_uint_32)pBlue) {
-        gTintedPolys[pTintedIndex].color_blu = pBlue;
-        changed = 1;
-    }
-    if (changed) {
-        (gTintedPolys[pTintedIndex].material)->colour = BR_COLOUR_RGB(gTintedPolys[pTintedIndex].color_red, gTintedPolys[pTintedIndex].color_grn, gTintedPolys[pTintedIndex].color_blu);
-        BrMaterialUpdate(gTintedPolys[pTintedIndex].material ,BR_MATU_LIGHTING);
-    }
-}
-
 // FUNCTION: CARMA2_HW 0x004d7c80
 static void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
     if (!gTintedPolys[pTintedIndex].used) {
@@ -491,22 +468,6 @@ void C2_HOOK_FASTCALL UpdateTintedPolyByMaterial(int pIndex) {
     }
 }
 
-// FUNCTION: CARMA2_HW 0x004d8630
-void C2_HOOK_FASTCALL UpdatePolyVertexColours(int pIndex) {
-    int i;
-    int new_color;
-
-    if (gTintedPolys[pIndex].actor->render_style == BR_RSTYLE_FACES) {
-        new_color = GetTotalTime() >> gTintedPolys[pIndex].colour;
-        for (i = 0; i < gTintedPolys[pIndex].model->nvertices; i++) {
-            gTintedPolys[pIndex].model->vertices[i].red = new_color + 128;
-            gTintedPolys[pIndex].model->vertices[i].grn = new_color + 30 * i;
-            gTintedPolys[pIndex].model->vertices[i].blu = new_color;
-        }
-        BrModelUpdate(gTintedPolys[pIndex].model, BR_MODU_VERTICES);
-    }
-}
-
 // FUNCTION: CARMA2_HW 0x004d8220
 void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex) {
     if (gTintedPolys[pTintedIndex].used) {
@@ -532,6 +493,126 @@ void C2_HOOK_FASTCALL RenderTintedPolys(void) {
 }
 
 // SetTintedPolyRefMaterial
+
+// FUNCTION: CARMA2_HW 0x004d82b0
+void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {
+    int changed;
+
+    changed = 0;
+    if (gTintedPolys[pTintedIndex].color_red != (br_uint_32)pRed) {
+        gTintedPolys[pTintedIndex].color_red = pRed;
+        changed = 1;
+    }
+    if (gTintedPolys[pTintedIndex].color_grn != (br_uint_32)pGreen) {
+        gTintedPolys[pTintedIndex].color_grn = pGreen;
+        changed = 1;
+    }
+    if (gTintedPolys[pTintedIndex].color_blu != (br_uint_32)pBlue) {
+        gTintedPolys[pTintedIndex].color_blu = pBlue;
+        changed = 1;
+    }
+    if (changed) {
+        (gTintedPolys[pTintedIndex].material)->colour = BR_COLOUR_RGB(gTintedPolys[pTintedIndex].color_red, gTintedPolys[pTintedIndex].color_grn, gTintedPolys[pTintedIndex].color_blu);
+        BrMaterialUpdate(gTintedPolys[pTintedIndex].material ,BR_MATU_LIGHTING);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d8470
+br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex) {
+
+    if (gTintedPolys[pTintedIndex].field_0x28 == '#') {
+        return gTintedPolys[pTintedIndex].material2;
+    }
+    return NULL;
+}
+
+static void C2_HOOK_FASTCALL UpdatePulsePoly(int pIndex) {
+    unsigned int red;
+    unsigned int grn;
+    unsigned int blu;
+    unsigned int value;
+
+    if (gTintedPolys[pIndex].visible) {
+        switch (gTintedPolys[pIndex].subClass) {
+        case 1:
+            UpdatePolyVertexColours(pIndex);
+            /* fall through */
+        default:
+            red = grn = blu = pIndex;
+            break;
+        case 0:
+            value = (GetTotalTime() >> gTintedPolys[pIndex].colour) & 0x1ff;
+            if (value < 255) {
+                value &= 0xff;
+            } else {
+                value = (-2 - value) & 0xff;
+            }
+            red = gTintedPolys[pIndex].color2_red & value;
+            grn = gTintedPolys[pIndex].color2_grn & value;
+            blu = gTintedPolys[pIndex].color2_blu & value;
+            break;
+        }
+        gTintedPolys[pIndex].material->colour = BR_COLOUR_RGB(red, grn, blu);
+        BrMaterialUpdate(gTintedPolys[pIndex].material, BR_MATU_LIGHTING);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d84a0
+void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex) {
+
+    if (gTintedPolys[pIndex].used) {
+        switch (gTintedPolys[pIndex].class) {
+        case 2: {
+            tSpecial_volume *volume = gCar_to_view->collision_info->last_special_volume;
+            if ((volume != NULL && volume->gravity_multiplier < 1.0f) || gAction_replay_mode) {
+                UpdateTintedPolyByMaterial(pIndex);
+                return;
+            }
+            break;
+        }
+        case 3:
+            UpdatePolyVertexColours(pIndex);
+            return;
+        case 4:
+            if (PDKeyDown(32) || (gFire_poly_iteration > 0 && gFire_poly_iteration <= 200)) {
+                UpdateFirePoly(pIndex);
+            }
+            if (PDKeyDown(35) || (gFire_poly_iteration > 0 && gFire_poly_iteration <= 200)) {
+                gFire_poly_enabled_006a0448 = 1;
+                UpdateFirePoly(pIndex);
+                return;
+            }
+            break;
+        case 6:
+            UpdatePulsePoly(pIndex);
+            break;
+        }
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004d8630
+void C2_HOOK_FASTCALL UpdatePolyVertexColours(int pIndex) {
+    int i;
+    int new_color;
+
+    if (gTintedPolys[pIndex].actor->render_style == BR_RSTYLE_FACES) {
+        new_color = GetTotalTime() >> gTintedPolys[pIndex].colour;
+        for (i = 0; i < gTintedPolys[pIndex].model->nvertices; i++) {
+            gTintedPolys[pIndex].model->vertices[i].red = new_color + 128;
+            gTintedPolys[pIndex].model->vertices[i].grn = new_color + 30 * i;
+            gTintedPolys[pIndex].model->vertices[i].blu = new_color;
+        }
+        BrModelUpdate(gTintedPolys[pIndex].model, BR_MODU_VERTICES);
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 void C2_HOOK_FASTCALL ClearTheFlame(int pIndex) {
     C2_HOOK_BUG_ON(REC2_ASIZE(gTintedPolys[pIndex].tints2) != FIRE_HEIGHT);
@@ -633,62 +714,6 @@ void C2_HOOK_FASTCALL UpdateFirePoly(int pIndex) {
     }
 }
 
-void C2_HOOK_FASTCALL UpdatePulsePoly(int pIndex) {
-  if (gTintedPolys[pIndex].visible) {
-    int red, grn, blu;
-
-    if (gTintedPolys[pIndex].subClass == 0) {
-      unsigned int mask;
-      mask = GetTotalTime() >> gTintedPolys[pIndex].colour;
-      if ((mask & 0x1ff) > 254) {
-        mask = -2 - (mask & 0x1ff);
-      }
-      mask &= 0xff;
-      red = gTintedPolys[pIndex].color2_red & mask;
-      grn = gTintedPolys[pIndex].color2_grn & mask;
-      blu = gTintedPolys[pIndex].color2_blu & mask;
-    } else {
-      red = grn = blu = pIndex;
-      if (gTintedPolys[pIndex].subClass == 1) {
-        UpdatePolyVertexColours(pIndex);
-      }
-    }
-    gTintedPolys[pIndex].material->colour = BR_COLOUR_RGB(red, grn, blu);
-    BrMaterialUpdate(gTintedPolys[pIndex].material, BR_MATU_LIGHTING);
-  }
-}
-
-// FUNCTION: CARMA2_HW 0x004d84a0
-void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex) {
-
-    if (gTintedPolys[pIndex].used) {
-        switch (gTintedPolys[pIndex].class) {
-        case 2: {
-            tSpecial_volume *volume = gCar_to_view->collision_info->last_special_volume;
-            if ((volume != NULL && volume->gravity_multiplier < 1.0f) || gAction_replay_mode) {
-                UpdateTintedPolyByMaterial(pIndex);
-            }
-            break;
-        }
-        case 3:
-            UpdatePolyVertexColours(pIndex);
-            return;
-        case 4:
-            if (PDKeyDown(32) || (gFire_poly_iteration > 0 && gFire_poly_iteration <= 200)) {
-                UpdateFirePoly(pIndex);
-            }
-            if (PDKeyDown(35) || (gFire_poly_iteration > 0 && gFire_poly_iteration <= 200)) {
-                gFire_poly_enabled_006a0448 = 1;
-                UpdateFirePoly(pIndex);
-            }
-            break;
-        case 6:
-            UpdatePulsePoly(pIndex);
-            break;
-        }
-    }
-}
-
 // FUNCTION: CARMA2_HW 0x004d8a20
 void C2_HOOK_FASTCALL UpdateTintedPolys(void) {
     int i;
@@ -696,15 +721,6 @@ void C2_HOOK_FASTCALL UpdateTintedPolys(void) {
     for (i = 0; i < REC2_ASIZE(gTintedPolys); i++) {
         ProcessTintedPoly(i);
     }
-}
-
-// FUNCTION: CARMA2_HW 0x004d8470
-br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex) {
-
-    if (gTintedPolys[pTintedIndex].field_0x28 == '#') {
-        return gTintedPolys[pTintedIndex].material2;
-    }
-    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x004d8bb0
