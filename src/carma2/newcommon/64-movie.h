@@ -49,7 +49,7 @@ extern void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void);
 
 // ShowStatusMessage
 
-// GetMovieWidth
+extern int C2_HOOK_FASTCALL GetMovieWidth(void);
 
 // GetMovieHeight
 
