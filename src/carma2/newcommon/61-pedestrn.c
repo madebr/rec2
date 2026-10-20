@@ -127,7 +127,14 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // StopActorBeingRenderable
 
-// IsActorRenderworthy
+// FUNCTION: CARMA2_HW 0x004cbcc0
+int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
+    if (pActor->parent != NULL) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // SetPedXZDirection
 

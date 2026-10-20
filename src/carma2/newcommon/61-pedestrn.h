@@ -98,7 +98,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // StopActorBeingRenderable
 
-// IsActorRenderworthy
+extern int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor);
 
 // SetPedXZDirection
 
