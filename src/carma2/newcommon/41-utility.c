@@ -44,6 +44,9 @@ tU32 gLost_time;
 // GLOBAL: CARMA2_HW 0x0079efb0
 tU32 gLast_tick_count;
 
+// GLOBAL: CARMA2_HW 0x00762180
+char gCurrent_load_directory[256];
+
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     br_device *dev;
@@ -291,7 +294,10 @@ void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* s
     stemPath[i] = '\0';
 }
 
-// DRLoadMultiplePix
+// STUB: CARMA2_HW 0x00513a30
+int C2_HOOK_FASTCALL DRLoadMultiplePix(char* pName, br_pixelmap** pMaps, int pCapacity) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x00514570
 int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity) {

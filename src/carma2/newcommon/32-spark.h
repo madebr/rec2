@@ -14,6 +14,10 @@ extern tSmoke gSmoke[25];
 extern br_material* gBlack_material;
 extern tBRender_smoke* gBR_smoke_pointers[35];
 extern int gN_BR_smoke_structs;
+extern int gColumn_flags;
+extern br_pixelmap* gFlame_map[20];
+extern br_model* gLollipop_model;
+extern tSmoke_column gSmoke_column[10];
 
 // DrawDot
 
@@ -145,7 +149,7 @@ extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
 // DisposeFlame
 
-// InitFlame
+extern void C2_HOOK_FASTCALL InitFlame(void);
 
 // InitSplash
 

@@ -3,8 +3,11 @@
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "rec2_macros.h"
+
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00660110
 int gSmoke_on = 1;
@@ -35,6 +38,18 @@ tBRender_smoke* gBR_smoke_pointers[35];
 
 // GLOBAL: CARMA2_HW 0x006aa56c
 int gN_BR_smoke_structs;
+
+// GLOBAL: CARMA2_HW 0x006a8638
+br_pixelmap* gFlame_map[20];
+
+// GLOBAL: CARMA2_HW 0x006a96a8
+tSmoke_column gSmoke_column[10];
+
+// GLOBAL: CARMA2_HW 0x006aa380
+br_model* gLollipop_model;
+
+// GLOBAL: CARMA2_HW 0x006aa59c
+int gColumn_flags;
 
 // GLOBAL: CARMA2_HW 0x006b7880
 br_material* gBlack_material;
@@ -290,7 +305,60 @@ void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
 
 // DisposeFlame
 
-// InitFlame
+// FUNCTION: CARMA2_HW 0x004fc3a0
+void C2_HOOK_FASTCALL InitFlame(void) {
+    int i;
+    int j;
+    int num;
+    char the_path[256];
+    br_actor* actor;
+    br_material* material;
+
+    gColumn_flags = 0;
+    gLollipop_model = BrModelAllocate("Lollipop", 4, 2);
+    strcpy(the_path, "FLAMES.PIX");
+    strcpy(gCurrent_load_directory, "COMMON");
+    num = DRLoadMultiplePix(the_path, gFlame_map, REC2_ASIZE(gFlame_map));
+    if (num != (int)REC2_ASIZE(gFlame_map)) {
+        FatalError(kFatalError_CantLoadPixelmapFile_S, the_path);
+    }
+    BrMapAddMany(gFlame_map, num);
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        gSmoke_column[i].flame_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        for (j = 0; j < (int)REC2_ASIZE(gSmoke_column[0].frame_count); j++) {
+            actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            material = BrMaterialAllocate(NULL);
+            BrActorAdd(gSmoke_column[i].flame_actor, actor);
+            actor->model = gLollipop_model;
+            actor->material = material;
+            material->flags &= ~BR_MATF_LIGHT;
+            material->flags |= BR_MATF_ALWAYS_VISIBLE;
+            material->colour_map = gFlame_map[0];
+            GlorifyMaterial(&material, 1, kRendererShadingType_AmbientOnly);
+            BrMaterialAdd(material);
+            gSmoke_column[i].frame_count[j] = 100;
+        }
+    }
+    gLollipop_model->nvertices = 4;
+    BrVector3SetFloat(&gLollipop_model->vertices[0].p, -.5f, 0.f, 0.f);
+    BrVector3SetFloat(&gLollipop_model->vertices[1].p, .5f, 0.f, 0.f);
+    BrVector3SetFloat(&gLollipop_model->vertices[2].p, .5f, 1.f, 0.f);
+    BrVector3SetFloat(&gLollipop_model->vertices[3].p, -.5f, 1.f, 0.f);
+    BrVector2Set(&gLollipop_model->vertices[0].map, 0.f, 1.f);
+    BrVector2Set(&gLollipop_model->vertices[1].map, 1.f, 1.f);
+    BrVector2Set(&gLollipop_model->vertices[2].map, 1.f, 0.f);
+    BrVector2Set(&gLollipop_model->vertices[3].map, 0.f, 0.f);
+    gLollipop_model->nfaces = 2;
+    gLollipop_model->faces[0].vertices[0] = 0;
+    gLollipop_model->faces[0].vertices[1] = 1;
+    gLollipop_model->faces[0].vertices[2] = 2;
+    gLollipop_model->faces[1].vertices[0] = 0;
+    gLollipop_model->faces[1].vertices[1] = 2;
+    gLollipop_model->faces[1].vertices[2] = 3;
+    gLollipop_model->faces[0].smoothing = 1;
+    gLollipop_model->faces[1].smoothing = 1;
+    BrModelAdd(gLollipop_model);
+}
 
 // InitSplash
 
