@@ -16,7 +16,7 @@ extern void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, cons
 
 // LoadCarMaterials
 
-// SmoothlySetCarMaterialFlags
+extern void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStorage, tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage);
 

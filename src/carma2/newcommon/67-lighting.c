@@ -74,7 +74,17 @@ void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char*
 
 // LoadCarMaterials
 
-// SmoothlySetCarMaterialFlags
+// FUNCTION: CARMA2_HW 0x004f67a0
+void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStorage, tCar_spec* pCar_spec) {
+    int i;
+    br_material* material;
+
+    for (i = pCar_spec->old_material_count; i < pCar_spec->new_material_count; i++) {
+        material = pStorage->materials[i];
+        SmoothificateCarMaterial(material);
+        material->user = material->colour_map;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004f6820
 void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage) {
