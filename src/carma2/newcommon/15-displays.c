@@ -427,7 +427,18 @@ void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
     }
 }
 
-// MoveHeadupTo
+// FUNCTION: CARMA2_HW 0x0044a8a0
+void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pNew_x, int pNew_y) {
+    tHeadup* the_headup;
+
+    if (pHeadup_index >= 0) {
+        the_headup = &gHeadups[pHeadup_index];
+        the_headup->justification = eJust_left;
+        the_headup->original_x = pNew_x;
+        the_headup->x = pNew_x;
+        the_headup->y = pNew_y;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0044a8d0
 void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
