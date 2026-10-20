@@ -322,9 +322,23 @@ void C2_HOOK_FASTCALL ClearHeadups(void) {
 
 // MungeHeadupWidth
 
-// NewTextHeadupSlot2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// NewTextHeadupSlot
+// STUB: CARMA2_HW 0x00449fd0
+int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x0044a380
+int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText) {
+    return NewTextHeadupSlot2(pSlot_index, pFlash_rate, pLifetime, pFont_index, pText, 1);
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
