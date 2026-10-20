@@ -16,7 +16,7 @@ extern tNet_game_options gNet_settings[9];
 
 // RequestCarDetails
 
-// SetNetAvailability
+extern void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions);
 
 extern void C2_HOOK_FASTCALL DefaultNetSettings(void);
 
