@@ -70,7 +70,7 @@ extern void C2_HOOK_FASTCALL EnableGroovidelic(br_actor* pActor, tU32 pBlock_fla
 
 extern void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* pMatrix, tInterrupt_status pPath_interrupt_status, tInterrupt_status pObject_interrupt_status, float pPath_resumption_value, float pObject_resumption_value);
 
-// ResetGrooveFlags
+extern void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 
 extern void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex);
 

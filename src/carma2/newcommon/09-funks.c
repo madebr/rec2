@@ -197,7 +197,21 @@ void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* pMatrix,
     BrMatrix34Copy(&the_groove->actor->t.t.mat, pMatrix);
 }
 
-// ResetGrooveFlags
+// FUNCTION: CARMA2_HW 0x0047b1e0
+void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
+    int i;
+    tGroovidelic_spec* the_groove;
+
+    i = 0;
+    if (gGroovidelics_array_size > 0) {
+        the_groove = gGroovidelics_array;
+        do {
+            the_groove->done_this_frame = 0;
+            i++;
+            the_groove++;
+        } while (i < gGroovidelics_array_size);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047b250
 void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex) {
