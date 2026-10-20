@@ -26,7 +26,7 @@ extern void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial
 
 extern void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial);
 
-// SmoothificateCarMaterial
+extern void C2_HOOK_FASTCALL SmoothificateCarMaterial(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL MungeLightingEffects(void);
 
