@@ -4,7 +4,9 @@
 void C2_HOOK_FASTCALL DoSCILogo(void) {
 }
 
-// DoStainlessLogo
+// FUNCTION: CARMA2_HW 0x0043e760
+void C2_HOOK_STDCALL DoStainlessLogo(void) {
+}
 
 // PlaySmackerFile
 
