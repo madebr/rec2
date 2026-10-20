@@ -258,7 +258,7 @@ extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
 // PipeSingleDSModel
 
-// PipeSingleVector3
+extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue);
 
 // PipeSingleDroneRender
 
