@@ -127,7 +127,15 @@ void C2_HOOK_FASTCALL HideSkids(void) {
 
 // SkidMark
 
-// InitCarSkidStuff
+// FUNCTION: CARMA2_HW 0x004ea700
+void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar) {
+    int wheel;
+
+    pCar->old_skidding = 0;
+    for (wheel = 0; wheel < (int)REC2_ASIZE(pCar->oil_remaining); wheel++) {
+        pCar->oil_remaining[wheel] = 0.0f;
+    }
+}
 
 // SkidsPerFrame
 
