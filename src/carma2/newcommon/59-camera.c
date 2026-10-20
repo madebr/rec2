@@ -1,5 +1,8 @@
 #include "59-camera.h"
 
+// GLOBAL: CARMA2_HW 0x006792b8
+int gCamera_frozen;
+
 // GLOBAL: CARMA2_HW 0x007634ac
 float gCamera_cockpit_hither;
 
@@ -84,7 +87,11 @@ tActionReplayCameraMode gAction_replay_camera_mode;
 
 // InitialiseExternalCamera
 
-// FreezeCamera
+// FUNCTION: CARMA2_HW 0x00413770
+void C2_HOOK_FASTCALL FreezeCamera(void) {
+
+    gCamera_frozen = 1;
+}
 
 // GetAverageGridPosition
 
