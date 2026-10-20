@@ -49,7 +49,7 @@ extern intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* p
 
 // IncreasingCompare
 
-// DecreasingCompare
+extern int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
 
 // CrushLimitNumber
 
