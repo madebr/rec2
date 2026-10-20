@@ -39,7 +39,9 @@ br_pixelmap* gDigits_pix;
 
 // ReceivedMechanics
 
-// ReceivedCopInfo
+// FUNCTION: CARMA2_HW 0x00498bb0
+void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
+}
 
 // SendAllNonCarPositions
 
