@@ -706,7 +706,11 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 
 // FRONTEND_NetworkJoinMenuHandler
 
-// OnePlayerSetup
+// FUNCTION: CARMA2_HW 0x00469a30
+int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
 
 // MenuSetCarImage
 
