@@ -192,7 +192,7 @@ extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, con
 
 extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPosition);
 
-// PipeSingleSpecial
+extern void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
 
 // PipeSingleCarIncident
 
