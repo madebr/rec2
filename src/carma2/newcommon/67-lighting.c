@@ -6,6 +6,7 @@
 #include "52-errors.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include <string.h>
@@ -101,7 +102,17 @@ void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
 
 // SmoothificateWorldMaterial
 
-// SmoothificateCarMaterial
+// FUNCTION: CARMA2_HW 0x004f6b50
+void C2_HOOK_FASTCALL SmoothificateCarMaterial(br_material* pMaterial) {
+
+  if (gNbPixelBits == 16) {
+      pMaterial->ka = 0.6f;
+      pMaterial->flags &= ~BR_MATF_PRELIT;
+      pMaterial->flags |= BR_MATF_SMOOTH | BR_MATF_LIGHT;
+      pMaterial->kd = 0.2f;
+      BrMaterialUpdate(pMaterial,BR_MATU_ALL);
+  }
+}
 
 // FUNCTION: CARMA2_HW 0x00486d60
 void C2_HOOK_FASTCALL MungeLightingEffects(void) {
