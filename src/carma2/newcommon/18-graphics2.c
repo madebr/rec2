@@ -453,7 +453,25 @@ void C2_HOOK_CDECL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int
     }
 }
 
-// DimRectangleClipped
+// FUNCTION: CARMA2_HW 0x0047cce0
+void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
+
+    if (pLeft < 0) {
+        pLeft = 0;
+    }
+    if (pTop < 0) {
+        pTop = 0;
+    }
+    if (pRight > pPixelmap->width) {
+        pRight = pPixelmap->width;
+    }
+    if (pBottom > pPixelmap->height) {
+        pBottom = pPixelmap->height;
+    }
+    if (pLeft < pRight && pTop < pBottom) {
+        DimRectangle(pPixelmap, pLeft, pTop, pRight, pBottom, pKnock_out_corners);
+    }
+}
 
 // DR8BitPixelmapRotatedAndFeatheredCopy
 
