@@ -321,24 +321,29 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char *pThe_str) {
 
 // FUNCTION: CARMA2_HW 0x0051afb0
 void C2_HOOK_FASTCALL PDNonFatalError(const char *pThe_str) {
+
     dr_dprintf("*** ERROR...");
     dr_dprintf(pThe_str);
 }
 
 // FUNCTION: CARMA2_HW 0x0051afd0
 int C2_HOOK_FASTCALL PDIsWindowInactive(void) {
+
     return gWindowActiveState == 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0051afe0
 char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
-    if ((unsigned char) pChar >= 0x80) {
-        char c = gExtendedAsciiToNormalAscii[(unsigned char) pChar - 128];
-        dr_dprintf("PDConvertToASCIILessThan128() Returning %d", c);
-        return c;
+    tU8 b = pChar;
+
+    if (b >= 128) {
+        b = gExtendedAsciiToNormalAscii[b - 128];
+        dr_dprintf("PDConvertToASCIILessThan128() Returning %d", b);
+        return b;
+    } else {
+        dr_dprintf("PDConvertToASCIILessThan128() Returning %d", b);
+        return b;
     }
-    dr_dprintf("PDConvertToASCIILessThan128() Returning %d", pChar);
-    return pChar;
 }
 
 // FUNCTION: CARMA2_HW 0x0051b040
@@ -360,6 +365,7 @@ int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
 
 // FUNCTION: CARMA2_HW 0x0051b0a0
 void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void) {
+
     dr_dprintf("KEYBOARD BUFFER CLEARED");
     gKeyboardBufferLength = 0;
 }
@@ -406,10 +412,14 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 
 // FUNCTION: CARMA2_HW 0x0051c2e0
 void C2_HOOK_FASTCALL PDLockRealBackScreen(void) {
+
+    // empty
 }
 
 // FUNCTION: CARMA2_HW 0x0051c2f0
 void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void) {
+
+    // empty
 }
 
 void DeActivateApp(void) {
@@ -436,13 +446,6 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
     char buffer[256];
 
     switch (uMsg) {
-        case WM_PAINT:
-            BeginPaint(hWnd, &paint);
-            EndPaint(hWnd, &paint);
-            return 0;
-        case WM_DESTROY:
-            dr_dprintf("WM_DESTROY received - doing nothing.");
-            break;
 #if !defined(KEEP_ACTIVE_IN_BACKGROUND)
         case WM_MOVE:
         case WM_SIZE:
@@ -452,6 +455,39 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             }
             break;
 #endif
+        case WM_PAINT:
+            BeginPaint(hWnd, &paint);
+            EndPaint(hWnd, &paint);
+            return 0;
+#if !defined(KEEP_ACTIVE_IN_BACKGROUND)
+        case WM_ACTIVATEAPP:
+            dr_dprintf(
+                "WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
+                wParam, lParam, GetForegroundWindow(), gHWnd, hWnd, IsIconic(gHWnd));
+            if (gHWnd != NULL) {
+                if (GetForegroundWindow() == gHWnd && !IsIconic(gHWnd)) {
+                    dr_dprintf("Activating app");
+                    if (gDirectInputDevice != NULL) {
+                        IDirectInputDevice_Acquire(gDirectInputDevice);
+                    }
+                    if (gHWnd != NULL && gScreenWidth != 0) {
+                        SetWindowPos(gHWnd, NULL, 0, 0, gScreenWidth, gScreenHeight,
+                                     SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
+                    }
+                    gWindowActiveState = 2;
+                    gTime_app_activated = PDGetTotalTime();
+                } else {
+                    if (gBack_screen != NULL && gBack_screen->pixels != NULL) {
+                        return 1;
+                    }
+                    DeActivateApp();
+                }
+            }
+            break;
+#endif
+        case WM_DESTROY:
+            dr_dprintf("WM_DESTROY received - doing nothing.");
+            break;
         case WM_SYSCOMMAND:
             if (GET_SC_WPARAM(wParam) == SC_CLOSE) {
                 DestroyWindow(gHWnd);
@@ -518,32 +554,6 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
                 dr_dprintf("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
             }
             break;
-#if !defined(KEEP_ACTIVE_IN_BACKGROUND)
-        case WM_ACTIVATEAPP:
-            dr_dprintf(
-                "WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
-                wParam, lParam, GetForegroundWindow(), gHWnd, hWnd, IsIconic(gHWnd));
-            if (gHWnd != NULL) {
-                if (GetForegroundWindow() == gHWnd && !IsIconic(gHWnd)) {
-                    dr_dprintf("Activating app");
-                    if (gDirectInputDevice != NULL) {
-                        IDirectInputDevice_Acquire(gDirectInputDevice);
-                    }
-                    if (gHWnd != NULL && gScreenWidth != 0) {
-                        SetWindowPos(gHWnd, NULL, 0, 0, gScreenWidth, gScreenHeight,
-                                     SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
-                    }
-                    gWindowActiveState = 2;
-                    gTime_app_activated = PDGetTotalTime();
-                } else {
-                    if (gBack_screen != NULL && gBack_screen->pixels != NULL) {
-                        return 1;
-                    }
-                    DeActivateApp();
-                }
-            }
-            break;
-#endif
         default:
             break;
     }

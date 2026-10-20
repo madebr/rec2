@@ -187,7 +187,7 @@ extern void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
 
 // FRONTEND_Main
 
-// ProcessInputString
+extern int C2_HOOK_FASTCALL ProcessInputString(void);
 
 extern int C2_HOOK_FASTCALL StopGettingInputString(void);
 
