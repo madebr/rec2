@@ -265,7 +265,7 @@ extern int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetEngineFactor
 
-// ResetUnderwater
+extern void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar);
 
 // PukeDrugsBackUp
 
@@ -277,13 +277,13 @@ extern void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car);
 
-// ResetWallclimb
+extern void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetBouncey
 
 // ResetSuspension
 
-// ResetDamageMultiplier
+extern void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetTyreGrip
 
