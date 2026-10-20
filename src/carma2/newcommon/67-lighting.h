@@ -24,7 +24,7 @@ extern int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const ch
 
 extern void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial);
 
-// SmoothificateWorldMaterial
+extern void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial);
 
 // SmoothificateCarMaterial
 
