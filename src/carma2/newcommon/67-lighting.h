@@ -12,13 +12,13 @@ extern void C2_HOOK_FASTCALL SmoothlyLoadIfItsAModel(const char* pPath);
 
 extern int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const char* pPath);
 
-// LoadTrackMaterials
+extern void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath);
 
 // LoadCarMaterials
 
 // SmoothlySetCarMaterialFlags
 
-// SmoothlySetWorldMaterialFlags
+extern void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage);
 
 // SmoothificatePowerups
 
