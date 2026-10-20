@@ -1,6 +1,7 @@
 #include "16-graphics1.h"
 
 #include "02-init.h"
+#include "15-displays.h"
 #include "19-font.h"
 #include "41-utility.h"
 #include "52-errors.h"
@@ -114,7 +115,27 @@ tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void) {
     return gShadow_level;
 }
 
-// ToggleShadow
+// FUNCTION: CARMA2_HW 0x004e9960
+void C2_HOOK_FASTCALL ToggleShadow(void) {
+
+    if (gShadow_level++ == eShadow_everyone) {
+        gShadow_level = eShadow_none;
+    }
+    switch (gShadow_level) {
+    case eShadow_none:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowNone));
+        break;
+    case eShadow_us_only:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsOnly));
+        break;
+    case eShadow_us_and_opponents:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsAndOpponents));
+        break;
+    case eShadow_everyone:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowEveryone));
+        break;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e99d0
 void C2_HOOK_FASTCALL InitShadow(void) {
