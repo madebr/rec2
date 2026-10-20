@@ -1,6 +1,7 @@
 #include "23-piping.h"
 
 #include "51-smash.h"
+#include "69-sound.h"
 #include "globvars.h"
 #include "platform.h"
 
@@ -246,9 +247,26 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
 
 // PipeSingleGraphicalWheelStuff
 
-// STUB: CARMA2_HW 0x004c84a0
+// FUNCTION: CARMA2_HW 0x004c84a0
 void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPosition) {
-    NOT_IMPLEMENTED();
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_shunk_single_sound, pitch, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_shunk_single_sound, position, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_shunk_single_sound, position, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_shunk_single_sound, outlet, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_shunk_single_sound, outlet, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_shunk_single_sound, volume, 0x12);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_shunk_single_sound, volume, 0x2);
+
+    if (!gAction_replay_mode && gProgram_state.racing) {
+        if (pPosition == NULL) {
+            pPosition = &gZero_vector__smash;
+        }
+        ARDoSingleVariedSession(ePipe_chunk_single_sound, pSound, 4,
+            SIZE_OFFSET_PIPING(tPipe_shunk_single_sound, pitch), pPitch,
+            SIZE_OFFSET_PIPING(tPipe_shunk_single_sound, position), pPosition,
+            SIZE_OFFSET_PIPING(tPipe_shunk_single_sound, outlet), GetIndexFromOutlet(pOutlet),
+            SIZE_OFFSET_PIPING(tPipe_shunk_single_sound, volume), (pR_volume << 8) + pL_volume);
+    }
 }
 
 // PipeSingleSpecial
