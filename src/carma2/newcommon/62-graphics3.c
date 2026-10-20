@@ -25,6 +25,9 @@ tCar_icon gCar_icons[128];
 // GLOBAL: CARMA2_HW 0x0074ab84
 br_actor* gCar_icons_model_actor;
 
+// GLOBAL: CARMA2_HW 0x0068d8c8
+int gTarget_lock_enabled;
+
 // GLOBAL: CARMA2_HW 0x0068d8cc
 int gInitMap_done;
 
@@ -134,7 +137,11 @@ tSmashable_race_target gSmashable_race_targets[300];
 
 // ToggleMapTransparency
 
-// InitTargetLock
+// FUNCTION: CARMA2_HW 0x004948a0
+void C2_HOOK_FASTCALL InitTargetLock(void) {
+
+    gTarget_lock_enabled = 0;
+}
 
 // SetIntegerMapRenders
 
