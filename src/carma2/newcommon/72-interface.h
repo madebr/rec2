@@ -75,7 +75,7 @@ extern int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend);
 
 // NewGameInfunc
 
-// StartFudge
+extern int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend);
 
 // FRONTEND_NewGameMenuHandler
 

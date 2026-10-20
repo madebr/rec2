@@ -653,7 +653,14 @@ int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend) {
 
 // NewGameInfunc
 
-// StartFudge
+// FUNCTION: CARMA2_HW 0x00467270
+int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
+    if (gProgram_state.field_0x2c) {
+        return 5;
+    } else {
+        return 0;
+    }
+}
 
 // FRONTEND_NewGameMenuHandler
 
