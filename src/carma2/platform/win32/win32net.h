@@ -10,6 +10,7 @@
 
 extern char gPathNetworkIni[240];
 extern int gPathNetworkIniValid;
+extern struct sockaddr gLocal_address;
 
 void C2_HOOK_FASTCALL NetNowIPXLocalTarget2String(char* pString, struct sockaddr* pSock_addr);
 
