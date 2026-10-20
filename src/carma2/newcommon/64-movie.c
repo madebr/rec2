@@ -111,7 +111,15 @@ int C2_HOOK_FASTCALL GetMovieWidth(void) {
     }
 }
 
-// GetMovieHeight
+// FUNCTION: CARMA2_HW 0x004e2160
+int C2_HOOK_FASTCALL GetMovieHeight(void) {
+
+    if (gNbPixelBits == 16) {
+        return gCurrent_graf_data->height / 2;
+    } else {
+        return gCurrent_graf_data->height;
+    }
+}
 
 // TidyMovieARDisplay
 
