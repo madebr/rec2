@@ -72,7 +72,7 @@ extern intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData
 
 // FindCarShellModel
 
-// LinkCarActorsToGroovidelicsCB
+extern intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pData);
 
 // LinkCarActorsToGroovidelics
 
