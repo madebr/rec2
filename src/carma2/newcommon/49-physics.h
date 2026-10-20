@@ -285,7 +285,7 @@ extern void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObjec
 
 // TrialPositionChildren
 
-// InternalPositionChildren
+extern void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysics_object* pRoot);
 
 // PositionChildren
 
