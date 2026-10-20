@@ -10,6 +10,7 @@ extern void* gPhysics_buffer2_ptr;
 extern void* gPhysics_buffer3_ptr;
 extern int gPhysics_other_buffer_capacity;
 extern void* gPhysics_other_buffer;
+extern void* gPhysics_scratch_ptr;
 
 // count
 
@@ -337,7 +338,7 @@ extern void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ,
 
 // IncreasePhysicsScratchPointer
 
-// ClearPhysicsScratchSpace
+extern void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void);
 
 extern tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(int pType);
 

@@ -33,6 +33,9 @@ int gPhysics_other_buffer_capacity;
 // GLOBAL: CARMA2_HW 0x006940c4
 void* gPhysics_other_buffer;
 
+// GLOBAL: CARMA2_HW 0x006940bc
+void* gPhysics_scratch_ptr;
+
 // count
 
 // FUNCTION: CARMA2_HW 0x004225b0
@@ -476,7 +479,11 @@ void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const 
 
 // IncreasePhysicsScratchPointer
 
-// ClearPhysicsScratchSpace
+// FUNCTION: CARMA2_HW 0x004c5d00
+void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void) {
+
+    gPhysics_scratch_ptr = gPhysics_other_buffer;
+}
 
 // FUNCTION: CARMA2_HW 0x004c5d10
 tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(int pType) {
