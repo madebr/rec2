@@ -429,6 +429,11 @@ void C2_HOOK_FASTCALL PlayFlicsFromDisk(void) {
     gPlay_from_disk = 1;
 }
 
+// FUNCTION: CARMA2_HW 0x00461a10
+void C2_HOOK_FASTCALL PlayFlicsFromMemory(void) {
+    gPlay_from_disk = 0;
+}
+
 // FUNCTION: CARMA2_HW 0x00461a20
 void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
     gPanel_flic_disable = 1;
@@ -514,9 +519,14 @@ int C2_HOOK_FASTCALL LoadFlic(int pIndex) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x00462a70
+// FUNCTION: CARMA2_HW 0x00462a70
 void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
-    NOT_IMPLEMENTED();
+    if (pIndex < 0) {
+        return;
+    }
+    if (gMain_flic_list[pIndex].data_ptr != NULL) {
+        MAMSUnlock((void**)&gMain_flic_list[pIndex].data_ptr);
+    }
 }
 
 // LoadFlicData
