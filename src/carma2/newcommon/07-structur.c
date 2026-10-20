@@ -2,6 +2,7 @@
 
 #include "15-displays.h"
 #include "30-opponent.h"
+#include "41-utility.h"
 #include "43-pratcam.h"
 #include "69-sound.h"
 #include "globvars.h"
@@ -72,7 +73,39 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
 
 // SelectOpponents
 
-// PickNetRace
+// FUNCTION: CARMA2_HW 0x00503ba0
+int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence) {
+    int i;
+    int new_index;
+    int races_count;
+    int most_seldom_seen;
+    int races_to_pick_from[50];
+
+    if (pNet_race_sequence == eNet_sequence_sequential) {
+        pCurrent_race++;
+        if (pCurrent_race >= gNumber_of_races) {
+            pCurrent_race = 0;
+        }
+        return pCurrent_race;
+    } else {
+        most_seldom_seen = 10000;
+        for (i = 0; i < gNumber_of_races; i++) {
+            if (gRace_list[i].count_opponents < most_seldom_seen) {
+                most_seldom_seen = gRace_list[i].count_opponents;
+            }
+        }
+        races_count = 0;
+        for (i = 0; i < gNumber_of_races; i++) {
+            if (gRace_list[i].count_opponents == most_seldom_seen && i != pCurrent_race) {
+                races_to_pick_from[races_count] = i;
+                races_count++;
+            }
+        }
+        new_index = races_to_pick_from[IRandomBetween(0, races_count - 1)];
+        gRace_list[new_index].count_opponents++;
+        return new_index;
+    }
+}
 
 // SwapNetCarsLoad
 

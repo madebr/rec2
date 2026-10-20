@@ -2,6 +2,7 @@
 #define GUARD_07_STRUCTUR_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 extern int gHud_tinted1;
 extern int gHud_tinted2;
@@ -36,7 +37,7 @@ extern void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
 
 // SelectOpponents
 
-// PickNetRace
+extern int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence);
 
 // SwapNetCarsLoad
 
