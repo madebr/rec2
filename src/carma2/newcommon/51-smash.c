@@ -416,7 +416,10 @@ void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex) {
     BrActorRemove(gDecals[pIndex].actor);
 }
 
-// ChangeSmashTexture
+// STUB: CARMA2_HW 0x004f6060
+void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture) {
+    NOT_IMPLEMENTED();
+}
 
 // DoNetSmash
 

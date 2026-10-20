@@ -501,6 +501,13 @@ typedef struct {
     br_model* new_model;
 } tPipe_chunk_smash_model_change;
 
+typedef struct {
+    tCar_spec* car_spec;
+    undefined4 field_0x4;
+    br_pixelmap* texture1;
+    br_pixelmap* texture2;
+} tPipe_smash_texture_change;
+
 typedef struct tPipe_chunk {
     tU32 subject_index;
     union {
@@ -509,6 +516,7 @@ typedef struct tPipe_chunk {
         tPipe_phil_object phil_object;
         tPipe_chunk_shrapnel shrapnel;
         tPipe_chunk_smash_model_change smash_model_change;
+        tPipe_smash_texture_change smash_texture_change;
         char raw_data[0];
     } data;
 } tPipe_chunk;
@@ -518,13 +526,6 @@ typedef struct tPipe_session {
     tU32 count;
     char data[];
 } tPipe_session;
-
-typedef struct {
-    tCar_spec* car_spec;
-    undefined4 field_0x4;
-    br_pixelmap* texture1;
-    br_pixelmap* texture2;
-} tPipe_smash_texture_change;
 
 typedef void C2_HOOK_FASTCALL tDrone_state_function(tDrone_spec*, tDroneStateFuncState);
 
