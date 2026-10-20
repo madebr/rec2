@@ -529,6 +529,7 @@ void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette) {
         green = (gRGB_colours[i] >> 8) & 0xFF;
         blue = gRGB_colours[i] & 0xFF;
         for (j = 0; j < 256; j++) {
+            // FIXME: big endian incompatible
             sum = sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 2) - red));
             sum += sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j) - blue));
             sum += sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 1) - green));
