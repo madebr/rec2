@@ -46,7 +46,7 @@ extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
 // AddGroovidelics
 
-// KillGroovadelic
+extern void C2_HOOK_FASTCALL KillGroovadelic(int pOwner);
 
 // KillFunkotronic
 

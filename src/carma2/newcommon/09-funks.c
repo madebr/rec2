@@ -114,7 +114,23 @@ void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
 
 // AddGroovidelics
 
-// KillGroovadelic
+// FUNCTION: CARMA2_HW 0x00477160
+void C2_HOOK_FASTCALL KillGroovadelic(int pOwner) {
+    int i;
+    tGroovidelic_spec* the_groove;
+
+    if (gGroovidelics_array != NULL) {
+        for (i = 0, the_groove = gGroovidelics_array; i < gGroovidelics_array_size; i++) {
+            if (the_groove[i].owner == pOwner
+                && the_groove[i].path_mode != eMove_controlled
+                && the_groove[i].path_mode != eMove_absolute
+                && the_groove[i].object_mode != eMove_controlled
+                && the_groove[i].object_mode != eMove_absolute) {
+                the_groove[i].owner = -999;
+            }
+        }
+    }
+}
 
 // KillFunkotronic
 
