@@ -1,7 +1,9 @@
 #ifndef GUARD_45_CUTSCENE_H
 #define GUARD_45_CUTSCENE_H
 
-// DoSCILogo
+#include "c2_hooks.h"
+
+extern void C2_HOOK_FASTCALL DoSCILogo(void);
 
 // DoStainlessLogo
 
