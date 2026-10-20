@@ -1,6 +1,8 @@
 #include "55-volume.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
+#include "34-finteray.h"
 #include "69-sound.h"
 #include "globvars.h"
 
@@ -29,7 +31,31 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
 
 // MungeSpecialVolume
 
-// ResetCarSpecialVolume
+// FUNCTION: CARMA2_HW 0x004ff530
+void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject) {
+    br_vector3 direction;
+    br_vector3 normal;
+    br_scalar distance;
+    br_material* material;
+    tSpecial_volume* volume;
+    char* mat_id;
+
+    volume = NULL;
+    BrVector3Set(&direction, 0.f, 200.f, 0.f);
+    DisablePlingMaterials();
+    FindFace(&pObject->actor->t.t.translate.t, &direction, &normal, &distance, &material);
+    EnablePlingMaterials();
+    if (distance < 100.f && material != NULL) {
+        mat_id = material->identifier;
+        if (mat_id != NULL) {
+            if (strlen(mat_id) != 0 && (mat_id[0] == '!' || mat_id[0] == '#')) {
+                volume = GetDefaultSpecialVolumeForWater();
+            }
+        }
+    }
+    pObject->auto_special_volume = volume;
+    pObject->water_depth_factor = 1.f;
+}
 
 // TestAutoSpecialVolume
 

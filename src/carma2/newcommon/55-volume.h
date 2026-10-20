@@ -15,7 +15,7 @@ extern tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
 
 // MungeSpecialVolume
 
-// ResetCarSpecialVolume
+extern void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject);
 
 // TestAutoSpecialVolume
 
