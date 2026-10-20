@@ -1,7 +1,27 @@
 #include "34-finteray.h"
 
+#include "rec2_macros.h"
+
 // GLOBAL: CARMA2_HW 0x005964c0
 int gPling_materials = 1;
+
+// GLOBAL: CARMA2_HW 0x00686190
+br_scalar gNearest_T;
+
+// GLOBAL: CARMA2_HW 0x006861cc
+br_actor* gNearest_actor;
+
+// GLOBAL: CARMA2_HW 0x00686188
+int gNearest_face;
+
+// GLOBAL: CARMA2_HW 0x00686194
+int gNearest_face_group;
+
+// GLOBAL: CARMA2_HW 0x0068618c
+br_model* gNearest_model;
+
+// GLOBAL: CARMA2_HW 0x00686198
+br_matrix34 gPick_model_to_view__finteray;
 
 // BadDiv
 
@@ -9,7 +29,18 @@ int gPling_materials = 1;
 
 // PickBoundsTestRay
 
-// ActorRayPick2D
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0045cb70
+int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vector3* pDir, br_model* model, br_material* material, dr_pick2d_cbfn* callback) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // DRSceneRayPick2D
 
@@ -17,11 +48,27 @@ int gPling_materials = 1;
 
 // FindHighestPolyCallBack
 
-// FindHighestCallBack
-
-// STUB: CARMA2_HW 0x0045ca60
-void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* nor, br_scalar* t, br_material** material, br_actor** actor) {
+// STUB: CARMA2_HW 0x0045cf20
+int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
     NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x0045ca60
+void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* pNormal, br_scalar* pT, br_material** pMaterial, br_actor** pActor) {
+    int group;
+
+    gNearest_T = 100.f;
+    BrMatrix34Inverse(&gPick_model_to_view__finteray, &pWorld->t.t.mat);
+    ActorRayPick2D(pWorld, pPosition, pDir, NULL, NULL, FindHighestCallBack);
+    *pT = gNearest_T;
+    if (gNearest_T < 100.f) {
+        group = gNearest_face_group;
+        BrVector3Copy(pNormal, &V11MODEL(gNearest_model)->groups[group].faces[gNearest_face].eqn);
+        *pMaterial = *V11MODEL(gNearest_model)->groups[group].face_colours.materials;
+        if (pActor != NULL) {
+            *pActor = gNearest_actor;
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x0045d5c0
