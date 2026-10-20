@@ -56,7 +56,10 @@ void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void) {
 
 }
 
-// ShowSpecialVolumesIfRequ
+// FUNCTION: CARMA2_HW 0x004415f0
+void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void) {
+
+}
 
 // DoEditModeKey
 

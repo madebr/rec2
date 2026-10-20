@@ -25,7 +25,7 @@ extern int gHeadup_map_h;
 
 extern void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void);
 
-// ShowSpecialVolumesIfRequ
+extern void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void);
 
 // DoEditModeKey
 
