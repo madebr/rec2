@@ -36,7 +36,7 @@ extern void C2_HOOK_FASTCALL HideSkids(void);
 
 // SkidMark
 
-// InitCarSkidStuff
+extern void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar);
 
 // SkidsPerFrame
 
