@@ -107,6 +107,14 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
 
 // SaveSpecialVolumes
 
-// FindInverseAndWorldBox
+// FUNCTION: CARMA2_HW 0x004ffd20
+void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
+    br_bounds bnds;
+
+    BrVector3Set(&bnds.min, -1.f, -1.f, -1.f);
+    BrVector3Set(&bnds.max, 1.f, 1.f, 1.f);
+    GetNewBoundingBox(&pSpec->boundary.box.bounds, &bnds, &pSpec->boundary.box.mat);
+    BrMatrix34Inverse(&pSpec->boundary.box.inv_mat, &pSpec->boundary.box.mat);
+}
 
 // ReadSpecialVolumes
