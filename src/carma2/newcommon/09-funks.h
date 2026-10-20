@@ -10,6 +10,7 @@ extern tFunkotronic_spec* gFunkotronics_array;
 extern tGroovidelic_spec* gGroovidelics_array;
 extern int gGroovidelics_array_size;
 extern tU32 gPrevious_groove_times[2];
+extern tGroove_funk_binding gGroove_funk_bindings[1440];
 
 // CalculateTextureBitsValue
 
@@ -19,7 +20,7 @@ extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 // AddFunkGrooveBinding
 
-// ControlBoundFunkGroove
+extern void C2_HOOK_FASTCALL ControlBoundFunkGroove(int pSlot_number, float pValue);
 
 // ControlBoundFunkGroovePlus
 
