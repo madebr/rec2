@@ -17,7 +17,7 @@ extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // MungeExplosions
 
-// CopyExplosionData
+extern void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion);
 
 // DoExplosionette
 
