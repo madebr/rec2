@@ -67,9 +67,9 @@ extern void C2_HOOK_FASTCALL ClearHeadups(void);
 
 // MungeHeadupWidth
 
-// NewTextHeadupSlot2
+extern int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it);
 
-// NewTextHeadupSlot
+extern int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText);
 
 extern int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index);
 
