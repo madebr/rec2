@@ -12,6 +12,8 @@ extern br_pixelmap* gIt_shade_table;
 extern int gSmoke_flags;
 extern tSmoke gSmoke[25];
 extern br_material* gBlack_material;
+extern tBRender_smoke* gBR_smoke_pointers[35];
+extern int gN_BR_smoke_structs;
 
 // DrawDot
 
@@ -99,7 +101,7 @@ extern int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
 
 extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
-// RenderRecordedSmokeCircles
+extern void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
 
 // RecordSmokeCircle
 

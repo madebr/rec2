@@ -3,6 +3,8 @@
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "globvars.h"
+#include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x00660110
 int gSmoke_on = 1;
@@ -27,6 +29,12 @@ int gSmoke_flags;
 
 // GLOBAL: CARMA2_HW 0x006a8ce0
 tSmoke gSmoke[25];
+
+// GLOBAL: CARMA2_HW 0x006a8760
+tBRender_smoke* gBR_smoke_pointers[35];
+
+// GLOBAL: CARMA2_HW 0x006aa56c
+int gN_BR_smoke_structs;
 
 // GLOBAL: CARMA2_HW 0x006b7880
 br_material* gBlack_material;
@@ -149,7 +157,42 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
     NOT_IMPLEMENTED();
 }
 
-// RenderRecordedSmokeCircles
+// FUNCTION: CARMA2_HW 0x004fb1b0
+void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
+    int i;
+    int j;
+    tBRender_smoke* smoke;
+    br_model* model;
+    tU8 red;
+    tU8 grn;
+    tU8 blu;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gBR_smoke_pointers) != 35);
+    C2_HOOK_BUG_ON(sizeof(gBR_smoke_pointers[0]) != 4);
+
+    BrQsort(gBR_smoke_pointers, gN_BR_smoke_structs, sizeof(gBR_smoke_pointers[0]), CmpSmokeZ);
+    for (i = gN_BR_smoke_structs - 1; i >= 0; i--) {
+        smoke = gBR_smoke_pointers[i];
+        BrVector3Copy(&gBlend_actor->t.t.translate.t, &smoke->pos);
+        gBlend_actor->t.t.mat.m[0][0] = smoke->r;
+        gBlend_actor->t.t.mat.m[1][1] = smoke->r / smoke->aspect;
+        gBlend_actor->material = smoke->material;
+        smoke->material->extra_prim[1].v.x = BrFloatToFixed(smoke->strength * 150.f);
+        BrMaterialUpdate(smoke->material, BR_MATU_EXTRA_PRIM);
+        red = BR_RED(smoke->col);
+        grn = BR_GRN(smoke->col);
+        blu = BR_BLU(smoke->col);
+        model = gBR_smoke_pointers[i]->model;
+        for (j = 0; j < model->nvertices; j++) {
+            model->vertices[j].red = red;
+            model->vertices[j].grn = grn;
+            model->vertices[j].blu = blu;
+        }
+        BrModelUpdate(model, BR_MODU_VERTEX_COLOURS);
+        gBlend_actor->model = model;
+        BrZbsSceneRenderAdd(gBlend_actor);
+    }
+}
 
 // RecordSmokeCircle
 
