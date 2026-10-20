@@ -94,7 +94,7 @@ extern void C2_HOOK_FASTCALL LoadHeadupImages(void);
 
 extern void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index);
 
-// LoadRaceInfo
+extern void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info);
 
 extern void C2_HOOK_FASTCALL LoadOpponents(void);
 
