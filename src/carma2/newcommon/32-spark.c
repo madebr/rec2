@@ -344,14 +344,10 @@ void C2_HOOK_FASTCALL InitFlame(void) {
     BrVector3SetFloat(&gLollipop_model->vertices[1].p, .5f, 0.f, 0.f);
     BrVector3SetFloat(&gLollipop_model->vertices[2].p, .5f, 1.f, 0.f);
     BrVector3SetFloat(&gLollipop_model->vertices[3].p, -.5f, 1.f, 0.f);
-    gLollipop_model->vertices[0].map.v[0] = 0.f;
-    gLollipop_model->vertices[0].map.v[1] = 1.f;
-    gLollipop_model->vertices[1].map.v[0] = 1.f;
-    gLollipop_model->vertices[1].map.v[1] = 1.f;
-    gLollipop_model->vertices[2].map.v[0] = 1.f;
-    gLollipop_model->vertices[2].map.v[1] = 0.f;
-    gLollipop_model->vertices[3].map.v[0] = 0.f;
-    gLollipop_model->vertices[3].map.v[1] = 0.f;
+    BrVector2Set(&gLollipop_model->vertices[0].map, 0.f, 1.f);
+    BrVector2Set(&gLollipop_model->vertices[1].map, 1.f, 1.f);
+    BrVector2Set(&gLollipop_model->vertices[2].map, 1.f, 0.f);
+    BrVector2Set(&gLollipop_model->vertices[3].map, 0.f, 0.f);
     gLollipop_model->nfaces = 2;
     gLollipop_model->faces[0].vertices[0] = 0;
     gLollipop_model->faces[0].vertices[1] = 1;
