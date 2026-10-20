@@ -360,7 +360,13 @@ int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // ResetEngineFactor
 
-// ResetUnderwater
+// FUNCTION: CARMA2_HW 0x004de600
+void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, underwater_ability, 0x1b0);
+
+    pCar->underwater_ability = 0;
+}
 
 // PukeDrugsBackUp
 
@@ -384,13 +390,25 @@ void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car) {
     gPinball_factor = 0.f;
 }
 
-// ResetWallclimb
+// FUNCTION: CARMA2_HW 0x004de740
+void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, wall_climber_mode, 0x1c4);
+
+    pCar->wall_climber_mode = 0;
+}
 
 // ResetBouncey
 
 // ResetSuspension
 
-// ResetDamageMultiplier
+// FUNCTION: CARMA2_HW 0x004de780
+void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, damage_multiplier, 0x4cc);
+
+    pCar->damage_multiplier = 1.f;
+}
 
 // FUNCTION: CARMA2_HW 0x004de790
 void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
