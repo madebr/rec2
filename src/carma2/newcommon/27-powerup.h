@@ -155,7 +155,7 @@ extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetInvulnerability
 
-// SetFreeRepairs
+extern int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetFreeRepairs
 
@@ -163,7 +163,7 @@ extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetStupidPedestrians
 
-// FreezeTimer
+extern int C2_HOOK_FASTCALL FreezeTimer(tPowerup* pPowerup, tCar_spec* pCar);
 
 // UnfreezeTimer
 
@@ -181,7 +181,7 @@ extern void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car);
 
 // SetEngineFactor
 
-// SetUnderwater
+extern int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar);
 
 // TrashBodywork
 

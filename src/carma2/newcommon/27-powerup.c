@@ -215,7 +215,14 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // ResetInvulnerability
 
-// SetFreeRepairs
+// FUNCTION: CARMA2_HW 0x004dc8a0
+int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gFree_repairs = 1;
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // ResetFreeRepairs
 
@@ -223,7 +230,14 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // ResetStupidPedestrians
 
-// FreezeTimer
+// FUNCTION: CARMA2_HW 0x004dc930
+int C2_HOOK_FASTCALL FreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gFreeze_timer = !gFreeze_timer;
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // UnfreezeTimer
 
@@ -249,7 +263,14 @@ void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
 
 // SetEngineFactor
 
-// SetUnderwater
+// FUNCTION: CARMA2_HW 0x004dcab0
+int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, underwater_ability, 0x1b0);
+
+    pCar->underwater_ability = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // TrashBodywork
 
