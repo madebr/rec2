@@ -1,7 +1,9 @@
 #include "64-movie.h"
 
+#include "25-grafdata.h"
 #include "41-utility.h"
 #include "globvars.h"
+#include "platform.h"
 
 #include <QTML.h>
 #include <Movies.h>
@@ -99,7 +101,15 @@ void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
 
 // ShowStatusMessage
 
-// GetMovieWidth
+// FUNCTION: CARMA2_HW 0x004e2140
+int C2_HOOK_FASTCALL GetMovieWidth(void) {
+
+    if (gNbPixelBits == 16) {
+        return gCurrent_graf_data->width / 2;
+    } else {
+        return gCurrent_graf_data->width;
+    }
+}
 
 // GetMovieHeight
 
