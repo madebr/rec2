@@ -54,6 +54,12 @@ int gPanel_flic_disable;
 // GLOBAL: CARMA2_HW 0x00686318
 int gPlay_from_disk;
 
+// GLOBAL: CARMA2_HW 0x005964c8
+int gPending_flic = -1;
+
+// GLOBAL: CARMA2_HW 0x0068620c
+int gPending_pending_flic;
+
 // GLOBAL: CARMA2_HW 0x005964d0
 tFlic_spec gMain_flic_list[372] = {
     { "MAINSTIL.FLI", 1, 0, 0, 0, 0, 25, },
@@ -660,5 +666,14 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 
 }
 
-// SuspendPendingFlic
+// FUNCTION: CARMA2_HW 0x00463700
+void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
+    gPending_pending_flic = gPending_flic;
+    gPending_flic = -1;
+}
+
+// FUNCTION: CARMA2_HW 0x00463720
+void C2_HOOK_FASTCALL ResumePendingFlic(void) {
+    gPending_flic = gPending_pending_flic;
+}
 
