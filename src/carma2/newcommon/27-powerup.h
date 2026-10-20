@@ -157,7 +157,7 @@ extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetFreeRepairs
 
-// ResetFreeRepairs
+extern void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetStupidPedestrians
 
@@ -165,7 +165,7 @@ extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar);
 
 // FreezeTimer
 
-// UnfreezeTimer
+extern void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* pPowerup, tCar_spec* pCar);
 
 // DoInstantRepair
 
