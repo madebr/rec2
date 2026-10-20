@@ -732,7 +732,11 @@ int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
 
 // ChangeCarMenuInfunc
 
-// ChangeCarCancel
+// FUNCTION: CARMA2_HW 0x0046b610
+int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
 
 // ChangeCarOK
 

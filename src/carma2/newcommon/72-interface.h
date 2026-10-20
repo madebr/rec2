@@ -143,7 +143,7 @@ extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
 // ChangeCarMenuInfunc
 
-// ChangeCarCancel
+extern int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend);
 
 // ChangeCarOK
 
