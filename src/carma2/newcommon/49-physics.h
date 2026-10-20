@@ -163,7 +163,7 @@ extern void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysic
 
 // CheckPointVelocities
 
-// WriteNewPositions
+extern void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject);
 
 // SetListDoingNothingFlag
 
