@@ -199,13 +199,13 @@ extern int C2_HOOK_FASTCALL SetGravity(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetWallclimb
+extern int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetBouncey
 
 // SetSuspension
 
-// SetTyreGrip
+extern int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetImmortalPeds
 
@@ -215,7 +215,7 @@ extern int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetSuicidalPeds
 
-// SetDamageMultiplier
+extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar);
 
 // FillInMine
 
