@@ -121,7 +121,7 @@ extern int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend);
 
 // FRONTEND_NetworkJoinMenuHandler
 
-// OnePlayerSetup
+extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
 // MenuSetCarImage
 
