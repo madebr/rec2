@@ -46,6 +46,9 @@ int gSwap_depth_effect_colour_green;
 // GLOBAL: CARMA2_HW 0x0067c4a8
 int gHas_sky_texture;
 
+// GLOBAL: CARMA2_HW 0x0079ec20
+br_pixelmap* gDepth_shade_table;
+
 static void C2_HOOK_FASTCALL FrobFog(void);
 
 // Log2
