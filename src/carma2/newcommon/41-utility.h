@@ -6,6 +6,7 @@
 #include "rec2_types.h"
 
 extern char* gMisc_strings[300];
+extern char gCurrent_load_directory[256];
 
 extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
@@ -45,7 +46,7 @@ extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name);
 
 extern void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath);
 
-// DRLoadMultiplePix
+extern int C2_HOOK_FASTCALL DRLoadMultiplePix(char* pName, br_pixelmap** pMaps, int pCapacity);
 
 extern int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity);
 
