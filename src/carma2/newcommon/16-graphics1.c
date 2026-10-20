@@ -91,6 +91,9 @@ int gHud_actor_storage_size;
 // GLOBAL: CARMA2_HW 0x00704e60
 br_actor* gHud_actor_storage[128];
 
+// GLOBAL: CARMA2_HW 0x006a22c4
+int gNumber_of_lollipops;
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -178,7 +181,10 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
 
 // LollipopizeActor
 
-// ResetLollipopQueue
+// FUNCTION: CARMA2_HW 0x004e4900
+void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
+    gNumber_of_lollipops = 0;
+}
 
 // RenderLollipops
 
