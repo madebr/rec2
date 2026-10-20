@@ -211,7 +211,13 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SetPedBrittle
 
-// SetInvulnerability
+// FUNCTION: CARMA2_HW 0x004dc830
+int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    pCar->invulnerable_no_crushage = 1;
+    pCar->invulnerable_no_damage = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // ResetInvulnerability
 
