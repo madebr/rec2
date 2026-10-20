@@ -194,7 +194,7 @@ extern void C2_HOOK_FASTCALL NetService(int pIn_race);
 
 extern void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
 
-// NetGetPlayerStatus
+extern tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
 // NetGuaranteedSendMessageToAllPlayers
 
