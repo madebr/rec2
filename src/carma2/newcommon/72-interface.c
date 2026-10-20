@@ -1520,7 +1520,7 @@ void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
 // FUNCTION: CARMA2_HW 0x00471ba0
 int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, int pY) {
     tFrontend_slider* slider;
-    br_model* model;
+    br_vertex* vertices;
     tFrontend_item_spec* item;
     tFrontend_brender_item* brender_item;
     int i;
@@ -1528,19 +1528,19 @@ int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, i
     item = gCurrent_frontend_spec->items;
     brender_item = gFrontend_brender_items;
     for (i = 0; i < pFrontend->count_items; i++, brender_item++, item++) {
-        model = brender_item->model;
-        if (pX >= model->vertices[1].p.v[0] && pX <= model->vertices[3].p.v[0]
-                && pY >= -model->vertices[0].p.v[1] && pY <= -model->vertices[1].p.v[1]
+        vertices = brender_item->model->vertices;
+        if (pX >= vertices[1].p.v[0] && pX <= vertices[3].p.v[0]
+                && pY >= -vertices[0].p.v[1] && pY <= -vertices[1].p.v[1]
                 && item->visible
                 && item->enabled >= 1) {
-             return i;
+            return i;
         }
     }
     for (slider = gCurrent_frontend_scrollbars; slider != NULL; slider = slider->next) {
         for (i = 0; i < 3; i++) {
-            model = gFrontend_brender_items[slider->itemid_start + i].model;
-            if (pX >= model->vertices[1].p.v[0] && pX <= model->vertices[3].p.v[0]
-                    && pY >= -model->vertices[0].p.v[1] && pY <= -model->vertices[1].p.v[1]) {
+            vertices = gFrontend_brender_items[slider->itemid_start + i].model->vertices;
+            if (pX >= vertices[1].p.v[0] && pX <= vertices[3].p.v[0]
+                    && pY >= -vertices[0].p.v[1] && pY <= -vertices[1].p.v[1]) {
                 return slider->itemid_start + i;
             }
         }
