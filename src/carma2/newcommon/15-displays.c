@@ -310,9 +310,25 @@ void C2_HOOK_FASTCALL ClearHeadups(void) {
 
 // KillOldestQueuedHeadup
 
-// DoTestPowerHeadup
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// DoPSPowerupHeadups
+// STUB: CARMA2_HW 0x00449830
+void C2_HOOK_FASTCALL DoTestPowerHeadup(int pLevel, const char* pAPO_str) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00449800
+void C2_HOOK_FASTCALL DoPSPowerupHeadups(void) {
+    DoTestPowerHeadup(gProgram_state.current_car.power_up_levels[0], "A");
+    DoTestPowerHeadup(gProgram_state.current_car.power_up_levels[1], "P");
+    DoTestPowerHeadup(gProgram_state.current_car.power_up_levels[2], "O");
+}
 
 // DoHeadups
 

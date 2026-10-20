@@ -55,9 +55,9 @@ extern void C2_HOOK_FASTCALL ClearHeadups(void);
 
 // KillOldestQueuedHeadup
 
-// DoTestPowerHeadup
+extern void C2_HOOK_FASTCALL DoTestPowerHeadup(int pLevel, const char* pAPO_str);
 
-// DoPSPowerupHeadups
+extern void C2_HOOK_FASTCALL DoPSPowerupHeadups(void);
 
 // DoHeadups
 
