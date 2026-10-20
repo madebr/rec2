@@ -1,6 +1,7 @@
 #include "18-graphics2.h"
 
 #include "25-grafdata.h"
+#include "33-depth.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "66-tintedpoly.h"
@@ -397,9 +398,60 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
 
 // PoshDrawLine
 
-// DeviouslyDimRectangle
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// DimRectangle
+// STUB: CARMA2_HW 0x0047cad0
+void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x0047cbd0
+void C2_HOOK_CDECL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
+    tU8* ptr;
+    tU8* depth_table_ptr;
+    tU8* right_ptr;
+    int y;
+    int line_skip;
+    int width;
+
+    if (gDevious_2d) {
+        DeviouslyDimRectangle(pPixelmap, pLeft, pTop, pRight, pBottom, pKnock_out_corners);
+        return;
+    }
+    ptr = (tU8*)pPixelmap->pixels + pLeft + pPixelmap->row_bytes * pTop;
+    line_skip = pPixelmap->row_bytes - pRight + pLeft;
+    depth_table_ptr = (tU8*)gDepth_shade_table->pixels + gDepth_shade_table->row_bytes * gDim_amount;
+    width = pRight - pLeft;
+    if (pKnock_out_corners) {
+        ptr++;
+        for (right_ptr = ptr + width - 2; ptr < right_ptr; ptr++) {
+            *ptr = depth_table_ptr[*ptr];
+        }
+        ptr += line_skip + 1;
+        for (y = pTop + 1; y < pBottom - 1; y++, ptr += line_skip) {
+            for (right_ptr = ptr + width; ptr < right_ptr; ptr++) {
+                *ptr = depth_table_ptr[*ptr];
+            }
+        }
+        ptr++;
+        for (right_ptr = ptr + width - 2; ptr < right_ptr; ptr++) {
+            *ptr = depth_table_ptr[*ptr];
+        }
+    } else {
+        for (y = pTop; y < pBottom; y++) {
+            for (right_ptr = ptr + width; ptr < right_ptr; ptr++) {
+                *ptr = depth_table_ptr[*ptr];
+            }
+            ptr += line_skip;
+        }
+    }
+}
 
 // DimRectangleClipped
 

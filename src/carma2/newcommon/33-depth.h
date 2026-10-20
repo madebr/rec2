@@ -6,6 +6,7 @@
 #include "rec2_types.h"
 
 extern int gHas_sky_texture;
+extern br_pixelmap* gDepth_shade_table;
 
 // Log2
 
