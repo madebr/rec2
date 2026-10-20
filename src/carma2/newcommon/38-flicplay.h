@@ -19,6 +19,8 @@ extern int gPalette_fuck_prevention;
 extern int gTransparency_on;
 extern int gPlay_from_disk;
 extern int gPanel_flic_disable;
+extern int gPending_flic;
+extern int gPending_pending_flic;
 
 extern int C2_HOOK_FASTCALL TranslationMode(void);
 
@@ -86,6 +88,8 @@ extern void C2_HOOK_FASTCALL FlushFlicQueue(void);
 
 extern void C2_HOOK_FASTCALL LoadInterfaceStrings(void);
 
-// SuspendPendingFlic
+extern void C2_HOOK_FASTCALL SuspendPendingFlic(void);
+
+extern void C2_HOOK_FASTCALL ResumePendingFlic(void);
 
 #endif // GUARD_38_FLICPLAY_H
