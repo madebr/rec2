@@ -1,6 +1,8 @@
 #ifndef GUARD_26_OPPOPROC_H
 #define GUARD_26_OPPOPROC_H
 
+#include "rec2_types.h"
+
 // DoNotDprintf
 
 // StraightestArcForCorner2D
@@ -15,7 +17,7 @@
 
 // GetStraight
 
-// TimeToStopStruggling
+extern int C2_HOOK_FASTCALL TimeToStopStruggling(tOpponent_spec* pOpponent_spec);
 
 // TimeToBeBrakingWhenStruggling
 

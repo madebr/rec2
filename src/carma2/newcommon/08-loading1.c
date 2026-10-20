@@ -36,6 +36,9 @@
 // GLOBAL: CARMA2_HW 0x00655e30
 int gDecode_thing = '@';
 
+// GLOBAL: CARMA2_HW 0x0079efb8
+tU32 gTime_stamp_for_this_munging;
+
 // GLOBAL: CARMA2_HW 0x00658610
 int gAllow_open_to_fail = 1;
 
