@@ -217,7 +217,13 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SetFreeRepairs
 
-// ResetFreeRepairs
+// FUNCTION: CARMA2_HW 0x004dc8d0
+void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gFree_repairs = 0;
+    }
+}
 
 // SetStupidPedestrians
 
@@ -225,7 +231,13 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // FreezeTimer
 
-// UnfreezeTimer
+// FUNCTION: CARMA2_HW 0x004dc970
+void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gFreeze_timer = 0;
+    }
+}
 
 // DoInstantRepair
 
