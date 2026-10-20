@@ -37,7 +37,7 @@ extern void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel);
 
 extern tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void);
 
-// ToggleShadow
+extern void C2_HOOK_FASTCALL ToggleShadow(void);
 
 extern void C2_HOOK_FASTCALL InitShadow(void);
 
