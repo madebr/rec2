@@ -290,7 +290,19 @@ void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOl
 
 // PipeSingleSmashDecal
 
-// PipeSingleSmashTextureChange
+// FUNCTION: CARMA2_HW 0x004c8a10
+void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_smash_texture_change, car_spec, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smash_texture_change, texture1, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_smash_texture_change, texture1, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smash_texture_change, texture2, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_smash_texture_change, texture2, 0x4);
+
+    ARDoSingleVariedSession(ePipe_smash_texture_change, (uintptr_t)pMaterial, 3,
+        SIZE_OFFSET_PIPING(tPipe_smash_texture_change, car_spec), pCar_spec,
+        SIZE_OFFSET_PIPING(tPipe_smash_texture_change, texture1), pMaterial->colour_map,
+        SIZE_OFFSET_PIPING(tPipe_smash_texture_change, texture2), pTexture);
+}
 
 // PipeSinglePedStatus
 
@@ -417,7 +429,19 @@ void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
 
 // ApplySmashDecal
 
-// ApplySmashTextureChange
+// FUNCTION: CARMA2_HW 0x004c9a30
+void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smash_texture_change, texture1, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smash_texture_change, texture2, 0xc);
+
+    chunk = *pChunk;
+    ChangeSmashTexture((br_material*)chunk->subject_index,
+        chunk->data.smash_texture_change.car_spec,
+        chunk->data.smash_texture_change.texture1,
+        chunk->data.smash_texture_change.texture2);
+}
 
 // ApplyRepulseRay
 

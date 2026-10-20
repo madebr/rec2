@@ -282,7 +282,7 @@ extern void C2_HOOK_FASTCALL TurnOnSmashDecal(int pIndex);
 
 extern void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex);
 
-// ChangeSmashTexture
+extern void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture);
 
 // DoNetSmash
 

@@ -222,7 +222,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_mod
 
 // PipeSingleSmashDecal
 
-// PipeSingleSmashTextureChange
+extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture);
 
 // PipeSinglePedStatus
 
@@ -346,7 +346,7 @@ extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
 // ApplySmashDecal
 
-// ApplySmashTextureChange
+extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // ApplyRepulseRay
 
