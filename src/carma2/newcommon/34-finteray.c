@@ -103,7 +103,10 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // MultiRayCheckSingleFace
 
-// GetNewBoundingBox
+// STUB: CARMA2_HW 0x0045f5b0
+void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m) {
+    NOT_IMPLEMENTED();
+}
 
 // STUB: CARMA2_HW 0x0045f690
 void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
