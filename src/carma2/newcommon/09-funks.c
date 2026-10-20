@@ -2,6 +2,7 @@
 
 #include "23-piping.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0068b840
@@ -19,6 +20,9 @@ int gGroovidelics_array_size;
 // GLOBAL: CARMA2_HW 0x0068b838
 tU32 gPrevious_groove_times[2];
 
+// GLOBAL: CARMA2_HW 0x00688b30
+tGroove_funk_binding gGroove_funk_bindings[1440];
+
 // CalculateTextureBitsValue
 
 // MapSawToTriangle
@@ -31,7 +35,24 @@ void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
 
 // AddFunkGrooveBinding
 
-// ControlBoundFunkGroove
+// FUNCTION: CARMA2_HW 0x004748a0
+void C2_HOOK_FASTCALL ControlBoundFunkGroove(int pSlot_number, float pValue) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroove_funk_binding, field_0x4, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tGroove_funk_binding, field_0x4, 0x1);
+    C2_HOOK_BUG_ON(sizeof(tGroove_funk_binding) != 0x8);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gGroove_funk_bindings) != 1440);
+
+    if (pSlot_number < 0) {
+        return;
+    }
+    if (pSlot_number >= (int)REC2_ASIZE(gGroove_funk_bindings)) {
+        FatalError(kFatalError_UsedRefNumOfControlledGroovidelicFunkotronicIsOutOfRange);
+    }
+    if (!gGroove_funk_bindings[pSlot_number].field_0x4) {
+        *gGroove_funk_bindings[pSlot_number].v = pValue;
+    }
+}
 
 // ControlBoundFunkGroovePlus
 
