@@ -745,9 +745,16 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // TotallyRepairModel
 
-// TotallyRepairModels
+// STUB: CARMA2_HW 0x00439a20
+intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser) {
+    NOT_IMPLEMENTED();
+}
 
-// TotallyRepairObject
+// FUNCTION: CARMA2_HW 0x00439a10
+int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void* pUser_data) {
+    DRActorEnumRecurse(pCollision_info->actor, TotallyRepairModels, pUser_data);
+    return 0;
+}
 
 // SendReAttachAllBits
 
