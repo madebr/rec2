@@ -117,7 +117,7 @@ extern void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
 
 // SendGameplayToHost
 
-// InitNetGameplayStuff
+extern void C2_HOOK_FASTCALL InitNetGameplayStuff(void);
 
 extern void C2_HOOK_FASTCALL DefaultNetName(void);
 

@@ -140,7 +140,10 @@ void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
 
 // SendGameplayToHost
 
-// InitNetGameplayStuff
+// FUNCTION: CARMA2_HW 0x0049bd00
+void C2_HOOK_FASTCALL InitNetGameplayStuff(void) {
+
+}
 
 // FUNCTION: CARMA2_HW 0x0049bd10
 void C2_HOOK_FASTCALL DefaultNetName(void) {
