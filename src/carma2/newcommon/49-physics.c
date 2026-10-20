@@ -419,7 +419,30 @@ void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, unde
 
 // TrialPositionChildren
 
-// InternalPositionChildren
+// FUNCTION: CARMA2_HW 0x004c2b20
+void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysics_object* pRoot) {
+    tPhysics_object* child;
+    br_vector3 parent_point;
+    br_vector3 child_point;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x1e8, 0x1e8);
+
+    child = pParent->child;
+    if (!(pParent->flags & 0x400)) {
+        pRoot = pParent;
+    }
+    for (; child != NULL; child = child->next) {
+        if (!(pParent->flags & 0x400)) {
+            BrMatrix34ApplyP(&parent_point, &child->physics_joint1->field_0x14, &pParent->transform_matrix);
+            BrMatrix34ApplyP(&child_point, &child->physics_joint1->field_0x08, &child->transform_matrix);
+            BrVector3Sub(&parent_point, &parent_point, &child_point);
+            BrVector3Accumulate((br_vector3*)child->transform_matrix.m[3], &parent_point);
+        } else {
+            BrMatrix34Mul(&pParent->transform_matrix, &pParent->field_0x1e8, &pRoot->transform_matrix);
+        }
+        InternalPositionChildren(child, pRoot);
+    }
+}
 
 // PositionChildren
 
