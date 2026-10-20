@@ -34,6 +34,8 @@ extern void C2_HOOK_FASTCALL TurnFlicTransparencyOff(void);
 
 extern void C2_HOOK_FASTCALL PlayFlicsFromDisk(void);
 
+extern void C2_HOOK_FASTCALL PlayFlicsFromMemory(void);
+
 extern void C2_HOOK_FASTCALL TurnOffPanelFlics(void);
 
 extern void C2_HOOK_FASTCALL TurnOnPanelFlics(void);
