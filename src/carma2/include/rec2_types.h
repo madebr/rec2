@@ -471,7 +471,6 @@ typedef enum {
     ePipe_chunk_prox_ray = 21,
     ePipe_chunk_flap_bits = 23,
     ePipe_model_mash = 24,
-    ePipe_chunk_smash_model_change = 33,
     ePipe_smash_texture_change = 36,
     ePipe_chunk_repulse_ray = 37,
     ePipe_chunk_single_ped_status = 40,
