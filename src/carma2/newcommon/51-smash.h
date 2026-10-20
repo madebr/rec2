@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern tExplosion gExplosions[50];
+extern br_vector3 gZero_vector__smash;
 extern tDecal gDecals[50];
 extern int gCount_queued_smashes;
 

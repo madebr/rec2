@@ -7,7 +7,6 @@
 
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
-extern br_vector3 gZero_vector__smash;
 
 // ARReplayForwards
 
