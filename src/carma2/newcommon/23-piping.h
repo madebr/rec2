@@ -340,7 +340,7 @@ extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
 // ApplyNonCarCreation
 
-// ApplySmashModelChange
+extern void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk);
 
 // ApplySmashRemoveFaces
 

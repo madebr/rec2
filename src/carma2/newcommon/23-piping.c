@@ -411,7 +411,19 @@ void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
 
 // ApplyNonCarCreation
 
-// ApplySmashModelChange
+// FUNCTION: CARMA2_HW 0x004c99f0
+void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smash_model_change, new_model, 0x4);
+
+    chunk = *pChunk;
+    if (chunk->data.smash_model_change.new_model != NULL) {
+        ChangeSmashModel((br_actor*)chunk->subject_index, chunk->data.smash_model_change.old_model, chunk->data.smash_model_change.new_model);
+    } else {
+        TurnOffSmashModel((br_actor*)chunk->subject_index);
+    }
+}
 
 // ApplySmashRemoveFaces
 
