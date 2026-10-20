@@ -570,7 +570,24 @@ void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint) {
     BrMemFree(pJoint);
 }
 
-// GetBoundsFromPointList
+// FUNCTION: CARMA2_HW 0x004c5eb0
+void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds) {
+    int i;
+
+    BrVector3Copy(&pBounds->min, &pVertices[0]);
+    BrVector3Copy(&pBounds->max, &pVertices[0]);
+    for (i = 1; i < pCount_vertices; i++) {
+        int j;
+
+        for (j = 0; j < 3; j++) {
+            if (pVertices[i].v[j] < pBounds->min.v[j]) {
+                pBounds->min.v[j] = pVertices[i].v[j];
+            } else if (pVertices[i].v[j] > pBounds->max.v[j]) {
+                pBounds->max.v[j] = pVertices[i].v[j];
+            }
+        }
+    }
+}
 
 // FillInShape
 
