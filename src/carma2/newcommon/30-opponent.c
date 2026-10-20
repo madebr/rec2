@@ -217,7 +217,17 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
     return NULL;
 }
 
-// GetOpponentsRealSection
+// FUNCTION: CARMA2_HW 0x004ae9e0
+int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no) {
+
+    if (pSection_no >= 20000) {
+        return pOpponent_spec->next_sections[pSection_no - 20000].section_no;
+    } else if (pSection_no >= 15000) {
+        return pSection_no - 15000;
+    } else {
+        return pSection_no;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004aea00
 int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
