@@ -197,7 +197,7 @@ extern void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_da
 
 // CloneEnvSmash
 
-// FreeConnotations
+extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors);
 
 // FreeEnvSmash
 
