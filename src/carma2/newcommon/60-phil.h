@@ -23,7 +23,7 @@ extern tPhysics_object* gPHIL_list_collision_infos;
 
 // GetOmegaFromOmega16
 
-// GetObjectNetworkStuff
+extern int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, tU32 pSize);
 
 // GetVelocityAndPosition
 
@@ -31,7 +31,7 @@ extern tPhysics_object* gPHIL_list_collision_infos;
 
 // WriteObjectNetworkStuff
 
-// GetHierarchyNetworkStuff
+extern int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, int pSize);
 
 // FindObject
 

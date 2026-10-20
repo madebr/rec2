@@ -22,7 +22,19 @@ tPhysics_object* gPHIL_list_collision_infos;
 
 // GetOmegaFromOmega16
 
-// GetObjectNetworkStuff
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0049c0d0
+int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, tU32 pSize) {
+
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // GetVelocityAndPosition
 
@@ -30,7 +42,35 @@ tPhysics_object* gPHIL_list_collision_infos;
 
 // WriteObjectNetworkStuff
 
-// GetHierarchyNetworkStuff
+// FUNCTION: CARMA2_HW 0x0049cd00
+int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, int pSize) {
+    int size;
+    int child_size;
+    tPhysics_object* child;
+    tU8* child_buffer;
+
+    size = GetObjectNetworkStuff(pObject, pBuffer, pSize);
+    if (size < 0) {
+        return -1;
+    }
+    child = pObject->child;
+    pSize -= size;
+    if (child != NULL) {
+        *pBuffer |= 0x80;
+        for (; child != NULL; child = child->next) {
+            child_buffer = pBuffer + size;
+            child_size = GetHierarchyNetworkStuff(child, child_buffer, pSize);
+            if (child_size < 0) {
+                return -1;
+            }
+            pSize -= child_size;
+            size += child_size;
+            *child_buffer |= 0x40;
+        }
+        *child_buffer &= ~0x40;
+    }
+    return size;
+}
 
 // FindObject
 
