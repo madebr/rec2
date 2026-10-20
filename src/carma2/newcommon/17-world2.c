@@ -521,6 +521,7 @@ void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette) {
     int blue;
     float nearest_distance;
     float distance;
+    double sum;
 
     for (i = 0; i < (int)REC2_ASIZE(gRGB_colours); i++) {
         nearest_distance = 196608.f;
@@ -528,9 +529,10 @@ void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette) {
         green = (gRGB_colours[i] >> 8) & 0xFF;
         blue = gRGB_colours[i] & 0xFF;
         for (j = 0; j < 256; j++) {
-            distance = (float)(sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 2) - red))
-                + sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j) - blue))
-                + sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 1) - green)));
+            sum = sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 2) - red));
+            sum += sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j) - blue));
+            sum += sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 1) - green));
+            distance = (float)sum;
             if (distance < nearest_distance) {
                 nearest_index = j;
                 nearest_distance = distance;
