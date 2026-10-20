@@ -14,6 +14,9 @@ tDecal gDecals[50];
 // GLOBAL: CARMA2_HW 0x006a828c
 int gCount_queued_smashes;
 
+// GLOBAL: CARMA2_HW 0x006abee8
+br_vector3 gZero_vector__smash;
+
 // FUNCTION: CARMA2_HW 0x004ea880
 void C2_HOOK_FASTCALL InitExplosions(void) {
     int i;
