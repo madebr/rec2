@@ -138,7 +138,10 @@ int C2_HOOK_FASTCALL OtherPerambulatoryInstasificationIsEnablificated(void) {
     return !gTraffic_disabled;
 }
 
-// LoadPanGameDroneInfo
+// STUB: CARMA2_HW 0x0044ed10
+void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
+    NOT_IMPLEMENTED();
+}
 
 // InitDrones
 
