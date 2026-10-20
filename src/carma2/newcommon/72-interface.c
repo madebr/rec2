@@ -986,7 +986,7 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
 int C2_HOOK_FASTCALL ProcessInputString(void) {
     int len;
     int key;
-    int int_ch;
+    int ch;
 
     if (gFrontend_current_input == NULL) {
         return 0;
@@ -1015,20 +1015,18 @@ int C2_HOOK_FASTCALL ProcessInputString(void) {
         }
         return -1;
     }
-    int_ch = PDGetKeyboardCharacter();
-    if (int_ch != 0) {
-        int ch;
-
-        dr_dprintf("FRONTEND: Got char %d", int_ch);
-        ch = PDConvertToASCIILessThan128(int_ch);
-        dr_dprintf("FRONTEND: Char converted to %d", (tU8)ch);
+    ch = PDGetKeyboardCharacter();
+    if (ch != 0) {
+        dr_dprintf("FRONTEND: Got char %d", ch);
+        ch = (tU8)PDConvertToASCIILessThan128(ch);
+        dr_dprintf("FRONTEND: Char converted to %d", ch);
         if (ch > 0x1f && ch != 0x7f) {
             gFrontend_current_input[len + 0] = ch;
             gFrontend_current_input[len + 1] = '\0';
             dr_dprintf("FRONTEND: Adding char %d to string. String now '%s'", ch, gFrontend_current_input);
             return 1;
         }
-        dr_dprintf("FRONTEND: Invalid Char", int_ch);
+        dr_dprintf("FRONTEND: Invalid Char", ch);
     }
     return 0;
 }
