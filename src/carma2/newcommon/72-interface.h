@@ -263,7 +263,7 @@ extern void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_i
 
 extern void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth);
 
-// Ians_GetItemAtMousePos
+extern int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, int pY);
 
 // TranslateSliderItem
 
