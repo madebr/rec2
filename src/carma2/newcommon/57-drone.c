@@ -164,7 +164,10 @@ int C2_HOOK_FASTCALL OtherPerambulatoryInstasificationIsEnablificated(void) {
 
 // DroneLookWhereYoureGoingYouBlindCunt
 
-// OKToViewDrones
+// FUNCTION: CARMA2_HW 0x00452680
+int C2_HOOK_FASTCALL OKToViewDrones(void) {
+    return 0;
+}
 
 // GetCurrentViewDroneMat
 

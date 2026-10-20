@@ -157,7 +157,7 @@ extern int C2_HOOK_FASTCALL OtherPerambulatoryInstasificationIsEnablificated(voi
 
 // DroneLookWhereYoureGoingYouBlindCunt
 
-// OKToViewDrones
+extern int C2_HOOK_FASTCALL OKToViewDrones(void);
 
 // GetCurrentViewDroneMat
 
