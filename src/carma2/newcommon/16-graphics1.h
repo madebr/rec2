@@ -23,6 +23,7 @@ extern int gHud_actor_storage_size;
 extern br_actor* gHud_actor_storage[128];
 extern int gSaved_table_count;
 extern tSaved_table gSaved_shade_tables[100];
+extern int gNumber_of_lollipops;
 
 // MungeClipPlane
 
@@ -50,7 +51,7 @@ extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
 // LollipopizeActor
 
-// ResetLollipopQueue
+extern void C2_HOOK_FASTCALL ResetLollipopQueue(void);
 
 // RenderLollipops
 
