@@ -34,6 +34,7 @@
 #include "70-packfile.h"
 #include "71-newgame.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
@@ -652,7 +653,25 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
     NOT_IMPLEMENTED();
 }
 
-// LoadRaceInfo
+// FUNCTION: CARMA2_HW 0x0048c860
+void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pRace_info->initial_timer) != 3);
+
+    pRace_info->index = pRace_index;
+    pRace_info->race_spec = &gRace_list[pRace_index];
+    if (gNet_mode == eNet_mode_none) {
+        pRace_info->number_of_racers = pRace_info->race_spec->count_explicit_opponents;
+    }
+    pRace_info->total_laps = pRace_info->race_spec->count_laps;
+    for (i = 0; i < (int)REC2_ASIZE(pRace_info->initial_timer); i++) {
+        pRace_info->initial_timer[i] = pRace_info->race_spec->initial_timer[i];
+        pRace_info->completion_bonus[i] = pRace_info->race_spec->completion_bonus[i];
+        pRace_info->completion_bonus_peds[i] = pRace_info->race_spec->completion_bonus_peds[i];
+        pRace_info->completion_bonus_opponents[i] = pRace_info->race_spec->completion_bonus_opponents[i];
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0048c930
 void C2_HOOK_FASTCALL LoadOpponents(void) {
