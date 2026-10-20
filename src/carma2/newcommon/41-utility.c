@@ -176,7 +176,12 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
     }
 }
 
-// tandeg
+// FUNCTION: CARMA2_HW 0x00513770
+float C2_HOOK_STDCALL tandeg(float pAngle) {
+
+    pAngle = (float)DEG_TO_RAD(pAngle);
+    return (float)(sin(pAngle) / cos(pAngle));
+}
 
 // FUNCTION: CARMA2_HW 0x00513790
 tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {

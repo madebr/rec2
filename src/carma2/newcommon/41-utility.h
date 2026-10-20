@@ -31,7 +31,7 @@ extern br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
 
 extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
 
-// tandeg
+extern float C2_HOOK_STDCALL tandeg(float pAngle);
 
 extern tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF);
 
