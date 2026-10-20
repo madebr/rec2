@@ -281,7 +281,7 @@ void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOl
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smash_model_change, new_model, 0x4);
     C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smash_model_change, new_model, 0x4);
 
-    ARDoSingleVariedSession(33, (uintptr_t)pActor, 2,
+    ARDoSingleVariedSession(ePipe_chunk_smash_model_change, (uintptr_t)pActor, 2,
         SIZE_OFFSET_PIPING(tPipe_chunk_smash_model_change, old_model), pOld_model,
         SIZE_OFFSET_PIPING(tPipe_chunk_smash_model_change, new_model), pNew_model);
 }
