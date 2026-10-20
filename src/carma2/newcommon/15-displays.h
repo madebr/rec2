@@ -65,7 +65,7 @@ extern void C2_HOOK_FASTCALL DoPSPowerupHeadups(void);
 
 // IsHeadupTextClever
 
-// MungeHeadupWidth
+extern int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup);
 
 extern int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it);
 
@@ -77,7 +77,7 @@ extern void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
 // MoveHeadupTo
 
-// ChangeHeadupText
+extern void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text);
 
 extern void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
 
