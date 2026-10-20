@@ -48,7 +48,7 @@ extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // MultiRayCheckSingleFace
 
-extern void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* pBounds_out, br_bounds* pBounds_in, br_matrix34* pMat);
+extern void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m);
 
 extern void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds);
 
