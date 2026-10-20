@@ -34,7 +34,7 @@ br_matrix34 gPick_model_to_view__finteray;
 #endif
 
 // STUB: CARMA2_HW 0x0045cb70
-int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* pActor, br_vector3* pPosition, br_vector3* pDir, br_model* pModel, br_material* pMaterial, dr_pick2d_cbfn* pCallback) {
+int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vector3* pDir, br_model* model, br_material* material, dr_pick2d_cbfn* callback) {
     NOT_IMPLEMENTED();
 }
 
