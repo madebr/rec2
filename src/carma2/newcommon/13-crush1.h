@@ -397,9 +397,9 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // TotallyRepairModel
 
-// TotallyRepairModels
+extern intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser);
 
-// TotallyRepairObject
+extern int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void* pUser_data);
 
 // SendReAttachAllBits
 
