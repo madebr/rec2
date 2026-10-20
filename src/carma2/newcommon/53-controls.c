@@ -51,7 +51,10 @@ char* gAbuse_text[10];
 
 // FinishRace
 
-// EnsureSpecialVolumesHidden
+// FUNCTION: CARMA2_HW 0x004415e0
+void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void) {
+
+}
 
 // ShowSpecialVolumesIfRequ
 

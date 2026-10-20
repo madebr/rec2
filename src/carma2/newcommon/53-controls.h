@@ -23,7 +23,7 @@ extern int gHeadup_map_h;
 
 // FinishRace
 
-// EnsureSpecialVolumesHidden
+extern void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void);
 
 // ShowSpecialVolumesIfRequ
 
