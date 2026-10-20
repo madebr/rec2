@@ -282,13 +282,27 @@ int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetWallclimb
+// FUNCTION: CARMA2_HW 0x004dce00
+int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, wall_climber_mode, 0x1c4);
+
+    pCar->wall_climber_mode = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // SetBouncey
 
 // SetSuspension
 
-// SetTyreGrip
+// FUNCTION: CARMA2_HW 0x004dced0
+int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, grip_multiplier, 0x4d0);
+
+    pCar->grip_multiplier = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // SetImmortalPeds
 
@@ -298,7 +312,14 @@ int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // ResetSuicidalPeds
 
-// SetDamageMultiplier
+// FUNCTION: CARMA2_HW 0x004dcf80
+int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, damage_multiplier, 0x4cc);
+
+    pCar->damage_multiplier = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // FillInMine
 
