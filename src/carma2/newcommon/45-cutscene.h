@@ -5,7 +5,7 @@
 
 extern void C2_HOOK_FASTCALL DoSCILogo(void);
 
-// DoStainlessLogo
+extern void C2_HOOK_STDCALL DoStainlessLogo(void);
 
 // PlaySmackerFile
 
