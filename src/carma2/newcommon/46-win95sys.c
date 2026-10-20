@@ -1,5 +1,7 @@
 #include "46-win95sys.h"
 
+#include "platform.h"
+
 // FUN_100bf5a4
 
 // AsmDoDeltaX
@@ -106,7 +108,17 @@
 
 // PDEnterDebugger
 
-// PDAllocateActionReplayBuffer
+// FUNCTION: CARMA2_HW 0x0051b9a0
+void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** pBuffer, tU32* pSize) {
+
+    PDReallyAllocateActionReplayBuffer();
+    if (pBuffer != NULL) {
+        *pBuffer = gPDActionReplayBuffer;
+    }
+    if (pSize != NULL) {
+        *pSize = gPDActionReplayBufferSize;
+    }
+}
 
 // PDDisposeActionReplayBuffer
 
