@@ -320,7 +320,18 @@ void C2_HOOK_FASTCALL ClearHeadups(void) {
 
 // IsHeadupTextClever
 
-// MungeHeadupWidth
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0044a220
+int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // NewTextHeadupSlot2
 
@@ -388,7 +399,17 @@ void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
 
 // MoveHeadupTo
 
-// ChangeHeadupText
+// FUNCTION: CARMA2_HW 0x0044a8d0
+void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
+    tHeadup* the_headup;
+
+    if (pHeadup_index < 0) {
+        return;
+    }
+    the_headup = &gHeadups[pHeadup_index];
+    strcpy(the_headup->data.text_info.text, pNew_text);
+    MungeHeadupWidth(the_headup);
+}
 
 // FUNCTION: CARMA2_HW 0x0044a9d0
 void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
