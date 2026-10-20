@@ -394,7 +394,7 @@ extern void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pM
 
 // ResetMan2
 
-// SetUpTestObjects
+extern void C2_HOOK_FASTCALL SetUpTestObjects(void);
 
 // ResetObjectList
 

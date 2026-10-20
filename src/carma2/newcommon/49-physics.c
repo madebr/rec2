@@ -809,7 +809,10 @@ void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage)
 
 // ResetMan2
 
-// SetUpTestObjects
+// FUNCTION: CARMA2_HW 0x004b5aa0
+void C2_HOOK_FASTCALL SetUpTestObjects(void) {
+
+}
 
 // ResetObjectList
 
