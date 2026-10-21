@@ -705,9 +705,13 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 
 // DoBending
 
-// STUB: CARMA2_HW 0x00431590
+// FUNCTION: CARMA2_HW 0x00431590
 void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
-    NOT_IMPLEMENTED();
+
+    (void)pOn_screen;
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+    pModel->flags &= ~BR_MODF_CUSTOM;
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, BrOnScreenCheck(&pModel->bounds), 0);
 }
 
 // FUNCTION: CARMA2_HW 0x004315e0
