@@ -155,7 +155,23 @@ void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, in
 #pragma auto_inline(on)
 #endif
 
-// GrooveThoseDelics
+// FUNCTION: CARMA2_HW 0x00478c00
+void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
+    tGroovidelic_spec* the_groove;
+    float f_the_time;
+    int i;
+
+    if (gGroovidelics_array != NULL) {
+        f_the_time = (float)GetTotalTime();
+        gPrevious_groove_times[1] = gPrevious_groove_times[0];
+        gPrevious_groove_times[0] = (tU32)f_the_time;
+        for (i = 0, the_groove = gGroovidelics_array; i < gGroovidelics_array_size; i++, the_groove++) {
+            if (the_groove->owner != -999 && !the_groove->done_this_frame) {
+                GrooveThisDelic(the_groove, (tU32)f_the_time, 0);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047b0e0
 void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor) {
