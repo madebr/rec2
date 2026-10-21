@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gCamera_frozen;
+
 extern float gCamera_cockpit_hither;
 extern tActionReplayCameraMode gAction_replay_camera_mode;
 
@@ -85,7 +87,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // InitialiseExternalCamera
 
-// FreezeCamera
+extern void C2_HOOK_FASTCALL FreezeCamera(void);
 
 // GetAverageGridPosition
 
