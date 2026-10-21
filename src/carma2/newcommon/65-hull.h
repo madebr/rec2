@@ -7,7 +7,7 @@
 
 extern br_scalar C2_HOOK_FASTCALL SignedTwiceAreaOf3DTriangle(const br_vector3* pV1, const br_vector3* pV2);
 
-extern int C2_HOOK_CDECL CompareAngle(void *pLhs, void *pRhs);
+extern int C2_HOOK_CDECL CompareAngle(const void *pLhs, const void *pRhs);
 
 extern int C2_HOOK_FASTCALL Collinear(const br_vector3* pV1, const br_vector3* pV2, const br_vector3* pV3);
 

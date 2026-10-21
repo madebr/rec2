@@ -23,7 +23,7 @@ br_scalar C2_HOOK_FASTCALL SignedTwiceAreaOf3DTriangle(const br_vector3* pV1, co
 #endif
 
 // FUNCTION: CARMA2_HW 0x00420dc0
-int C2_HOOK_CDECL CompareAngle(void *pLhs, void *pRhs) {
+int C2_HOOK_CDECL CompareAngle(const void *pLhs, const void *pRhs) {
     tCollision_shape_polyhedron_data* polyhedron;
     br_scalar s1, s2;
     br_vector3 tv1, tv2;
