@@ -1,6 +1,8 @@
 #include "13-crush1.h"
 
 #include "08-loading1.h"
+#include "09-funks.h"
+#include "23-piping.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
@@ -757,7 +759,19 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // CompletelyUnBendOtherThings
 
-// EnableGroovers
+// FUNCTION: CARMA2_HW 0x00439910
+intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush;
+
+    user_crush = pActor->user;
+    if (user_crush != NULL && user_crush->groove != NULL) {
+        PipeSingleGrooveOnOff(1, pActor, 0x3);
+        EnableGroovidelic(pActor, 0x3);
+        PipeSingleTransformType(pActor, BR_TRANSFORM_MATRIX34_LP);
+        pActor->t.type = BR_TRANSFORM_MATRIX34_LP;
+    }
+    return 0;
+}
 
 // DoCompletelyUnBentThings
 
