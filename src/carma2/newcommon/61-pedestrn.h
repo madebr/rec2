@@ -132,7 +132,7 @@ extern int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor);
 
 // CBLoadForm
 
-// CBDisposeForm
+extern void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm);
 
 // CBLoadPersonality
 
