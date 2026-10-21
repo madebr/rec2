@@ -328,7 +328,7 @@ extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pV
 
 // ApplySplitWeld
 
-// ApplyBend
+extern void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk);
 
 // ApplyUnBend
 
