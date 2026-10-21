@@ -367,9 +367,13 @@ void C2_HOOK_FASTCALL DisposeExcessMemory(void) {
     }
 }
 
-// STUB: CARMA2_HW 0x0049ff50
+// FUNCTION: CARMA2_HW 0x0049ff50
 int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage) {
-    NOT_IMPLEMENTED();
+
+    if (pMessage->header.field_0x14 == 0xff) {
+        return -1;
+    }
+    pMessage->contents.raw.header.type = eNetMsg_none;
     return 0;
 }
 
