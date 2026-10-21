@@ -278,7 +278,10 @@ void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm) {
 
 // FinishUpLoadingPeds
 
-// MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo
+// FUNCTION: CARMA2_HW 0x004d35d0
+void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo(void) {
+
+}
 
 // SetNextRandomTurn
 
