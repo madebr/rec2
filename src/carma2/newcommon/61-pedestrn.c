@@ -169,7 +169,7 @@ int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
 // CBLoadForm
 
 // FUNCTION: CARMA2_HW 0x004cc940
-void C2_HOOK_FASTCALL CBDisposeForm(undefined4* pForm) {
+void C2_HOOK_FASTCALL CBDisposeForm(void* pForm) {
 }
 
 // CBLoadPersonality
