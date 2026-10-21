@@ -131,7 +131,7 @@ extern void C2_HOOK_FASTCALL SetTrafficOn(int pTraffic_on);
 
 extern int C2_HOOK_FASTCALL OtherPerambulatoryInstasificationIsEnablificated(void);
 
-// LoadPanGameDroneInfo
+extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 // InitDrones
 
