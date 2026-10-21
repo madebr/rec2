@@ -75,7 +75,9 @@ void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void) {
 
 // F11Key
 
-// F12Key
+// FUNCTION: CARMA2_HW 0x00441900
+void C2_HOOK_FASTCALL F12Key(void) {
+}
 
 // NumberKey0
 
