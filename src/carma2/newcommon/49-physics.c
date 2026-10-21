@@ -778,14 +778,12 @@ int C2_HOOK_FASTCALL FindFacesInBox(tBounds* pBounds, tFace_ref* pFace_list, int
 }
 
 // FUNCTION: CARMA2_HW 0x004b5970
-float C2_HOOK_FASTCALL GetFrictionFromFace(void* pFace) {
-    tFace_ref* face;
+float C2_HOOK_FASTCALL GetFrictionFromFace(const tFace_ref* pFace) {
     int material_index;
 
     C2_HOOK_BUG_ON(REC2_ASIZE(gCurrent_race.material_modifiers) != 11);
 
-    face = pFace;
-    material_index = face->material->identifier[0] - '/';
+    material_index = pFace->material->identifier[0] - '/';
     if (material_index < 0 || material_index >= (int)REC2_ASIZE(gCurrent_race.material_modifiers)) {
         material_index = 0;
     }

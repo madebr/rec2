@@ -5196,7 +5196,7 @@ typedef struct tWorld_callbacks {
     int (C2_HOOK_FASTCALL * find_faces_in_box)(tBounds*, tFace_ref*, int, struct tWorld_callbacks*);
     tNon_car_spec* (C2_HOOK_FASTCALL * pull_actor_from_world)(br_actor*);
     void (C2_HOOK_FASTCALL * stop_groovidelic)(br_actor*);
-    float (C2_HOOK_FASTCALL * get_friction_from_face)(void*);
+    float (C2_HOOK_FASTCALL * get_friction_from_face)(const tFace_ref*);
     void (C2_HOOK_FASTCALL * activate_passive)(tPhysics_object*);
 } tWorld_callbacks;
 
