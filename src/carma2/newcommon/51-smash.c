@@ -300,7 +300,40 @@ void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
 
 // CloneEnvSmash
 
-// FreeConnotations
+// FUNCTION: CARMA2_HW 0x004f0a80
+void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors) {
+    int i;
+    int j;
+    tExplosion_animation_group* group;
+
+    for (i = 0; i < pConnotations->count_shrapnel; i++) {
+        if (pConnotations->shrapnel[i].type == kShrapnelType_GhostParts && !pKeep_actors) {
+            for (j = 0; j < pConnotations->shrapnel[i].type_info.ghost.count_actors; j++) {
+                BrActorFree(pConnotations->shrapnel[i].type_info.ghost.actors[j]);
+            }
+            BrMemFree(pConnotations->shrapnel[i].type_info.ghost.actors);
+        } else if (pConnotations->shrapnel[i].type == kShrapnelType_NonCars && !pKeep_actors) {
+            for (j = 0; j < pConnotations->shrapnel[i].type_info.noncar.count_actors; j++) {
+                if (pConnotations->shrapnel[i].type_info.noncar.actors[j]->parent == NULL) {
+                    BrActorFree(pConnotations->shrapnel[i].type_info.noncar.actors[j]);
+                }
+            }
+            BrMemFree(pConnotations->shrapnel[i].type_info.noncar.actors);
+        }
+    }
+    if (pConnotations->special_effects.explosion_animation.count_groups != 0) {
+        for (i = 0, group = pConnotations->special_effects.explosion_animation.groups; i < pConnotations->special_effects.explosion_animation.count_groups; i++, group++) {
+            BrMemFree(group->frames);
+        }
+        BrMemFree(pConnotations->special_effects.explosion_animation.groups);
+    }
+    if (pConnotations->side_effects.activations.count_activations != 0) {
+        BrMemFree(pConnotations->side_effects.activations.activations);
+    }
+    if (pConnotations->side_effects.side_effects.count_side_effects != 0) {
+        BrMemFree(pConnotations->side_effects.side_effects.side_effects);
+    }
+}
 
 // FreeEnvSmash
 
