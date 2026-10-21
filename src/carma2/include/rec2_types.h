@@ -5390,6 +5390,9 @@ enum {
     eMiscString_net_games_always_accessorized = 124,
     eMiscString_recovery_cancelled = 125,
     eMiscString_task_switched = 139,
+    eMiscString_armor_strengthened = 175,
+    eMiscString_engine_power_increased = 176,
+    eMiscString_increased_offsensive = 177,
     eMiscString_driven_to_destruction_description = 194,
     eMiscString_car_crusher_description = 195,
     eMiscString_smashy_things_description = 196,
@@ -5442,6 +5445,7 @@ enum {
     eMiscString_not_wasted = 292,
     eMiscString_already_have_it = 292,
 
+    eMiscString_increase_apo_start = eMiscString_armor_strengthened,
     eMiscString_netgame_stage_start = eMiscString_starting,
     eMiscString_network_type_start = eMiscString_driven_to_destruction,
     eMiscString_network_type_description_start = eMiscString_driven_to_destruction_description,
