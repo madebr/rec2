@@ -10,14 +10,14 @@ inputs:
   gist-repo:
     description: 'Gist repository where progress is stored (e.g. project-organization/1234567890abcdef1234567890abcdef)'
     required: true
-  target:
-    description: 'Reccmp target'
+  targets:
+    description: 'Reccmp targets (space delimiter)'
     required: true
-  symbol-count: # FIXME: remove once reccmp supports symbol count in reccmp-project.yml
-    description: 'Symbol count'
+  symbol-counts: # FIXME: remove once reccmp supports symbol count in reccmp-project.yml
+    description: 'Symbol count (space delimiter)'
     required: true
   reccmp-version:
-    description: 'Reccmp version (empty for latest, skip for disabling installation'
+    description: 'Reccmp version (empty for latest, skip for disabling installation)'
     default: ''
   original-search-path:
     descriptoin: 'Location of original binaries'
