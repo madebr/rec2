@@ -185,7 +185,16 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 
 // AddSmudgeToPipingSession
 
-// AddSparkToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6f20
+void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, p, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_spark, v, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, v, 0xc);
+
+    ARAddVariedDataToSession(ePipe_chunk_spark, pSpark_index, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_spark, p), pPos,
+        SIZE_OFFSET_PIPING(tPipe_chunk_spark, v), pV);
+}
 
 // FUNCTION: CARMA2_HW 0x004c6f40
 void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial) {
