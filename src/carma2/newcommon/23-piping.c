@@ -391,9 +391,17 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 
 // PipeSingleEndShitMine
 
-// STUB: CARMA2_HW 0x004c8ff0
+// FUNCTION: CARMA2_HW 0x004c8ff0
 void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_type) {
-    NOT_IMPLEMENTED();
+    tU16 type_from = pActor->t.type;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_transform_type, type_from, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_transform_type, type_to, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_transform_type, type_to, 0x1);
+
+    ARDoSingleVariedSession(ePipe_single_transform_type, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_from), type_from,
+        SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_to), (tU16)pTransform_type);
 }
 
 // PipeSingleOppoRenderage
