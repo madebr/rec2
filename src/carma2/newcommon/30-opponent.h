@@ -184,7 +184,7 @@ extern void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index);
 
 // ClearTwattageOccurrenceVariables
 
-// TwoCarsHitEachOther
+extern void C2_HOOK_FASTCALL TwoCarsHitEachOther(tCar_spec* pA_car, tCar_spec* pAnother_car);
 
 // RecordOpponentTwattageOccurrence
 
