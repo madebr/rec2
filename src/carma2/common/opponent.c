@@ -808,7 +808,7 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
         gProgram_state.AI_vehicles.opponents[i].car_spec->last_person_to_hit_us = NULL;
         gProgram_state.AI_vehicles.opponents[i].car_spec->last_person_we_hit = NULL;
         gProgram_state.AI_vehicles.opponents[i].car_spec->field_0x1544 = 0;
-        gProgram_state.AI_vehicles.opponents[i].car_spec->field_0x1548 = gTime_stamp_for_this_munging;
+        gProgram_state.AI_vehicles.opponents[i].car_spec->last_time_we_touched_a_player = gTime_stamp_for_this_munging;
         gProgram_state.AI_vehicles.opponents[i].car_spec->grudge_raised_recently = 1;
         gProgram_state.AI_vehicles.opponents[i].car_spec->no_of_processes_recording_my_trail = 0;
         gProgram_state.AI_vehicles.opponents[i].nnext_sections = 0;
