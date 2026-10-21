@@ -51,7 +51,7 @@ extern void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void);
 
 extern int C2_HOOK_FASTCALL GetMovieWidth(void);
 
-// GetMovieHeight
+extern int C2_HOOK_FASTCALL GetMovieHeight(void);
 
 // TidyMovieARDisplay
 
