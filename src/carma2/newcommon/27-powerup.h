@@ -345,7 +345,7 @@ extern void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* 
 
 // LoseDodgyPowerups
 
-// GetPowerupCount
+extern int C2_HOOK_FASTCALL GetPowerupCount(void);
 
 // GetPowerupPosition
 
