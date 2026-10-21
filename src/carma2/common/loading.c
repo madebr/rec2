@@ -1290,22 +1290,8 @@ int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b48c0
-int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile) {
-    tTwatVfsFile* twtFile;
-    int result;
-
-    if ((int)pFile < REC2_ASIZE(gTwatVfsFiles)) {
-        twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
-        if (twtFile->pos >= twtFile->end) {
-            twtFile->error = -1;
-            return EOF;
-        }
-        twtFile->error = 0;
-        result = *twtFile->pos;
-        twtFile->pos++;
-        return result;
-    }
-    return fgetc(pFile);
+int C2_HOOK_FASTCALL DRgetc(FILE* pFile) {
+    return DRfgetc(pFile);
 }
 
 // FUNCTION: CARMA2_HW 0x004b49a0

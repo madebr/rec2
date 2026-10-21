@@ -251,7 +251,7 @@ void C2_HOOK_FASTCALL DRclearerr(FILE* pFile);
 
 int C2_HOOK_FASTCALL PFfgetc(FILE* pFile);
 
-int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile);
+int C2_HOOK_FASTCALL DRgetc(FILE* pFile);
 
 int C2_HOOK_FASTCALL PFungetc(int ch, FILE* file);
 
