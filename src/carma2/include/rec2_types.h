@@ -2188,9 +2188,9 @@ typedef struct {
     br_colour colour;
     br_pixelmap* pixelmap;
     br_colour colours[256];
-    br_uint_32 tints1[2048];
-    br_uint_32 tints2[2048];
-    br_uint_32 tints3[2048];
+    br_uint_32 tints1[32][64];
+    br_uint_32 tints2[32][64];
+    br_uint_32 tints3[32][64];
     br_uint_32 unknown_1;  // FIXME: unknown
     br_uint_32 unknown_2;  // FIXME: unknown
 } tTintedPoly;

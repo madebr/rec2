@@ -11,9 +11,9 @@ extern void C2_HOOK_FASTCALL InitTintedPolyStuff(void);
 
 extern br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int height, int nbX, int nbY);
 
-// BuildTintedPolyMaterial
+// static br_material* C2_HOOK_FASTCALL BuildTintedPolyMaterial(int pOpacity);
 
-// GetRangeOfValuesFromPixelmap
+// void C2_HOOK_FASTCALL GetRangeOfValuesFromPixelmap(br_pixelmap* pMap, int* pDarkest, int* pBrightest);
 
 extern int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
 
@@ -21,9 +21,9 @@ extern int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int heig
 
 extern void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void);
 
-// UpdateTintedPolyByMaterial
+extern void C2_HOOK_FASTCALL UpdateTintedPolyByMaterial(int pIndex);
 
-// UpdatePolyVertexColours
+extern void C2_HOOK_FASTCALL UpdatePolyVertexColours(int pIndex);
 
 extern void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex);
 
@@ -37,17 +37,16 @@ extern void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int
 
 extern br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex);
 
-// ClearTheFlame
+extern void C2_HOOK_FASTCALL ClearTheFlame(int pIndex);
 
-// GetUniqueFileName
+extern void C2_HOOK_FASTCALL GetUniqueFileName(const char *pDirectory, const char *pExtension, char *pDest);
 
-// UpdateFirePoly
+extern void C2_HOOK_FASTCALL UpdateFirePoly(int pIndex);
 
-// UpdatePulsePoly
 
-// ProcessTintedPoly
+extern void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex);
 
-// UpdateTintedPolys
+extern void C2_HOOK_FASTCALL UpdateTintedPolys(void);
 
 extern void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height);
 
