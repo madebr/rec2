@@ -36,6 +36,12 @@ int gPickup_respawn_min_time_ms;
 // GLOBAL: CARMA2_HW 0x007447e8
 int gPickup_respawn_max_extra_time_ms;
 
+// GLOBAL: CARMA2_HW 0x007447d0
+int gBlind_pedestrians;
+
+// GLOBAL: CARMA2_HW 0x007447e4
+int gPed_dismemberfest;
+
 // GLOBAL: CARMA2_HW 0x007059c0
 int gCount_mutant_tail_parts;
 
@@ -240,7 +246,11 @@ void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SetStupidPedestrians
 
-// ResetStupidPedestrians
+// FUNCTION: CARMA2_HW 0x004dc920
+void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gBlind_pedestrians = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc930
 int C2_HOOK_FASTCALL FreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
@@ -277,7 +287,11 @@ void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
     gExploding_pedestrians = 0;
 }
 
-// ResetPedBrittle
+// FUNCTION: CARMA2_HW 0x004dca20
+void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_dismemberfest = 0;
+}
 
 // SetEngineFactor
 
