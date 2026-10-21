@@ -73,7 +73,7 @@ jobs:
         curl -fLSs -o CARMA2_HW.EXE.txt https://gist.githubusercontent.com/madebr/92b121cfd427c51b771fb614b4c893f4/raw/CARMA2_HW.EXE.txt
         python .github/binendec.py -D -i CARMA2_HW.EXE.txt -o originals/CARMA2_HW.EXE
 
-        curl -fLSs -o CARMA2_HW.EXE.txt https://gist.githubusercontent.com/madebr/92b121cfd427c51b771fb614b4c893f4/raw/Carma2_SW.exe.txt
+        curl -fLSs -o Carma2_SW.exe.txt https://gist.githubusercontent.com/madebr/92b121cfd427c51b771fb614b4c893f4/raw/Carma2_SW.exe.txt
         python .github/binendec.py -D -i Carma2_SW.exe.txt -o originals/Carma2_SW.exe
 
         curl -fLSs -o carma2.exe.txt https://gist.githubusercontent.com/madebr/92b121cfd427c51b771fb614b4c893f4/raw/carma2.exe.txt

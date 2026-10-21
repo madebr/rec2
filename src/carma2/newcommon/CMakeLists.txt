@@ -114,14 +114,14 @@ foreach(edition ${REC2_EDITIONS})
             QuickTime::Dummy
             Smackw32::Smackw32
     )
-
-    if(NOT MSVC)
-        add_compile_options(-Wredundant-decls)
-    endif()
-
-    if(MSVC AND NOT REC2_MATCHING)
-        add_compile_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-    endif()
 endforeach()
+
+if(NOT MSVC)
+    add_compile_options(-Wredundant-decls)
+endif()
+
+if(MSVC AND NOT REC2_MATCHING)
+    add_compile_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+endif()
 
 register_hw_sw_target(c2_newcommon)

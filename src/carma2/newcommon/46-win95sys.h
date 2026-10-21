@@ -78,7 +78,7 @@
 
 // HCalcPathName
 
-void C2_HOOK_FASTCALL PDSetFileVariables(void);
+// extern void C2_HOOK_FASTCALL PDSetFileVariables(void); /* See platform.h */
 
 // PDBuildAppPath
 
