@@ -269,7 +269,10 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
     }
 }
 
-// PipeSingleSpecial
+// FUNCTION: CARMA2_HW 0x004c8530
+void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
+    ARDoSingleVariedSession(ePipe_chunk_special, pType, 0);
+}
 
 // PipeSingleCarIncident
 
