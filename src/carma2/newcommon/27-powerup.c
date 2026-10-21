@@ -536,7 +536,11 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // LoseDodgyPowerups
 
-// GetPowerupCount
+// FUNCTION: CARMA2_HW 0x004df1e0
+int C2_HOOK_FASTCALL GetPowerupCount(void) {
+
+    return 0;
+}
 
 // GetPowerupPosition
 
