@@ -388,7 +388,7 @@ extern void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize);
 
 extern int C2_HOOK_FASTCALL FindFacesInBox(tBounds* pBounds, tFace_ref* pFace_list, int pMax_face, tWorld_callbacks* pWorld_callbacks);
 
-// GetFrictionFromFace
+extern float C2_HOOK_FASTCALL GetFrictionFromFace(const tFace_ref* pFace);
 
 extern void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage);
 

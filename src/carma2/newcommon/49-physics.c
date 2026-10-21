@@ -7,6 +7,7 @@
 #include "37-brucetrk.h"
 #include "52-errors.h"
 #include "globvars.h"
+#include "rec2_macros.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
 
@@ -776,7 +777,18 @@ int C2_HOOK_FASTCALL FindFacesInBox(tBounds* pBounds, tFace_ref* pFace_list, int
     return emitted;
 }
 
-// GetFrictionFromFace
+// FUNCTION: CARMA2_HW 0x004b5970
+float C2_HOOK_FASTCALL GetFrictionFromFace(const tFace_ref* pFace) {
+    int material_index;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCurrent_race.material_modifiers) != 11);
+
+    material_index = pFace->material->identifier[0] - '/';
+    if (material_index < 0 || material_index >= (int)REC2_ASIZE(gCurrent_race.material_modifiers)) {
+        material_index = 0;
+    }
+    return gCurrent_race.material_modifiers[material_index].car_wall_friction;
+}
 
 // FUNCTION: CARMA2_HW 0x004b5990
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage) {
