@@ -30,6 +30,9 @@ int gExploding_pedestrians;
 // GLOBAL: CARMA2_HW 0x0069b9f0
 tNapalm_bolt gNapalm_bolts[5];
 
+// GLOBAL: CARMA2_HW 0x007447a8
+int gDancing_peds;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix

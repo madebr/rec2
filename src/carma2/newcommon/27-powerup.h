@@ -14,6 +14,8 @@ extern int gPickup_respawn_min_time_ms;
 extern int gPickup_respawn_max_extra_time_ms;
 extern int gBlind_pedestrians;
 extern int gPed_dismemberfest;
+extern int gPanicking_peds;
+extern float gPed_gravity_multiplier;
 extern int gCount_mutant_tail_parts;
 extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
@@ -309,11 +311,11 @@ extern void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetGhostPeds
 
-// ResetDancingPeds
+extern void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetPanickingPeds
+extern void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetLowGravityPeds
+extern void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetPissedPeds
 
