@@ -137,7 +137,17 @@ int C2_HOOK_FASTCALL ResetFoxModelCallback(br_model* pModel) {
     return 1;
 }
 
-// ResetFoxLighting
+// FUNCTION: CARMA2_HW 0x004f93b0
+int C2_HOOK_FASTCALL ResetFoxLighting(br_material* pMaterial) {
+
+    if (pMaterial->flags & BR_MATF_PRELIT) {
+        pMaterial->flags &= ~BR_MATF_PRELIT;
+        BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // CancelAlternateFoxEffect
 
