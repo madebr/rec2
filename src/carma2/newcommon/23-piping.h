@@ -154,7 +154,7 @@ extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, con
 
 // AddSmokeToPipingSession
 
-// AddSmokeColumnToPipingSession
+extern void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour);
 
 // AddFlameToPipingSession
 
