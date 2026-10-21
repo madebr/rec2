@@ -744,7 +744,11 @@ int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend) {
 
 // CarClickNext
 
-// ChangeCarMenuOutfunc
+// FUNCTION: CARMA2_HW 0x0046ba70
+int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend) {
+
+    return 1;
+}
 
 // FRONTEND_ChangeCarMenuHandler
 
