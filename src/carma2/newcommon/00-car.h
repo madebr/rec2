@@ -194,6 +194,6 @@ extern void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* p
 
 extern void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex);
 
-// TurnOffNonCar
+extern void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex);
 
 #endif // GUARD_00_CAR_H
