@@ -336,7 +336,7 @@ extern void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ,
 
 // GetPhysicsScratchPointer
 
-// IncreasePhysicsScratchPointer
+extern void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize);
 
 extern void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void);
 
