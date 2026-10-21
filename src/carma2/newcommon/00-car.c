@@ -256,5 +256,8 @@ void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_FACES;
 }
 
-// TurnOffNonCar
+// FUNCTION: CARMA2_HW 0x00420900
+void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex) {
+    gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_NONE;
+}
 
