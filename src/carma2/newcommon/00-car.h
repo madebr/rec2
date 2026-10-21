@@ -192,7 +192,7 @@ extern void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* p
 
 // GetPrecalculatedFacesUnderCar
 
-// TurnOnNonCar
+extern void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex);
 
 // TurnOffNonCar
 
