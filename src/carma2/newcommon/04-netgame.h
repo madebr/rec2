@@ -2,6 +2,7 @@
 #define GUARD_04_NETGAME_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // SendShapeNumbers
 
@@ -15,7 +16,7 @@
 
 // DistanceBetweenCars
 
-// CarShapeNeedsSendingToPlayer
+extern int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pShapes, int pPlayer_id);
 
 // AddShapeStuffToMechanicsMessage
 
