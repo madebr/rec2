@@ -240,7 +240,7 @@ extern void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm);
 
 // FinishUpLoadingPeds
 
-// MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo
+extern void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo(void);
 
 // SetNextRandomTurn
 
