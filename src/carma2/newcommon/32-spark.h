@@ -83,7 +83,7 @@ extern void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar);
 
 // SetFoxModelCallback
 
-// ResetFoxModelCallback
+extern int C2_HOOK_FASTCALL ResetFoxModelCallback(br_model* pModel);
 
 // ResetFoxLighting
 

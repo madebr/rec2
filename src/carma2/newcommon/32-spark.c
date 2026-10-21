@@ -130,7 +130,12 @@ void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
 
 // SetFoxModelCallback
 
-// ResetFoxModelCallback
+// FUNCTION: CARMA2_HW 0x004f9390
+int C2_HOOK_FASTCALL ResetFoxModelCallback(br_model* pModel) {
+    pModel->flags &= ~BR_MODF_CUSTOM;
+    pModel->custom = NULL;
+    return 1;
+}
 
 // ResetFoxLighting
 
