@@ -2,6 +2,7 @@
 
 #include <c2_hooks.h>
 #include "00-car.h"
+#include "08-loading1.h"
 #include "globvars.h"
 #include "globvrpb.h"
 
@@ -261,7 +262,16 @@ void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 
 // ClearTwattageOccurrenceVariables
 
-// TwoCarsHitEachOther
+// FUNCTION: CARMA2_HW 0x004aeeb0
+void C2_HOOK_FASTCALL TwoCarsHitEachOther(tCar_spec* pA_car, tCar_spec* pAnother_car) {
+
+    if (pA_car != NULL && pA_car->driver == eDriver_local_human) {
+        pAnother_car->field_0x1548 = gTime_stamp_for_this_munging;
+    }
+    if (pAnother_car != NULL && pAnother_car->driver == eDriver_local_human) {
+        pA_car->field_0x1548 = gTime_stamp_for_this_munging;
+    }
+}
 
 // RecordOpponentTwattageOccurrence
 
