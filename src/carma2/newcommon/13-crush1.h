@@ -125,7 +125,7 @@ extern void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVerte
 
 // TooFarToCrush
 
-// NearestAxis
+extern int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector);
 
 // CrushModel
 

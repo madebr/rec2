@@ -7,6 +7,7 @@
 #include "platform.h"
 #include "rec2_macros.h"
 
+#include "c2_math.h"
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00679698
@@ -381,7 +382,17 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // TooFarToCrush
 
-// NearestAxis
+// FUNCTION: CARMA2_HW 0x00436890
+int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
+
+    if ((float)fabs(pVector->v[0]) > 0.707107f) {
+        return 0;
+    } else if ((float)fabs(pVector->v[1]) > 0.707107f) {
+        return 1;
+    } else {
+        return 2;
+    }
+}
 
 // CrushModel
 
