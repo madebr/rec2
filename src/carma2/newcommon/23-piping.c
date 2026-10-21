@@ -292,7 +292,12 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
 
 // PipeSingleShrapnelShower
 
-// PipeSingleExplosion
+// FUNCTION: CARMA2_HW 0x004c8920
+void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData) {
+    C2_HOOK_BUG_ON(sizeof(tExplosion) != 120);
+
+    ARDoSingleVariedSession(31, (uintptr_t)pIndex, 1, sizeof(tExplosion), 0, pData);
+}
 
 // PipeSingleNonCarCreation
 
