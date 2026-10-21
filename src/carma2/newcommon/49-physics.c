@@ -1,5 +1,6 @@
 #include "49-physics.h"
 
+#include "00-car.h"
 #include "16-graphics1.h"
 #include "28-world3.h"
 #include "32-spark.h"
@@ -273,7 +274,19 @@ void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject) {
 
 // GetPreCalculatedJointForces
 
-// MakeObjectListDoSomething
+// FUNCTION: CARMA2_HW 0x004b9f40
+void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
+    while (pObject != NULL) {
+        if (pObject->disable_move_rotate) {
+            pObject->disable_move_rotate = 0;
+            pObject->box_face_ref = gFace_num__car - 2;
+        }
+        if (pObject->child != NULL) {
+            MakeObjectListDoSomething(pObject->child);
+        }
+        pObject = pObject->next;
+    }
+}
 
 // CheckForObjectTouchingAnotherObject
 
