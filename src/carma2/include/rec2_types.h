@@ -453,6 +453,15 @@ typedef struct {
     br_matrix34 m;
 } tPipe_chunk_end_shit_mine;
 
+typedef struct {
+    br_actor* actor;
+    br_angle angle;
+} tPipe_chunk_flap;
+
+typedef struct {
+    br_actor* actor;
+} tPipe_chunk_identity;
+
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,

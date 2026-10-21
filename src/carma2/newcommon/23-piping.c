@@ -282,11 +282,26 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
 
 // PipeSingleSkidAdjustment
 
-// PipeSingleFlap
+// FUNCTION: CARMA2_HW 0x004c8620
+void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flap, angle, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, angle, 0x2);
+
+    ARDoSingleVariedSession(ePipe_chunk_flap_bits, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, angle), pAngle);
+}
 
 // PipeSingleRelink
 
-// PipeSingleIdentity
+// FUNCTION: CARMA2_HW 0x004c86d0
+void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_identity, actor, 0x4);
+
+    ARDoSingleVariedSession(26, (uintptr_t)pActor, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_identity, actor), pActor);
+}
 
 // PipeSingleSplitWeld
 
