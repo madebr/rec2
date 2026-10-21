@@ -151,7 +151,7 @@ extern int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend);
 
 // CarClickNext
 
-// ChangeCarMenuOutfunc
+extern int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend);
 
 // FRONTEND_ChangeCarMenuHandler
 
