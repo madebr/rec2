@@ -5,6 +5,7 @@
 #include "41-utility.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrpb.h"
 
 #include "rec2_macros.h"
 
@@ -21,7 +22,34 @@ tNet_game_options gNet_settings[9];
 
 // RequestCarDetails
 
-// SetNetAvailability
+// FUNCTION: CARMA2_HW 0x00466370
+void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions) {
+    int i;
+
+    for (i = 0; i < gNumber_of_racers; i++) {
+        switch (gOpponents[i].network_availability) {
+        case eNet_avail_never:
+            gCar_details[i].ownership = eCar_owner_not_allowed;
+            break;
+        case eNet_avail_eagle:
+            if (pOptions->car_choice == eNet_car_all || pOptions->car_choice == eNet_car_eagle) {
+                gCar_details[i].ownership = eCar_owner_none;
+            } else {
+                gCar_details[i].ownership = eCar_owner_not_allowed;
+            }
+            break;
+        case eNet_avail_all:
+            if (pOptions->car_choice == eNet_car_all || pOptions->car_choice == eNet_car_novelty) {
+                gCar_details[i].ownership = eCar_owner_none;
+            } else {
+                gCar_details[i].ownership = eCar_owner_not_allowed;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004663e0
 void C2_HOOK_FASTCALL DefaultNetSettings(void) {
