@@ -2539,7 +2539,7 @@ typedef struct tCar_spec {
     float field_0x4d4;
     tDamage_unit damage_units[12];
     tS8 frame_start_damage[12];
-    float last_impact_location;
+    tImpact_location last_impact_location;
     tDamage_program damage_programs[6];
     tHeadup_slot headup_slots[2][20];
     undefined field_0xe08[4];
