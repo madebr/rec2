@@ -32,6 +32,7 @@ br_tv_template_entry rendererNewTemplateEntries[] = {
 };
 
 // FUNCTION: CARMA2_HW 0x005405e0
+// FUNCTION: CARMA2_SW 0x0053bc80
 br_renderer_facility* C2_HOOK_STDCALL RendererFacilitySoftAllocate(br_device* dev, const char* identifier) {
     br_soft_renderer_facility* self;
 
@@ -58,6 +59,7 @@ br_renderer_facility* C2_HOOK_STDCALL RendererFacilitySoftAllocate(br_device* de
 }
 
 // FUNCTION: CARMA2_HW 0x00540670
+// FUNCTION: CARMA2_SW 0x0053bd10
 void C2_HOOK_CDECL _M_br_renderer_facility_soft_free(br_soft_renderer_facility* self) {
 
 
@@ -89,6 +91,7 @@ br_int_32 C2_HOOK_CDECL _M_br_renderer_facility_soft_space(br_soft_renderer_faci
 }
 
 // FUNCTION: CARMA2_HW 0x005406f0
+// FUNCTION: CARMA2_SW 0x0053bd90
 br_tv_template* C2_HOOK_CDECL _M_br_renderer_facility_soft_templateQuery(br_soft_renderer_facility* self) {
 
     if (self->device->templates.rendererFacilityTemplate == NULL) {

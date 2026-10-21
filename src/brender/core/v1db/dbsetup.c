@@ -42,6 +42,7 @@ br_resource_class v1db_resourceClasses[] = {
 br_v1db_state v1db;
 
 // FUNCTION: CARMA2_HW 0x00525860
+// FUNCTION: CARMA2_SW 0x00520f00
 br_error C2_HOOK_CDECL BrV1dbBegin(void) {
     int i;
 
@@ -253,6 +254,7 @@ void C2_HOOK_CDECL BrZsBegin(br_uint_8 colour_type, void* primitive, br_uint_32 
 }
 
 // FUNCTION: CARMA2_HW 0x00525d20
+// FUNCTION: CARMA2_SW 0x005213c0
 void C2_HOOK_CDECL BrZbsBegin(br_uint_8 colour_type, br_uint_8 depth_type, void* primitive, br_uint_32 size) {
     if (v1db.zx_active == 0) {
         if (BrV1dbRendererBegin((br_device_pixelmap*)BrDevLastBeginQuery(), NULL) != 0) {
@@ -291,6 +293,7 @@ void C2_HOOK_CDECL BrZbsEnd(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00525f50
+// FUNCTION: CARMA2_SW 0x005215f0
 void C2_HOOK_CDECL BrV1dbBeginWrapper_Float(void) {
     BrBegin();
     BrV1dbBegin();

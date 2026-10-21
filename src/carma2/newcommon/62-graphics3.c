@@ -17,6 +17,7 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00655dfc
+// GLOBAL: CARMA2_SW 0x00650ce4
 int gMini_map_visible = 2;
 
 // GLOBAL: CARMA2_HW 0x0074a780
@@ -226,6 +227,7 @@ static void C2_HOOK_FASTCALL ReadMoodMessages(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00496e30
+// FUNCTION: CARMA2_SW 0x00493ca0
 void C2_HOOK_FASTCALL InitMap(void) {
 
     if (!gInitMap_done) {
@@ -402,6 +404,7 @@ static void C2_HOOK_FASTCALL MapChanged(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00497620
+// FUNCTION: CARMA2_SW 0x00494250
 void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0) {
 
     if (KeyIsDown(31) && pKey0) {
@@ -438,6 +441,7 @@ void C2_HOOK_FASTCALL InitSmashTargets(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004977f0
+// FUNCTION: CARMA2_SW 0x00494420
 void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown) {
     int index;
 

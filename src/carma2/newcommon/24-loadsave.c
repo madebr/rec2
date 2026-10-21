@@ -7,6 +7,7 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x0068b8ec
+// GLOBAL: CARMA2_SW 0x00685e4c
 int gSave_game_out_of_sync;
 
 // GLOBAL: CARMA2_HW 0x0068c72c
@@ -45,6 +46,7 @@ tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
 }
 
 // FUNCTION: CARMA2_HW 0x00491ce0
+// FUNCTION: CARMA2_SW 0x0048ef50
 int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game) {
     int i;
 

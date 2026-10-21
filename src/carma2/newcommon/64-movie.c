@@ -11,15 +11,19 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a0c24
+// GLOBAL: CARMA2_SW 0x0069ac7c
 int gQuickTime_initialized;
 
 // GLOBAL: CARMA2_HW 0x00705440
+// GLOBAL: CARMA2_SW 0x006fbf00
 char gQuick_time_temp_path[256];
 
 // GLOBAL: CARMA2_HW 0x00705240
+// GLOBAL: CARMA2_SW 0x006fbd00
 char gQuick_time_movie_path_stub[256];
 
 // GLOBAL: CARMA2_HW 0x00705340
+// GLOBAL: CARMA2_SW 0x006fbe00
 char gQuick_time_banner_texture_name[256];
 
 // GLOBAL: CARMA2_HW 0x0065ee50
@@ -53,6 +57,7 @@ char gDefault_quick_time_compressor[] = "animation";
 // FreeOffQTshite
 
 // FUNCTION: CARMA2_HW 0x004e1700
+// FUNCTION: CARMA2_SW 0x004dda00
 void C2_HOOK_CDECL InitQuickTimeStuff(void) {
 
     gQuickTime_initialized = 0;
@@ -65,6 +70,7 @@ void C2_HOOK_CDECL InitQuickTimeStuff(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e1740
+// FUNCTION: CARMA2_SW 0x004dda40
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 
     if (gQuick_time_quality[0] == '\0') {
@@ -102,6 +108,7 @@ void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
 // ShowStatusMessage
 
 // FUNCTION: CARMA2_HW 0x004e2140
+// FUNCTION: CARMA2_SW 0x004de4c0
 int C2_HOOK_FASTCALL GetMovieWidth(void) {
 
     if (gNbPixelBits == 16) {
@@ -112,6 +119,7 @@ int C2_HOOK_FASTCALL GetMovieWidth(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e2160
+// FUNCTION: CARMA2_SW 0x004de4e0
 int C2_HOOK_FASTCALL GetMovieHeight(void) {
 
     if (gNbPixelBits == 16) {

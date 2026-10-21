@@ -128,6 +128,7 @@ static void C2_HOOK_FASTCALL GetRangeOfValuesFromPixelmap(br_pixelmap* pMap, int
 }
 
 // FUNCTION: CARMA2_HW 0x004d70c0
+// FUNCTION: CARMA2_SW 0x004d36c0
 int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3) {
     tPath_name the_path;
     int i;
@@ -469,6 +470,7 @@ void C2_HOOK_FASTCALL UpdateTintedPolyByMaterial(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x004d8220
+// FUNCTION: CARMA2_SW 0x004d46f0
 void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex) {
     if (gTintedPolys[pTintedIndex].used) {
         gTintedPolys[pTintedIndex].actor->render_style = BR_RSTYLE_FACES;
@@ -477,6 +479,7 @@ void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x004d8250
+// FUNCTION: CARMA2_SW 0x004d4770
 void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
     if (gTintedPolys[pTintedIndex].used) {
         (gTintedPolys[pTintedIndex].actor)->render_style = BR_RSTYLE_NONE;
@@ -488,6 +491,7 @@ void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x004d8290
+// FUNCTION: CARMA2_SW 0x004d47d0
 void C2_HOOK_FASTCALL RenderTintedPolys(void) {
     BrZbsSceneRender(gTintedPolyCamera, gTintedPolyCamera, gBack_screen, gDepth_buffer);
 }
@@ -558,6 +562,7 @@ static void C2_HOOK_FASTCALL UpdatePulsePoly(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x004d84a0
+// FUNCTION: CARMA2_SW 0x004d49d0
 void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex) {
 
     if (gTintedPolys[pIndex].used) {
@@ -724,6 +729,7 @@ void C2_HOOK_FASTCALL UpdateTintedPolys(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004d8bb0
+// FUNCTION: CARMA2_SW 0x004d50e0
 void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height) {
     tTintedPoly* tinted;
     int nb_x;

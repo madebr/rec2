@@ -11,39 +11,48 @@
 #include "platform.h"
 
 // GLOBAL: CARMA2_HW 0x0068c1f0
+// GLOBAL: CARMA2_SW 0x00686238
 int gAlways_typing;
 
 // GLOBAL: CARMA2_HW 0x0068c1ec
+// GLOBAL: CARMA2_SW 0x00686234
 int gDisabled_count;
 
 // GLOBAL: CARMA2_HW 0x0068c1f8
 int gDisabled_choices[10];
 
 // GLOBAL: CARMA2_HW 0x0075b8fc
+// GLOBAL: CARMA2_SW 0x00751e5c
 int gTyping_slot;
 
 // GLOBAL: CARMA2_HW 0x0068c1e8
 const tInterface_spec* gSpec;
 
 // GLOBAL: CARMA2_HW 0x0068c220
+// GLOBAL: CARMA2_SW 0x00686268
 int gCurrent_mode;
 
 // GLOBAL: CARMA2_HW 0x0068c224
+// GLOBAL: CARMA2_SW 0x0068626c
 int gCurrent_choice;
 
 // GLOBAL: CARMA2_HW 0x0068c228
+// GLOBAL: CARMA2_SW 0x00686270
 tU32 gStart_time;
 
 // GLOBAL: CARMA2_HW 0x0079ecb8
+// GLOBAL: CARMA2_SW 0x00795244
 int gMouse_in_use;
 
 // FUNCTION: CARMA2_HW 0x00484620
+// FUNCTION: CARMA2_SW 0x00481760
 void C2_HOOK_FASTCALL SetAlwaysTyping(void) {
 
     gAlways_typing = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x00484630
+// FUNCTION: CARMA2_SW 0x00481770
 void C2_HOOK_FASTCALL ClearAlwaysTyping(void) {
 
     gAlways_typing = 0;
@@ -66,6 +75,7 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout__intrface(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00484dd0
+// FUNCTION: CARMA2_SW 0x00481f10
 void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_selection, int* pNew_selection, int pMode, int pSkip_disabled) {
 
     if (ChoiceDisabled(*pNew_selection)) {
@@ -107,6 +117,7 @@ void C2_HOOK_FASTCALL RecopyAreas(const tInterface_spec* pSpec) {
 }
 
 // FUNCTION: CARMA2_HW 0x004846e0
+// FUNCTION: CARMA2_SW 0x00481820
 int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice) {
     tProg_status entry_status;
     int i;

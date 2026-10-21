@@ -9,6 +9,7 @@
 // MakeFaceAndTextureIt
 
 // FUNCTION: CARMA2_HW 0x00401000
+// FUNCTION: CARMA2_SW 0x00401000
 void C2_HOOK_FASTCALL InitPanGameAIWorld(void) {
 
     PrintMemoryDump(0, "BEFORE LoadOpponents()");

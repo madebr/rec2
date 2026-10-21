@@ -22,6 +22,7 @@ float gFLOAT_006b2c4c;
 float gFLOAT_006b2c68;
 
 // GLOBAL: CARMA2_HW 0x006b2c20
+// GLOBAL: CARMA2_SW 0x006ac3a8
 br_vector3 gS3_listener_position_now;
 
 // GLOBAL: CARMA2_HW 0x006b2c58
@@ -70,6 +71,7 @@ void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src) {
 }
 
 // FUNCTION: CARMA2_HW 0x00567875
+// FUNCTION: CARMA2_SW 0x00562f15
 void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag, tS3_sound_source* src, float pMax_distance_squared, int pPeriod, tS3_repeats pAmbient_repeats, tS3_volume pVolume, int pPitch, tS3_speed pSpeed) {
     tS3_channel* channel;
     int is_sample;
@@ -231,6 +233,7 @@ void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left) {
 }
 
 // FUNCTION: CARMA2_HW 0x00566048
+// FUNCTION: CARMA2_SW 0x005616e8
 int C2_HOOK_FASTCALL S3StartSound3D(tS3_outlet *pOutlet, int pSound, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed) {
     tS3_descriptor* descriptor;
     tS3_channel* channel;
@@ -370,6 +373,7 @@ int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound,
 }
 
 // FUNCTION: CARMA2_HW 0x005676da
+// FUNCTION: CARMA2_SW 0x00562d7a
 void C2_HOOK_FASTCALL S3CopyVector3(void* pDest, void* pSrc, int pIs_BRender) {
 
     if (pIs_BRender) {
@@ -380,6 +384,7 @@ void C2_HOOK_FASTCALL S3CopyVector3(void* pDest, void* pSrc, int pIs_BRender) {
 }
 
 // FUNCTION: CARMA2_HW 0x005675ce
+// FUNCTION: CARMA2_SW 0x00562c6e
 void C2_HOOK_FASTCALL S3UpdateListenerVectors(void) {
 
     if (gS3_listener_pos_ptr != NULL) {
@@ -498,6 +503,7 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
 }
 
 // FUNCTION: CARMA2_HW 0x00567ea5
+// FUNCTION: CARMA2_SW 0x00563545
 int C2_HOOK_FASTCALL S3UpdateSourceVectors(void) {
     tS3_sound_source* source;
 
@@ -538,6 +544,7 @@ int C2_HOOK_FASTCALL S3UpdateSourceVectors(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056711c
+// FUNCTION: CARMA2_SW 0x005627bc
 int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
     float dist_squared;
     float dist;
@@ -614,6 +621,7 @@ int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
 }
 
 // FUNCTION: CARMA2_HW 0x00567575
+// FUNCTION: CARMA2_SW 0x00562c15
 int C2_HOOK_FASTCALL S3Service3D(tS3_channel* pChannel) {
     int updated;
 

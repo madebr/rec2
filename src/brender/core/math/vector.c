@@ -115,6 +115,7 @@ void C2_HOOK_CDECL BrVector3SetInt(br_vector3* v1, int i1, int i2, int i3) {
 }
 
 // FUNCTION: CARMA2_HW 0x00534590
+// FUNCTION: CARMA2_SW 0x0052fc30
 void C2_HOOK_CDECL BrVector3SetFloat(br_vector3* v1, float f1, float f2, float f3) {
 
     v1->v[0] = BR_SCALAR(f1);

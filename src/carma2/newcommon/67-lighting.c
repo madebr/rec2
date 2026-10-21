@@ -12,6 +12,7 @@
 #include <string.h>
 
 // FUNCTION: CARMA2_HW 0x004f6520
+// FUNCTION: CARMA2_SW 0x004f2180
 void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage* pStorage, const char* pPath) {
     gStorage_for_callbacks = pStorage;
     PFForEveryFile(pPath, SmoothlyLoadIfItsAModel);
@@ -63,6 +64,7 @@ int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const char* pPa
 }
 
 // FUNCTION: CARMA2_HW 0x004f6640
+// FUNCTION: CARMA2_SW 0x004f2290
 void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath) {
 
     gMaterial_shading_for_callback = kRendererShadingType_Default;
@@ -87,6 +89,7 @@ void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStorage, tC
 }
 
 // FUNCTION: CARMA2_HW 0x004f6820
+// FUNCTION: CARMA2_SW 0x004f23d0
 void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage) {
     int i;
     for (i = 0; i < pStorage->materials_count; i++) {
@@ -99,6 +102,7 @@ void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage) 
 // SmoothificatePowerups
 
 // FUNCTION: CARMA2_HW 0x004f6a20
+// FUNCTION: CARMA2_SW 0x005112e0
 void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
     int need_update;
 
@@ -158,12 +162,14 @@ void C2_HOOK_FASTCALL SmoothificateCarMaterial(br_material* pMaterial) {
 }
 
 // FUNCTION: CARMA2_HW 0x00486d60
+// FUNCTION: CARMA2_SW 0x00483e90
 void C2_HOOK_FASTCALL MungeLightingEffects(void) {
 
     // empty
 }
 
 // FUNCTION: CARMA2_HW 0x00486d70
+// FUNCTION: CARMA2_SW 0x00483ea0
 void C2_HOOK_FASTCALL KillLightingEffects(void) {
 
     // empty
@@ -176,12 +182,14 @@ void C2_HOOK_FASTCALL InitLightingEffects(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00486db0
+// FUNCTION: CARMA2_SW 0x00483ee0
 void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* pRace_lighting_path) {
 
     // empty
 }
 
 // FUNCTION: CARMA2_HW 0x00486dc0
+// FUNCTION: CARMA2_SW 0x00483ef0
 void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF) {
     GetThreeInts(pF, &gLighting_data.directional.red, &gLighting_data.directional.green, &gLighting_data.directional.blue);
     GetPairOfScalars(pF, &gLighting_data.ambient_0, &gLighting_data.diffuse_0);

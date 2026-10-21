@@ -38,6 +38,7 @@ br_tv_template_entry geometryLightingTemplateEntries[] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00540e30
+// FUNCTION: CARMA2_SW 0x0053c4d0
 br_geometry_lighting* C2_HOOK_STDCALL GeometryLightingAllocate(br_soft_renderer_facility* type, const char* id) {
     br_geometry_lighting_soft* self;
 

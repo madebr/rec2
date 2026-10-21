@@ -3,6 +3,7 @@
 #include "c2_hooks.h"
 
 // FUNCTION: CARMA2_HW 0x0053c0c0
+// FUNCTION: CARMA2_SW 0x00537760
 br_error C2_HOOK_STDCALL GeneralRectangleCopy(br_device_pixelmap* dest, br_point* p, br_device_pixelmap* src, br_rectangle* r) {
 
     return 0x1008;

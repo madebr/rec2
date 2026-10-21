@@ -4,6 +4,7 @@
 int gCamera_frozen;
 
 // GLOBAL: CARMA2_HW 0x007634ac
+// GLOBAL: CARMA2_SW 0x00759a0c
 float gCamera_cockpit_hither;
 
 // GLOBAL: CARMA2_HW 0x0079efa8

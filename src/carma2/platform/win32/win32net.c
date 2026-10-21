@@ -17,6 +17,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x006b3380
+// GLOBAL: CARMA2_SW 0x006acae0
 char gPathNetworkIni[240];
 
 // GLOBAL: CARMA2_HW 0x006ad4c4
@@ -77,12 +78,15 @@ char gSend_buffer[512];
 char gReceive_buffer[512];
 
 // GLOBAL: CARMA2_HW 0x006ac35c
+// GLOBAL: CARMA2_SW 0x006a58ac
 int gNumber_of_hosts;
 
 // GLOBAL: CARMA2_HW 0x006ac574
+// GLOBAL: CARMA2_SW 0x006a5ac4
 tPD_net_game_info* gJoinable_games;
 
 // FUNCTION: CARMA2_HW 0x0051a190
+// FUNCTION: CARMA2_SW 0x00513c70
 void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
     char buffer[16];
     DWORD size;
@@ -244,6 +248,7 @@ int C2_HOOK_FASTCALL PDNetInitialise(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00519a10
+// FUNCTION: CARMA2_SW 0x005134f0
 int C2_HOOK_FASTCALL PDNetShutdown(void) {
 
     dr_dprintf("PDNetShutdown()");
@@ -255,6 +260,7 @@ int C2_HOOK_FASTCALL PDNetShutdown(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00519a40
+// FUNCTION: CARMA2_SW 0x00513520
 void C2_HOOK_FASTCALL PDNetStartProducingJoinList(void) {
 
     C2_HOOK_BUG_ON(sizeof(tPD_net_game_info) * JOINABLE_GAMES_CAPACITY != 0x140);
@@ -268,6 +274,7 @@ void C2_HOOK_FASTCALL PDNetStartProducingJoinList(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00519a80
+// FUNCTION: CARMA2_SW 0x00513560
 void C2_HOOK_FASTCALL PDNetEndJoinList(void) {
 
     dr_dprintf("PDNetEndJoinList()");
@@ -456,6 +463,7 @@ void C2_HOOK_FASTCALL PDNetLeaveGame(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051a380
+// FUNCTION: CARMA2_SW 0x00513e60
 tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, void** pSender_address) {
     char addr_str[32];
     int sa_len;
@@ -502,6 +510,7 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
 }
 
 // FUNCTION: CARMA2_HW 0x0051a630
+// FUNCTION: CARMA2_SW 0x00514110
 int C2_HOOK_FASTCALL PDNetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress) {
 
     /* FIXME: sizeof(struct sockaddr) == 16 */

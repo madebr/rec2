@@ -832,6 +832,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR(br_datafile* df, br_actor* ap) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523a70
+// FUNCTION: CARMA2_SW 0x0051f110
 int C2_HOOK_STDCALL FopRead_ACTOR(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* ap;
 
@@ -852,6 +853,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_MODEL(br_datafile* df, br_model* model) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523ac0
+// FUNCTION: CARMA2_SW 0x0051f160
 int C2_HOOK_STDCALL FopRead_ACTOR_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char name[256];
     br_actor* a;
@@ -1097,6 +1099,7 @@ int C2_HOOK_STDCALL FopRead_CAMERA(br_datafile* df, br_uint_32 id, br_uint_32 le
 }
 
 // FUNCTION: CARMA2_HW 0x00523de0
+// FUNCTION: CARMA2_SW 0x0051f480
 br_uint_32 C2_HOOK_CDECL BrModelLoadMany(char* filename, br_model** models, br_uint_16 num) {
     int count;
     int r;
@@ -1213,6 +1216,7 @@ br_uint_32 C2_HOOK_CDECL BrModelSaveMany(char* filename, br_model** models, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00524330
+// FUNCTION: CARMA2_SW 0x0051f9d0
 br_uint_32 C2_HOOK_CDECL BrActorLoadMany(char* filename, br_actor** actors, br_uint_16 num) {
     br_datafile* df;
     int count;
@@ -1311,6 +1315,7 @@ br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00524600
+// FUNCTION: CARMA2_SW 0x0051fca0
 br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materials, br_uint_16 num) {
     br_datafile* df;
     int count;
@@ -1419,6 +1424,7 @@ br_uint_32 C2_HOOK_CDECL BrMaterialSave(char* filename, br_material* ptr) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524be0
+// FUNCTION: CARMA2_SW 0x00520280
 br_actor* C2_HOOK_CDECL BrActorLoad(char* filename) {
     br_actor* ptr;
 

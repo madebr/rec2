@@ -19,9 +19,11 @@ int gShade_list[16];
 int* gShade_table = &gShade_list[8];
 
 // GLOBAL: CARMA2_HW 0x006a82b4
+// GLOBAL: CARMA2_SW 0x006a2314
 int gNum_dust_tables;
 
 // GLOBAL: CARMA2_HW 0x006aa57c
+// GLOBAL: CARMA2_SW 0x006a3fc8
 int gSpark_flags;
 
 // GLOBAL: CARMA2_HW 0x006aa5ac
@@ -46,12 +48,15 @@ br_pixelmap* gFlame_map[20];
 tSmoke_column gSmoke_column[10];
 
 // GLOBAL: CARMA2_HW 0x006aa380
+// GLOBAL: CARMA2_SW 0x006a3dd0
 br_model* gLollipop_model;
 
 // GLOBAL: CARMA2_HW 0x006aa59c
+// GLOBAL: CARMA2_SW 0x006a3fec
 int gColumn_flags;
 
 // GLOBAL: CARMA2_HW 0x006b7880
+// GLOBAL: CARMA2_SW 0x006ae560
 br_material* gBlack_material;
 
 // DrawDot
@@ -81,6 +86,7 @@ br_material* gBlack_material;
 // AdjustShrapnel
 
 // FUNCTION: CARMA2_HW 0x004f87a0
+// FUNCTION: CARMA2_SW 0x004f3e20
 void C2_HOOK_FASTCALL ResetSparks(void) {
     gSpark_flags = 0;
 }
@@ -259,6 +265,7 @@ void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_sc
 // CreateSmokeColumn
 
 // FUNCTION: CARMA2_HW 0x004fb910
+// FUNCTION: CARMA2_SW 0x004f6e50
 void C2_HOOK_FASTCALL GenerateSmokeShades(void) {
     // GLOBAL: CARMA2_HW 0x006aa5b4
     static int rb = 0;
@@ -321,6 +328,7 @@ void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
 // DisposeFlame
 
 // FUNCTION: CARMA2_HW 0x004fc3a0
+// FUNCTION: CARMA2_SW 0x004f7900
 void C2_HOOK_FASTCALL InitFlame(void) {
     int i;
     int j;
@@ -390,12 +398,14 @@ void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int pFire_point) {
 }
 
 // FUNCTION: CARMA2_HW 0x004fc9d0
+// FUNCTION: CARMA2_SW 0x004f7f30
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
     gSmoke_on = pSmoke_on;
 }
 
 // FUNCTION: CARMA2_HW 0x004fca30
+// FUNCTION: CARMA2_SW 0x004f7f90
 int C2_HOOK_FASTCALL GetSmokeOn(void) {
 
     return gSmoke_on;
@@ -435,6 +445,7 @@ void C2_HOOK_FASTCALL CreateSplash(tPhysics_object* pObject, tU32 pTime) {
 // MungeSplash
 
 // FUNCTION: CARMA2_HW 0x004fdb70
+// FUNCTION: CARMA2_SW 0x004f90d0
 void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* pF) {
     int i;
     int red;
@@ -457,6 +468,7 @@ void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* pF) {
 }
 
 // FUNCTION: CARMA2_HW 0x004fdc00
+// FUNCTION: CARMA2_SW 0x004f9170
 void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 }
 

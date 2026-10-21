@@ -15,6 +15,7 @@ br_matrix23 mattmp1_23;
 br_matrix23 mattmp2_23;
 
 // FUNCTION: CARMA2_HW 0x00534ae0
+// FUNCTION: CARMA2_SW 0x00530180
 void C2_HOOK_CDECL BrMatrix23Copy(br_matrix23* A, const br_matrix23* B) {
 
     A(0, 0) = B(0, 0);
@@ -37,6 +38,7 @@ void C2_HOOK_CDECL BrMatrix23Mul(br_matrix23* A, const br_matrix23* B, const br_
 }
 
 // FUNCTION: CARMA2_HW 0x00534ba0
+// FUNCTION: CARMA2_SW 0x00530240
 void C2_HOOK_CDECL BrMatrix23Identity(br_matrix23* mat) {
 
     M(0, 0) = 1.f;

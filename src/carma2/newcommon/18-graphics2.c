@@ -43,36 +43,45 @@ int gPalette_index;
 int gNoTransients;
 
 // GLOBAL: CARMA2_HW 0x0074a674
+// GLOBAL: CARMA2_SW 0x00741134
 br_pixelmap* gRender_palette;
 
 // GLOBAL: CARMA2_HW 0x0079ec14
 int gDim_amount;
 
 // GLOBAL: CARMA2_HW 0x0074a680
+// GLOBAL: CARMA2_SW 0x00741140
 char* gCurrent_palette_pixels;
 
 // GLOBAL: CARMA2_HW 0x0074cf04
 int gPalette_changed;
 
 // GLOBAL: CARMA2_HW 0x0074a678
+// GLOBAL: CARMA2_SW 0x00741138
 br_pixelmap* gCurrent_palette;
 
 // GLOBAL: CARMA2_HW 0x006923ac
+// GLOBAL: CARMA2_SW 0x0068c404
 br_pixelmap* gOrig_render_palette;
 
 // GLOBAL: CARMA2_HW 0x0074a67c
+// GLOBAL: CARMA2_SW 0x0074113c
 br_pixelmap* gFlic_palette;
 
 // GLOBAL: CARMA2_HW 0x006923c8
+// GLOBAL: CARMA2_SW 0x0068c420
 int gFaded_palette;
 
 // GLOBAL: CARMA2_HW 0x006923c0
+// GLOBAL: CARMA2_SW 0x0068c418
 int gPalette_munged;
 
 // GLOBAL: CARMA2_HW 0x006923b8
+// GLOBAL: CARMA2_SW 0x0068c410
 br_colour* gScratch_pixels;
 
 // GLOBAL: CARMA2_HW 0x006923a8
+// GLOBAL: CARMA2_SW 0x0068c400
 br_pixelmap* gScratch_palette;
 
 // GLOBAL: CARMA2_HW 0x0074a604
@@ -94,9 +103,11 @@ br_pixelmap* gPalette_0074a670;
 br_pixelmap* gMini_map_glowing_line_palettes[3];
 
 // GLOBAL: CARMA2_HW 0x0068be20
+// GLOBAL: CARMA2_SW 0x00685e64
 br_pixelmap* gCurrent_splash;
 
 // FUNCTION: CARMA2_HW 0x004b4fd0
+// FUNCTION: CARMA2_SW 0x004b1140
 void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount) {
 
     if (!pFirst_colour) {
@@ -138,12 +149,14 @@ void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_current_
 }
 
 // FUNCTION: CARMA2_HW 0x004b5030
+// FUNCTION: CARMA2_SW 0x004b1190
 void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette) {
 
     DRSetPalette2(pThe_palette, 1);
 }
 
 // FUNCTION: CARMA2_HW 0x004b5090
+// FUNCTION: CARMA2_SW 0x004b11e0
 void C2_HOOK_FASTCALL InitializePalettes(void) {
     br_pixelmap* render_palette;
 
@@ -189,10 +202,12 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 // RevertPalette
 
 // FUNCTION: CARMA2_HW 0x004b5320
+// FUNCTION: CARMA2_SW 0x004b1a70
 void C2_HOOK_FASTCALL MungePalette(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b5330
+// FUNCTION: CARMA2_SW 0x004b1a80
 void C2_HOOK_FASTCALL ResetPalette(void) {
 
     InitPaletteAnimate();
@@ -204,6 +219,7 @@ void C2_HOOK_FASTCALL ResetPalette(void) {
 // SetFadedPalette
 
 // FUNCTION: CARMA2_HW 0x004b5460
+// FUNCTION: CARMA2_SW 0x004b1ba0
 void C2_HOOK_FASTCALL FadePaletteDown(void) {
 }
 
@@ -212,6 +228,7 @@ void C2_HOOK_FASTCALL FadePaletteDown(void) {
 // EnsurePaletteUp
 
 // FUNCTION: CARMA2_HW 0x004b5770
+// FUNCTION: CARMA2_SW 0x004b1e90
 void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
 
     if (gPalette_munged) {
@@ -221,6 +238,7 @@ void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0043dff0
+// FUNCTION: CARMA2_SW 0x0043e040
 void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
     int i;
 
@@ -300,6 +318,7 @@ void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2,
 }
 
 // FUNCTION: CARMA2_HW 0x0047b880
+// FUNCTION: CARMA2_SW 0x0047aba0
 void C2_HOOK_FASTCALL ClearEntireScreen(void) {
 
     if (gScreen != NULL) {
@@ -314,6 +333,7 @@ void C2_HOOK_FASTCALL ClearEntireScreen(void) {
 // DistanceFromPlane
 
 // FUNCTION: CARMA2_HW 0x0047b960
+// FUNCTION: CARMA2_SW 0x0047ac50
 void C2_HOOK_FASTCALL KillSplashScreen(void) {
 
     if (gCurrent_splash != NULL) {
@@ -326,6 +346,7 @@ void C2_HOOK_FASTCALL KillSplashScreen(void) {
 // SplashScreenWith
 
 // FUNCTION: CARMA2_HW 0x0047ba80
+// FUNCTION: CARMA2_SW 0x0047ae00
 void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_16 pDest_x, br_int_16 pDest_y, const br_pixelmap* pSource, br_int_16 pSource_x, br_int_16 pSource_y, br_int_16 pWidth, br_int_16 pHeight) {
     int y;
     int x;
@@ -412,6 +433,7 @@ void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, i
 #endif
 
 // FUNCTION: CARMA2_HW 0x0047cbd0
+// FUNCTION: CARMA2_SW 0x0047bd90
 void C2_HOOK_CDECL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
     tU8* ptr;
     tU8* depth_table_ptr;
@@ -454,6 +476,7 @@ void C2_HOOK_CDECL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int
 }
 
 // FUNCTION: CARMA2_HW 0x0047cce0
+// FUNCTION: CARMA2_SW 0x0047be70
 void C2_HOOK_FASTCALL DimRectangleClipped(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
 
     if (pLeft < 0) {

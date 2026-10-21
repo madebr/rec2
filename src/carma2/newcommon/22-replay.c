@@ -3,6 +3,7 @@
 #include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x0058f620
+// GLOBAL: CARMA2_SW 0x0058a620
 int gAR_camera_type = 2;
 
 // ActualActionReplayHeadups

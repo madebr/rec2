@@ -4,6 +4,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x005b39b8
+// GLOBAL: CARMA2_SW 0x005ae8e8
 tFrontend_spec gFrontend_NETWORK = {
 #if 0 // FIXME: enable this
     "Network",

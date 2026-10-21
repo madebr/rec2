@@ -13,6 +13,7 @@
 int gINT_00595f84 = 7500;
 
 // GLOBAL: CARMA2_HW 0x00595f88
+// GLOBAL: CARMA2_SW 0x00590ee8
 int gJoystick_index = -1;
 
 // GLOBAL: CARMA2_HW 0x00595f90
@@ -36,6 +37,7 @@ typedef struct tJoystick_preference_node {
 } tJoystick_preference_node;
 
 // FUNCTION: CARMA2_HW 0x0045a0f0
+// FUNCTION: CARMA2_SW 0x00459e80
 int C2_HOOK_FASTCALL HasCurrentJoystick(void) {
     return gJoystick_index != -1;
 }
@@ -305,6 +307,7 @@ void C2_HOOK_FASTCALL DisableJoysticks(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045c0b0
+// FUNCTION: CARMA2_SW 0x0045bb30
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
     tPath_name path;
     tButtonJoystickInfo* info;

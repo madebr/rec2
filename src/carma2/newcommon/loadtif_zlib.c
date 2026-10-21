@@ -6,6 +6,7 @@
 #include <stdio.h>
 
 // GLOBAL: CARMA2_HW 0x006631c0
+// GLOBAL: CARMA2_SW 0x0065d958
 br_filesystem gZlib_filesystem = {
     "Zlib filesystem",
     ZlibFsGetAttributes,

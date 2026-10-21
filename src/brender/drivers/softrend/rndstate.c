@@ -10,6 +10,7 @@
 #include "c2_string.h"
 
 // FUNCTION: CARMA2_HW 0x005417f0
+// FUNCTION: CARMA2_SW 0x0053ce90
 br_error C2_HOOK_STDCALL CheckPrimitiveState(br_soft_renderer* self) {
     br_error r;
 

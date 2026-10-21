@@ -18,9 +18,11 @@
 
 
 // GLOBAL: CARMA2_HW 0x0079feb0
+// GLOBAL: CARMA2_SW 0x00796450
 br_uint_32 DriverTimestamp;
 
 // FUNCTION: CARMA2_HW 0x00540590
+// FUNCTION: CARMA2_SW 0x0053bc30
 br_device* C2_HOOK_CDECL BrDrv1Begin(const char* arguments) {
     br_device *device;
 

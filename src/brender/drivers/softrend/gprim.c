@@ -42,6 +42,7 @@ br_tv_template_entry geometryPrimitivesTemplateEntries[] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00541160
+// FUNCTION: CARMA2_SW 0x0053c800
 br_geometry_primitives* C2_HOOK_STDCALL GeometryPrimitivesAllocate(br_soft_renderer_facility* type, const char* id) {
     br_geometry_primitives_soft* self;
 

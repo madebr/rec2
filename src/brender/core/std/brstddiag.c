@@ -16,9 +16,11 @@ br_diaghandler BrStdioDiagHandler = {
 
 
 // GLOBAL: CARMA2_HW 0x0066fe54
+// GLOBAL: CARMA2_SW 0x0066a5e4
 br_diaghandler* _BrDefaultDiagHandler = &BrStdioDiagHandler;
 
 // FUNCTION: CARMA2_HW 0x0053fa00
+// FUNCTION: CARMA2_SW 0x0053b0a0
 void C2_HOOK_CDECL BrStdioWarning(char* message) {
 
     fflush(stdout);
@@ -28,6 +30,7 @@ void C2_HOOK_CDECL BrStdioWarning(char* message) {
 }
 
 // FUNCTION: CARMA2_HW 0x0053fa40
+// FUNCTION: CARMA2_SW 0x0053b0e0
 void C2_HOOK_CDECL BrStdioFailure(char* message) {
 
     fflush(stdout);

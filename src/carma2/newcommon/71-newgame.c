@@ -23,6 +23,7 @@ tNet_game_options gNet_settings[9];
 // RequestCarDetails
 
 // FUNCTION: CARMA2_HW 0x00466370
+// FUNCTION: CARMA2_SW 0x00466100
 void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions) {
     int i;
 
@@ -52,6 +53,7 @@ void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions) {
 }
 
 // FUNCTION: CARMA2_HW 0x004663e0
+// FUNCTION: CARMA2_SW 0x00466170
 void C2_HOOK_FASTCALL DefaultNetSettings(void) {
     FILE* file;
     tNet_game_options* pOptions;

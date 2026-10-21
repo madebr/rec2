@@ -18,12 +18,15 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x0067c500
+// GLOBAL: CARMA2_SW 0x00676c70
 tHeadup gHeadups[37];
 
 // GLOBAL: CARMA2_HW 0x0067fcd8
+// GLOBAL: CARMA2_SW 0x0067a438
 br_font* gBR_fonts[4];
 
 // GLOBAL: CARMA2_HW 0x0067fd00
+// GLOBAL: CARMA2_SW 0x0067a450
 br_pixelmap* gRevs[13];
 
 // GLOBAL: CARMA2_HW 0x0074cf84
@@ -87,6 +90,7 @@ br_pixelmap* gIcon_grnBlock1;
 tHud_message gHud_messages[46];
 
 // GLOBAL: CARMA2_HW 0x00655e54
+// GLOBAL: CARMA2_SW 0x00650d3c
 int gHeadup_detail_level = 5;
 
 // GLOBAL: CARMA2_HW 0x0067fcc0
@@ -99,24 +103,31 @@ int gLast_fancy_index = -1;
 tU32 gLast_fancy_time;
 
 // GLOBAL: CARMA2_HW 0x0067fcf8
+// GLOBAL: CARMA2_SW 0x0067a44c
 tU32 gLast_centre_headup;
 
 // GLOBAL: CARMA2_HW 0x005913d8
+// GLOBAL: CARMA2_SW 0x0058c3b8
 int gLast_credit_headup__displays = -1;
 
 // GLOBAL: CARMA2_HW 0x0067f874
+// GLOBAL: CARMA2_SW 0x00679fe4
 tU32 gLast_earn_time;
 
 // GLOBAL: CARMA2_HW 0x005913dc
+// GLOBAL: CARMA2_SW 0x0058c3bc
 int gLast_time_credit_headup = -1;
 
 // GLOBAL: CARMA2_HW 0x0067fcc4
+// GLOBAL: CARMA2_SW 0x0067a42c
 tU32 gLast_time_earn_time;
 
 // GLOBAL: CARMA2_HW 0x0079eac0
+// GLOBAL: CARMA2_SW 0x00795020
 int gOld_times[10];
 
 // GLOBAL: CARMA2_HW 0x0067f888
+// GLOBAL: CARMA2_SW 0x00679ff4
 int gQueued_headup_count;
 
 
@@ -174,6 +185,7 @@ static void C2_HOOK_FASTCALL LoadHeadupMessageFile(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00449090
+// FUNCTION: CARMA2_SW 0x004494b0
 void C2_HOOK_FASTCALL InitHeadups(void) {
     int i;
 
@@ -381,6 +393,7 @@ int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pL
 #endif
 
 // FUNCTION: CARMA2_HW 0x0044a600
+// FUNCTION: CARMA2_SW 0x0044a790
 void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
     tU32 the_time;
     int temp_ref;
@@ -441,6 +454,7 @@ void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pNew_x, int pNew_y) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044a8d0
+// FUNCTION: CARMA2_SW 0x0044aa60
 void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
     tHeadup* the_headup;
 
@@ -453,6 +467,7 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044a9d0
+// FUNCTION: CARMA2_SW 0x0044ab60
 void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     int i;
     int y_pitch;
@@ -507,6 +522,7 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
 // EarnCredits100
 
 // FUNCTION: CARMA2_HW 0x0044b470
+// FUNCTION: CARMA2_SW 0x0044b600
 int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
     int amount;
 

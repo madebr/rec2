@@ -206,6 +206,7 @@ const soft_state_cull partCullDefault = {
 };
 
 // FUNCTION: CARMA2_HW 0x005414a0
+// FUNCTION: CARMA2_SW 0x0053cb40
 int C2_HOOK_STDCALL StateInitialise(soft_state_all* state) {
     int i;
 

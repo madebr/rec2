@@ -32,6 +32,7 @@
 tFrontendMenuType gFrontend_next_menu;
 
 // GLOBAL: CARMA2_HW 0x00688b20
+// GLOBAL: CARMA2_SW 0x00683080
 int gFrontend_suppress_mouse;
 
 // GLOBAL: CARMA2_HW 0x00688ab0
@@ -49,21 +50,26 @@ tFrontend_item_spec gDefault_last_interface_item = {
 };
 
 // GLOBAL: CARMA2_HW 0x006864f4
+// GLOBAL: CARMA2_SW 0x00680c34
 int gFrontend_scrollbars_updated;
 
 // GLOBAL: CARMA2_HW 0x00686850
+// GLOBAL: CARMA2_SW 0x00680f94
 br_pixelmap* gFrontend_images[100];
 
 // GLOBAL: CARMA2_HW 0x00687248
 tFrontend_brender_item gFrontend_brender_items[100]; /* FIXME: parametrize size + index of last item */
 
 // GLOBAL: CARMA2_HW 0x00688770
+// GLOBAL: CARMA2_SW 0x00682cd0
 int gFrontend_selected_item_index;
 
 // GLOBAL: CARMA2_HW 0x0068b8a0
+// GLOBAL: CARMA2_SW 0x00685e00
 tRace_group_spec* gRace_groups;
 
 // GLOBAL: CARMA2_HW 0x00688af4
+// GLOBAL: CARMA2_SW 0x00683054
 char* gFrontend_current_input;
 
 // GLOBAL: CARMA2_HW 0x0068723c
@@ -76,6 +82,7 @@ char gFrontend_original_player_name[32];
 int gINT_0059b0d8 = -1;
 
 // GLOBAL: CARMA2_HW 0x0059b0d4
+// GLOBAL: CARMA2_SW 0x00596004
 int gFrontend_maximum_input_length = 9;
 
 // GLOBAL: CARMA2_HW 0x00763924
@@ -106,9 +113,11 @@ int gCredits_total_height;
 double gFrontend_throb_factor;
 
 // GLOBAL: CARMA2_HW 0x00763940
+// GLOBAL: CARMA2_SW 0x00759ea0
 br_actor* gFrontend_billboard_actors[8];
 
 // GLOBAL: CARMA2_HW 0x00688b10
+// GLOBAL: CARMA2_SW 0x00683070
 br_actor* gFrontend_menu_camera;
 
 // GLOBAL: CARMA2_HW 0x007638ac
@@ -130,18 +139,22 @@ tU32 gFrontend_scroll_last_update;
 int gFrontend_mouse_down;
 
 // GLOBAL: CARMA2_HW 0x0068875c
+// GLOBAL: CARMA2_SW 0x00682cbc
 tU32 gFrontend_time_last_input;
 
 // GLOBAL: CARMA2_HW 0x00764ee4
+// GLOBAL: CARMA2_SW 0x0075b444
 int gNet_join_host_result;  // FIXME: use union instead?
 
 // GLOBAL: CARMA2_HW 0x00688b08
 int gPrev_frontend_mouse_down;
 
 // GLOBAL: CARMA2_HW 0x006883a8
+// GLOBAL: CARMA2_SW 0x00682908
 int gFrontend_leave_current_menu;
 
 // GLOBAL: CARMA2_HW 0x00688abc
+// GLOBAL: CARMA2_SW 0x0068301c
 tFrontend_spec* gCurrent_frontend_spec;
 
 // GLOBAL: CARMA2_HW 0x007635f0
@@ -157,12 +170,15 @@ br_uint_32 gFrontend_APO_Colour_3;
 br_actor* gFrontend_actor;
 
 // GLOBAL: CARMA2_HW 0x0068683c
+// GLOBAL: CARMA2_SW 0x00680f7c
 int gFrontend_count_brender_items;
 
 // GLOBAL: CARMA2_HW 0x00764ee0
+// GLOBAL: CARMA2_SW 0x0075b440
 int gFrontend_remove_current_backdrop;
 
 // GLOBAL: CARMA2_HW 0x00686f8c
+// GLOBAL: CARMA2_SW 0x006816cc
 br_pixelmap* gFrontend_backdrop;
 
 // GLOBAL: CARMA2_HW 0x00688ae8
@@ -205,12 +221,14 @@ int gFrontend_backdrop1_opacity_mode;
 int gFrontend_backdrop2_opacity_mode;
 
 // GLOBAL: CARMA2_HW 0x00686ef8
+// GLOBAL: CARMA2_SW 0x00681638
 int gFrontend_interpolate_steps_left;
 
 // GLOBAL: CARMA2_HW 0x00763820
 tFrontend_slider gOptions_sound_slider;
 
 // GLOBAL: CARMA2_HW 0x00688ae4
+// GLOBAL: CARMA2_SW 0x00683044
 int gValid_stashed_save_game; // FIXME: rename variable?
 
 // GLOBAL: CARMA2_HW 0x00688408
@@ -227,6 +245,7 @@ const int gControls_frontend_to_key_mapping_lut[29] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00466450
+// FUNCTION: CARMA2_SW 0x004661e0
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
     return 0;
@@ -235,6 +254,7 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 // int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY); // Moved for inlining purposes
 
 // FUNCTION: CARMA2_HW 0x00466ce0
+// FUNCTION: CARMA2_SW 0x00466a70
 void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_index) {
     br_model* model;
     int item_index;
@@ -272,6 +292,7 @@ static void C2_HOOK_FASTCALL SetLevelBar(tFrontend_spec* pFrontend, int pLevel_i
 }
 
 // FUNCTION: CARMA2_HW 0x00467890
+// FUNCTION: CARMA2_SW 0x00467610
 void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend) {
     int i;
 
@@ -293,6 +314,7 @@ void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x004666f0
+// FUNCTION: CARMA2_SW 0x00466480
 void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
     int i;
     const char* text;
@@ -320,6 +342,7 @@ void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046abf0
+// FUNCTION: CARMA2_SW 0x0046a930
 br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* pFolder, const char* pName) {
     br_pixelmap* pixelmaps[1000];
     br_pixelmap* result;
@@ -359,6 +382,7 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* 
 }
 
 // FUNCTION: CARMA2_HW 0x00466760
+// FUNCTION: CARMA2_SW 0x004664f0
 void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     tPath_name path;
     char buffer[256];
@@ -504,6 +528,7 @@ void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend) {
 // FindNextActiveItem
 
 // FUNCTION: CARMA2_HW 0x00467a30
+// FUNCTION: CARMA2_SW 0x004677b0
 int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index) {
     int i;
 
@@ -520,6 +545,7 @@ int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_in
 // RaceIndex
 
 // FUNCTION: CARMA2_HW 0x00466bb0
+// FUNCTION: CARMA2_SW 0x00466940
 int C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(tFrontend_spec* pFrontend) {
     int race_index;
 
@@ -534,6 +560,7 @@ int C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntin
 }
 
 // FUNCTION: CARMA2_HW 0x00467b30
+// FUNCTION: CARMA2_SW 0x004678b0
 void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     char group_text[12];
     int group;
@@ -588,6 +615,7 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 // void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend); // Moved for inlining purposes
 
 // FUNCTION: CARMA2_HW 0x00466ec0
+// FUNCTION: CARMA2_SW 0x00466c50
 int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
 
     if (gTyping) {
@@ -615,6 +643,7 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x00467050
+// FUNCTION: CARMA2_SW 0x00466de0
 int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
 
     ToggleTyping(pFrontend);
@@ -629,6 +658,7 @@ int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
 // NetGameToggleTyping
 
 // FUNCTION: CARMA2_HW 0x00467130
+// FUNCTION: CARMA2_SW 0x00466ec0
 int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend) {
 
     (void)pFrontend;
@@ -654,6 +684,7 @@ int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend) {
 // NewGameInfunc
 
 // FUNCTION: CARMA2_HW 0x00467270
+// FUNCTION: CARMA2_SW 0x00467000
 int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
     if (gProgram_state.field_0x2c) {
         return 5;
@@ -707,6 +738,7 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 // FRONTEND_NetworkJoinMenuHandler
 
 // FUNCTION: CARMA2_HW 0x00469a30
+// FUNCTION: CARMA2_SW 0x00469790
 int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
 
     return 0;
@@ -763,6 +795,7 @@ int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend) {
 // FRONTEND_GenericMenuHandler
 
 // FUNCTION: CARMA2_HW 0x0046c5c0
+// FUNCTION: CARMA2_SW 0x0046c2d0
 void C2_HOOK_FASTCALL FRONTEND_CreateMenuButton(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText) {
     float map_x;
     float map_y;
@@ -841,6 +874,7 @@ void C2_HOOK_FASTCALL FRONTEND_CreateMenuButton(tFrontend_brender_item* pFronten
 }
 
 // FUNCTION: CARMA2_HW 0x0046c970
+// FUNCTION: CARMA2_SW 0x0046c610
 int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
     char s[256];
     char s2[256];
@@ -947,6 +981,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046ccb0
+// FUNCTION: CARMA2_SW 0x0046c9a0
 int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     char s[256];
     tS8 i;
@@ -1034,6 +1069,7 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
 // FRONTEND_Main
 
 // FUNCTION: CARMA2_HW 0x0046e470
+// FUNCTION: CARMA2_SW 0x0046db10
 int C2_HOOK_FASTCALL ProcessInputString(void) {
     int len;
     int key;
@@ -1143,6 +1179,7 @@ void C2_HOOK_FASTCALL DodgyPause(tU32 pTime) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f5b0
+// FUNCTION: CARMA2_SW 0x0046ec60
 void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps) {
     float t;
     int i;
@@ -1181,6 +1218,7 @@ void C2_HOOK_FASTCALL ScrollCredits(void) {
 // LoadGameInFunc
 
 // FUNCTION: CARMA2_HW 0x0046f8a0
+// FUNCTION: CARMA2_SW 0x0046ef50
 br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
     br_pixelmap* map;
     br_actor* actor;
@@ -1550,6 +1588,7 @@ void C2_HOOK_FASTCALL PrepareAPO(int pActor_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x004708a0
+// FUNCTION: CARMA2_SW 0x0046ff50
 void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
     br_model *model;
     float map_left;

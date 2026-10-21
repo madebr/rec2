@@ -11,6 +11,7 @@
 #include <stdarg.h>
 
 // FUNCTION: CARMA2_HW 0x00537d60
+// FUNCTION: CARMA2_SW 0x00533400
 br_pixelmap* C2_HOOK_CDECL BrPixelmapAllocateSub(br_pixelmap* src, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h) {
     br_pixelmap* new;
     br_rectangle r;
@@ -27,6 +28,7 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapAllocateSub(br_pixelmap* src, br_int_32 x, 
 }
 
 // FUNCTION: CARMA2_HW 0x00537dc0
+// FUNCTION: CARMA2_SW 0x00533460
 void C2_HOOK_CDECL BrPixelmapFree(br_pixelmap* src) {
 
     CheckDispatch((br_device_pixelmap*)src);
@@ -47,6 +49,7 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapResize(br_pixelmap* src, br_int_32 width, b
 }
 
 // FUNCTION: CARMA2_HW 0x00537e20
+// FUNCTION: CARMA2_SW 0x005334c0
 br_pixelmap* C2_HOOK_CDECL BrPixelmapMatch(br_pixelmap* src, br_uint_8 match_type) {
     br_pixelmap *new;
 
@@ -300,6 +303,7 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapClone(br_pixelmap* src) {
 }
 
 // FUNCTION: CARMA2_HW 0x005382f0
+// FUNCTION: CARMA2_SW 0x00533990
 void C2_HOOK_CDECL BrPixelmapFill(br_pixelmap* dst, br_uint_32 colour) {
 
     CheckDispatch((br_device_pixelmap*)dst);
@@ -353,6 +357,7 @@ br_error C2_HOOK_STDCALL DispatchCopy(br_device_pixelmap* self, br_device_pixelm
 }
 
 // FUNCTION: CARMA2_HW 0x00538430
+// FUNCTION: CARMA2_SW 0x00533ad0
 br_error C2_HOOK_STDCALL DispatchRectangleCopy(br_device_pixelmap* self, br_point* p, br_device_pixelmap* src, br_rectangle* r) {
 
     CheckDispatch((br_device_pixelmap*)self);
@@ -397,6 +402,7 @@ br_error C2_HOOK_STDCALL DispatchRectangleStretchCopy(br_device_pixelmap* self, 
 }
 
 // FUNCTION: CARMA2_HW 0x00538590
+// FUNCTION: CARMA2_SW 0x00533c30
 void C2_HOOK_CDECL BrPixelmapRectangleCopy(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {
     br_rectangle r;
     br_point p;
@@ -429,6 +435,7 @@ void C2_HOOK_CDECL BrPixelmapRectangleStretchCopy(br_pixelmap* dst, br_int_32 dx
 }
 
 // FUNCTION: CARMA2_HW 0x00538640
+// FUNCTION: CARMA2_SW 0x00533ce0
 void C2_HOOK_CDECL BrPixelmapRectangleFill(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h, br_uint_32 colour) {
     br_rectangle r;
 
@@ -505,6 +512,7 @@ void C2_HOOK_CDECL BrPixelmapPixelSet(br_pixelmap* dst, br_int_32 x, br_int_32 y
 }
 
 // FUNCTION: CARMA2_HW 0x00538840
+// FUNCTION: CARMA2_SW 0x00533ee0
 br_uint_32 C2_HOOK_CDECL BrPixelmapPixelGet(br_pixelmap* dst, br_int_32 x, br_int_32 y) {
     br_point p;
     br_uint_32 colour;
@@ -518,6 +526,7 @@ br_uint_32 C2_HOOK_CDECL BrPixelmapPixelGet(br_pixelmap* dst, br_int_32 x, br_in
 }
 
 // FUNCTION: CARMA2_HW 0x00538880
+// FUNCTION: CARMA2_SW 0x00533f20
 void C2_HOOK_CDECL BrPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
 
     br_rectangle s;
@@ -546,6 +555,7 @@ void C2_HOOK_CDECL BrPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
 }
 
 // FUNCTION: CARMA2_HW 0x00538990
+// FUNCTION: CARMA2_SW 0x00534030
 void C2_HOOK_CDECL BrPixelmapLine(br_pixelmap* dst, br_int_32 x1, br_int_32 y1, br_int_32 x2, br_int_32 y2, br_uint_32 colour) {
     br_point s;
     br_point e;
@@ -570,6 +580,7 @@ void C2_HOOK_CDECL BrPixelmapDoubleBuffer(br_pixelmap* dst, br_pixelmap* src) {
 }
 
 // FUNCTION: CARMA2_HW 0x00538a10
+// FUNCTION: CARMA2_SW 0x005340b0
 void C2_HOOK_CDECL BrPixelmapText(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_uint_32 colour, br_font* font, char* text) {
     br_point p;
 
@@ -602,6 +613,7 @@ void C2_HOOK_CDECL BrPixelmapTextF(br_pixelmap* dst, br_int_32 x, br_int_32 y, b
 }
 
 // FUNCTION: CARMA2_HW 0x00538ad0
+// FUNCTION: CARMA2_SW 0x00534170
 br_uint_16 C2_HOOK_CDECL BrPixelmapTextWidth(br_pixelmap* dst, br_font* font, char* text) {
     int i;
     int j;
@@ -702,6 +714,7 @@ void C2_HOOK_CDECL BrPixelmapPaletteEntrySetMany(br_pixelmap* pm, br_int_32 inde
 }
 
 // FUNCTION: CARMA2_HW 0x00538d20
+// FUNCTION: CARMA2_SW 0x005343c0
 br_pixelmap* C2_HOOK_CDECL BrPixelmapDirectLock(br_pixelmap* src, br_boolean block) {
 
     CheckDispatch((br_device_pixelmap*)src);
@@ -713,6 +726,7 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapDirectLock(br_pixelmap* src, br_boolean blo
 }
 
 // FUNCTION: CARMA2_HW 0x00538d50
+// FUNCTION: CARMA2_SW 0x005343f0
 br_pixelmap* C2_HOOK_CDECL BrPixelmapDirectUnlock(br_pixelmap* src) {
 
     CheckDispatch((br_device_pixelmap*)src);

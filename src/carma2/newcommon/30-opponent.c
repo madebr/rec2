@@ -16,6 +16,7 @@ int gMinTimeOpponentRepair;
 int gMaxTimeOpponentRepair;
 
 // GLOBAL: CARMA2_HW 0x00691744
+// GLOBAL: CARMA2_SW 0x0068b79c
 int gNumber_of_cops_before_faffage;
 
 // FUNCTION: CARMA2_HW 0x004a8160
@@ -157,6 +158,7 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
 // ResetPredominantJobbies
 
 // FUNCTION: CARMA2_HW 0x004a9600
+// FUNCTION: CARMA2_SW 0x004a5770
 void C2_HOOK_FASTCALL LoadCopCars(void) {
 
     gProgram_state.AI_vehicles.number_of_cops = 0;
@@ -175,6 +177,7 @@ void C2_HOOK_FASTCALL LoadCopCars(void) {
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 
 // FUNCTION: CARMA2_HW 0x004ae790
+// FUNCTION: CARMA2_SW 0x004aa900
 int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
     switch (pCategory) {
     case eVehicle_self:

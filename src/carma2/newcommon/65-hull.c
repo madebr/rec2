@@ -1,9 +1,11 @@
 #include "65-hull.h"
 
 // GLOBAL: CARMA2_HW 0x0067942c
+// GLOBAL: CARMA2_SW 0x00673b9c
 tCollision_shape_polyhedron_data* gPolyhedron_to_sort;
 
 // GLOBAL: CARMA2_HW 0x00679420
+// GLOBAL: CARMA2_SW 0x00673b90
 br_vector3 gPhysics_reference_normal_comparison;
 
 // FUNCTION: CARMA2_HW 0x00420d60

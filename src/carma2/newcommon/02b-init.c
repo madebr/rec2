@@ -13,6 +13,7 @@
 #include <stdio.h>
 
 // GLOBAL: CARMA2_HW 0x00762284
+// GLOBAL: CARMA2_SW 0x007587e4
 int gDemo;
 
 // GLOBAL: CARMA2_HW 0x0074d354
@@ -32,6 +33,7 @@ void C2_HOOK_FASTCALL CheckTimedDemo(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047e560
+// FUNCTION: CARMA2_SW 0x0047e6f0
 void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void) {
     br_camera* camera_data;
 
@@ -51,6 +53,7 @@ void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047e500
+// FUNCTION: CARMA2_SW 0x0047e690
 void C2_HOOK_FASTCALL AllocateStandardLamp(void) {
     int i;
 
@@ -68,6 +71,7 @@ void C2_HOOK_FASTCALL AllocateStandardLamp(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047e320
+// FUNCTION: CARMA2_SW 0x0047e4b0
 void C2_HOOK_FASTCALL AllocateActors(void) {
     int i;
 
@@ -91,6 +95,7 @@ void C2_HOOK_FASTCALL AllocateActors(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047e3b0
+// FUNCTION: CARMA2_SW 0x0047e540
 void C2_HOOK_FASTCALL AllocateCamera(void) {
     br_camera* camera_ptr;
     int i;

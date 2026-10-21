@@ -7,6 +7,7 @@
 #include "c2_stdlib.h"
 
 // FUNCTION: CARMA2_HW 0x00527fd0
+// FUNCTION: CARMA2_SW 0x00523670
 br_resource_class* C2_HOOK_CDECL BrResClassAdd(br_resource_class* rclass) {
     br_resource_class* r;
 

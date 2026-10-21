@@ -1,9 +1,11 @@
 #if 0
 
 // LIBRARY: CARMA2_HW 0x0054d036
+// LIBRARY: CARMA2_SW 0x005486dc
 // _DirectSoundCreate@12
 
 // LIBRARY: CARMA2_HW 0x0054d03c
+// LIBRARY: CARMA2_SW 0x005486e2
 // _DirectInputCreateA@16
 
 #endif

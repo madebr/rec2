@@ -3,6 +3,7 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x005964c0
+// GLOBAL: CARMA2_SW 0x00591404
 int gPling_materials = 1;
 
 // GLOBAL: CARMA2_HW 0x00686190
@@ -54,6 +55,7 @@ int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_mat
 }
 
 // FUNCTION: CARMA2_HW 0x0045ca60
+// FUNCTION: CARMA2_SW 0x0045c4a0
 void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* pNormal, br_scalar* pT, br_material** pMaterial, br_actor** pActor) {
     int group;
 
@@ -72,12 +74,14 @@ void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_
 }
 
 // FUNCTION: CARMA2_HW 0x0045d5c0
+// FUNCTION: CARMA2_SW 0x0045d000
 void C2_HOOK_FASTCALL EnablePlingMaterials(void) {
 
     gPling_materials = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0045d5d0
+// FUNCTION: CARMA2_SW 0x0045d010
 void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
     gPling_materials = 0;

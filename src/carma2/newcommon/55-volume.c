@@ -14,6 +14,7 @@
 tSpecial_volume gDefault_default_water_spec_vol;
 
 // GLOBAL: CARMA2_HW 0x00761f44
+// GLOBAL: CARMA2_SW 0x007584a4
 tSpecial_volume* gDefault_water_spec_vol_real;
 
 // GLOBAL: CARMA2_HW 0x00660268
@@ -60,6 +61,7 @@ void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject) {
 // TestAutoSpecialVolume
 
 // FUNCTION: CARMA2_HW 0x004ff8d0
+// FUNCTION: CARMA2_SW 0x004fb1b0
 void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
     char s[256];
 
@@ -108,6 +110,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
 // SaveSpecialVolumes
 
 // FUNCTION: CARMA2_HW 0x004ffd20
+// FUNCTION: CARMA2_SW 0x004fb600
 void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
     br_bounds bnds;
 

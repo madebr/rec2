@@ -171,6 +171,7 @@ br_device_pixelmap* C2_HOOK_STDCALL DevicePixelmapMemAllocate(br_uint_8 type, br
 }
 
 // FUNCTION: CARMA2_HW 0x00539730
+// FUNCTION: CARMA2_SW 0x00534dd0
 void C2_HOOK_STDCALL CheckDispatch(br_device_pixelmap* pm) {
     if (pm->dispatch == NULL) {
         pm->dispatch = &devicePixelmapDispatch;

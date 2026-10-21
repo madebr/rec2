@@ -5,6 +5,7 @@
 #include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x0075b8f8
+// GLOBAL: CARMA2_SW 0x00751e58
 br_pixelmap* gDigits_pix;
 
 // SendShapeNumbers
@@ -89,6 +90,7 @@ void C2_HOOK_FASTCALL InitNetHeadups(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049a730
+// FUNCTION: CARMA2_SW 0x004968b0
 void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
 
     if (gDigits_pix != NULL) {
@@ -141,11 +143,13 @@ void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
 // SendGameplayToHost
 
 // FUNCTION: CARMA2_HW 0x0049bd00
+// FUNCTION: CARMA2_SW 0x00497e80
 void C2_HOOK_FASTCALL InitNetGameplayStuff(void) {
 
 }
 
 // FUNCTION: CARMA2_HW 0x0049bd10
+// FUNCTION: CARMA2_SW 0x00497e90
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
     NetObtainSystemUserName(gProgram_state.player_name, 32);

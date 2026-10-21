@@ -238,6 +238,7 @@ const char* ChunkNames[CHUNKNAMES_NB] = {
 int DatafileStackTop;
 
 // FUNCTION: CARMA2_HW 0x00529ff0
+// FUNCTION: CARMA2_SW 0x00524b80
 void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count) {
 
     if (DatafileStackTop >= BR_ASIZE(DatafileStack)) {
@@ -250,6 +251,7 @@ void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a040
+// FUNCTION: CARMA2_SW 0x00524bd0
 void* C2_HOOK_STDCALL DfPop(int type, int* countp) {
 
     if (DatafileStackTop <= 0) {
@@ -266,6 +268,7 @@ void* C2_HOOK_STDCALL DfPop(int type, int* countp) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a0b0
+// FUNCTION: CARMA2_SW 0x00524c40
 void* C2_HOOK_STDCALL DfTop(int type, int* countp) {
     if (DatafileStackTop <= 0)
         BrFailure("DatafileStack Underflow");
@@ -277,6 +280,7 @@ void* C2_HOOK_STDCALL DfTop(int type, int* countp) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a120
+// FUNCTION: CARMA2_SW 0x00524cb0
 int C2_HOOK_STDCALL DfTopType(void) {
     if (DatafileStackTop <= 0) {
         return 0;
@@ -1455,6 +1459,7 @@ int C2_HOOK_STDCALL DfSkipBinary(br_datafile* df, br_uint_32 length) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c990
+// FUNCTION: CARMA2_SW 0x00527520
 int C2_HOOK_STDCALL DfChunksInterpret(br_datafile* df, br_chunks_table* table) {
     br_uint_32 length;
     br_uint_32 count;
@@ -1513,6 +1518,7 @@ int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052ca50
+// FUNCTION: CARMA2_SW 0x005275e0
 br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar_type) {
     int mode;
     br_datafile* df;
@@ -1549,6 +1555,7 @@ br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar
 }
 
 // FUNCTION: CARMA2_HW 0x0052cb80
+// FUNCTION: CARMA2_SW 0x00527710
 void C2_HOOK_STDCALL DfClose(br_datafile* df) {
     br_datafile* dfp;
 

@@ -86,6 +86,7 @@ br_uint_8 _CombineTransforms[7][7] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00531870
+// FUNCTION: CARMA2_SW 0x0052cf10
 void C2_HOOK_CDECL BrTransformToMatrix34(br_matrix34* mat, const br_transform* xform) {
 
     switch (xform->type) {
@@ -169,6 +170,7 @@ void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, const br_transform* 
 }
 
 // FUNCTION: CARMA2_HW 0x00531ba0
+// FUNCTION: CARMA2_SW 0x0052d240
 void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, const br_transform* xform) {
     br_matrix34 tmp;
 

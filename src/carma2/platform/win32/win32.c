@@ -42,6 +42,7 @@ typedef LONG LSTATUS;
 #endif
 
 // GLOBAL: CARMA2_HW 0x00662200
+// GLOBAL: CARMA2_SW 0x006a6c54
 int gDefault_spec_index = 1;
 
 // GLOBAL: CARMA2_HW 0x00662204
@@ -54,9 +55,11 @@ tGraf_spec gGraf_specs[2] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00762324
+// GLOBAL: CARMA2_SW 0x00758884
 int gGraf_spec_index;
 
 // GLOBAL: CARMA2_HW 0x0074ca60
+// GLOBAL: CARMA2_SW 0x007430c4
 int gNbPixelBits;
 
 // GLOBAL: CARMA2_HW 0x0074ca94
@@ -67,19 +70,24 @@ int gUnknown_int_0074cf48;
 
 
 // GLOBAL: CARMA2_HW 0x006acc88
+// GLOBAL: CARMA2_SW 0x006a6428
 char gFatalErrorMessage[512];
 
 // GLOBAL: CARMA2_HW 0x006ad498
+// GLOBAL: CARMA2_SW 0x006a6c28
 int gIsFatalError;
 
 // GLOBAL: CARMA2_HW 0x006ad494
+// GLOBAL: CARMA2_SW 0x006a6c24
 int gExit_code;
 
 
 // GLOBAL: CARMA2_HW 0x006ad4c8
+// GLOBAL: CARMA2_SW 0x006a6c50
 void *gHWnd;
 
 // GLOBAL: CARMA2_HW 0x006621e0
+// GLOBAL: CARMA2_SW 0x0065cacc
 int gWindowActiveState = 2; // FIXME: enum: 0, 1 or 2
 
 
@@ -87,15 +95,18 @@ int gWindowActiveState = 2; // FIXME: enum: 0, 1 or 2
 int gWindowMovingResizing;
 
 // GLOBAL: CARMA2_HW 0x006acea0
+// GLOBAL: CARMA2_SW 0x006a6640
 LPDIRECTINPUTDEVICEA gDirectInputDevice;
 
 // GLOBAL: CARMA2_HW 0x006621dc
 char *gRenderer = "3DFX_WIN";
 
 // GLOBAL: CARMA2_HW 0x006ad488
+// GLOBAL: CARMA2_SW 0x006a6c18
 int gMouseLButtonDown;
 
 // GLOBAL: CARMA2_HW 0x006ad48c
+// GLOBAL: CARMA2_SW 0x006a6c1c
 int gMouseRButtonDown;
 
 // GLOBAL: CARMA2_HW 0x006ad490
@@ -121,6 +132,7 @@ int gScreenHeight;
 
 
 // GLOBAL: CARMA2_HW 0x006ad4b0
+// GLOBAL: CARMA2_SW 0x006a6c40
 int gKeyboardBufferLength;
 
 // GLOBAL: CARMA2_HW 0x006ace88
@@ -130,15 +142,19 @@ unsigned char gKeyboardBuffer[20];
 int gPerformanceCounterInitialized;
 
 // GLOBAL: CARMA2_HW 0x006acc80
+// GLOBAL: CARMA2_SW 0x006a6420
 LARGE_INTEGER gPerformanceCounterStart;
 
 // GLOBAL: CARMA2_HW 0x006acc68
+// GLOBAL: CARMA2_SW 0x006a61b0
 LARGE_INTEGER gPerformanceCounterFrequency_s;
 
 // GLOBAL: CARMA2_HW 0x006ad1f0
+// GLOBAL: CARMA2_SW 0x006a6990
 LARGE_INTEGER gPerformanceCounterFrequency_ms;
 
 // GLOBAL: CARMA2_HW 0x006ac858
+// GLOBAL: CARMA2_SW 0x006a5da8
 LARGE_INTEGER gPerformanceCounterFrequency_us;
 
 
@@ -179,6 +195,7 @@ HPALETTE gPDPalette;
 SYSTEM_INFO gSystem_info;
 
 // GLOBAL: CARMA2_HW 0x0068c830
+// GLOBAL: CARMA2_SW 0x0067c6e8
 DWORD gPage_size;
 
 // GLOBAL: CARMA2_HW 0x00681fa0
@@ -269,6 +286,7 @@ void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051b9f0
+// FUNCTION: CARMA2_SW 0x005157c0
 void C2_HOOK_FASTCALL PDInitialiseSystem(void) {
     gBack_screen = NULL;
     gScreen = NULL;
@@ -278,11 +296,13 @@ void C2_HOOK_FASTCALL PDInitialiseSystem(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c6f0
+// FUNCTION: CARMA2_SW 0x00517920
 void C2_HOOK_FASTCALL PDSetFileVariables(void) {
     gDir_separator = "\\";
 }
 
 // FUNCTION: CARMA2_HW 0x0051c700
+// FUNCTION: CARMA2_SW 0x00517930
 void C2_HOOK_FASTCALL PDBuildAppPath(char *pThe_path) {
     GetCurrentDirectoryA(253, pThe_path);
     GetShortPathNameA(pThe_path, pThe_path, 253);
@@ -291,6 +311,7 @@ void C2_HOOK_FASTCALL PDBuildAppPath(char *pThe_path) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051af20
+// FUNCTION: CARMA2_SW 0x005149a0
 void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char *pThe_str) {
     const char *str1;
     const char *str2;
@@ -327,6 +348,7 @@ void C2_HOOK_FASTCALL PDNonFatalError(const char *pThe_str) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051afd0
+// FUNCTION: CARMA2_SW 0x00514c50
 int C2_HOOK_FASTCALL PDIsWindowInactive(void) {
 
     return gWindowActiveState == 1;
@@ -347,6 +369,7 @@ char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051b040
+// FUNCTION: CARMA2_SW 0x00514cd0
 int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
     unsigned int key;
 
@@ -364,6 +387,7 @@ int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051b0a0
+// FUNCTION: CARMA2_SW 0x00514f60
 void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void) {
 
     dr_dprintf("KEYBOARD BUFFER CLEARED");
@@ -371,6 +395,7 @@ void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c110
+// FUNCTION: CARMA2_SW 0x00515ee0
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
     // GLOBAL: CARMA2_HW 0x006ad4d8
     static int been_here;
@@ -440,6 +465,7 @@ void DeActivateApp(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051b0c0
+// FUNCTION: CARMA2_SW 0x00514f80
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     PAINTSTRUCT paint;
     POINT point;
@@ -561,6 +587,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 }
 
 // FUNCTION: CARMA2_HW 0x0051cab0
+// FUNCTION: CARMA2_SW 0x00517d40
 int C2_HOOK_FASTCALL PDGetASCIIFromKey(int pKey) {
     if (PDKeyDown(0)) {
         return gASCII_shift_table[pKey];
@@ -570,6 +597,7 @@ int C2_HOOK_FASTCALL PDGetASCIIFromKey(int pKey) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051d500
+// FUNCTION: CARMA2_SW 0x00518cf0
 int C2_HOOK_FASTCALL PDCheckDriveExists2(const char *pThe_path, const char *pFile_name, tU32 pMin_size) {
     char the_path[256];
     tU32 file_size;
@@ -622,6 +650,7 @@ int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c850
+// FUNCTION: CARMA2_SW 0x00517c40
 void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap *pPalette, int pFirst_colour, int pCount) {
     int i;
     PALETTEENTRY colours[256];
@@ -641,22 +670,26 @@ void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap *pPalette, int pFirst_colo
 }
 
 // FUNCTION: CARMA2_HW 0x0051c840
+// FUNCTION: CARMA2_SW 0x00517bf0
 void C2_HOOK_FASTCALL PDSetPalette(br_pixelmap *pixelmap) {
     BrPixelmapPaletteSet(gScreen, pixelmap);
 }
 
 // FUNCTION: CARMA2_HW 0x0051cbe0
+// FUNCTION: CARMA2_SW 0x00517fb0
 int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call) {
     SDL3ServiceMessages();
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0051c520
+// FUNCTION: CARMA2_SW 0x00517210
 void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only) {
     BrPixelmapDoubleBuffer(gScreen, gBack_screen);
 }
 
 // FUNCTION: CARMA2_HW 0x0051d7c0
+// FUNCTION: CARMA2_SW 0x00518e30
 void C2_HOOK_FASTCALL PDInitTimer(void) {
     LARGE_INTEGER freq;
     LARGE_INTEGER current_count;
@@ -674,6 +707,7 @@ void C2_HOOK_FASTCALL PDInitTimer(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051d410
+// FUNCTION: CARMA2_SW 0x00518cb0
 tU32 C2_HOOK_FASTCALL PDGetTotalTime(void) {
     LARGE_INTEGER perfCountValue;
     LARGE_INTEGER delta;
@@ -687,6 +721,7 @@ tU32 C2_HOOK_FASTCALL PDGetTotalTime(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051d990
+// FUNCTION: CARMA2_SW 0x00519000
 int C2_HOOK_FASTCALL PDGetMicroseconds(void) {
     if (gPerformanceCounterInitialized) {
         LARGE_INTEGER perfCountValue;
@@ -706,6 +741,7 @@ void C2_HOOK_FASTCALL PDEnterDebugger(const char *pStr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051d4b0
+// FUNCTION: CARMA2_SW 0x00518cd0
 int C2_HOOK_FASTCALL PDFileUnlock(const char *pThe_path) {
     DWORD dwAttributes;
 
@@ -717,6 +753,7 @@ int C2_HOOK_FASTCALL PDFileUnlock(const char *pThe_path) {
 }
 
 // FUNCTION: CARMA2_HW 0x00486c30
+// FUNCTION: CARMA2_SW 0x00483d70
 void C2_HOOK_FASTCALL PDEnumPath(const char *path, tEnumPathCallback pCallback, void *data) {
     char originalCurrentDirectory[MAX_PATH];
     tPath_name filePath;
@@ -761,12 +798,14 @@ void C2_HOOK_FASTCALL PDEnumPath(const char *path, tEnumPathCallback pCallback, 
 }
 
 // FUNCTION: CARMA2_HW 0x00486c20
+// FUNCTION: CARMA2_SW 0x00483d60
 int C2_HOOK_FASTCALL PDmkdir(const char *path) {
 
     return c2_mkdir(path);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c9f0
+// FUNCTION: CARMA2_SW 0x0044c7a0
 void C2_HOOK_FASTCALL MAMSUnlock(void **pPtr) {
     void *mem = *pPtr;
     if (mem == NULL) {
@@ -777,10 +816,12 @@ void C2_HOOK_FASTCALL MAMSUnlock(void **pPtr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044ca30
+// FUNCTION: CARMA2_SW 0x0044c7e0
 void C2_HOOK_FASTCALL MAMSLock(void **pPtr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051d640
+// FUNCTION: CARMA2_SW 0x00517a70
 void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char *pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     char found_path[256];
     WIN32_FIND_DATAA find_data;
@@ -815,6 +856,7 @@ void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char *pThe_path, tPDForEveryFi
 }
 
 // FUNCTION: CARMA2_HW 0x0051c760
+// FUNCTION: CARMA2_SW 0x00517990
 void C2_HOOK_FASTCALL PDForEveryFile(const char *pThe_path, tPDForEveryFile_cbfn pAction_routine) {
     char found_path[256];
     WIN32_FIND_DATAA find_data;
@@ -861,6 +903,7 @@ void C2_HOOK_FASTCALL PDGetCurrentTime(char *pTimeStr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051db00
+// FUNCTION: CARMA2_SW 0x005191a0
 int C2_HOOK_FASTCALL PDGetMouseClickPosition(int *pX_coord, int *pY_coord) {
     if (!gCursorPos_LastClick_Valid) {
         gCursorPos_LastClick_Valid = 0;
@@ -873,6 +916,7 @@ int C2_HOOK_FASTCALL PDGetMouseClickPosition(int *pX_coord, int *pY_coord) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c5f0
+// FUNCTION: CARMA2_SW 0x00517610
 static void C2_HOOK_CDECL OnWarnCallback(char *text) {
     dr_dprintf("*******************************************************************************");
     dr_dprintf("BRender WARNING: '%s'", text);
@@ -880,6 +924,7 @@ static void C2_HOOK_CDECL OnWarnCallback(char *text) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c620
+// FUNCTION: CARMA2_SW 0x00517640
 static void C2_HOOK_CDECL OnErrorCallback(char *text) {
     const char *msg;
 
@@ -906,6 +951,7 @@ static void C2_HOOK_CDECL OnErrorCallback(char *text) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c6c0
+// FUNCTION: CARMA2_SW 0x005178f0
 void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
     gPD_error_handler.identifier = "LlantisilioBlahBlahBlahOgOgOch";
     gPD_error_handler.warning = OnWarnCallback;
@@ -914,6 +960,7 @@ void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c290
+// FUNCTION: CARMA2_SW 0x00516170
 int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char **pArgv) {
     gGraf_spec_index = gDefault_spec_index;
 #ifdef REC2_MATCHING
@@ -925,14 +972,17 @@ int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char **pArgv) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c270
+// FUNCTION: CARMA2_SW 0x00516150
 void C2_HOOK_FASTCALL PDSaveOriginalPalette(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c2b0
+// FUNCTION: CARMA2_SW 0x00516190
 void C2_HOOK_FASTCALL PDInitScreen(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c300
+// FUNCTION: CARMA2_SW 0x00516420
 void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     dr_dprintf("PDAllocateScreenAndBack() - START...");
 
@@ -1031,10 +1081,12 @@ void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c280
+// FUNCTION: CARMA2_SW 0x00516160
 void C2_HOOK_FASTCALL PDRevertPalette(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c8e0
+// FUNCTION: CARMA2_SW 0x00517cb0
 void C2_HOOK_FASTCALL PDMouseButtons(int *pLeftButtonDown, int *pRightButtonDown) {
     *pLeftButtonDown = gMouseLButtonDown;
     if (pRightButtonDown != NULL) {
@@ -1107,6 +1159,7 @@ void C2_HOOK_FASTCALL PDPageInProcessMemory(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051d4d0
+// FUNCTION: CARMA2_SW 0x00519090
 void C2_HOOK_FASTCALL PDFileDelete(const char *pPath, int pIgnore_read_only) {
     if (pIgnore_read_only) {
         DWORD flags = GetFileAttributesA(pPath);

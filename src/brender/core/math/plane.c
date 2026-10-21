@@ -5,6 +5,7 @@
 #include "c2_math.h"
 
 // FUNCTION: CARMA2_HW 0x00536fb0
+// FUNCTION: CARMA2_SW 0x00532650
 br_int_32 C2_HOOK_CDECL BrPlaneEquation(br_vector4* eqn, const br_vector3* v0, const br_vector3* v1, const br_vector3* v2) {
     float ax;
     float ay;

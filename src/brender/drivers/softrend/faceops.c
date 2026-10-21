@@ -280,6 +280,7 @@ void C2_HOOK_CDECL OpLineClip(brp_block* block, brp_vertex* v0, brp_vertex* v1) 
 }
 
 // FUNCTION: CARMA2_HW 0x00545c40
+// FUNCTION: CARMA2_SW 0x005412e0
 void C2_HOOK_STDCALL SubdivideSetThreshold(br_int_32 subdivide_tolerance) {
 
     rend.subdivide_threshold = 1.f / (1.25f - 0.002f * (float)subdivide_tolerance);

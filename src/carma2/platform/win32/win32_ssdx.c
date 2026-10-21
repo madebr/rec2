@@ -41,9 +41,11 @@ LPDIRECTDRAWSURFACE gAttached_surface;
 LPDIRECTDRAWCLIPPER gDirectDrawClipper;
 
 // GLOBAL: CARMA2_HW 0x006aaa14
+// GLOBAL: CARMA2_SW 0x006a4464
 LPDIRECTDRAW gDirectDraw;
 
 // GLOBAL: CARMA2_HW 0x006aaa18
+// GLOBAL: CARMA2_SW 0x006a4468
 LPDIRECTDRAW2 gDirectDraw2;
 
 // GLOBAL: CARMA2_HW 0x006aaa04
@@ -75,6 +77,7 @@ int gSSDXPitch;
 
 
 // FUNCTION: CARMA2_HW 0x00500070
+// FUNCTION: CARMA2_SW 0x004fb950
 HRESULT CALLBACK LocalEnumAttachedSurfacesCallback(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext) {
     int* counter = lpContext;
     dr_dprintf("LocalEnumAttachedSurfacesCallback(): Enum-ing attached surface #%d, address 0x%p", *counter, lpSurface);
@@ -83,6 +86,7 @@ HRESULT CALLBACK LocalEnumAttachedSurfacesCallback(LPDIRECTDRAWSURFACE lpSurface
 }
 
 // FUNCTION: CARMA2_HW 0x005000a0
+// FUNCTION: CARMA2_SW 0x004fb980
 void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch) {
     DDSURFACEDESC desc;
     HRESULT res;
@@ -193,6 +197,7 @@ void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 }
 
 // FUNCTION: CARMA2_HW 0x00500500
+// FUNCTION: CARMA2_SW 0x004fbde0
 int C2_HOOK_FASTCALL SSDXStart(void *p_hWnd, int p_DirectDraw, int p_EnumerateDDX, int p_flags) {
     HRESULT hRes;
 
@@ -224,6 +229,7 @@ int C2_HOOK_FASTCALL SSDXStart(void *p_hWnd, int p_DirectDraw, int p_EnumerateDD
 }
 
 // FUNCTION: CARMA2_HW 0x00500590
+// FUNCTION: CARMA2_SW 0x004fbef0
 void C2_HOOK_FASTCALL SSDXStop(void) {
 
     SSDXUnlockAttachedSurface();
@@ -270,6 +276,7 @@ void C2_HOOK_FASTCALL SSDXStop(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x005006d0
+// FUNCTION: CARMA2_SW 0x004fc030
 void C2_HOOK_FASTCALL SSDXRelease(void) {
 
     if (gDirectDraw2 != NULL) {
@@ -290,6 +297,7 @@ void C2_HOOK_FASTCALL SSDXRelease(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00500760
+// FUNCTION: CARMA2_SW 0x004fc0c0
 void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, int* pPitch) {
     HRESULT result;
 
@@ -404,6 +412,7 @@ error:
 }
 
 // FUNCTION: CARMA2_HW 0x00500b40
+// FUNCTION: CARMA2_SW 0x004fc4a0
 void C2_HOOK_FASTCALL SSDXUnlockAttachedSurface(void) {
 
     if (gAttached_surface_locked) {
@@ -472,6 +481,7 @@ void C2_HOOK_FASTCALL SSDXSetPrimaryPalette(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00500cf0
+// FUNCTION: CARMA2_SW 0x004fc650
 void C2_HOOK_FASTCALL SSDXWindowPosOrSizeChanged(HWND pHwnd) {
 
     if (gUse_DirectDraw) {
