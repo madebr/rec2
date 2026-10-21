@@ -444,7 +444,11 @@ void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysic
     }
 }
 
-// PositionChildren
+// FUNCTION: CARMA2_HW 0x004c2b10
+void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
+
+    InternalPositionChildren(pCollision_info, pCollision_info);
+}
 
 // ApplyTorque
 
