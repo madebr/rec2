@@ -438,7 +438,9 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 
 // ApplySplitWeld
 
-// ApplyBend
+// FUNCTION: CARMA2_HW 0x004c9930
+void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk) {
+}
 
 // ApplyUnBend
 
