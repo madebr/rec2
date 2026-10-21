@@ -840,7 +840,14 @@ void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec) {
 
 // ARUndoCrush
 
-// ARCompressModelMash
+// FUNCTION: CARMA2_HW 0x0043bf30
+void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* pModel, br_vector3* pSrc) {
+    tU16 i;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        CompressVector3(&pDest[i], &pSrc[i], -10.0f, 10.0f);
+    }
+}
 
 // ARApplyModelMash
 
