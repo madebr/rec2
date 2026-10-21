@@ -49,27 +49,60 @@ runs:
         python -m pip -q install "reccmp${{ (inputs.reccmp-version != '' && format('=={0}', inputs.reccmp-version)) || '' }}"
     - name: 'Calculate variables'
       id: calc
-      shell: sh
+      shell: python
       run: |
-        case "${{ runner.os }}" in
-          "Windows")
-            unix_temp_path="$(cygpath -u '${{ runner.temp }}')"
-            ;;
-          *)
-            unix_temp_path="${{ runner.temp }}"
-            ;;
-        esac
-        safe_temp_path="$(echo '${{ runner.temp }}' | sed -e 's#[\]#/#g')"
-        safe_comment_payload_path="$(echo '${{ inputs.comment-payload-path }}' | sed -e 's#[\]#/#g')"
+        import os
+        import re
+        import subprocess
 
-        echo "unix-temp-path=${unix_temp_path}" >> ${GITHUB_OUTPUT}
-        echo "safe-temp-path=${safe_temp_path}" >> ${GITHUB_OUTPUT}
-        echo "gist-hash=$(echo '${{ inputs.gist-repo }}' | sed -nEe 's#[^/]+/##p')" >> ${GITHUB_OUTPUT}
-        echo "comment-payload-path=${safe_comment_payload_path}" >> ${GITHUB_OUTPUT}
-    - name: 'Fetch previous ${{ inputs.target }} json'
+        runner_temp = """
+        ${{ runner.temp }}
+        """.strip()
+
+        safe_comment_payload_path = """
+        ${{ comment-payload-path }}
+        """.strip().replace("\\", "/")
+
+        gist_repo = """
+        ${{ inputs.gist-repo }}
+        """.strip()
+        gist_owner, gist_hash = gist_repo.split("/", 1)
+
+        targets_str = """
+        ${{ inputs.targets }}
+        """.strip()
+        targets = re.split(f"\s+", targets_str)
+        symbol_counts_str = """
+        ${{ inputs.symbol-counts }}
+        """.strip()
+        symbol_counts = [int(v) for v in re.split(f"\s+", symbol_counts_str)]
+
+        if len(targets) != len(symbol_counts):
+          raise ValueError(f"Number of targets is not equal to number of symbols: targets={','.join(targets)}, symbols={','.join(str(v) for v in symbol_counts)}")
+
+        for target, symbol_count in zip(targets, symbol_counts):
+          with open(os.environ["GITHUB_ENV"], "a") as github_env:
+            print(f"{target}_SYMBOL_COUNT={symbol_count}", file=github_env)
+
+        match "${{ runner.os }}":
+          case "Windows":
+            unix_temp_path = subprocess.check_output(["cygpath", "-u", runner_temp], text=True).strip()
+          case _:
+            unix_temp_path = runner_temp
+        safe_temp_path = runner_tep.replace("\\", "/")
+        safe_comment_payload_path = comment_payload_path.replace("\\", "/")
+
+        with open(os.environ["GITHUB_OUTPUT"], "a") as github_output:
+          print(f"unix-temp-path={unix_temp_path}", file=github_output)
+          print(f"safe-temp-path={safe_temp_path}", file=github_output)
+          print(f"gist-hash={gist_hash}", file=github_output)
+          print(f"comment-payload-path={safe_comment_payload_path}", file=github_output)
+    - name: 'Fetch previous jsons'
       shell: sh
       run: |
-        curl -fLSs -o "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}-old.json" https://gist.githubusercontent.com/${{ inputs.gist-repo }}/raw/${{ inputs.target }}.json
+        for target in ${{ input.targets }}; do
+          curl -fLSs -o "${{ steps.calc.outputs.unix-temp-path }}/${target}-old.json" https://gist.githubusercontent.com/${{ inputs.gist-repo }}/raw/${target}.json
+        done
     - name: 'Detect originals'
       if: ${{ inputs.original-search-path != '' }}
       shell: sh
@@ -79,14 +112,16 @@ runs:
       shell: sh
       run: |
         ${{ (inputs.working-directory && format('cd "{0}"', inputs.working-directory)) || '' }}
-        reccmp-reccmp --no-color --target ${{ inputs.target }} \
-          --diff "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}-old.json" \
-          --json  "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.json" \
-          --json-diet \
-          -T "${{ inputs.symbol-count }}" \
-          -H "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.html" \
-          -S "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.svg" \
-          >${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt
+        for target in ${{ input.targets }}; do
+          reccmp-reccmp --no-color --target ${target} \
+            --diff "${{ steps.calc.outputs.unix-temp-path }}/${target}-old.json" \
+            --json "${{ steps.calc.outputs.unix-temp-path }}/${target}.json" \
+            --json-diet \
+            -T "${${target}_SYMBOL_COUNT}" \
+            -H "${{ steps.calc.outputs.unix-temp-path }}/${target}.html" \
+            -S "${{ steps.calc.outputs.unix-temp-path }}/${target}.svg" \
+            >${{ steps.calc.outputs.unix-temp-path }}/${target}.txt
+        done
     - name: 'Update gist'
       if: ${{ inputs.gist-token != '' && github.event_name == 'push' && github.repository == inputs.root-repo && github.event.ref == format('refs/heads/{0}', inputs.root-branch) }}
       uses: actions/github-script@main
@@ -100,29 +135,39 @@ runs:
             branch: '${{ github.ref }}',
             sha: '${{ github.sha }}',
           };
+          targets = "${{ inputs.targets }}".split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } );
+          upload_gist_files = {
+            'commit.json': { content: JSON.stringify(commit_info), },
+          };
+          targets.forEach((target) => {
+            upload_gist_files[`${target}.json`] = { content: fs.readFileSync(`${{ steps.calc.outputs.safe-temp-path }}/${target}.json`, 'utf8'),  };
+            upload_gist_files[`${target}.svg`] =  { content: fs.readFileSync(`${{ steps.calc.outputs.safe-temp-path }}/${target}.svg`,  'utf8'),  };
+            upload_gist_files[`${target}.html`] = { content: fs.readFileSync(`${{ steps.calc.outputs.safe-temp-path }}/${target}.html`, 'utf8'),  };
+            upload_gist_files[`${target}.txt`] =  { content: fs.readFileSync(`${{ steps.calc.outputs.safe-temp-path }}/${target}.txt`,  'utf8'),  };
+          });
           await github.rest.gists.update({
             gist_id: '${{ steps.calc.outputs.gist-hash }}',
-            files: {
-              'commit.json': { content: JSON.stringify(commit_info), },
-              '${{ inputs.target }}.json': { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.json', 'utf8'),  },
-              '${{ inputs.target }}.svg':  { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.svg',  'utf8'),  },
-              '${{ inputs.target }}.html': { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.html', 'utf8'),  },
-              '${{ inputs.target }}.txt':  { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.txt',  'utf8'),  },
-            },
+            files: upload_gist_files,
           });
     - name: 'Show progress'
       shell: sh
       run:
-        cat "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt"
+        for target in ${{ input.targets }}; do
+          echo "target ${target}"
+          cat "${{ steps.calc.outputs.unix-temp-path }}/${target}.txt"
+          echo "========"
+        done
     - name: 'Create comment payload'
       if: ${{ github.event_name == 'pull_request' }}
       shell: sh
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        cat <<EOF >${{ steps.calc.outputs.comment-payload-path }}
-        ## reccmp report
-        \`\`\`
-        $(cat ${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt)
-        \`\`\`
-        EOF
+        payload_path="${{ steps.calc.outputs.comment-payload-path }}"
+        echo "# reccmp report" >>${payload_path}
+        for target in ${{ input.targets }} do
+          echo "## ${target}" >>${payload_path}
+          echo '```' >>${payload_path}
+          cat ${{ steps.calc.outputs.unix-temp-path }}/${target}.txt >>${payload_path}
+          echo '```' >>${payload_path}
+        done
