@@ -1,6 +1,9 @@
 #include "53-controls.h"
 
+#include "15-displays.h"
+#include "41-utility.h"
 #include "70-packfile.h"
+#include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -167,7 +170,16 @@ void C2_HOOK_FASTCALL F12Key(void) {
 
 // CycleInvulnerability
 
-// ToggleTimerFreeze
+// FUNCTION: CARMA2_HW 0x00444590
+void C2_HOOK_FASTCALL ToggleTimerFreeze(void) {
+
+    gFreeze_timer = !gFreeze_timer;
+    if (gFreeze_timer) {
+        NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_timer_frozen));
+    } else {
+        NewTextHeadupSlot(4, 0, 1000, -4, "Timer thawed out");
+    }
+}
 
 // EarnDosh
 

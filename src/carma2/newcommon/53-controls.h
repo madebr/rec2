@@ -131,7 +131,7 @@ extern void C2_HOOK_FASTCALL F12Key(void);
 
 // CycleInvulnerability
 
-// ToggleTimerFreeze
+extern void C2_HOOK_FASTCALL ToggleTimerFreeze(void);
 
 // EarnDosh
 
