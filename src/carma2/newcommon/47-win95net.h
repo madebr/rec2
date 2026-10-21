@@ -36,7 +36,7 @@ extern int C2_HOOK_FASTCALL PDNetHostGame(tNet_game_details* pDetails, char* pHo
 
 // SetForRecieve
 
-// PDNetSetPlayerSystemInfo
+extern void C2_HOOK_FASTCALL PDNetSetPlayerSystemInfo(tNet_game_player_info* pPlayer, void* pSender_address);
 
 // PDNetGetHeaderSize
 
