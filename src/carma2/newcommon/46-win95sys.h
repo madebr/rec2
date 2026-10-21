@@ -2,6 +2,7 @@
 #define GUARD_46_WIN95SYS_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // FUN_100bf5a4
 
@@ -109,7 +110,7 @@ void C2_HOOK_FASTCALL PDSetFileVariables(void);
 
 // PDEnterDebugger
 
-// PDAllocateActionReplayBuffer
+extern void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** pBuffer, tU32* pSize);
 
 // PDDisposeActionReplayBuffer
 
