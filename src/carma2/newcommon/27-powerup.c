@@ -446,7 +446,15 @@ void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->wall_climber_mode = 0;
 }
 
-// ResetBouncey
+// FUNCTION: CARMA2_HW 0x004de750
+void C2_HOOK_FASTCALL ResetBouncey(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, bounce_rate, 0x4c0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, bounce_amount, 0x4c4);
+
+    pCar->bounce_rate = 0.f;
+    pCar->bounce_amount = 0.f;
+}
 
 // ResetSuspension
 

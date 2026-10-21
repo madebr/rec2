@@ -279,7 +279,7 @@ extern void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car);
 
 extern void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetBouncey
+extern void C2_HOOK_FASTCALL ResetBouncey(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetSuspension
 
