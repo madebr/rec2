@@ -151,7 +151,7 @@ extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPedBrittle
 
-// SetInvulnerability
+extern int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetInvulnerability
 
