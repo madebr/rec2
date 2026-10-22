@@ -5,6 +5,7 @@
 #include "41-utility.h"
 #include "brender/brender.h"
 #include "globvars.h"
+#include "globvrpb.h"
 
 // GLOBAL: CARMA2_HW 0x00763500
 int gCunning_stunt_bonus[3];
@@ -148,7 +149,16 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // TumbleObject
 
-// MakeLiftGoUp
+// FUNCTION: CARMA2_HW 0x00418230
+void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, flags, 0x100);
+
+    if (gNet_mode != eNet_mode_client) {
+        pNon_car->flags &= ~0xff;
+        pNon_car->flags |= 0x1;
+    }
+}
 
 // NonCarCalcForce
 
