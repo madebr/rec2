@@ -39,7 +39,7 @@ extern void C2_HOOK_FASTCALL InitTargetLock(void);
 
 // DrawCarArrow
 
-// DoSomeThingsToCheckpoints
+extern void C2_HOOK_FASTCALL DoSomeThingsToCheckpoints(br_pixelmap* pMap, tU32 pTime, tDoSomethingsToCheckpoints_cbfn* pCallback, int pDraw_prev);
 
 // CalcMapCheckpoint
 

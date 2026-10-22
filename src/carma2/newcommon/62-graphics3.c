@@ -11,6 +11,7 @@
 #include "63-loading3.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 #include <limits.h>
@@ -159,7 +160,50 @@ void C2_HOOK_FASTCALL InitTargetLock(void) {
 
 // DrawCarArrow
 
-// DoSomeThingsToCheckpoints
+// FUNCTION: CARMA2_HW 0x00495ba0
+void C2_HOOK_FASTCALL DoSomeThingsToCheckpoints(br_pixelmap* pMap, tU32 pTime, tDoSomethingsToCheckpoints_cbfn* pCallback, int pDraw_prev) {
+    int i;
+    int checkpoint;
+    int checkpoints[10];
+    int checkpoint_flags;
+
+    for (i = 0; i < gCurrent_race.check_point_count; i++) {
+        checkpoints[i] = 0;
+    }
+    if (gNet_mode != eNet_mode_none) {
+        if (gCurrent_net_game->type == eNet_game_type_checkpoint) {
+            checkpoint_flags = gNet_players[gThis_net_player_index].score2;
+            for (i = 0; i < gCurrent_race.check_point_count; i++) {
+                if (checkpoint_flags & 0x1) {
+                    pCallback(pMap, i, pTime, 1);
+                    checkpoints[i] = 1;
+                }
+                checkpoint_flags >>= 1;
+            }
+        } else if (gCurrent_net_game->type == eNet_game_type_5 || gCurrent_net_game->type == eNet_game_type_4) {
+            if (gNet_players[gThis_net_player_index].score2 >= 0) {
+                checkpoint = gNet_players[gThis_net_player_index].score2 % gCurrent_race.check_point_count;
+                pCallback(pMap, checkpoint, pTime, 1);
+                checkpoints[checkpoint] = 1;
+            }
+        }
+    } else {
+        pCallback(pMap, gCheckpoint - 1, pTime, 1);
+        checkpoints[gCheckpoint - 1] = 1;
+    }
+    if (pDraw_prev) {
+        if (gNet_mode == eNet_mode_none
+                || gCurrent_net_game->type == eNet_game_type_checkpoint
+                || gCurrent_net_game->type == eNet_game_type_4
+                || gCurrent_net_game->type == eNet_game_type_5) {
+            for (i = 0; i < gCurrent_race.check_point_count; i++) {
+                if (!checkpoints[i]) {
+                    pCallback(pMap, i, pTime, 0);
+                }
+            }
+        }
+    }
+}
 
 // CalcMapCheckpoint
 
