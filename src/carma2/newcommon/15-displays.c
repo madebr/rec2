@@ -531,9 +531,18 @@ int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x0044ba90
+// FUNCTION: CARMA2_HW 0x0044ba90
 int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight) {
-    NOT_IMPLEMENTED();
+    int height;
+
+    if (gDevious_2d && gTexture_power_of_2) {
+        height = 1;
+        while (height < pHeight) {
+            height <<= 1;
+        }
+        return height;
+    }
+    return pHeight;
 }
 
 // FUNCTION: CARMA2_HW 0x0044bac0
