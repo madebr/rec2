@@ -603,6 +603,7 @@ tCollision_shape_box* C2_HOOK_FASTCALL AllocateShapeBox(int pType) {
 // GetJointSize
 
 // FUNCTION: CARMA2_HW 0x004c5e20
+// FUNCTION: CARMA2_SW 0x004c2550
 tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType) {
     return BrMemAllocate(offsetof(tPhysics_joint, limits) + pCount_limits * sizeof(tPhysics_joint_limit), (br_uint_8)pType);
 }

@@ -31,6 +31,7 @@ int gCursor_tinted_center = -1;
 int gCursor_line_width = 5;
 
 // GLOBAL: CARMA2_HW 0x0067be98
+// GLOBAL: CARMA2_SW 0x00676608
 tTransient_bm gTransient_bitmaps[50];
 
 // GLOBAL: CARMA2_HW 0x006923a4

@@ -8,9 +8,11 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x00591188
+// GLOBAL: CARMA2_SW 0x0058c180
 int gSky_on = 1;
 
 // GLOBAL: CARMA2_HW 0x0079ec1c
+// GLOBAL: CARMA2_SW 0x0079517c
 br_pixelmap* gSwap_sky_texture;
 
 // GLOBAL: CARMA2_HW 0x0067c4e0
@@ -18,6 +20,7 @@ br_pixelmap* gSwap_sky_texture;
 br_material* gHorizon_material;
 
 // GLOBAL: CARMA2_HW 0x0067c4a0
+// GLOBAL: CARMA2_SW 0x00676c18
 br_model* gForward_sky_model;
 
 // GLOBAL: CARMA2_HW 0x0074cee8
@@ -148,6 +151,7 @@ void C2_HOOK_FASTCALL FrobFog(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00445500
+// FUNCTION: CARMA2_SW 0x00445330
 void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial) {
     int i;
     float tex_y;

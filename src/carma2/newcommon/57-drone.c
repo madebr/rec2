@@ -142,6 +142,7 @@ int C2_HOOK_FASTCALL OtherPerambulatoryInstasificationIsEnablificated(void) {
 }
 
 // STUB: CARMA2_HW 0x0044ed10
+// STUB: CARMA2_SW 0x0044eab0
 void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
     NOT_IMPLEMENTED();
 }
