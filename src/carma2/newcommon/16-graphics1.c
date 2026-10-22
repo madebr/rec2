@@ -259,9 +259,30 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
     BrMapAdd(gRear_pixelmap);
 }
 
-// AdjustRenderScreenSize
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// ScreenSmaller
+// STUB: CARMA2_HW 0x004e4b40
+void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004e4cd0
+void C2_HOOK_FASTCALL ScreenSmaller(void) {
+
+    if (gMap_view != 2) {
+        gRender_indent++;
+        if (gRender_indent > 8) {
+            gRender_indent = 8;
+        }
+        AdjustRenderScreenSize();
+    }
+}
 
 // ScreenLarger
 

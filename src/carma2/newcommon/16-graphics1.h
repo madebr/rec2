@@ -59,9 +59,9 @@ extern void C2_HOOK_FASTCALL SetupDepthBuffer(void);
 
 extern void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight);
 
-// AdjustRenderScreenSize
+extern void C2_HOOK_FASTCALL AdjustRenderScreenSize(void);
 
-// ScreenSmaller
+extern void C2_HOOK_FASTCALL ScreenSmaller(void);
 
 // ScreenLarger
 
