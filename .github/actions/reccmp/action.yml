@@ -60,7 +60,7 @@ runs:
         """.strip()
 
         safe_comment_payload_path = """
-        ${{ comment-payload-path }}
+        ${{ inputs.comment-payload-path }}
         """.strip().replace("\\", "/")
 
         gist_repo = """
@@ -71,11 +71,11 @@ runs:
         targets_str = """
         ${{ inputs.targets }}
         """.strip()
-        targets = re.split(f"\s+", targets_str)
+        targets = re.split(r"\s+", targets_str)
         symbol_counts_str = """
         ${{ inputs.symbol-counts }}
         """.strip()
-        symbol_counts = [int(v) for v in re.split(f"\s+", symbol_counts_str)]
+        symbol_counts = [int(v) for v in re.split(r"\s+", symbol_counts_str)]
 
         if len(targets) != len(symbol_counts):
           raise ValueError(f"Number of targets is not equal to number of symbols: targets={','.join(targets)}, symbols={','.join(str(v) for v in symbol_counts)}")
@@ -100,7 +100,7 @@ runs:
     - name: 'Fetch previous jsons'
       shell: sh
       run: |
-        for target in ${{ input.targets }}; do
+        for target in ${{ inputs.targets }}; do
           curl -fLSs -o "${{ steps.calc.outputs.unix-temp-path }}/${target}-old.json" https://gist.githubusercontent.com/${{ inputs.gist-repo }}/raw/${target}.json
         done
     - name: 'Detect originals'
@@ -112,7 +112,7 @@ runs:
       shell: sh
       run: |
         ${{ (inputs.working-directory && format('cd "{0}"', inputs.working-directory)) || '' }}
-        for target in ${{ input.targets }}; do
+        for target in ${{ inputs.targets }}; do
           reccmp-reccmp --no-color --target ${target} \
             --diff "${{ steps.calc.outputs.unix-temp-path }}/${target}-old.json" \
             --json "${{ steps.calc.outputs.unix-temp-path }}/${target}.json" \
@@ -152,7 +152,7 @@ runs:
     - name: 'Show progress'
       shell: sh
       run:
-        for target in ${{ input.targets }}; do
+        for target in ${{ inputs.targets }}; do
           echo "target ${target}"
           cat "${{ steps.calc.outputs.unix-temp-path }}/${target}.txt"
           echo "========"
@@ -165,7 +165,7 @@ runs:
       run: |
         payload_path="${{ steps.calc.outputs.comment-payload-path }}"
         echo "# reccmp report" >>${payload_path}
-        for target in ${{ input.targets }} do
+        for target in ${{ inputs.targets }} do
           echo "## ${target}" >>${payload_path}
           echo '```' >>${payload_path}
           cat ${{ steps.calc.outputs.unix-temp-path }}/${target}.txt >>${payload_path}
