@@ -6,7 +6,7 @@
 
 // SendShapeNumbers
 
-// ClearShapeStatusFlag
+extern void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, int pPlayer_id);
 
 // SendNonCar
 
