@@ -3,6 +3,7 @@
 
 #include "rec2_types.h"
 
+extern int gBIG_APC_index;
 extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
@@ -150,7 +151,7 @@ extern void C2_HOOK_FASTCALL LoadCopCars(void);
 
 // InitOpponents
 
-// DisposeOpponents
+extern void C2_HOOK_FASTCALL DisposeOpponents(void);
 
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 

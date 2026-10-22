@@ -6,6 +6,9 @@
 #include "globvars.h"
 #include "globvrpb.h"
 
+// GLOBAL: CARMA2_HW 0x0065a3c4
+int gBIG_APC_index = -1;
+
 // GLOBAL: CARMA2_HW 0x0065a3cc
 float gOpponent_nastyness_frigger = 1.0f;
 
@@ -170,7 +173,17 @@ void C2_HOOK_FASTCALL LoadCopCars(void) {
 
 // InitOpponents
 
-// DisposeOpponents
+// FUNCTION: CARMA2_HW 0x004ae5d0
+void C2_HOOK_FASTCALL DisposeOpponents(void) {
+    int i;
+
+    if (gProgram_state.AI_vehicles.number_of_cops != 0) {
+        for (i = 0; i < gProgram_state.AI_vehicles.number_of_cops; i++) {
+            DisposeCar(gProgram_state.AI_vehicles.cops[i].car_spec, (i == gBIG_APC_index) ? 99 : 98);
+            BrMemFree(gProgram_state.AI_vehicles.cops[i].car_spec);
+        }
+    }
+}
 
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 
