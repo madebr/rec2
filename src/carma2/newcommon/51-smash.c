@@ -17,6 +17,7 @@ tDecal gDecals[50];
 int gCount_queued_smashes;
 
 // GLOBAL: CARMA2_HW 0x006abee8
+// GLOBAL: CARMA2_SW 0x006a5438
 br_vector3 gZero_vector__smash;
 
 // FUNCTION: CARMA2_HW 0x004ea880

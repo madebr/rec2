@@ -54,6 +54,7 @@ tShadow_level gShadow_level = eShadow_us_only;
 int gRender_indent;
 
 // GLOBAL: CARMA2_HW 0x006baa40
+// GLOBAL: CARMA2_SW 0x006b1720
 tU8 gTemporary_physics_render_buffer[300000];
 
 // GLOBAL: CARMA2_HW 0x006a2448

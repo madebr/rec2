@@ -93,6 +93,7 @@ void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCo
 // ARDoSingleSession
 
 // STUB: CARMA2_HW 0x00402bd0
+// STUB: CARMA2_SW 0x00402bd0
 void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...) {
     NOT_IMPLEMENTED();
 }

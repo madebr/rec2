@@ -118,6 +118,7 @@ tS3_outlet* gMusic_outlet;
 tS3_outlet* gXXX_outlet;
 
 // GLOBAL: CARMA2_HW 0x0079e160
+// GLOBAL: CARMA2_SW 0x007946c0
 tS3_outlet* gIndexed_outlets[6];
 
 // GLOBAL: CARMA2_HW 0x00595c38
@@ -745,12 +746,14 @@ void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio) {
 }
 
 // FUNCTION: CARMA2_HW 0x004566a0
+// FUNCTION: CARMA2_SW 0x00456430
 tS3_outlet* C2_HOOK_FASTCALL GetOutletFromIndex(int pIndex) {
 
     return gIndexed_outlets[pIndex];
 }
 
 // FUNCTION: CARMA2_HW 0x004566b0
+// FUNCTION: CARMA2_SW 0x00456440
 int C2_HOOK_FASTCALL GetIndexFromOutlet(tS3_outlet* pOutlet) {
     int i;
 

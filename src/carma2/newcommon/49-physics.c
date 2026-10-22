@@ -22,20 +22,23 @@
 tPhysicsError_cbfn* gPhysics_error_cb;
 
 // GLOBAL: CARMA2_HW 0x00744818
+// GLOBAL: CARMA2_SW 0x0073b2d8
 void* gPhysics_buffer1_ptr;
 
 // GLOBAL: CARMA2_HW 0x00744814
+// GLOBAL: CARMA2_SW 0x0073b2d4
 void* gPhysics_buffer2_ptr;
 
 // GLOBAL: CARMA2_HW 0x0074a5e0
+// GLOBAL: CARMA2_SW 0x007410a0
 void* gPhysics_buffer3_ptr;
 
 // GLOBAL: CARMA2_HW 0x006940c8
-// GLOBAL: CARMA2_SW 0x0068e11c
+// GLOBAL: CARMA2_SW 0x0068e120
 int gPhysics_other_buffer_capacity;
 
 // GLOBAL: CARMA2_HW 0x006940c4
-// GLOBAL: CARMA2_SW 0x0068e120
+// GLOBAL: CARMA2_SW 0x0068e11c
 void* gPhysics_other_buffer;
 
 // GLOBAL: CARMA2_HW 0x006940bc
@@ -692,6 +695,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char*
 // PhysicsWarning
 
 // FUNCTION: CARMA2_HW 0x004c61f0
+// FUNCTION: CARMA2_SW 0x004c2920
 void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn) {
 
     gPhysics_error_cb = pError_cbfn;
@@ -751,6 +755,7 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObject, tEnu
 }
 
 // FUNCTION: CARMA2_HW 0x004c6510
+// FUNCTION: CARMA2_SW 0x004c2c40
 void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize) {
 
     gPhysics_buffer1_ptr = pBuffer;
@@ -823,6 +828,7 @@ float C2_HOOK_FASTCALL GetFrictionFromFace(const tFace_ref* pFace) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b5990
+// FUNCTION: CARMA2_SW 0x004b20b0
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage) {
     char s[256];
 

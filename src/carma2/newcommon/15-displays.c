@@ -505,6 +505,12 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     if (&gProgram_state.current_car != gCar_to_view) {
         return;
     }
+#ifdef REC2_SW
+    if (gHeadup_detail_level == 0 || gHeadup_detail_level == 3) {
+        return;
+    }
+#endif
+
     if (gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0) {
         if (gProgram_state.which_view != eView_forward) {
             return;
@@ -514,6 +520,9 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     } else {
         the_wobble_x = gProgram_state.current_car.damage_x_offset;
         the_wobble_y = gProgram_state.current_car.damage_y_offset;
+#ifdef REC2_SW
+
+#endif
     }
 
     DRPixelmapCopy(gDamage_hud, gGrey_top5);
