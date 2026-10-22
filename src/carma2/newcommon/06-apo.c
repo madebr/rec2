@@ -20,6 +20,7 @@ void C2_HOOK_FASTCALL ImprovePSPowerup(tCar_spec* pCar, int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x00502e70
+// FUNCTION: CARMA2_SW 0x004fe7c0
 void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
     char message[256];
     char cost[256];
