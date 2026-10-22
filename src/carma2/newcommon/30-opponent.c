@@ -7,6 +7,7 @@
 #include "globvrpb.h"
 
 // GLOBAL: CARMA2_HW 0x0065a3c4
+// GLOBAL: CARMA2_SW 0x00654cdc
 int gBIG_APC_index = -1;
 
 // GLOBAL: CARMA2_HW 0x0065a3cc
@@ -174,6 +175,7 @@ void C2_HOOK_FASTCALL LoadCopCars(void) {
 // InitOpponents
 
 // FUNCTION: CARMA2_HW 0x004ae5d0
+// FUNCTION: CARMA2_SW 0x004aa740
 void C2_HOOK_FASTCALL DisposeOpponents(void) {
     int i;
 
