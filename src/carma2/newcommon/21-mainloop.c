@@ -37,6 +37,7 @@ tU32 gNet_auto_increase_credits_dt[8];
 #endif
 
 // STUB: CARMA2_HW 0x00492980
+// STUB: CARMA2_SW 0x0048fbf0
 tRace_result C2_HOOK_FASTCALL MainGameLoop(void) {
 
     NOT_IMPLEMENTED();
@@ -47,6 +48,7 @@ tRace_result C2_HOOK_FASTCALL MainGameLoop(void) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00492950
+// FUNCTION: CARMA2_SW 0x0048fbc0
 tRace_result C2_HOOK_FASTCALL DoRace(void) {
     tRace_result result;
 
