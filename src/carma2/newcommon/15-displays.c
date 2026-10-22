@@ -105,12 +105,15 @@ tHud_message gHud_messages[46];
 int gHeadup_detail_level = 5;
 
 // GLOBAL: CARMA2_HW 0x0067fcc0
+// GLOBAL: CARMA2_SW 0x0067a428
 tU32 gLast_fancy_headup;
 
 // GLOBAL: CARMA2_HW 0x005913d4
+// GLOBAL: CARMA2_SW 0x0058c3b4
 int gLast_fancy_index = -1;
 
 // GLOBAL: CARMA2_HW 0x0067fd34
+// GLOBAL: CARMA2_SW 0x0067a484
 tU32 gLast_fancy_time;
 
 // GLOBAL: CARMA2_HW 0x0067fcf8
@@ -373,6 +376,7 @@ void C2_HOOK_FASTCALL DoPSPowerupHeadups(void) {
 #endif
 
 // STUB: CARMA2_HW 0x0044a220
+// STUB: CARMA2_SW 0x0044a3b0
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
     NOT_IMPLEMENTED();
 }
@@ -404,6 +408,7 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLi
 #endif
 
 // STUB: CARMA2_HW 0x0044a3a0
+// STUB: CARMA2_SW 0x0044a530
 int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index) {
     NOT_IMPLEMENTED();
 }

@@ -679,6 +679,7 @@ int gGraf_data_index;
 int gReal_graf_data_index;
 
 // GLOBAL: CARMA2_HW 0x0074b774
+// GLOBAL: CARMA2_SW 0x00741e34
 tGraf_data* gCurrent_graf_data;
 
 // FUNCTION: CARMA2_HW 0x0047b3e0

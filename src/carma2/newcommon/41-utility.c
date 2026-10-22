@@ -1361,7 +1361,6 @@ void C2_HOOK_FASTCALL Copy8BitTo16Bit(br_pixelmap* pDst, br_pixelmap* pSrc, br_p
 }
 
 // FUNCTION: CARMA2_HW 0x00517d90
-// FUNCTION: CARMA2_SW 0x0047d970
 void C2_HOOK_FASTCALL DRPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
 
     if (dst->type == src->type) {

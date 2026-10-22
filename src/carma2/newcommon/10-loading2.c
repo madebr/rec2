@@ -486,15 +486,42 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
 // FUNCTION: CARMA2_HW 0x00487ea0
 // FUNCTION: CARMA2_SW 0x00484fd0
 void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
+#ifdef REC2_SW
+    tPath_name path;
+    int i;
 
-    // empty
+    if (gProgram_state.sausage_eater_mode) {
+        strcpy(path, "GHANDX.PIX");
+    } else {
+        strcpy(path, "HANDX.PIX");
+    }
+    PossibleService();
+    if (gCursors[0] == NULL && LoadPixelmaps(path, gCursors, 4) == 0) {
+        FatalError(kFatalError_LoadCursorImage);
+    }
+    if (gProgram_state.sausage_eater_mode) {
+        strcpy(path, "GHANDPX.PIX");
+    } else {
+        strcpy(path, "HANDPX.PIX");
+    }
+    PossibleService();
+    if (gCursors[4] == NULL && LoadPixelmaps(path, &gCursors[4], 4) == 0) {
+        FatalError(kFatalError_LoadCursorImage);
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00487eb0
 // FUNCTION: CARMA2_SW 0x004850e0
 void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
+#ifdef REC2_SW
+    int i;
 
-    // empty
+    // original code uses 4, not BR_ASIZE(gCursors). Bug?
+    for (i = 0; i < 4; i++) {
+        gCursors[i] = NULL;
+    }
+#endif
 }
 
 // AdjustCarCoordinates

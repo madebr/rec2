@@ -835,7 +835,29 @@ FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 // FUNCTION: CARMA2_HW 0x0044bb80
 // FUNCTION: CARMA2_SW 0x0044b8e0
 void C2_HOOK_FASTCALL UnlockInterfaceStuff(void) {
-
+#ifdef REC2_SW
+  int i;
+  for (i = 0; i < 4; i++) {
+    if (gCursors[i]) {
+      BrPixelmapFree(gCursors[i]);
+      gCursors[i] = NULL;
+    }
+  }
+  PossibleService();
+  for (i = 0; i < 4; i++) {
+    if (gCursors[i + 4]) {
+      BrPixelmapFree(gCursors[i + 4]);
+      gCursors[i + 4] = NULL;
+    }
+  }
+  PossibleService();
+  for (i = 0; i < COUNT_OF(gCursor_giblet_images); i++) {
+    if (gCursor_giblet_images[i]) {
+      BrPixelmapFree(gCursor_giblet_images[i]);
+      gCursor_giblet_images[i] = NULL;
+    }
+  }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0044bb90
