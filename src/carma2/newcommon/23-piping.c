@@ -399,6 +399,7 @@ void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_mate
 // PipeSinglePedModelChange
 
 // FUNCTION: CARMA2_HW 0x004c8cc0
+// FUNCTION: CARMA2_SW 0x004c53f0
 void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* pObject) {
     C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_phil_object, matrix, 0x30);
 
