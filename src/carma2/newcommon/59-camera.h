@@ -89,7 +89,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 extern void C2_HOOK_FASTCALL FreezeCamera(void);
 
-// GetAverageGridPosition
+extern void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race);
 
 // FindACar
 
