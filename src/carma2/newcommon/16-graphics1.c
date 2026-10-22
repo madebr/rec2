@@ -264,6 +264,7 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
 #endif
 
 // STUB: CARMA2_HW 0x004e4b40
+// STUB: CARMA2_SW 0x004e0ed0
 void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
     NOT_IMPLEMENTED();
 }
