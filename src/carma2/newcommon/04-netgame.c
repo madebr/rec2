@@ -3,6 +3,7 @@
 #include "01-network.h"
 #include "63-loading3.h"
 #include "globvars.h"
+#include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0075b8f8
 br_pixelmap* gDigits_pix;
@@ -19,7 +20,17 @@ br_pixelmap* gDigits_pix;
 
 // DistanceBetweenCars
 
-// CarShapeNeedsSendingToPlayer
+// FUNCTION: CARMA2_HW 0x00498370
+int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pShapes, int pPlayer_id) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(pShapes->items); i++) {
+        if (pShapes->items[i].network_id == pPlayer_id) {
+            return (tS8)pShapes->items[i].field_0x4;
+        }
+    }
+    return 0;
+}
 
 // AddShapeStuffToMechanicsMessage
 
