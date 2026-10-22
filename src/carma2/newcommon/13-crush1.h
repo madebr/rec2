@@ -389,7 +389,7 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // CompletelyUnBendOtherThings
 
-// EnableGroovers
+extern intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData);
 
 // DoCompletelyUnBentThings
 
