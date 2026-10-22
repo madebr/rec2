@@ -33,6 +33,7 @@ void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void) {
 // MungeAIWorld
 
 // FUNCTION: CARMA2_HW 0x004013d0
+// FUNCTION: CARMA2_SW 0x004013d0
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector) {
     br_transform trans;
 
