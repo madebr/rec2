@@ -520,6 +520,7 @@ void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk) {
 }
 
 // FUNCTION: CARMA2_HW 0x004c9940
+// FUNCTION: CARMA2_SW 0x004c6070
 void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk) {
 }
 
