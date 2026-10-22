@@ -54,10 +54,9 @@ runs:
         import os
         import re
         import subprocess
+        import tempfile
 
-        runner_temp = """
-        ${{ runner.temp }}
-        """.strip()
+        runner_temp = tempfile.gettempdir()
 
         safe_comment_payload_path = """
         ${{ inputs.comment-payload-path }}
