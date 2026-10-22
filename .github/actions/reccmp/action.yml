@@ -150,7 +150,7 @@ runs:
           });
     - name: 'Show progress'
       shell: sh
-      run:
+      run: |
         for target in ${{ inputs.targets }}; do
           echo "target ${target}"
           cat "${{ steps.calc.outputs.unix-temp-path }}/${target}.txt"
