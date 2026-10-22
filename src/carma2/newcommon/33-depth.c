@@ -1,8 +1,10 @@
 #include "33-depth.h"
 
 #include "00-car.h"
+#include "15-displays.h"
 #include "17-world2.h"
 #include "37-brucetrk.h"
+#include "41-utility.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "rec2_macros.h"
@@ -246,9 +248,30 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
 
 // DoSpecialCameraEffect
 
-// AssertYons
+// FUNCTION: CARMA2_HW 0x00446a10
+// FUNCTION: CARMA2_SW 0x00446a90
+void C2_HOOK_FASTCALL AssertYons(void) {
+    br_camera* camera_ptr;
+    int i;
+    br_scalar yon_multiplier;
 
-// IncreaseYon
+    for (i = 0; i < (int)REC2_ASIZE(gCamera_list); ++i) {
+        camera_ptr = gCamera_list[i]->type_data;
+        yon_multiplier = gYon_multiplier;
+        camera_ptr->yon_z = yon_multiplier * gCamera_yon;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00446a40
+// FUNCTION: CARMA2_SW 0x00446ac0
+void C2_HOOK_FASTCALL IncreaseYon(void) {
+    char s[256];
+
+    gCamera_yon += 5.f;
+    AssertYons();
+    sprintf(s, GetMiscString(eMiscString_yon_increased_to_D), (int)((br_camera*)gCamera_list[1]->type_data)->yon_z);
+    NewTextHeadupSlot(4, 0, 2000, -4, s);
+}
 
 // DecreaseYon
 
