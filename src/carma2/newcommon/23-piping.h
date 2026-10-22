@@ -240,7 +240,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, 
 
 // PipeSinglePedModelChange
 
-// PipeSinglePHILObject
+extern void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* pObject);
 
 // PipeSingleGibShower
 
