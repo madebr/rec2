@@ -108,6 +108,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
 }
 
 // FUNCTION: CARMA2_HW 0x004ffa20
+// FUNCTION: CARMA2_SW 0x004fb300
 void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
     tPath_name the_path;
     FILE* f;
