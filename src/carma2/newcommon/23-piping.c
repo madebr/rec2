@@ -93,7 +93,6 @@ void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCo
 // ARDoSingleSession
 
 // STUB: CARMA2_HW 0x00402bd0
-// STUB: CARMA2_SW 0x00402bd0
 void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...) {
     NOT_IMPLEMENTED();
 }
@@ -181,6 +180,7 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
 // InitialiseActionReplay
 
 // STUB: CARMA2_HW 0x004c6c60
+// STUB: CARMA2_SW 0x004c3390
 void C2_HOOK_FASTCALL DisposeActionReplay(void) {
     NOT_IMPLEMENTED();
 }
@@ -194,6 +194,7 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 // AddSmudgeToPipingSession
 
 // FUNCTION: CARMA2_HW 0x004c6f20
+// FUNCTION: CARMA2_SW 0x004c3650
 void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV) {
     C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, p, 0xc);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_spark, v, 0xc);
@@ -205,6 +206,7 @@ void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3
 }
 
 // FUNCTION: CARMA2_HW 0x004c6f40
+// FUNCTION: CARMA2_SW 0x004c36b6
 void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_shrapnel, pos, 0x0);
     C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_shrapnel, pos, 0xc);
@@ -229,6 +231,7 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
 // AddSmokeToPipingSession
 
 // FUNCTION: CARMA2_HW 0x004c70c0
+// FUNCTION: CARMA2_SW 0x004c37f0
 void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour) {
     C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke_column, core, 0x10);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke_column, vertex, 0x10);
@@ -276,6 +279,7 @@ void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y) {
 // PipeSingleGrooveStop
 
 // FUNCTION: CARMA2_HW 0x004c80f0
+// FUNCTION: CARMA2_SW 0x004c3720
 void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
     C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, actor, 0x4);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);

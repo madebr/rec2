@@ -5,6 +5,7 @@
 // __mb_cur_max
 
 // GLOBAL: CARMA2_HW 0x00673a50
+// GLOBAL: CARMA2_SW 0x0066e1d0
 // _pctype
 
 // GLOBAL: CARMA2_HW 0x007a0884
@@ -41,6 +42,7 @@
 // __umaskval
 
 // GLOBAL: CARMA2_HW 0x006b2e00
+// GLOBAL: CARMA2_SW 0x006ac588
 // errno
 
 // GLOBAL: CARMA2_HW 0x006b2e04
@@ -102,9 +104,11 @@
 // __aenvptr
 
 // GLOBAL: CARMA2_HW 0x006b2e28
+// GLOBAL: CARMA2_SW 0x006ac5b0
 // __environ
 
 // GLOBAL: CARMA2_HW 0x006b2e30
+// GLOBAL: CARMA2_SW 0x006ac5b8
 // __wenviron
 
 // GLOBAL: CARMA2_HW 0x006b3210
@@ -149,12 +153,15 @@
 // ___initenv
 
 // GLOBAL: CARMA2_HW 0x00673d00
+// GLOBAL: CARMA2_SW 0x0066e480
 // __fptrap
 
 // GLOBAL: CARMA2_HW 0x00673c60
+// GLOBAL: CARMA2_SW 0x0066e3e0
 // ___decimal_point
 
 // GLOBAL: CARMA2_HW 0x00676420
+// GLOBAL: CARMA2_SW 0x00670b98
 // __HUGE
 
 // GLOBAL: CARMA2_HW 0x00676080
@@ -167,6 +174,7 @@
 // __pow10neg
 
 // GLOBAL: CARMA2_HW 0x00673e00
+// GLOBAL: CARMA2_SW 0x0066e580
 // __d_inf
 
 // GLOBAL: CARMA2_HW 0x00673e10
@@ -210,9 +218,11 @@
 // __DEFAULT_CW_in_mem
 
 // GLOBAL: CARMA2_HW 0x006b2dd8
+// GLOBAL: CARMA2_SW 0x006ac560
 // ___fastflag
 
 // GLOBAL: CARMA2_HW 0x00673e50
+// GLOBAL: CARMA2_SW 0x0066e5d0
 // __indefinite
 
 // GLOBAL: CARMA2_HW 0x00673e8a
@@ -259,6 +269,7 @@
 // _memset
 
 // LIBRARY: CARMA2_HW 0x005842a0
+// LIBRARY: CARMA2_SW 0x0057f600
 // _isspace
 
 // LIBRARY: CARMA2_HW 0x00584330
@@ -416,9 +427,11 @@
 // _exit
 
 // LIBRARY: CARMA2_HW 0x00578ac0
+// LIBRARY: CARMA2_SW 0x00574140
 // _getenv
 
 // LIBRARY: CARMA2_HW 0x00578b50
+// LIBRARY: CARMA2_SW 0x005741d0
 // _strtod
 
 // LIBRARY: CARMA2_HW 0x00578c10
@@ -499,6 +512,7 @@
 // _longjmp
 
 // LIBRARY: CARMA2_HW 0x0057a8b0
+// LIBRARY: CARMA2_SW 0x00575f30
 // __input
 
 // LIBRARY: CARMA2_HW 0x0057b800
@@ -535,6 +549,7 @@
 // __exit
 
 // LIBRARY: CARMA2_HW 0x0057cf90
+// LIBRARY: CARMA2_SW 0x00578610
 // __ctrlfp
 
 // LIBRARY: CARMA2_HW 0x0057c3b0
@@ -544,6 +559,7 @@
 // __handle_qnan1
 
 // LIBRARY: CARMA2_HW 0x0057cdf0
+// LIBRARY: CARMA2_SW 0x00578470
 // __sptype
 
 // LIBRARY: CARMA2_HW 0x0057c2c0
@@ -667,6 +683,7 @@
 // __ismbblead
 
 // LIBRARY: CARMA2_HW 0x00582bd0
+// LIBRARY: CARMA2_SW 0x0057df30
 // __mbsnbicoll
 
 // LIBRARY: CARMA2_HW 0x005862f0
@@ -719,6 +736,7 @@
 // _strspn
 
 // LIBRARY: CARMA2_HW 0x00582c10
+// LIBRARY: CARMA2_SW 0x0057df70
 // ___wtomb_environ
 
 // LIBRARY: CARMA2_HW 0x005865f0
@@ -734,6 +752,7 @@
 // ___sbh_resize_block
 
 // LIBRARY: CARMA2_HW 0x005840b0
+// LIBRARY: CARMA2_SW 0x0057f410
 // _mbtowc
 
 // LIBRARY: CARMA2_HW 0x005808f0
@@ -825,9 +844,11 @@
 // __set_statfp
 
 // LIBRARY: CARMA2_HW 0x0057ce50
+// LIBRARY: CARMA2_SW 0x005784d0
 // __decomp
 
 // LIBRARY: CARMA2_HW 0x0057cd20
+// LIBRARY: CARMA2_SW 0x005783a0
 // __set_exp
 
 // LIBRARY: CARMA2_HW 0x00589250
@@ -864,6 +885,7 @@
 // __convertTOStoQNaN
 
 // LIBRARY: CARMA2_HW 0x0057d207
+// LIBRARY: CARMA2_SW 0x00578887
 // __startOneArgErrorHandling
 
 // LIBRARY: CARMA2_HW 0x0057d2fb
@@ -882,12 +904,15 @@
 // _ldexp
 
 // LIBRARY: CARMA2_HW 0x0057c470
+// LIBRARY: CARMA2_SW 0x00577af0
 // __except2
 
 // LIBRARY: CARMA2_HW 0x00583070
+// LIBRARY: CARMA2_SW 0x0057e3d0
 // __copysign
 
 // LIBRARY: CARMA2_HW 0x0057c330
+// LIBRARY: CARMA2_SW 0x005779b0
 // __handle_qnan2
 
 // LIBRARY: CARMA2_HW 0x00579f24
