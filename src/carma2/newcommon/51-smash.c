@@ -382,6 +382,7 @@ void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_a
 #endif
 
 // STUB: CARMA2_HW 0x004f52f0
+// STUB: CARMA2_SW 0x004f0f50
 float C2_HOOK_FASTCALL BashObject(tPhysics_object* pObject, br_actor* pActor, float pMagnitude, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce, int pSnap, int pNetwork) {
     NOT_IMPLEMENTED();
 }
@@ -391,6 +392,7 @@ float C2_HOOK_FASTCALL BashObject(tPhysics_object* pObject, br_actor* pActor, fl
 #endif
 
 // FUNCTION: CARMA2_HW 0x004f53e0
+// FUNCTION: CARMA2_SW 0x004f1040
 void C2_HOOK_FASTCALL NonCarSnapSmashCallback(tPhysics_object* pObject, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce) {
 
     BashObject(pObject, pObject->actor, BrVector3Length(pForce), pPosition, pNormal, pForce, 1, 0);
