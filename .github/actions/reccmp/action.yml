@@ -90,7 +90,6 @@ runs:
           case _:
             unix_temp_path = runner_temp
         safe_temp_path = runner_temp.replace("\\", "/")
-        safe_comment_payload_path = comment_payload_path.replace("\\", "/")
 
         with open(os.environ["GITHUB_OUTPUT"], "a") as github_output:
           print(f"unix-temp-path={unix_temp_path}", file=github_output)
