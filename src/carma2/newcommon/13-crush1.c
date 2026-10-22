@@ -775,9 +775,16 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // SphericizeCar
 
-// BattenDownTheHatches
+// STUB: CARMA2_HW 0x004398d0
+intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
+    NOT_IMPLEMENTED();
+}
 
-// BattenDownTheObjects
+// FUNCTION: CARMA2_HW 0x004398c0
+int C2_HOOK_FASTCALL BattenDownTheObjects(tPhysics_object* pCollision_info, void* pUser_data) {
+    DRActorEnumRecurse(pCollision_info->actor, BattenDownTheHatches, pUser_data);
+    return 0;
+}
 
 // CompletelyUnBendCollisionShape
 
