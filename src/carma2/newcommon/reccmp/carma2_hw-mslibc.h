@@ -56,6 +56,7 @@
 // ___pioinfo
 
 // GLOBAL: CARMA2_HW 0x006b2e70
+// GLOBAL: CARMA2_SW 0x006ac5f8
 // ___lc_handle
 
 // GLOBAL: CARMA2_HW 0x00673c84
@@ -626,9 +627,11 @@
 // ___crtGetStringTypeA
 
 // LIBRARY: CARMA2_HW 0x00582518
+// LIBRARY: CARMA2_SW 0x0057d878
 // __except_handler3
 
 // LIBRARY: CARMA2_HW 0x005814d0
+// LIBRARY: CARMA2_SW 0x0057c830
 // __XcptFilter
 
 // LIBRARY: CARMA2_HW 0x0057eea0

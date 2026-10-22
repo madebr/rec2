@@ -37,7 +37,7 @@ br_scalar gNormal_force_to_detach;
 br_scalar gMin_bend_angle;
 
 // GLOBAL: CARMA2_HW 0x0067b7b0
-// GLOBAL: CARMA2_SW 0x00676558
+// GLOBAL: CARMA2_SW 0x00675f20
 int gMin_bend_damage;
 
 // GLOBAL: CARMA2_HW 0x0067b7b4
@@ -65,6 +65,7 @@ br_scalar gMin_force_to_split_Y_per_tonne;
 int gMin_split_damage;
 
 // GLOBAL: CARMA2_HW 0x0067bde8
+// GLOBAL: CARMA2_SW 0x00676558
 br_scalar gMin_bend_force;
 
 // GLOBAL: CARMA2_HW 0x0067bdec

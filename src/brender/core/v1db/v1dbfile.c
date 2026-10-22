@@ -449,7 +449,7 @@ br_chunks_table_entry ModelLoadEntries[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663f08
-// GLOBAL: CARMA2_SW 00065e6a0
+// GLOBAL: CARMA2_SW 0x0065e6a0
 br_chunks_table ModelLoadTable = { BR_ASIZE(ModelLoadEntries), ModelLoadEntries };
 
 // GLOBAL: CARMA2_HW 0x00663f10
