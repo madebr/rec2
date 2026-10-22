@@ -330,7 +330,7 @@ extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTra
 
 extern void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk);
 
-// ApplyUnBend
+extern void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk);
 
 // ApplyEndMyBend
 

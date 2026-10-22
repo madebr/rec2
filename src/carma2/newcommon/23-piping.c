@@ -519,7 +519,9 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk) {
 }
 
-// ApplyUnBend
+// FUNCTION: CARMA2_HW 0x004c9940
+void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk) {
+}
 
 // ApplyEndMyBend
 
