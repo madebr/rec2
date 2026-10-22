@@ -11,6 +11,7 @@ br_pixelmap* gDigits_pix;
 // SendShapeNumbers
 
 // FUNCTION: CARMA2_HW 0x00497ef0
+// FUNCTION: CARMA2_SW 0x00494b20
 void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, int pPlayer_id) {
     int i;
 
