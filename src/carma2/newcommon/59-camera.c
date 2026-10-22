@@ -97,6 +97,7 @@ void C2_HOOK_FASTCALL FreezeCamera(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00413780
+// FUNCTION: CARMA2_SW 0x004137b0
 void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race) {
     int i;
     br_scalar total_cars;
