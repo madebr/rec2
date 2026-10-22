@@ -162,11 +162,20 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
+        section() {
+          echo "## $1"
+          if [ -f "$2" ]; then
+            echo '```'
+            sed -i -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' "$2"
+            python -c "print(open('$2').read().strip())";
+            echo '```'
+          else
+            echo '(no diff available)';
+          fi
+        }
+
         payload_path="${{ steps.calc.outputs.comment-payload-path }}"
         echo "# reccmp report" >>${payload_path}
         for target in ${{ inputs.targets }}; do
-          echo "## ${target}" >>${payload_path}
-          echo '```' >>${payload_path}
-          cat ${{ steps.calc.outputs.unix-temp-path }}/${target}.txt >>${payload_path}
-          echo '```' >>${payload_path}
+          section "${target}" "${{ steps.calc.outputs.unix-temp-path }}/${target}.txt" >>${payload_path}
         done
