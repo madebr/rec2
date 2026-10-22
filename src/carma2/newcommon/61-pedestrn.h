@@ -326,7 +326,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // FlushAllPedCaches
 
-// SavePedStuff
+extern void C2_HOOK_FASTCALL SavePedStuff(void);
 
 // ComparePedStuff
 
