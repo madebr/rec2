@@ -453,6 +453,15 @@ typedef struct {
     br_matrix34 m;
 } tPipe_chunk_end_shit_mine;
 
+typedef struct {
+    br_actor* actor;
+    br_angle angle;
+} tPipe_chunk_flap;
+
+typedef struct {
+    br_actor* actor;
+} tPipe_chunk_identity;
+
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
@@ -469,8 +478,9 @@ typedef enum {
     ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_prox_ray = 21,
-    ePipe_chunk_flap_bits = 23,
+    ePipe_chunk_flap = 23,
     ePipe_model_mash = 24,
+    ePipe_chunk_identity = 26,
     ePipe_chunk_explosion = 31,
     ePipe_chunk_smash_model_change = 33,
     ePipe_smash_texture_change = 36,
