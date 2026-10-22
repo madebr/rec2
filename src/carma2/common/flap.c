@@ -232,7 +232,7 @@ void C2_HOOK_FASTCALL FlapBits(tCar_spec* pCar) {
             BrVector3Add(&force, &gBatty_gravity, &force);
             BrMatrix34TApplyV(&flapbit_arg.force, &force, &pCar->car_master_actor->t.t.mat);
             flapbit_arg.car = pCar;
-            ARStartPipingSession(ePipe_chunk_flap_bits);
+            ARStartPipingSession(ePipe_chunk_flap);
             DRActorEnumRecurseWithSnart(pCar->car_model_actor, NULL, FlapBit, &flapbit_arg);
             AREndPipingSession();
         }
