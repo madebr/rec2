@@ -172,6 +172,7 @@ void C2_HOOK_FASTCALL AdjustOilSpill(int pIndex, br_matrix34* pMat, br_scalar pF
 }
 
 // FUNCTION: CARMA2_HW 0x004a78e0
+// FUNCTION: CARMA2_SW 0x004a3a50
 void C2_HOOK_FASTCALL ReceivedOilSpill(tNet_message_chunk* pContents) {
     tCar_spec* car;
 
