@@ -307,6 +307,7 @@ void C2_HOOK_FASTCALL ClearHeadups(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004496f0
+// FUNCTION: CARMA2_SW 0x00449840
 void C2_HOOK_FASTCALL DimAFewBits(void) {
     int i;
 
