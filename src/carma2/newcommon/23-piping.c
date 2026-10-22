@@ -220,7 +220,17 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
 
 // AddSmokeToPipingSession
 
-// AddSmokeColumnToPipingSession
+// FUNCTION: CARMA2_HW 0x004c70c0
+void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke_column, core, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke_column, vertex, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke_column, vertex, 0x2);
+
+    pIndex += pColour << 14;
+    ARAddVariedDataToSession(ePipe_chunk_smoke_column, pIndex, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke_column, core), pCore,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke_column, vertex), pVertex);
+}
 
 // AddFlameToPipingSession
 
