@@ -63,6 +63,7 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
 // CheckCheckpoints
 
 // FUNCTION: CARMA2_HW 0x005039b0
+// FUNCTION: CARMA2_SW 0x004ff300
 void C2_HOOK_FASTCALL TotalRepair(void) {
 
     TotallyRepairCar();
