@@ -1,5 +1,6 @@
 #include "07-structur.h"
 
+#include "13-crush1.h"
 #include "15-displays.h"
 #include "30-opponent.h"
 #include "41-utility.h"
@@ -61,7 +62,12 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
 
 // CheckCheckpoints
 
-// TotalRepair
+// FUNCTION: CARMA2_HW 0x005039b0
+void C2_HOOK_FASTCALL TotalRepair(void) {
+
+    TotallyRepairCar();
+    NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_instant_repair));
+}
 
 // DoLogos
 

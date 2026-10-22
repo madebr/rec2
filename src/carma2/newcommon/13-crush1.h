@@ -405,7 +405,7 @@ extern int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info
 
 extern void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
-// TotallyRepairCar
+extern void C2_HOOK_FASTCALL TotallyRepairCar(void);
 
 // AddTotalDeflectionOfModel
 

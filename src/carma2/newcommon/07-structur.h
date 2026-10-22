@@ -25,7 +25,7 @@ extern void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
 
 // CheckCheckpoints
 
-// TotalRepair
+extern void C2_HOOK_FASTCALL TotalRepair(void);
 
 // DoLogos
 
