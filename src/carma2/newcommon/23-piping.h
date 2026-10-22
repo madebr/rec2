@@ -7,6 +7,7 @@
 
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
+extern tU8* gPipe_play_ptr;
 
 // ARReplayForwards
 
@@ -64,9 +65,9 @@ extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, i
 
 // ARResetPipePlayToEnd
 
-// ARGetPipePlayPtr
+extern tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void);
 
-// ARSetPipePlayPtr
+extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // ApplyPipedSession
 

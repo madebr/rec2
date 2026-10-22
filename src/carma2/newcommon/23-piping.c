@@ -15,6 +15,10 @@ float gReplay_rate;
 // GLOBAL: CARMA2_HW 0x006768e8
 const tReplay_callback* gPipe_callbacks;
 
+// GLOBAL: CARMA2_HW 0x006768b8
+// GLOBAL: CARMA2_SW 0x00671028
+tU8* gPipe_play_ptr;
+
 // ARReplayForwards
 
 // FUNCTION: CARMA2_HW 0x00402360
@@ -94,9 +98,17 @@ void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCou
 
 // ARResetPipePlayToEnd
 
-// ARGetPipePlayPtr
+// FUNCTION: CARMA2_HW 0x00402df0
+// FUNCTION: CARMA2_SW 0x00402df0
+tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void) {
+    return gPipe_play_ptr;
+}
 
-// ARSetPipePlayPtr
+// FUNCTION: CARMA2_HW 0x00402e00
+// FUNCTION: CARMA2_SW 0x00402e00
+void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
+    gPipe_play_ptr = pPtr;
+}
 
 // ApplyPipedSession
 
