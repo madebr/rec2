@@ -146,7 +146,7 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 // AddSmudgeToPipingSession
 
-// AddSparkToPipingSession
+extern void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV);
 
 extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
@@ -154,7 +154,7 @@ extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, con
 
 // AddSmokeToPipingSession
 
-// AddSmokeColumnToPipingSession
+extern void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour);
 
 // AddFlameToPipingSession
 
@@ -178,11 +178,11 @@ extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, con
 
 // PipeSingleCrush
 
-// PipeSingleScreenWobble
+extern void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y);
 
 // PipeSingleGrooveStop
 
-// PipeSingleNonCar
+extern void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor);
 
 // PipeSingleOilSpill
 
@@ -202,17 +202,17 @@ extern void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
 
 // PipeSingleSkidAdjustment
 
-// PipeSingleFlap
+extern void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle);
 
 // PipeSingleRelink
 
-// PipeSingleIdentity
+extern void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor);
 
 // PipeSingleSplitWeld
 
 // PipeSingleShrapnelShower
 
-// PipeSingleExplosion
+extern void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData);
 
 // PipeSingleNonCarCreation
 
@@ -246,7 +246,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, 
 
 // PipeSingleBloodSpurt
 
-// PipeSingleGrooveOnOff
+extern void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBlock_flags);
 
 // PipeSinglePowerupGot
 
@@ -272,7 +272,7 @@ extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pV
 
 // PipeSingleEndShitMine
 
-// PipeSingleTransformType
+extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_type);
 
 // PipeSingleOppoRenderage
 

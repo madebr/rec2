@@ -786,7 +786,11 @@ int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend) {
 
 // StartGameInfunc
 
-// FRONTEND_StartGameMenuHandler
+// FUNCTION: CARMA2_HW 0x0046bd50
+int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFrontend) {
+
+    return 1;
+}
 
 // CreditsScreenInfunc
 

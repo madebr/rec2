@@ -117,13 +117,13 @@ extern void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVerte
 
 // PointSimplexDistSq
 
-// DistSq
+extern float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_vector3* pVertices);
 
 // LimitImpactScale
 
 // GetImpactScale
 
-// TooFarToCrush
+extern int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq);
 
 extern int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector);
 
@@ -389,7 +389,7 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // CompletelyUnBendOtherThings
 
-// EnableGroovers
+extern intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData);
 
 // DoCompletelyUnBentThings
 

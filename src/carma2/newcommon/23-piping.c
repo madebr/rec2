@@ -192,7 +192,16 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 
 // AddSmudgeToPipingSession
 
-// AddSparkToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6f20
+void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, p, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_spark, v, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, v, 0xc);
+
+    ARAddVariedDataToSession(ePipe_chunk_spark, pSpark_index, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_spark, p), pPos,
+        SIZE_OFFSET_PIPING(tPipe_chunk_spark, v), pV);
+}
 
 // FUNCTION: CARMA2_HW 0x004c6f40
 void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial) {
@@ -218,7 +227,17 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
 
 // AddSmokeToPipingSession
 
-// AddSmokeColumnToPipingSession
+// FUNCTION: CARMA2_HW 0x004c70c0
+void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke_column, core, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke_column, vertex, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke_column, vertex, 0x2);
+
+    pIndex += pColour << 14;
+    ARAddVariedDataToSession(ePipe_chunk_smoke_column, pIndex, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke_column, core), pCore,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke_column, vertex), pVertex);
+}
 
 // AddFlameToPipingSession
 
@@ -242,11 +261,29 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
 
 // PipeSingleCrush
 
-// PipeSingleScreenWobble
+// FUNCTION: CARMA2_HW 0x004c8090
+void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_screen_wobble, wobble_x, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_screen_wobble, wobble_y, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_screen_wobble, wobble_y, 0x1);
+
+    ARDoSingleVariedSession(ePipe_chunk_screen_wobble, 0, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_screen_wobble, wobble_x), pWobble_x,
+        SIZE_OFFSET_PIPING(tPipe_chunk_screen_wobble, wobble_y), pWobble_y);
+}
 
 // PipeSingleGrooveStop
 
-// PipeSingleNonCar
+// FUNCTION: CARMA2_HW 0x004c80f0
+void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, matrix, 0x30);
+
+    ARDoSingleVariedSession(ePipe_chunk_non_car, pId, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
+}
 
 // PipeSingleOilSpill
 
@@ -291,17 +328,37 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
 
 // PipeSingleSkidAdjustment
 
-// PipeSingleFlap
+// FUNCTION: CARMA2_HW 0x004c8620
+void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flap, angle, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, angle, 0x2);
+
+    ARDoSingleVariedSession(ePipe_chunk_flap, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, angle), pAngle);
+}
 
 // PipeSingleRelink
 
-// PipeSingleIdentity
+// FUNCTION: CARMA2_HW 0x004c86d0
+void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_identity, actor, 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_identity, (uintptr_t)pActor, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_identity, actor), pActor);
+}
 
 // PipeSingleSplitWeld
 
 // PipeSingleShrapnelShower
 
-// PipeSingleExplosion
+// FUNCTION: CARMA2_HW 0x004c8920
+void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData) {
+    C2_HOOK_BUG_ON(sizeof(tExplosion) != 120);
+
+    ARDoSingleVariedSession(ePipe_chunk_explosion, (uintptr_t)pIndex, 1, sizeof(tExplosion), 0, pData);
+}
 
 // PipeSingleNonCarCreation
 
@@ -357,7 +414,16 @@ void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_mate
 
 // PipeSingleBloodSpurt
 
-// PipeSingleGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004c8d80
+void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBlock_flags) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_groove_on_of, enable, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_groove_on_of, block_flags, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_groove_on_of, block_flags, 0x4);
+
+    ARDoSingleVariedSession(ePipe_single_groove_on_off, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_single_groove_on_of, enable), pOn,
+        SIZE_OFFSET_PIPING(tPipe_single_groove_on_of, block_flags), pBlock_flags);
+}
 
 // PipeSinglePowerupGot
 
@@ -393,7 +459,18 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 
 // PipeSingleEndShitMine
 
-// PipeSingleTransformType
+// FUNCTION: CARMA2_HW 0x004c8ff0
+void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_type) {
+    tU16 type_from = pActor->t.type;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_transform_type, type_from, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_transform_type, type_to, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_transform_type, type_to, 0x1);
+
+    ARDoSingleVariedSession(ePipe_single_transform_type, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_from), type_from,
+        SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_to), (tU16)pTransform_type);
+}
 
 // PipeSingleOppoRenderage
 

@@ -29,7 +29,7 @@ extern tSmoke_column gSmoke_column[10];
 
 // DrawLine2D
 
-// SetLineModelCols
+extern void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol);
 
 // ReplaySparks
 

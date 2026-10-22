@@ -385,7 +385,10 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // FlushAllPedCaches
 
-// SavePedStuff
+// FUNCTION: CARMA2_HW 0x004d6d90
+void C2_HOOK_FASTCALL SavePedStuff(void) {
+
+}
 
 // ComparePedStuff
 

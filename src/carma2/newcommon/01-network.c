@@ -333,7 +333,17 @@ int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_m
 
 // NetSendMessageToPlayer
 
-// NetSendMessageToHost
+// FUNCTION: CARMA2_HW 0x0049f0d0
+int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage) {
+
+    if (gNet_mode != eNet_mode_none) {
+        pMessage->header.field_0x8 = gLocal_net_ID;
+        pMessage->header.field_0x10 = PDGetTotalTime();
+        return PDNetSendMessageToAddress(pDetails, pMessage, &pDetails->pd_net_info);
+    } else {
+        return -3;
+    }
+}
 
 // NetSendMessageToAllPlayers
 

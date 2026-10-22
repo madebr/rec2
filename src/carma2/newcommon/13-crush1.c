@@ -1,6 +1,8 @@
 #include "13-crush1.h"
 
 #include "08-loading1.h"
+#include "09-funks.h"
+#include "23-piping.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
@@ -406,13 +408,37 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // PointSimplexDistSq
 
-// DistSq
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0042c8b0
+float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_vector3* pVertices) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // LimitImpactScale
 
 // GetImpactScale
 
-// TooFarToCrush
+// FUNCTION: CARMA2_HW 0x0042d0e0
+int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq) {
+    br_vector3 diagonal;
+    float threshold;
+
+    BrVector3Sub(&diagonal, &pModel->bounds.max, &pModel->bounds.min);
+    threshold = BrVector3LengthSquared(&diagonal) + pMax_dist_sq;
+    if (DistSq(&pModel->bounds.min, pCount, pVertices) > threshold
+        || DistSq(&pModel->bounds.max, pCount, pVertices) > threshold) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00436890
 int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
@@ -739,10 +765,14 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 
 // DoBending
 
-// STUB: CARMA2_HW 0x00431590
-// STUB: CARMA2_SW 0x004315c0
+// FUNCTION: CARMA2_HW 0x00431590
+// FUNCTION: CARMA2_SW 0x004315c0
 void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
-    NOT_IMPLEMENTED();
+
+    (void)pOn_screen;
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+    pModel->flags &= ~BR_MODF_CUSTOM;
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, BrOnScreenCheck(&pModel->bounds), 0);
 }
 
 // FUNCTION: CARMA2_HW 0x004315e0
@@ -793,7 +823,19 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // CompletelyUnBendOtherThings
 
-// EnableGroovers
+// FUNCTION: CARMA2_HW 0x00439910
+intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush;
+
+    user_crush = pActor->user;
+    if (user_crush != NULL && user_crush->groove != NULL) {
+        PipeSingleGrooveOnOff(1, pActor, 0x3);
+        EnableGroovidelic(pActor, 0x3);
+        PipeSingleTransformType(pActor, BR_TRANSFORM_MATRIX34_LP);
+        pActor->t.type = BR_TRANSFORM_MATRIX34_LP;
+    }
+    return 0;
+}
 
 // DoCompletelyUnBentThings
 
