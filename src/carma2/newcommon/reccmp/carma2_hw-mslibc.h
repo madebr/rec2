@@ -298,7 +298,8 @@
 // __close
 
 // LIBRARY: CARMA2_HW 0x0057fa30
-// __read
+// LIBRARY: CARMA2_SW 0x0057abe0
+// _read
 
 // LIBRARY: CARMA2_HW 0x006737d0
 // _iob
@@ -384,6 +385,7 @@
 // _vsprintf
 
 // LIBRARY: CARMA2_HW 0x00578fd0
+// LIBRARY: CARMA2_SW 0x00574650
 // __filbuf
 
 // LIBRARY: CARMA2_HW 0x005774a0
