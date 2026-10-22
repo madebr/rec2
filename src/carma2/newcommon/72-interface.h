@@ -157,7 +157,7 @@ extern int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend);
 
 // StartGameInfunc
 
-// FRONTEND_StartGameMenuHandler
+extern int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFrontend);
 
 // CreditsScreenInfunc
 
