@@ -64,6 +64,9 @@ const tU8 gOther_long_key[16] = {
 // GLOBAL: CARMA2_SW 0x00759aa4
 int gFunk_groove_flags[30];
 
+// GLOBAL: CARMA2_SW 0x00795220
+br_pixelmap* gCursors[8];
+
 // FUNCTION: CARMA2_HW 0x0048f830
 // FUNCTION: CARMA2_SW 0x0048caa0
 tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
@@ -848,13 +851,6 @@ void C2_HOOK_FASTCALL UnlockInterfaceStuff(void) {
     if (gCursors[i + 4]) {
       BrPixelmapFree(gCursors[i + 4]);
       gCursors[i + 4] = NULL;
-    }
-  }
-  PossibleService();
-  for (i = 0; i < COUNT_OF(gCursor_giblet_images); i++) {
-    if (gCursor_giblet_images[i]) {
-      BrPixelmapFree(gCursor_giblet_images[i]);
-      gCursor_giblet_images[i] = NULL;
     }
   }
 #endif

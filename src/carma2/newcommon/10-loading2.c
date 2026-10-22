@@ -488,7 +488,6 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
 void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
 #ifdef REC2_SW
     tPath_name path;
-    int i;
 
     if (gProgram_state.sausage_eater_mode) {
         strcpy(path, "GHANDX.PIX");
@@ -496,8 +495,8 @@ void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
         strcpy(path, "HANDX.PIX");
     }
     PossibleService();
-    if (gCursors[0] == NULL && LoadPixelmaps(path, gCursors, 4) == 0) {
-        FatalError(kFatalError_LoadCursorImage);
+    if (gCursors[0] == NULL && LoadInterfacePixelmaps(path, gCursors, 4) == 0) {
+        FatalError(kFatalError_CannotLoadCursorImage);
     }
     if (gProgram_state.sausage_eater_mode) {
         strcpy(path, "GHANDPX.PIX");
@@ -505,8 +504,8 @@ void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
         strcpy(path, "HANDPX.PIX");
     }
     PossibleService();
-    if (gCursors[4] == NULL && LoadPixelmaps(path, &gCursors[4], 4) == 0) {
-        FatalError(kFatalError_LoadCursorImage);
+    if (gCursors[4] == NULL && LoadInterfacePixelmaps(path, &gCursors[4], 4) == 0) {
+        FatalError(kFatalError_CannotLoadCursorImage);
     }
 #endif
 }

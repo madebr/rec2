@@ -313,6 +313,7 @@ void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* s
 }
 
 // STUB: CARMA2_HW 0x00513a30
+// STUB: CARMA2_SW 0x0050ee70
 int C2_HOOK_FASTCALL DRLoadMultiplePix(char* pName, br_pixelmap** pMaps, int pCapacity) {
     NOT_IMPLEMENTED();
 }

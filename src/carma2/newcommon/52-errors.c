@@ -201,6 +201,7 @@ const char* gError_messages[184] = {
 };
 
 // STUB: CARMA2_HW 0x0044c230
+// STUB: CARMA2_SW 0x0044bfe0
 void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     char the_str[1024];
     char* sub_str;

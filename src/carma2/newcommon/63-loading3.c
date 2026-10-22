@@ -113,7 +113,31 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
     return pm;
 }
 
+// FUNCTION: CARMA2_HW 0x0048ee00
+// FUNCTION: CARMA2_SW 0x0048c0a0
+br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap2(const char* pPath_name) {
+    br_pixelmap *pm;
+
+    pm = RealLoadPixelmap(pPath_name);
+    EnsurePixelmapAllowed(pm, 1);
+    return pm;
+}
+
+// STUB: CARMA2_HW 0x0048eec0
+// STUB: CARMA2_SW 0x0048c160
+int C2_HOOK_FASTCALL LoadInterfacePixelmaps(const char *pPath_name, br_pixelmap** pMaps, int pCapacity) {
+    tPath_name path;
+    size_t count;
+
+    strcpy(path, pPath_name);
+    strcpy(gCurrent_load_directory, "INTRFACE");
+    count = DRLoadMultiplePix(path, pMaps, pCapacity);
+    DoNotAllowOpenToFail();
+    return count;
+}
+
 // FUNCTION: CARMA2_HW 0x0048ef40
+// FUNCTION: CARMA2_SW 0x0048c1e0
 br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName) {
     tPath_name the_path;
 
@@ -123,6 +147,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048ef80
+// FUNCTION: CARMA2_SW 0x0048c220
 br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path) {
     tPath_name the_path;
 
