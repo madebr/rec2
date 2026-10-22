@@ -146,7 +146,7 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 // AddSmudgeToPipingSession
 
-// AddSparkToPipingSession
+extern void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV);
 
 extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
@@ -178,11 +178,11 @@ extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, con
 
 // PipeSingleCrush
 
-// PipeSingleScreenWobble
+extern void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y);
 
 // PipeSingleGrooveStop
 
-// PipeSingleNonCar
+extern void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor);
 
 // PipeSingleOilSpill
 
@@ -212,7 +212,7 @@ extern void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor);
 
 // PipeSingleShrapnelShower
 
-// PipeSingleExplosion
+extern void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData);
 
 // PipeSingleNonCarCreation
 

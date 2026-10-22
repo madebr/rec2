@@ -481,6 +481,7 @@ typedef enum {
     ePipe_chunk_flap = 23,
     ePipe_model_mash = 24,
     ePipe_chunk_identity = 26,
+    ePipe_chunk_explosion = 31,
     ePipe_chunk_smash_model_change = 33,
     ePipe_smash_texture_change = 36,
     ePipe_chunk_repulse_ray = 37,

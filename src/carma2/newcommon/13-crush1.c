@@ -374,13 +374,37 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // PointSimplexDistSq
 
-// DistSq
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0042c8b0
+float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_vector3* pVertices) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // LimitImpactScale
 
 // GetImpactScale
 
-// TooFarToCrush
+// FUNCTION: CARMA2_HW 0x0042d0e0
+int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq) {
+    br_vector3 diagonal;
+    float threshold;
+
+    BrVector3Sub(&diagonal, &pModel->bounds.max, &pModel->bounds.min);
+    threshold = BrVector3LengthSquared(&diagonal) + pMax_dist_sq;
+    if (DistSq(&pModel->bounds.min, pCount, pVertices) > threshold
+        || DistSq(&pModel->bounds.max, pCount, pVertices) > threshold) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00436890
 int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
@@ -705,9 +729,13 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 
 // DoBending
 
-// STUB: CARMA2_HW 0x00431590
+// FUNCTION: CARMA2_HW 0x00431590
 void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
-    NOT_IMPLEMENTED();
+
+    (void)pOn_screen;
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+    pModel->flags &= ~BR_MODF_CUSTOM;
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, BrOnScreenCheck(&pModel->bounds), 0);
 }
 
 // FUNCTION: CARMA2_HW 0x004315e0

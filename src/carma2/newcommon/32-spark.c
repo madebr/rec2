@@ -64,7 +64,26 @@ br_material* gBlack_material;
 
 // DrawLine2D
 
-// SetLineModelCols
+// FUNCTION: CARMA2_HW 0x004f7cb0
+void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {
+
+    if (pCol != 0) {
+        gLine_model->vertices[0].red = 0xff;
+        gLine_model->vertices[0].grn = 0xff;
+        gLine_model->vertices[0].blu = 0xff;
+        gLine_model->vertices[1].red = 0xff;
+        gLine_model->vertices[1].grn = 0xff;
+        gLine_model->vertices[1].blu = 0xff;
+    } else {
+        gLine_model->vertices[0].red = 0xff;
+        gLine_model->vertices[0].grn = 0x00;
+        gLine_model->vertices[0].blu = 0x00;
+        gLine_model->vertices[1].red = 0xff;
+        gLine_model->vertices[1].grn = 0xff;
+        gLine_model->vertices[1].blu = 0x00;
+    }
+    BrModelUpdate(gLine_model, BR_MODU_ALL);
+}
 
 // ReplaySparks
 

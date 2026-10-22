@@ -185,7 +185,16 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 
 // AddSmudgeToPipingSession
 
-// AddSparkToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6f20
+void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, p, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_spark, v, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, v, 0xc);
+
+    ARAddVariedDataToSession(ePipe_chunk_spark, pSpark_index, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_spark, p), pPos,
+        SIZE_OFFSET_PIPING(tPipe_chunk_spark, v), pV);
+}
 
 // FUNCTION: CARMA2_HW 0x004c6f40
 void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial) {
@@ -235,11 +244,29 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
 
 // PipeSingleCrush
 
-// PipeSingleScreenWobble
+// FUNCTION: CARMA2_HW 0x004c8090
+void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_screen_wobble, wobble_x, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_screen_wobble, wobble_y, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_screen_wobble, wobble_y, 0x1);
+
+    ARDoSingleVariedSession(ePipe_chunk_screen_wobble, 0, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_screen_wobble, wobble_x), pWobble_x,
+        SIZE_OFFSET_PIPING(tPipe_chunk_screen_wobble, wobble_y), pWobble_y);
+}
 
 // PipeSingleGrooveStop
 
-// PipeSingleNonCar
+// FUNCTION: CARMA2_HW 0x004c80f0
+void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, matrix, 0x30);
+
+    ARDoSingleVariedSession(ePipe_chunk_non_car, pId, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
+}
 
 // PipeSingleOilSpill
 
@@ -307,7 +334,12 @@ void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor) {
 
 // PipeSingleShrapnelShower
 
-// PipeSingleExplosion
+// FUNCTION: CARMA2_HW 0x004c8920
+void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData) {
+    C2_HOOK_BUG_ON(sizeof(tExplosion) != 120);
+
+    ARDoSingleVariedSession(ePipe_chunk_explosion, (uintptr_t)pIndex, 1, sizeof(tExplosion), 0, pData);
+}
 
 // PipeSingleNonCarCreation
 

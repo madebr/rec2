@@ -18,7 +18,27 @@ tNet_game_options gNet_settings[9];
 
 // ReadNetGameChoices
 
-// PickARandomCar
+// FUNCTION: CARMA2_HW 0x004662c0
+int C2_HOOK_FASTCALL PickARandomCar(void) {
+    int i;
+    int cars[2 * REC2_ASIZE(gCar_details)];
+    int array_size;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(cars) != 120);
+
+    array_size = 0;
+    for (i = 0; i < gNumber_of_racers; i++) {
+        if (gCar_details[i].ownership == eCar_owner_none) {
+            cars[array_size] = i;
+            array_size++;
+            if (gOpponents[i].network_availability == eNet_avail_all) {
+                cars[array_size] = i;
+                array_size++;
+            }
+        }
+    }
+    return cars[IRandomBetween(0, array_size - 1)];
+}
 
 // RequestCarDetails
 

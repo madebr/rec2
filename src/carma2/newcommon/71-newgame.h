@@ -12,7 +12,7 @@ extern tNet_game_options gNet_settings[9];
 
 // ReadNetGameChoices
 
-// PickARandomCar
+extern int C2_HOOK_FASTCALL PickARandomCar(void);
 
 // RequestCarDetails
 

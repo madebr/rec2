@@ -30,6 +30,9 @@ br_vector3 gZero_v__car;  // FIXME: make const?
 // GLOBAL: CARMA2_HW 0x006793dc
 int gNum_active_non_cars;
 
+// GLOBAL: CARMA2_HW 0x0065d010
+int gFace_num__car = 1;
+
 // DamageUnit
 
 // FUNCTION: CARMA2_HW 0x00413f10

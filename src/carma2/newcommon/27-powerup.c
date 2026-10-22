@@ -36,6 +36,12 @@ int gPickup_respawn_min_time_ms;
 // GLOBAL: CARMA2_HW 0x007447e8
 int gPickup_respawn_max_extra_time_ms;
 
+// GLOBAL: CARMA2_HW 0x007447d0
+int gBlind_pedestrians;
+
+// GLOBAL: CARMA2_HW 0x007447e4
+int gPed_dismemberfest;
+
 // GLOBAL: CARMA2_HW 0x007059c0
 int gCount_mutant_tail_parts;
 
@@ -240,7 +246,11 @@ void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SetStupidPedestrians
 
-// ResetStupidPedestrians
+// FUNCTION: CARMA2_HW 0x004dc920
+void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gBlind_pedestrians = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc930
 int C2_HOOK_FASTCALL FreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
@@ -277,7 +287,11 @@ void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
     gExploding_pedestrians = 0;
 }
 
-// ResetPedBrittle
+// FUNCTION: CARMA2_HW 0x004dca20
+void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_dismemberfest = 0;
+}
 
 // SetEngineFactor
 
@@ -446,7 +460,15 @@ void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->wall_climber_mode = 0;
 }
 
-// ResetBouncey
+// FUNCTION: CARMA2_HW 0x004de750
+void C2_HOOK_FASTCALL ResetBouncey(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, bounce_rate, 0x4c0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, bounce_amount, 0x4c4);
+
+    pCar->bounce_rate = 0.f;
+    pCar->bounce_amount = 0.f;
+}
 
 // ResetSuspension
 
@@ -504,7 +526,14 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // ResetMassMultiplier
 
-// ShowPedestrians
+// FUNCTION: CARMA2_HW 0x004dec10
+int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gShow_peds_on_map = 1;
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dec40
 void C2_HOOK_FASTCALL HidePedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
@@ -514,7 +543,14 @@ void C2_HOOK_FASTCALL HidePedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
     }
 }
 
-// SetElectroBastard
+// FUNCTION: CARMA2_HW 0x004dec60
+int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, proxy_ray_distance, 0x170c);
+
+    pCar->proxy_ray_distance = pPowerup->float_params[0] * pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dec90
 void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
