@@ -16,6 +16,7 @@ void C2_HOOK_STDCALL DoStainlessLogo(void) {
 #endif
 
 // STUB: CARMA2_HW 0x0043e770
+// STUB: CARMA2_SW 0x0043e880
 void C2_HOOK_FASTCALL PlaySmackerFile(char* pSmack_name) {
     NOT_IMPLEMENTED();
 }
@@ -32,6 +33,7 @@ void C2_HOOK_FASTCALL DoEndRaceAnimation(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0043f390
+// FUNCTION: CARMA2_SW 0x0043f470
 void C2_HOOK_FASTCALL DoGameCompletedAnimation(void) {
 
     PlaySmackerFile("TOPRANK.SMK");
