@@ -55,7 +55,7 @@ extern int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pVal
 
 // SoftnessOfNearestPointCB
 
-// DRActorEnumRecurseWithTranslation
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* pCallback, void* pContext);
 
 // SoftnessOfNearestPoint
 
