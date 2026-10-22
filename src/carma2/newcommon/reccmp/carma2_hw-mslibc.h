@@ -147,6 +147,7 @@
 // __FPinit
 
 // GLOBAL: CARMA2_HW 0x00676460
+// GLOBAL: CARMA2_SW 0x00670bd0
 // __matherr_flag
 
 // GLOBAL: CARMA2_HW 0x006b2e2c
@@ -165,6 +166,7 @@
 // __HUGE
 
 // GLOBAL: CARMA2_HW 0x00676080
+// GLOBAL: CARMA2_SW 0x00670790
 // ___badioinfo
 
 // GLOBAL: CARMA2_HW 0x00676590
@@ -209,6 +211,7 @@
 // _tzapiused
 
 // GLOBAL: CARMA2_HW 0x006764f8
+// GLOBAL: CARMA2_SW 0x00670c68
 // __tzname
 
 // GLOBAL: CARMA2_HW 0x006b2ef8
@@ -249,6 +252,15 @@
 
 // GLOBAL: CARMA2_HW 0x0058f010
 // ___xi_z
+
+// GLOBAL: CARMA2_SW 0x0066e49c
+// ___nullstring
+
+// GLOBAL: CARMA2_SW 0x0066e4a0
+// ___wnullstring
+
+// GLOBAL: CARMA2_SW 0x00588700
+// ___lookuptable
 
 // LIBRARY: CARMA2_HW 0x00576860
 // LIBRARY: CARMA2_SW 0x00571f00
@@ -307,6 +319,7 @@
 // _fflush
 
 // LIBRARY: CARMA2_HW 0x005772f0
+// LIBRARY: CARMA2_SW 0x00572770
 // _ftell
 
 // LIBRARY: CARMA2_HW 0x00576ec0
@@ -517,6 +530,7 @@
 // __input
 
 // LIBRARY: CARMA2_HW 0x0057b800
+// LIBRARY: CARMA2_SW 0x00576e80
 // __output
 
 // LIBRARY: CARMA2_HW 0x0057d630
@@ -528,6 +542,7 @@
 // __dosmaperr
 
 // LIBRARY: CARMA2_HW 0x0057b6d0
+// LIBRARY: CARMA2_SW 0x00576d50
 // __flsbuf
 
 // LIBRARY: CARMA2_HW 0x0057f1f0
@@ -554,9 +569,11 @@
 // __ctrlfp
 
 // LIBRARY: CARMA2_HW 0x0057c3b0
+// LIBRARY: CARMA2_SW 0x00577a30
 // __except1
 
 // LIBRARY: CARMA2_HW 0x0057c2e0
+// LIBRARY: CARMA2_SW 0x00577960
 // __handle_qnan1
 
 // LIBRARY: CARMA2_HW 0x0057cdf0
@@ -564,6 +581,7 @@
 // __sptype
 
 // LIBRARY: CARMA2_HW 0x0057c2c0
+// LIBRARY: CARMA2_SW 0x00577940
 // __frnd
 
 // LIBRARY: CARMA2_HW 0x00576d60
@@ -705,12 +723,14 @@
 // __initterm
 
 // LIBRARY: CARMA2_HW 0x0057cbd0
+// LIBRARY: CARMA2_SW 0x00578250
 // __umatherr
 
 // LIBRARY: CARMA2_HW 0x005845d0
 // __matherr
 
 // LIBRARY: CARMA2_HW 0x0057cc80
+// LIBRARY: CARMA2_SW 0x00578300
 // __set_errno
 
 // LIBRARY: CARMA2_HW 0x00582dc0
@@ -765,6 +785,7 @@
 // __allshl
 
 // LIBRARY: CARMA2_HW 0x00580c00
+// LIBRARY: CARMA2_SW 0x0057bdb0
 // ___loctotime_t
 
 // LIBRARY: CARMA2_HW 0x0057f910
@@ -829,9 +850,11 @@
 // ___multtenpow12
 
 // LIBRARY: CARMA2_HW 0x00575bf6
+// LIBRARY: CARMA2_SW 0x00571296
 // ___from_strstr_to_strchr
 
 // LIBRARY: CARMA2_HW 0x005844a0
+// LIBRARY: CARMA2_SW 0x0057f800
 // __isatty
 
 // LIBRARY: CARMA2_HW 0x00579fd0
@@ -839,6 +862,7 @@
 // _memchr
 
 // LIBRARY: CARMA2_HW 0x0057c8a0
+// LIBRARY: CARMA2_SW 0x00577f20
 // __handle_exc
 
 // LIBRARY: CARMA2_HW 0x0057cfc0
@@ -856,9 +880,11 @@
 // _closesocket
 
 // LIBRARY: CARMA2_HW 0x005856b0
+// LIBRARY: CARMA2_SW 0x00580a10
 // ___tzset
 
 // LIBRARY: CARMA2_HW 0x005856d0
+// LIBRARY: CARMA2_SW 0x00580a30
 // __tzset
 
 // LIBRARY: CARMA2_HW 0x00585980
@@ -866,6 +892,7 @@
 // __isindst
 
 // LIBRARY: CARMA2_HW 0x00577a00
+// LIBRARY: CARMA2_SW 0x00572e80
 // _atol
 
 // LIBRARY: CARMA2_HW 0x00587350
@@ -991,5 +1018,17 @@
 // LIBRARY: CARMA2_HW 0x00576c00
 // LIBRARY: CARMA2_SW 0x00572080
 // _div
+
+// LIBRARY: CARMA2_SW 0x00578360
+// __errcode
+
+// LIBRARY: CARMA2_SW 0x00577be0
+// __raise_exc
+
+// LIBRARY: CARMA2_SW 0x0057f8b0
+// __aullrem
+
+// LIBRARY: CARMA2_SW 0x0057f830
+// _wctomb
 
 #endif

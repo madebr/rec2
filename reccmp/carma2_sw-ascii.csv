@@ -54,6 +54,7 @@ address,type,x-text
 0x588bbc,string,"user32.dll"
 0x588bd8,string,"SunMonTueWedThuFriSat"
 0x588bf0,string,"JanFebMarAprMayJunJulAugSepOctNovDec"
+0x588c18,string,"TZ"
 0x588fda,string,"GetSystemInfo"
 0x588fea,string,"HeapAlloc"
 0x588ff6,string,"GetProcessHeap"
