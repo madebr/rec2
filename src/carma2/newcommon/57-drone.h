@@ -2,6 +2,9 @@
 #define GUARD_57_DRONE_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern br_vector3 gRender_bounds_centre;
 
 // DoNotDprintf
 
@@ -65,7 +68,7 @@
 
 // ResetDroneModel
 
-// DroneCarWithinRenderingDistance
+extern int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pPos);
 
 // DronePlaneWithinRenderingDistance
 
