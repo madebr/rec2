@@ -355,7 +355,7 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 // NetOptions_Infunc
 
-// NetOptions_Outfunc
+extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
 // NetOptions_CreditsRoller
 
