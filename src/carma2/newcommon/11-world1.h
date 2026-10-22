@@ -12,7 +12,7 @@ extern br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matri
 
 // FindSpecVolIndex
 
-// MungeMaterialSV
+extern void C2_HOOK_FASTCALL MungeMaterialSV(br_matrix34* pMat, br_material* pMat_1, br_material* pMat_2, int pAxis_0, int pAxis_1);
 
 // SetSpecVolMatSize
 
