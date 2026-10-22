@@ -326,6 +326,7 @@ void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004fba00
+// FUNCTION: CARMA2_SW 0x004f6f60
 void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z) {
     int i;
     tSmoke_column* col;
