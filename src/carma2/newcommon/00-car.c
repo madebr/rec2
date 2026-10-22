@@ -150,6 +150,7 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 // TumbleObject
 
 // FUNCTION: CARMA2_HW 0x00418230
+// FUNCTION: CARMA2_SW 0x00418260
 void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, flags, 0x100);
