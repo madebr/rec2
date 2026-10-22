@@ -111,13 +111,14 @@ runs:
       run: |
         ${{ (inputs.working-directory && format('cd "{0}"', inputs.working-directory)) || '' }}
         for target in ${{ inputs.targets }}; do
+          count_var="${target}_SYMBOL_COUNT"
           reccmp-reccmp --no-color --target ${target} \
             --diff "${{ steps.calc.outputs.unix-temp-path }}/${target}-old.json" \
             --json "${{ steps.calc.outputs.unix-temp-path }}/${target}.json" \
             --json-diet \
-            -T "${${target}_SYMBOL_COUNT}" \
-            -H "${{ steps.calc.outputs.unix-temp-path }}/${target}.html" \
-            -S "${{ steps.calc.outputs.unix-temp-path }}/${target}.svg" \
+            --total "${!count_var}" \
+            --html "${{ steps.calc.outputs.unix-temp-path }}/${target}.html" \
+            --svg "${{ steps.calc.outputs.unix-temp-path }}/${target}.svg" \
             >${{ steps.calc.outputs.unix-temp-path }}/${target}.txt
         done
     - name: 'Update gist'
