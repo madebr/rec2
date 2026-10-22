@@ -209,6 +209,7 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 // CycleCarSimplificationLevel
 
 // FUNCTION: CARMA2_HW 0x004448a0
+// FUNCTION: CARMA2_SW 0x00444980
 void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
     int on;
 
