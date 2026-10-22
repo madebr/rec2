@@ -553,6 +553,7 @@ void C2_HOOK_FASTCALL ResendGuaranteedMessages(void) {
 // NetCarFromPlayerID
 
 // FUNCTION: CARMA2_HW 0x004a69b0
+// FUNCTION: CARMA2_SW 0x004a2b30
 tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar) {
     int i;
 
