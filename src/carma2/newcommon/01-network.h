@@ -216,7 +216,7 @@ extern void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
 // NetCarFromPlayerID
 
-// NetPlayerFromCar
+extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar);
 
 // GetCheckSum
 
