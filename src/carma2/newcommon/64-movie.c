@@ -14,6 +14,7 @@
 int gQuickTime_initialized;
 
 // GLOBAL: CARMA2_HW 0x006a0c50
+// GLOBAL: CARMA2_SW 0x0069aca8
 int gNext_replay_record_state;
 
 // GLOBAL: CARMA2_HW 0x00705440
@@ -99,6 +100,7 @@ void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
 // MovieRecordFrame
 
 // FUNCTION: CARMA2_HW 0x004e2100
+// FUNCTION: CARMA2_SW 0x004de480
 int C2_HOOK_FASTCALL MovieRecording(void) {
     return gNext_replay_record_state;
 }
