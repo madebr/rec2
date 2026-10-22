@@ -17,6 +17,7 @@
 // ChangeKeyMapIndex
 
 // FUNCTION: CARMA2_HW 0x004b4090
+// FUNCTION: CARMA2_SW 0x004b0200
 void C2_HOOK_FASTCALL GetGraphicsSettingsData(tFrontend_spec* pFrontend) {
     float yon_factor;
     float yon;
