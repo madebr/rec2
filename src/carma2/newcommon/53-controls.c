@@ -185,7 +185,10 @@ void C2_HOOK_FASTCALL ToggleTimerFreeze(void) {
 
 // LoseDosh
 
-// ToggleHeadupMap
+// FUNCTION: CARMA2_HW 0x00444600
+void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
+
+}
 
 // HackyMapFixForMac3dfx
 
