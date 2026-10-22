@@ -296,7 +296,7 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
 void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData) {
     C2_HOOK_BUG_ON(sizeof(tExplosion) != 120);
 
-    ARDoSingleVariedSession(31, (uintptr_t)pIndex, 1, sizeof(tExplosion), 0, pData);
+    ARDoSingleVariedSession(ePipe_chunk_explosion, (uintptr_t)pIndex, 1, sizeof(tExplosion), 0, pData);
 }
 
 // PipeSingleNonCarCreation
