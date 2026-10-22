@@ -155,7 +155,7 @@ extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
 // CycleCarSimplificationLevel
 
-// ToggleAccessoryRendering
+extern void C2_HOOK_FASTCALL ToggleAccessoryRendering(void);
 
 // UserSendMessage
 
