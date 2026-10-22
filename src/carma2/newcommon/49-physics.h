@@ -180,7 +180,7 @@ extern void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject);
 
 // GetPreCalculatedJointForces
 
-// MakeObjectListDoSomething
+extern void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject);
 
 // CheckForObjectTouchingAnotherObject
 

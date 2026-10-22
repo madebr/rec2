@@ -11,6 +11,7 @@ extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
 extern int gNum_active_non_cars;
+extern int gFace_num__car;
 
 // DamageUnit
 
