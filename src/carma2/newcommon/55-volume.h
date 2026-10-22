@@ -21,7 +21,7 @@ extern void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject);
 
 extern void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx);
 
-// SaveSpecialVolumes
+extern void C2_HOOK_FASTCALL SaveSpecialVolumes(void);
 
 extern void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec);
 
