@@ -48,6 +48,7 @@ int gSwap_depth_effect_colour_red;
 int gSwap_depth_effect_colour_green;
 
 // GLOBAL: CARMA2_HW 0x0067c4a8
+// GLOBAL: CARMA2_SW 0x00676c20
 int gHas_sky_texture;
 
 // GLOBAL: CARMA2_HW 0x0079ec20
@@ -381,6 +382,7 @@ void C2_HOOK_FASTCALL ChangeDepthEffect(void) {
 #endif
 
 // STUB: CARMA2_HW 0x00445e20
+// STUB: CARMA2_SW 0x00445ea0
 void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel) {
     NOT_IMPLEMENTED();
 }

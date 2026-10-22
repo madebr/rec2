@@ -83,6 +83,7 @@ br_font* gHeadup_font;
 
 
 // GLOBAL: CARMA2_HW 0x0075bb80
+// GLOBAL: CARMA2_SW 0x007520e0
 tProgram_state gProgram_state;
 
 // GLOBAL: CARMA2_HW 0x0068b880
@@ -99,6 +100,7 @@ int gNumber_of_races;
 
 
 // GLOBAL: CARMA2_HW 0x0075b960
+// GLOBAL: CARMA2_SW 0x00751ec0
 tBrender_storage gOur_car_storage_space;
 
 // GLOBAL: CARMA2_HW 0x00761ca0

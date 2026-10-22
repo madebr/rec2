@@ -7,9 +7,11 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00591374
+// GLOBAL: CARMA2_SW 0x0058c354
 tCar_texturing_level gCar_texturing_level = eCTL_full;
 
 // GLOBAL: CARMA2_HW 0x0059136c
+// GLOBAL: CARMA2_SW 0x0058c34c
 tRoad_texturing_level gRoad_texturing_level = eRTL_full;
 
 // GLOBAL: CARMA2_HW 0x00591370
@@ -17,6 +19,7 @@ tRoad_texturing_level gRoad_texturing_level = eRTL_full;
 tWall_texturing_level gWall_texturing_level = eWTL_full;
 
 // GLOBAL: CARMA2_HW 0x006793d8
+// GLOBAL: CARMA2_SW 0x00673b48
 int gCar_simplification_level;
 
 // GLOBAL: CARMA2_HW 0x00591368
@@ -135,6 +138,7 @@ void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCall
 }
 
 // FUNCTION: CARMA2_HW 0x00448fd0
+// FUNCTION: CARMA2_SW 0x004493f0
 void C2_HOOK_FASTCALL ProcessModelFaceMaterials2(br_model* pModel, material_cbfn* pCallback) {
     tU32 i;
     tU32 j;

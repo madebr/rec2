@@ -338,6 +338,7 @@ int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelma
 // WaitFor
 
 // FUNCTION: CARMA2_HW 0x005146f0
+// FUNCTION: CARMA2_SW 0x0050fb30
 intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg) {
     intptr_t result;
 
