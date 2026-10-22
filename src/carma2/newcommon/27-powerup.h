@@ -12,6 +12,8 @@ extern tSlot_info gPotential_substitution_value_APO;
 extern int gNet_powerup_time_replacement;
 extern int gPickup_respawn_min_time_ms;
 extern int gPickup_respawn_max_extra_time_ms;
+extern int gBlind_pedestrians;
+extern int gPed_dismemberfest;
 extern int gCount_mutant_tail_parts;
 extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
@@ -161,7 +163,7 @@ extern void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCa
 
 // SetStupidPedestrians
 
-// ResetStupidPedestrians
+extern void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL FreezeTimer(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -177,7 +179,7 @@ extern void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car);
 
 extern void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car);
 
-// ResetPedBrittle
+extern void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetEngineFactor
 
