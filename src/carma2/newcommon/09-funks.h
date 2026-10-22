@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL KillGroovadelic(int pOwner);
 
 extern void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it);
 
-// GrooveThoseDelics
+extern void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 
 extern void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor);
 
