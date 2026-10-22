@@ -11,6 +11,7 @@
 // DoEndRaceSummary
 
 // FUNCTION: CARMA2_HW 0x004e33d0
+// FUNCTION: CARMA2_SW 0x004df760
 int C2_HOOK_FASTCALL AnyBuyableCars(void) {
     int count;
     int i;
