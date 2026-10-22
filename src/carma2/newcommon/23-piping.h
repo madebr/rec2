@@ -212,7 +212,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
 
 // PipeSingleShrapnelShower
 
-// PipeSingleExplosion
+extern void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData);
 
 // PipeSingleNonCarCreation
 
