@@ -177,5 +177,5 @@ runs:
         payload_path="${{ steps.calc.outputs.comment-payload-path }}"
         echo "# reccmp report" >>${payload_path}
         for target in ${{ inputs.targets }}; do
-          section "${target}" "${{ steps.calc.outputs.unix-temp-path }}/${target}.txt" >>${payload_path}
+          section "${target}" "${{ steps.calc.outputs.safe-temp-path }}/${target}.txt" >>${payload_path}
         done
