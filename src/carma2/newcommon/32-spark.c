@@ -89,14 +89,16 @@ int C2_HOOK_FASTCALL DrawLine3D(const br_vector3* pStart, const br_vector3* pEnd
         }
         fraction = (end.v[2] + gSpark_cam->hither_z) / (end.v[2] - start.v[2]);
         if (start.v[2] > -gSpark_cam->hither_z) {
-            start.v[0] = end.v[0] - (end.v[0] - start.v[0]) * fraction;
-            start.v[1] = end.v[1] - (end.v[1] - start.v[1]) * fraction;
-            start.v[2] = -gSpark_cam->hither_z;
+            BrVector3Set(&start,
+                end.v[0] - (end.v[0] - start.v[0]) * fraction,
+                end.v[1] - (end.v[1] - start.v[1]) * fraction,
+                -gSpark_cam->hither_z);
         }
         if (end.v[2] > -gSpark_cam->hither_z) {
-            end.v[0] = end.v[0] - (end.v[0] - start.v[0]) * fraction;
-            end.v[1] = end.v[1] - (end.v[1] - start.v[1]) * fraction;
-            end.v[2] = -gSpark_cam->hither_z;
+            BrVector3Set(&end,
+                end.v[0] - (end.v[0] - start.v[0]) * fraction,
+                end.v[1] - (end.v[1] - start.v[1]) * fraction,
+                -gSpark_cam->hither_z);
         }
     }
     BrMatrix4ApplyP(&projected_start, &start, &gCameraToScreen);
