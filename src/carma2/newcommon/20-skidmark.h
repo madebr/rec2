@@ -14,7 +14,7 @@ extern int gCurrent_skid;
 
 // MaterialFromIndex
 
-// AdjustSkid
+extern void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
 
 // FarFromLine2D
 
