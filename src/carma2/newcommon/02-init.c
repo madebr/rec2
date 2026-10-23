@@ -121,7 +121,24 @@ void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
     }
 }
 
-// ReinitialiseRearviewCamera
+// FUNCTION: CARMA2_HW 0x0047db30
+void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void) {
+    br_camera* camera_ptr;
+    float width;
+    float height;
+
+    camera_ptr = gRearview_camera->type_data;
+    camera_ptr->field_of_view = BrDegreeToAngle(gProgram_state.current_car.rearview_camera_angle);
+    width = (float)(gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left);
+    height = (float)(gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top);
+    camera_ptr->aspect = width / height;
+    BrVector3Set(&gRearview_camera->t.t.translate.t,
+        gProgram_state.current_car.mirror_x_offset,
+        gProgram_state.current_car.mirror_y_offset,
+        gProgram_state.current_car.mirror_z_offset);
+    AllocateRearviewPixelmap();
+    MungeRearviewSky();
+}
 
 // FUNCTION: CARMA2_HW 0x0047dc30
 void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
