@@ -3,6 +3,10 @@
 #include "37-brucetrk.h"
 #include "globvars.h"
 
+// GLOBAL: CARMA2_HW 0x006792b4
+// GLOBAL: CARMA2_SW 0x00673a24
+br_actor* gPed_actor;
+
 // GLOBAL: CARMA2_HW 0x006792b8
 int gCamera_frozen;
 
@@ -46,13 +50,36 @@ tActionReplayCameraMode gAction_replay_camera_mode;
 
 // PositionExternalCamera
 
-// CameraBugFix
+// FUNCTION: CARMA2_HW 0x0040f760
+// FUNCTION: CARMA2_SW 0x0040f740
+void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* pCar, tU32 pTime) {
+
+    if (gAction_replay_mode
+            && (gAction_replay_camera_mode == kActionReplayCameraMode_ActionTracking || gAction_replay_camera_mode == kActionReplayCameraMode_Panning)
+            && gPed_actor != NULL
+            && !gProgram_state.cockpit_on) {
+        IncidentCam(pCar, pTime);
+    }
+}
 
 // PossibleRemoveNonCarFromWorld
 
 // PutNonCarBackInWorld
 
-// IncidentCam
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0040f790
+// STUB: CARMA2_SW 0x0040f770
+int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime) {
+
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // MoveCamToIncident
 
