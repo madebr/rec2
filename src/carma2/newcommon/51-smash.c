@@ -417,15 +417,7 @@ void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_materia
         MungeMaterialCB(pActor, &munge_material_cb_ctx);
     }
     if (munge_material_cb_ctx.count_indices != 0) {
-        br_scalar scale;
-
-        scale = BrVector3Length(&munge_material_cb_ctx.field_0x20);
-        if (scale > BR_SCALAR_EPSILON * 2) {
-            scale = (br_scalar)(1.0 / scale);
-            BrVector3Scale(pNormal, &munge_material_cb_ctx.field_0x20, scale);
-        } else {
-            BrVector3Set(pNormal, 1.0f, 0.0f, 0.0f);
-        }
+        BrVector3Normalise(pNormal, &munge_material_cb_ctx.field_0x20);
     }
     *pCount_indices = munge_material_cb_ctx.count_indices;
     *pCount_vertices = munge_material_cb_ctx.count_vertices;
