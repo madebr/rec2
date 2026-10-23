@@ -429,7 +429,7 @@ extern void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 // UnBendOtherThings
 
-// NormalizedAngle
+extern br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle);
 
 // CalculateAmountRepairedFraction
 
