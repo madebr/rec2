@@ -518,7 +518,16 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyRelink
 
-// ApplyIdentity
+// FUNCTION: CARMA2_HW 0x004c9890
+// FUNCTION: CARMA2_SW 0x004c5fc0
+void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    chunk = *pChunk;
+    BrMatrix34Identity(&chunk->data.identity.actor->t.t.mat);
+}
 
 // ApplySplitWeld
 

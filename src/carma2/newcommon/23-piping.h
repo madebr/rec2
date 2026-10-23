@@ -324,7 +324,7 @@ extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTra
 
 // ApplyRelink
 
-// ApplyIdentity
+extern void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk);
 
 // ApplySplitWeld
 

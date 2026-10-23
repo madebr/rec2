@@ -526,6 +526,7 @@ typedef struct tPipe_chunk {
         tPipe_ped_physics_data ped_physics;
         tPipe_phil_object phil_object;
         tPipe_chunk_shrapnel shrapnel;
+        tPipe_chunk_identity identity;
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
         char raw_data[0];
