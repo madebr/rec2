@@ -1,5 +1,11 @@
 #include "57-drone.h"
 
+#include <math.h>
+
+// GLOBAL: CARMA2_HW 0x006820c0
+// GLOBAL: CARMA2_SW 0x0067c800
+br_vector3 gRender_bounds_centre;
+
 // GLOBAL: CARMA2_HW 0x00684518
 int gTraffic_disabled;
 
@@ -65,7 +71,18 @@ int gTraffic_disabled;
 
 // ResetDroneModel
 
-// DroneCarWithinRenderingDistance
+// FUNCTION: CARMA2_HW 0x0044ca90
+// FUNCTION: CARMA2_SW 0x0044c840
+int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pPos) {
+
+    if ((float)fabs(gRender_bounds_centre.v[0] - pPos->v[0]) < 15.f
+        && (float)fabs(gRender_bounds_centre.v[1] - pPos->v[1]) < 12.f
+        && (float)fabs(gRender_bounds_centre.v[2] - pPos->v[2]) < 15.f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // DronePlaneWithinRenderingDistance
 
