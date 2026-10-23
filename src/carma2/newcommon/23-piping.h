@@ -448,7 +448,7 @@ extern void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_ch
 
 // UndoSmashDecal
 
-// UndoSmashTextureChange
+extern void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoActorTrans
 
