@@ -548,7 +548,18 @@ void C2_HOOK_FASTCALL ResendGuaranteedMessages(void) {
 
 // NetWaitForGuaranteeReplies
 
-// NetPlayerFromID
+// FUNCTION: CARMA2_HW 0x004a6920
+// FUNCTION: CARMA2_SW 0x004a2aa0
+tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromID(tPlayer_ID pPlayer) {
+    int i;
+
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].ID == pPlayer) {
+            return &gNet_players[i];
+        }
+    }
+    return NULL;
+}
 
 // STUB: CARMA2_HW 0x004a6960
 // STUB: CARMA2_SW 0x004a2ae0
