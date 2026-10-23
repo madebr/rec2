@@ -135,7 +135,7 @@ extern void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 
 extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
-// AdjustFlame
+extern void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z);
 
 // ReplayFlame
 
