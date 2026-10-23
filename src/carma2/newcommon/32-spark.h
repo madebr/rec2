@@ -203,7 +203,7 @@ extern void C2_HOOK_FASTCALL FreeSmokeShadeTables(void);
 
 // ForEveryActorMaterialNoGrooves
 
-// ForEveryCarMaterial
+extern void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves);
 
 // ForEveryCarModelCB
 
@@ -211,7 +211,7 @@ extern void C2_HOOK_FASTCALL FreeSmokeShadeTables(void);
 
 // MightBlendifyMaterial
 
-// BlendifyMaterialCB
+extern int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar);
 

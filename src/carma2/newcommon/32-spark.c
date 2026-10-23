@@ -495,7 +495,19 @@ void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 
 // ForEveryActorMaterialNoGrooves
 
-// ForEveryCarMaterial
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004fe640
+// STUB: CARMA2_SW 0x004f9f20
+void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // ForEveryCarModelCB
 
@@ -503,11 +515,16 @@ void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 
 // MightBlendifyMaterial
 
-// BlendifyMaterialCB
-
-// STUB: CARMA2_HW 0x004fecf0
-void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar) {
+// STUB: CARMA2_HW 0x004fed00
+// STUB: CARMA2_SW 0x004fa5e0
+int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial) {
     NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004fecf0
+// FUNCTION: CARMA2_SW 0x004fa5d0
+void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar) {
+    ForEveryCarMaterial(pCar, BlendifyMaterialCB, 1);
 }
 
 // UnBlendifyMaterialCB
