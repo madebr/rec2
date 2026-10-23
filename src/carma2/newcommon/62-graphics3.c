@@ -167,6 +167,7 @@ void C2_HOOK_FASTCALL DoSomeThingsToCheckpoints(br_pixelmap* pMap, tU32 pTime, t
     int checkpoints[10];
     int checkpoint_flags;
 
+    C2_HOOK_ASSERT(gCurrent_race.check_point_count <= REC2_ASIZE(checkpoints));
     for (i = 0; i < gCurrent_race.check_point_count; i++) {
         checkpoints[i] = 0;
     }
