@@ -112,7 +112,11 @@ br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX) {
 
 // DRMatrix34PostRotateX
 
-// DRMatrix34PostRotateY
+// STUB: CARMA2_HW 0x00512ad0
+// STUB: CARMA2_SW 0x0050df10
+void C2_HOOK_FASTCALL DRMatrix34PostRotateY(br_matrix34* pMat, br_angle pRy) {
+    NOT_IMPLEMENTED();
+}
 
 // DRMatrix34PreRotateZ
 
