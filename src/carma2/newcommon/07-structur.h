@@ -33,7 +33,7 @@ extern void C2_HOOK_FASTCALL TotalRepair(void);
 
 // DoProgramDemo
 
-// ChooseOpponent
+extern int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness);
 
 // SelectOpponents
 
