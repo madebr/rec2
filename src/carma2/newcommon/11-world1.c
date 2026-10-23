@@ -1,6 +1,41 @@
 #include "11-world1.h"
 
-// DeleteBastards
+#include "28-world3.h"
+
+#include "rec2_macros.h"
+
+// GLOBAL: CARMA2_HW 0x006ab7a8
+// GLOBAL: CARMA2_SW 0x006a51f8
+int gDelete_count;
+
+// GLOBAL: CARMA2_HW 0x006aafc8
+// GLOBAL: CARMA2_SW 0x006a4a18
+br_actor* gDelete_list[500];
+
+// FUNCTION: CARMA2_HW 0x00507210
+// FUNCTION: CARMA2_SW 0x00502660
+br_uint_32 C2_HOOK_FASTCALL DeleteBastards(br_actor* pActor, br_matrix34* pMatrix, void* pArg) {
+    int i;
+    int parent_already_doomed;
+
+    if ((pActor != gAdditional_actors
+            && (pActor->identifier == NULL || pActor->identifier[0] == '&')
+            && Vector3IsZero((br_vector3*)pMatrix->m[3]))
+        || (pActor->model == NULL && pActor->type == BR_ACTOR_MODEL)) {
+        parent_already_doomed = 0;
+        for (i = 0; i < gDelete_count; i++) {
+            if (gDelete_list[i] == pActor) {
+                parent_already_doomed = 1;
+                break;
+            }
+        }
+        if (!parent_already_doomed) {
+            gDelete_list[gDelete_count] = pActor;
+            gDelete_count++;
+        }
+    }
+    return 0;
+}
 
 // DeleteAnyZeroBastards
 
