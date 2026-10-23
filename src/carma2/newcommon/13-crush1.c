@@ -271,7 +271,30 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
 
 // SoftnessOfNearestPointCB
 
-// DRActorEnumRecurseWithTranslation
+// FUNCTION: CARMA2_HW 0x0042b760
+// FUNCTION: CARMA2_SW 0x0042b7f0
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* pCallback, void* pContext) {
+    br_vector3 delta;
+    intptr_t result;
+    br_actor* a;
+
+    if (pDelta != NULL) {
+        BrVector3Add(&delta, (br_vector3*)pActor->t.t.mat.m[3], pDelta);
+    } else {
+        BrVector3Set(&delta, 0.0f, 0.0f, 0.0f);
+    }
+    result = pCallback(pActor, &delta, pContext);
+    if (result != 0) {
+        return result;
+    }
+    for (a = pActor->children; a != NULL; a = a->next) {
+        result = DRActorEnumRecurseWithTranslation(a, &delta, pCallback, pContext);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
 
 // SoftnessOfNearestPoint
 
