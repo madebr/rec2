@@ -7,6 +7,8 @@
 #include "rec2_types.h"
 
 extern int gApplicationDataTwtMounted;
+extern int gWasted_explosion_chance;
+extern tExplosion_animation gExplosion_pix_animation_groups;
 extern tPath_name gApplication_path;
 extern char gRace_path[256];
 extern const char* gDir_separator;

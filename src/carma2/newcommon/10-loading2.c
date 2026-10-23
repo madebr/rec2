@@ -22,6 +22,7 @@
 #include "38-flicplay.h"
 #include "41-utility.h"
 #include "42-input.h"
+#include "51-smash.h"
 #include "52-errors.h"
 #include "53-controls.h"
 #include "55-volume.h"
@@ -451,9 +452,13 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     gMass_mine = GetAFloat(gTempFile);
 }
 
-// STUB: CARMA2_HW 0x00487dc0
+// FUNCTION: CARMA2_HW 0x00487dc0
+// FUNCTION: CARMA2_SW 0x00484ef0
 void C2_HOOK_FASTCALL FinishLoadingGeneral(void) {
-    NOT_IMPLEMENTED();
+    gDefault_default_water_spec_vol.screen_pixelmap = BrMapFind(gUnderwater_screen_name);
+    LoadWastedExplosion(gTempFile, &gWasted_explosion_chance, &gExplosion_sound_id, &gExplosion_pix_animation_groups);
+    ReadPowerupSmash(gTempFile);
+    PFfclose(gTempFile);
 }
 
 // FUNCTION: CARMA2_HW 0x00487e10
