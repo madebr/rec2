@@ -825,7 +825,11 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
 
-// TotallyRepairCar
+// STUB: CARMA2_HW 0x00439bf0
+// STUB: CARMA2_SW 0x00439c30
+void C2_HOOK_FASTCALL TotallyRepairCar(void) {
+    NOT_IMPLEMENTED();
+}
 
 // AddTotalDeflectionOfModel
 

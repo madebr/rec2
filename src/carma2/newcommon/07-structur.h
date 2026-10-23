@@ -25,7 +25,7 @@ extern void C2_HOOK_FASTCALL IncrementLap(void);
 
 // CheckCheckpoints
 
-// TotalRepair
+extern void C2_HOOK_FASTCALL TotalRepair(void);
 
 // DoLogos
 
