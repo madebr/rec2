@@ -214,7 +214,7 @@ extern void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
 // NetPlayerFromID
 
-// NetCarFromPlayerID
+extern tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer);
 
 extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar);
 
