@@ -72,7 +72,7 @@ extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOppone
 
 // ClearOpponentsProjectedRoute
 
-// AddToOpponentsProjectedRoute
+extern int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection);
 
 // StunTheBugger
 
