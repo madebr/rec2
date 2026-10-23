@@ -51,9 +51,29 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
     }
 }
 
-// IncrementCheckpoint
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// IncrementLap
+// STUB: CARMA2_HW 0x005032a0
+// STUB: CARMA2_SW 0x004febf0
+void C2_HOOK_FASTCALL IncrementCheckpoint(void) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x005033b0
+// FUNCTION: CARMA2_SW 0x004fed00
+void C2_HOOK_FASTCALL IncrementLap(void) {
+    int i;
+
+    for (i = gCheckpoint; i <= gCheckpoint_count; i++) {
+        IncrementCheckpoint();
+    }
+}
 
 // RayHitFace
 
