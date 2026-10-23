@@ -36,7 +36,7 @@ extern br_scalar C2_HOOK_STDCALL GetYonFactor(void);
 
 extern void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew);
 
-// FoundAnActor
+extern intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext);
 
 // ProcessNearbyActors
 

@@ -1,6 +1,10 @@
 #include "37-brucetrk.h"
 
 #include "globvars.h"
+#include "rec2_macros.h"
+
+#include <math.h>
+#include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00655e60
 br_scalar gYon_factor = 0.25f;
@@ -104,7 +108,57 @@ void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew) {
     gYon_factor = pNew;
 }
 
-// FoundAnActor
+// FUNCTION: CARMA2_HW 0x0040e290
+// FUNCTION: CARMA2_SW 0x0040e270
+intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext) {
+    tFoundAnActor_context* context = pContext;
+    char* identifier;
+
+    if ((float)fabs(pActor->t.t.mat.m[3][0] - context->pos->v[0]) > context->max_dist_axis
+            || (float)fabs(pActor->t.t.mat.m[3][1] - context->pos->v[1]) > context->max_dist_axis
+            || (float)fabs(pActor->t.t.mat.m[3][2] - context->pos->v[2]) > context->max_dist_axis) {
+        return 0;
+    }
+    if (pActor->type != BR_ACTOR_MODEL && (context->match_flags & 0x1000)) {
+        return 0;
+    }
+    identifier = pActor->identifier;
+    if (identifier == NULL && !(context->match_flags & 0x4)) {
+        return 0;
+    }
+    if (identifier != NULL && identifier[0] == '&' && !(context->match_flags & 0x3)) {
+        return 0;
+    }
+    if (identifier != NULL && identifier[0] != '&' && !(context->match_flags & 0x4)) {
+        return 0;
+    }
+    if (context->match_type == 1) {
+        if (pActor->type != BR_ACTOR_MODEL || pActor->model == NULL || pActor->model->identifier == NULL) {
+            return 0;
+        }
+        if (context->identifier_index >= 0 && pActor->model->identifier[context->identifier_index] != context->identifier_value) {
+            return 0;
+        }
+        if (context->identifier_index < 0 && pActor->model->identifier[strlen(pActor->model->identifier) + context->identifier_index] != context->identifier_value) {
+            return 0;
+        }
+    }
+    if (context->match_type == 2) {
+        if (identifier == NULL) {
+            return 0;
+        }
+        if (context->identifier_index >= 0 && identifier[context->identifier_index] != context->identifier_value) {
+            return 0;
+        }
+        if (context->identifier_index < 0 && pActor->identifier[strlen(pActor->identifier) + context->identifier_index] != context->identifier_value) {
+            return 0;
+        }
+    }
+    if (Vector3DistanceSquared(context->pos, (br_vector3*)pActor->t.t.mat.m[3]) >= context->max_dist_squared) {
+        return 0;
+    }
+    return context->callback(pActor, context->callback_context);
+}
 
 // ProcessNearbyActors
 
