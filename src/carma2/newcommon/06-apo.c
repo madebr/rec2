@@ -30,7 +30,7 @@ void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
     }
     if (gProgram_state.current_car.power_up_levels[pIndex] < gProgram_state.current_car.power_up_slots[pIndex]) {
         if (gProgram_state.credits < (gNet_mode != eNet_mode_none ? gCost_APO.initial_network[gCurrent_net_game->type] : gCost_APO.initial[gProgram_state.skill_level])) {
-            strcpy(message, GetMiscString(179));
+            strcpy(message, GetMiscString(eMiscString_cannot_afford_it_credits_S));
             sprintf(cost, "%d", gNet_mode != eNet_mode_none ? gCost_APO.initial_network[gCurrent_net_game->type] : gCost_APO.initial[gProgram_state.skill_level]);
             SubsStringJob(message, cost);
             NewTextHeadupSlot(4, 0, 3000, -4, message);
@@ -40,7 +40,7 @@ void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
             NewTextHeadupSlot(4, 0, 3000, -4, GetMiscString(eMiscString_increase_apo_start + pIndex));
         }
     } else {
-        NewTextHeadupSlot(4, 0, 3000, -4, GetMiscString(174));
+        NewTextHeadupSlot(4, 0, 3000, -4, GetMiscString(eMiscString_you_re_already_at_max_you_need_more_slots));
     }
 }
 
