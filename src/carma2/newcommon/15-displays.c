@@ -500,9 +500,25 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
 
 // ChangingView
 
-// EarnCredits2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// EarnCredits
+// STUB: CARMA2_HW 0x0044b300
+// STUB: CARMA2_SW 0x0044b490
+void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x0044b440
+// FUNCTION: CARMA2_SW 0x0044b5d0
+void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
+    EarnCredits2(pAmount, "");
+}
 
 // EarnCredits100
 
