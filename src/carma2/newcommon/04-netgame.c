@@ -162,7 +162,25 @@ void C2_HOOK_FASTCALL DefaultNetName(void) {
     NetObtainSystemUserName(gProgram_state.player_name, 32);
 }
 
-// AddPlayerToShapeStatusLists
+// FUNCTION: CARMA2_HW 0x0049bde0
+// FUNCTION: CARMA2_SW 0x00497f60
+void C2_HOOK_FASTCALL AddPlayerToShapeStatusLists(int pPlayer_id, int pCount, tNet_game_player_info* pPlayers) {
+    tCar_crush_network_shapes* shapes;
+    int j;
+
+    for (; pCount > 0; pCount--, pPlayers++) {
+        if (pPlayers->car != NULL && pPlayers->car->car_crush_spec != NULL) {
+            shapes = pPlayers->car->car_crush_spec->network_stuff;
+            for (j = 0; j < (int)REC2_ASIZE(shapes->items); j++) {
+                if (shapes->items[j].network_id == 0) {
+                    shapes->items[j].network_id = pPlayer_id;
+                    shapes->items[j].field_0x4 = 1;
+                    break;
+                }
+            }
+        }
+    }
+}
 
 // RemovePlayerFromShapeStatusLists
 
