@@ -32,7 +32,7 @@ extern void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void);
 
 // ReinitialiseRearviewCamera
 
-// ReinitialiseRenderStuff
+extern void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void);
 
 extern void C2_HOOK_FASTCALL InstallFindFailedHooks(void);
 
