@@ -7,6 +7,8 @@
 
 #include "c2_hooks.h"
 
+extern PALETTEENTRY gPD_palette_entries[256];
+
 HRESULT CALLBACK LocalEnumAttachedSurfacesCallback(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext);
 
 void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch);

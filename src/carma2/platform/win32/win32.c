@@ -49,6 +49,7 @@ int gDefault_spec_index = 1;
 int gDefault_data_index = 1;
 
 // GLOBAL: CARMA2_HW 0x00662208
+// GLOBAL: CARMA2_SW 0x0065caf0
 tGraf_spec gGraf_specs[2] = {
     {8, 1, 0, 320, 200, 0, 0, "32X20X8", "320x200 init string", 320, 320, 200, 0},
     {8, 1, 0, 640, 480, 0, 0, "64X48X8", "640x480 init string", 640, 640, 480, 0},
@@ -98,8 +99,10 @@ int gWindowMovingResizing;
 // GLOBAL: CARMA2_SW 0x006a6640
 LPDIRECTINPUTDEVICEA gDirectInputDevice;
 
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x006621dc
 char *gRenderer = "3DFX_WIN";
+#endif
 
 // GLOBAL: CARMA2_HW 0x006ad488
 // GLOBAL: CARMA2_SW 0x006a6c18
@@ -166,7 +169,8 @@ tU32 gTime_app_activated;
 br_diaghandler gPD_error_handler;
 
 // GLOBAL: CARMA2_HW 0x00662150
-char gExtendedAsciiToNormalAscii[128] = {
+// GLOBAL: CARMA2_SW 0x0065ca40
+const char gExtendedAsciiToNormalAscii[128] = {
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
     ' ', '\'', '\'', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
     ' ', '~', 'c', '$', '*', 'Y', '|', ' ', '"', 'c', 'a', '<', '-', '-', 'R', '-',
@@ -458,7 +462,9 @@ void DeActivateApp(void) {
         if (gHWnd != NULL) {
             SetWindowPos(gHWnd, NULL, 0, 0, 0, 0, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
         }
+#ifdef REC2_HW
         gWindowActiveState = (strcmp(gRenderer, "D3D") == 0) ? 0 : 1;
+#endif
         gWindowMovingResizing = 0;
     }
     dr_dprintf("DeActivateApp() - END; active state now %d", gWindowActiveState);
@@ -544,6 +550,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
                 break;
             }
             GetCursorPos(&point);
+#ifdef REC2_HW
             if (!gScaleMouse || strcmp(gRenderer, "D3D") == 0) {
                 ScreenToClient(gHWnd, &point);
                 gPD_mouse_position = gCursorPos_LastClick = point;
@@ -551,6 +558,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
                 gPD_mouse_position.x = gCursorPos_LastClick.x = (int) ((double) point.x / (gScreenWidth / 640.));
                 gPD_mouse_position.y = gCursorPos_LastClick.y = (int) ((double) point.y / (gScreenHeight / 480.));
             }
+#endif
             gCursorPos_LastClick_Valid = 1;
             break;
         case WM_RBUTTONDOWN:
@@ -984,10 +992,28 @@ void C2_HOOK_FASTCALL PDInitScreen(void) {
 // FUNCTION: CARMA2_HW 0x0051c300
 // FUNCTION: CARMA2_SW 0x00516420
 void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
+#ifdef REC2_SW
+    int result;
+#endif
     dr_dprintf("PDAllocateScreenAndBack() - START...");
 
+#ifdef REC2_SW
+    dr_dprintf("Setting up DirectDraw stuff...");
+    SSDXStart(gHWnd, 0, 1, SSDX_InitDirectDraw);
     dr_dprintf("Setting up DirectSound stuff...");
+    result = SSDXStart(gHWnd, 0, 1, SSDX_InitDirectSound);
+    if (result == 0) {
+        SSDXStartDirectDraw();
+    }
+    gBack_screen = BrPixelmapAllocate(BR_PMT_INDEX8,
+        gGraf_specs[gGraf_spec_index].phys_width,
+        gGraf_specs[gGraf_spec_index].phys_height,
+        gOffscreen_pixels, 0);
+    gScreen = gBack_screen;
+#endif
 
+#ifdef REC2_HW
+    dr_dprintf("Setting up DirectSound stuff...");
     SSDXStart(gHWnd, 0, 1, SSDX_InitDirectSound);
 
     gNbPixelBits = 16;
@@ -1040,7 +1066,7 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     memset(gBack_screen->pixels, 0, gBack_screen->height * gBack_screen->row_bytes);
 
     BrPixelmapDoubleBuffer(gScreen, gBack_screen);
-
+#endif
     dr_dprintf("PDAllocateScreenAndBack() - END.");
 }
 
@@ -1079,6 +1105,38 @@ void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
     gPD_mouse_position.x = *pX;
     gPD_mouse_position.y = *pY;
 }
+
+#ifdef CARMA2_SW
+void SSDXStartDirectDraw() {
+    int row_pitch;
+    int result_code;
+
+    result_code = SSDXDirectDrawSetup(gGraf_specs[gGraf_spec_index].total_width, gGraf_specs[gGraf_spec_index].total_height, gGraf_specs[gGraf_spec_index].total_width, &row_pitch);
+    if (result_code != 0) {
+        SSDXPrintDirectDrawError(result_code);
+        PDFatalError("Unable to setup DirectDraw - please check that DirectX is installed");
+    }
+    gGraf_specs[gGraf_spec_index].row_bytes = row_pitch;
+    gGraf_specs[gGraf_spec_index].phys_width = row_pitch;
+    gGraf_specs[gGraf_spec_index].phys_height = gGraf_specs[gGraf_spec_index].total_height;
+    dr_dprintf("Graf spec info after screen allocation:\n                 Total width:   %d\n                 Total height:  %d\n                 Phys width:    %d\n"
+        "                 Phys height:   %d\n"
+        "                 Row bytes:     %d\n",
+        gGraf_specs[gGraf_spec_index].total_width,
+        gGraf_specs[gGraf_spec_index].total_height,
+        gGraf_specs[gGraf_spec_index].phys_width,
+        gGraf_specs[gGraf_spec_index].phys_height,
+        gGraf_specs[gGraf_spec_index].row_bytes);
+    pixels = SSDXLockAttachedSurface();
+    if (pixels != NULL) {
+        gOffscreen_pixels = pixels;
+        if (gBack_screen != NULL) {
+        }
+        }
+    }
+
+}
+#endif
 
 // FUNCTION: CARMA2_HW 0x0051c280
 // FUNCTION: CARMA2_SW 0x00516160

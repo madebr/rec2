@@ -21,6 +21,7 @@
 char gPathNetworkIni[240];
 
 // GLOBAL: CARMA2_HW 0x006ad4c4
+// GLOBAL: CARMA2_SW 0x006a6c4c
 int gPathNetworkIniValid;
 
 // GLOBAL: CARMA2_HW 0x006ac12c

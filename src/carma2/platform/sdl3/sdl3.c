@@ -73,7 +73,7 @@ int gUnknown_int_0074cf48;
 tJoystick_info g_Joystick_infos[16];
 int g_Count_Joystick_infos;
 
-char gExtendedAsciiToNormalAscii[128] = {
+const char gExtendedAsciiToNormalAscii[128] = {
     ' ', ' ',  ' ',  ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
     ' ', '\'', '\'', ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
     ' ', '~',  'c',  '$', '*',  'Y', '|', ' ', '"', 'c', 'a', '<', '-', '-', 'R', '-',
