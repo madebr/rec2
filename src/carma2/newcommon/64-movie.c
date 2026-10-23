@@ -13,6 +13,10 @@
 // GLOBAL: CARMA2_HW 0x006a0c24
 int gQuickTime_initialized;
 
+// GLOBAL: CARMA2_HW 0x006a0c50
+// GLOBAL: CARMA2_SW 0x0069aca8
+int gNext_replay_record_state;
+
 // GLOBAL: CARMA2_HW 0x00705440
 char gQuick_time_temp_path[256];
 
@@ -95,7 +99,11 @@ void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
 
 // MovieRecordFrame
 
-// MovieRecording
+// FUNCTION: CARMA2_HW 0x004e2100
+// FUNCTION: CARMA2_SW 0x004de480
+int C2_HOOK_FASTCALL MovieRecording(void) {
+    return gNext_replay_record_state;
+}
 
 // KillStatusMessage
 

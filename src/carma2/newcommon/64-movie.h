@@ -3,6 +3,8 @@
 
 #include "c2_hooks.h"
 
+extern int gNext_replay_record_state;
+
 extern char gQuick_time_temp_path[256];
 extern char gQuick_time_movie_path_stub[256];
 extern char gQuick_time_banner_texture_name[256];
@@ -43,7 +45,7 @@ extern void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void);
 
 // MovieRecordFrame
 
-// MovieRecording
+extern int C2_HOOK_FASTCALL MovieRecording(void);
 
 // KillStatusMessage
 
