@@ -122,7 +122,7 @@ extern void C2_HOOK_FASTCALL InitNetGameplayStuff(void);
 
 extern void C2_HOOK_FASTCALL DefaultNetName(void);
 
-// AddPlayerToShapeStatusLists
+extern void C2_HOOK_FASTCALL AddPlayerToShapeStatusLists(int pPlayer_id, int pCount, tNet_game_player_info* pPlayers);
 
 // RemovePlayerFromShapeStatusLists
 
