@@ -15,9 +15,9 @@ extern int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
 
 extern void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
 
-// IncrementCheckpoint
+extern void C2_HOOK_FASTCALL IncrementCheckpoint(void);
 
-// IncrementLap
+extern void C2_HOOK_FASTCALL IncrementLap(void);
 
 // RayHitFace
 
