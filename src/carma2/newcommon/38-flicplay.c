@@ -535,7 +535,35 @@ void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
     }
 }
 
-// LoadFlicData
+// FUNCTION: CARMA2_HW 0x00462a90
+// FUNCTION: CARMA2_SW 0x00462520
+int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) {
+    FILE* f;
+    tPath_name the_path;
+
+    if (*pData == NULL) {
+        if (!gPlay_from_disk) {
+            PossibleService();
+            PathCat(the_path, gApplication_path, "ANIM");
+            PathCat(the_path, the_path, pName);
+            f = DRfopen(the_path, "rb");
+            if (f == NULL) {
+                return 0;
+            }
+            *pData_length = GetFileLength(f);
+            *pData = BrMemAllocate(*pData_length, kMem_misc);
+            if (*pData == NULL) {
+                PFfclose(f);
+                return 0;
+            }
+            PFfread(*pData, 1, *pData_length, f);
+            PFfclose(f);
+        }
+    } else {
+        MAMSLock((void**)pData);
+    }
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00462cc0
 void C2_HOOK_FASTCALL InitFlicQueue(void) {
