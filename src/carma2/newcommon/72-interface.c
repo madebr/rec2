@@ -1035,7 +1035,10 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
     gFrontend_time_last_input = PDGetTotalTime();
 }
 
-// FRONTEND_Main
+// STUB: CARMA2_HW 0x0046d8e0
+int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontend_type) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x0046e470
 int C2_HOOK_FASTCALL ProcessInputString(void) {
