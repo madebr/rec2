@@ -33,7 +33,20 @@ int gNum_active_non_cars;
 // GLOBAL: CARMA2_HW 0x0065d010
 int gFace_num__car = 1;
 
-// DamageUnit
+// FUNCTION: CARMA2_HW 0x00413cc0
+// FUNCTION: CARMA2_SW 0x00413cf0
+void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount) {
+    tDamage_unit* the_damage;
+
+    if (pDamage_amount <= 0) {
+        return;
+    }
+    the_damage = &pCar->damage_units[pUnit_type];
+    the_damage->damage_level += pDamage_amount;
+    if (the_damage->damage_level >= 100) {
+        the_damage->damage_level = 99;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00413f10
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData) {
