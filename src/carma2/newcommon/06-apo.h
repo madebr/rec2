@@ -9,7 +9,7 @@
 
 extern void C2_HOOK_FASTCALL ImprovePSPowerup(tCar_spec* pCar, int pIndex);
 
-// BuyPSPowerup
+extern void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex);
 
 // BuyArmour
 
