@@ -421,7 +421,7 @@ void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_materia
 
         scale = BrVector3Length(&munge_material_cb_ctx.field_0x20);
         if (scale > BR_SCALAR_EPSILON * 2) {
-            scale = 1.0 / scale;
+            scale = (br_scalar)(1.0 / scale);
             BrVector3Scale(pNormal, &munge_material_cb_ctx.field_0x20, scale);
         } else {
             BrVector3Set(pNormal, 1.0f, 0.0f, 0.0f);
