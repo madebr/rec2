@@ -485,7 +485,28 @@ int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
 
 // DoDeltaTrans
 
-// DoBlack
+// FUNCTION: CARMA2_HW 0x00462580
+// FUNCTION: CARMA2_SW 0x00462010
+void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int the_width;
+    tU8* pixel_ptr;
+    tU32 the_row_bytes;
+    tU32* line_pixel_ptr;
+
+    pixel_ptr = pFlic_info->first_pixel;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    the_width = pFlic_info->width >> 2;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = (tU32*)pixel_ptr;
+        for (j = 0; j < the_width; j++) {
+            *line_pixel_ptr = 0;
+            line_pixel_ptr++;
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoRunLengthTrans
 
