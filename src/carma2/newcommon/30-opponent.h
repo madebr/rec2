@@ -44,7 +44,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // AllowForDecel
 
-// ShiftOpponentsProjectedRoute
+extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces);
 
 // NewCalcGetNearPlayerRoute
 
