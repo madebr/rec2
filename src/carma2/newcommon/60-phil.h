@@ -59,7 +59,7 @@ extern tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void);
 
 // PHILMakeObjectPassive
 
-// PHILMakeObjectActive
+extern int C2_HOOK_FASTCALL PHILMakeObjectActive(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, int pFlag);
 
 // PHILSetPassiveObjectsMatrix
 

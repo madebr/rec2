@@ -1,5 +1,7 @@
 #include "60-phil.h"
 
+#include "55-volume.h"
+
 // GLOBAL: CARMA2_HW 0x0065d004
 int gPHIL_disabled = 1;
 
@@ -113,7 +115,53 @@ tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
 
 // PHILMakeObjectPassive
 
-// PHILMakeObjectActive
+// FUNCTION: CARMA2_HW 0x004b6090
+// FUNCTION: CARMA2_SW 0x004b27b0
+int C2_HOOK_FASTCALL PHILMakeObjectActive(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, int pFlag) {
+    tPHIL_queued_object_info* info;
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    if (pObject->field_0x239 == 2) {
+        info = pObject->field_0x240;
+        info->field_0x8 = 2;
+        if (pVelocity != NULL) {
+            info->field_0x18 = *pVelocity;
+            info->flags |= 0x1;
+        }
+        if (pOmega != NULL) {
+            info->field_0x24 = *pOmega;
+            info->flags |= 0x2;
+        }
+        if (pFlag) {
+            info->field_0x4 |= 0x2;
+        } else {
+            info->field_0x4 &= ~0x2;
+        }
+        return 0;
+    }
+    info = pObject->field_0x240;
+    if (info != NULL) {
+        info->field_0x8 = 2;
+        pObject->flags &= ~0x20;
+        if (pFlag) {
+            info->field_0x4 |= 0x2;
+        } else {
+            info->field_0x4 &= ~0x2;
+        }
+        if (pVelocity != NULL) {
+            pObject->v = *pVelocity;
+        }
+        if (pOmega != NULL) {
+            pObject->omega = *pOmega;
+        }
+        ResetCarSpecialVolume(pObject);
+        return 0;
+    } else {
+        return 3;
+    }
+}
 
 // PHILSetPassiveObjectsMatrix
 
