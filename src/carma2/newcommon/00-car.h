@@ -107,7 +107,7 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // TumbleObject
 
-// MakeLiftGoUp
+extern void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car);
 
 // NonCarCalcForce
 
