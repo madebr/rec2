@@ -14,9 +14,11 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x0065852c
+// GLOBAL: CARMA2_SW 0x00652f0c
 char* gPedTexturePath = "PIXELMAP";
 
 // FUNCTION: CARMA2_HW 0x0048ea40
+// FUNCTION: CARMA2_SW 0x0048bce0
 int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
     tPath_name tempPath;
     br_uint_32 nb;
@@ -102,6 +104,7 @@ br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048ec00
+// FUNCTION: CARMA2_SW 0x0048bea0
 br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
     br_pixelmap *pm;
 
@@ -110,7 +113,31 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
     return pm;
 }
 
+// FUNCTION: CARMA2_HW 0x0048ee00
+// FUNCTION: CARMA2_SW 0x0048c0a0
+br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap2(const char* pPath_name) {
+    br_pixelmap *pm;
+
+    pm = RealLoadPixelmap(pPath_name);
+    EnsurePixelmapAllowed(pm, 1);
+    return pm;
+}
+
+// STUB: CARMA2_HW 0x0048eec0
+// STUB: CARMA2_SW 0x0048c160
+int C2_HOOK_FASTCALL LoadInterfacePixelmaps(const char *pPath_name, br_pixelmap** pMaps, int pCapacity) {
+    tPath_name path;
+    size_t count;
+
+    strcpy(path, pPath_name);
+    strcpy(gCurrent_load_directory, "INTRFACE");
+    count = DRLoadMultiplePix(path, pMaps, pCapacity);
+    DoNotAllowOpenToFail();
+    return count;
+}
+
 // FUNCTION: CARMA2_HW 0x0048ef40
+// FUNCTION: CARMA2_SW 0x0048c1e0
 br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName) {
     tPath_name the_path;
 
@@ -120,6 +147,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048ef80
+// FUNCTION: CARMA2_SW 0x0048c220
 br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path) {
     tPath_name the_path;
 
@@ -130,6 +158,7 @@ br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048efd0
+// FUNCTION: CARMA2_SW 0x0048c270
 br_model* C2_HOOK_FASTCALL LoadModel(const char* pName) {
     tPath_name the_path;
 
@@ -140,6 +169,7 @@ br_model* C2_HOOK_FASTCALL LoadModel(const char* pName) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f020
+// FUNCTION: CARMA2_SW 0x0048c2c0
 br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName) {
     tPath_name the_path;
     br_actor* actor;
@@ -156,6 +186,7 @@ br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f090
+// FUNCTION: CARMA2_SW 0x0048c330
 void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name) {
     br_pixelmap* palette_array[100];
     int number_of_palettes;
@@ -171,6 +202,7 @@ void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f100
+// FUNCTION: CARMA2_SW 0x0048c3a0
 void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name) {
     br_pixelmap* table_array[100];
     int number_of_tables;
@@ -186,6 +218,7 @@ void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f1d0
+// FUNCTION: CARMA2_SW 0x0048c470
 void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name) {
     br_material* material_array[100];
     int i;
@@ -200,6 +233,7 @@ void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f230
+// FUNCTION: CARMA2_SW 0x0048c4d0
 void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
     int i;
     br_model* model_array[100];
@@ -215,6 +249,7 @@ void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f290
+// FUNCTION: CARMA2_SW 0x0048c530
 void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
     int i;
     br_actor* actor_array[100];
@@ -229,6 +264,7 @@ void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f2e0
+// FUNCTION: CARMA2_SW 0x0048c580
 void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
     br_actor* actor;
     br_light* light;
@@ -246,6 +282,7 @@ void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f360
+// FUNCTION: CARMA2_SW 0x0048c5d0
 void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine) {
     tPath_name the_path;
     tTWTVFS twt;
@@ -257,6 +294,7 @@ void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_na
 }
 
 // FUNCTION: CARMA2_HW 0x0048f3b0
+// FUNCTION: CARMA2_SW 0x0048c620
 int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
     struct {
         tPath_name path_txt;
@@ -309,12 +347,14 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f6a0
+// FUNCTION: CARMA2_SW 0x0048c910
 int C2_HOOK_FASTCALL OriginalCarmaCDinDrive(void) {
 
     return gCD_is_in_drive;
 }
 
 // FUNCTION: CARMA2_HW 0x0048f6b0
+// FUNCTION: CARMA2_SW 0x0048c920
 int C2_HOOK_FASTCALL CarmaCDinDriveOrFullGameInstalled(void) {
 
     if (gCD_fully_installed) {
@@ -324,12 +364,14 @@ int C2_HOOK_FASTCALL CarmaCDinDriveOrFullGameInstalled(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f7f0
+// FUNCTION: CARMA2_SW 0x0048ca60
 void C2_HOOK_FASTCALL SetDefaultPixelmapFolderName(void) {
 
     gPedTexturePath = "PIXELMAP";
 }
 
 // FUNCTION: CARMA2_HW 0x0048f800
+// FUNCTION: CARMA2_SW 0x0048ca70
 void C2_HOOK_FASTCALL ConfigureBloodPedTexturePath(void) {
     gPedTexturePath = "PIXELMAP";
 }
@@ -340,6 +382,7 @@ void C2_HOOK_FASTCALL ConfigureZombiePedTexturePath(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f820
+// FUNCTION: CARMA2_SW 0x0048ca90
 void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void) {
     gPedTexturePath = "ALPIXELMAP";
 }

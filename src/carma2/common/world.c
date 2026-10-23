@@ -497,6 +497,7 @@ intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallba
 }
 
 // FUNCTION: CARMA2_HW 0x00448ea0
+// FUNCTION: CARMA2_SW 0x004492c0
 intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
     if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
         pActor->render_style = *(br_uint_8*)pFlag;
@@ -514,7 +515,7 @@ void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn) {
         } else {
             style = BR_RSTYLE_NONE;
         }
-        DRActorEnumRecurse(gTrack_actor, (br_actor_enum_cbfn*)SetAccessoryRenderingCB, &style);
+        DRActorEnumRecurse(gTrack_actor, SetAccessoryRenderingCB, &style);
     }
     gRendering_accessories = pOn;
 }

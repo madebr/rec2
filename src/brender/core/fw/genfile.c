@@ -34,6 +34,7 @@ br_file_struct_member file_info_FM[] = {
 br_file_struct file_info_F = { "file_info", BR_ASIZE(file_info_FM), file_info_FM, sizeof(file_info) };
 
 // FUNCTION: CARMA2_HW 0x00529f70
+// FUNCTION: CARMA2_SW 0x00524b00
 int C2_HOOK_STDCALL FopRead_END(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     return 1;
 }

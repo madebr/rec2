@@ -18,22 +18,27 @@
 
 
 // GLOBAL: CARMA2_HW 0x006acea4
+// GLOBAL: CARMA2_SW 0x006a6644
 HINSTANCE gHInstance;
 
 // GLOBAL: CARMA2_HW 0x006ace9c
+// GLOBAL: CARMA2_SW 0x006a663c
 int gNShowCmd;
 
 // GLOBAL: CARMA2_HW 0x006ad484
+// GLOBAL: CARMA2_SW 0x006a6c14
 int gProgram_result;
 
 
 // GLOBAL: CARMA2_HW 0x006621d0
+// GLOBAL: CARMA2_SW 0x0065cac0
 const char* gCarma2WndClassName = "Carma2MainWndClass";
 
 // GLOBAL: CARMA2_HW 0x00662270
 const char* gRegionDescriminator = "AUDIQUATTRO";
 
 // FUNCTION: CARMA2_HW 0x0051aaa0
+// FUNCTION: CARMA2_SW 0x00514580
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
     char* currentArgument;
     WNDCLASSA wndCls;

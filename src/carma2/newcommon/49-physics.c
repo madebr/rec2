@@ -18,29 +18,37 @@
 #define PHYSICS_BUFFER_OTHER_SIZE 50000
 
 // GLOBAL: CARMA2_HW 0x006940c0
+// GLOBAL: CARMA2_SW 0x0068e118
 tPhysicsError_cbfn* gPhysics_error_cb;
 
 // GLOBAL: CARMA2_HW 0x00744818
+// GLOBAL: CARMA2_SW 0x0073b2d8
 void* gPhysics_buffer1_ptr;
 
 // GLOBAL: CARMA2_HW 0x00744814
+// GLOBAL: CARMA2_SW 0x0073b2d4
 void* gPhysics_buffer2_ptr;
 
 // GLOBAL: CARMA2_HW 0x0074a5e0
+// GLOBAL: CARMA2_SW 0x007410a0
 void* gPhysics_buffer3_ptr;
 
 // GLOBAL: CARMA2_HW 0x006940c8
+// GLOBAL: CARMA2_SW 0x0068e120
 int gPhysics_other_buffer_capacity;
 
 // GLOBAL: CARMA2_HW 0x006940c4
+// GLOBAL: CARMA2_SW 0x0068e11c
 void* gPhysics_other_buffer;
 
 // GLOBAL: CARMA2_HW 0x006940bc
+// GLOBAL: CARMA2_SW 0x0068e114
 void* gPhysics_scratch_ptr;
 
 // count
 
 // FUNCTION: CARMA2_HW 0x004225b0
+// FUNCTION: CARMA2_SW 0x00422630
 void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector3* source, const br_matrix34* matrix) {
     br_vector3 relative;
 
@@ -234,6 +242,7 @@ void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_objec
 // CheckPointVelocities
 
 // FUNCTION: CARMA2_HW 0x004c2a10
+// FUNCTION: CARMA2_SW 0x004bf140
 void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject) {
     tPhysics_object* child;
     tPhysics_object* root;
@@ -553,6 +562,7 @@ void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004c5d10
+// FUNCTION: CARMA2_SW 0x004c2440
 tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(int pType) {
     tCollision_shape_sphere* result;
 
@@ -562,6 +572,7 @@ tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(int pType) {
 }
 
 // FUNCTION: CARMA2_HW 0x004c5d70
+// FUNCTION: CARMA2_SW 0x004c24a0
 tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocateShapePolyhedron(int pCount_points, int pType) {
     tCollision_shape_polyhedron* result;
     tU8* raw_memory;
@@ -612,6 +623,7 @@ tCollision_shape_box* C2_HOOK_FASTCALL AllocateShapeBox(int pType) {
 // GetJointSize
 
 // FUNCTION: CARMA2_HW 0x004c5e20
+// FUNCTION: CARMA2_SW 0x004c2550
 tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType) {
     return BrMemAllocate(offsetof(tPhysics_joint, limits) + pCount_limits * sizeof(tPhysics_joint_limit), (br_uint_8)pType);
 }
@@ -630,6 +642,7 @@ tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint,
 // FreeShape
 
 // FUNCTION: CARMA2_HW 0x004c5e80
+// FUNCTION: CARMA2_SW 0x004c25b0
 void C2_HOOK_FASTCALL FreeShapeList(tPhysics_shape *pShape) {
 
     if (pShape->common.next != NULL) {
@@ -639,12 +652,14 @@ void C2_HOOK_FASTCALL FreeShapeList(tPhysics_shape *pShape) {
 }
 
 // FUNCTION: CARMA2_HW 0x004c5ea0
+// FUNCTION: CARMA2_SW 0x004c25d0
 void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint) {
 
     BrMemFree(pJoint);
 }
 
 // FUNCTION: CARMA2_HW 0x004c5eb0
+// FUNCTION: CARMA2_SW 0x004c25e0
 void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds) {
     int i;
 
@@ -668,6 +683,7 @@ void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pC
 // UpdateCollisionObject
 
 // FUNCTION: CARMA2_HW 0x004c61c0
+// FUNCTION: CARMA2_SW 0x004c28f0
 void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char* pMessage) {
 
     if (gPhysics_error_cb != NULL) {
@@ -679,6 +695,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char*
 // PhysicsWarning
 
 // FUNCTION: CARMA2_HW 0x004c61f0
+// FUNCTION: CARMA2_SW 0x004c2920
 void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn) {
 
     gPhysics_error_cb = pError_cbfn;
@@ -687,6 +704,7 @@ void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn) {
 // RepositionAndOrientateChildren
 
 // FUNCTION: CARMA2_HW 0x004c63b0
+// FUNCTION: CARMA2_SW 0x004c2ae0
 void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics_object* pChild) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, next, 0x220);
@@ -703,6 +721,7 @@ void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics_object
 // PhysicsRemoveObject
 
 // FUNCTION: CARMA2_HW 0x004c6470
+// FUNCTION: CARMA2_SW 0x004c2ba0
 int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext) {
     int result;
     tPhysics_object* child;
@@ -736,6 +755,7 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObject, tEnu
 }
 
 // FUNCTION: CARMA2_HW 0x004c6510
+// FUNCTION: CARMA2_SW 0x004c2c40
 void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize) {
 
     gPhysics_buffer1_ptr = pBuffer;
@@ -808,6 +828,7 @@ float C2_HOOK_FASTCALL GetFrictionFromFace(const tFace_ref* pFace) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b5990
+// FUNCTION: CARMA2_SW 0x004b20b0
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage) {
     char s[256];
 
@@ -852,6 +873,7 @@ void C2_HOOK_FASTCALL SetUpTestObjects(void) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x004b5ca0
+// FUNCTION: CARMA2_SW 0x004b23c0
 void C2_HOOK_FASTCALL InitPhysics(void) {
 
     PhysicsSetErrorHandler(DoPhysicsError);

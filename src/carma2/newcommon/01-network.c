@@ -12,63 +12,81 @@
 #include <stdlib.h>
 
 // GLOBAL: CARMA2_HW 0x0068d95c
+// GLOBAL: CARMA2_SW 0x006879b4
 int gJoin_poll_index;
 
 // GLOBAL: CARMA2_HW 0x0068d978
+// GLOBAL: CARMA2_SW 0x006879d0
 int gBastard_has_answered;
 
 // GLOBAL: CARMA2_HW 0x0068d984
 tU32 gAsk_time;
 
 // GLOBAL: CARMA2_HW 0x0068d98c
+// GLOBAL: CARMA2_SW 0x006879e4
 int gMessage_header_size;
 
 // GLOBAL: CARMA2_HW 0x00690c80
 tU32 gLast_status_broadcast;
 
 // GLOBAL: CARMA2_HW 0x00690230
+// GLOBAL: CARMA2_SW 0x0068a288
 tAddToJoinListProc* gAdd_proc;
 
 // GLOBAL: CARMA2_HW 0x00690238
+// GLOBAL: CARMA2_SW 0x0068a290
 int gTime_for_next_one;
 
 // GLOBAL: CARMA2_HW 0x00690c34
+// GLOBAL: CARMA2_SW 0x0068ac8c
 tNet_game_details* gCurrent_join_poll_game;
 
 // GLOBAL: CARMA2_HW 0x00690c38
+// GLOBAL: CARMA2_SW 0x0068ac90
 int gNet_service_disable;
 
 // GLOBAL: CARMA2_HW 0x00690c3c
+// GLOBAL: CARMA2_SW 0x0068ac94
 int gIn_net_service;
 
 // GLOBAL: CARMA2_HW 0x00690c48
+// GLOBAL: CARMA2_SW 0x0068aca0
 tNet_message_memory* gDynamic_messages;
 
 // GLOBAL: CARMA2_HW 0x00690c4c
+// GLOBAL: CARMA2_SW 0x0068aca4
 tU32 gLast_flush_message;
 
 // GLOBAL: CARMA2_HW 0x00690c54
+// GLOBAL: CARMA2_SW 0x0068acac
 int gJoin_list_mode;
 
 // GLOBAL: CARMA2_HW 0x0074b7dc
+// GLOBAL: CARMA2_SW 0x00741e9c
 tPlayer_ID gLocal_net_ID;
 
 // GLOBAL: CARMA2_HW 0x00690c44
+// GLOBAL: CARMA2_SW 0x0068ac9c
 int gOnly_receive_guarantee_replies;
 
 // GLOBAL: CARMA2_HW 0x0068d97c
+// GLOBAL: CARMA2_SW 0x006879d4
 tMin_message* gMin_messages;
 
 // GLOBAL: CARMA2_HW 0x0068d970
+// GLOBAL: CARMA2_SW 0x006879c8
 tMid_message* gMid_messages;
 
 // GLOBAL: CARMA2_HW 0x0068d980
+// GLOBAL: CARMA2_SW 0x006879d8
 tMax_message* gMax_messages;
 
 // GLOBAL: CARMA2_HW 0x0068d96c
+// GLOBAL: CARMA2_SW 0x006879c4
 int gNet_initialised;
 
 // GLOBAL: CARMA2_HW 0x0068d960
+// GLOBAL: CARMA2_SW 0x006879b8
 int gDont_allow_joiners;
 
 // GLOBAL: CARMA2_HW 0x0074a690
@@ -84,6 +102,7 @@ tU16 gGuarantee_number = 1;
 int gNext_guarantee;
 
 // FUNCTION: CARMA2_HW 0x0049d210
+// FUNCTION: CARMA2_SW 0x00499390
 int C2_HOOK_FASTCALL NetInitialise(void) {
     int i;
 
@@ -142,12 +161,14 @@ void C2_HOOK_FASTCALL ShutdownNetIfRequired(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049d3e0
+// FUNCTION: CARMA2_SW 0x00499560
 void C2_HOOK_FASTCALL DisableNetService(void) {
 
     gNet_service_disable = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0049d3f0
+// FUNCTION: CARMA2_SW 0x00499570
 void C2_HOOK_FASTCALL ReenableNetService(void) {
 
     gNet_service_disable = 0;
@@ -286,6 +307,7 @@ int C2_HOOK_FASTCALL NetJoinGameLowLevel(tNet_game_details* pGame_details, const
 // NetJoinGame
 
 // FUNCTION: CARMA2_HW 0x0049ee20
+// FUNCTION: CARMA2_SW 0x0049afa0
 void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_length) {
 
     PDNetObtainSystemUserName(pName, pMax_length);
@@ -378,6 +400,7 @@ void C2_HOOK_FASTCALL DisposeExcessMemory(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049ff50
+// FUNCTION: CARMA2_SW 0x0049c0d0
 int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage) {
 
     if (pMessage->header.field_0x14 == 0xff) {

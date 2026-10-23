@@ -3,6 +3,7 @@
 #include "dbsetup.h"
 
 // FUNCTION: CARMA2_HW 0x00523160
+// FUNCTION: CARMA2_SW 0x0051e800
 void C2_HOOK_CDECL BrMapUpdate(br_pixelmap* map, br_uint_16 flags) {
 
     BrBufferUpdate(map, BRT_COLOUR_MAP_O, flags);

@@ -48,12 +48,15 @@
 #include <time.h>
 
 // GLOBAL: CARMA2_HW 0x0068be2c
+// GLOBAL: CARMA2_SW 0x00685e70
 int gBr_initialized;
 
 // GLOBAL: CARMA2_HW 0x0068be34
+// GLOBAL: CARMA2_SW 0x00685e78
 int gInitialisation_finished;
 
 // GLOBAL: CARMA2_HW 0x0068be24
+// GLOBAL: CARMA2_SW 0x00685e68
 tU32 gAustere_time;
 
 // GLOBAL: CARMA2_HW 0x0074b760
@@ -103,6 +106,7 @@ void C2_HOOK_FASTCALL Modify2DCopyPixelmaps(void) {
 // ReinitialiseForwardCamera
 
 // FUNCTION: CARMA2_HW 0x0047dab0
+// FUNCTION: CARMA2_SW 0x0047dc90
 void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
     if (gRearview_screen != NULL) {
         BrPixelmapFree(gRearview_screen);
@@ -809,6 +813,7 @@ void C2_HOOK_FASTCALL DoDevelopmentThings(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047dd20
+// FUNCTION: CARMA2_SW 0x0047df00
 void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 
     PDInitialiseSystem();
@@ -818,6 +823,7 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 }
 
 // FUNCTION: CARMA2_HW 0x00481620
+// FUNCTION: CARMA2_SW 0x0047e7a0
 void C2_HOOK_FASTCALL InitGameAccordingToSkillLevel(void) {
     int i;
 
@@ -831,6 +837,7 @@ void C2_HOOK_FASTCALL InitGameAccordingToSkillLevel(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004816b0
+// FUNCTION: CARMA2_SW 0x0047e830
 void C2_HOOK_FASTCALL InitGame(int pStart_race) {
     int i;
 
@@ -869,12 +876,14 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 // InitRace
 
 // FUNCTION: CARMA2_HW 0x00481e90
+// FUNCTION: CARMA2_SW 0x0047efd0
 int C2_HOOK_FASTCALL GetScreenSize(void) {
 
     return gRender_indent;
 }
 
 // FUNCTION: CARMA2_HW 0x00481ea0
+// FUNCTION: CARMA2_SW 0x0047efe0
 void C2_HOOK_FASTCALL SetScreenSize(int pNew_size) {
 
     gRender_indent = pNew_size;

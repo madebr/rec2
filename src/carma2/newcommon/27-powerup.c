@@ -10,9 +10,11 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a0ad4
+// GLOBAL: CARMA2_SW 0x0069ab2c
 const char* gPowerup_txt_path;
 
 // GLOBAL: CARMA2_HW 0x007059e0
+// GLOBAL: CARMA2_SW 0x006fc4a0
 tHeadup_icon gPickedup_powerups[20];
 
 // GLOBAL: CARMA2_HW 0x00763480
@@ -43,6 +45,7 @@ int gBlind_pedestrians;
 int gPed_dismemberfest;
 
 // GLOBAL: CARMA2_HW 0x007059c0
+// GLOBAL: CARMA2_SW 0x006fc480
 int gCount_mutant_tail_parts;
 
 // GLOBAL: CARMA2_HW 0x00705b78
@@ -55,12 +58,15 @@ float gMass_mutant_tail_ball;
 float gMass_mine = 1.0f;
 
 // GLOBAL: CARMA2_HW 0x006a0454
+// GLOBAL: CARMA2_SW 0x0069a4ac
 int gCount_cloaked_cars;
 
 // GLOBAL: CARMA2_HW 0x006a0910
+// GLOBAL: CARMA2_SW 0x0069a968
 tCar_spec* gCloaked_cars[12];
 
 // GLOBAL: CARMA2_HW 0x006a0a54
+// GLOBAL: CARMA2_SW 0x0069aaac
 tPowerup* gPowerup_array;
 
 // GetNextGoodyTime
@@ -198,6 +204,7 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 // GainAPOPotential
 
 // FUNCTION: CARMA2_HW 0x004dc720
+// FUNCTION: CARMA2_SW 0x004d8c20
 int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
 
     gPedestrian_speed_factor = pPowerup->float_params[0];
@@ -209,6 +216,7 @@ int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
 // SetPedHeadSize
 
 // FUNCTION: CARMA2_HW 0x004dc7d0
+// FUNCTION: CARMA2_SW 0x004d8cd0
 int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
 
     gExploding_pedestrians = 1;
@@ -218,6 +226,7 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
 // SetPedBrittle
 
 // FUNCTION: CARMA2_HW 0x004dc830
+// FUNCTION: CARMA2_SW 0x004d8d30
 int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar) {
 
     pCar->invulnerable_no_crushage = 1;
@@ -228,6 +237,7 @@ int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar) {
 // ResetInvulnerability
 
 // FUNCTION: CARMA2_HW 0x004dc8a0
+// FUNCTION: CARMA2_SW 0x004d8da0
 int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (pCar != NULL && pCar->driver == eDriver_local_human) {
@@ -237,6 +247,7 @@ int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004dc8d0
+// FUNCTION: CARMA2_SW 0x004d8dd0
 void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (pCar != NULL && pCar->driver == eDriver_local_human) {
@@ -253,6 +264,7 @@ void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar
 }
 
 // FUNCTION: CARMA2_HW 0x004dc930
+// FUNCTION: CARMA2_SW 0x004d8e30
 int C2_HOOK_FASTCALL FreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (pCar != NULL && pCar->driver == eDriver_local_human) {
@@ -262,6 +274,7 @@ int C2_HOOK_FASTCALL FreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004dc970
+// FUNCTION: CARMA2_SW 0x004d8e70
 void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (pCar != NULL && pCar->driver == eDriver_local_human) {
@@ -272,6 +285,7 @@ void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
 // DoInstantRepair
 
 // FUNCTION: CARMA2_HW 0x004dc9c0
+// FUNCTION: CARMA2_SW 0x004d8ec0
 void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car) {
 
     gPedestrian_speed_factor = 1.f;
@@ -282,6 +296,7 @@ void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car) {
 // ResetPedHeadSize
 
 // FUNCTION: CARMA2_HW 0x004dca10
+// FUNCTION: CARMA2_SW 0x004d8f10
 void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
 
     gExploding_pedestrians = 0;
@@ -296,6 +311,7 @@ void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar) {
 // SetEngineFactor
 
 // FUNCTION: CARMA2_HW 0x004dcab0
+// FUNCTION: CARMA2_SW 0x004d8fb0
 int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, underwater_ability, 0x1b0);
@@ -315,6 +331,7 @@ int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
 // SetOpponentsSpeed
 
 // FUNCTION: CARMA2_HW 0x004dcd70
+// FUNCTION: CARMA2_SW 0x004d9270
 int C2_HOOK_FASTCALL SetCopsSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
 
     gCop_speed_factor = pPowerup->float_params[0];
@@ -322,6 +339,7 @@ int C2_HOOK_FASTCALL SetCopsSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004dcda0
+// FUNCTION: CARMA2_SW 0x004d92a0
 int C2_HOOK_FASTCALL SetGravity(tPowerup* pPowerup, tCar_spec* pCar) {
 
     gGravity_multiplier = pPowerup->float_params[0];
@@ -329,6 +347,7 @@ int C2_HOOK_FASTCALL SetGravity(tPowerup* pPowerup, tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004dcdd0
+// FUNCTION: CARMA2_SW 0x004d92d0
 int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar) {
 
     gPinball_factor = pPowerup->float_params[0];
@@ -336,6 +355,7 @@ int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004dce00
+// FUNCTION: CARMA2_SW 0x004d9300
 int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, wall_climber_mode, 0x1c4);
@@ -349,6 +369,7 @@ int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
 // SetSuspension
 
 // FUNCTION: CARMA2_HW 0x004dced0
+// FUNCTION: CARMA2_SW 0x004d93d0
 int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, grip_multiplier, 0x4d0);
@@ -366,6 +387,7 @@ int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 // ResetSuicidalPeds
 
 // FUNCTION: CARMA2_HW 0x004dcf80
+// FUNCTION: CARMA2_SW 0x004d9480
 int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, damage_multiplier, 0x4cc);
@@ -423,6 +445,7 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 // ResetEngineFactor
 
 // FUNCTION: CARMA2_HW 0x004de600
+// FUNCTION: CARMA2_SW 0x004dab00
 void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, underwater_ability, 0x1b0);
@@ -435,24 +458,28 @@ void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
 // ResetOpponentsSpeed
 
 // FUNCTION: CARMA2_HW 0x004de710
+// FUNCTION: CARMA2_SW 0x004dac10
 void C2_HOOK_FASTCALL ResetCopsSpeed(tPowerup* powerup, tCar_spec* car) {
 
     gCop_speed_factor = 1.f;
 }
 
 // FUNCTION: CARMA2_HW 0x004de720
+// FUNCTION: CARMA2_SW 0x004dac20
 void C2_HOOK_FASTCALL ResetGravity(tPowerup* pPowerup, tCar_spec* pCar) {
 
     gGravity_multiplier = gDefault_gravity;
 }
 
 // FUNCTION: CARMA2_HW 0x004de730
+// FUNCTION: CARMA2_SW 0x004dac30
 void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car) {
 
     gPinball_factor = 0.f;
 }
 
 // FUNCTION: CARMA2_HW 0x004de740
+// FUNCTION: CARMA2_SW 0x004dac40
 void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, wall_climber_mode, 0x1c4);
@@ -473,6 +500,7 @@ void C2_HOOK_FASTCALL ResetBouncey(tPowerup* pPowerup, tCar_spec* pCar) {
 // ResetSuspension
 
 // FUNCTION: CARMA2_HW 0x004de780
+// FUNCTION: CARMA2_SW 0x004dac80
 void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, damage_multiplier, 0x4cc);
@@ -481,6 +509,7 @@ void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar)
 }
 
 // FUNCTION: CARMA2_HW 0x004de790
+// FUNCTION: CARMA2_SW 0x004dac90
 void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, grip_multiplier, 0x4d0);
@@ -536,6 +565,7 @@ int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004dec40
+// FUNCTION: CARMA2_SW 0x004db140
 void C2_HOOK_FASTCALL HidePedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (pCar != NULL && pCar->driver == eDriver_local_human) {
@@ -553,6 +583,7 @@ int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004dec90
+// FUNCTION: CARMA2_SW 0x004db190
 void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, proxy_ray_distance, 0x170c);
@@ -573,6 +604,7 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
 // LoseDodgyPowerups
 
 // FUNCTION: CARMA2_HW 0x004df1e0
+// FUNCTION: CARMA2_SW 0x004db6e0
 int C2_HOOK_FASTCALL GetPowerupCount(void) {
 
     return 0;
@@ -663,6 +695,7 @@ void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, 
 }
 
 // FUNCTION: CARMA2_HW 0x004e09d0
+// FUNCTION: CARMA2_SW 0x004dccf0
 br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pTexture) {
     br_actor* actor;
     br_material* material;
@@ -714,29 +747,34 @@ br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pTexture) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c00
+// FUNCTION: CARMA2_SW 0x004dcf20
 void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void) {
     gPowerup_txt_path = "POWERUP.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c10
+// FUNCTION: CARMA2_SW 0x004dcf30
 void C2_HOOK_FASTCALL ConfigureBloodPedPowerupTxtPath(void) {
 
     gPowerup_txt_path = "POWERUP.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c20
+// FUNCTION: CARMA2_SW 0x004dcf40
 void C2_HOOK_FASTCALL ConfigureZombiePedPowerupTxtPath(void) {
 
     gPowerup_txt_path = "ZOMPOWERUP.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c30
+// FUNCTION: CARMA2_SW 0x004dcf50
 void C2_HOOK_FASTCALL ConfigureAlienPedPowerupTxtPath(void) {
 
     gPowerup_txt_path = "ALPOWERUP.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c40
+// FUNCTION: CARMA2_SW 0x004dcf60
 int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (gNet_mode != eNet_mode_none && !IsCarCloaked(pCar)) {
@@ -768,6 +806,7 @@ void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e0d10
+// FUNCTION: CARMA2_SW 0x004dd030
 int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar) {
     int i;
 

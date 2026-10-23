@@ -28,6 +28,7 @@ tFloat_bunch_info gCar_car_damage_multiplier;
 br_vector3 gZero_v__car;  // FIXME: make const?
 
 // GLOBAL: CARMA2_HW 0x006793dc
+// GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
 
 // GLOBAL: CARMA2_HW 0x0065d010
@@ -36,6 +37,7 @@ int gFace_num__car = 1;
 // DamageUnit
 
 // FUNCTION: CARMA2_HW 0x00413f10
+// FUNCTION: CARMA2_SW 0x00413f40
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData) {
 
     if (pActor->user != NULL) {
@@ -189,6 +191,7 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 // MultiFindFloorInBoxBU
 
 // FUNCTION: CARMA2_HW 0x0041e340
+// FUNCTION: CARMA2_SW 0x0041e370
 void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vector3* nor, br_scalar* t, br_material** material) {
 
     ActorFindFace(pPosition, pDir, gTrack_actor, nor, t, material, NULL);

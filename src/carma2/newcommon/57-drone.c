@@ -7,6 +7,7 @@
 br_vector3 gRender_bounds_centre;
 
 // GLOBAL: CARMA2_HW 0x00684518
+// GLOBAL: CARMA2_SW 0x0067ec58
 int gTraffic_disabled;
 
 // DoNotDprintf
@@ -145,17 +146,20 @@ int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pPos) {
 // GetNewCrushyModelForDrone
 
 // FUNCTION: CARMA2_HW 0x0044ecf0
+// FUNCTION: CARMA2_SW 0x0044ea90
 void C2_HOOK_FASTCALL SetTrafficOn(int pTraffic_on) {
 
     gTraffic_disabled = !pTraffic_on;
 }
 
 // FUNCTION: CARMA2_HW 0x0044ed00
+// FUNCTION: CARMA2_SW 0x0044eaa0
 int C2_HOOK_FASTCALL OtherPerambulatoryInstasificationIsEnablificated(void) {
     return !gTraffic_disabled;
 }
 
 // STUB: CARMA2_HW 0x0044ed10
+// STUB: CARMA2_SW 0x0044eab0
 void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
     NOT_IMPLEMENTED();
 }
@@ -185,6 +189,7 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
 // DroneLookWhereYoureGoingYouBlindCunt
 
 // FUNCTION: CARMA2_HW 0x00452680
+// FUNCTION: CARMA2_SW 0x00452410
 int C2_HOOK_FASTCALL OKToViewDrones(void) {
     return 0;
 }

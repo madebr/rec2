@@ -8,12 +8,14 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006b7818
+// GLOBAL: CARMA2_SW 0x006ae4f8
 int gTimers_stack_size;
 
 // GLOBAL: CARMA2_HW 0x006b7600
 tTimer gTimers[19];
 
 // GLOBAL: CARMA2_HW 0x006b7814
+// GLOBAL: CARMA2_SW 0x006ae4f4
 int gTimers_max_index;
 
 // GLOBAL: CARMA2_HW 0x006aaa40
@@ -35,12 +37,14 @@ tU32 gTimers_frame_end_time;
 int gTimers_draw_y;
 
 // GLOBAL: CARMA2_HW 0x006aaa58
+// GLOBAL: CARMA2_SW 0x006a44a8
 tU32 gTimers_frame_start_time;
 
 // GLOBAL: CARMA2_HW 0x006aaa5c
 tU32 gTimers_tolerance;
 
 // FUNCTION: CARMA2_HW 0x00504300
+// FUNCTION: CARMA2_SW 0x004ffc50
 void C2_HOOK_FASTCALL Timers_Init(void) {
     int i;
     int j;
@@ -97,6 +101,7 @@ void C2_HOOK_FASTCALL Timers_Init(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00504700
+// FUNCTION: CARMA2_SW 0x004ffef0
 void C2_HOOK_FASTCALL Timers_StartFrame(void) {
     int i;
 

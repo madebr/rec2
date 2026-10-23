@@ -78,7 +78,7 @@ extern void C2_HOOK_FASTCALL DoRunLengthX(tFlic_descriptor* pFlic_info, tU32 pCh
 
 // HCalcPathName
 
-void C2_HOOK_FASTCALL PDSetFileVariables(void);
+// extern void C2_HOOK_FASTCALL PDSetFileVariables(void); /* See platform.h */
 
 // PDBuildAppPath
 

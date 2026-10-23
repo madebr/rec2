@@ -1,8 +1,3 @@
-add_library(rec2_headers INTERFACE)
-target_include_directories(rec2_headers INTERFACE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
-)
-
 add_library(c2_common STATIC EXCLUDE_FROM_ALL
     ../include/rec2_macros.h
     ../include/rec2_types.h
@@ -182,11 +177,11 @@ target_include_directories(c2_common
 )
 target_link_libraries(c2_common
     PUBLIC
-        rec2_headers
+        rec2::headers
         BRender::Headers
         c2_hooks
         c2_platform
-        S3::S3
+        S3::S3${edition}
         TIFF::TIFF
         ZLIB::ZLIB
         QuickTime::Dummy

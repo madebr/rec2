@@ -6,6 +6,7 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0065a398
+// GLOBAL: CARMA2_SW 0x00654cb0
 const char* gOil_pixie_names[1] = {
     "OIL.PIX",
 };
@@ -14,15 +15,18 @@ const char* gOil_pixie_names[1] = {
 br_pixelmap* gOil_pixies[1];
 
 // GLOBAL: CARMA2_HW 0x00690c90
+// GLOBAL: CARMA2_SW 0x0068ace8
 tOil_spill_info gOily_spills[32];
 
 // GLOBAL: CARMA2_HW 0x0074a68c
+// GLOBAL: CARMA2_SW 0x0074114c
 br_material* oily_material;
 
 // GLOBAL: CARMA2_HW 0x00691710
 int gNext_oil_pixie;
 
 // FUNCTION: CARMA2_HW 0x004a6a10
+// FUNCTION: CARMA2_SW 0x004a2b90
 void C2_HOOK_FASTCALL InitOilSpills(void) {
     int i;
     br_model* the_model;
@@ -108,6 +112,7 @@ void C2_HOOK_FASTCALL QueueOilSpill2(tCar_spec* pCar, br_actor* pCar_actor, br_m
 #endif
 
 // FUNCTION: CARMA2_HW 0x004a6dd0
+// FUNCTION: CARMA2_SW 0x004a2f40
 void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar) {
     QueueOilSpill2(pCar, pCar->car_master_actor, pCar->car_actor->model, 500,
         0.35f, 0.6f, 0.00003f, 0.0001f, 0.1f, 1.5f, 2.5f, 0.01f, 0.15f,
@@ -139,11 +144,13 @@ void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel
 // ProcessOilSpills
 
 // FUNCTION: CARMA2_HW 0x004a74e0
+// FUNCTION: CARMA2_SW 0x004a3650
 int C2_HOOK_FASTCALL GetOilSpillCount(void) {
     return (int)REC2_ASIZE(gOily_spills);
 }
 
 // FUNCTION: CARMA2_HW 0x004a74f0
+// FUNCTION: CARMA2_SW 0x004a3660
 void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize) {
     if (gOily_spills[pIndex].car_actor != NULL) {
         *pActor = gOily_spills[pIndex].actor;

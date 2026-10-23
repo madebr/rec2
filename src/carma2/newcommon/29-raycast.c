@@ -1,11 +1,13 @@
 #include "29-raycast.h"
 
 // GLOBAL: CARMA2_HW 0x006a20d0
+// GLOBAL: CARMA2_SW 0x0069c128
 br_actor* gY_picking_camera;
 
 // DRActorToRoot
 
 // FUNCTION: CARMA2_HW 0x004e3660
+// FUNCTION: CARMA2_SW 0x004df9f0
 void C2_HOOK_FASTCALL InitRayCasting(void) {
     br_camera* camera_ptr;
 

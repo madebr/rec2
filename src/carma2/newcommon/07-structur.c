@@ -21,6 +21,7 @@ int gHud_tinted3 = -1;
 int gCredits_checkpoint[3];
 
 // FUNCTION: CARMA2_HW 0x00503050
+// FUNCTION: CARMA2_SW 0x004fe9a0
 int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     int result;
     int count;
@@ -101,6 +102,7 @@ void C2_HOOK_FASTCALL TotalRepair(void) {
 // SelectOpponents
 
 // FUNCTION: CARMA2_HW 0x00503ba0
+// FUNCTION: CARMA2_SW 0x004ff4f0
 int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence) {
     int i;
     int new_index;

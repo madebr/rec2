@@ -1,6 +1,7 @@
 #include "60-phil.h"
 
 // GLOBAL: CARMA2_HW 0x0065d004
+// GLOBAL: CARMA2_SW 0x0065793c
 int gPHIL_disabled = 1;
 
 // GLOBAL: CARMA2_HW 0x0074a5f0
@@ -43,6 +44,7 @@ int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffe
 // WriteObjectNetworkStuff
 
 // FUNCTION: CARMA2_HW 0x0049cd00
+// FUNCTION: CARMA2_SW 0x00498e80
 int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, int pSize) {
     int size;
     int child_size;
@@ -85,6 +87,7 @@ int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pBu
 // PHILInit
 
 // FUNCTION: CARMA2_HW 0x004b5d20
+// FUNCTION: CARMA2_SW 0x004b2440
 void C2_HOOK_FASTCALL PHILDisable(void) {
     gPHIL_disabled = 1;
 }

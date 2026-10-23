@@ -13,96 +13,127 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00679698
+// GLOBAL: CARMA2_SW 0x00673e08
 br_scalar gDistortion_factor;
 
 // GLOBAL: CARMA2_HW 0x006796b0
+// GLOBAL: CARMA2_SW 0x00673e20
 br_scalar gForce_to_movement_factor;
 
 // GLOBAL: CARMA2_HW 0x00679550
+// GLOBAL: CARMA2_SW 0x00673cc0
 br_scalar gMax_detach_time_ms;
 
 // GLOBAL: CARMA2_HW 0x006796b8
+// GLOBAL: CARMA2_SW 0x00673e28
 br_scalar gMin_crush_force;
 
 // GLOBAL: CARMA2_HW 0x0067944c
+// GLOBAL: CARMA2_SW 0x00673bbc
 br_scalar gNormal_force_to_detach;
 
 // GLOBAL: CARMA2_HW 0x0067a18c
+// GLOBAL: CARMA2_SW 0x006748fc
 br_scalar gMin_bend_angle;
 
 // GLOBAL: CARMA2_HW 0x0067b7b0
+// GLOBAL: CARMA2_SW 0x00675f20
 int gMin_bend_damage;
 
 // GLOBAL: CARMA2_HW 0x0067b7b4
+// GLOBAL: CARMA2_SW 0x00675f24
 br_scalar gFlap_inertia_fudge_biscuit;
 
 // GLOBAL: CARMA2_HW 0x0067b7d0
+// GLOBAL: CARMA2_SW 0x00675f40
 int gMax_split_damage;
 
 // GLOBAL: CARMA2_HW 0x0067bac8
+// GLOBAL: CARMA2_SW 0x00676238
 br_scalar gMin_force_to_split_XZ_per_tonne;
 
 // GLOBAL: CARMA2_HW 0x0067bacc
+// GLOBAL: CARMA2_SW 0x0067623c
 br_scalar gMax_crush_dist_sq;
 
 // GLOBAL: CARMA2_HW 0x0067bd5c
+// GLOBAL: CARMA2_SW 0x006764cc
 br_scalar gMin_force_to_split_Y_per_tonne;
 
 // GLOBAL: CARMA2_HW 0x0067bd64
+// GLOBAL: CARMA2_SW 0x006764d4
 int gMin_split_damage;
 
 // GLOBAL: CARMA2_HW 0x0067bde8
+// GLOBAL: CARMA2_SW 0x00676558
 br_scalar gMin_bend_force;
 
 // GLOBAL: CARMA2_HW 0x0067bdec
+// GLOBAL: CARMA2_SW 0x0067655c
 br_scalar gMax_crush_force;
 
 // GLOBAL: CARMA2_HW 0x0067bdf4
+// GLOBAL: CARMA2_SW 0x00676564
 int gMax_bend_damage;
 
 // GLOBAL: CARMA2_HW 0x0067bdf8
+// GLOBAL: CARMA2_SW 0x00676568
 br_scalar gTorque_to_snap_per_tonne;
 
 // GLOBAL: CARMA2_HW 0x0067be00
+// GLOBAL: CARMA2_SW 0x00676570
 br_scalar gChance_of_bending;
 
 // GLOBAL: CARMA2_HW 0x0067be04
+// GLOBAL: CARMA2_SW 0x00676574
 br_scalar gChance_of_inverse_buckle;
 
 // GLOBAL: CARMA2_HW 0x0067be78
+// GLOBAL: CARMA2_SW 0x006765e8
 br_vector3 gBatty_gravity;
 
 // GLOBAL: CARMA2_HW 0x0067a190
+// GLOBAL: CARMA2_SW 0x00674900
 undefined4 gCrush_array_0067a190[10];
 
 // GLOBAL: CARMA2_HW 0x00679440
+// GLOBAL: CARMA2_SW 0x00673bb0
 undefined4 gDAT_00679440;
 
 // GLOBAL: CARMA2_HW 0x006796a0
+// GLOBAL: CARMA2_SW 0x00673e10
 tCrush_info_buffer gDetached_bit_crush_info_buffer;
 
 // GLOBAL: CARMA2_HW 0x00679448
+// GLOBAL: CARMA2_SW 0x00673bb8
 tPhysics_object* gDetached_bit_collision_infos;
 
 // GLOBAL: CARMA2_HW 0x006796ac
+// GLOBAL: CARMA2_SW 0x00673e1c
 tDriver gDetached_bit_driver;
 
 // GLOBAL: CARMA2_HW 0x0067bd68
+// GLOBAL: CARMA2_SW 0x006764d8
 tPhysics_joint* gTrack_crush_joints[32];
 
 // GLOBAL: CARMA2_HW 0x0067b7b8
+// GLOBAL: CARMA2_SW 0x00675f28
 tCrush_info_buffer gSplit_car_crush_info_buffer;
 
 // GLOBAL: CARMA2_HW 0x0067a188
+// GLOBAL: CARMA2_SW 0x006748f8
 tPhysics_object* gSplit_car_collision_infos;
 
 // GLOBAL: CARMA2_HW 0x0067b7c4
+// GLOBAL: CARMA2_SW 0x00675f34
 tDriver gSplit_car_driver;
 
 // GLOBAL: CARMA2_HW 0x006796b4
+// GLOBAL: CARMA2_SW 0x00673e24
 tPhysics_shape* gGonad_sphere_collision_shape;
 
 // FUNCTION: CARMA2_HW 0x00429bb0
+// FUNCTION: CARMA2_SW 0x00429c40
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
     char s[256];
     char *result;
@@ -172,6 +203,7 @@ void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
 // RemoveCarFromCrushLists
 
 // FUNCTION: CARMA2_HW 0x00429fa0
+// FUNCTION: CARMA2_SW 0x0042a030
 void C2_HOOK_FASTCALL InitCrushSystems(void) {
     int i;
 
@@ -318,6 +350,7 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
 // InitPhysModCrushData
 
 // FUNCTION: CARMA2_HW 0x0042c420
+// FUNCTION: CARMA2_SW 0x0042c4b0
 void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_spec* pCar) {
     int i;
 
@@ -441,6 +474,7 @@ int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
 // SendCrush
 
 // FUNCTION: CARMA2_HW 0x00436940
+// FUNCTION: CARMA2_SW 0x00436970
 void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc) {
     int i;
 
@@ -582,6 +616,7 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 // ToggleFlaps
 
 // FUNCTION: CARMA2_HW 0x00434910
+// FUNCTION: CARMA2_SW 0x00434940
 int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_object* pObject) {
     br_vector3 world_direction;
     br_vector3 parent_direction;
@@ -732,6 +767,7 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 // DoBending
 
 // FUNCTION: CARMA2_HW 0x00431590
+// FUNCTION: CARMA2_SW 0x004315c0
 void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
 
     (void)pOn_screen;
@@ -741,6 +777,7 @@ void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_materia
 }
 
 // FUNCTION: CARMA2_HW 0x004315e0
+// FUNCTION: CARMA2_SW 0x00431610
 void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
     tUser_detail_level_model* user_detail_model;
 

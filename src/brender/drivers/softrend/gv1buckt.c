@@ -39,6 +39,7 @@ br_tv_template_entry geometryV1BucketsTemplateEntries[] ={
 
 
 // FUNCTION: CARMA2_HW 0x005412b0
+// FUNCTION: CARMA2_SW 0x0053c950
 br_geometry_v1_buckets* C2_HOOK_STDCALL GeometryV1BucketsAllocate(br_soft_renderer_facility *type, const char *id) {
     br_geometry_v1_buckets_soft* self;
 
@@ -101,6 +102,7 @@ br_tv_template* C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_templateQuery(br_ge
 }
 
 // FUNCTION: CARMA2_HW 0x00541390
+// FUNCTION: CARMA2_SW 0x0053ca30
 br_error C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_render(br_renderer_state_stored* self, br_soft_renderer* renderer, br_primitive** buckets, br_int_32 nbuckets) {
     br_primitive* p;
 	br_renderer_state_stored* last_state;

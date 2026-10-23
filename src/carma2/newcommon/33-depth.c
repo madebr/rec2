@@ -10,15 +10,19 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x00591188
+// GLOBAL: CARMA2_SW 0x0058c180
 int gSky_on = 1;
 
 // GLOBAL: CARMA2_HW 0x0079ec1c
+// GLOBAL: CARMA2_SW 0x0079517c
 br_pixelmap* gSwap_sky_texture;
 
 // GLOBAL: CARMA2_HW 0x0067c4e0
+// GLOBAL: CARMA2_SW 0x00676c58
 br_material* gHorizon_material;
 
 // GLOBAL: CARMA2_HW 0x0067c4a0
+// GLOBAL: CARMA2_SW 0x00676c18
 br_model* gForward_sky_model;
 
 // GLOBAL: CARMA2_HW 0x0074cee8
@@ -46,6 +50,7 @@ int gSwap_depth_effect_colour_red;
 int gSwap_depth_effect_colour_green;
 
 // GLOBAL: CARMA2_HW 0x0067c4a8
+// GLOBAL: CARMA2_SW 0x00676c20
 int gHas_sky_texture;
 
 // GLOBAL: CARMA2_HW 0x0079ec20
@@ -149,6 +154,7 @@ void C2_HOOK_FASTCALL FrobFog(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00445500
+// FUNCTION: CARMA2_SW 0x00445330
 void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial) {
     int i;
     float tex_y;
@@ -276,6 +282,7 @@ void C2_HOOK_FASTCALL IncreaseYon(void) {
 // DecreaseYon
 
 // FUNCTION: CARMA2_HW 0x00446b70
+// FUNCTION: CARMA2_SW 0x00446bf0
 void C2_HOOK_STDCALL SetYon(br_scalar pYon) {
     int i;
     br_camera* camera_ptr;
@@ -294,18 +301,21 @@ void C2_HOOK_STDCALL SetYon(br_scalar pYon) {
 }
 
 // FUNCTION: CARMA2_HW 0x00446bb0
+// FUNCTION: CARMA2_SW 0x00446c30
 br_scalar C2_HOOK_STDCALL GetYon(void) {
 
     return gCamera_yon;
 }
 
 // FUNCTION: CARMA2_HW 0x00446e00
+// FUNCTION: CARMA2_SW 0x00447040
 int C2_HOOK_FASTCALL GetSkyTextureOn(void) {
 
     return gSky_on;
 }
 
 // FUNCTION: CARMA2_HW 0x00446e10
+// FUNCTION: CARMA2_SW 0x00447050
 void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn) {
 
     if (gSky_on != skyTextureOn) {
@@ -338,6 +348,7 @@ int C2_HOOK_FASTCALL GetDepthCueingOn(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00446fa0
+// FUNCTION: CARMA2_SW 0x004471e0
 void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn) {
 
     if (gDepth_cueing_on != pOn && gHorizon_material != NULL) {
@@ -381,6 +392,7 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
 // ToggleDepthCueing
 
 // FUNCTION: CARMA2_HW 0x00447220
+// FUNCTION: CARMA2_SW 0x00447640
 void C2_HOOK_FASTCALL ChangeDepthEffect(void) {
     gProgram_state.current_depth_effect.type = gProgram_state.default_depth_effect.type;
     gProgram_state.current_depth_effect.sky_texture = gProgram_state.default_depth_effect.sky_texture;
@@ -393,6 +405,7 @@ void C2_HOOK_FASTCALL ChangeDepthEffect(void) {
 #endif
 
 // STUB: CARMA2_HW 0x00445e20
+// STUB: CARMA2_SW 0x00445ea0
 void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel) {
     NOT_IMPLEMENTED();
 }
@@ -402,16 +415,19 @@ void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00447250
+// FUNCTION: CARMA2_SW 0x00447670
 void C2_HOOK_FASTCALL MungeForwardSky(void) {
     MungeSkyModel(gCamera, gForward_sky_model);
     gHas_sky_texture = gProgram_state.default_depth_effect.sky_texture != NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x00447280
+// FUNCTION: CARMA2_SW 0x004476a0
 void C2_HOOK_FASTCALL MungeRearviewSky(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00447290
+// FUNCTION: CARMA2_SW 0x004476b0
 void C2_HOOK_FASTCALL SkyTextureChanged(void) {
 
     BrMaterialUpdate(gHorizon_material, BR_MATU_COLOURMAP);

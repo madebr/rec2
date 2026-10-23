@@ -201,6 +201,7 @@ br_image Image_BRHOST1 = {
 };
 
 // FUNCTION: CARMA2_HW 0x0053fab0
+// FUNCTION: CARMA2_SW 0x0053b150
 void C2_HOOK_CDECL HostBegin(void) {
 
     RealSelectorBegin();
@@ -208,6 +209,7 @@ void C2_HOOK_CDECL HostBegin(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0053fad0
+// FUNCTION: CARMA2_SW 0x0053b170
 void C2_HOOK_CDECL HostEnd(void) {
 
     BrImageRemove(&Image_BRHOST1);

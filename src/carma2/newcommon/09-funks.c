@@ -15,6 +15,7 @@ tFunkotronic_spec* gFunkotronics_array;
 tGroovidelic_spec* gGroovidelics_array;
 
 // GLOBAL: CARMA2_HW 0x0068b848
+// GLOBAL: CARMA2_SW 0x00685da8
 int gGroovidelics_array_size;
 
 // GLOBAL: CARMA2_HW 0x0068b838
@@ -32,6 +33,7 @@ int gFunkotronics_array_size;
 // MapSawToTriangle
 
 // FUNCTION: CARMA2_HW 0x00474880
+// FUNCTION: CARMA2_SW 0x00473de0
 void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
 
     gSight_distance_squared = (br_scalar)REC2_SQR(pYon * 1.02);
@@ -100,6 +102,7 @@ br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat,
 // AddFunkotronics
 
 // FUNCTION: CARMA2_HW 0x00476430
+// FUNCTION: CARMA2_SW 0x00475990
 void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
     tGroovidelic_spec* the_groove;
     int i;
@@ -214,6 +217,7 @@ void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b130
+// FUNCTION: CARMA2_SW 0x0047a690
 void C2_HOOK_FASTCALL DisableGroovidelic(br_actor* pActor, tU32 pBlock_flags) {
     tGroovidelic_spec* the_groove;
     int i;
@@ -228,6 +232,7 @@ void C2_HOOK_FASTCALL DisableGroovidelic(br_actor* pActor, tU32 pBlock_flags) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b160
+// FUNCTION: CARMA2_SW 0x0047a6c0
 void C2_HOOK_FASTCALL EnableGroovidelic(br_actor* pActor, tU32 pBlock_flags) {
     tGroovidelic_spec* the_groove;
     int i;
@@ -254,6 +259,7 @@ void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* pMatrix,
 }
 
 // FUNCTION: CARMA2_HW 0x0047b1e0
+// FUNCTION: CARMA2_SW 0x0047a740
 void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
     int i;
     tGroovidelic_spec* the_groove;
@@ -270,6 +276,7 @@ void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b250
+// FUNCTION: CARMA2_SW 0x0047a7b0
 void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex) {
     gFunkotronics_array[pIndex].flags |= 0x1;
     PipeSingleFunkEnable(pIndex, 0);
@@ -282,6 +289,7 @@ void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b2b0
+// FUNCTION: CARMA2_SW 0x0047a810
 void C2_HOOK_FASTCALL MasterDisableFunkotronic(int pIndex) {
     gFunkotronics_array[pIndex].flags |= 0x2;
 }

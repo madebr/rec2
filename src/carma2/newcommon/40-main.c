@@ -22,6 +22,7 @@
 #include <string.h>
 
 // FUNCTION: CARMA2_HW 0x00491f70
+// FUNCTION: CARMA2_SW 0x0048f1e0
 C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
     SaveOptions();
     if (gSave_game_out_of_sync) {
@@ -67,6 +68,7 @@ void C2_HOOK_FASTCALL ServiceGame(void) {
 // ServiceGameInRace
 
 // FUNCTION: CARMA2_HW 0x004924a0
+// FUNCTION: CARMA2_SW 0x0048f6d0
 void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     tPath_name location;
 

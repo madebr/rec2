@@ -31,9 +31,11 @@
 
 
 // GLOBAL: CARMA2_HW 0x0079f4e0
+// GLOBAL: CARMA2_SW 0x00795a80
 br_framework_state fw;
 
 // GLOBAL: CARMA2_HW 0x00665518
+// GLOBAL: CARMA2_SW 0x0065fcc4
 br_resource_class fw_resourceClasses[25] = {
     { 0u, "REGISTRY", BR_MEMORY_REGISTRY, NULL, 0u },
     { 0u, "ANCHOR", BR_MEMORY_ANCHOR, NULL, 0u },
@@ -63,6 +65,7 @@ br_resource_class fw_resourceClasses[25] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00665b70
+// GLOBAL: CARMA2_SW 0x00660308
 void* functionPointers_BRCORE1[185] = {
     BrAbort,
     BrAddHead,
@@ -252,6 +255,7 @@ void* functionPointers_BRCORE1[185] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00665710
+// GLOBAL: CARMA2_SW 0x0065fea8
 const char* namePointers_BRCORE1[185] = {
     "_BrAbort",
     "_BrAddHead",
@@ -442,6 +446,7 @@ const char* namePointers_BRCORE1[185] = {
 
 
 // GLOBAL: CARMA2_HW 0x006659f8
+// GLOBAL: CARMA2_SW 0x00660190
 br_uint_16 nameOrdinals_BRCORE1[185] = {
     0,
     1,
@@ -631,6 +636,7 @@ br_uint_16 nameOrdinals_BRCORE1[185] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00665e58
+// GLOBAL: CARMA2_SW 0x006605f0
 br_image Image_BRCORE1 = {
     { 0 },
     "BRCORE1",
@@ -652,6 +658,7 @@ br_image Image_BRCORE1 = {
 #define NBR_DEV_SLOTS 16
 
 // FUNCTION: CARMA2_HW 0x00527e20
+// FUNCTION: CARMA2_SW 0x005234c0
 br_error C2_HOOK_CDECL BrFwBegin(void) {
     int i;
 
@@ -690,6 +697,7 @@ br_error C2_HOOK_CDECL BrFwBegin(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527f20
+// FUNCTION: CARMA2_SW 0x005235c0
 br_error C2_HOOK_CDECL BrFwEnd(void) {
 
     if (!fw.active) {
@@ -702,6 +710,7 @@ br_error C2_HOOK_CDECL BrFwEnd(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527f70
+// FUNCTION: CARMA2_SW 0x00523610
 br_diaghandler* C2_HOOK_CDECL BrDiagHandlerSet(br_diaghandler* newdh) {
     br_diaghandler* old;
 
@@ -714,6 +723,7 @@ br_diaghandler* C2_HOOK_CDECL BrDiagHandlerSet(br_diaghandler* newdh) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527f90
+// FUNCTION: CARMA2_SW 0x00523630
 br_filesystem* C2_HOOK_CDECL BrFilesystemSet(br_filesystem* newfs) {
     br_filesystem* old;
 
@@ -726,6 +736,7 @@ br_filesystem* C2_HOOK_CDECL BrFilesystemSet(br_filesystem* newfs) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527fb0
+// FUNCTION: CARMA2_SW 0x00523650
 br_allocator* C2_HOOK_CDECL BrAllocatorSet(br_allocator* newal) {
     br_allocator* old;
 

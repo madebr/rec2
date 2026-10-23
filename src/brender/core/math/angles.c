@@ -121,6 +121,7 @@ br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* e
 }
 
 // FUNCTION: CARMA2_HW 0x005320d0
+// FUNCTION: CARMA2_SW 0x0052d770
 br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* mat) {
     br_uint_8 o;
     int a0;

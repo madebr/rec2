@@ -66,12 +66,14 @@ void C2_HOOK_CDECL BrLightDisable(br_actor* l) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524f10
+// FUNCTION: CARMA2_SW 0x005205b0
 void C2_HOOK_CDECL BrClipPlaneEnable(br_actor* c) {
 
     actorEnable(&v1db.enabled_clip_planes, c);
 }
 
 // FUNCTION: CARMA2_HW 0x00524fa0
+// FUNCTION: CARMA2_SW 0x00520640
 void C2_HOOK_CDECL BrClipPlaneDisable(br_actor* c) {
 
     actorDisable(&v1db.enabled_clip_planes, c);
@@ -90,6 +92,7 @@ void C2_HOOK_CDECL BrHorizonPlaneDisable(br_actor* h) {
 }
 
 // FUNCTION: CARMA2_HW 0x005250d0
+// FUNCTION: CARMA2_SW 0x00520770
 br_actor* C2_HOOK_CDECL BrEnvironmentSet(br_actor* a) {
     br_actor* old_a;
 

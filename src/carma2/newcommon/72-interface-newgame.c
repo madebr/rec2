@@ -4,6 +4,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x005bf280
+// GLOBAL: CARMA2_SW 0x005ba1b0
 tFrontend_spec gFrontend_NEWGAME = {
 #if 0 // FIXME: enable this
     "newgame",

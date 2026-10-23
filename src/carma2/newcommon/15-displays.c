@@ -12,18 +12,22 @@
 #include "globvars.h"
 #include "globvrbm.h"
 #include "globvrkm.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x0067c500
+// GLOBAL: CARMA2_SW 0x00676c70
 tHeadup gHeadups[37];
 
 // GLOBAL: CARMA2_HW 0x0067fcd8
+// GLOBAL: CARMA2_SW 0x0067a438
 br_font* gBR_fonts[4];
 
 // GLOBAL: CARMA2_HW 0x0067fd00
+// GLOBAL: CARMA2_SW 0x0067a450
 br_pixelmap* gRevs[13];
 
 // GLOBAL: CARMA2_HW 0x0074cf84
@@ -66,57 +70,78 @@ br_pixelmap* gTimer_lhs;
 br_pixelmap* gHud_timer_rhs;
 
 // GLOBAL: CARMA2_HW 0x006815b8
+// GLOBAL: CARMA2_SW 0x0067bcfc
 br_pixelmap* gIcon_armour;
 
 // GLOBAL: CARMA2_HW 0x006815b4
+// GLOBAL: CARMA2_SW 0x0067bcf8
 br_pixelmap* gIcon_power;
 
 // GLOBAL: CARMA2_HW 0x0067c4f0
+// GLOBAL: CARMA2_SW 0x00676c68
 br_pixelmap* gIcon_offense;
 
 // GLOBAL: CARMA2_HW 0x0067c4f4
+// GLOBAL: CARMA2_SW 0x00676c6c
 br_pixelmap* gIcon_greyBloc1;
 
 // GLOBAL: CARMA2_HW 0x0067fce8
+// GLOBAL: CARMA2_SW 0x0067a448
 br_pixelmap* gIcon_litBloc1;
 
 // GLOBAL: CARMA2_HW 0x0067fcd4
+// GLOBAL: CARMA2_SW 0x0067a430
 br_pixelmap* gIcon_grnBlock1;
 
+// GLOBAL: CARMA2_SW 0x00679ff0
+br_pixelmap* gIcon_greyTop;
+
 // GLOBAL: CARMA2_HW 0x0067fd40
+// GLOBAL: CARMA2_SW 0x0067a488
 tHud_message gHud_messages[46];
 
 // GLOBAL: CARMA2_HW 0x00655e54
+// GLOBAL: CARMA2_SW 0x00650d3c
 int gHeadup_detail_level = 5;
 
 // GLOBAL: CARMA2_HW 0x0067fcc0
+// GLOBAL: CARMA2_SW 0x0067a428
 tU32 gLast_fancy_headup;
 
 // GLOBAL: CARMA2_HW 0x005913d4
+// GLOBAL: CARMA2_SW 0x0058c3b4
 int gLast_fancy_index = -1;
 
 // GLOBAL: CARMA2_HW 0x0067fd34
+// GLOBAL: CARMA2_SW 0x0067a484
 tU32 gLast_fancy_time;
 
 // GLOBAL: CARMA2_HW 0x0067fcf8
+// GLOBAL: CARMA2_SW 0x0067a44c
 tU32 gLast_centre_headup;
 
 // GLOBAL: CARMA2_HW 0x005913d8
+// GLOBAL: CARMA2_SW 0x0058c3b8
 int gLast_credit_headup__displays = -1;
 
 // GLOBAL: CARMA2_HW 0x0067f874
+// GLOBAL: CARMA2_SW 0x00679fe4
 tU32 gLast_earn_time;
 
 // GLOBAL: CARMA2_HW 0x005913dc
+// GLOBAL: CARMA2_SW 0x0058c3bc
 int gLast_time_credit_headup = -1;
 
 // GLOBAL: CARMA2_HW 0x0067fcc4
+// GLOBAL: CARMA2_SW 0x0067a42c
 tU32 gLast_time_earn_time;
 
 // GLOBAL: CARMA2_HW 0x0079eac0
+// GLOBAL: CARMA2_SW 0x00795020
 int gOld_times[10];
 
 // GLOBAL: CARMA2_HW 0x0067f888
+// GLOBAL: CARMA2_SW 0x00679ff4
 int gQueued_headup_count;
 
 
@@ -174,6 +199,7 @@ static void C2_HOOK_FASTCALL LoadHeadupMessageFile(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00449090
+// FUNCTION: CARMA2_SW 0x004494b0
 void C2_HOOK_FASTCALL InitHeadups(void) {
     int i;
 
@@ -186,6 +212,9 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     gBR_fonts[1] = BrFontProp7x9;
     gBR_fonts[2] = gFont_7;
     gBR_fonts[3] = gHeadup_font;
+#ifdef REC2_SW
+    gGraf_spec_index = 0;
+#endif
     gRevs[ 0] = LoadPixelmap("rev1.tif");
     gRevs[ 1] = LoadPixelmap("rev2.tif");
     gRevs[ 2] = LoadPixelmap("rev3.tif");
@@ -199,6 +228,8 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     gRevs[10] = LoadPixelmap("rev11.tif");
     gRevs[11] = LoadPixelmap("rev12.tif");
     gRevs[12] = LoadPixelmap("rev13.tif");
+
+#ifdef REC2_HW
     gPowerbar = LoadPixelmap("powerbar.tif");
 
     gArmour_colour_map = BrPixelmapAllocate(BR_PMT_RGBA_4444,
@@ -263,6 +294,7 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     gTimerRightHUD_model->vertices[2].p.v[1] = gTimerRightHUD_model->vertices[3].p.v[1] - (float)gTimerRightHUD_dim_h;
     gTimerRightHUD_model->vertices[1].p.v[1] = gTimerRightHUD_model->vertices[2].p.v[1];
     BrModelUpdate(gTimerRightHUD_model, BR_MODU_VERTEX_POSITIONS);
+#endif
 
     gIcon_armour = LoadPixelmap("iconarmour.tif");
     gIcon_power = LoadPixelmap("iconpower.tif");
@@ -270,7 +302,10 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     gIcon_greyBloc1 = LoadPixelmap("greybloc1.tif");
     gIcon_litBloc1 = LoadPixelmap("litbloc1.tif");
     gIcon_grnBlock1 = LoadPixelmap("grnblock1.tif");
-
+#ifdef REC2_SW
+    gIcon_greyTop = LoadPixelmap("greytop.tif");
+    gGraf_spec_index = 1;
+#endif
     LoadHeadupMessageFile();
 }
 
@@ -341,6 +376,7 @@ void C2_HOOK_FASTCALL DoPSPowerupHeadups(void) {
 #endif
 
 // STUB: CARMA2_HW 0x0044a220
+// STUB: CARMA2_SW 0x0044a3b0
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
     NOT_IMPLEMENTED();
 }
@@ -372,6 +408,7 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLi
 #endif
 
 // STUB: CARMA2_HW 0x0044a3a0
+// STUB: CARMA2_SW 0x0044a530
 int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index) {
     NOT_IMPLEMENTED();
 }
@@ -381,6 +418,7 @@ int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pL
 #endif
 
 // FUNCTION: CARMA2_HW 0x0044a600
+// FUNCTION: CARMA2_SW 0x0044a790
 void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
     tU32 the_time;
     int temp_ref;
@@ -441,6 +479,7 @@ void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pNew_x, int pNew_y) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044a8d0
+// FUNCTION: CARMA2_SW 0x0044aa60
 void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
     tHeadup* the_headup;
 
@@ -453,6 +492,7 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044a9d0
+// FUNCTION: CARMA2_SW 0x0044ab60
 void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     int i;
     int y_pitch;
@@ -465,6 +505,12 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     if (&gProgram_state.current_car != gCar_to_view) {
         return;
     }
+#ifdef REC2_SW
+    if (gHeadup_detail_level == 0 || gHeadup_detail_level == 3) {
+        return;
+    }
+#endif
+
     if (gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0) {
         if (gProgram_state.which_view != eView_forward) {
             return;
@@ -474,6 +520,9 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     } else {
         the_wobble_x = gProgram_state.current_car.damage_x_offset;
         the_wobble_y = gProgram_state.current_car.damage_y_offset;
+#ifdef REC2_SW
+
+#endif
     }
 
     DRPixelmapCopy(gDamage_hud, gGrey_top5);
@@ -523,6 +572,7 @@ void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
 // EarnCredits100
 
 // FUNCTION: CARMA2_HW 0x0044b470
+// FUNCTION: CARMA2_SW 0x0044b600
 int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
     int amount;
 

@@ -31,6 +31,7 @@ void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, const br_matrix4* B) {
 }
 
 // FUNCTION: CARMA2_HW 0x00535d40
+// FUNCTION: CARMA2_SW 0x005313e0
 void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, const br_matrix4* B, const br_matrix4* C) {
 
     A(0, 0) = BR_MAC4(B(0, 0), C(0, 0), B(0, 1), C(1, 0), B(0, 2), C(2, 0), B(0, 3), C(3, 0));
@@ -73,6 +74,7 @@ void C2_HOOK_CDECL BrMatrix4Identity(br_matrix4* mat) {
 }
 
 // FUNCTION: CARMA2_HW 0x00536030
+// FUNCTION: CARMA2_SW 0x005316d0
 void C2_HOOK_CDECL BrMatrix4Scale(br_matrix4* mat, br_scalar sx, br_scalar sy, br_scalar sz) {
 
     M(0, 0) = sx;
@@ -94,6 +96,7 @@ void C2_HOOK_CDECL BrMatrix4Scale(br_matrix4* mat, br_scalar sx, br_scalar sy, b
 }
 
 // FUNCTION: CARMA2_HW 0x00536080
+// FUNCTION: CARMA2_SW 0x00531720
 br_scalar C2_HOOK_CDECL BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B) {
     int i;
     int j;
@@ -232,6 +235,7 @@ void C2_HOOK_CDECL BrMatrix4Adjoint(br_matrix4* A, const br_matrix4* B) {
 }
 
 // FUNCTION: CARMA2_HW 0x00536820
+// FUNCTION: CARMA2_SW 0x00531ec0
 void C2_HOOK_CDECL BrMatrix4Perspective(br_matrix4* mat, br_angle field_of_view, br_scalar aspect, br_scalar hither, br_scalar yon) {
     br_scalar scale;
 
@@ -266,6 +270,7 @@ void C2_HOOK_CDECL BrMatrix4Apply(br_vector4* A, const br_vector4* B, const br_m
 }
 
 // FUNCTION: CARMA2_HW 0x00536990
+// FUNCTION: CARMA2_SW 0x00532030
 void C2_HOOK_CDECL BrMatrix4ApplyP(br_vector4* A, const br_vector3* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0)) + C(3, 0);
@@ -332,6 +337,7 @@ void C2_HOOK_CDECL BrMatrix4Copy34(br_matrix4* A, const br_matrix34* B) {
 }
 
 // FUNCTION: CARMA2_HW 0x00536d10
+// FUNCTION: CARMA2_SW 0x005323b0
 void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, const br_matrix34* B, const br_matrix4* C) {
 
     A(0, 0) = BR_MAC3(B(0, 0), C(0, 0), B(0, 1), C(1, 0), B(0, 2), C(2, 0));

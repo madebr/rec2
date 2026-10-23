@@ -5620,6 +5620,7 @@ enum {
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
     kFatalError_CannotLoadFontImage_S = 0x14,
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
+    kFatalError_CannotLoadCursorImage = 0x16,
     kFatalError_ScreenWidthHeightDoesNotMatchGrafData = 0x18,
     kFatalError_CannotLoadCarResolutionIndependentFile = 0x19,
     kFatalError_CannotLoadDamageImage = 0x1b,

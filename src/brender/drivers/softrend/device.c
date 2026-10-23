@@ -45,6 +45,7 @@ br_tv_template_entry deviceTemplateEntries[] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00540880
+// FUNCTION: CARMA2_SW 0x0053bf20
 void C2_HOOK_CDECL _M_br_softrend_device_free(br_soft_device* self) {
 
     BrObjectContainerFree((br_object_container *)self, BR_NULL_TOKEN, NULL, NULL);
@@ -52,6 +53,7 @@ void C2_HOOK_CDECL _M_br_softrend_device_free(br_soft_device* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x005408a0
+// FUNCTION: CARMA2_SW 0x0053bf40
 br_token C2_HOOK_CDECL _M_br_softrend_device_type(br_soft_device* self) {
 
     return BRT_DEVICE;
@@ -71,6 +73,7 @@ br_size_t C2_HOOK_CDECL _M_br_softrend_device_space(br_soft_device* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x005408e0
+// FUNCTION: CARMA2_SW 0x0053bf80
 br_tv_template* C2_HOOK_CDECL _M_br_soft_device_templateQuery(br_soft_device* self) {
 
     if (self->templates.deviceTemplate == NULL) {
@@ -83,12 +86,14 @@ br_tv_template* C2_HOOK_CDECL _M_br_soft_device_templateQuery(br_soft_device* se
 }
 
 // FUNCTION: CARMA2_HW 0x00540910
+// FUNCTION: CARMA2_SW 0x0053bfb0
 void* C2_HOOK_CDECL _M_br_softrend_device_listQuery(br_soft_device* self) {
 
     return self->object_list;
 }
 
 // FUNCTION: CARMA2_HW 0x00540810
+// FUNCTION: CARMA2_SW 0x0053beb0
 br_device* C2_HOOK_STDCALL DeviceSoftAllocate(const char* identifier) {
     br_soft_device *self;
 

@@ -10,6 +10,7 @@
 #include <windows.h>
 
 // FUNCTION: CARMA2_HW 0x0051cad0
+// FUNCTION: CARMA2_SW 0x00517d60
 void C2_HOOK_CDECL SDL3ServiceMessages(void) {
     MSG msg;
 
@@ -49,6 +50,7 @@ void C2_HOOK_CDECL SDL3ServiceMessages(void) {
 
 
 // FUNCTION: CARMA2_HW 0x0044c830
+// FUNCTION: CARMA2_SW 0x0044c5e0
 void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void) {
     if (gActionReplayBufferFile != NULL) {
         PFfclose(gActionReplayBufferFile);

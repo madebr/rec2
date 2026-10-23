@@ -6,6 +6,7 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x005933a8
+// GLOBAL: CARMA2_SW 0x0058e308
 br_filesystem gFile_system = {
     "Carmageddon",
     NULL,
@@ -23,15 +24,18 @@ br_filesystem gFile_system = {
 };
 
 // GLOBAL: CARMA2_HW 0x006815c4
+// GLOBAL: CARMA2_SW 0x0067bd04
 br_filesystem* gOld_file_system;
 
 // FUNCTION: CARMA2_HW 0x0044c6a0
+// FUNCTION: CARMA2_SW 0x0044c450
 int C2_HOOK_CDECL DRStdioEOF(void* f) {
 
     return PFfeof(f);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c6b0
+// FUNCTION: CARMA2_SW 0x0044c460
 int C2_HOOK_CDECL DRStdioGetChr(void* f) {
 
     return PFfgetc(f);
@@ -45,12 +49,14 @@ br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044c6f0
+// FUNCTION: CARMA2_SW 0x0044c4a0
 void C2_HOOK_CDECL DRStdioAdvance(br_size_t count, void *f) {
 
     PFfseek((FILE*)f, count, SEEK_CUR);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c700
+// FUNCTION: CARMA2_SW 0x0044c4b0
 void* C2_HOOK_CDECL DRStdioOpenRead(const char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result) {
 
     if (mode_result != NULL) {
@@ -60,30 +66,35 @@ void* C2_HOOK_CDECL DRStdioOpenRead(const char* name, br_size_t n_magics, br_mod
 }
 
 // FUNCTION: CARMA2_HW 0x0044c720
+// FUNCTION: CARMA2_SW 0x0044c4d0
 void* C2_HOOK_CDECL DRStdioOpenWrite(const char* name, int mode) {
 
     return gOld_file_system->open_write(name, mode);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c740
+// FUNCTION: CARMA2_SW 0x0044c4f0
 void C2_HOOK_CDECL DRStdioClose(void* f) {
 
     PFfclose(f);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c750
+// FUNCTION: CARMA2_SW 0x0044c500
 br_size_t C2_HOOK_CDECL DRStdioRead(void* buf, br_size_t size, unsigned int n, void* f) {
 
     return PFfread(buf, size, n, f);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c770
+// FUNCTION: CARMA2_SW 0x0044c520
 br_size_t C2_HOOK_CDECL DRStdioWrite(const void* buf, br_size_t size, unsigned int n, void* f) {
 
     return PFfwrite(buf, size, n, f);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c790
+// FUNCTION: CARMA2_SW 0x0044c540
 void C2_HOOK_FASTCALL InstallDRFileCalls(void) {
     br_filesystem* temp_system;
 

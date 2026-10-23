@@ -6,18 +6,22 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x006a55c8
+// GLOBAL: CARMA2_SW 0x0069f628
 tExplosion gExplosions[50];
 
 // GLOBAL: CARMA2_HW 0x006a80f8
 tDecal gDecals[50];
 
 // GLOBAL: CARMA2_HW 0x006a828c
+// GLOBAL: CARMA2_SW 0x006a22ec
 int gCount_queued_smashes;
 
 // GLOBAL: CARMA2_HW 0x006abee8
+// GLOBAL: CARMA2_SW 0x006a5438
 br_vector3 gZero_vector__smash;
 
 // FUNCTION: CARMA2_HW 0x004ea880
+// FUNCTION: CARMA2_SW 0x004e6570
 void C2_HOOK_FASTCALL InitExplosions(void) {
     int i;
     int capacity;
@@ -68,6 +72,7 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
 // MungeExplosions
 
 // FUNCTION: CARMA2_HW 0x004eace0
+// FUNCTION: CARMA2_SW 0x004e69c0
 void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion) {
     C2_HOOK_BUG_ON(sizeof(tExplosion) != 0x78);
 
@@ -143,6 +148,7 @@ void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion) {
 // SmashItIntoVerySmallPiecesIndeed
 
 // FUNCTION: CARMA2_HW 0x004ecfa0
+// FUNCTION: CARMA2_SW 0x004e8c70
 void C2_HOOK_FASTCALL InitSmashQueue(void) {
     gCount_queued_smashes = 0;
 }
@@ -409,6 +415,7 @@ void C2_HOOK_FASTCALL NonCarSnapSmashCallback(tPhysics_object* pObject, br_vecto
 // LinkSmashies
 
 // FUNCTION: CARMA2_HW 0x004f5a00
+// FUNCTION: CARMA2_SW 0x004f1660
 intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec) {
     return DRActorEnumRecurse(pCar_spec->car_master_actor, RepairModels, pCar_spec);
 }

@@ -9,12 +9,15 @@
 
 
 // GLOBAL: CARMA2_HW 0x0065fe08
+// GLOBAL: CARMA2_SW 0x0065a748
 char* gBoring_material_names[2] = { "OILSMEAR.MAT", "ROBSMEAR.MAT" };
 
 // GLOBAL: CARMA2_HW 0x0065fe10
+// GLOBAL: CARMA2_SW 0x0065a750
 char* gMaterial_names[2] = { "OILSMEAR.MAT", "GIBSMEAR.MAT" };
 
 // GLOBAL: CARMA2_HW 0x006a27f0
+// GLOBAL: CARMA2_SW 0x0069c848
 tSkid gSkids[100];
 
 // GLOBAL: CARMA2_HW 0x006a27e8
@@ -31,6 +34,7 @@ int gCurrent_skid;
 // Reflex2D
 
 // FUNCTION: CARMA2_HW 0x004e9c40
+// FUNCTION: CARMA2_SW 0x004e5a00
 void C2_HOOK_FASTCALL InitSkids(void) {
     int skid;
     int mat;
@@ -103,12 +107,14 @@ void C2_HOOK_FASTCALL InitSkids(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e9ee0
+// FUNCTION: CARMA2_SW 0x004e5c80
 void C2_HOOK_FASTCALL HideSkid(int pSkid_num) {
 
     gSkids[pSkid_num].actor->render_style = BR_RSTYLE_NONE;
 }
 
 // FUNCTION: CARMA2_HW 0x004e9f00
+// FUNCTION: CARMA2_SW 0x004e5ca0
 void C2_HOOK_FASTCALL HideSkids(void) {
     int skid;
 
@@ -202,6 +208,7 @@ void C2_HOOK_FASTCALL SkidMark(tCar_spec* pCar_spec, int pWheel_num) {
 }
 
 // FUNCTION: CARMA2_HW 0x004ea700
+// FUNCTION: CARMA2_SW 0x004e64a0
 void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar) {
     int wheel;
 

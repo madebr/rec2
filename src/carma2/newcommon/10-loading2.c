@@ -41,16 +41,20 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x0068c6ec
+// GLOBAL: CARMA2_SW 0x0068673c
 FILE* gTempFile;
 
 // GLOBAL: CARMA2_HW 0x0068c718
+// GLOBAL: CARMA2_SW 0x00686768
 const char* gPedTextTxtPath;
 
 // GLOBAL: CARMA2_HW 0x0068b88c
+// GLOBAL: CARMA2_SW 0x00685dec
 int gKey_map_index;
 
 #define DECODE_OFFSET 50
 // GLOBAL: CARMA2_HW 0x00655e38
+// GLOBAL: CARMA2_SW 0x00650d20
 char gDecode_string[14] = {
     (char)('i' + DECODE_OFFSET),
     (char)(' ' + DECODE_OFFSET),
@@ -90,9 +94,11 @@ int gCount_demo_opponents;
 int gDemo_opponents[15];
 
 // GLOBAL: CARMA2_HW 0x00679308
+// GLOBAL: CARMA2_SW 0x00673a78
 int gCamera_type;
 
 // GLOBAL: CARMA2_HW 0x0074b4a8
+// GLOBAL: CARMA2_SW 0x00741b68
 int gGroove_funk_offset;
 
 // GLOBAL: CARMA2_HW 0x00657558
@@ -128,6 +134,7 @@ void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, 
 }
 
 // FUNCTION: CARMA2_HW 0x00486e10
+// FUNCTION: CARMA2_SW 0x00483f40
 void C2_HOOK_FASTCALL LoadInRegistees(void) {
 
     LoadInRegisteeDir(gApplication_path, "REG", 1);
@@ -186,6 +193,7 @@ void C2_HOOK_FASTCALL GetHithers(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00486ef0
+// FUNCTION: CARMA2_SW 0x00484020
 void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     tPath_name the_path;
     int i;
@@ -456,6 +464,7 @@ void C2_HOOK_FASTCALL FinishLoadingGeneral(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00487e10
+// FUNCTION: CARMA2_SW 0x00484f40
 void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     FILE* f;
     tPath_name the_path;
@@ -475,20 +484,49 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00487ea0
+// FUNCTION: CARMA2_SW 0x00484fd0
 void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
+#ifdef REC2_SW
+    tPath_name path;
 
-    // empty
+    if (gProgram_state.sausage_eater_mode) {
+        strcpy(path, "GHANDX.PIX");
+    } else {
+        strcpy(path, "HANDX.PIX");
+    }
+    PossibleService();
+    if (gCursors[0] == NULL && LoadInterfacePixelmaps(path, gCursors, 4) == 0) {
+        FatalError(kFatalError_CannotLoadCursorImage);
+    }
+    if (gProgram_state.sausage_eater_mode) {
+        strcpy(path, "GHANDPX.PIX");
+    } else {
+        strcpy(path, "HANDPX.PIX");
+    }
+    PossibleService();
+    if (gCursors[4] == NULL && LoadInterfacePixelmaps(path, &gCursors[4], 4) == 0) {
+        FatalError(kFatalError_CannotLoadCursorImage);
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00487eb0
+// FUNCTION: CARMA2_SW 0x004850e0
 void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
+#ifdef REC2_SW
+    int i;
 
-    // empty
+    // original code uses 4, not BR_ASIZE(gCursors). Bug?
+    for (i = 0; i < 4; i++) {
+        gCursors[i] = NULL;
+    }
+#endif
 }
 
 // AdjustCarCoordinates
 
 // FUNCTION: CARMA2_HW 0x0048b560
+// FUNCTION: CARMA2_SW 0x004887a0
 void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char s[256];
     char* str;
@@ -538,6 +576,7 @@ void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048b810
+// FUNCTION: CARMA2_SW 0x00488a50
 void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char s[256];
     char* str;
@@ -600,6 +639,7 @@ void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 // GetDamageProgram
 
 // FUNCTION: CARMA2_HW 0x0048bf20
+// FUNCTION: CARMA2_SW 0x00489160
 intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData) {
 
     C2_HOOK_BUG_ON(sizeof(tUser_crush_data) != 0x10);
@@ -627,6 +667,7 @@ intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData) {
 // FindCarShellModel
 
 // FUNCTION: CARMA2_HW 0x0048c130
+// FUNCTION: CARMA2_SW 0x00489370
 intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pData) {
     tUser_crush_data* user_crush;
 
@@ -664,6 +705,7 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 }
 
 // FUNCTION: CARMA2_HW 0x0048c860
+// FUNCTION: CARMA2_SW 0x00489aa0
 void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
     int i;
 
@@ -684,6 +726,7 @@ void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048c930
+// FUNCTION: CARMA2_SW 0x00489b70
 void C2_HOOK_FASTCALL LoadOpponents(void) {
     FILE* f;
     tPath_name the_path;
@@ -766,6 +809,7 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048cd80
+// FUNCTION: CARMA2_SW 0x00489fc0
 void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
 
     InitFunkGrooveFlags();
@@ -775,6 +819,7 @@ void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
 // LoadOpponentsCars
 
 // FUNCTION: CARMA2_HW 0x0048cfc0
+// FUNCTION: CARMA2_SW 0x0048a200
 void C2_HOOK_FASTCALL LoadMiscStrings(void) {
     int i;
     FILE *f;
@@ -810,6 +855,7 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048d0e0
+// FUNCTION: CARMA2_SW 0x0048a320
 void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, track_file_name, 0x1a1e);
@@ -820,6 +866,7 @@ void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048d110
+// FUNCTION: CARMA2_SW 0x0048a350
 void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions) {
 
     pOptions->enable_text_messages = GetAnInt(pF);
@@ -844,6 +891,7 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048d8f0
+// FUNCTION: CARMA2_SW 0x0048ab30
 int C2_HOOK_FASTCALL RestoreOptions(void) {
     tPath_name the_path;
     FILE* f;
@@ -1013,21 +1061,25 @@ void C2_HOOK_FASTCALL InitFunkGrooveFlags(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048ea00
+// FUNCTION: CARMA2_SW 0x0048bca0
 void C2_HOOK_FASTCALL SetDefaultTextFileName(void) {
     gPedTextTxtPath = "TEXT.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x0048ea10
+// FUNCTION: CARMA2_SW 0x0048bcb0
 void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void) {
     gPedTextTxtPath = "TEXT.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x0048ea20
+// FUNCTION: CARMA2_SW 0x0048bcc0
 void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void) {
     gPedTextTxtPath = "ZOMTEXT.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x0048ea30
+// FUNCTION: CARMA2_SW 0x0048bcd0
 void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void) {
     gPedTextTxtPath = "ALTEXT.TXT";
 }

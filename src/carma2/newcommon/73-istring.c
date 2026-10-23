@@ -17,6 +17,7 @@ int gCount_interface_strings;
 char* gInterface_strings[300];
 
 // FUNCTION: CARMA2_HW 0x00484fd0
+// FUNCTION: CARMA2_SW 0x00482110
 void C2_HOOK_FASTCALL IString_Load(void) {
     tPath_name the_path;
     FILE* f;
@@ -56,6 +57,7 @@ void C2_HOOK_FASTCALL IString_Free(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00485110
+// FUNCTION: CARMA2_SW 0x00482250
 const char* C2_HOOK_FASTCALL IString_Get(int pIndex) {
 
     if (pIndex > gCount_interface_strings) {

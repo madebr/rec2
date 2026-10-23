@@ -91,19 +91,16 @@ br_colour* gScratch_pixels;
 br_pixelmap* gScratch_palette;
 
 // GLOBAL: CARMA2_HW 0x0074a604
-br_pixelmap* gPalette_0074a604;
+br_pixelmap* gBlend25_table;
 
 // GLOBAL: CARMA2_HW 0x0074a600
-br_pixelmap* gPalette_0074a600;
+br_pixelmap* gBlend50_table;
 
 // GLOBAL: CARMA2_HW 0x0074a660
-br_pixelmap* gMini_map_glowing_line_palettes[3];
-
-// GLOBAL: CARMA2_HW 0x0074a66c
-br_pixelmap* gPalette_0074a66c;
+br_pixelmap* gBlend_palettes[4];
 
 // GLOBAL: CARMA2_HW 0x0074a5fc
-br_pixelmap* gPalette_0074a5fc;
+br_pixelmap* gBlend75_table;
 
 // GLOBAL: CARMA2_HW 0x0074a670
 br_pixelmap* gPalette_0074a670;
@@ -2838,13 +2835,13 @@ void C2_HOOK_FASTCALL DR8BitFancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, i
     int anim_index;
 
     anim_index = (PDGetTotalTime() / pTime_period) % BR_ASIZE(gMini_map_glowing_line_animation_indices);
-    DRPixelmapBlendedLine(pMap, pX1, pY1, pX2, pY2, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+    DRPixelmapBlendedLine(pMap, pX1, pY1, pX2, pY2, pColour, gBlend_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
     if (fabsf((float)(pY2 - pY1)) < fabsf((float)(pX2 - pX1))) {
-        DRPixelmapBlendedLine(pMap, pX1, pY1 - 1, pX2, pY2 - 1, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
-        DRPixelmapBlendedLine(pMap, pX1, pY1 + 1, pX2, pY2 + 1, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+        DRPixelmapBlendedLine(pMap, pX1, pY1 - 1, pX2, pY2 - 1, pColour, gBlend_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+        DRPixelmapBlendedLine(pMap, pX1, pY1 + 1, pX2, pY2 + 1, pColour, gBlend_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
     } else {
-        DRPixelmapBlendedLine(pMap, pX1 - 1, pY1, pX2 - 1, pY2, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
-        DRPixelmapBlendedLine(pMap, pX1 + 1, pY1, pX2 + 1, pY2, pColour, gMini_map_glowing_line_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+        DRPixelmapBlendedLine(pMap, pX1 - 1, pY1, pX2 - 1, pY2, pColour, gBlend_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
+        DRPixelmapBlendedLine(pMap, pX1 + 1, pY1, pX2 + 1, pY2, pColour, gBlend_palettes[gMini_map_glowing_line_animation_indices[anim_index]]);
     }
 }
 
@@ -2923,7 +2920,7 @@ void C2_HOOK_FASTCALL DR8BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, b
             src_f_x += pMat->m[0][0];
             src_f_y -= pMat->m[1][0];
             if (pTrans) {
-                *ptr_write = ((tU8*)gPalette_0074a600->pixels)[*ptr_write + ((tU8*)pSrc->pixels)[src_y * pSrc->row_bytes + width_div_2 + src_x] * 256];
+                *ptr_write = ((tU8*)gBlend50_table->pixels)[*ptr_write + ((tU8*)pSrc->pixels)[src_y * pSrc->row_bytes + width_div_2 + src_x] * 256];
             } else {
                 src_pix = ((tU8*)pSrc->pixels)[src_y * pSrc->row_bytes + width_div_2 + src_x];
                 dx_bit0 = ((src_pix >> 0) & 0x1) - ((*ptr_write >> 0) & 0x1) + dx;
@@ -2933,13 +2930,13 @@ void C2_HOOK_FASTCALL DR8BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, b
                         && -height_div_2 <= dy_bit1 && dy_bit1 <= height_div_2) {
                     if (!(-width_near1 <= dx_bit0 && dx_bit0 <= width_near1
                             && -height_near1 <= dy_bit1 && dy_bit1 <= height_near1)) {
-                        *ptr_write = ((tU8*)gPalette_0074a604->pixels)[*ptr_write + 256 * src_pix];
+                        *ptr_write = ((tU8*)gBlend25_table->pixels)[*ptr_write + 256 * src_pix];
                     } else if (!(-width_near2 <= dx_bit0 && dx_bit0 <= width_near2
                             && -height_near2 <= dy_bit1 && dy_bit1 <= height_near2)) {
-                        *ptr_write = ((tU8*)gPalette_0074a600->pixels)[*ptr_write + 256 * src_pix];
+                        *ptr_write = ((tU8*)gBlend50_table->pixels)[*ptr_write + 256 * src_pix];
                     } else if (!(-width_near3 <= dx_bit0 && dx_bit0 <= width_near3
                             && -height_near3 <= dy_bit1 && dy_bit1 <= height_near3)) {
-                        *ptr_write = ((tU8*)gPalette_0074a5fc->pixels)[*ptr_write + 256 * src_pix];
+                        *ptr_write = ((tU8*)gBlend75_table->pixels)[*ptr_write + 256 * src_pix];
                     } else {
                         *ptr_write = src_pix;
                     }

@@ -1290,22 +1290,8 @@ int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b48c0
-int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile) {
-    tTwatVfsFile* twtFile;
-    int result;
-
-    if ((int)pFile < REC2_ASIZE(gTwatVfsFiles)) {
-        twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
-        if (twtFile->pos >= twtFile->end) {
-            twtFile->error = -1;
-            return EOF;
-        }
-        twtFile->error = 0;
-        result = *twtFile->pos;
-        twtFile->pos++;
-        return result;
-    }
-    return fgetc(pFile);
+int C2_HOOK_FASTCALL DRgetc(FILE* pFile) {
+    return DRfgetc(pFile);
 }
 
 // FUNCTION: CARMA2_HW 0x004b49a0
@@ -3032,10 +3018,10 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     gPalette_munged |= render_palette != gRender_palette;
     gScratch_pixels = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
     gScratch_palette = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, gScratch_pixels, 0);
-    gMini_map_glowing_line_palettes[0] = (br_pixelmap*)-1; /* FIXME: invalid pointer! */
-    gMini_map_glowing_line_palettes[1] = gPalette_0074a604;
-    gMini_map_glowing_line_palettes[2] = gPalette_0074a600;
-    gPalette_0074a66c = gPalette_0074a5fc;
+    gBlend_palettes[0] = (br_pixelmap*)-1; /* FIXME: invalid pointer! */
+    gBlend_palettes[1] = gBlend25_table;
+    gBlend_palettes[2] = gBlend50_table;
+    gBlend_palettes[3`] = gBlend75_table;
     gPalette_0074a670 = NULL;
 }
 
