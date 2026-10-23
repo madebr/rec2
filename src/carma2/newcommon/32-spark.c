@@ -54,15 +54,77 @@ int gColumn_flags;
 // GLOBAL: CARMA2_HW 0x006b7880
 br_material* gBlack_material;
 
+// GLOBAL: CARMA2_HW 0x006a8718
+br_matrix4 gCameraToScreen;
+
+// GLOBAL: CARMA2_HW 0x006a82b0
+br_camera* gSpark_cam;
+
 // DrawDot
 
 // SetWorldToScreen
 
 // DrawLine3DThroughBRender
 
-// DrawLine3D
+// FUNCTION: CARMA2_HW 0x004f6b80
+int C2_HOOK_FASTCALL DrawLine3D(const br_vector3* pStart, const br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_pixelmap* pShade) {
+    br_vector3 start;
+    br_vector3 end;
+    br_vector4 projected_start;
+    br_vector4 projected_end;
+    br_scalar fraction;
 
-// DrawLine2D
+    if (gNo_2d_effects) {
+        BrVector3Copy(&gLine_model->vertices[0].p, pStart);
+        BrVector3Copy(&gLine_model->vertices[1].p, pEnd);
+        BrModelUpdate(gLine_model, BR_MODU_VERTEX_POSITIONS);
+        BrZbsSceneRenderAdd(gLine_actor);
+        return 999;
+    }
+    BrVector3Copy(&start, pStart);
+    BrVector3Copy(&end, pEnd);
+    if (start.v[2] > -gSpark_cam->hither_z || end.v[2] > -gSpark_cam->hither_z) {
+        if (start.v[2] > -gSpark_cam->hither_z && end.v[2] > -gSpark_cam->hither_z) {
+            return 0;
+        }
+        fraction = (end.v[2] + gSpark_cam->hither_z) / (end.v[2] - start.v[2]);
+        if (start.v[2] > -gSpark_cam->hither_z) {
+            start.v[0] = end.v[0] - (end.v[0] - start.v[0]) * fraction;
+            start.v[1] = end.v[1] - (end.v[1] - start.v[1]) * fraction;
+            start.v[2] = -gSpark_cam->hither_z;
+        }
+        if (end.v[2] > -gSpark_cam->hither_z) {
+            end.v[0] = end.v[0] - (end.v[0] - start.v[0]) * fraction;
+            end.v[1] = end.v[1] - (end.v[1] - start.v[1]) * fraction;
+            end.v[2] = -gSpark_cam->hither_z;
+        }
+    }
+    BrMatrix4ApplyP(&projected_start, &start, &gCameraToScreen);
+    BrMatrix4ApplyP(&projected_end, &end, &gCameraToScreen);
+    BrVector3Set(&start,
+        projected_start.v[0] / projected_start.v[3],
+        projected_start.v[1] / projected_start.v[3],
+        projected_start.v[2] / projected_start.v[3]);
+    BrVector3Set(&end,
+        projected_end.v[0] / projected_end.v[3],
+        projected_end.v[1] / projected_end.v[3],
+        projected_end.v[2] / projected_end.v[3]);
+    return DrawLine2D(&start, &end, pScreen, pDepth, 1.f, pShade);
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004f6de0
+// STUB: CARMA2_SW 0x004f2690
+int C2_HOOK_FASTCALL DrawLine2D(br_vector3* pStart, br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_scalar pBrightness, br_pixelmap* pShade) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004f7cb0
 void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {

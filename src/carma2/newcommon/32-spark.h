@@ -18,6 +18,8 @@ extern int gColumn_flags;
 extern br_pixelmap* gFlame_map[20];
 extern br_model* gLollipop_model;
 extern tSmoke_column gSmoke_column[10];
+extern br_matrix4 gCameraToScreen;
+extern br_camera* gSpark_cam;
 
 // DrawDot
 
@@ -25,9 +27,9 @@ extern tSmoke_column gSmoke_column[10];
 
 // DrawLine3DThroughBRender
 
-// DrawLine3D
+extern int C2_HOOK_FASTCALL DrawLine3D(const br_vector3* pStart, const br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_pixelmap* pShade);
 
-// DrawLine2D
+extern int C2_HOOK_FASTCALL DrawLine2D(br_vector3* pStart, br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_scalar pBrightness, br_pixelmap* pShade);
 
 extern void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol);
 
