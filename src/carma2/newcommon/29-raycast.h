@@ -21,7 +21,7 @@ extern void C2_HOOK_FASTCALL InitRayCasting(void);
 
 // DRScenePick2D
 
-// DRModelPick2D
+extern int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, dr_modelpick2d_raycast_cbfn* pCallback, void* pArg);
 
 // FindHighestPolyCallBack
 
@@ -29,9 +29,9 @@ extern void C2_HOOK_FASTCALL InitRayCasting(void);
 
 // FindBestY
 
-// FindYVerticallyBelowPolyCallBack
+extern int C2_HOOK_CDECL FindYVerticallyBelowPolyCallBack(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pContext);
 
-// FindYVerticallyBelowCallBack
+extern int C2_HOOK_CDECL FindYVerticallyBelowCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT_near, float pT_far, void* pArg);
 
 // FindYVerticallyBelow
 
