@@ -104,13 +104,45 @@ void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
     }
 }
 
-// SortOutSmoke
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// DoCrashEarnings
+// STUB: CARMA2_HW 0x00440230
+// STUB: CARMA2_SW 0x00440310
+void C2_HOOK_FASTCALL SortOutSmoke(tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00440660
+// STUB: CARMA2_SW 0x00440740
+int C2_HOOK_FASTCALL DoCrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // DoWheelDamage
 
-// CrashEarnings
+// FUNCTION: CARMA2_HW 0x00440640
+// FUNCTION: CARMA2_SW 0x00440720
+void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
+
+    if (DoCrashEarnings(pCar1, pCar2)) {
+        SortOutSmoke(pCar1);
+        SortOutSmoke(pCar2);
+    }
+}
 
 // PercentageCarHealth
 
