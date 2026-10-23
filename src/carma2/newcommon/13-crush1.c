@@ -876,7 +876,15 @@ void C2_HOOK_FASTCALL TotallyRepairCar(void) {
 
 // UnBendOtherThings
 
-// NormalizedAngle
+// FUNCTION: CARMA2_HW 0x0043ac90
+// FUNCTION: CARMA2_SW 0x0043ace0
+br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle) {
+    if (pAngle < BR_ANGLE_DEG(180)) {
+        return (br_scalar)(pAngle / (double)BR_ONE_LS);
+    } else {
+        return (br_scalar)((br_angle)-pAngle / (double)BR_ONE_LS);
+    }
+}
 
 // CalculateAmountRepairedFraction
 
