@@ -1,3 +1,4 @@
+#include "43-pratcam.h"
 #include "58-crush2.h"
 #include "rec2_macros.h"
 
@@ -55,7 +56,40 @@ void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar) {
     pCar->pre_car_col_velocity_car_space = pCar->collision_info->velocity_car_space;
 }
 
-// DoPratcamHit
+// FUNCTION: CARMA2_HW 0x0043faa0
+// FUNCTION: CARMA2_SW 0x0043fb80
+void C2_HOOK_FASTCALL DoPratcamHit(br_vector3* pVelocity) {
+    br_scalar magnitude_squared;
+    br_scalar abs_x;
+    br_scalar abs_z;
+    int offset;
+
+    magnitude_squared = BrVector3LengthSquared(pVelocity);
+    offset = 0;
+    if (magnitude_squared > 0.2f) {
+        offset = 8;
+    } else if (magnitude_squared > 0.015f) {
+        offset = 4;
+    } else if (magnitude_squared < 0.001f) {
+        return;
+    }
+
+    abs_x = (br_scalar)fabs(pVelocity->v[0]);
+    abs_z = (br_scalar)fabs(pVelocity->v[2]);
+    if (abs_x > abs_z) {
+        if (pVelocity->v[0] < 0.f) {
+            PratcamEvent(offset + 16);
+        } else {
+            PratcamEvent(offset + 15);
+        }
+    } else {
+        if (pVelocity->v[2] < 0.f) {
+            PratcamEvent(offset + 13);
+        } else {
+            PratcamEvent(offset + 14);
+        }
+    }
+}
 
 // DamageSystems
 

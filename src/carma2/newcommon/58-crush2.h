@@ -28,7 +28,7 @@ extern int gTime_per_ped_kill[3];
 
 extern void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar);
 
-// DoPratcamHit
+extern void C2_HOOK_FASTCALL DoPratcamHit(br_vector3* pVelocity);
 
 // DamageSystems
 
