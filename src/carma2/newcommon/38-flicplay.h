@@ -58,7 +58,7 @@ extern int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
 
 // DoDeltaTrans
 
-// DoBlack
+extern void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 pChunk_length);
 
 // DoRunLengthTrans
 
