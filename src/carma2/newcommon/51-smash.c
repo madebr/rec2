@@ -383,9 +383,53 @@ void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_a
 
 // SmashFaceMustBeUpdateable
 
-// MungeMaterialCB
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// MungeMaterial
+// STUB: CARMA2_HW 0x004f55d0
+// STUB: CARMA2_SW 0x004f1230
+intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* pData) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004f54d0
+// FUNCTION: CARMA2_SW 0x004f1130
+void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_material* pMaterial_1, br_material* pMaterial_2, int pCapacity_indices, tU16* pIndices, int* pCount_indices, int pCapacity_vertices, tCar_crush_vertex_data* pVertices, int* pCount_vertices, br_vector3* pNormal) {
+    tMungeMaterialCB_Context munge_material_cb_ctx;
+
+    munge_material_cb_ctx.material_0x0 = pMaterial_1;
+    munge_material_cb_ctx.material_0x4 = pMaterial_2;
+    munge_material_cb_ctx.capacity_indices = pCapacity_indices;
+    munge_material_cb_ctx.indices = pIndices;
+    munge_material_cb_ctx.count_indices = 0;
+    munge_material_cb_ctx.capacity_vertices = pCapacity_vertices;
+    munge_material_cb_ctx.vertices = pVertices;
+    munge_material_cb_ctx.count_vertices = 0;
+
+    if (pRecursive) {
+        DRActorEnumRecurse(pActor, MungeMaterialCB, &munge_material_cb_ctx);
+    } else {
+        MungeMaterialCB(pActor, &munge_material_cb_ctx);
+    }
+    if (munge_material_cb_ctx.count_indices != 0) {
+        br_scalar scale;
+
+        scale = BrVector3Length(&munge_material_cb_ctx.field_0x20);
+        if (scale > BR_SCALAR_EPSILON * 2) {
+            scale = 1.0 / scale;
+            BrVector3Scale(pNormal, &munge_material_cb_ctx.field_0x20, scale);
+        } else {
+            BrVector3Set(pNormal, 1.0f, 0.0f, 0.0f);
+        }
+    }
+    *pCount_indices = munge_material_cb_ctx.count_indices;
+    *pCount_vertices = munge_material_cb_ctx.count_vertices;
+}
 
 // ReinitSmashing
 
