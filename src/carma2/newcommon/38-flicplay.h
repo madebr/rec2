@@ -52,7 +52,7 @@ extern int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
 
 // DoDifferenceX
 
-// DoDifferenceTrans
+extern void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 pChunk_length);
 
 // DoColour256
 
