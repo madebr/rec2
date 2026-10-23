@@ -26,8 +26,8 @@ extern tU32 gNet_auto_increase_credits_dt[8];
 
 // CheckActiveCarList
 
-// MainGameLoop
+extern tRace_result C2_HOOK_FASTCALL MainGameLoop(void);
 
-// DoRace
+extern tRace_result C2_HOOK_FASTCALL DoRace(void);
 
 #endif // GUARD_21_MAINLOOP_H
