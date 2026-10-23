@@ -495,8 +495,6 @@ void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 pChunk_length) 
     tU32 the_row_bytes;
     tU32* line_pixel_ptr;
 
-    C2_HOOK_BUG_ON(sizeof(tU32) != 4);
-
     pixel_ptr = pFlic_info->first_pixel;
     the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
     the_width = pFlic_info->width >> 2;
