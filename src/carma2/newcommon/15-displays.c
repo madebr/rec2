@@ -12,6 +12,7 @@
 #include "globvars.h"
 #include "globvrbm.h"
 #include "globvrkm.h"
+#include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -501,6 +502,10 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     int the_wobble_y;
     br_pixelmap* the_image;
     tDamage_unit* the_damage;
+#ifdef REC2_SW
+    int shift_x;
+    int shift_y;
+#endif
 
     if (&gProgram_state.current_car != gCar_to_view) {
         return;
@@ -509,6 +514,8 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     if (gHeadup_detail_level == 0 || gHeadup_detail_level == 3) {
         return;
     }
+    shift_x = 0;
+    shift_y = 0;
 #endif
 
     if (gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0) {
@@ -521,11 +528,20 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
         the_wobble_x = gProgram_state.current_car.damage_x_offset;
         the_wobble_y = gProgram_state.current_car.damage_y_offset;
 #ifdef REC2_SW
-
+        if (gNet_mode != eNet_mode_none) {
+            shift_x = 56 - gProgram_state.current_car.damage_background_x;
+            shift_y = -gProgram_state.current_car.damage_background_y;
+        }
+        DRPixelmapBlend75Copy(gBack_screen,
+            (br_int_16)(gProgram_state.current_car.damage_background_x + shift_x),
+            (br_int_16)(gProgram_state.current_car.damage_background_y + shift_y),
+            gProgram_state.current_car.damage_background);
 #endif
     }
 
+#ifdef REC2_HW
     DRPixelmapCopy(gDamage_hud, gGrey_top5);
+#endif
     for (i = 0; i < (int)REC2_ASIZE(gProgram_state.current_car.damage_units); ++i) {
         if (i != eDamage_driver) {
             the_damage = &gProgram_state.current_car.damage_units[i];
@@ -533,9 +549,15 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
             the_step = 5 * the_damage->damage_level / 100;
             y_pitch = (the_image->height / 2) / 5;
             DRPixelmapRectangleMaskedCopy(
+#ifdef REC2_SW
+                gBack_screen,
+                (br_int_16)(the_wobble_x + shift_x + the_damage->x_coord),
+                (br_int_16)(the_wobble_y + shift_y + the_damage->y_coord),
+#else
                 gDamage_hud,
                 (br_int_16)(the_wobble_x + the_damage->x_coord),
                 (br_int_16)(the_wobble_y + the_damage->y_coord),
+#endif
                 the_image,
                 0,
                 (br_int_16)(y_pitch * (2 * the_step + ((pThe_time / the_damage->periods[the_step]) & 1))),

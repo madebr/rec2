@@ -22,7 +22,7 @@
 #include <stddef.h>
 
 // GLOBAL: CARMA2_HW 0x00663490
-// GLOBAL: CARMA2_SW 0xDAT_0065dc28
+// GLOBAL: CARMA2_SW 0x0065dc28
 br_file_struct_member br_vertex_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[0]), "p.v[x]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[1]), "p.v[y]", NULL },
