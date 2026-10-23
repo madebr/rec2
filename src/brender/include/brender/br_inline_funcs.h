@@ -131,7 +131,7 @@
         br_scalar _scale;                                        \
         _scale = BR_LENGTH3((v2)->v[0], (v2)->v[1], (v2)->v[2]); \
         if (_scale > BR_SCALAR_EPSILON * 2) {                    \
-            _scale = 1.0f / _scale;                              \
+            _scale = (br_scalar)(1.0 / _scale);                  \
             (v1)->v[0] = (v2)->v[0] * _scale;                    \
             (v1)->v[1] = (v2)->v[1] * _scale;                    \
             (v1)->v[2] = (v2)->v[2] * _scale;                    \
