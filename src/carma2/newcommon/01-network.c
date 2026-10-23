@@ -552,7 +552,18 @@ void C2_HOOK_FASTCALL ResendGuaranteedMessages(void) {
 
 // NetCarFromPlayerID
 
-// NetPlayerFromCar
+// FUNCTION: CARMA2_HW 0x004a69b0
+// FUNCTION: CARMA2_SW 0x004a2b30
+tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].car == pCar) {
+            return &gNet_players[i];
+        }
+    }
+    return NULL;
+}
 
 // GetCheckSum
 
