@@ -32,7 +32,17 @@ void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void) {
 
 // MungeAIWorld
 
-// PointActorAlongThisBloodyVector
+// FUNCTION: CARMA2_HW 0x004013d0
+// FUNCTION: CARMA2_SW 0x004013d0
+void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector) {
+    br_transform trans;
+
+    trans.type = BR_TRANSFORM_LOOK_UP;
+    BrVector3Copy(&trans.t.look_up.t, &pThe_actor->t.t.translate.t);
+    BrVector3Copy(&trans.t.look_up.look, pThe_vector);
+    BrVector3Set(&trans.t.look_up.up, 0.f, 1.f, 0.f);
+    BrTransformToTransform(&pThe_actor->t, &trans);
+}
 
 // MakeAIEditCubeHere
 
