@@ -12,7 +12,7 @@ tPhysics_object* gPHIL_list_collision_infos;
 
 // FUNCTION: CARMA2_HW 0x0049be90
 // FUNCTION: CARMA2_SW 0x00498010
-void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matrix34* pMatrix) {
+void C2_HOOK_FASTCALL GetOrientationFromMatrix(tFixed_quat* pOrientation, const br_matrix34* pMatrix) {
     br_quat quaternion;
     br_scalar value;
 
@@ -26,7 +26,7 @@ void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matr
     }
     value = (value + 1.f) * .5f;
     value *= 65534.f;
-    pOrientation[0] = (tU16)(value + .5f);
+    pOrientation->v[0] = (tU16)(value + .5f);
     value = quaternion.y;
     if (value > 1.f) {
         value = 1.f;
@@ -36,7 +36,7 @@ void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matr
     }
     value = (value + 1.f) * .5f;
     value *= 65534.f;
-    pOrientation[1] = (tU16)(value + .5f);
+    pOrientation->v[1] = (tU16)(value + .5f);
     value = quaternion.z;
     if (value > 1.f) {
         value = 1.f;
@@ -46,7 +46,7 @@ void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matr
     }
     value = (value + 1.f) * .5f;
     value *= 65534.f;
-    pOrientation[2] = (tU16)(value + .5f);
+    pOrientation->v[2] = (tU16)(value + .5f);
     value = quaternion.w;
     if (value > 1.f) {
         value = 1.f;
@@ -56,7 +56,7 @@ void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matr
     }
     value = (value + 1.f) * .5f;
     value *= 65534.f;
-    pOrientation[3] = (tU16)(value + .5f);
+    pOrientation->v[3] = (tU16)(value + .5f);
 }
 
 // GetMatrixFromOrientation

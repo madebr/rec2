@@ -4173,6 +4173,10 @@ typedef struct {
     float field_0x14;
 } tCollision_info_owner;
 
+typedef struct {
+    tU16 v[4];
+} tFixed_quat;
+
 typedef enum {
     eJoint_limit_plane = 0,
     eJoint_limit_universal = 1,
