@@ -78,7 +78,21 @@ void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion) {
 
 // Explode
 
-// RemoveExplosions
+// FUNCTION: CARMA2_HW 0x004eb020
+// FUNCTION: CARMA2_SW 0x004e6d00
+void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec) {
+    int i;
+    tExplosion* explosion;
+
+    for (i = REC2_ASIZE(gExplosions), explosion = gExplosions; i > 0; i--, explosion++) {
+        if (explosion->start != 0 && explosion->collision_actor == pCar_spec->collision_info->actor) {
+            if (explosion->actor->parent != NULL) {
+                BrActorRemove(explosion->actor);
+            }
+            explosion->finished = 1;
+        }
+    }
+}
 
 // CalcRandomPointBetween
 
