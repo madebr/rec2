@@ -542,9 +542,18 @@ int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
 
 // DoTestHeadup
 
-// STUB: CARMA2_HW 0x0044ba60
+// FUNCTION: CARMA2_HW 0x0044ba60
 int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth) {
-    NOT_IMPLEMENTED();
+    int width;
+
+    if (gDevious_2d && gTexture_power_of_2) {
+        width = 1;
+        while (width < pWidth) {
+            width <<= 1;
+        }
+        return width;
+    }
+    return pWidth;
 }
 
 // STUB: CARMA2_HW 0x0044ba90
