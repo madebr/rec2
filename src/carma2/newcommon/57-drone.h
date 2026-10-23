@@ -70,7 +70,7 @@ extern br_vector3 gRender_bounds_centre;
 
 extern int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pPos);
 
-// DronePlaneWithinRenderingDistance
+extern int C2_HOOK_FASTCALL DronePlaneWithinRenderingDistance(const br_vector3* pPos);
 
 // DroneTrainWithinRenderingDistance
 
