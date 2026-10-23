@@ -10,7 +10,54 @@ tPhysics_object* gPHIL_list_collision_infos;
 
 // FractionToScalar
 
-// GetOrientationFromMatrix
+// FUNCTION: CARMA2_HW 0x0049be90
+// FUNCTION: CARMA2_SW 0x00498010
+void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matrix34* pMatrix) {
+    br_quat quaternion;
+    br_scalar value;
+
+    BrMatrix34ToQuat(&quaternion, pMatrix);
+    value = quaternion.x;
+    if (value > 1.f) {
+        value = 1.f;
+    }
+    if (value < -1.f) {
+        value = -1.f;
+    }
+    value = (value + 1.f) * .5f;
+    value *= 65534.f;
+    pOrientation[0] = (tU16)(value + .5f);
+    value = quaternion.y;
+    if (value > 1.f) {
+        value = 1.f;
+    }
+    if (value < -1.f) {
+        value = -1.f;
+    }
+    value = (value + 1.f) * .5f;
+    value *= 65534.f;
+    pOrientation[1] = (tU16)(value + .5f);
+    value = quaternion.z;
+    if (value > 1.f) {
+        value = 1.f;
+    }
+    if (value < -1.f) {
+        value = -1.f;
+    }
+    value = (value + 1.f) * .5f;
+    value *= 65534.f;
+    pOrientation[2] = (tU16)(value + .5f);
+    value = quaternion.w;
+    if (value > 1.f) {
+        value = 1.f;
+    }
+    if (value < -1.f) {
+        value = -1.f;
+    }
+    value = (value + 1.f) * .5f;
+    value *= 65534.f;
+    pOrientation[3] = (tU16)(value + .5f);
+}
 
 // GetMatrixFromOrientation
 

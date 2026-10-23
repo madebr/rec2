@@ -11,7 +11,7 @@ extern tPhysics_object* gPHIL_list_collision_infos;
 
 // FractionToScalar
 
-// GetOrientationFromMatrix
+extern void C2_HOOK_FASTCALL GetOrientationFromMatrix(tU16* pOrientation, const br_matrix34* pMatrix);
 
 // GetMatrixFromOrientation
 
