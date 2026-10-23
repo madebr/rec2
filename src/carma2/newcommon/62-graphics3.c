@@ -110,6 +110,18 @@ br_pixelmap* gSmashy_dot;
 // GLOBAL: CARMA2_HW 0x0068c87c
 br_pixelmap* gAlt_meter;
 
+// GLOBAL: CARMA2_HW 0x0068c880
+// GLOBAL: CARMA2_SW 0x006868d8
+br_matrix23 gMatrix23_0068c880;
+
+// GLOBAL: CARMA2_HW 0x0068c868
+// GLOBAL: CARMA2_SW 0x006868c0
+br_vector3 gOrigin_map;
+
+// GLOBAL: CARMA2_HW 0x0068d898
+// GLOBAL: CARMA2_SW 0x006878f0
+br_vector2 gOrigin_headup_map;
+
 // GLOBAL: CARMA2_HW 0x0068c860
 int gCheckpoint_digit_height;
 
@@ -208,7 +220,19 @@ void C2_HOOK_FASTCALL DoSomeThingsToCheckpoints(br_pixelmap* pMap, tU32 pTime, t
 
 // CalcMapCheckpoint
 
-// CalcMapCheckpoint2
+// FUNCTION: CARMA2_HW 0x00496940
+void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    br_vector3 pos_mapspace;
+    br_vector2 p;
+    tRace_checkpoint_spec* checkpoint;
+
+    checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
+    BrMatrix34ApplyP(&pos_mapspace, &checkpoint->pos, &gCurrent_race.map_transformation);
+    BrVector2Set(&p, pos_mapspace.v[0] - gOrigin_map.v[0] + gOrigin_headup_map.v[0], pos_mapspace.v[1] - gOrigin_map.v[1] + gOrigin_headup_map.v[1]);
+    BrMatrix23TApplyV(&checkpoint->map_position, &p, &gMatrix23_0068c880);
+    checkpoint->map_position.v[0] += (float)gINT_0074abd4;
+    checkpoint->map_position.v[1] += (float)gINT_0074abd0;
+}
 
 // DrawCheckpoint
 
