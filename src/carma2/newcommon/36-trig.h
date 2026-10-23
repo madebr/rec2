@@ -32,7 +32,7 @@ extern br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar p
 
 // DRMatrix34PostRotateX
 
-extern void C2_HOOK_FASTCALL DRMatrix34PostRotateY(br_matrix34* pMat, br_angle pRy);
+extern void C2_HOOK_FASTCALL DRMatrix34PostRotateY(br_matrix34* mat, br_angle ry);
 
 // DRMatrix34PreRotateZ
 
