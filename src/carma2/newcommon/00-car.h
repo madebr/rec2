@@ -13,7 +13,7 @@ extern br_vector3 gZero_v__car;
 extern int gNum_active_non_cars;
 extern int gFace_num__car;
 
-// DamageUnit
+extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount);
 
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
