@@ -7,6 +7,7 @@
 
 extern br_material* gDefault_track_material;
 extern int gCount_track_non_cars;
+extern br_vector3 gAverage_grid_position;
 
 // AssertNoncars
 

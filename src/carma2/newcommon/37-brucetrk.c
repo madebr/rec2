@@ -15,6 +15,10 @@ br_material* gDefault_track_material;
 // GLOBAL: CARMA2_HW 0x00679260
 int gCount_track_non_cars;
 
+// GLOBAL: CARMA2_HW 0x00679268
+// GLOBAL: CARMA2_SW 0x006739d8
+br_vector3 gAverage_grid_position;
+
 // AssertNoncars
 
 // AllocateActorMatrix

@@ -1,5 +1,8 @@
 #include "59-camera.h"
 
+#include "37-brucetrk.h"
+#include "globvars.h"
+
 // GLOBAL: CARMA2_HW 0x006792b8
 int gCamera_frozen;
 
@@ -93,7 +96,28 @@ void C2_HOOK_FASTCALL FreezeCamera(void) {
     gCamera_frozen = 1;
 }
 
-// GetAverageGridPosition
+// FUNCTION: CARMA2_HW 0x00413780
+// FUNCTION: CARMA2_SW 0x004137b0
+void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race) {
+    int i;
+    br_scalar total_cars;
+    tCar_spec* car;
+
+    total_cars = 0.0f;
+    BrVector3SetFloat(&gAverage_grid_position, 0.0f, 0.0f, 0.0f);
+    if (pThe_race->number_of_racers <= 2) {
+        BrVector3Copy(&gAverage_grid_position, &gProgram_state.current_car.pos);
+    } else {
+        for (i = 0; i < pThe_race->number_of_racers; i++) {
+            car = pThe_race->opponent_list[i].car_spec;
+            BrVector3Accumulate(&gAverage_grid_position, &car->pos);
+            total_cars += 1.0f;
+        }
+        gAverage_grid_position.v[0] /= total_cars;
+        gAverage_grid_position.v[1] /= total_cars;
+        gAverage_grid_position.v[2] /= total_cars;
+    }
+}
 
 // FindACar
 
