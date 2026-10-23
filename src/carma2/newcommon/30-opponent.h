@@ -7,6 +7,7 @@ extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
 extern int gNumber_of_cops_before_faffage;
+extern tU8* gBit_per_node;
 
 extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
@@ -144,7 +145,7 @@ extern void C2_HOOK_FASTCALL LoadCopCars(void);
 
 // LoadInOppoPaths
 
-// DisposeOpponentPaths
+extern void C2_HOOK_FASTCALL DisposeOpponentPaths(void);
 
 // MungeOpponents
 

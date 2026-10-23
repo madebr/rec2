@@ -18,6 +18,10 @@ int gMaxTimeOpponentRepair;
 // GLOBAL: CARMA2_HW 0x00691744
 int gNumber_of_cops_before_faffage;
 
+// GLOBAL: CARMA2_HW 0x0069175c
+// GLOBAL: CARMA2_SW 0x0068b7b4
+tU8* gBit_per_node;
+
 // FUNCTION: CARMA2_HW 0x004a8160
 void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
@@ -164,7 +168,26 @@ void C2_HOOK_FASTCALL LoadCopCars(void) {
 
 // LoadInOppoPaths
 
-// DisposeOpponentPaths
+// FUNCTION: CARMA2_HW 0x004a9c50
+// FUNCTION: CARMA2_SW 0x004a5dc0
+void C2_HOOK_FASTCALL DisposeOpponentPaths(void) {
+
+    if (gProgram_state.AI_vehicles.path_nodes != NULL) {
+        BrMemFree(gProgram_state.AI_vehicles.path_nodes);
+    }
+    if (gProgram_state.AI_vehicles.path_sections != NULL) {
+        BrMemFree(gProgram_state.AI_vehicles.path_sections);
+    }
+    if (gBit_per_node != NULL) {
+        BrMemFree(gBit_per_node);
+    }
+
+    gProgram_state.AI_vehicles.number_of_path_nodes = 0;
+    gProgram_state.AI_vehicles.number_of_path_sections = 0;
+    gProgram_state.AI_vehicles.path_nodes = NULL;
+    gProgram_state.AI_vehicles.path_sections = NULL;
+    gBit_per_node = NULL;
+}
 
 // MungeOpponents
 
