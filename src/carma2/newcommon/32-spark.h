@@ -125,7 +125,7 @@ extern void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos
 
 // ActorError
 
-// AdjustSmokeColumn
+extern void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour);
 
 // CreateSmokeColumn2
 
