@@ -377,9 +377,9 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // SphericizeCar
 
-// BattenDownTheHatches
+extern intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser);
 
-// BattenDownTheObjects
+extern int C2_HOOK_FASTCALL BattenDownTheObjects(tPhysics_object* pCollision_info, void* pUser_data);
 
 // CompletelyUnBendCollisionShape
 
