@@ -1382,6 +1382,18 @@ tS3_error_codes C2_HOOK_FASTCALL S3MIDILoadSong(tS3_channel* pChannel) {
     return eS3_error_none;
 }
 
+// STUB: CARMA2_HW 0x00564d4a
+// STUB: CARMA2_SW 0x005603ea
+void C2_HOOK_FASTCALL S3ReverseSample(tS3_effect_tag pEffect, tS3_sound_tag pTag) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x00564d75
+// STUB: CARMA2_SW 0x00560415
+int C2_HOOK_FASTCALL S3SetSampleFilterCallbacks(tS3_sample_filter pEnable, tS3_sample_filter pDisable) {
+    NOT_IMPLEMENTED();
+}
+
 // FUNCTION: CARMA2_HW 0x00564de0
 // FUNCTION: CARMA2_SW 0x00560480
 int C2_HOOK_FASTCALL S3ExecuteSampleFilterFuncs(tS3_channel* pChannel) {

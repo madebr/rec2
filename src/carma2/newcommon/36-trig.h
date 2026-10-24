@@ -4,6 +4,8 @@
 #include "brender/brender.h"
 #include "c2_hooks.h"
 
+extern float gFloat_sine_table[91];
+
 // FastFloatSin
 
 // FastFloatCos
@@ -15,6 +17,8 @@
 // FastScalarSinAngle
 
 // FastScalarCosAngle
+
+extern float C2_HOOK_STDCALL FastFloatArcSin(float pValue);
 
 extern float C2_HOOK_STDCALL FastFloatArcTan2(float pY, float pX);
 
@@ -32,7 +36,7 @@ extern br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar p
 
 // DRMatrix34PostRotateX
 
-// DRMatrix34PostRotateY
+extern void C2_HOOK_FASTCALL DRMatrix34PostRotateY(br_matrix34* mat, br_angle ry);
 
 // DRMatrix34PreRotateZ
 

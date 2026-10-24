@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern int gCamera_frozen;
+extern br_actor* gPed_actor;
 
 extern float gCamera_cockpit_hither;
 extern tActionReplayCameraMode gAction_replay_camera_mode;
@@ -23,7 +24,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // ViewOpponent
 
-// ReallyViewOpponent
+extern void C2_HOOK_FASTCALL ReallyViewOpponent(void);
 
 // CheckDisablePlingMaterials
 
@@ -41,15 +42,15 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // PositionCarMountedCamera
 
-// PositionExternalCamera
+extern void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime);
 
-// CameraBugFix
+extern void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* pCar, tU32 pTime);
 
 // PossibleRemoveNonCarFromWorld
 
 // PutNonCarBackInWorld
 
-// IncidentCam
+extern int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime);
 
 // MoveCamToIncident
 
@@ -85,11 +86,11 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // CollideCameraWithOtherCars
 
-// InitialiseExternalCamera
+extern void C2_HOOK_FASTCALL InitialiseExternalCamera(void);
 
 extern void C2_HOOK_FASTCALL FreezeCamera(void);
 
-// GetAverageGridPosition
+extern void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race);
 
 // FindACar
 

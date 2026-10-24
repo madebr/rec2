@@ -1,5 +1,13 @@
 #include "57-drone.h"
 
+#include "41-utility.h"
+
+#include <math.h>
+
+// GLOBAL: CARMA2_HW 0x006820c0
+// GLOBAL: CARMA2_SW 0x0067c800
+br_vector3 gRender_bounds_centre;
+
 // GLOBAL: CARMA2_HW 0x00684518
 // GLOBAL: CARMA2_SW 0x0067ec58
 int gTraffic_disabled;
@@ -44,7 +52,16 @@ int gTraffic_disabled;
 
 // GetSpeedControlFromString
 
-// MrFindy
+// FUNCTION: CARMA2_HW 0x00450b30
+// FUNCTION: CARMA2_SW 0x004508c0
+br_actor* C2_HOOK_CDECL MrFindy(br_actor* pActor, const char* pName) {
+
+    if (DRStricmp(pActor->identifier, pName) == 0) {
+        return pActor;
+    } else {
+        return NULL;
+    }
+}
 
 // FindDroneChildActor
 
@@ -66,11 +83,44 @@ int gTraffic_disabled;
 
 // ResetDroneModel
 
-// DroneCarWithinRenderingDistance
+// FUNCTION: CARMA2_HW 0x0044ca90
+// FUNCTION: CARMA2_SW 0x0044c840
+int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pPos) {
 
-// DronePlaneWithinRenderingDistance
+    if ((float)fabs(gRender_bounds_centre.v[0] - pPos->v[0]) < 15.f
+        && (float)fabs(gRender_bounds_centre.v[1] - pPos->v[1]) < 12.f
+        && (float)fabs(gRender_bounds_centre.v[2] - pPos->v[2]) < 15.f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
-// DroneTrainWithinRenderingDistance
+// FUNCTION: CARMA2_HW 0x0044cae0
+// FUNCTION: CARMA2_SW 0x0044c890
+int C2_HOOK_FASTCALL DronePlaneWithinRenderingDistance(const br_vector3* pPos) {
+
+    if ((float)fabs(gRender_bounds_centre.v[0] - pPos->v[0]) < 40.f
+        && (float)fabs(gRender_bounds_centre.v[1] - pPos->v[1]) < 30.f
+        && (float)fabs(gRender_bounds_centre.v[2] - pPos->v[2]) < 40.f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0044cb30
+// FUNCTION: CARMA2_SW 0x0044c8e0
+int C2_HOOK_FASTCALL DroneTrainWithinRenderingDistance(const br_vector3* pPos) {
+
+    if ((float)fabs(gRender_bounds_centre.v[0] - pPos->v[0]) < 50.f
+        && (float)fabs(gRender_bounds_centre.v[1] - pPos->v[1]) < 20.f
+        && (float)fabs(gRender_bounds_centre.v[2] - pPos->v[2]) < 50.f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // SemiInitDroneSpec
 

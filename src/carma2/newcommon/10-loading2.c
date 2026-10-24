@@ -2,6 +2,7 @@
 
 #include "00-car.h"
 #include "02-init.h"
+#include "05-drmem.h"
 #include "07-structur.h"
 #include "08-loading1.h"
 #include "09-funks.h"
@@ -21,6 +22,7 @@
 #include "38-flicplay.h"
 #include "41-utility.h"
 #include "42-input.h"
+#include "51-smash.h"
 #include "52-errors.h"
 #include "53-controls.h"
 #include "55-volume.h"
@@ -458,9 +460,13 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     gMass_mine = GetAFloat(gTempFile);
 }
 
-// STUB: CARMA2_HW 0x00487dc0
+// FUNCTION: CARMA2_HW 0x00487dc0
+// FUNCTION: CARMA2_SW 0x00484ef0
 void C2_HOOK_FASTCALL FinishLoadingGeneral(void) {
-    NOT_IMPLEMENTED();
+    gDefault_default_water_spec_vol.screen_pixelmap = BrMapFind(gUnderwater_screen_name);
+    LoadWastedExplosion(gTempFile, &gWasted_explosion_chance, &gExplosion_sound_id, &gExplosion_pix_animation_groups);
+    ReadPowerupSmash(gTempFile);
+    PFfclose(gTempFile);
 }
 
 // FUNCTION: CARMA2_HW 0x00487e10
@@ -618,7 +624,56 @@ void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     }
 }
 
-// LoadHeadups
+// FUNCTION: CARMA2_HW 0x0048ba60
+// FUNCTION: CARMA2_SW 0x00488ca0
+void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+    int j;
+    int number_of_slots;
+
+    number_of_slots = GetAnInt(pF);
+    for (j = 0; j < number_of_slots; j++) {
+        GetALineAndDontArgue(pF, s);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].field_0x28);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].x);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].y);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].colour);
+        str = strtok(NULL, "\t ,/");
+        strcpy(s, str);
+        switch (s[0]) {
+        case 'l':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_left;
+            break;
+        case 'r':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_right;
+            break;
+        case 'c':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_centre;
+            break;
+        }
+        if (s[1] == 'c') {
+            pCar_spec->headup_slots[pIndex][j].cockpit_anchored = 1;
+        }
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_left);
+        if (pCar_spec->headup_slots[pIndex][j].dim_left >= 0) {
+            pCar_spec->headup_slots[pIndex][j].dimmed_background = 1;
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_top);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_right);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_bottom);
+        } else {
+            pCar_spec->headup_slots[pIndex][j].dimmed_background = 0;
+        }
+    }
+}
 
 // OldReadNonCarMechanicsData
 
@@ -650,7 +705,28 @@ intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData) {
     return 0;
 }
 
-// AllocateCarModelData
+// FUNCTION: CARMA2_HW 0x0048bf50
+// FUNCTION: CARMA2_SW 0x00489190
+intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush;
+    tCar_spec* car_spec;
+    tUser_detail_level_model* model_data;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tUser_detail_level_model) != 0xc);
+
+    car_spec = pData;
+    user_crush = pActor->user;
+    if (user_crush != NULL) {
+        for (i = 0; i < car_spec->count_detail_levels; i++) {
+            if (user_crush->models[i] != NULL) {
+                model_data = BrMemAllocate(sizeof(tUser_detail_level_model), kMem_crush_data);
+                user_crush->models[i]->user = model_data;
+            }
+        }
+    }
+    return 0;
+}
 
 // AddCarModelToList
 
@@ -690,7 +766,18 @@ intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pDa
 
 // SetUpGraphicalWheelStuff
 
-// LoadCar
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00488f70
+void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x0048c150
 void C2_HOOK_FASTCALL LoadHeadupImages(void) {
@@ -816,7 +903,61 @@ void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
     gGroove_funk_offset = 0;
 }
 
-// LoadOpponentsCars
+// FUNCTION: CARMA2_HW 0x0048cda0
+// FUNCTION: CARMA2_SW 0x00489fe0
+void C2_HOOK_FASTCALL LoadOpponentsCars(tRace_info* pRace_info) {
+    int i;
+    int j;
+    tOpp_spec* opponent;
+    int sod_counter;
+    char buffer[256];
+
+    C2_HOOK_BUG_ON(sizeof(tCar_spec) != 6500);
+
+    sod_counter = 0;
+    if (gNet_mode == eNet_mode_none) {
+        AboutToLoadFirstCar();
+        PrintMemoryDump(0, "JUST BEFORE LOADING YOUR CAR");
+        LoadCar(gOpponents[gProgram_state.current_car_index].car_file_name, eDriver_local_human, &gProgram_state.current_car, 0, gProgram_state.player_name, &gOur_car_storage_space);
+        SetCarStorageTexturingLevel(&gOur_car_storage_space, GetCarTexturingLevel(), eCTL_full);
+        PrintMemoryDump(0, "IMMEDIATELY AFTER LOADING YOUR CAR");
+    }
+
+    gGroove_funk_offset = GROOVE_FUNK_MAX_PER_CAR;
+    gCount_opponents = 0;
+    if (gNet_mode == eNet_mode_none) {
+        for (i = 0; i < pRace_info->number_of_racers; i++) {
+            opponent = &pRace_info->opponent_list[i];
+            PossibleService();
+            if (opponent->index >= 0) {
+                opponent->car_spec = BrMemAllocate(sizeof(tCar_spec), kMem_oppo_car_spec);
+                if (DRStricmp("MAX DAMAGE", gOpponents[opponent->index].name) == 0) {
+                    sod_counter++;
+                    sprintf(buffer, "POOR SOD %d", sod_counter);
+                    LoadCar(gOpponents[opponent->index].car_file_name, eDriver_oppo, opponent->car_spec, opponent->index, buffer, &gTheir_cars_storage_space);
+                } else {
+                    LoadCar(gOpponents[opponent->index].car_file_name, eDriver_oppo, opponent->car_spec, opponent->index, gOpponents[opponent->index].name, &gTheir_cars_storage_space);
+                }
+                PrintMemoryDump(0, "IMMEDIATELY AFTER LOADING AN OPPONENT");
+            }
+            if (gCurrent_race.race_spec->race_type == kRaceType_Cars) {
+                if (gCurrent_race.race_spec->options.cars.count_opponents < 0) {
+                    gCount_opponents++;
+                    opponent->car_spec->is_race_goal = 1;
+                } else {
+                    for (j = 0; j < gCurrent_race.race_spec->options.cars.count_opponents; j++) {
+                        if (opponent->index == gCurrent_race.race_spec->options.cars.opponents[j]) {
+                            gCount_opponents++;
+                            opponent->car_spec->is_race_goal = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        SetCarStorageTexturingLevel(&gTheir_cars_storage_space, GetCarTexturingLevel(), eCTL_full);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0048cfc0
 // FUNCTION: CARMA2_SW 0x0048a200

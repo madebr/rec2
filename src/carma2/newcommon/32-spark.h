@@ -18,6 +18,8 @@ extern int gColumn_flags;
 extern br_pixelmap* gFlame_map[20];
 extern br_model* gLollipop_model;
 extern tSmoke_column gSmoke_column[10];
+extern br_matrix4 gCameraToScreen;
+extern br_camera* gSpark_cam;
 
 // DrawDot
 
@@ -25,9 +27,9 @@ extern tSmoke_column gSmoke_column[10];
 
 // DrawLine3DThroughBRender
 
-// DrawLine3D
+extern int C2_HOOK_FASTCALL DrawLine3D(const br_vector3* pStart, const br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_pixelmap* pShade);
 
-// DrawLine2D
+extern int C2_HOOK_FASTCALL DrawLine2D(br_vector3* pStart, br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_scalar pBrightness, br_pixelmap* pShade);
 
 extern void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol);
 
@@ -93,7 +95,7 @@ extern int C2_HOOK_FASTCALL ResetFoxLighting(br_material* pMaterial);
 
 // SetupAlternateFoxEffect
 
-// RestorePixelmap
+extern int C2_HOOK_FASTCALL RestorePixelmap(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar);
 
@@ -125,7 +127,7 @@ extern void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos
 
 // ActorError
 
-// AdjustSmokeColumn
+extern void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour);
 
 // CreateSmokeColumn2
 
@@ -135,7 +137,7 @@ extern void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 
 extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
-// AdjustFlame
+extern void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z);
 
 // ReplayFlame
 
@@ -203,7 +205,7 @@ extern void C2_HOOK_FASTCALL FreeSmokeShadeTables(void);
 
 // ForEveryActorMaterialNoGrooves
 
-// ForEveryCarMaterial
+extern void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves);
 
 // ForEveryCarModelCB
 
@@ -211,11 +213,11 @@ extern void C2_HOOK_FASTCALL FreeSmokeShadeTables(void);
 
 // MightBlendifyMaterial
 
-// BlendifyMaterialCB
+extern int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar);
 
-// UnBlendifyMaterialCB
+extern int C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 

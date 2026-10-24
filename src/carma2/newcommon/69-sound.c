@@ -373,6 +373,17 @@ int C2_HOOK_FASTCALL DRS3StopSound(tS3_sound_tag pSound_tag) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00455860
+// FUNCTION: CARMA2_SW 0x004555f0
+tS3_error_codes C2_HOOK_FASTCALL DRS3LoadSound(tS3_sound_id pThe_sound) {
+
+    if (gSound_enabled) {
+        return S3LoadSample(pThe_sound);
+    } else {
+        return eS3_error_none;
+    }
+}
+
 void C2_HOOK_FASTCALL DRS3Service(void) {
 
     if (gSound_enabled) {

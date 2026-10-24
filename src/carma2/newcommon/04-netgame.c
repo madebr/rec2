@@ -1,6 +1,7 @@
 #include "04-netgame.h"
 
 #include "01-network.h"
+#include "30-opponent.h"
 #include "63-loading3.h"
 #include "globvars.h"
 #include "rec2_macros.h"
@@ -11,7 +12,21 @@ br_pixelmap* gDigits_pix;
 
 // SendShapeNumbers
 
-// ClearShapeStatusFlag
+// FUNCTION: CARMA2_HW 0x00497ef0
+// FUNCTION: CARMA2_SW 0x00494b20
+void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, int pPlayer_id) {
+    int i;
+
+    if (pShapes == NULL) {
+        return;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(pShapes->items); i++) {
+        if (pShapes->items[i].network_id == pPlayer_id) {
+            pShapes->items[i].field_0x4 = 0;
+            return;
+        }
+    }
+}
 
 // SendNonCar
 
@@ -71,7 +86,21 @@ void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 
 // RepositionPlayer
 
-// DisableCar
+// FUNCTION: CARMA2_HW 0x00499260
+// FUNCTION: CARMA2_SW 0x00495e90
+void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
+
+    if (pCar->driver_name[0] != '\0') {
+        if (!pCar->disabled) {
+            pCar->disabled = 1;
+            ForceRebuildActiveCarList();
+        }
+        if (pCar->car_master_actor->t.t.mat.m[3][0] < 500.0f) {
+            BrVector3Accumulate(&pCar->car_master_actor->t.t.translate.t, &gInitial_position);
+            BrVector3Copy((br_vector3*)pCar->old_frame_mat.m[3], &pCar->car_master_actor->t.t.translate.t);
+        }
+    }
+}
 
 // EnableCar
 
@@ -87,9 +116,25 @@ void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 
 // DrawScoreBoxes
 
-// DoNetScores2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// DoNetScores
+// STUB: CARMA2_HW 0x00499a00
+void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004999f0
+// FUNCTION: CARMA2_SW 0x00496290
+void C2_HOOK_FASTCALL DoNetScores(void) {
+
+    DoNetScores2(0);
+}
 
 // FUNCTION: CARMA2_HW 0x0049a710
 void C2_HOOK_FASTCALL InitNetHeadups(void) {
@@ -166,7 +211,25 @@ void C2_HOOK_FASTCALL DefaultNetName(void) {
     NetObtainSystemUserName(gProgram_state.player_name, 32);
 }
 
-// AddPlayerToShapeStatusLists
+// FUNCTION: CARMA2_HW 0x0049bde0
+// FUNCTION: CARMA2_SW 0x00497f60
+void C2_HOOK_FASTCALL AddPlayerToShapeStatusLists(int pPlayer_id, int pCount, tNet_game_player_info* pPlayers) {
+    tCar_crush_network_shapes* shapes;
+    int j;
+
+    for (; pCount > 0; pCount--, pPlayers++) {
+        if (pPlayers->car != NULL && pPlayers->car->car_crush_spec != NULL) {
+            shapes = pPlayers->car->car_crush_spec->network_stuff;
+            for (j = 0; j < (int)REC2_ASIZE(shapes->items); j++) {
+                if (shapes->items[j].network_id == 0) {
+                    shapes->items[j].network_id = pPlayer_id;
+                    shapes->items[j].field_0x4 = 1;
+                    break;
+                }
+            }
+        }
+    }
+}
 
 // RemovePlayerFromShapeStatusLists
 

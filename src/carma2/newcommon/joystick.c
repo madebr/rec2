@@ -42,6 +42,24 @@ int C2_HOOK_FASTCALL HasCurrentJoystick(void) {
     return gJoystick_index != -1;
 }
 
+// FUNCTION: CARMA2_HW 0x0045a300
+// FUNCTION: CARMA2_SW 0x0045a090
+int C2_HOOK_FASTCALL ReadUntilCharacter(FILE* pF, char* pBuffer, int pBuffer_size, char pLimit_char) {
+    int i;
+    char s[2];
+
+    strcpy(pBuffer, "");
+    s[1] = '\0';
+    for (i = 0; (s[0] = fgetc(pF)) != pLimit_char && i < pBuffer_size && !feof(pF); i++) {
+        strcat(pBuffer, s);
+    }
+    if (feof(pF)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x0045b920
 int C2_HOOK_FASTCALL WriteJoystickPreferences(FILE* pF, const tButtonJoystickInfo* pInfo) {
     char s[256];

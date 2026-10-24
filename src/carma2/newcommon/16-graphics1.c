@@ -286,11 +286,43 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
     BrMapAdd(gRear_pixelmap);
 }
 
-// AdjustRenderScreenSize
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// ScreenSmaller
+// STUB: CARMA2_HW 0x004e4b40
+// STUB: CARMA2_SW 0x004e0ed0
+void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
+    NOT_IMPLEMENTED();
+}
 
-// ScreenLarger
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004e4cd0
+void C2_HOOK_FASTCALL ScreenSmaller(void) {
+
+    if (gMap_view != 2) {
+        gRender_indent++;
+        if (gRender_indent > 8) {
+            gRender_indent = 8;
+        }
+        AdjustRenderScreenSize();
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004e4d00
+void C2_HOOK_FASTCALL ScreenLarger(void) {
+
+    if (gMap_view != 2) {
+        gRender_indent--;
+        if (gRender_indent < 0) {
+            gRender_indent = 0;
+        }
+        AdjustRenderScreenSize();
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e4d30
 // FUNCTION: CARMA2_SW 0x004e1090
@@ -343,7 +375,10 @@ void C2_HOOK_FASTCALL ResetScreenWobble(void) {
 
 // DoACompleteRenderPass
 
-// RenderAFrame
+// STUB: CARMA2_HW 0x004e4e40
+void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004e5a70
 // FUNCTION: CARMA2_SW 0x004e1c30

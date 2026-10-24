@@ -5,8 +5,10 @@
 #include "rec2_types.h"
 #include <s3/s3.h>
 
+extern int gPlay_direction;
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
+extern tU8* gPipe_play_ptr;
 
 // ARReplayForwards
 
@@ -18,9 +20,9 @@ extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
 extern void C2_HOOK_FASTCALL ARSetReplayRate(float pRate);
 
-// ARGetReplayDirection
+extern int C2_HOOK_FASTCALL ARGetReplayDirection(void);
 
-// ARSetReplayDirection
+extern void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection);
 
 // ARResetPiping
 
@@ -50,9 +52,9 @@ extern int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType);
 
 // ARStartPipingSession
 
-// EndPipingSession2
+extern void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
-// AREndPipingSession
+extern void C2_HOOK_FASTCALL AREndPipingSession(void);
 
 // ARAddDataToSession
 
@@ -64,9 +66,9 @@ extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, i
 
 // ARResetPipePlayToEnd
 
-// ARGetPipePlayPtr
+extern tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void);
 
-// ARSetPipePlayPtr
+extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // ApplyPipedSession
 
@@ -102,9 +104,9 @@ extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, i
 
 // ARDoActionReplay
 
-// ReverseSound
+extern void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag pTag);
 
-// ARGoBackwards
+extern int C2_HOOK_FASTCALL ARGoBackwards(void);
 
 // ARGoForwards
 
@@ -240,7 +242,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, 
 
 // PipeSinglePedModelChange
 
-// PipeSinglePHILObject
+extern void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* pObject);
 
 // PipeSingleGibShower
 
@@ -284,11 +286,11 @@ extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTra
 
 // ApplyShrapnel
 
-// ApplyScreenWobble
+extern void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk);
 
 // ApplyGrooveStop
 
-// ApplyNonCar
+extern void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk);
 
 // ApplySmoke
 
@@ -324,13 +326,13 @@ extern void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTra
 
 // ApplyRelink
 
-// ApplyIdentity
+extern void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk);
 
 // ApplySplitWeld
 
 extern void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk);
 
-// ApplyUnBend
+extern void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk);
 
 // ApplyEndMyBend
 
@@ -344,7 +346,7 @@ extern void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk);
 
 // ApplySmashRemoveFaces
 
-// ApplySmashDecal
+extern void C2_HOOK_FASTCALL ApplySmashDecal(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
@@ -446,9 +448,9 @@ extern void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_ch
 
 // UndoSmashRemoveFaces
 
-// UndoSmashDecal
+extern void C2_HOOK_FASTCALL UndoSmashDecal(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
-// UndoSmashTextureChange
+extern void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoActorTrans
 

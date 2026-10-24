@@ -14,11 +14,15 @@ extern int C2_HOOK_FASTCALL ChoiceDisabled(int pChoice);
 
 extern void C2_HOOK_FASTCALL ResetInterfaceTimeout__intrface(void);
 
+extern void C2_HOOK_FASTCALL DisableChoice(int pChoice);
+
 extern void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_selection, int* pNew_selection, int pMode, int pSkip_disabled);
 
 extern void C2_HOOK_FASTCALL RecopyAreas(const tInterface_spec* pSpec);
 
 extern int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
+
+extern void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode);
 
 extern int C2_HOOK_FASTCALL WhichItemIsSelectedIn(tFrontend_spec* pFrontend, int pGroup);
 

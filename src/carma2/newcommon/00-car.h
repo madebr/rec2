@@ -5,6 +5,7 @@
 
 extern int gCunning_stunt_bonus[3];
 extern float gArmour_starting_value[100];
+extern int gExplosion_sound_id;
 extern float gPower_starting_value[100];
 extern float gOffensive_starting_value[100];
 extern tFloat_bunch_info gCar_softness;
@@ -13,7 +14,7 @@ extern br_vector3 gZero_v__car;
 extern int gNum_active_non_cars;
 extern int gFace_num__car;
 
-// DamageUnit
+extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount);
 
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
@@ -89,7 +90,7 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // ControlCar2
 
-// ControlCar3
+extern void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br_scalar pDt);
 
 // ControlCar4
 
@@ -107,7 +108,7 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // TumbleObject
 
-// MakeLiftGoUp
+extern void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car);
 
 // NonCarCalcForce
 
@@ -170,6 +171,8 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 // DoComplexCarModels
 
 // ResetCarScreens
+
+extern void C2_HOOK_FASTCALL AdjustDownForce(void);
 
 // FlyCar
 

@@ -34,7 +34,7 @@ extern void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_sp
 
 extern void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
-// LoadHeadups
+extern void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
 // OldReadNonCarMechanicsData
 
@@ -56,7 +56,7 @@ extern void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spe
 
 extern intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData);
 
-// AllocateCarModelData
+extern intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData);
 
 // AddCarModelToList
 
@@ -86,7 +86,7 @@ extern intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, vo
 
 // SetUpGraphicalWheelStuff
 
-// LoadCar
+extern void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
 
 extern void C2_HOOK_FASTCALL LoadHeadupImages(void);
 
@@ -100,7 +100,7 @@ extern void C2_HOOK_FASTCALL LoadOpponents(void);
 
 extern void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
 
-// LoadOpponentsCars
+extern void C2_HOOK_FASTCALL LoadOpponentsCars(tRace_info* pRace_info);
 
 extern void C2_HOOK_FASTCALL LoadMiscStrings(void);
 

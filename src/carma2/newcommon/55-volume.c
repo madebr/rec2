@@ -3,7 +3,9 @@
 #include "00-car.h"
 #include "08-loading1.h"
 #include "34-finteray.h"
+#include "41-utility.h"
 #include "69-sound.h"
+#include "70-packfile.h"
 #include "globvars.h"
 
 #include "c2_string.h"
@@ -107,7 +109,67 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
     }
 }
 
-// SaveSpecialVolumes
+// FUNCTION: CARMA2_HW 0x004ffa20
+// FUNCTION: CARMA2_SW 0x004fb300
+void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
+    tPath_name the_path;
+    FILE* f;
+    int i;
+    tSpecial_volume* v;
+    const char* screen_name;
+
+    PathCat(the_path, gApplication_path, "SPECSAVE.TXT");
+    f = DRfopen(the_path, "wt");
+    if (f != NULL) {
+        fprintf(f, "// SPECIAL EFFECTS VOLUMES\n\n");
+        fprintf(f, "%d\t\t\t\t// # special effects volumes\n\n", gProgram_state.special_volume_count);
+        for (i = 0, v = gProgram_state.special_volumes; i < gProgram_state.special_volume_count; i++, v++) {
+            switch (v->boundary_type) {
+            case eFx_boundary_box:
+                fprintf(f, "BOX\n");
+                fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[0][0], v->boundary.box.mat.m[0][1], v->boundary.box.mat.m[0][2]);
+                fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[1][0], v->boundary.box.mat.m[1][1], v->boundary.box.mat.m[1][2]);
+                fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[2][0], v->boundary.box.mat.m[2][1], v->boundary.box.mat.m[2][2]);
+                fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[3][0], v->boundary.box.mat.m[3][1], v->boundary.box.mat.m[3][2]);
+                break;
+            case eFx_boundary_plane:
+                fprintf(f, "%.3f, %.3f, %.3f, %.3f\n", v->boundary.plane.v[0], v->boundary.plane.v[1], v->boundary.plane.v[2], v->boundary.plane.v[3]);
+                break;
+            case eFx_boundary_default:
+                fprintf(f, "DEFAULT\n");
+                break;
+            default:
+                break;
+            }
+            fprintf(f, "%.2f\t\t\t\t// gravity multiplier\n", v->gravity_multiplier);
+            fprintf(f, "%.2f\t\t\t\t// viscosity multiplier\n", v->viscosity_multiplier);
+            fprintf(f, "%.2f\t\t\t\t// Car damage per millisecond\n", v->car_damage_per_ms);
+            fprintf(f, "%.2f\t\t\t\t// Pedestrian damage per millisecond\n", v->ped_damage_per_ms);
+            fprintf(f, "%d\t\t\t\t\t// camera effect index\n", v->camera_special_effect_index);
+            fprintf(f, "%d\t\t\t\t\t// sky colour\n", v->sky_col);
+            if (v->screen_pixelmap != NULL) {
+                screen_name = v->screen_pixelmap->identifier;
+            } else {
+                screen_name = "NONE";
+            }
+            fprintf(f, "%s\t\t\t\t// Windscreen texture to use\n", screen_name);
+            fprintf(f, "%d\t\t\t\t\t// Sound ID of entry noise\n", v->entry_noise);
+            fprintf(f, "%d\t\t\t\t\t// Sound ID of exit noise\n", v->exit_noise);
+            fprintf(f, "%d\t\t\t\t\t// Engine noise index\n", v->engine_noise_index);
+            fprintf(f, "%d\t\t\t\t\t// material index\n", v->material_modifier_index);
+            if (v->boundary_type == eFx_boundary_box || v->boundary_type == eFx_boundary_plane) {
+                if (v->soundfx_type == kSoundFx_None) {
+                    fprintf(f, "NONE\t\t\t\t\t// sound type\n");
+                } else {
+                    fprintf(f, "%s\t\t\t\t\t// sound type\n", gSoundType_choices[v->soundfx_type]);
+                    WriteOutSoundSpec(f, &v->soundfx_data);
+                }
+            }
+            fprintf(f, "\n");
+        }
+        PFfclose(f);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004ffd20
 // FUNCTION: CARMA2_SW 0x004fb600

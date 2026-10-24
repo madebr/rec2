@@ -7,6 +7,7 @@
 
 extern br_material* gDefault_track_material;
 extern int gCount_track_non_cars;
+extern br_vector3 gAverage_grid_position;
 
 // AssertNoncars
 
@@ -36,7 +37,7 @@ extern br_scalar C2_HOOK_STDCALL GetYonFactor(void);
 
 extern void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew);
 
-// FoundAnActor
+extern intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext);
 
 // ProcessNearbyActors
 

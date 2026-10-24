@@ -185,7 +185,7 @@ extern void C2_HOOK_FASTCALL MaybeDoMouseCursor(void);
 
 extern void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
 
-// FRONTEND_Main
+extern int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontend_type);
 
 extern int C2_HOOK_FASTCALL ProcessInputString(void);
 
@@ -323,11 +323,11 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 // Controls_JoystickDpadToggle
 
-// Slider_XProc
+extern void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider);
 
-// Slider_YProc
+extern void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider);
 
-// Slider_ForceProc
+extern void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider);
 
 // DisplayJoystickSettings
 
@@ -355,7 +355,7 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 // NetOptions_Infunc
 
-// NetOptions_Outfunc
+extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
 // NetOptions_CreditsRoller
 

@@ -3,6 +3,9 @@
 
 #include "c2_hooks.h"
 
+extern int gNext_replay_record_state;
+extern int gShow_status_message;
+
 extern char gQuick_time_temp_path[256];
 extern char gQuick_time_movie_path_stub[256];
 extern char gQuick_time_banner_texture_name[256];
@@ -43,9 +46,9 @@ extern void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void);
 
 // MovieRecordFrame
 
-// MovieRecording
+extern int C2_HOOK_FASTCALL MovieRecording(void);
 
-// KillStatusMessage
+extern void C2_HOOK_FASTCALL KillStatusMessage(void);
 
 // ShowStatusMessage
 
@@ -53,7 +56,7 @@ extern int C2_HOOK_FASTCALL GetMovieWidth(void);
 
 extern int C2_HOOK_FASTCALL GetMovieHeight(void);
 
-// TidyMovieARDisplay
+extern void C2_HOOK_FASTCALL TidyMovieARDisplay(void);
 
 // TrapS3SoundOutput
 

@@ -29,6 +29,10 @@ void* gPhysics_buffer1_ptr;
 // GLOBAL: CARMA2_SW 0x0073b2d4
 void* gPhysics_buffer2_ptr;
 
+// GLOBAL: CARMA2_HW 0x00744810
+// GLOBAL: CARMA2_SW 0x0073b2d0
+int gImmortal_peds;
+
 // GLOBAL: CARMA2_HW 0x0074a5e0
 // GLOBAL: CARMA2_SW 0x007410a0
 void* gPhysics_buffer3_ptr;
@@ -491,7 +495,19 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
 
 // RQSingleExpand
 
-// RQDcmpV
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004c5830
+// STUB: CARMA2_SW 0x004c1f60
+int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // MakeIdentity
 
@@ -513,7 +529,11 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
 
 // RQMatrixSolveWithNegatives
 
-// MatrixProcess
+// FUNCTION: CARMA2_HW 0x004c5b50
+// FUNCTION: CARMA2_SW 0x004c2280
+int C2_HOOK_FASTCALL MatrixProcess(br_scalar* pR, br_scalar* pQ, int pDim) {
+    return RQDcmpV(pR, pDim, pQ);
+}
 
 // FUNCTION: CARMA2_HW 0x004c5b60
 void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const br_scalar* pRhs, br_scalar* pX, int pDim) {
@@ -553,7 +573,14 @@ void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const 
 
 // GetPhysicsScratchPointer
 
-// IncreasePhysicsScratchPointer
+// FUNCTION: CARMA2_HW 0x004c5cb0
+void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize) {
+
+    if ((tU8*)gPhysics_scratch_ptr + pSize > (tU8*)gPhysics_other_buffer + gPhysics_other_buffer_capacity) {
+        PhysicsError(ePhysicsError_OutOfMemory, NULL);
+    }
+    gPhysics_scratch_ptr = (tU8*)gPhysics_scratch_ptr + pSize;
+}
 
 // FUNCTION: CARMA2_HW 0x004c5d00
 void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void) {
@@ -639,7 +666,11 @@ tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint,
     return clone;
 }
 
-// FreeShape
+// FUNCTION: CARMA2_HW 0x004c5e70
+// FUNCTION: CARMA2_SW 0x004c25a0
+void C2_HOOK_FASTCALL FreeShape(void* pData) {
+    BrMemFree(pData);
+}
 
 // FUNCTION: CARMA2_HW 0x004c5e80
 // FUNCTION: CARMA2_SW 0x004c25b0

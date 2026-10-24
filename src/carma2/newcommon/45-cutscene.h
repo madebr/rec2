@@ -7,13 +7,17 @@ extern void C2_HOOK_FASTCALL DoSCILogo(void);
 
 extern void C2_HOOK_STDCALL DoStainlessLogo(void);
 
-// PlaySmackerFile
+extern void C2_HOOK_FASTCALL PlaySmackerFile(char* pSmack_name);
 
-// DoOpeningAnimation
+extern void C2_HOOK_FASTCALL DoOpeningAnimation(void);
+
+extern void C2_HOOK_FASTCALL DoNewGameAnimation(void);
 
 extern void C2_HOOK_FASTCALL DoEndRaceAnimation(void);
 
-// DoGameCompletedAnimation
+extern void C2_HOOK_FASTCALL DoGameOverAnimation(void);
+
+extern void C2_HOOK_FASTCALL DoGameCompletedAnimation(void);
 
 // StartLoadingScreen
 

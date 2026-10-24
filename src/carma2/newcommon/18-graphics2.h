@@ -85,11 +85,11 @@ extern void C2_HOOK_FASTCALL KillSplashScreen(void);
 
 extern void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_16 pDest_x, br_int_16 pDest_y, const br_pixelmap* pSource, br_int_16 pSource_x, br_int_16 pSource_y, br_int_16 pWidth, br_int_16 pHeight);
 
-// DRMaskedStamp
+extern void C2_HOOK_FASTCALL DRMaskedStamp(br_int_16 pDest_x, br_int_16 pDest_y, br_pixelmap* pSource);
 
-// SwitchToHiresMode
+extern int C2_HOOK_FASTCALL SwitchToHiresMode(void);
 
-// SwitchToLoresMode
+extern int C2_HOOK_FASTCALL SwitchToLoresMode(void);
 
 // PoshDrawLine
 
@@ -109,7 +109,7 @@ extern void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, i
 
 // DR8BitFancyDrawLine
 
-// FancyDrawLine
+extern void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period);
 
 // DRPixelmapCopyMapBlack8Bit
 

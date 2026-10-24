@@ -3,10 +3,12 @@
 
 #include "rec2_types.h"
 
+extern int gBIG_APC_index;
 extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
 extern int gNumber_of_cops_before_faffage;
+extern tU8* gBit_per_node;
 
 extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
@@ -44,7 +46,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // AllowForDecel
 
-// ShiftOpponentsProjectedRoute
+extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces);
 
 // NewCalcGetNearPlayerRoute
 
@@ -72,7 +74,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // ProcessRunAway
 
-// ProcessWaitForSomeHaplessSod
+extern void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 
 // ProcessReturnToStart
 
@@ -122,7 +124,7 @@ extern void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
 
 // TeleportCopToStart
 
-// CalcDistanceFromHome
+extern void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec);
 
 // MassageOpponentPosition
 
@@ -144,13 +146,13 @@ extern void C2_HOOK_FASTCALL LoadCopCars(void);
 
 // LoadInOppoPaths
 
-// DisposeOpponentPaths
+extern void C2_HOOK_FASTCALL DisposeOpponentPaths(void);
 
 // MungeOpponents
 
 // InitOpponents
 
-// DisposeOpponents
+extern void C2_HOOK_FASTCALL DisposeOpponents(void);
 
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 

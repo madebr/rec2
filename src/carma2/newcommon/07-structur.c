@@ -1,5 +1,6 @@
 #include "07-structur.h"
 
+#include "13-crush1.h"
 #include "15-displays.h"
 #include "30-opponent.h"
 #include "41-utility.h"
@@ -39,7 +40,11 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     return result;
 }
 
-// RaceCompleted
+// STUB: CARMA2_HW 0x005030b0
+// STUB: CARMA2_SW 0x004fea00
+void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x00503270
 void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
@@ -52,9 +57,29 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
     }
 }
 
-// IncrementCheckpoint
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// IncrementLap
+// STUB: CARMA2_HW 0x005032a0
+// STUB: CARMA2_SW 0x004febf0
+void C2_HOOK_FASTCALL IncrementCheckpoint(void) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x005033b0
+// FUNCTION: CARMA2_SW 0x004fed00
+void C2_HOOK_FASTCALL IncrementLap(void) {
+    int i;
+
+    for (i = gCheckpoint; i <= gCheckpoint_count; i++) {
+        IncrementCheckpoint();
+    }
+}
 
 // RayHitFace
 
@@ -62,7 +87,13 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
 
 // CheckCheckpoints
 
-// TotalRepair
+// FUNCTION: CARMA2_HW 0x005039b0
+// FUNCTION: CARMA2_SW 0x004ff300
+void C2_HOOK_FASTCALL TotalRepair(void) {
+
+    TotallyRepairCar();
+    NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_instant_repair));
+}
 
 // DoLogos
 
@@ -70,7 +101,37 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
 
 // DoProgramDemo
 
-// ChooseOpponent
+// FUNCTION: CARMA2_HW 0x00503b00
+// FUNCTION: CARMA2_SW 0x004ff450
+int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness) {
+    int i;
+    int count;
+    int temp_array[40];
+
+    while (1) {
+        count = 0;
+        for (i = 0; i < gNumber_of_racers; i++) {
+            if ((pNastiness == 0 || gOpponents[i].strength_rating == pNastiness)
+                && gProgram_state.current_car_index != i
+                && !gOpponents[i].picked
+                && gOpponents[i].strength_rating <= 5
+                && gOpponents[i].strength_rating >= 1) {
+                temp_array[count++] = i;
+            }
+        }
+        if (count != 0) {
+            break;
+        }
+        if (pNastiness < 5) {
+            pNastiness++;
+        } else {
+            pNastiness = 0;
+        }
+    }
+    i = temp_array[IRandomBetween(0, count - 1)];
+    gOpponents[i].picked = 1;
+    return i;
+}
 
 // SelectOpponents
 

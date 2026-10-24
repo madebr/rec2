@@ -570,11 +570,24 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
 #endif
 }
 
-// DRMaskedStamp
+// FUNCTION: CARMA2_HW 0x0047bc40
+// FUNCTION: CARMA2_SW 0x0047af60
+void C2_HOOK_FASTCALL DRMaskedStamp(br_int_16 pDest_x, br_int_16 pDest_y, br_pixelmap* pSource) {
 
-// SwitchToHiresMode
+    DRPixelmapRectangleMaskedCopy(gBack_screen, pDest_x, pDest_y, pSource, 0, 0, pSource->width, pSource->height);
+}
 
-// SwitchToLoresMode
+// FUNCTION: CARMA2_HW 0x0047c650
+int C2_HOOK_FASTCALL SwitchToHiresMode(void) {
+
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0047c660
+int C2_HOOK_FASTCALL SwitchToLoresMode(void) {
+
+    return 0;
+}
 
 // PoshDrawLine
 
@@ -669,7 +682,10 @@ void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, int pY1,
 
 // DR8BitFancyDrawLine
 
-// FancyDrawLine
+// STUB: CARMA2_HW 0x0047d2b0
+void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period) {
+    NOT_IMPLEMENTED();
+}
 
 // DRPixelmapCopyMapBlack8Bit
 

@@ -1,11 +1,15 @@
 #include "33-depth.h"
 
 #include "00-car.h"
+#include "15-displays.h"
 #include "17-world2.h"
 #include "37-brucetrk.h"
+#include "41-utility.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "rec2_macros.h"
+
+#include "c2_stdio.h"
 
 // GLOBAL: CARMA2_HW 0x00591188
 // GLOBAL: CARMA2_SW 0x0058c180
@@ -242,6 +246,10 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
 
 // DepthEffect
 
+// FUNCTION: CARMA2_HW 0x00445ca0
+void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world) {
+}
+
 // DepthEffectSky
 
 // DoWobbleCamera
@@ -252,9 +260,43 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
 
 // DoSpecialCameraEffect
 
-// AssertYons
+// FUNCTION: CARMA2_HW 0x00446890
+// FUNCTION: CARMA2_SW 0x00446910
+void C2_HOOK_FASTCALL ReduceDepthStart(void) {
+    char s[256];
 
-// IncreaseYon
+    if (gProgram_state.current_depth_effect.start > 3) {
+        gProgram_state.current_depth_effect.start--;
+    }
+    sprintf(s, "Depth start reduced to %d", gProgram_state.current_depth_effect.start);
+    NewTextHeadupSlot(4, 0, 500, -1, s);
+    gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
+}
+
+// FUNCTION: CARMA2_HW 0x00446a10
+// FUNCTION: CARMA2_SW 0x00446a90
+void C2_HOOK_FASTCALL AssertYons(void) {
+    br_camera* camera_ptr;
+    int i;
+    br_scalar yon_multiplier;
+
+    for (i = 0; i < (int)REC2_ASIZE(gCamera_list); ++i) {
+        camera_ptr = gCamera_list[i]->type_data;
+        yon_multiplier = gYon_multiplier;
+        camera_ptr->yon_z = yon_multiplier * gCamera_yon;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00446a40
+// FUNCTION: CARMA2_SW 0x00446ac0
+void C2_HOOK_FASTCALL IncreaseYon(void) {
+    char s[256];
+
+    gCamera_yon += 5.f;
+    AssertYons();
+    sprintf(s, GetMiscString(eMiscString_yon_increased_to_D), (int)((br_camera*)gCamera_list[1]->type_data)->yon_z);
+    NewTextHeadupSlot(4, 0, 2000, -4, s);
+}
 
 // DecreaseYon
 
@@ -282,6 +324,24 @@ void C2_HOOK_STDCALL SetYon(br_scalar pYon) {
 br_scalar C2_HOOK_STDCALL GetYon(void) {
 
     return gCamera_yon;
+}
+
+// FUNCTION: CARMA2_HW 0x00446bc0
+// FUNCTION: CARMA2_SW 0x00446c40
+void C2_HOOK_STDCALL IncreaseAngle(void) {
+    br_camera* camera_ptr;
+    int i;
+    char s[256];
+
+    for (i = 0; i < (int)REC2_ASIZE(gCamera_list); i++) {
+        camera_ptr = gCamera_list[i]->type_data;
+        camera_ptr->field_of_view += BrDegreeToAngle(2.5);
+        if (camera_ptr->field_of_view > BrDegreeToAngle(170)) {
+            camera_ptr->field_of_view = BrDegreeToAngle(170);
+        }
+        sprintf(s, "Camera angle increased to %d", gProgram_state.current_depth_effect.end);
+        NewTextHeadupSlot(4, 0, 500, -1, s);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00446e00

@@ -6,6 +6,8 @@
 
 extern int gPling_materials;
 extern br_scalar gNearest_T;
+extern int gTemp_group;
+
 extern br_actor* gNearest_actor;
 extern int gNearest_face;
 extern int gNearest_face_group;
@@ -16,7 +18,7 @@ extern br_matrix34 gPick_model_to_view__finteray;
 
 // DRVector2AccumulateScale
 
-// PickBoundsTestRay
+extern int C2_HOOK_FASTCALL PickBoundsTestRay_finteray(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far);
 
 extern int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vector3* pDir, br_model* model, br_material* material, dr_pick2d_cbfn* callback);
 
@@ -24,7 +26,7 @@ extern int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, 
 
 // DRModelPick2D
 
-// FindHighestPolyCallBack
+extern int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData);
 
 extern int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg);
 

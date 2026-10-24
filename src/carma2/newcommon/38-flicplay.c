@@ -488,13 +488,86 @@ int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
 
 // DoDifferenceX
 
-// DoDifferenceTrans
+// FUNCTION: CARMA2_HW 0x00462480
+// FUNCTION: CARMA2_SW 0x00461f10
+void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int k;
+    int skipped_lines;
+    int number_of_lines;
+    int number_of_packets;
+    int skip_count;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+
+    (void)pChunk_length;
+    skipped_lines = MemReadU16(&pFlic_info->data);
+    number_of_lines = MemReadU16(&pFlic_info->data);
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel + skipped_lines * the_row_bytes;
+    for (i = 0; i < number_of_lines; i++) {
+        line_pixel_ptr = pixel_ptr;
+        number_of_packets = MemReadU8(&pFlic_info->data);
+        for (j = 0; j < number_of_packets; j++) {
+            skip_count = MemReadU8(&pFlic_info->data);
+            size_count = MemReadS8(&pFlic_info->data);
+            line_pixel_ptr += skip_count;
+            if (size_count >= 0) {
+                for (k = 0; k < size_count; k++) {
+                    the_byte = *pFlic_info->data++;
+                    if (the_byte != 0) {
+                        *line_pixel_ptr = the_byte;
+                        line_pixel_ptr++;
+                    } else {
+                        line_pixel_ptr++;
+                    }
+                }
+            } else {
+                the_byte = *pFlic_info->data++;
+                if (the_byte != 0) {
+                    for (k = 0; k < -size_count; k++) {
+                        *line_pixel_ptr = the_byte;
+                        line_pixel_ptr++;
+                    }
+                } else {
+                    line_pixel_ptr += size_count;
+                }
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoColour256
 
 // DoDeltaTrans
 
-// DoBlack
+// FUNCTION: CARMA2_HW 0x00462580
+// FUNCTION: CARMA2_SW 0x00462010
+void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int the_width;
+    tU8* pixel_ptr;
+    tU32 the_row_bytes;
+    tU32* line_pixel_ptr;
+
+    pixel_ptr = pFlic_info->first_pixel;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    the_width = pFlic_info->width >> 2;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = (tU32*)pixel_ptr;
+        for (j = 0; j < the_width; j++) {
+            *line_pixel_ptr = 0;
+            line_pixel_ptr++;
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoRunLengthTrans
 
@@ -547,7 +620,46 @@ void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
     }
 }
 
-// LoadFlicData
+// FUNCTION: CARMA2_HW 0x00462a90
+// FUNCTION: CARMA2_SW 0x00462520
+int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) {
+    FILE* f;
+    tPath_name the_path;
+
+    if (*pData == NULL) {
+        if (!gPlay_from_disk) {
+            PossibleService();
+            PathCat(the_path, gApplication_path, "ANIM");
+            PathCat(the_path, the_path, pName);
+            f = DRfopen(the_path, "rb");
+            if (f == NULL) {
+                return 0;
+            }
+            *pData_length = GetFileLength(f);
+            *pData = BrMemAllocate(*pData_length, kMem_misc);
+            if (*pData == NULL) {
+                PFfclose(f);
+                return 0;
+            }
+            PFfread(*pData, 1, *pData_length, f);
+            PFfclose(f);
+        }
+    } else {
+        MAMSLock((void**)pData);
+    }
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x00462b80
+// FUNCTION: CARMA2_SW 0x00462610
+void C2_HOOK_FASTCALL FreeFlic(int pIndex) {
+
+    PossibleService();
+    if (gMain_flic_list[pIndex].data_ptr != NULL) {
+        BrMemFree(gMain_flic_list[pIndex].data_ptr);
+        gMain_flic_list[pIndex].data_ptr = NULL;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00462cc0
 // FUNCTION: CARMA2_SW 0x00462750

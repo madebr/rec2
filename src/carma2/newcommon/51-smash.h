@@ -23,7 +23,7 @@ extern void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosio
 
 // Explode
 
-// RemoveExplosions
+extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
 // CalcRandomPointBetween
 
@@ -115,6 +115,8 @@ extern void C2_HOOK_FASTCALL InitSmashQueue(void);
 
 // ReadShrapnelSpec
 
+extern void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* pTimes);
+
 // ReadSpillData
 
 // ReadExplosion
@@ -159,7 +161,7 @@ extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush
 
 // RemoveAllDecals
 
-// ReadPowerupSmash
+extern void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF);
 
 extern void C2_HOOK_FASTCALL InitSmashing(void);
 
@@ -241,15 +243,15 @@ extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int 
 
 // SmashEnvironment
 
-// BashObject
+extern float C2_HOOK_FASTCALL BashObject(tPhysics_object* pObject, br_actor* pActor, float pMagnitude, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce, int pSnap, int pNetwork);
 
-// NonCarSnapSmashCallback
+extern void C2_HOOK_FASTCALL NonCarSnapSmashCallback(tPhysics_object* pObject, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce);
 
 // SmashFaceMustBeUpdateable
 
-// MungeMaterialCB
+extern intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* pData);
 
-// MungeMaterial
+extern void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_material* pMaterial_1, br_material* pMaterial_2, int pCapacity_indices, tU16* pIndices, int* pCount_indices, int pCapacity_vertices, tCar_crush_vertex_data* pVertices, int* pCount_vertices, br_vector3* pNormal);
 
 // ReinitSmashing
 
@@ -267,7 +269,7 @@ extern intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec);
 
 // SetSmashableModel
 
-// LoadWastedExplosion
+extern void C2_HOOK_FASTCALL LoadWastedExplosion(FILE* pF, int* pChance_explosion, int* pExplosion_sound_id, tExplosion_animation* pExplosion_groups);
 
 extern void C2_HOOK_FASTCALL ChangeSmashModel(br_actor* pActor, br_model* pOld_model, br_model* pNew_model);
 

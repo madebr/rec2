@@ -24,6 +24,10 @@ tU32 gPrevious_groove_times[2];
 // GLOBAL: CARMA2_HW 0x00688b30
 tGroove_funk_binding gGroove_funk_bindings[1440];
 
+// GLOBAL: CARMA2_HW 0x0068b844
+// GLOBAL: CARMA2_SW 0x00685da4
+int gFunkotronics_array_size;
+
 // CalculateTextureBitsValue
 
 // MapSawToTriangle
@@ -135,7 +139,27 @@ void C2_HOOK_FASTCALL KillGroovadelic(int pOwner) {
     }
 }
 
-// KillFunkotronic
+// FUNCTION: CARMA2_HW 0x004771c0
+// FUNCTION: CARMA2_SW 0x00476720
+void C2_HOOK_FASTCALL KillFunkotronic(int pOwner) {
+    int i;
+    tFunkotronic_spec* the_funk;
+
+    if (gFunkotronics_array != NULL) {
+        for (i = 0, the_funk = gFunkotronics_array; i < gFunkotronics_array_size; i++) {
+            if (the_funk[i].owner == pOwner
+                && the_funk[i].matrix_mode != eMove_controlled
+                && the_funk[i].matrix_mode != eMove_absolute
+                && the_funk[i].lighting_animation_type != eMove_controlled
+                && the_funk[i].lighting_animation_type != eMove_absolute
+                && ((the_funk[i].texture_animation_data.frames_info.mode != eMove_controlled
+                        && the_funk[i].texture_animation_data.frames_info.mode != eMove_texturebits)
+                    || the_funk[i].texture_animation_type != eTexture_animation_frames)) {
+                the_funk[i].owner = -999;
+            }
+        }
+    }
+}
 
 // NormaliseDegreeAngle
 
@@ -249,6 +273,20 @@ void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
             the_groove++;
         } while (i < gGroovidelics_array_size);
     }
+}
+
+// FUNCTION: CARMA2_HW 0x0047b210
+// FUNCTION: CARMA2_SW 0x0047a770
+intptr_t C2_HOOK_CDECL DelGrooveRef(br_actor* pActor, void* pArg) {
+    tGroovidelic_spec* the_groove;
+    int i;
+
+    for (i = 0, the_groove = gGroovidelics_array; i < gGroovidelics_array_size; i++, the_groove++) {
+        if (pActor == the_groove->actor) {
+            the_groove->owner = -999;
+        }
+    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0047b250

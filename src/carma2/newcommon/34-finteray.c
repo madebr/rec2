@@ -9,6 +9,9 @@ int gPling_materials = 1;
 // GLOBAL: CARMA2_HW 0x00686190
 br_scalar gNearest_T;
 
+// GLOBAL: CARMA2_HW 0x006861c8
+int gTemp_group;
+
 // GLOBAL: CARMA2_HW 0x006861cc
 br_actor* gNearest_actor;
 
@@ -28,7 +31,56 @@ br_matrix34 gPick_model_to_view__finteray;
 
 // DRVector2AccumulateScale
 
-// PickBoundsTestRay
+// FUNCTION: CARMA2_HW 0x0045cd90
+// FUNCTION: CARMA2_SW 0x0045c7d0
+int C2_HOOK_FASTCALL PickBoundsTestRay_finteray(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far) {
+    int i;
+    br_scalar inverse;
+    br_scalar t;
+
+    for (i = 0; i < 3; i++) {
+        if (pRay_dir->v[i] < -2 * BR_SCALAR_EPSILON) {
+            inverse = pRay_dir->v[i];
+            inverse = -1.f / inverse;
+            t = (pRay_pos->v[i] - pBounds->max.v[i]) * inverse;
+            if (t > BR_SCALAR_MAX) {
+                pT_near = BR_SCALAR_MAX;
+            } else if (t > pT_near) {
+                pT_near = t;
+            }
+            t = (pRay_pos->v[i] - pBounds->min.v[i]) * inverse;
+            if (t < BR_SCALAR_MIN) {
+                pT_far = BR_SCALAR_MIN;
+            } else if (t < pT_far) {
+                pT_far = t;
+            }
+        } else if (pRay_dir->v[i] > 2 * BR_SCALAR_EPSILON) {
+            inverse = pRay_dir->v[i];
+            inverse = -1.f / inverse;
+            t = (pRay_pos->v[i] - pBounds->max.v[i]) * inverse;
+            if (t < BR_SCALAR_MIN) {
+                pT_far = BR_SCALAR_MIN;
+            } else if (t < pT_far) {
+                pT_far = t;
+            }
+            t = (pRay_pos->v[i] - pBounds->min.v[i]) * inverse;
+            if (t > BR_SCALAR_MAX) {
+                pT_near = BR_SCALAR_MAX;
+            } else if (t > pT_near) {
+                pT_near = t;
+            }
+        } else if (pRay_pos->v[i] > pBounds->max.v[i] || pRay_pos->v[i] < pBounds->min.v[i]) {
+            return 0;
+        }
+    }
+    if (pT_near <= pT_far) {
+        *pNew_t_near = pT_near;
+        *pNew_t_far = pT_far;
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -47,7 +99,18 @@ int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vect
 
 // DRModelPick2D
 
-// FindHighestPolyCallBack
+// FUNCTION: CARMA2_HW 0x0045d570
+int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData) {
+
+    if (pT < gNearest_T) {
+        gNearest_T = pT;
+        gNearest_model = pModel;
+        gNearest_actor = pActor;
+        gNearest_face = pF;
+        gNearest_face_group = gTemp_group;
+    }
+    return 0;
+}
 
 // STUB: CARMA2_HW 0x0045cf20
 int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {

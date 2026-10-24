@@ -9,8 +9,8 @@
 
 extern int C2_HOOK_FASTCALL DoVerifyQuit(int pReplace_background);
 
-// DoMainScreen
+extern void C2_HOOK_FASTCALL DoMainScreen(void);
 
-// DoOptionsMenu
+extern void C2_HOOK_FASTCALL DoOptionsMenu(void);
 
 #endif // GUARD_44_MAINMENU_H

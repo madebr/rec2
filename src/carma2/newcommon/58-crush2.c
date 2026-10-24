@@ -1,4 +1,16 @@
 #include "58-crush2.h"
+
+#include "07-structur.h"
+#include "09-funks.h"
+#include "15-displays.h"
+#include "21-mainloop.h"
+#include "30-opponent.h"
+#include "39-oil.h"
+#include "41-utility.h"
+#include "43-pratcam.h"
+#include "globvars.h"
+#include "globvrpb.h"
+
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0074d3b0
@@ -24,7 +36,35 @@ int gTime_per_ped_kill[3];
 
 // CheckLastCar
 
-// KnackerThisCar
+// FUNCTION: CARMA2_HW 0x0043f5f0
+// FUNCTION: CARMA2_SW 0x0043f6d0
+void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
+
+    if (pCar->invulnerable_no_wastage) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_client) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_none && pCar != NULL && pCar->driver == eDriver_local_human) {
+        RaceCompleted(eRace_over_6);
+    }
+    pCar->knackered = 1;
+    QueueWastedMassage(pCar->index);
+    if (gNet_mode == eNet_mode_none && GetCarCount(eVehicle_opponent) != 0 && NumberOfOpponentsLeft() == 0) {
+        if (gCurrent_race.race_spec->race_type == kRaceType_Carma1 || gCurrent_race.race_spec->race_type == kRaceType_Cars) {
+            if (gCurrent_race.race_spec->race_type == kRaceType_Carma1) {
+                NewTextHeadupSlot(4, 0, 5000, -4, GetMiscString(10));
+            }
+            RaceCompleted(eRace_over_2);
+        }
+    }
+    QueueOilSpill(pCar);
+    if (gNet_mode == eNet_mode_none) {
+        KillGroovadelic(pCar->index);
+        KillFunkotronic(pCar->index);
+    }
+}
 
 // ExplodeMeCarUpMeOldMatey
 
@@ -55,7 +95,40 @@ void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar) {
     pCar->pre_car_col_velocity_car_space = pCar->collision_info->velocity_car_space;
 }
 
-// DoPratcamHit
+// FUNCTION: CARMA2_HW 0x0043faa0
+// FUNCTION: CARMA2_SW 0x0043fb80
+void C2_HOOK_FASTCALL DoPratcamHit(br_vector3* pVelocity) {
+    br_scalar magnitude_squared;
+    br_scalar abs_x;
+    br_scalar abs_z;
+    int offset;
+
+    magnitude_squared = BrVector3LengthSquared(pVelocity);
+    offset = 0;
+    if (magnitude_squared > 0.2f) {
+        offset = 8;
+    } else if (magnitude_squared > 0.015f) {
+        offset = 4;
+    } else if (magnitude_squared < 0.001f) {
+        return;
+    }
+
+    abs_x = (br_scalar)fabs(pVelocity->v[0]);
+    abs_z = (br_scalar)fabs(pVelocity->v[2]);
+    if (abs_x > abs_z) {
+        if (pVelocity->v[0] < 0.f) {
+            PratcamEvent(offset + 16);
+        } else {
+            PratcamEvent(offset + 15);
+        }
+    } else {
+        if (pVelocity->v[2] < 0.f) {
+            PratcamEvent(offset + 13);
+        } else {
+            PratcamEvent(offset + 14);
+        }
+    }
+}
 
 // DamageSystems
 
@@ -70,13 +143,45 @@ void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
     }
 }
 
-// SortOutSmoke
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// DoCrashEarnings
+// STUB: CARMA2_HW 0x00440230
+// STUB: CARMA2_SW 0x00440310
+void C2_HOOK_FASTCALL SortOutSmoke(tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00440660
+// STUB: CARMA2_SW 0x00440740
+int C2_HOOK_FASTCALL DoCrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // DoWheelDamage
 
-// CrashEarnings
+// FUNCTION: CARMA2_HW 0x00440640
+// FUNCTION: CARMA2_SW 0x00440720
+void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
+
+    if (DoCrashEarnings(pCar1, pCar2)) {
+        SortOutSmoke(pCar1);
+        SortOutSmoke(pCar2);
+    }
+}
 
 // PercentageCarHealth
 

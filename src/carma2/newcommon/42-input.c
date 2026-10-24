@@ -598,6 +598,26 @@ void C2_HOOK_FASTCALL StartTyping(int pSlot_index, char* pText, int pVisible_len
     gCurrent_cursor = ChangeCharTo(pSlot_index, gCurrent_position, ROLLING_LETTER_LOOP_RANDOM);
 }
 
+// FUNCTION: CARMA2_HW 0x00484590
+// FUNCTION: CARMA2_SW 0x004816d0
+void C2_HOOK_FASTCALL KillCursor(int pSlot_index) {
+    int x_coord;
+    int y_coord;
+    int j;
+    tRolling_letter* let;
+
+    if (gCurrent_position < gVisible_length && gCurrent_position >= 0) {
+        y_coord = gLetter_y_coords[pSlot_index];
+        x_coord = gCurrent_graf_data->rolling_letter_x_pitch * gCurrent_position + gLetter_x_coords[pSlot_index];
+        for (let = gRolling_letters, j = 0; j < NBR_ROLLING_LETTERS; j++, let++) {
+            if (let->number_of_letters >= 0 && x_coord == let->x_coord && y_coord == let->y_coord) {
+                gRolling_letters[j].number_of_letters = -1;
+                break;
+            }
+        }
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00484600
 // FUNCTION: CARMA2_SW 0x00481740
 void C2_HOOK_FASTCALL EdgeTriggerModeOn(void) {

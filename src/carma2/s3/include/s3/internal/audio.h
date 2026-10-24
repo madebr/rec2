@@ -132,6 +132,10 @@ extern int C2_HOOK_FASTCALL S3MIDILoadSong2(tS3_channel* pChannel);
 
 extern tS3_error_codes C2_HOOK_FASTCALL S3MIDILoadSong(tS3_channel* pChannel);
 
+extern void C2_HOOK_FASTCALL S3ReverseSample(tS3_effect_tag pEffect, tS3_sound_tag pTag);
+
+extern int C2_HOOK_FASTCALL S3SetSampleFilterCallbacks(tS3_sample_filter pEnable, tS3_sample_filter pDisable);
+
 extern int C2_HOOK_FASTCALL S3ExecuteSampleFilterFuncs(tS3_channel* pChannel);
 
 extern tS3_error_codes C2_HOOK_FASTCALL S3PlayMIDI(tS3_channel* pChannel);

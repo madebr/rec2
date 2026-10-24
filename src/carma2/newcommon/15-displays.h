@@ -51,7 +51,7 @@ extern void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
 extern void C2_HOOK_FASTCALL ClearHeadups(void);
 
-// DimAFewBits
+extern void C2_HOOK_FASTCALL DimAFewBits(void);
 
 // KillOldestQueuedHeadup
 
@@ -61,7 +61,7 @@ extern void C2_HOOK_FASTCALL DoPSPowerupHeadups(void);
 
 // DoHeadups
 
-// FindAHeadupHoleWoofBarkSoundsABitRude
+extern int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index);
 
 // IsHeadupTextClever
 
@@ -79,15 +79,17 @@ extern void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pNew_x, int pNe
 
 extern void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text);
 
+extern void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont);
+
 extern void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
 
 // DoInstruments
 
 // ChangingView
 
-// EarnCredits2
+extern void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text);
 
-// EarnCredits
+extern void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
 // EarnCredits100
 

@@ -5,6 +5,11 @@
 #include "08-loading1.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "rec2_macros.h"
+
+// GLOBAL: CARMA2_HW 0x0065a3c4
+// GLOBAL: CARMA2_SW 0x00654cdc
+int gBIG_APC_index = -1;
 
 // GLOBAL: CARMA2_HW 0x0065a3cc
 float gOpponent_nastyness_frigger = 1.0f;
@@ -18,6 +23,10 @@ int gMaxTimeOpponentRepair;
 // GLOBAL: CARMA2_HW 0x00691744
 // GLOBAL: CARMA2_SW 0x0068b79c
 int gNumber_of_cops_before_faffage;
+
+// GLOBAL: CARMA2_HW 0x0069175c
+// GLOBAL: CARMA2_SW 0x0068b7b4
+tU8* gBit_per_node;
 
 // FUNCTION: CARMA2_HW 0x004a8160
 void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
@@ -58,7 +67,24 @@ void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 // AllowForDecel
 
-// ShiftOpponentsProjectedRoute
+// FUNCTION: CARMA2_HW 0x004ab100
+// FUNCTION: CARMA2_SW 0x004a7270
+int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pOpponent_spec->next_sections) != 12);
+
+    if (pOpponent_spec->nnext_sections > pPlaces) {
+        for (i = 0; i < (int)REC2_ASIZE(pOpponent_spec->next_sections) - pPlaces; i++) {
+            pOpponent_spec->next_sections[i].section_no = pOpponent_spec->next_sections[pPlaces + i].section_no;
+            pOpponent_spec->next_sections[i].direction = pOpponent_spec->next_sections[pPlaces + i].direction;
+        }
+        pOpponent_spec->nnext_sections -= pPlaces;
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // NewCalcGetNearPlayerRoute
 
@@ -86,7 +112,21 @@ void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 // ProcessRunAway
 
-// ProcessWaitForSomeHaplessSod
+// FUNCTION: CARMA2_HW 0x004abc00
+// FUNCTION: CARMA2_SW 0x004a7d70
+void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+
+    switch (pCommand) {
+    case ePOC_start:
+        pOpponent_spec->car_spec->brake_force = 15.f * pOpponent_spec->car_spec->collision_info->M;
+        return;
+    case ePOC_run:
+        pOpponent_spec->car_spec->brake_force = 15.f * pOpponent_spec->car_spec->collision_info->M;
+        return;
+    case ePOC_die:
+        return;
+    }
+}
 
 // ProcessReturnToStart
 
@@ -139,7 +179,14 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
 
 // TeleportCopToStart
 
-// CalcDistanceFromHome
+// FUNCTION: CARMA2_HW 0x004ada90
+// FUNCTION: CARMA2_SW 0x004a9c00
+void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec) {
+    br_vector3 wank;
+
+    BrVector3Sub(&wank, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &pOpponent_spec->start_pos);
+    pOpponent_spec->distance_from_home = BrVector3Length(&wank);
+}
 
 // MassageOpponentPosition
 
@@ -166,13 +213,43 @@ void C2_HOOK_FASTCALL LoadCopCars(void) {
 
 // LoadInOppoPaths
 
-// DisposeOpponentPaths
+// FUNCTION: CARMA2_HW 0x004a9c50
+// FUNCTION: CARMA2_SW 0x004a5dc0
+void C2_HOOK_FASTCALL DisposeOpponentPaths(void) {
+
+    if (gProgram_state.AI_vehicles.path_nodes != NULL) {
+        BrMemFree(gProgram_state.AI_vehicles.path_nodes);
+    }
+    if (gProgram_state.AI_vehicles.path_sections != NULL) {
+        BrMemFree(gProgram_state.AI_vehicles.path_sections);
+    }
+    if (gBit_per_node != NULL) {
+        BrMemFree(gBit_per_node);
+    }
+
+    gProgram_state.AI_vehicles.number_of_path_nodes = 0;
+    gProgram_state.AI_vehicles.number_of_path_sections = 0;
+    gProgram_state.AI_vehicles.path_nodes = NULL;
+    gProgram_state.AI_vehicles.path_sections = NULL;
+    gBit_per_node = NULL;
+}
 
 // MungeOpponents
 
 // InitOpponents
 
-// DisposeOpponents
+// FUNCTION: CARMA2_HW 0x004ae5d0
+// FUNCTION: CARMA2_SW 0x004aa740
+void C2_HOOK_FASTCALL DisposeOpponents(void) {
+    int i;
+
+    if (gProgram_state.AI_vehicles.number_of_cops != 0) {
+        for (i = 0; i < gProgram_state.AI_vehicles.number_of_cops; i++) {
+            DisposeCar(gProgram_state.AI_vehicles.cops[i].car_spec, (i == gBIG_APC_index) ? 99 : 98);
+            BrMemFree(gProgram_state.AI_vehicles.cops[i].car_spec);
+        }
+    }
+}
 
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 

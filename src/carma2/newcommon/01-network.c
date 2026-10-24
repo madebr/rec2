@@ -260,7 +260,14 @@ void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
 
 // NetDisposePIDGameInfo
 
-// NetDisposeGameDetails
+// FUNCTION: CARMA2_HW 0x0049dc80
+// FUNCTION: CARMA2_SW 0x00499e00
+void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails) {
+
+    if (pDetails != NULL) {
+        BrMemFree(pDetails);
+    }
+}
 
 tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void) {
 
@@ -357,7 +364,11 @@ tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2
     return NULL;
 }
 
-// NetBuildGuaranteedMessage
+// STUB: CARMA2_HW 0x0049f680
+// STUB: CARMA2_SW 0x0049b800
+tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption) {
+    NOT_IMPLEMENTED();
+}
 
 // NetGetToPlayerContentsSize
 
@@ -556,7 +567,11 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
 
 // NetGuaranteedSendMessageToEverybody
 
-// NetGuaranteedSendMessageToHost
+// STUB: CARMA2_HW 0x004a5c80
+// STUB: CARMA2_SW 0x004a1e00
+void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
+    NOT_IMPLEMENTED();
+}
 
 // AddToGuaranteeList
 
@@ -571,11 +586,38 @@ void C2_HOOK_FASTCALL ResendGuaranteedMessages(void) {
 
 // NetWaitForGuaranteeReplies
 
-// NetPlayerFromID
+// FUNCTION: CARMA2_HW 0x004a6920
+// FUNCTION: CARMA2_SW 0x004a2aa0
+tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromID(tPlayer_ID pPlayer) {
+    int i;
 
-// NetCarFromPlayerID
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].ID == pPlayer) {
+            return &gNet_players[i];
+        }
+    }
+    return NULL;
+}
 
-// NetPlayerFromCar
+// STUB: CARMA2_HW 0x004a6960
+// STUB: CARMA2_SW 0x004a2ae0
+tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer) {
+
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004a69b0
+// FUNCTION: CARMA2_SW 0x004a2b30
+tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].car == pCar) {
+            return &gNet_players[i];
+        }
+    }
+    return NULL;
+}
 
 // GetCheckSum
 

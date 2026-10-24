@@ -6,7 +6,7 @@
 
 // SendShapeNumbers
 
-// ClearShapeStatusFlag
+extern void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, int pPlayer_id);
 
 // SendNonCar
 
@@ -54,7 +54,7 @@ extern void C2_HOOK_FASTCALL ReceivedCopInfo(void);
 
 // RepositionPlayer
 
-// DisableCar
+extern void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar);
 
 // EnableCar
 
@@ -70,9 +70,9 @@ extern void C2_HOOK_FASTCALL ReceivedCopInfo(void);
 
 // DrawScoreBoxes
 
-// DoNetScores2
+extern void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores);
 
-// DoNetScores
+extern void C2_HOOK_FASTCALL DoNetScores(void);
 
 extern void C2_HOOK_FASTCALL InitNetHeadups(void);
 
@@ -122,7 +122,7 @@ extern void C2_HOOK_FASTCALL InitNetGameplayStuff(void);
 
 extern void C2_HOOK_FASTCALL DefaultNetName(void);
 
-// AddPlayerToShapeStatusLists
+extern void C2_HOOK_FASTCALL AddPlayerToShapeStatusLists(int pPlayer_id, int pCount, tNet_game_player_info* pPlayers);
 
 // RemovePlayerFromShapeStatusLists
 

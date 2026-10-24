@@ -59,15 +59,79 @@ int gColumn_flags;
 // GLOBAL: CARMA2_SW 0x006ae560
 br_material* gBlack_material;
 
+// GLOBAL: CARMA2_HW 0x006a8718
+br_matrix4 gCameraToScreen;
+
+// GLOBAL: CARMA2_HW 0x006a82b0
+br_camera* gSpark_cam;
+
 // DrawDot
 
 // SetWorldToScreen
 
 // DrawLine3DThroughBRender
 
-// DrawLine3D
+// FUNCTION: CARMA2_HW 0x004f6b80
+int C2_HOOK_FASTCALL DrawLine3D(const br_vector3* pStart, const br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_pixelmap* pShade) {
+    br_vector3 start;
+    br_vector3 end;
+    br_vector4 projected_start;
+    br_vector4 projected_end;
+    br_scalar fraction;
 
-// DrawLine2D
+    if (gNo_2d_effects) {
+        BrVector3Copy(&gLine_model->vertices[0].p, pStart);
+        BrVector3Copy(&gLine_model->vertices[1].p, pEnd);
+        BrModelUpdate(gLine_model, BR_MODU_VERTEX_POSITIONS);
+        BrZbsSceneRenderAdd(gLine_actor);
+        return 999;
+    }
+    BrVector3Copy(&start, pStart);
+    BrVector3Copy(&end, pEnd);
+    if (start.v[2] > -gSpark_cam->hither_z || end.v[2] > -gSpark_cam->hither_z) {
+        if (start.v[2] > -gSpark_cam->hither_z && end.v[2] > -gSpark_cam->hither_z) {
+            return 0;
+        }
+        fraction = (end.v[2] + gSpark_cam->hither_z) / (end.v[2] - start.v[2]);
+        if (start.v[2] > -gSpark_cam->hither_z) {
+            BrVector3Set(&start,
+                end.v[0] - (end.v[0] - start.v[0]) * fraction,
+                end.v[1] - (end.v[1] - start.v[1]) * fraction,
+                -gSpark_cam->hither_z);
+        }
+        if (end.v[2] > -gSpark_cam->hither_z) {
+            BrVector3Set(&end,
+                end.v[0] - (end.v[0] - start.v[0]) * fraction,
+                end.v[1] - (end.v[1] - start.v[1]) * fraction,
+                -gSpark_cam->hither_z);
+        }
+    }
+    BrMatrix4ApplyP(&projected_start, &start, &gCameraToScreen);
+    BrMatrix4ApplyP(&projected_end, &end, &gCameraToScreen);
+    BrVector3Set(&start,
+        projected_start.v[0] / projected_start.v[3],
+        projected_start.v[1] / projected_start.v[3],
+        projected_start.v[2] / projected_start.v[3]);
+    BrVector3Set(&end,
+        projected_end.v[0] / projected_end.v[3],
+        projected_end.v[1] / projected_end.v[3],
+        projected_end.v[2] / projected_end.v[3]);
+    return DrawLine2D(&start, &end, pScreen, pDepth, 1.f, pShade);
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004f6de0
+// STUB: CARMA2_SW 0x004f2690
+int C2_HOOK_FASTCALL DrawLine2D(br_vector3* pStart, br_vector3* pEnd, br_pixelmap* pScreen, br_pixelmap* pDepth, br_scalar pBrightness, br_pixelmap* pShade) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004f7cb0
 void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {
@@ -180,7 +244,18 @@ int C2_HOOK_FASTCALL ResetFoxLighting(br_material* pMaterial) {
 
 // SetupAlternateFoxEffect
 
-// RestorePixelmap
+// FUNCTION: CARMA2_HW 0x004f9760
+// FUNCTION: CARMA2_SW 0x004f4de0
+int C2_HOOK_FASTCALL RestorePixelmap(br_material* pMaterial) {
+
+    if (pMaterial->colour_map != pMaterial->user) {
+        pMaterial->colour_map = pMaterial->user;
+        BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // STUB: CARMA2_HW 0x004f9620
 void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
@@ -277,7 +352,27 @@ void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_sc
 
 // ActorError
 
-// AdjustSmokeColumn
+// FUNCTION: CARMA2_HW 0x004fb580
+// FUNCTION: CARMA2_SW 0x004f6ac0
+void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour) {
+    tU32 bit;
+
+    bit = 1 << pIndex;
+    gColumn_flags ^= bit;
+    gSmoke_column[pIndex].core = *pCore;
+    gSmoke_column[pIndex].vertex_index = pVertex;
+    gSmoke_column[pIndex].colour = pColour;
+    gSmoke_column[pIndex].frame_count[0] = 100;
+    gSmoke_column[pIndex].frame_count[1] = 100;
+    gSmoke_column[pIndex].frame_count[2] = 100;
+    if (pColour == 0) {
+        if ((gColumn_flags & bit) != 0) {
+            BrActorAdd(gNon_track_actor, gSmoke_column[pIndex].flame_actor);
+        } else if (gSmoke_column[pIndex].flame_actor->depth != 0) {
+            BrActorRemove(gSmoke_column[pIndex].flame_actor);
+        }
+    }
+}
 
 // CreateSmokeColumn2
 
@@ -332,7 +427,20 @@ void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
     }
 }
 
-// AdjustFlame
+// FUNCTION: CARMA2_HW 0x004fba00
+// FUNCTION: CARMA2_SW 0x004f6f60
+void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z) {
+    int i;
+    tSmoke_column* col;
+
+    i = pIndex & 0xf;
+    col = &gSmoke_column[(pIndex & ~0xf) >> 4];
+    col->frame_count[i] = pFrame_count;
+    col->scale_x[i] = pScale_x;
+    col->scale_y[i] = pScale_y;
+    col->offset_x[i] = pOffset_x;
+    col->offset_z[i] = pOffset_z;
+}
 
 // ReplayFlame
 
@@ -507,7 +615,19 @@ void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 
 // ForEveryActorMaterialNoGrooves
 
-// ForEveryCarMaterial
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004fe640
+// STUB: CARMA2_SW 0x004f9f20
+void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // ForEveryCarModelCB
 
@@ -515,18 +635,28 @@ void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 
 // MightBlendifyMaterial
 
-// BlendifyMaterialCB
-
-// STUB: CARMA2_HW 0x004fecf0
-void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar) {
+// STUB: CARMA2_HW 0x004fed00
+// STUB: CARMA2_SW 0x004fa5e0
+int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial) {
     NOT_IMPLEMENTED();
 }
 
-// UnBlendifyMaterialCB
+// FUNCTION: CARMA2_HW 0x004fecf0
+// FUNCTION: CARMA2_SW 0x004fa5d0
+void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar) {
+    ForEveryCarMaterial(pCar, BlendifyMaterialCB, 1);
+}
 
-// STUB: CARMA2_HW 0x004fed40
-void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
+// STUB: CARMA2_HW 0x004fed50
+// STUB: CARMA2_SW 0x004fa630
+int C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial) {
     NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004fed40
+// FUNCTION: CARMA2_SW 0x004fa620
+void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
+    ForEveryCarMaterial(pCar_spec, UnBlendifyMaterialCB, 1);
 }
 
 // IsCarSmoking

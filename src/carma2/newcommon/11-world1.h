@@ -4,7 +4,10 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-// DeleteBastards
+extern int gDelete_count;
+extern br_actor* gDelete_list[500];
+
+extern br_uint_32 C2_HOOK_FASTCALL DeleteBastards(br_actor* pActor, br_matrix34* pMatrix, void* pArg);
 
 // DeleteAnyZeroBastards
 

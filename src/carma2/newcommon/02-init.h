@@ -26,13 +26,13 @@ extern void C2_HOOK_FASTCALL AllocateActors(void);
 
 extern void C2_HOOK_FASTCALL AllocateCamera(void);
 
-// ReinitialiseForwardCamera
+extern void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void);
 
 extern void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void);
 
-// ReinitialiseRearviewCamera
+extern void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void);
 
-// ReinitialiseRenderStuff
+extern void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void);
 
 extern void C2_HOOK_FASTCALL InstallFindFailedHooks(void);
 

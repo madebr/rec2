@@ -2,6 +2,7 @@
 
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "18-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "41-utility.h"
@@ -11,6 +12,7 @@
 #include "63-loading3.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 #include <limits.h>
@@ -101,6 +103,22 @@ float gFLOAT_0074ab9c;
 // GLOBAL: CARMA2_HW 0x0074abb8
 float gFLOAT_0074abb8;
 
+// GLOBAL: CARMA2_HW 0x0074abbc
+// GLOBAL: CARMA2_SW 0x00741268
+int gMap_render_y_i;
+
+// GLOBAL: CARMA2_HW 0x0074abc0
+// GLOBAL: CARMA2_SW 0x0074126c
+int gMap_render_x_i;
+
+// GLOBAL: CARMA2_HW 0x0074abc8
+// GLOBAL: CARMA2_SW 0x00741274
+int gMap_render_height_i;
+
+// GLOBAL: CARMA2_HW 0x0074abe8
+// GLOBAL: CARMA2_SW 0x00741294
+int gMap_render_width_i;
+
 // GLOBAL: CARMA2_HW 0x0068d6e4
 br_pixelmap* gCheckpoint_numbers;
 
@@ -109,6 +127,18 @@ br_pixelmap* gSmashy_dot;
 
 // GLOBAL: CARMA2_HW 0x0068c87c
 br_pixelmap* gAlt_meter;
+
+// GLOBAL: CARMA2_HW 0x0068c880
+// GLOBAL: CARMA2_SW 0x006868d8
+br_matrix23 gMatrix23_0068c880;
+
+// GLOBAL: CARMA2_HW 0x0068c868
+// GLOBAL: CARMA2_SW 0x006868c0
+br_vector3 gOrigin_map;
+
+// GLOBAL: CARMA2_HW 0x0068d898
+// GLOBAL: CARMA2_SW 0x006878f0
+br_vector2 gOrigin_headup_map;
 
 // GLOBAL: CARMA2_HW 0x0068c860
 int gCheckpoint_digit_height;
@@ -136,7 +166,13 @@ tSmashable_race_target gSmashable_race_targets[300];
 
 // CycleMapOptions
 
-// ToggleMapTransparency
+// FUNCTION: CARMA2_HW 0x00494880
+// FUNCTION: CARMA2_SW 0x00491b80
+void C2_HOOK_FASTCALL ToggleMapTransparency(void) {
+
+    gMap_trans = !gMap_trans;
+    SaveOptions();
+}
 
 // FUNCTION: CARMA2_HW 0x004948a0
 void C2_HOOK_FASTCALL InitTargetLock(void) {
@@ -144,7 +180,16 @@ void C2_HOOK_FASTCALL InitTargetLock(void) {
     gTarget_lock_enabled = 0;
 }
 
-// SetIntegerMapRenders
+// FUNCTION: CARMA2_HW 0x004948b0
+void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
+
+    gMap_render_width = 128.f;
+    gMap_render_height = 80.f;
+    gMap_render_x_i = ((int)gMap_render_x) & ~0x3;
+    gMap_render_y_i = ((int)gMap_render_y) & ~0x1;
+    gMap_render_width_i = (int)gMap_render_width;
+    gMap_render_height_i = (int)gMap_render_height;
+}
 
 // OppositeColour
 
@@ -160,11 +205,67 @@ void C2_HOOK_FASTCALL InitTargetLock(void) {
 
 // DrawCarArrow
 
-// DoSomeThingsToCheckpoints
+// FUNCTION: CARMA2_HW 0x00495ba0
+void C2_HOOK_FASTCALL DoSomeThingsToCheckpoints(br_pixelmap* pMap, tU32 pTime, tDoSomethingsToCheckpoints_cbfn* pCallback, int pDraw_prev) {
+    int i;
+    int checkpoint;
+    int checkpoints[10];
+    int checkpoint_flags;
+
+    C2_HOOK_ASSERT(gCurrent_race.check_point_count <= REC2_ASIZE(checkpoints));
+    for (i = 0; i < gCurrent_race.check_point_count; i++) {
+        checkpoints[i] = 0;
+    }
+    if (gNet_mode != eNet_mode_none) {
+        if (gCurrent_net_game->type == eNet_game_type_checkpoint) {
+            checkpoint_flags = gNet_players[gThis_net_player_index].score2;
+            for (i = 0; i < gCurrent_race.check_point_count; i++) {
+                if (checkpoint_flags & 0x1) {
+                    pCallback(pMap, i, pTime, 1);
+                    checkpoints[i] = 1;
+                }
+                checkpoint_flags >>= 1;
+            }
+        } else if (gCurrent_net_game->type == eNet_game_type_5 || gCurrent_net_game->type == eNet_game_type_4) {
+            if (gNet_players[gThis_net_player_index].score2 >= 0) {
+                checkpoint = gNet_players[gThis_net_player_index].score2 % gCurrent_race.check_point_count;
+                pCallback(pMap, checkpoint, pTime, 1);
+                checkpoints[checkpoint] = 1;
+            }
+        }
+    } else {
+        pCallback(pMap, gCheckpoint - 1, pTime, 1);
+        checkpoints[gCheckpoint - 1] = 1;
+    }
+    if (pDraw_prev) {
+        if (gNet_mode == eNet_mode_none
+                || gCurrent_net_game->type == eNet_game_type_checkpoint
+                || gCurrent_net_game->type == eNet_game_type_4
+                || gCurrent_net_game->type == eNet_game_type_5) {
+            for (i = 0; i < gCurrent_race.check_point_count; i++) {
+                if (!checkpoints[i]) {
+                    pCallback(pMap, i, pTime, 0);
+                }
+            }
+        }
+    }
+}
 
 // CalcMapCheckpoint
 
-// CalcMapCheckpoint2
+// FUNCTION: CARMA2_HW 0x00496940
+void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    br_vector3 pos_mapspace;
+    br_vector2 p;
+    tRace_checkpoint_spec* checkpoint;
+
+    checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
+    BrMatrix34ApplyP(&pos_mapspace, &checkpoint->pos, &gCurrent_race.map_transformation);
+    BrVector2Set(&p, pos_mapspace.v[0] - gOrigin_map.v[0] + gOrigin_headup_map.v[0], pos_mapspace.v[1] - gOrigin_map.v[1] + gOrigin_headup_map.v[1]);
+    BrMatrix23TApplyV(&checkpoint->map_position, &p, &gMatrix23_0068c880);
+    checkpoint->map_position.v[0] += (float)gINT_0074abd4;
+    checkpoint->map_position.v[1] += (float)gINT_0074abd0;
+}
 
 // DrawCheckpoint
 
@@ -176,7 +277,26 @@ void C2_HOOK_FASTCALL InitTargetLock(void) {
 
 // FinishMap
 
-// CheckpointLine
+// FUNCTION: CARMA2_HW 0x00496b10
+void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    int p2_x;
+    int p2_y;
+    tRace_checkpoint_spec* checkpoint;
+
+    if (pCheckpoint >= 0 && pCheckpoint < gCurrent_race.check_point_count) {
+        checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
+        if (checkpoint->map_position.v[0] < 0.f) {
+            p2_x = 8;
+            p2_y = (int)((checkpoint->map_position.v[1] - (float)gINT_0074abd0)
+                * ((float)gINT_0074abd4 / ((float)gINT_0074abd4 - checkpoint->map_position.v[0]))
+                + (float)gINT_0074abd0);
+        } else {
+            p2_x = (int)(checkpoint->map_position.v[0] + 8.f);
+            p2_y = (int)checkpoint->map_position.v[1];
+        }
+        FancyDrawLine(pMap, gINT_0074abd4 + 8, gINT_0074abd0, p2_x, p2_y, 132, 100);
+    }
+}
 
 // DoDirectionFinderStuff
 

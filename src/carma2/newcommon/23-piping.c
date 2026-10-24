@@ -1,13 +1,21 @@
 #include "23-piping.h"
 
+#include "00-car.h"
+#include "16-graphics1.h"
 #include "51-smash.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "platform.h"
 
+#include <s3/internal/audio.h>
+
 #include <stddef.h>
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
+
+// GLOBAL: CARMA2_HW 0x006768c0
+// GLOBAL: CARMA2_SW 0x00671030
+int gPlay_direction;
 
 // GLOBAL: CARMA2_HW 0x00676900
 // GLOBAL: CARMA2_SW 0x00671070
@@ -16,6 +24,10 @@ float gReplay_rate;
 // GLOBAL: CARMA2_HW 0x006768e8
 // GLOBAL: CARMA2_SW 0x00671058
 const tReplay_callback* gPipe_callbacks;
+
+// GLOBAL: CARMA2_HW 0x006768b8
+// GLOBAL: CARMA2_SW 0x00671028
+tU8* gPipe_play_ptr;
 
 // ARReplayForwards
 
@@ -38,9 +50,17 @@ void C2_HOOK_FASTCALL ARSetReplayRate(float pRate) {
     gReplay_rate = pRate;
 }
 
-// ARGetReplayDirection
+// FUNCTION: CARMA2_HW 0x004023b0
+// FUNCTION: CARMA2_SW 0x004023b0
+int C2_HOOK_FASTCALL ARGetReplayDirection(void) {
+    return gPlay_direction;
+}
 
-// ARSetReplayDirection
+// FUNCTION: CARMA2_HW 0x004023c0
+// FUNCTION: CARMA2_SW 0x004023c0
+void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection) {
+    gPlay_direction = (int)pDirection;
+}
 
 // ARResetPiping
 
@@ -79,9 +99,26 @@ int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType) {
 
 // ARStartPipingSession
 
-// EndPipingSession2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// AREndPipingSession
+// STUB: CARMA2_HW 0x00402660
+// STUB: CARMA2_SW 0x00402660
+void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00402890
+// FUNCTION: CARMA2_SW 0x00402890
+void C2_HOOK_FASTCALL AREndPipingSession(void) {
+
+    EndPipingSession2(1);
+}
 
 // ARAddDataToSession
 
@@ -99,9 +136,17 @@ void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCou
 
 // ARResetPipePlayToEnd
 
-// ARGetPipePlayPtr
+// FUNCTION: CARMA2_HW 0x00402df0
+// FUNCTION: CARMA2_SW 0x00402df0
+tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void) {
+    return gPipe_play_ptr;
+}
 
-// ARSetPipePlayPtr
+// FUNCTION: CARMA2_HW 0x00402e00
+// FUNCTION: CARMA2_SW 0x00402e00
+void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
+    gPipe_play_ptr = pPtr;
+}
 
 // ApplyPipedSession
 
@@ -137,9 +182,17 @@ void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCou
 
 // ARDoActionReplay
 
-// ReverseSound
+// FUNCTION: CARMA2_HW 0x00403d10
+// FUNCTION: CARMA2_SW 0x00403d10
+void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag pTag) {
+    S3ReverseSample(pEffect, pTag);
+}
 
-// ARGoBackwards
+// FUNCTION: CARMA2_HW 0x00403d00
+// FUNCTION: CARMA2_SW 0x00403d00
+int C2_HOOK_FASTCALL ARGoBackwards(void) {
+    return S3SetSampleFilterCallbacks(ReverseSound, ReverseSound);
+}
 
 // ARGoForwards
 
@@ -413,7 +466,14 @@ void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_mate
 
 // PipeSinglePedModelChange
 
-// PipeSinglePHILObject
+// FUNCTION: CARMA2_HW 0x004c8cc0
+// FUNCTION: CARMA2_SW 0x004c53f0
+void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* pObject) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_phil_object, matrix, 0x30);
+
+    ARDoSingleVariedSession(ePipe_chunk_phil_object, (uintptr_t)pObject, 1,
+        SIZE_OFFSET_PIPING(tPipe_phil_object, matrix), &pObject->actor->t.t.mat);
+}
 
 // PipeSingleGibShower
 
@@ -487,11 +547,24 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyShrapnel
 
-// ApplyScreenWobble
+// FUNCTION: CARMA2_HW 0x004c9180
+// FUNCTION: CARMA2_SW 0x004c58b0
+void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_screen_wobble, wobble_y, 0x1);
+
+    SetScreenWobble(((tPipe_chunk_screen_wobble*)(*pChunk)->data.raw_data)->wobble_x,
+        ((tPipe_chunk_screen_wobble*)(*pChunk)->data.raw_data)->wobble_y);
+}
 
 // ApplyGrooveStop
 
-// ApplyNonCar
+// FUNCTION: CARMA2_HW 0x004c91b0
+// FUNCTION: CARMA2_SW 0x004c58e0
+void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
+
+    AdjustNonCar((*pChunk)->data.non_car.actor, &(*pChunk)->data.non_car.matrix);
+}
 
 // ApplySmoke
 
@@ -527,7 +600,16 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyRelink
 
-// ApplyIdentity
+// FUNCTION: CARMA2_HW 0x004c9890
+// FUNCTION: CARMA2_SW 0x004c5fc0
+void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    chunk = *pChunk;
+    BrMatrix34Identity(&chunk->data.identity.actor->t.t.mat);
+}
 
 // ApplySplitWeld
 
@@ -535,7 +617,10 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk) {
 }
 
-// ApplyUnBend
+// FUNCTION: CARMA2_HW 0x004c9940
+// FUNCTION: CARMA2_SW 0x004c6070
+void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk) {
+}
 
 // ApplyEndMyBend
 
@@ -561,7 +646,14 @@ void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
 
 // ApplySmashRemoveFaces
 
-// ApplySmashDecal
+// FUNCTION: CARMA2_HW 0x004c9a20
+// FUNCTION: CARMA2_SW 0x004c6150
+void C2_HOOK_FASTCALL ApplySmashDecal(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    chunk = *pChunk;
+    TurnOnSmashDecal(chunk->subject_index);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9a30
 void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
@@ -688,9 +780,31 @@ void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pP
 
 // UndoSmashRemoveFaces
 
-// UndoSmashDecal
+// FUNCTION: CARMA2_HW 0x004ca150
+// FUNCTION: CARMA2_SW 0x004c6880
+void C2_HOOK_FASTCALL UndoSmashDecal(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
 
-// UndoSmashTextureChange
+    (void)pPrev_chunk;
+    chunk = *pChunk;
+    TurnOffSmashDecal(chunk->subject_index);
+}
+
+// FUNCTION: CARMA2_HW 0x004ca160
+// FUNCTION: CARMA2_SW 0x004c6890
+void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smash_texture_change, texture1, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smash_texture_change, texture2, 0xc);
+
+    (void)pPrev_chunk;
+    chunk = *pChunk;
+    ChangeSmashTexture((br_material*)chunk->subject_index,
+        chunk->data.smash_texture_change.car_spec,
+        chunk->data.smash_texture_change.texture2,
+        chunk->data.smash_texture_change.texture1);
+}
 
 // UndoActorTrans
 

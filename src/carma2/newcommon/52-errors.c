@@ -245,6 +245,28 @@ void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     PDFatalError(the_str);
 }
 
+// FUNCTION: CARMA2_HW 0x0044c460
+// FUNCTION: CARMA2_SW 0x0044c210
+void C2_HOOK_CDECL NonFatalError(int pStr_index, ...) {
+    char the_str[256];
+    char* sub_str;
+    char temp_str[256];
+    char* sub_pt;
+    va_list ap;
+
+    strcpy(the_str, gError_messages[pStr_index]);
+    va_start(ap, pStr_index);
+    while ((sub_pt = strchr(the_str, '%')) != NULL) {
+        sub_str = va_arg(ap, char*);
+        StripCRNL(sub_str);
+        strcpy(temp_str, sub_pt + 1);
+        strcpy(sub_pt, sub_str);
+        strcat(the_str, temp_str);
+    }
+    va_end(ap);
+    PDNonFatalError(the_str);
+}
+
 // FUNCTION: CARMA2_HW 0x0044c570
 // FUNCTION: CARMA2_SW 0x0044c320
 void C2_HOOK_FASTCALL CloseDiagnostics(void) {

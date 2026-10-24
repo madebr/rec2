@@ -11,6 +11,7 @@ extern tGroovidelic_spec* gGroovidelics_array;
 extern int gGroovidelics_array_size;
 extern tU32 gPrevious_groove_times[2];
 extern tGroove_funk_binding gGroove_funk_bindings[1440];
+extern int gFunkotronics_array_size;
 
 // CalculateTextureBitsValue
 
@@ -48,7 +49,7 @@ extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
 extern void C2_HOOK_FASTCALL KillGroovadelic(int pOwner);
 
-// KillFunkotronic
+extern void C2_HOOK_FASTCALL KillFunkotronic(int pOwner);
 
 // NormaliseDegreeAngle
 
@@ -71,6 +72,8 @@ extern void C2_HOOK_FASTCALL EnableGroovidelic(br_actor* pActor, tU32 pBlock_fla
 extern void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* pMatrix, tInterrupt_status pPath_interrupt_status, tInterrupt_status pObject_interrupt_status, float pPath_resumption_value, float pObject_resumption_value);
 
 extern void C2_HOOK_FASTCALL ResetGrooveFlags(void);
+
+extern intptr_t C2_HOOK_CDECL DelGrooveRef(br_actor* pActor, void* pArg);
 
 extern void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex);
 

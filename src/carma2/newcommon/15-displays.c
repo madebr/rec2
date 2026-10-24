@@ -342,7 +342,23 @@ void C2_HOOK_FASTCALL ClearHeadups(void) {
     gLast_centre_headup = 0;
 }
 
-// DimAFewBits
+// FUNCTION: CARMA2_HW 0x004496f0
+// FUNCTION: CARMA2_SW 0x00449840
+void C2_HOOK_FASTCALL DimAFewBits(void) {
+    int i;
+
+#define DIM_INDEX (gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0)
+    for (i = 0; i < gProgram_state.current_car.dim_count[DIM_INDEX]; i++) {
+        DimRectangle(
+            gBack_screen,
+            gProgram_state.current_car.dim_left[DIM_INDEX][i],
+            gProgram_state.current_car.dim_top[DIM_INDEX][i],
+            gProgram_state.current_car.dim_right[DIM_INDEX][i],
+            gProgram_state.current_car.dim_bottom[DIM_INDEX][i],
+            1);
+    }
+#undef DIM_INDEX
+}
 
 // KillOldestQueuedHeadup
 
@@ -368,7 +384,23 @@ void C2_HOOK_FASTCALL DoPSPowerupHeadups(void) {
 
 // DoHeadups
 
-// FindAHeadupHoleWoofBarkSoundsABitRude
+// FUNCTION: CARMA2_HW 0x00449fa0
+int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index) {
+    int i;
+    int empty_one;
+    tHeadup* the_headup;
+
+    the_headup = gHeadups;
+    empty_one = -1;
+    for (i = 0; i < (int)REC2_ASIZE(gHeadups); i++, the_headup++) {
+        if (pSlot_index >= 0 && the_headup->slot_index == pSlot_index) {
+            return i;
+        } else if (the_headup->type == eHeadup_unused) {
+            empty_one = i;
+        }
+    }
+    return empty_one;
+}
 
 // IsHeadupTextClever
 
@@ -492,6 +524,15 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
     MungeHeadupWidth(the_headup);
 }
 
+// FUNCTION: CARMA2_HW 0x0044a920
+// FUNCTION: CARMA2_SW 0x0044aab0
+void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont) {
+
+    if (pHeadup_index >= 0) {
+        gHeadups[pHeadup_index].data.image_info.font = &gFonts[-pFont];
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x0044a9d0
 // FUNCTION: CARMA2_SW 0x0044ab60
 void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
@@ -571,9 +612,25 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
 
 // ChangingView
 
-// EarnCredits2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// EarnCredits
+// STUB: CARMA2_HW 0x0044b300
+// STUB: CARMA2_SW 0x0044b490
+void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x0044b440
+// FUNCTION: CARMA2_SW 0x0044b5d0
+void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
+    EarnCredits2(pAmount, "");
+}
 
 // EarnCredits100
 
@@ -598,14 +655,32 @@ int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
 
 // DoTestHeadup
 
-// STUB: CARMA2_HW 0x0044ba60
+// FUNCTION: CARMA2_HW 0x0044ba60
 int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth) {
-    NOT_IMPLEMENTED();
+    int width;
+
+    if (gDevious_2d && gTexture_power_of_2) {
+        width = 1;
+        while (width < pWidth) {
+            width <<= 1;
+        }
+        return width;
+    }
+    return pWidth;
 }
 
-// STUB: CARMA2_HW 0x0044ba90
+// FUNCTION: CARMA2_HW 0x0044ba90
 int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight) {
-    NOT_IMPLEMENTED();
+    int height;
+
+    if (gDevious_2d && gTexture_power_of_2) {
+        height = 1;
+        while (height < pHeight) {
+            height <<= 1;
+        }
+        return height;
+    }
+    return pHeight;
 }
 
 // FUNCTION: CARMA2_HW 0x0044bac0

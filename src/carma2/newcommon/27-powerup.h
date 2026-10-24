@@ -14,10 +14,13 @@ extern int gPickup_respawn_min_time_ms;
 extern int gPickup_respawn_max_extra_time_ms;
 extern int gBlind_pedestrians;
 extern int gPed_dismemberfest;
+extern int gPanicking_peds;
+extern float gPed_gravity_multiplier;
 extern int gCount_mutant_tail_parts;
 extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
 extern float gMass_mine;
+extern int gInstant_handbrake;
 
 // GetNextGoodyTime
 
@@ -151,7 +154,7 @@ extern int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPedBrittle
+extern int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -161,7 +164,7 @@ extern int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetStupidPedestrians
+extern int C2_HOOK_FASTCALL SetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -209,11 +212,11 @@ extern int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetImmortalPeds
+extern int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetImmortalPeds
 
-// SetSuicidalPeds
+extern int C2_HOOK_FASTCALL SetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetSuicidalPeds
 
@@ -295,9 +298,9 @@ extern void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 // MungeVouchers
 
-// SetInstantHandbrake
+extern int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetInstantHandbrake
+extern void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetDancingPeds
 
@@ -309,11 +312,11 @@ extern void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetGhostPeds
 
-// ResetDancingPeds
+extern void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetPanickingPeds
+extern void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetLowGravityPeds
+extern void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetPissedPeds
 
@@ -349,7 +352,7 @@ extern void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* 
 
 extern int C2_HOOK_FASTCALL GetPowerupCount(void);
 
-// GetPowerupPosition
+extern void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition);
 
 // ARPowerupGot
 

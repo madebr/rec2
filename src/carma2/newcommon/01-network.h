@@ -38,7 +38,7 @@ extern void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
 // NetDisposePIDGameInfo
 
-// NetDisposeGameDetails
+extern void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails);
 
 extern tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void);
 
@@ -88,7 +88,7 @@ extern int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tN
 
 extern tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2);
 
-// NetBuildGuaranteedMessage
+extern tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
 
 // NetGetToPlayerContentsSize
 
@@ -200,7 +200,7 @@ extern tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
 // NetGuaranteedSendMessageToEverybody
 
-// NetGuaranteedSendMessageToHost
+extern void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
 // AddToGuaranteeList
 
@@ -212,11 +212,11 @@ extern void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
 // NetWaitForGuaranteeReplies
 
-// NetPlayerFromID
+extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromID(tPlayer_ID pPlayer);
 
-// NetCarFromPlayerID
+extern tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer);
 
-// NetPlayerFromCar
+extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar);
 
 // GetCheckSum
 

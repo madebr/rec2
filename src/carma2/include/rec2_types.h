@@ -165,6 +165,11 @@ typedef enum {
     eDrone_state_STOP = 4,
 } tDroneStateFuncState;
 
+typedef struct tMin_max_time {
+  tU32 min_time;
+  tU32 max_time;
+} tMin_max_time;
+
 typedef struct tSave_camera {
     int saved;
     br_scalar zoom;
@@ -526,6 +531,7 @@ typedef struct tPipe_chunk {
         tPipe_ped_physics_data ped_physics;
         tPipe_phil_object phil_object;
         tPipe_chunk_shrapnel shrapnel;
+        tPipe_chunk_identity identity;
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
         char raw_data[0];
@@ -4173,6 +4179,10 @@ typedef struct {
     float field_0x14;
 } tCollision_info_owner;
 
+typedef struct {
+    tU16 v[4];
+} tFixed_quat;
+
 typedef enum {
     eJoint_limit_plane = 0,
     eJoint_limit_universal = 1,
@@ -5401,9 +5411,11 @@ enum {
     eMiscString_net_games_always_accessorized = 124,
     eMiscString_recovery_cancelled = 125,
     eMiscString_task_switched = 139,
+    eMiscString_you_re_already_at_max_you_need_more_slots = 174,
     eMiscString_armor_strengthened = 175,
     eMiscString_engine_power_increased = 176,
     eMiscString_increased_offsensive = 177,
+    eMiscString_cannot_afford_it_credits_S = 179,
     eMiscString_driven_to_destruction_description = 194,
     eMiscString_car_crusher_description = 195,
     eMiscString_smashy_things_description = 196,

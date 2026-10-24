@@ -47,7 +47,7 @@ extern intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* p
 
 // InitNetworkShapesStuff
 
-// IncreasingCompare
+extern int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2);
 
 extern int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
 
@@ -55,7 +55,7 @@ extern int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pVal
 
 // SoftnessOfNearestPointCB
 
-// DRActorEnumRecurseWithTranslation
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* pCallback, void* pContext);
 
 // SoftnessOfNearestPoint
 
@@ -377,11 +377,11 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // SphericizeCar
 
-// BattenDownTheHatches
+extern intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser);
 
-// BattenDownTheObjects
+extern int C2_HOOK_FASTCALL BattenDownTheObjects(tPhysics_object* pCollision_info, void* pUser_data);
 
-// CompletelyUnBendCollisionShape
+extern void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape);
 
 // CompletelyUnBendCollisionShapes
 
@@ -405,7 +405,7 @@ extern int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info
 
 extern void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
-// TotallyRepairCar
+extern void C2_HOOK_FASTCALL TotallyRepairCar(void);
 
 // AddTotalDeflectionOfModel
 
@@ -429,7 +429,7 @@ extern void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 // UnBendOtherThings
 
-// NormalizedAngle
+extern br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle);
 
 // CalculateAmountRepairedFraction
 
@@ -459,7 +459,7 @@ extern void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* pModel, br_vector3* pSrc);
 
-// ARApplyModelMash
+extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pSrc);
 
 // ARUndoModelMash
 

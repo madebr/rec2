@@ -74,6 +74,20 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout__intrface(void) {
     gStart_time = PDGetTotalTime();
 }
 
+// FUNCTION: CARMA2_HW 0x00484650
+// FUNCTION: CARMA2_SW 0x00481790
+void C2_HOOK_FASTCALL DisableChoice(int pChoice) {
+    int i;
+
+    for (i = 0; i < gDisabled_count; i++) {
+        if (gDisabled_choices[i] == pChoice) {
+            return;
+        }
+    }
+    gDisabled_choices[gDisabled_count] = pChoice;
+    gDisabled_count++;
+}
+
 // FUNCTION: CARMA2_HW 0x00484dd0
 // FUNCTION: CARMA2_SW 0x00481f10
 void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_selection, int* pNew_selection, int pMode, int pSkip_disabled) {
@@ -332,6 +346,17 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
     UnlockInterfaceStuff();
     EdgeTriggerModeOff();
     return result;
+}
+
+// FUNCTION: CARMA2_HW 0x00484f10
+// FUNCTION: CARMA2_SW 0x00482050
+void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode) {
+    int last_choice;
+
+    last_choice = gCurrent_choice;
+    gCurrent_choice = pNew_choice;
+    gCurrent_mode = pNew_mode;
+    ChangeSelection(gSpec, &last_choice, &gCurrent_choice, gCurrent_mode, 1);
 }
 
 // FUNCTION: CARMA2_HW 0x00484f40

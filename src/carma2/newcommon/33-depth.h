@@ -44,6 +44,8 @@ extern void C2_HOOK_FASTCALL InitDepthEffects(void);
 
 // DepthEffect
 
+extern void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world);
+
 // DepthEffectSky
 
 // DoWobbleCamera
@@ -54,15 +56,19 @@ extern void C2_HOOK_FASTCALL InitDepthEffects(void);
 
 // DoSpecialCameraEffect
 
-// AssertYons
+extern void C2_HOOK_FASTCALL ReduceDepthStart(void);
 
-// IncreaseYon
+extern void C2_HOOK_FASTCALL AssertYons(void);
+
+extern void C2_HOOK_FASTCALL IncreaseYon(void);
 
 // DecreaseYon
 
 extern void C2_HOOK_STDCALL SetYon(br_scalar pYon);
 
 extern br_scalar C2_HOOK_STDCALL GetYon(void);
+
+extern void C2_HOOK_STDCALL IncreaseAngle(void);
 
 extern int C2_HOOK_FASTCALL GetSkyTextureOn(void);
 

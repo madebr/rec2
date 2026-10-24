@@ -21,6 +21,7 @@
 #include "72-interface-quit.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "joystick.h"
 #include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
@@ -1070,7 +1071,10 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
     gFrontend_time_last_input = PDGetTotalTime();
 }
 
-// FRONTEND_Main
+// STUB: CARMA2_HW 0x0046d8e0
+int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontend_type) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x0046e470
 // FUNCTION: CARMA2_SW 0x0046db10
@@ -1894,11 +1898,26 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
 
 // Controls_JoystickDpadToggle
 
-// Slider_XProc
+// FUNCTION: CARMA2_HW 0x004729d0
+// FUNCTION: CARMA2_SW 0x00471f60
+void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider) {
 
-// Slider_YProc
+    SetJoystickX((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
+}
 
-// Slider_ForceProc
+// FUNCTION: CARMA2_HW 0x004729f0
+// FUNCTION: CARMA2_SW 0x00471f80
+void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider) {
+
+    SetJoystickY((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
+}
+
+// FUNCTION: CARMA2_HW 0x00472a10
+// FUNCTION: CARMA2_SW 0x00471fa0
+void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider) {
+
+    SetJoystickFFBGain((int)(pSlider->value * 100.0));
+}
 
 // DisplayJoystickSettings
 
@@ -1926,7 +1945,11 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
 
 // NetOptions_Infunc
 
-// NetOptions_Outfunc
+// FUNCTION: CARMA2_HW 0x00473210
+// FUNCTION: CARMA2_SW 0x00472780
+int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
+    return 0;
+}
 
 // NetOptions_CreditsRoller
 

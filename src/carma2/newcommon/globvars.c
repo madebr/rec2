@@ -429,6 +429,14 @@ tU32 gI_am_cheating;
 //br_matrix34 gCamera_to_world;
 //tRace_list_spec gRace_list[100];
 
+// GLOBAL: CARMA2_HW 0x00762120
+// GLOBAL: CARMA2_SW 0x00758680
+int gWasted_explosion_chance;
+
+// GLOBAL: CARMA2_HW 0x007620f8
+// GLOBAL: CARMA2_SW 0x00758658
+tExplosion_animation gExplosion_pix_animation_groups;
+
 // GLOBAL: CARMA2_HW 0x00762124
 // GLOBAL: CARMA2_SW 0x00758684
 float gPinball_factor;

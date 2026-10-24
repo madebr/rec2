@@ -7,6 +7,7 @@
 extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
+extern int gImmortal_peds;
 extern void* gPhysics_buffer3_ptr;
 extern int gPhysics_other_buffer_capacity;
 extern void* gPhysics_other_buffer;
@@ -308,7 +309,7 @@ extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 // RQSingleExpand
 
-// RQDcmpV
+extern int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal);
 
 // MakeIdentity
 
@@ -330,13 +331,13 @@ extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 // RQMatrixSolveWithNegatives
 
-// MatrixProcess
+extern int C2_HOOK_FASTCALL MatrixProcess(br_scalar* pR, br_scalar* pQ, int pDim);
 
 extern void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const br_scalar* pRhs, br_scalar* pX, int pDim);
 
 // GetPhysicsScratchPointer
 
-// IncreasePhysicsScratchPointer
+extern void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize);
 
 extern void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void);
 
@@ -354,7 +355,7 @@ extern tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, 
 
 extern tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint, int pType);
 
-// FreeShape
+extern void C2_HOOK_FASTCALL FreeShape(void* pData);
 
 extern void C2_HOOK_FASTCALL FreeShapeList(tPhysics_shape *pShape);
 

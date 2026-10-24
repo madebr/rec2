@@ -14,7 +14,7 @@ extern int gTime_per_ped_kill[3];
 
 // CheckLastCar
 
-// KnackerThisCar
+extern void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar);
 
 // ExplodeMeCarUpMeOldMatey
 
@@ -28,7 +28,7 @@ extern int gTime_per_ped_kill[3];
 
 extern void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar);
 
-// DoPratcamHit
+extern void C2_HOOK_FASTCALL DoPratcamHit(br_vector3* pVelocity);
 
 // DamageSystems
 
@@ -36,13 +36,13 @@ extern void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar);
 
-// SortOutSmoke
+extern void C2_HOOK_FASTCALL SortOutSmoke(tCar_spec* pCar);
 
-// DoCrashEarnings
+extern int C2_HOOK_FASTCALL DoCrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2);
 
 // DoWheelDamage
 
-// CrashEarnings
+extern void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2);
 
 // PercentageCarHealth
 

@@ -1,5 +1,6 @@
 #include "64-movie.h"
 
+#include "16-graphics1.h"
 #include "25-grafdata.h"
 #include "41-utility.h"
 #include "globvars.h"
@@ -13,6 +14,14 @@
 // GLOBAL: CARMA2_HW 0x006a0c24
 // GLOBAL: CARMA2_SW 0x0069ac7c
 int gQuickTime_initialized;
+
+// GLOBAL: CARMA2_HW 0x006a0c50
+// GLOBAL: CARMA2_SW 0x0069aca8
+int gNext_replay_record_state;
+
+// GLOBAL: CARMA2_HW 0x006a23b8
+// GLOBAL: CARMA2_SW 0x0069c410
+int gShow_status_message;
 
 // GLOBAL: CARMA2_HW 0x00705440
 // GLOBAL: CARMA2_SW 0x006fbf00
@@ -101,9 +110,18 @@ void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
 
 // MovieRecordFrame
 
-// MovieRecording
+// FUNCTION: CARMA2_HW 0x004e2100
+// FUNCTION: CARMA2_SW 0x004de480
+int C2_HOOK_FASTCALL MovieRecording(void) {
+    return gNext_replay_record_state;
+}
 
-// KillStatusMessage
+// FUNCTION: CARMA2_HW 0x004e2110
+// FUNCTION: CARMA2_SW 0x004de490
+void C2_HOOK_FASTCALL KillStatusMessage(void) {
+
+    gShow_status_message = 0;
+}
 
 // ShowStatusMessage
 
@@ -129,7 +147,17 @@ int C2_HOOK_FASTCALL GetMovieHeight(void) {
     }
 }
 
-// TidyMovieARDisplay
+// FUNCTION: CARMA2_HW 0x004e2190
+// FUNCTION: CARMA2_SW 0x004de510
+void C2_HOOK_FASTCALL TidyMovieARDisplay(void) {
+    int old_state;
+
+    old_state = gNext_replay_record_state;
+    gNext_replay_record_state = 20;
+    RenderAFrame(1);
+    RenderAFrame(1);
+    gNext_replay_record_state = old_state;
+}
 
 // TrapS3SoundOutput
 

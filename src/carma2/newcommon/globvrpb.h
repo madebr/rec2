@@ -13,6 +13,7 @@ extern int gThis_net_player_index;
 extern int gPending_race;
 extern tCar_detail_info gCar_details[60];
 extern int gINT_0074b780;
+extern int gReceived_car_details;
 extern int gStart_race_sent;
 extern int gRendering_mirror;
 

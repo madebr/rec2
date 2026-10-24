@@ -286,7 +286,17 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* pData) {
 
 // InitNetworkShapesStuff
 
-// IncreasingCompare
+// FUNCTION: CARMA2_HW 0x0042acb0
+// FUNCTION: CARMA2_SW 0x0042ad40
+int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2) {
+    if (*(const float*)pValue1 < *(const float*)pValue2) {
+        return -1;
+    } else if (*(const float*)pValue1 == *(const float*)pValue2) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042ace0
 int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
@@ -303,7 +313,30 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
 
 // SoftnessOfNearestPointCB
 
-// DRActorEnumRecurseWithTranslation
+// FUNCTION: CARMA2_HW 0x0042b760
+// FUNCTION: CARMA2_SW 0x0042b7f0
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* pCallback, void* pContext) {
+    br_vector3 delta;
+    intptr_t result;
+    br_actor* a;
+
+    if (pDelta != NULL) {
+        BrVector3Add(&delta, (br_vector3*)pActor->t.t.mat.m[3], pDelta);
+    } else {
+        BrVector3Set(&delta, 0.0f, 0.0f, 0.0f);
+    }
+    result = pCallback(pActor, &delta, pContext);
+    if (result != 0) {
+        return result;
+    }
+    for (a = pActor->children; a != NULL; a = a->next) {
+        result = DRActorEnumRecurseWithTranslation(a, &delta, pCallback, pContext);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
 
 // SoftnessOfNearestPoint
 
@@ -812,11 +845,29 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // SphericizeCar
 
-// BattenDownTheHatches
+// STUB: CARMA2_HW 0x004398d0
+// STUB: CARMA2_SW 0x00439910
+intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
+    NOT_IMPLEMENTED();
+}
 
-// BattenDownTheObjects
+// FUNCTION: CARMA2_HW 0x004398c0
+// FUNCTION: CARMA2_SW 0x00439900
+int C2_HOOK_FASTCALL BattenDownTheObjects(tPhysics_object* pCollision_info, void* pUser_data) {
+    DRActorEnumRecurse(pCollision_info->actor, BattenDownTheHatches, pUser_data);
+    return 0;
+}
 
-// CompletelyUnBendCollisionShape
+// FUNCTION: CARMA2_HW 0x00439fd0
+// FUNCTION: CARMA2_SW 0x0043a010
+void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape) {
+    int i;
+
+    pShape->count_points = pShape->original_count_points;
+    for (i = 0; i < pShape->count_points; i++) {
+        BrVector3Copy(&pShape->field_0x18[i].field_0x18, &pShape->field_0x18[i].field_0x2c);
+    }
+}
 
 // CompletelyUnBendCollisionShapes
 
@@ -862,7 +913,11 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
 
-// TotallyRepairCar
+// STUB: CARMA2_HW 0x00439bf0
+// STUB: CARMA2_SW 0x00439c30
+void C2_HOOK_FASTCALL TotallyRepairCar(void) {
+    NOT_IMPLEMENTED();
+}
 
 // AddTotalDeflectionOfModel
 
@@ -886,7 +941,15 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 
 // UnBendOtherThings
 
-// NormalizedAngle
+// FUNCTION: CARMA2_HW 0x0043ac90
+// FUNCTION: CARMA2_SW 0x0043ace0
+br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle) {
+    if (pAngle < BR_ANGLE_DEG(180)) {
+        return (br_scalar)(pAngle / (double)BR_ONE_LS);
+    } else {
+        return (br_scalar)((br_angle)-pAngle / (double)BR_ONE_LS);
+    }
+}
 
 // CalculateAmountRepairedFraction
 
@@ -939,7 +1002,18 @@ void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* 
     }
 }
 
-// ARApplyModelMash
+// FUNCTION: CARMA2_HW 0x0043bf80
+// FUNCTION: CARMA2_SW 0x0043bfd0
+void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pSrc) {
+    tU16 i;
+    br_vector3 delta;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        ExpandVector3(&delta, &pSrc[i], -10.0f, 10.0f);
+        BrVector3Accumulate(&pModel->vertices[i].p, &delta);
+    }
+    SetModelForUpdate(pModel);
+}
 
 // ARUndoModelMash
 

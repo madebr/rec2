@@ -3,9 +3,11 @@
 
 #include "c2_hooks.h"
 
+#include "brender/brender.h"
+
 // MakeVertexAndOffsetIt
 
-// MakeFaceAndTextureIt
+extern void C2_HOOK_FASTCALL MakeFaceAndTextureIt(br_model* pModel, int pFace_num, br_uint_16 pV0, br_uint_16 pV1, br_uint_16 pV2, br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL InitPanGameAIWorld(void);
 
@@ -19,7 +21,9 @@ extern void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void);
 
 // MungeAIWorld
 
-// PointActorAlongThisBloodyVector
+extern void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
+
+extern br_material* C2_HOOK_FASTCALL CreateSimpleMaterial(int pIndex);
 
 // MakeAIEditCubeHere
 

@@ -2,6 +2,7 @@
 
 #include "16-graphics1.h"
 #include "32-spark.h"
+#include "49-physics.h"
 #include "61-pedestrn.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -41,8 +42,14 @@ int gPickup_respawn_max_extra_time_ms;
 // GLOBAL: CARMA2_HW 0x007447d0
 int gBlind_pedestrians;
 
+// GLOBAL: CARMA2_HW 0x007447dc
+float gPed_gravity_multiplier;
+
 // GLOBAL: CARMA2_HW 0x007447e4
 int gPed_dismemberfest;
+
+// GLOBAL: CARMA2_HW 0x007447f8
+int gPanicking_peds;
 
 // GLOBAL: CARMA2_HW 0x007059c0
 // GLOBAL: CARMA2_SW 0x006fc480
@@ -64,6 +71,10 @@ int gCount_cloaked_cars;
 // GLOBAL: CARMA2_HW 0x006a0910
 // GLOBAL: CARMA2_SW 0x0069a968
 tCar_spec* gCloaked_cars[12];
+
+// GLOBAL: CARMA2_HW 0x0079ec50
+// GLOBAL: CARMA2_SW 0x007951b0
+int gInstant_handbrake;
 
 // GLOBAL: CARMA2_HW 0x006a0a54
 // GLOBAL: CARMA2_SW 0x0069aaac
@@ -223,7 +234,13 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetPedBrittle
+// FUNCTION: CARMA2_HW 0x004dc800
+// FUNCTION: CARMA2_SW 0x004d8d00
+int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_dismemberfest = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc830
 // FUNCTION: CARMA2_SW 0x004d8d30
@@ -255,7 +272,13 @@ void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
     }
 }
 
-// SetStupidPedestrians
+// FUNCTION: CARMA2_HW 0x004dc8f0
+// FUNCTION: CARMA2_SW 0x004d8df0
+int C2_HOOK_FASTCALL SetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gBlind_pedestrians = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc920
 void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
@@ -378,11 +401,23 @@ int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetImmortalPeds
+// FUNCTION: CARMA2_HW 0x004dcf00
+// FUNCTION: CARMA2_SW 0x004d9400
+int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gImmortal_peds = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // ResetImmortalPeds
 
-// SetSuicidalPeds
+// FUNCTION: CARMA2_HW 0x004dcf40
+// FUNCTION: CARMA2_SW 0x004d9440
+int C2_HOOK_FASTCALL SetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPeds_suicidal = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // ResetSuicidalPeds
 
@@ -523,9 +558,24 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // MungeVouchers
 
-// SetInstantHandbrake
+// FUNCTION: CARMA2_HW 0x004de820
+// FUNCTION: CARMA2_SW 0x004dad20
+int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// ResetInstantHandbrake
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gInstant_handbrake = 1;
+    }
+    return pPowerup - gPowerup_array;
+}
+
+// FUNCTION: CARMA2_HW 0x004de850
+// FUNCTION: CARMA2_SW 0x004dad50
+void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gInstant_handbrake = 0;
+    }
+}
 
 // SetDancingPeds
 
@@ -537,11 +587,23 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SetGhostPeds
 
-// ResetDancingPeds
+// FUNCTION: CARMA2_HW 0x004de960
+void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// ResetPanickingPeds
+    gDancing_peds = 0;
+}
 
-// ResetLowGravityPeds
+// FUNCTION: CARMA2_HW 0x004de970
+void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPanicking_peds = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004de980
+void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_gravity_multiplier = 1.f;
+}
 
 // ResetPissedPeds
 
@@ -610,7 +672,11 @@ int C2_HOOK_FASTCALL GetPowerupCount(void) {
     return 0;
 }
 
-// GetPowerupPosition
+// FUNCTION: CARMA2_HW 0x004df1f0
+// FUNCTION: CARMA2_SW 0x004db6f0
+void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition) {
+
+}
 
 // ARPowerupGot
 

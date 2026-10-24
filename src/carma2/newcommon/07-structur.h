@@ -11,13 +11,13 @@ extern int gCredits_checkpoint[3];
 
 extern int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
 
-// RaceCompleted
+extern void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason);
 
 extern void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
 
-// IncrementCheckpoint
+extern void C2_HOOK_FASTCALL IncrementCheckpoint(void);
 
-// IncrementLap
+extern void C2_HOOK_FASTCALL IncrementLap(void);
 
 // RayHitFace
 
@@ -25,7 +25,7 @@ extern void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
 
 // CheckCheckpoints
 
-// TotalRepair
+extern void C2_HOOK_FASTCALL TotalRepair(void);
 
 // DoLogos
 
@@ -33,7 +33,7 @@ extern void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
 
 // DoProgramDemo
 
-// ChooseOpponent
+extern int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness);
 
 // SelectOpponents
 

@@ -59,11 +59,11 @@ extern void C2_HOOK_FASTCALL SetupDepthBuffer(void);
 
 extern void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight);
 
-// AdjustRenderScreenSize
+extern void C2_HOOK_FASTCALL AdjustRenderScreenSize(void);
 
-// ScreenSmaller
+extern void C2_HOOK_FASTCALL ScreenSmaller(void);
 
-// ScreenLarger
+extern void C2_HOOK_FASTCALL ScreenLarger(void);
 
 // ClearWobbles
 
@@ -87,7 +87,7 @@ extern void C2_HOOK_FASTCALL ResetScreenWobble(void);
 
 // DoACompleteRenderPass
 
-// RenderAFrame
+extern void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on);
 
 extern void C2_HOOK_FASTCALL StartRenderingHeadups(void);
 

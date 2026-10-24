@@ -1,5 +1,7 @@
 #include "60-phil.h"
 
+#include "55-volume.h"
+
 // GLOBAL: CARMA2_HW 0x0065d004
 // GLOBAL: CARMA2_SW 0x0065793c
 int gPHIL_disabled = 1;
@@ -11,7 +13,54 @@ tPhysics_object* gPHIL_list_collision_infos;
 
 // FractionToScalar
 
-// GetOrientationFromMatrix
+// FUNCTION: CARMA2_HW 0x0049be90
+// FUNCTION: CARMA2_SW 0x00498010
+void C2_HOOK_FASTCALL GetOrientationFromMatrix(tFixed_quat* pOrientation, const br_matrix34* pMatrix) {
+    br_quat quaternion;
+    br_scalar value;
+
+    BrMatrix34ToQuat(&quaternion, pMatrix);
+    value = quaternion.x;
+    if (value > 1.f) {
+        value = 1.f;
+    }
+    if (value < -1.f) {
+        value = -1.f;
+    }
+    value = (value + 1.f) * .5f;
+    value *= 65534.f;
+    pOrientation->v[0] = (tU16)(value + .5f);
+    value = quaternion.y;
+    if (value > 1.f) {
+        value = 1.f;
+    }
+    if (value < -1.f) {
+        value = -1.f;
+    }
+    value = (value + 1.f) * .5f;
+    value *= 65534.f;
+    pOrientation->v[1] = (tU16)(value + .5f);
+    value = quaternion.z;
+    if (value > 1.f) {
+        value = 1.f;
+    }
+    if (value < -1.f) {
+        value = -1.f;
+    }
+    value = (value + 1.f) * .5f;
+    value *= 65534.f;
+    pOrientation->v[2] = (tU16)(value + .5f);
+    value = quaternion.w;
+    if (value > 1.f) {
+        value = 1.f;
+    }
+    if (value < -1.f) {
+        value = -1.f;
+    }
+    value = (value + 1.f) * .5f;
+    value *= 65534.f;
+    pOrientation->v[3] = (tU16)(value + .5f);
+}
 
 // GetMatrixFromOrientation
 
@@ -110,15 +159,115 @@ tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
     }
 }
 
-// PHILGetNextObject
+// FUNCTION: CARMA2_HW 0x004b5ff0
+// FUNCTION: CARMA2_SW 0x004b2710
+tPhysics_object* C2_HOOK_FASTCALL PHILGetNextObject(tPhysics_object* pObject) {
+    if (gPHIL_disabled) {
+        return NULL;
+    } else {
+        return pObject->next;
+    }
+}
 
 // PHILReturnObjectStatus
 
-// PHILMakeObjectPassive
+// FUNCTION: CARMA2_HW 0x004b6040
+// FUNCTION: CARMA2_SW 0x004b2760
+int C2_HOOK_FASTCALL PHILMakeObjectPassive(tPhysics_object* pObject) {
+    tPHIL_queued_header* info;
 
-// PHILMakeObjectActive
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    if (pObject->field_0x239 == 2) {
+        info = pObject->field_0x240;
+        info->field_0x8 = 1;
+        return 0;
+    }
+    info = pObject->field_0x240;
+    if (info != NULL) {
+        info->field_0x8 = 1;
+        pObject->flags |= 0x20;
+        return 0;
+    } else {
+        return 3;
+    }
+}
 
-// PHILSetPassiveObjectsMatrix
+// FUNCTION: CARMA2_HW 0x004b6090
+// FUNCTION: CARMA2_SW 0x004b27b0
+int C2_HOOK_FASTCALL PHILMakeObjectActive(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, int pFlag) {
+    tPHIL_queued_object_info* info;
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    if (pObject->field_0x239 == 2) {
+        info = pObject->field_0x240;
+        info->field_0x8 = 2;
+        if (pVelocity != NULL) {
+            info->field_0x18 = *pVelocity;
+            info->flags |= 0x1;
+        }
+        if (pOmega != NULL) {
+            info->field_0x24 = *pOmega;
+            info->flags |= 0x2;
+        }
+        if (pFlag) {
+            info->field_0x4 |= 0x2;
+        } else {
+            info->field_0x4 &= ~0x2;
+        }
+        return 0;
+    }
+    info = pObject->field_0x240;
+    if (info != NULL) {
+        info->field_0x8 = 2;
+        pObject->flags &= ~0x20;
+        if (pFlag) {
+            info->field_0x4 |= 0x2;
+        } else {
+            info->field_0x4 &= ~0x2;
+        }
+        if (pVelocity != NULL) {
+            pObject->v = *pVelocity;
+        }
+        if (pOmega != NULL) {
+            pObject->omega = *pOmega;
+        }
+        ResetCarSpecialVolume(pObject);
+        return 0;
+    } else {
+        return 3;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004b61a0
+// FUNCTION: CARMA2_SW 0x004b28c0
+int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const br_matrix34* pMatrix) {
+    tPHIL_queued_object_info* queued;
+    tPHIL_queued_header* info;
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    if (pObject->field_0x239 == 2) {
+        queued = pObject->field_0x240;
+        queued->field_0x30 = *pMatrix;
+        queued->flags |= 0x4;
+        return 0;
+    }
+    info = pObject->field_0x240;
+    if (info != NULL) {
+        if (info->field_0x8 != 1) {
+            return 4;
+        }
+        info->collision_info->actor->t.t.mat = *pMatrix;
+        return 0;
+    } else {
+        return 3;
+    }
+}
 
 // PHILAddActiveObject
 
