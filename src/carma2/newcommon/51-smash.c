@@ -1,5 +1,6 @@
 #include "51-smash.h"
 
+#include "08-loading1.h"
 #include "41-utility.h"
 #include "globvars.h"
 #include "rec2_types.h"
@@ -186,6 +187,17 @@ void C2_HOOK_FASTCALL InitSmashQueue(void) {
 // LoadActorFromRace
 
 // ReadShrapnelSpec
+
+// FUNCTION: CARMA2_HW 0x004ee5a0
+// FUNCTION: CARMA2_SW 0x004ea270
+void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* pTimes) {
+    float min;
+    float max;
+
+    GetPairOfFloats(pFile, &min, &max);
+    pTimes->min_time = (int)(min * 1000.0);
+    pTimes->max_time = (int)(max * 1000.0);
+}
 
 // ReadSpillData
 

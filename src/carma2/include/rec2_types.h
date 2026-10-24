@@ -165,6 +165,11 @@ typedef enum {
     eDrone_state_STOP = 4,
 } tDroneStateFuncState;
 
+typedef struct tMin_max_time {
+  tU32 min_time;
+  tU32 max_time;
+} tMin_max_time;
+
 typedef struct tSave_camera {
     int saved;
     br_scalar zoom;
