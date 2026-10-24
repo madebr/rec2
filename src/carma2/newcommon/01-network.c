@@ -239,7 +239,14 @@ void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
 
 // NetDisposePIDGameInfo
 
-// NetDisposeGameDetails
+// FUNCTION: CARMA2_HW 0x0049dc80
+// FUNCTION: CARMA2_SW 0x00499e00
+void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails) {
+
+    if (pDetails != NULL) {
+        BrMemFree(pDetails);
+    }
+}
 
 tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void) {
 

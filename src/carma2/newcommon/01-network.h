@@ -38,7 +38,7 @@ extern void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
 // NetDisposePIDGameInfo
 
-// NetDisposeGameDetails
+extern void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails);
 
 extern tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void);
 
