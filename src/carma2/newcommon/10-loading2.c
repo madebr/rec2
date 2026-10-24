@@ -580,7 +580,56 @@ void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     }
 }
 
-// LoadHeadups
+// FUNCTION: CARMA2_HW 0x0048ba60
+// FUNCTION: CARMA2_SW 0x00488ca0
+void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+    int j;
+    int number_of_slots;
+
+    number_of_slots = GetAnInt(pF);
+    for (j = 0; j < number_of_slots; j++) {
+        GetALineAndDontArgue(pF, s);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].field_0x28);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].x);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].y);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].colour);
+        str = strtok(NULL, "\t ,/");
+        strcpy(s, str);
+        switch (s[0]) {
+        case 'l':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_left;
+            break;
+        case 'r':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_right;
+            break;
+        case 'c':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_centre;
+            break;
+        }
+        if (s[1] == 'c') {
+            pCar_spec->headup_slots[pIndex][j].cockpit_anchored = 1;
+        }
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_left);
+        if (pCar_spec->headup_slots[pIndex][j].dim_left >= 0) {
+            pCar_spec->headup_slots[pIndex][j].dimmed_background = 1;
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_top);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_right);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_bottom);
+        } else {
+            pCar_spec->headup_slots[pIndex][j].dimmed_background = 0;
+        }
+    }
+}
 
 // OldReadNonCarMechanicsData
 
