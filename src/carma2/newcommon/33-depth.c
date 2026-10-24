@@ -239,7 +239,7 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
 // DepthEffect
 
 // FUNCTION: CARMA2_HW 0x00445ca0
-// FUNCTION: CARMA2_SW 0x00445b20
+// FUNCTION: CARMA2_SW 0x00445a30
 void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world) {
 
 }
