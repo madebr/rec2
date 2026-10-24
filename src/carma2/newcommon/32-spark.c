@@ -624,11 +624,16 @@ void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar) {
     ForEveryCarMaterial(pCar, BlendifyMaterialCB, 1);
 }
 
-// UnBlendifyMaterialCB
-
-// STUB: CARMA2_HW 0x004fed40
-void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
+// STUB: CARMA2_HW 0x004fed50
+// STUB: CARMA2_SW 0x004fa630
+int C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial) {
     NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004fed40
+// FUNCTION: CARMA2_SW 0x004fa620
+void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
+    ForEveryCarMaterial(pCar_spec, UnBlendifyMaterialCB, 1);
 }
 
 // IsCarSmoking
