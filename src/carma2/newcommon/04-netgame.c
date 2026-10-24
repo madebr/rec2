@@ -115,9 +115,25 @@ void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
 
 // DrawScoreBoxes
 
-// DoNetScores2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// DoNetScores
+// STUB: CARMA2_HW 0x00499a00
+void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004999f0
+// FUNCTION: CARMA2_SW 0x00496290
+void C2_HOOK_FASTCALL DoNetScores(void) {
+
+    DoNetScores2(0);
+}
 
 // FUNCTION: CARMA2_HW 0x0049a710
 void C2_HOOK_FASTCALL InitNetHeadups(void) {
