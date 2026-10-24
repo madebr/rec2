@@ -381,7 +381,7 @@ extern intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser
 
 extern int C2_HOOK_FASTCALL BattenDownTheObjects(tPhysics_object* pCollision_info, void* pUser_data);
 
-// CompletelyUnBendCollisionShape
+extern void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape);
 
 // CompletelyUnBendCollisionShapes
 
