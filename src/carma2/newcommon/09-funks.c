@@ -269,6 +269,20 @@ void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x0047b210
+// FUNCTION: CARMA2_SW 0x0047a770
+intptr_t C2_HOOK_CDECL DelGrooveRef(br_actor* pActor, void* pArg) {
+    tGroovidelic_spec* the_groove;
+    int i;
+
+    for (i = 0, the_groove = gGroovidelics_array; i < gGroovidelics_array_size; i++, the_groove++) {
+        if (pActor == the_groove->actor) {
+            the_groove->owner = -999;
+        }
+    }
+    return 0;
+}
+
 // FUNCTION: CARMA2_HW 0x0047b250
 void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex) {
     gFunkotronics_array[pIndex].flags |= 0x1;

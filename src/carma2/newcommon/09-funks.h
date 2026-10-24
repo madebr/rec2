@@ -73,6 +73,8 @@ extern void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* p
 
 extern void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 
+extern intptr_t C2_HOOK_CDECL DelGrooveRef(br_actor* pActor, void* pArg);
+
 extern void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex);
 
 extern void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex);
