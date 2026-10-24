@@ -354,7 +354,7 @@ extern tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, 
 
 extern tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint, int pType);
 
-// FreeShape
+extern void C2_HOOK_FASTCALL FreeShape(void* pData);
 
 extern void C2_HOOK_FASTCALL FreeShapeList(tPhysics_shape *pShape);
 

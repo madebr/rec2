@@ -634,7 +634,11 @@ tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint,
     return clone;
 }
 
-// FreeShape
+// FUNCTION: CARMA2_HW 0x004c5e70
+// FUNCTION: CARMA2_SW 0x004c25a0
+void C2_HOOK_FASTCALL FreeShape(void* pData) {
+    BrMemFree(pData);
+}
 
 // FUNCTION: CARMA2_HW 0x004c5e80
 void C2_HOOK_FASTCALL FreeShapeList(tPhysics_shape *pShape) {
