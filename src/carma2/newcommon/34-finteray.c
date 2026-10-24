@@ -29,7 +29,7 @@ br_matrix34 gPick_model_to_view__finteray;
 
 // FUNCTION: CARMA2_HW 0x0045cd90
 // FUNCTION: CARMA2_SW 0x0045c7d0
-int C2_HOOK_FASTCALL PickBoundsTestRay(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far) {
+int C2_HOOK_FASTCALL PickBoundsTestRay_finteray(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far) {
     int i;
     br_scalar inverse;
     br_scalar t;
