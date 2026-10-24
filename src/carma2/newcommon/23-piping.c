@@ -684,7 +684,21 @@ void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pP
 
 // UndoSmashDecal
 
-// UndoSmashTextureChange
+// FUNCTION: CARMA2_HW 0x004ca160
+// FUNCTION: CARMA2_SW 0x004c6890
+void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smash_texture_change, texture1, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smash_texture_change, texture2, 0xc);
+
+    (void)pPrev_chunk;
+    chunk = *pChunk;
+    ChangeSmashTexture((br_material*)chunk->subject_index,
+        chunk->data.smash_texture_change.car_spec,
+        chunk->data.smash_texture_change.texture2,
+        chunk->data.smash_texture_change.texture1);
+}
 
 // UndoActorTrans
 
