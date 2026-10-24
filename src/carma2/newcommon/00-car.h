@@ -171,6 +171,8 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 
 // ResetCarScreens
 
+extern void C2_HOOK_FASTCALL AdjustDownForce(void);
+
 // FlyCar
 
 // GetCarOverallBoundsMinY

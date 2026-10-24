@@ -1,11 +1,15 @@
 #include "00-car.h"
 
+#include "15-displays.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "brender/brender.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "globvrpb.h"
+
+#include "c2_stdio.h"
 
 // GLOBAL: CARMA2_HW 0x00763500
 int gCunning_stunt_bonus[3];
@@ -239,6 +243,24 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 // DoComplexCarModels
 
 // ResetCarScreens
+
+// FUNCTION: CARMA2_HW 0x0041f3c0
+// FUNCTION: CARMA2_SW 0x0041f440
+void C2_HOOK_FASTCALL AdjustDownForce(void) {
+    char s[100];
+    tCar_spec* c;
+
+    c = gCar_to_view;
+    c->downforce_to_weight += 50.f;
+    if (c->downforce_to_weight > 2000.f) {
+        c->downforce_to_weight = 50.f;
+    }
+    if (c->downforce_to_weight > 300.f) {
+        c->downforce_to_weight = 2000.f;
+    }
+    sprintf(s, "DownForceSpeed %f", c->downforce_to_weight);
+    NewTextHeadupSlot(4, 0, 1500, -4, s);
+}
 
 // FlyCar
 
