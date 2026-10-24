@@ -8,6 +8,8 @@ extern void C2_HOOK_FASTCALL SetNonFatalAllocationErrors(void);
 
 extern void C2_HOOK_FASTCALL ResetNonFatalAllocationErrors(void);
 
+extern int C2_HOOK_FASTCALL AllocationErrorsAreFatal(void);
+
 extern void C2_HOOK_FASTCALL MAMSInitMem(void);
 
 extern void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle);
