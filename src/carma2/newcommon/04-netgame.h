@@ -70,9 +70,9 @@ extern void C2_HOOK_FASTCALL ReceivedCopInfo(void);
 
 // DrawScoreBoxes
 
-// DoNetScores2
+extern void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores);
 
-// DoNetScores
+extern void C2_HOOK_FASTCALL DoNetScores(void);
 
 extern void C2_HOOK_FASTCALL InitNetHeadups(void);
 
