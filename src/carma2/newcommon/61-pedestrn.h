@@ -7,6 +7,7 @@
 extern float gPedestrian_speed_factor;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
+extern int gDancing_peds;
 
 // OrientationChanged
 
