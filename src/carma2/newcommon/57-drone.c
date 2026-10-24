@@ -1,5 +1,7 @@
 #include "57-drone.h"
 
+#include "41-utility.h"
+
 #include <math.h>
 
 // GLOBAL: CARMA2_HW 0x006820c0
@@ -49,7 +51,16 @@ int gTraffic_disabled;
 
 // GetSpeedControlFromString
 
-// MrFindy
+// FUNCTION: CARMA2_HW 0x00450b30
+// FUNCTION: CARMA2_SW 0x004508c0
+br_actor* C2_HOOK_CDECL MrFindy(br_actor* pActor, const char* pName) {
+
+    if (DRStricmp(pActor->identifier, pName) == 0) {
+        return pActor;
+    } else {
+        return NULL;
+    }
+}
 
 // FindDroneChildActor
 
