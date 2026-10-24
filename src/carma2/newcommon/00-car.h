@@ -89,7 +89,7 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // ControlCar2
 
-// ControlCar3
+extern void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br_scalar pDt);
 
 // ControlCar4
 
