@@ -69,6 +69,8 @@ extern void C2_HOOK_FASTCALL F12Key(void);
 
 // LookRight
 
+extern void C2_HOOK_FASTCALL DamageTest(void);
+
 // ToggleMiniMap
 
 // CheckToggles
