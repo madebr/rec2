@@ -124,7 +124,7 @@ extern void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
 
 // TeleportCopToStart
 
-// CalcDistanceFromHome
+extern void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec);
 
 // MassageOpponentPosition
 
