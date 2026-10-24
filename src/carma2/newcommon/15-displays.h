@@ -79,6 +79,8 @@ extern void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pNew_x, int pNe
 
 extern void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text);
 
+extern void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont);
+
 extern void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
 
 // DoInstruments
