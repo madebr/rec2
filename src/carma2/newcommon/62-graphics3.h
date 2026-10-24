@@ -22,7 +22,7 @@ extern br_vector2 gOrigin_headup_map;
 
 // CycleMapOptions
 
-// ToggleMapTransparency
+extern void C2_HOOK_FASTCALL ToggleMapTransparency(void);
 
 extern void C2_HOOK_FASTCALL InitTargetLock(void);
 

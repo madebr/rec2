@@ -148,7 +148,13 @@ tSmashable_race_target gSmashable_race_targets[300];
 
 // CycleMapOptions
 
-// ToggleMapTransparency
+// FUNCTION: CARMA2_HW 0x00494880
+// FUNCTION: CARMA2_SW 0x00491b80
+void C2_HOOK_FASTCALL ToggleMapTransparency(void) {
+
+    gMap_trans = !gMap_trans;
+    SaveOptions();
+}
 
 // FUNCTION: CARMA2_HW 0x004948a0
 void C2_HOOK_FASTCALL InitTargetLock(void) {
