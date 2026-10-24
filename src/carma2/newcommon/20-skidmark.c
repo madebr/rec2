@@ -24,7 +24,14 @@ int gCurrent_skid;
 
 // MaterialFromIndex
 
-// AdjustSkid
+// FUNCTION: CARMA2_HW 0x004e9be0
+// FUNCTION: CARMA2_SW 0x004e59a0
+void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial) {
+    gSkids[pSkid_num].actor->t.t.mat = *pMatrix;
+    gSkids[pSkid_num].pos = *(br_vector3*)pMatrix->m[3];
+    gSkids[pSkid_num].actor->material = pMaterial;
+    gSkids[pSkid_num].actor->render_style = BR_RSTYLE_DEFAULT;
+}
 
 // FarFromLine2D
 
