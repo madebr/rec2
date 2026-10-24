@@ -335,7 +335,27 @@ void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_sc
 
 // ActorError
 
-// AdjustSmokeColumn
+// FUNCTION: CARMA2_HW 0x004fb580
+// FUNCTION: CARMA2_SW 0x004f6ac0
+void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour) {
+    tU32 bit;
+
+    bit = 1 << pIndex;
+    gColumn_flags ^= bit;
+    gSmoke_column[pIndex].core = *pCore;
+    gSmoke_column[pIndex].vertex_index = pVertex;
+    gSmoke_column[pIndex].colour = pColour;
+    gSmoke_column[pIndex].frame_count[0] = 100;
+    gSmoke_column[pIndex].frame_count[1] = 100;
+    gSmoke_column[pIndex].frame_count[2] = 100;
+    if (pColour == 0) {
+        if ((gColumn_flags & bit) != 0) {
+            BrActorAdd(gNon_track_actor, gSmoke_column[pIndex].flame_actor);
+        } else if (gSmoke_column[pIndex].flame_actor->depth != 0) {
+            BrActorRemove(gSmoke_column[pIndex].flame_actor);
+        }
+    }
+}
 
 // CreateSmokeColumn2
 
