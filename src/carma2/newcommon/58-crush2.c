@@ -1,5 +1,16 @@
-#include "43-pratcam.h"
 #include "58-crush2.h"
+
+#include "07-structur.h"
+#include "09-funks.h"
+#include "15-displays.h"
+#include "21-mainloop.h"
+#include "30-opponent.h"
+#include "39-oil.h"
+#include "41-utility.h"
+#include "43-pratcam.h"
+#include "globvars.h"
+#include "globvrpb.h"
+
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0074d3b0
@@ -25,7 +36,35 @@ int gTime_per_ped_kill[3];
 
 // CheckLastCar
 
-// KnackerThisCar
+// FUNCTION: CARMA2_HW 0x0043f5f0
+// FUNCTION: CARMA2_SW 0x0043f6d0
+void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
+
+    if (pCar->invulnerable_no_wastage) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_client) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_none && pCar != NULL && pCar->driver == eDriver_local_human) {
+        RaceCompleted(eRace_over_6);
+    }
+    pCar->knackered = 1;
+    QueueWastedMassage(pCar->index);
+    if (gNet_mode == eNet_mode_none && GetCarCount(eVehicle_opponent) != 0 && NumberOfOpponentsLeft() == 0) {
+        if (gCurrent_race.race_spec->race_type == kRaceType_Carma1 || gCurrent_race.race_spec->race_type == kRaceType_Cars) {
+            if (gCurrent_race.race_spec->race_type == kRaceType_Carma1) {
+                NewTextHeadupSlot(4, 0, 5000, -4, GetMiscString(10));
+            }
+            RaceCompleted(eRace_over_2);
+        }
+    }
+    QueueOilSpill(pCar);
+    if (gNet_mode == eNet_mode_none) {
+        KillGroovadelic(pCar->index);
+        KillFunkotronic(pCar->index);
+    }
+}
 
 // ExplodeMeCarUpMeOldMatey
 
