@@ -72,7 +72,7 @@ extern int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pP
 
 // DronePlaneWithinRenderingDistance
 
-// DroneTrainWithinRenderingDistance
+extern int C2_HOOK_FASTCALL DroneTrainWithinRenderingDistance(const br_vector3* pPos);
 
 // SemiInitDroneSpec
 
