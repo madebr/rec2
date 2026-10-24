@@ -5,6 +5,8 @@
 
 extern void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 
+extern void C2_HOOK_CDECL NonFatalError(int pStr_index, ...);
+
 extern void C2_HOOK_FASTCALL CloseDiagnostics(void);
 
 extern void C2_HOOK_FASTCALL OpenDiagnostics(void);
