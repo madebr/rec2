@@ -1873,7 +1873,12 @@ void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider) {
     SetJoystickY((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
 }
 
-// Slider_ForceProc
+// FUNCTION: CARMA2_HW 0x00472a10
+// FUNCTION: CARMA2_SW 0x00471fa0
+void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider) {
+
+    SetJoystickFFBGain((int)(pSlider->value * 100.0));
+}
 
 // DisplayJoystickSettings
 
