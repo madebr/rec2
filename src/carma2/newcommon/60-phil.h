@@ -57,7 +57,7 @@ extern tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void);
 
 // PHILReturnObjectStatus
 
-// PHILMakeObjectPassive
+extern int C2_HOOK_FASTCALL PHILMakeObjectPassive(tPhysics_object* pObject);
 
 // PHILMakeObjectActive
 
