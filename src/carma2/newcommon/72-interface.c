@@ -1862,7 +1862,7 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
 // Slider_XProc
 
 // FUNCTION: CARMA2_HW 0x004729f0
-// FUNCTION: CARMA2_SW 0x00471f60
+// FUNCTION: CARMA2_SW 0x00471f80
 void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider) {
 
     SetJoystickY((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
