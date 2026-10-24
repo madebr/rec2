@@ -176,13 +176,13 @@ void C2_HOOK_FASTCALL InitSmashQueue(void) {
 
 // FUNCTION: CARMA2_HW 0x004ee5a0
 // FUNCTION: CARMA2_SW 0x004ea270
-void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes) {
+void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* pTimes) {
     float min;
     float max;
 
     GetPairOfFloats(pFile, &min, &max);
-    pTimes[0] = (int)(min * 1000.0);
-    pTimes[1] = (int)(max * 1000.0);
+    pTimes->min_time = (int)(min * 1000.0);
+    pTimes->max_time = (int)(max * 1000.0);
 }
 
 // ReadSpillData
