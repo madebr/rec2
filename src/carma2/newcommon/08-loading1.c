@@ -570,6 +570,34 @@ static void C2_HOOK_FASTCALL EncodeLine2(char* pS) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004907b0
+// FUNCTION: CARMA2_SW 0x0048da20
+void C2_HOOK_FASTCALL EncodeLine_DEMO(char* pS) {
+    int len;
+    int seed;
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gLong_key) != 16);
+
+    len = strlen(pS);
+    while (len != 0 && (pS[len - 1] == '\r' || pS[len - 1] == '\n')) {
+        pS[len - 1] = '\0';
+        len--;
+    }
+    seed = len % (int)REC2_ASIZE(gLong_key);
+    for (i = 0; i < len; i++) {
+        if (pS[i] == '\t') {
+            pS[i] = (char)0x9f;
+        }
+        pS[i] = ((gLong_key[seed] ^ (pS[i] - 0x20)) & 0x7f) + 0x20;
+
+        seed = (seed + 7) % (int)REC2_ASIZE(gLong_key);
+        if (pS[i] == (char)0x9f) {
+            pS[i] = '\t';
+        }
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00490840
 // FUNCTION: CARMA2_SW 0x0048dab0
 void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
