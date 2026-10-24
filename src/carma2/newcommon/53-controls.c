@@ -185,7 +185,11 @@ void C2_HOOK_FASTCALL ToggleTimerFreeze(void) {
 
 // EarnDosh
 
-// LoseDosh
+// FUNCTION: CARMA2_HW 0x004445f0
+// FUNCTION: CARMA2_SW 0x004446d0
+void C2_HOOK_FASTCALL LoseDosh(void) {
+    EarnCredits(-5000);
+}
 
 // FUNCTION: CARMA2_HW 0x00444600
 void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
