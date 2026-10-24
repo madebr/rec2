@@ -21,6 +21,8 @@ extern int C2_HOOK_FASTCALL TimeToStopStruggling(tOpponent_spec* pOpponent_spec)
 
 // TimeToBeBrakingWhenStruggling
 
+extern void C2_HOOK_CDECL DoNotDprintf_oppoproc(const char* pMessage, ...);
+
 // CalcCorners
 
 // Distance2D

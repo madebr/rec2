@@ -31,6 +31,12 @@ int C2_HOOK_FASTCALL TimeToStopStruggling(tOpponent_spec* pOpponent_spec) {
 
 // TimeToBeBrakingWhenStruggling
 
+// FUNCTION: CARMA2_HW 0x004b13c0
+// FUNCTION: CARMA2_SW 0x004ad530
+void C2_HOOK_CDECL DoNotDprintf_oppoproc(const char* pMessage, ...) {
+
+}
+
 // CalcCorners
 
 // Distance2D
