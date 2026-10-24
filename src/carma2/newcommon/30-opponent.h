@@ -74,7 +74,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // ProcessRunAway
 
-// ProcessWaitForSomeHaplessSod
+extern void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 
 // ProcessReturnToStart
 

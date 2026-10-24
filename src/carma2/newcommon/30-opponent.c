@@ -93,7 +93,21 @@ void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 // ProcessRunAway
 
-// ProcessWaitForSomeHaplessSod
+// FUNCTION: CARMA2_HW 0x004abc00
+// FUNCTION: CARMA2_SW 0x004a7d70
+void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+
+    switch (pCommand) {
+    case ePOC_start:
+        pOpponent_spec->car_spec->brake_force = 15.f * pOpponent_spec->car_spec->collision_info->M;
+        return;
+    case ePOC_run:
+        pOpponent_spec->car_spec->brake_force = 15.f * pOpponent_spec->car_spec->collision_info->M;
+        return;
+    case ePOC_die:
+        return;
+    }
+}
 
 // ProcessReturnToStart
 
