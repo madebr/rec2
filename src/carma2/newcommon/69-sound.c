@@ -19,6 +19,7 @@
 #include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
+#include "s3/internal/audio.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -420,6 +421,17 @@ void C2_HOOK_FASTCALL DRS3Service(void) {
 
     if (gSound_enabled) {
         S3Service(gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0, 1);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00455880
+// FUNCTION: CARMA2_SW 0x00455610
+int C2_HOOK_FASTCALL DRS3ReleaseSound(tS3_sound_id pThe_sound) {
+
+    if (gSound_enabled) {
+        return S3ReleaseSound(pThe_sound);
+    } else {
+        return 0;
     }
 }
 

@@ -45,6 +45,8 @@ extern tS3_error_codes C2_HOOK_FASTCALL DRS3LoadSound(tS3_sound_id pThe_sound);
 
 extern void C2_HOOK_FASTCALL DRS3Service(void);
 
+extern int C2_HOOK_FASTCALL DRS3ReleaseSound(tS3_sound_id pThe_sound);
+
 extern int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
 
 extern void C2_HOOK_FASTCALL DRS3ShutDown(void);
