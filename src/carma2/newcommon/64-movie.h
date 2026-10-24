@@ -56,7 +56,7 @@ extern int C2_HOOK_FASTCALL GetMovieWidth(void);
 
 extern int C2_HOOK_FASTCALL GetMovieHeight(void);
 
-// TidyMovieARDisplay
+extern void C2_HOOK_FASTCALL TidyMovieARDisplay(void);
 
 // TrapS3SoundOutput
 

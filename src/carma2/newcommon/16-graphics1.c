@@ -344,7 +344,10 @@ void C2_HOOK_FASTCALL ResetScreenWobble(void) {
 
 // DoACompleteRenderPass
 
-// RenderAFrame
+// STUB: CARMA2_HW 0x004e4e40
+void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004e5a70
 void C2_HOOK_FASTCALL StartRenderingHeadups(void) {
