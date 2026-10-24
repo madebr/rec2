@@ -18,6 +18,7 @@ extern int gCount_mutant_tail_parts;
 extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
 extern float gMass_mine;
+extern int gInstant_handbrake;
 
 // GetNextGoodyTime
 
@@ -295,9 +296,9 @@ extern void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 // MungeVouchers
 
-// SetInstantHandbrake
+extern int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetInstantHandbrake
+extern void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetDancingPeds
 

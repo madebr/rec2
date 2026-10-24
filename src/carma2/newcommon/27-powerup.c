@@ -60,6 +60,10 @@ int gCount_cloaked_cars;
 // GLOBAL: CARMA2_HW 0x006a0910
 tCar_spec* gCloaked_cars[12];
 
+// GLOBAL: CARMA2_HW 0x0079ec50
+// GLOBAL: CARMA2_SW 0x007951b0
+int gInstant_handbrake;
+
 // GLOBAL: CARMA2_HW 0x006a0a54
 tPowerup* gPowerup_array;
 
@@ -494,9 +498,24 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // MungeVouchers
 
-// SetInstantHandbrake
+// FUNCTION: CARMA2_HW 0x004de820
+// FUNCTION: CARMA2_SW 0x004dad20
+int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// ResetInstantHandbrake
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gInstant_handbrake = 1;
+    }
+    return pPowerup - gPowerup_array;
+}
+
+// FUNCTION: CARMA2_HW 0x004de850
+// FUNCTION: CARMA2_SW 0x004dad50
+void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gInstant_handbrake = 0;
+    }
+}
 
 // SetDancingPeds
 
