@@ -31,6 +31,8 @@ extern int C2_HOOK_FASTCALL DRS3ChangeVolume(int pChannel_id, int pVolume);
 
 extern int C2_HOOK_FASTCALL DRS3StopSound(tS3_sound_tag pSound_tag);
 
+extern tS3_error_codes C2_HOOK_FASTCALL DRS3LoadSound(tS3_sound_id pThe_sound);
+
 extern void C2_HOOK_FASTCALL DRS3Service(void);
 
 extern int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
