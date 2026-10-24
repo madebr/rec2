@@ -325,7 +325,7 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider);
 
-// Slider_YProc
+extern void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider);
 
 // Slider_ForceProc
 
