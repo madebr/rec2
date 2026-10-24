@@ -9,9 +9,11 @@
 #include "23-piping.h"
 
 #include "00-car.h"
+#include "09-funks.h"
 #include "16-graphics1.h"
 #include "27-powerup.h"
 #include "32-spark.h"
+
 #include "51-smash.h"
 #include "69-sound.h"
 #include "globvars.h"
@@ -922,7 +924,22 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // ApplyBloodSpurt
 
-// ApplyGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004c9be0
+// FUNCTION: CARMA2_SW 0x004c6310
+void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+    tPipe_single_groove_on_of* data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_groove_on_of, block_flags, 0x4);
+
+    chunk = *pChunk;
+    data = (tPipe_single_groove_on_of*)chunk->data.raw_data;
+    if (data->enable) {
+        EnableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    } else {
+        DisableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    }
+}
 
 // ApplyPowerupGot
 
@@ -1083,7 +1100,22 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoBloodSpurt
 
-// UndoGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004ca2d0
+// FUNCTION: CARMA2_SW 0x004c6a00
+void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+    tPipe_single_groove_on_of* data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_groove_on_of, block_flags, 0x4);
+
+    chunk = *pChunk;
+    data = (tPipe_single_groove_on_of*)chunk->data.raw_data;
+    if (data->enable) {
+        DisableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    } else {
+        EnableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    }
+}
 
 // UndoPowerupGot
 
