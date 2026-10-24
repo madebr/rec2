@@ -96,7 +96,27 @@ void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage) 
     }
 }
 
-// SmoothificatePowerups
+// FUNCTION: CARMA2_HW 0x004f6900
+void C2_HOOK_FASTCALL SmoothificatePowerups(br_actor* pActor) {
+    br_model* model;
+    int i;
+
+    if (gNbPixelBits != 16) {
+        return;
+    }
+    model = pActor->model;
+    if (model == NULL) {
+        return;
+    }
+    if (pActor->material != NULL) {
+        SmoothificatePowerupMaterial(pActor->material);
+    }
+    for (i = 0; i < model->nfaces; i++) {
+        if (model->faces[i].material != NULL) {
+            SmoothificatePowerupMaterial(model->faces[i].material);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004f6a20
 void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
