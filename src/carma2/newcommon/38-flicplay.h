@@ -80,6 +80,8 @@ extern void C2_HOOK_FASTCALL UnlockFlic(int pIndex);
 
 // LoadFlicData
 
+extern void C2_HOOK_FASTCALL FreeFlic(int pIndex);
+
 extern void C2_HOOK_FASTCALL InitFlicQueue(void);
 
 extern int C2_HOOK_FASTCALL FlicQueueFinished(void);
