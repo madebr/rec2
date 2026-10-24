@@ -65,6 +65,20 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout__intrface(void) {
     gStart_time = PDGetTotalTime();
 }
 
+// FUNCTION: CARMA2_HW 0x00484650
+// FUNCTION: CARMA2_SW 0x00481790
+void C2_HOOK_FASTCALL DisableChoice(int pChoice) {
+    int i;
+
+    for (i = 0; i < gDisabled_count; i++) {
+        if (gDisabled_choices[i] == pChoice) {
+            return;
+        }
+    }
+    gDisabled_choices[gDisabled_count] = pChoice;
+    gDisabled_count++;
+}
+
 // FUNCTION: CARMA2_HW 0x00484dd0
 void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_selection, int* pNew_selection, int pMode, int pSkip_disabled) {
 
