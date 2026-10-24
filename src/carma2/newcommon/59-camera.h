@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern int gCamera_frozen;
+extern br_actor* gPed_actor;
 
 extern float gCamera_cockpit_hither;
 extern tActionReplayCameraMode gAction_replay_camera_mode;
@@ -43,13 +44,13 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // PositionExternalCamera
 
-// CameraBugFix
+extern void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* pCar, tU32 pTime);
 
 // PossibleRemoveNonCarFromWorld
 
 // PutNonCarBackInWorld
 
-// IncidentCam
+extern int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime);
 
 // MoveCamToIncident
 
