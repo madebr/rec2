@@ -21,6 +21,7 @@
 #include "72-interface-quit.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "joystick.h"
 #include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
@@ -1858,7 +1859,12 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
 
 // Controls_JoystickDpadToggle
 
-// Slider_XProc
+// FUNCTION: CARMA2_HW 0x004729d0
+// FUNCTION: CARMA2_SW 0x00471f60
+void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider) {
+
+    SetJoystickX((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
+}
 
 // Slider_YProc
 
