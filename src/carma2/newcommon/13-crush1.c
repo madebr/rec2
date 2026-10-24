@@ -821,7 +821,16 @@ int C2_HOOK_FASTCALL BattenDownTheObjects(tPhysics_object* pCollision_info, void
     return 0;
 }
 
-// CompletelyUnBendCollisionShape
+// FUNCTION: CARMA2_HW 0x00439fd0
+// FUNCTION: CARMA2_SW 0x0043a010
+void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape) {
+    int i;
+
+    pShape->count_points = pShape->original_count_points;
+    for (i = 0; i < pShape->count_points; i++) {
+        BrVector3Copy(&pShape->field_0x18[i].field_0x18, &pShape->field_0x18[i].field_0x2c);
+    }
+}
 
 // CompletelyUnBendCollisionShapes
 
