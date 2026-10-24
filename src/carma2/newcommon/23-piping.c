@@ -92,9 +92,26 @@ int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType) {
 
 // ARStartPipingSession
 
-// EndPipingSession2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// AREndPipingSession
+// STUB: CARMA2_HW 0x00402660
+// STUB: CARMA2_SW 0x00402660
+void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00402890
+// FUNCTION: CARMA2_SW 0x00402890
+void C2_HOOK_FASTCALL AREndPipingSession(void) {
+
+    EndPipingSession2(1);
+}
 
 // ARAddDataToSession
 
