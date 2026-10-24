@@ -183,7 +183,12 @@ void C2_HOOK_FASTCALL ToggleTimerFreeze(void) {
     }
 }
 
-// EarnDosh
+// FUNCTION: CARMA2_HW 0x004445e0
+// FUNCTION: CARMA2_SW 0x004446c0
+void C2_HOOK_FASTCALL EarnDosh(void) {
+
+    EarnCredits(5000);
+}
 
 // LoseDosh
 
