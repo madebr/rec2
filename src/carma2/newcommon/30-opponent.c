@@ -5,6 +5,7 @@
 #include "08-loading1.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0065a3c4
 // GLOBAL: CARMA2_SW 0x00654cdc
@@ -65,7 +66,24 @@ void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 // AllowForDecel
 
-// ShiftOpponentsProjectedRoute
+// FUNCTION: CARMA2_HW 0x004ab100
+// FUNCTION: CARMA2_SW 0x004a7270
+int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pOpponent_spec->next_sections) != 12);
+
+    if (pOpponent_spec->nnext_sections > pPlaces) {
+        for (i = 0; i < (int)REC2_ASIZE(pOpponent_spec->next_sections) - pPlaces; i++) {
+            pOpponent_spec->next_sections[i].section_no = pOpponent_spec->next_sections[pPlaces + i].section_no;
+            pOpponent_spec->next_sections[i].direction = pOpponent_spec->next_sections[pPlaces + i].direction;
+        }
+        pOpponent_spec->nnext_sections -= pPlaces;
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // NewCalcGetNearPlayerRoute
 
