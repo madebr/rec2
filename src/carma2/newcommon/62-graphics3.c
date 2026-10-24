@@ -101,6 +101,22 @@ float gFLOAT_0074ab9c;
 // GLOBAL: CARMA2_HW 0x0074abb8
 float gFLOAT_0074abb8;
 
+// GLOBAL: CARMA2_HW 0x0074abbc
+// GLOBAL: CARMA2_SW 0x00741268
+int gMap_render_y_i;
+
+// GLOBAL: CARMA2_HW 0x0074abc0
+// GLOBAL: CARMA2_SW 0x0074126c
+int gMap_render_x_i;
+
+// GLOBAL: CARMA2_HW 0x0074abc8
+// GLOBAL: CARMA2_SW 0x00741274
+int gMap_render_height_i;
+
+// GLOBAL: CARMA2_HW 0x0074abe8
+// GLOBAL: CARMA2_SW 0x00741294
+int gMap_render_width_i;
+
 // GLOBAL: CARMA2_HW 0x0068d6e4
 br_pixelmap* gCheckpoint_numbers;
 
@@ -156,7 +172,16 @@ void C2_HOOK_FASTCALL InitTargetLock(void) {
     gTarget_lock_enabled = 0;
 }
 
-// SetIntegerMapRenders
+// FUNCTION: CARMA2_HW 0x004948b0
+void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
+
+    gMap_render_width = 128.f;
+    gMap_render_height = 80.f;
+    gMap_render_x_i = ((int)gMap_render_x) & ~0x3;
+    gMap_render_y_i = ((int)gMap_render_y) & ~0x1;
+    gMap_render_width_i = (int)gMap_render_width;
+    gMap_render_height_i = (int)gMap_render_height;
+}
 
 // OppositeColour
 
