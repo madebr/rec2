@@ -23,7 +23,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // ViewOpponent
 
-// ReallyViewOpponent
+extern void C2_HOOK_FASTCALL ReallyViewOpponent(void);
 
 // CheckDisablePlingMaterials
 
@@ -41,7 +41,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // PositionCarMountedCamera
 
-// PositionExternalCamera
+extern void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime);
 
 // CameraBugFix
 
@@ -85,7 +85,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // CollideCameraWithOtherCars
 
-// InitialiseExternalCamera
+extern void C2_HOOK_FASTCALL InitialiseExternalCamera(void);
 
 extern void C2_HOOK_FASTCALL FreezeCamera(void);
 

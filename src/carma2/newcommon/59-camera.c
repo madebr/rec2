@@ -2,6 +2,8 @@
 
 #include "37-brucetrk.h"
 #include "globvars.h"
+#include "globvrkm.h"
+#include "globvrpb.h"
 
 // GLOBAL: CARMA2_HW 0x006792b8
 int gCamera_frozen;
@@ -26,7 +28,24 @@ tActionReplayCameraMode gAction_replay_camera_mode;
 
 // ViewOpponent
 
-// ReallyViewOpponent
+// FUNCTION: CARMA2_HW 0x0040e680
+// FUNCTION: CARMA2_SW 0x0040e660
+void C2_HOOK_FASTCALL ReallyViewOpponent(void) {
+    int i;
+
+    if (gNet_mode == eNet_mode_client) {
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            if (gNet_players[i].ID == gCar_to_view_id) {
+                gCar_to_view_id = 0;
+                gCamera_yaw = 0;
+                gCar_to_view = gNet_players[i].car;
+                InitialiseExternalCamera();
+                PositionExternalCamera(gCar_to_view, 200);
+                return;
+            }
+        }
+    }
+}
 
 // CheckDisablePlingMaterials
 
@@ -44,7 +63,19 @@ tActionReplayCameraMode gAction_replay_camera_mode;
 
 // PositionCarMountedCamera
 
-// PositionExternalCamera
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0040ea30
+// STUB: CARMA2_SW 0x0040ea10
+void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // CameraBugFix
 
@@ -88,7 +119,19 @@ tActionReplayCameraMode gAction_replay_camera_mode;
 
 // CollideCameraWithOtherCars
 
-// InitialiseExternalCamera
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00413580
+// STUB: CARMA2_SW 0x004135b0
+void C2_HOOK_FASTCALL InitialiseExternalCamera(void) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x00413770
 void C2_HOOK_FASTCALL FreezeCamera(void) {
