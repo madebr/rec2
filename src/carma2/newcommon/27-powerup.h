@@ -215,7 +215,7 @@ extern int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetImmortalPeds
 
-// SetSuicidalPeds
+extern int C2_HOOK_FASTCALL SetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetSuicidalPeds
 

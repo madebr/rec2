@@ -24,6 +24,10 @@ int gExplosives_on = 1;
 // GLOBAL: CARMA2_HW 0x007447e0
 float gPedestrian_speed_factor;
 
+// GLOBAL: CARMA2_HW 0x007447ac
+// GLOBAL: CARMA2_SW 0x0073b26c
+int gPeds_suicidal;
+
 // GLOBAL: CARMA2_HW 0x007447b0
 int gExploding_pedestrians;
 
