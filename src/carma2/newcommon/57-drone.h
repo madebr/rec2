@@ -46,7 +46,7 @@ extern br_vector3 gRender_bounds_centre;
 
 // GetSpeedControlFromString
 
-// MrFindy
+extern br_actor* C2_HOOK_CDECL MrFindy(br_actor* pActor, const char* pName);
 
 // FindDroneChildActor
 
