@@ -136,7 +136,7 @@ extern void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm);
 
 // CBLoadPersonality
 
-// CBDisposePersonality
+extern void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality);
 
 // CBFillInObject
 
