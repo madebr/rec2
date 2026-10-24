@@ -56,9 +56,21 @@ int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* pModel, br_material* pMater
 #pragma auto_inline(on)
 #endif
 
-// FindHighestPolyCallBack
+// STUB: CARMA2_HW 0x004e4300
+// STUB: CARMA2_SW 0x004e0690
+int C2_HOOK_CDECL FindHighestPolyCallBack__raycast(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pArg) {
+    NOT_IMPLEMENTED();
+}
 
-// FindHighestCallBack
+// FUNCTION: CARMA2_HW 0x004e3d50
+// FUNCTION: CARMA2_SW 0x004e00e0
+int C2_HOOK_CDECL FindHighestCallBack__raycast(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
+
+    if (gProgram_state.current_car.car_actor != pActor) {
+        DRModelPick2D_raycast(pModel, pMaterial, pRay_pos, pRay_dir, pT_near, pT_far, FindHighestPolyCallBack__raycast, pArg);
+    }
+    return 0;
+}
 
 // FindBestY
 
