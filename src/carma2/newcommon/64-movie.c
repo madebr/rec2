@@ -17,6 +17,10 @@ int gQuickTime_initialized;
 // GLOBAL: CARMA2_SW 0x0069aca8
 int gNext_replay_record_state;
 
+// GLOBAL: CARMA2_HW 0x006a23b8
+// GLOBAL: CARMA2_SW 0x0069c410
+int gShow_status_message;
+
 // GLOBAL: CARMA2_HW 0x00705440
 char gQuick_time_temp_path[256];
 
@@ -105,7 +109,12 @@ int C2_HOOK_FASTCALL MovieRecording(void) {
     return gNext_replay_record_state;
 }
 
-// KillStatusMessage
+// FUNCTION: CARMA2_HW 0x004e2110
+// FUNCTION: CARMA2_SW 0x004de490
+void C2_HOOK_FASTCALL KillStatusMessage(void) {
+
+    gShow_status_message = 0;
+}
 
 // ShowStatusMessage
 
