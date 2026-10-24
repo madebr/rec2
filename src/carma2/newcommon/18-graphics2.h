@@ -109,7 +109,7 @@ extern void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, i
 
 // DR8BitFancyDrawLine
 
-// FancyDrawLine
+extern void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period);
 
 // DRPixelmapCopyMapBlack8Bit
 

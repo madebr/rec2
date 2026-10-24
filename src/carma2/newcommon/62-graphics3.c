@@ -2,6 +2,7 @@
 
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "18-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "41-utility.h"
@@ -244,7 +245,26 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU3
 
 // FinishMap
 
-// CheckpointLine
+// FUNCTION: CARMA2_HW 0x00496b10
+void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    int p2_x;
+    int p2_y;
+    tRace_checkpoint_spec* checkpoint;
+
+    if (pCheckpoint >= 0 && pCheckpoint < gCurrent_race.check_point_count) {
+        checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
+        if (checkpoint->map_position.v[0] < 0.f) {
+            p2_x = 8;
+            p2_y = (int)((checkpoint->map_position.v[1] - (float)gINT_0074abd0)
+                * ((float)gINT_0074abd4 / ((float)gINT_0074abd4 - checkpoint->map_position.v[0]))
+                + (float)gINT_0074abd0);
+        } else {
+            p2_x = (int)(checkpoint->map_position.v[0] + 8.f);
+            p2_y = (int)checkpoint->map_position.v[1];
+        }
+        FancyDrawLine(pMap, gINT_0074abd4 + 8, gINT_0074abd0, p2_x, p2_y, 132, 100);
+    }
+}
 
 // DoDirectionFinderStuff
 
