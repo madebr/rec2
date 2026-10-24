@@ -479,7 +479,59 @@ int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
 
 // DoDifferenceX
 
-// DoDifferenceTrans
+// FUNCTION: CARMA2_HW 0x00462480
+// FUNCTION: CARMA2_SW 0x00461f10
+void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int k;
+    int skipped_lines;
+    int number_of_lines;
+    int number_of_packets;
+    int skip_count;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+
+    (void)pChunk_length;
+    skipped_lines = MemReadU16(&pFlic_info->data);
+    number_of_lines = MemReadU16(&pFlic_info->data);
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel + skipped_lines * the_row_bytes;
+    for (i = 0; i < number_of_lines; i++) {
+        line_pixel_ptr = pixel_ptr;
+        number_of_packets = MemReadU8(&pFlic_info->data);
+        for (j = 0; j < number_of_packets; j++) {
+            skip_count = MemReadU8(&pFlic_info->data);
+            size_count = MemReadS8(&pFlic_info->data);
+            line_pixel_ptr += skip_count;
+            if (size_count >= 0) {
+                for (k = 0; k < size_count; k++) {
+                    the_byte = *pFlic_info->data++;
+                    if (the_byte != 0) {
+                        *line_pixel_ptr = the_byte;
+                        line_pixel_ptr++;
+                    } else {
+                        line_pixel_ptr++;
+                    }
+                }
+            } else {
+                the_byte = *pFlic_info->data++;
+                if (the_byte != 0) {
+                    for (k = 0; k < -size_count; k++) {
+                        *line_pixel_ptr = the_byte;
+                        line_pixel_ptr++;
+                    }
+                } else {
+                    line_pixel_ptr += size_count;
+                }
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoColour256
 
