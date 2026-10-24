@@ -31,6 +31,14 @@ int gNext_replay_record_state;
 // GLOBAL: CARMA2_SW 0x0069c410
 int gShow_status_message;
 
+// GLOBAL: CARMA2_HW 0x006a23bc
+// GLOBAL: CARMA2_SW 0x0069c414
+int gStatus_message_1;
+
+// GLOBAL: CARMA2_HW 0x006a23c0
+// GLOBAL: CARMA2_SW 0x0069c418
+int gStatus_message_2;
+
 // GLOBAL: CARMA2_HW 0x00705440
 // GLOBAL: CARMA2_SW 0x006fbf00
 char gQuick_time_temp_path[256];
@@ -133,7 +141,14 @@ void C2_HOOK_FASTCALL KillStatusMessage(void) {
     gShow_status_message = 0;
 }
 
-// ShowStatusMessage
+// FUNCTION: CARMA2_HW 0x004e2120
+// FUNCTION: CARMA2_SW 0x004de4a0
+void C2_HOOK_FASTCALL ShowStatusMessage(int pMessage1, int pMessage2) {
+
+    gShow_status_message = 1;
+    gStatus_message_1 = pMessage1;
+    gStatus_message_2 = pMessage2;
+}
 
 // FUNCTION: CARMA2_HW 0x004e2140
 // FUNCTION: CARMA2_SW 0x004de4c0
