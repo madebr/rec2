@@ -51,7 +51,7 @@ extern void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
 extern void C2_HOOK_FASTCALL ClearHeadups(void);
 
-// DimAFewBits
+extern void C2_HOOK_FASTCALL DimAFewBits(void);
 
 // KillOldestQueuedHeadup
 
