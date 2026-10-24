@@ -3,7 +3,21 @@
 #include "41-utility.h"
 #include "69-sound.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "platform.h"
+#include <stdlib.h>
+
+// GLOBAL: CARMA2_HW 0x0068c814
+// GLOBAL: CARMA2_SW 0x00686868
+tU32 gOld_camera_time;
+
+// GLOBAL: CARMA2_HW 0x0068c820
+// GLOBAL: CARMA2_SW 0x00686874
+tU32 gActual_last_tick_count;
+
+// GLOBAL: CARMA2_HW 0x0068c824
+// GLOBAL: CARMA2_SW 0x00686878
+tU32 gAverage_frame_period;
 
 // GLOBAL: CARMA2_HW 0x00761ef0
 int gCredits_per_second_time_bonus[3];  /* FIXME: rename to gPoints_per_second */
@@ -26,7 +40,80 @@ void C2_HOOK_FASTCALL QueueWastedMassage(int pIndex) {
 
 // MungeHeadups
 
-// UpdateFramePeriod
+// FUNCTION: CARMA2_HW 0x00492680
+// FUNCTION: CARMA2_SW 0x0048f8a0
+void C2_HOOK_FASTCALL UpdateFramePeriod(tU32* pCamera_period) {
+    tU32 new_tick_count;
+    tU32 new_camera_tick_count;
+    int error;
+
+    if (gAction_replay_mode) {
+        tU32 last_tick_count;
+        tU32 camera_period;
+
+        last_tick_count = gLast_tick_count;
+        gFrame_period = abs((int)(gLast_replay_frame_time - last_tick_count));
+        gLast_tick_count = gLast_replay_frame_time;
+        new_camera_tick_count = PDGetTotalTime();
+        new_tick_count = GetTotalTime();
+        if (gOld_camera_time != 0) {
+            camera_period = new_camera_tick_count - gOld_camera_time;
+        } else {
+            camera_period = 0;
+        }
+        *pCamera_period = camera_period;
+        gOld_camera_time = new_camera_tick_count;
+        if (gFrame_period != 0) {
+            *pCamera_period = gFrame_period;
+        }
+    } else {
+        int new_period;
+
+        new_tick_count = PDGetTotalTime();
+        gLast_tick_count += gFrame_period;
+        error = new_tick_count - gLast_tick_count;
+        gFrame_period = new_tick_count - gActual_last_tick_count;
+        if (gFrame_period > 500 && new_tick_count - gRace_start > 2000) {
+            gFrame_period = gAverage_frame_period / 10;
+            gLast_tick_count = new_tick_count;
+            if (gNet_mode != eNet_mode_none) {
+                switch (gNet_mode) {
+                case eNet_mode_client:
+                    gProgram_state.current_car.collision_info->field_0x49c = 0;
+                    break;
+                case eNet_mode_host:
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        gAverage_frame_period = 9 * gAverage_frame_period / 10 + gFrame_period;
+        if (new_tick_count - gRace_start > 2000) {
+            gFrame_period = gAverage_frame_period / 10;
+        }
+        new_period = gFrame_period + error;
+        if (new_period <= 0) {
+            gLast_tick_count = new_tick_count;
+        } else {
+            gFrame_period = new_period;
+        }
+        *pCamera_period = gFrame_period;
+        gActual_last_tick_count = new_tick_count;
+    }
+    if (gFrame_period < 10) {
+        gFrame_period = 10;
+        gLast_tick_count = new_tick_count;
+    } else if (gFrame_period > 1000) {
+        gFrame_period = 1000;
+        gLast_tick_count = new_tick_count;
+    }
+    if (*pCamera_period < 10) {
+        *pCamera_period = 10;
+    } else if (*pCamera_period > 1000) {
+        *pCamera_period = 1000;
+    }
+}
 
 // CheckTimer
 
