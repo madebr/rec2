@@ -10,7 +10,21 @@ br_pixelmap* gDigits_pix;
 
 // SendShapeNumbers
 
-// ClearShapeStatusFlag
+// FUNCTION: CARMA2_HW 0x00497ef0
+// FUNCTION: CARMA2_SW 0x00494b20
+void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, int pPlayer_id) {
+    int i;
+
+    if (pShapes == NULL) {
+        return;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(pShapes->items); i++) {
+        if (pShapes->items[i].network_id == pPlayer_id) {
+            pShapes->items[i].field_0x4 = 0;
+            return;
+        }
+    }
+}
 
 // SendNonCar
 
