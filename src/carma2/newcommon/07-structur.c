@@ -39,7 +39,11 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     return result;
 }
 
-// RaceCompleted
+// STUB: CARMA2_HW 0x005030b0
+// STUB: CARMA2_SW 0x004fea00
+void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x00503270
 void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {

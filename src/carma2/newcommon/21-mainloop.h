@@ -12,7 +12,7 @@ extern tU32 gNet_auto_increase_credits_dt[8];
 
 // LoseOldestWastedMassage
 
-// QueueWastedMassage
+extern void C2_HOOK_FASTCALL QueueWastedMassage(int pIndex);
 
 // MungeHeadups
 

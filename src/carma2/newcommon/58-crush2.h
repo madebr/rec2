@@ -14,7 +14,7 @@ extern int gTime_per_ped_kill[3];
 
 // CheckLastCar
 
-// KnackerThisCar
+extern void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar);
 
 // ExplodeMeCarUpMeOldMatey
 
