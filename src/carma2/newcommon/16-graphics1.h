@@ -63,7 +63,7 @@ extern void C2_HOOK_FASTCALL AdjustRenderScreenSize(void);
 
 extern void C2_HOOK_FASTCALL ScreenSmaller(void);
 
-// ScreenLarger
+extern void C2_HOOK_FASTCALL ScreenLarger(void);
 
 // ClearWobbles
 
