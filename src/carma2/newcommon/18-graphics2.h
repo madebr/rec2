@@ -119,4 +119,6 @@ extern void C2_HOOK_FASTCALL DisableLights(void);
 
 extern void C2_HOOK_FASTCALL EnableLights(void);
 
+extern void C2_HOOK_FASTCALL DRPixelmapBlend75Copy(br_pixelmap* pDest, br_int_16 pDest_x, br_int_16 pDest_y, br_pixelmap* pSource);
+
 #endif // GUARD_18_GRAPHICS2_H
