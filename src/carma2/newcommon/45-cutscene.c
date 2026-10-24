@@ -25,7 +25,13 @@ void C2_HOOK_FASTCALL PlaySmackerFile(char* pSmack_name) {
 #pragma auto_inline(on)
 #endif
 
-// DoOpeningAnimation
+// FUNCTION: CARMA2_HW 0x0043f330
+// FUNCTION: CARMA2_SW 0x0043f410
+void C2_HOOK_FASTCALL DoOpeningAnimation(void) {
+    PlaySmackerFile("INTERPLAYGO.SMK");
+    PlaySmackerFile("MIX_INTR.SMK");
+    WaitForNoKeys();
+}
 
 // FUNCTION: CARMA2_HW 0x0043f370
 void C2_HOOK_FASTCALL DoEndRaceAnimation(void) {
