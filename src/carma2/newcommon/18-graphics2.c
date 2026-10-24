@@ -403,7 +403,11 @@ int C2_HOOK_FASTCALL SwitchToHiresMode(void) {
     return 0;
 }
 
-// SwitchToLoresMode
+// FUNCTION: CARMA2_HW 0x0047c660
+int C2_HOOK_FASTCALL SwitchToLoresMode(void) {
+
+    return 0;
+}
 
 // PoshDrawLine
 

@@ -89,7 +89,7 @@ extern void C2_HOOK_FASTCALL DRMaskedStamp(br_int_16 pDest_x, br_int_16 pDest_y,
 
 extern int C2_HOOK_FASTCALL SwitchToHiresMode(void);
 
-// SwitchToLoresMode
+extern int C2_HOOK_FASTCALL SwitchToLoresMode(void);
 
 // PoshDrawLine
 
