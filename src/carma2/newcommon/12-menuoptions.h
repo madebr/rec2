@@ -12,6 +12,6 @@
 
 extern void C2_HOOK_FASTCALL GetGraphicsSettingsData(tFrontend_spec* pFrontend);
 
-// SetGraphicsSettingsData
+extern void C2_HOOK_FASTCALL SetGraphicsSettingsData(tFrontend_spec* pFrontend);
 
 #endif // GUARD_12_MENUOPTIONS_H
