@@ -174,7 +174,14 @@ void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm) {
 
 // CBLoadPersonality
 
-// CBDisposePersonality
+// FUNCTION: CARMA2_HW 0x004ccaa0
+// FUNCTION: CARMA2_SW 0x004c91a0
+void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, sounds, 0x64);
+
+    BrMemFree(pPersonality->sounds);
+}
 
 // CBFillInObject
 
