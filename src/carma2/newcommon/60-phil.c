@@ -156,7 +156,15 @@ tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
     }
 }
 
-// PHILGetNextObject
+// FUNCTION: CARMA2_HW 0x004b5ff0
+// FUNCTION: CARMA2_SW 0x004b2710
+tPhysics_object* C2_HOOK_FASTCALL PHILGetNextObject(tPhysics_object* pObject) {
+    if (gPHIL_disabled) {
+        return NULL;
+    } else {
+        return pObject->next;
+    }
+}
 
 // PHILReturnObjectStatus
 
