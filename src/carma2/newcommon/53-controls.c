@@ -110,6 +110,12 @@ void C2_HOOK_FASTCALL F12Key(void) {
 
 // LookRight
 
+// FUNCTION: CARMA2_HW 0x00441fd0
+// FUNCTION: CARMA2_SW 0x004420b0
+void C2_HOOK_FASTCALL DamageTest(void) {
+
+}
+
 // ToggleMiniMap
 
 // CheckToggles
