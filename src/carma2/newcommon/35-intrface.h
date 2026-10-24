@@ -20,6 +20,8 @@ extern void C2_HOOK_FASTCALL RecopyAreas(const tInterface_spec* pSpec);
 
 extern int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
 
+extern void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode);
+
 extern int C2_HOOK_FASTCALL WhichItemIsSelectedIn(tFrontend_spec* pFrontend, int pGroup);
 
 extern void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, int pValue);
