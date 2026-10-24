@@ -285,7 +285,17 @@ void C2_HOOK_FASTCALL ScreenSmaller(void) {
     }
 }
 
-// ScreenLarger
+// FUNCTION: CARMA2_HW 0x004e4d00
+void C2_HOOK_FASTCALL ScreenLarger(void) {
+
+    if (gMap_view != 2) {
+        gRender_indent--;
+        if (gRender_indent < 0) {
+            gRender_indent = 0;
+        }
+        AdjustRenderScreenSize();
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e4d30
 void C2_HOOK_FASTCALL ClearWobbles(void) {
