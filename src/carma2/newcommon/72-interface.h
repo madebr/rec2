@@ -327,7 +327,7 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 // Slider_YProc
 
-// Slider_ForceProc
+extern void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider);
 
 // DisplayJoystickSettings
 
