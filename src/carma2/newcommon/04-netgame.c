@@ -1,6 +1,7 @@
 #include "04-netgame.h"
 
 #include "01-network.h"
+#include "30-opponent.h"
 #include "63-loading3.h"
 #include "globvars.h"
 #include "rec2_macros.h"
@@ -84,7 +85,21 @@ void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 
 // RepositionPlayer
 
-// DisableCar
+// FUNCTION: CARMA2_HW 0x00499260
+// FUNCTION: CARMA2_SW 0x00495e90
+void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
+
+    if (pCar->driver_name[0] != '\0') {
+        if (!pCar->disabled) {
+            pCar->disabled = 1;
+            ForceRebuildActiveCarList();
+        }
+        if (pCar->car_master_actor->t.t.mat.m[3][0] < 500.0f) {
+            BrVector3Accumulate(&pCar->car_master_actor->t.t.translate.t, &gInitial_position);
+            BrVector3Copy((br_vector3*)pCar->old_frame_mat.m[3], &pCar->car_master_actor->t.t.translate.t);
+        }
+    }
+}
 
 // EnableCar
 
