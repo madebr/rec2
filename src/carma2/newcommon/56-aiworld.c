@@ -6,7 +6,16 @@
 
 // MakeVertexAndOffsetIt
 
-// MakeFaceAndTextureIt
+// FUNCTION: CARMA2_HW 0x00401f90
+// FUNCTION: CARMA2_SW 0x00401f90
+void C2_HOOK_FASTCALL MakeFaceAndTextureIt(br_model* pModel, int pFace_num, br_uint_16 pV0, br_uint_16 pV1, br_uint_16 pV2, br_material* pMaterial) {
+
+    pModel->faces[pFace_num].vertices[0] = pV0;
+    pModel->faces[pFace_num].vertices[1] = pV1;
+    pModel->faces[pFace_num].vertices[2] = pV2;
+    pModel->faces[pFace_num].smoothing = 0xffff;
+    pModel->faces[pFace_num].material = pMaterial;
+}
 
 // FUNCTION: CARMA2_HW 0x00401000
 void C2_HOOK_FASTCALL InitPanGameAIWorld(void) {
