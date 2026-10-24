@@ -78,7 +78,7 @@ extern int C2_HOOK_FASTCALL LoadFlic(int pIndex);
 
 extern void C2_HOOK_FASTCALL UnlockFlic(int pIndex);
 
-// LoadFlicData
+extern int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length);
 
 extern void C2_HOOK_FASTCALL InitFlicQueue(void);
 
