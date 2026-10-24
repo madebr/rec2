@@ -87,7 +87,7 @@ extern void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, b
 
 // DRMaskedStamp
 
-// SwitchToHiresMode
+extern int C2_HOOK_FASTCALL SwitchToHiresMode(void);
 
 // SwitchToLoresMode
 
