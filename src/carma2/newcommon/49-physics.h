@@ -7,6 +7,7 @@
 extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
+extern int gImmortal_peds;
 extern void* gPhysics_buffer3_ptr;
 extern int gPhysics_other_buffer_capacity;
 extern void* gPhysics_other_buffer;
