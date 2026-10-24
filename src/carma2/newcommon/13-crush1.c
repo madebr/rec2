@@ -956,7 +956,18 @@ void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* 
     }
 }
 
-// ARApplyModelMash
+// FUNCTION: CARMA2_HW 0x0043bf80
+// FUNCTION: CARMA2_SW 0x0043bfd0
+void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pSrc) {
+    tU16 i;
+    br_vector3 delta;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        ExpandVector3(&delta, &pSrc[i], -10.0f, 10.0f);
+        BrVector3Accumulate(&pModel->vertices[i].p, &delta);
+    }
+    SetModelForUpdate(pModel);
+}
 
 // ARUndoModelMash
 
