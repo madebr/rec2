@@ -135,7 +135,7 @@ extern void C2_HOOK_FASTCALL ToggleTimerFreeze(void);
 
 // EarnDosh
 
-// LoseDosh
+extern void C2_HOOK_FASTCALL LoseDosh(void);
 
 extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
