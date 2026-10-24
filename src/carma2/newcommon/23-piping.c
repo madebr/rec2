@@ -1,5 +1,7 @@
 #include "23-piping.h"
 
+#include "00-car.h"
+#include "16-graphics1.h"
 #include "51-smash.h"
 #include "69-sound.h"
 #include "globvars.h"
@@ -502,11 +504,24 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
 
 // ApplyShrapnel
 
-// ApplyScreenWobble
+// FUNCTION: CARMA2_HW 0x004c9180
+// FUNCTION: CARMA2_SW 0x004c58b0
+void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_screen_wobble, wobble_y, 0x1);
+
+    SetScreenWobble(((tPipe_chunk_screen_wobble*)(*pChunk)->data.raw_data)->wobble_x,
+        ((tPipe_chunk_screen_wobble*)(*pChunk)->data.raw_data)->wobble_y);
+}
 
 // ApplyGrooveStop
 
-// ApplyNonCar
+// FUNCTION: CARMA2_HW 0x004c91b0
+// FUNCTION: CARMA2_SW 0x004c58e0
+void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
+
+    AdjustNonCar((*pChunk)->data.non_car.actor, &(*pChunk)->data.non_car.matrix);
+}
 
 // ApplySmoke
 
