@@ -13,6 +13,10 @@ int gCunning_stunt_bonus[3];
 // GLOBAL: CARMA2_HW 0x0074d1c0
 float gArmour_starting_value[100];
 
+// GLOBAL: CARMA2_HW 0x00761f5c
+// GLOBAL: CARMA2_SW 0x007584bc
+int gExplosion_sound_id;
+
 // GLOBAL: CARMA2_HW 0x00761f60
 float gPower_starting_value[100];
 

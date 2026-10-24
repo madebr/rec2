@@ -5,6 +5,7 @@
 
 extern int gCunning_stunt_bonus[3];
 extern float gArmour_starting_value[100];
+extern int gExplosion_sound_id;
 extern float gPower_starting_value[100];
 extern float gOffensive_starting_value[100];
 extern tFloat_bunch_info gCar_softness;
