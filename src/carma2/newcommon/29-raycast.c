@@ -41,7 +41,7 @@ void C2_HOOK_FASTCALL InitRayCasting(void) {
 
 // STUB: CARMA2_HW 0x004e3a30
 // STUB: CARMA2_SW 0x004dfdc0
-int C2_HOOK_FASTCALL PickBoundsTestRay__raycast(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far) {
+int C2_HOOK_FASTCALL PickBoundsTestRay__raycast(br_bounds* b, br_vector3* rp, br_vector3* rd, br_scalar t_near, br_scalar t_far, br_scalar* new_t_near, br_scalar* new_t_far) {
     NOT_IMPLEMENTED();
 }
 
