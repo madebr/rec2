@@ -115,6 +115,8 @@ extern void C2_HOOK_FASTCALL InitSmashQueue(void);
 
 // ReadShrapnelSpec
 
+extern void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes);
+
 // ReadSpillData
 
 // ReadExplosion
