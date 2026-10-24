@@ -1,5 +1,6 @@
 #include "71-newgame.h"
 
+#include "01-network.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
 #include "41-utility.h"
@@ -41,6 +42,21 @@ int C2_HOOK_FASTCALL PickARandomCar(void) {
 }
 
 // RequestCarDetails
+
+// FUNCTION: CARMA2_HW 0x00466330
+// FUNCTION: CARMA2_SW 0x004660c0
+void C2_HOOK_FASTCALL PollCarDetails(tNet_game_details* pNet_game) {
+    tNet_message* message;
+
+    if (gReceived_car_details) {
+        gReceived_car_details = 0;
+        if (gNet_mode == eNet_mode_none) {
+            gNet_mode = eNet_mode_thinking_about_it;
+        }
+        message = NetBuildGuaranteedMessage(6, 0);
+        NetGuaranteedSendMessageToHost(pNet_game, message, NULL);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00466370
 void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions) {

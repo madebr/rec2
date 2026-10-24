@@ -335,7 +335,11 @@ tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2
     return NULL;
 }
 
-// NetBuildGuaranteedMessage
+// STUB: CARMA2_HW 0x0049f680
+// STUB: CARMA2_SW 0x0049b800
+tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption) {
+    NOT_IMPLEMENTED();
+}
 
 // NetGetToPlayerContentsSize
 
@@ -533,7 +537,11 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
 
 // NetGuaranteedSendMessageToEverybody
 
-// NetGuaranteedSendMessageToHost
+// STUB: CARMA2_HW 0x004a5c80
+// STUB: CARMA2_SW 0x004a1e00
+void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
+    NOT_IMPLEMENTED();
+}
 
 // AddToGuaranteeList
 
