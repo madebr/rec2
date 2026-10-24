@@ -546,7 +546,7 @@ void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
 // ApplySmashRemoveFaces
 
 // FUNCTION: CARMA2_HW 0x004c9a20
-// FUNCTION: CARMA2_SW 0x004c6110
+// FUNCTION: CARMA2_SW 0x004c6150
 void C2_HOOK_FASTCALL ApplySmashDecal(tPipe_chunk** pChunk) {
     tPipe_chunk* chunk;
 
