@@ -491,7 +491,10 @@ void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, int pY1,
 
 // DR8BitFancyDrawLine
 
-// FancyDrawLine
+// STUB: CARMA2_HW 0x0047d2b0
+void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period) {
+    NOT_IMPLEMENTED();
+}
 
 // DRPixelmapCopyMapBlack8Bit
 
