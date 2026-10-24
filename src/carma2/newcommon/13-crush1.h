@@ -381,7 +381,7 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // BattenDownTheObjects
 
-// CompletelyUnBendCollisionShape
+extern void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pShape);
 
 // CompletelyUnBendCollisionShapes
 
