@@ -64,6 +64,8 @@ extern void C2_HOOK_STDCALL SetYon(br_scalar pYon);
 
 extern br_scalar C2_HOOK_STDCALL GetYon(void);
 
+extern void C2_HOOK_STDCALL IncreaseAngle(void);
+
 extern int C2_HOOK_FASTCALL GetSkyTextureOn(void);
 
 extern void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn);

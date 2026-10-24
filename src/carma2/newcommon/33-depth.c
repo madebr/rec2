@@ -299,6 +299,24 @@ br_scalar C2_HOOK_STDCALL GetYon(void) {
     return gCamera_yon;
 }
 
+// FUNCTION: CARMA2_HW 0x00446bc0
+// FUNCTION: CARMA2_SW 0x00446c40
+void C2_HOOK_STDCALL IncreaseAngle(void) {
+    br_camera* camera_ptr;
+    int i;
+    char s[256];
+
+    for (i = 0; i < (int)REC2_ASIZE(gCamera_list); i++) {
+        camera_ptr = gCamera_list[i]->type_data;
+        camera_ptr->field_of_view += BrDegreeToAngle(2.5);
+        if (camera_ptr->field_of_view > BrDegreeToAngle(170)) {
+            camera_ptr->field_of_view = BrDegreeToAngle(170);
+        }
+        sprintf(s, "Camera angle increased to %d", gProgram_state.current_depth_effect.end);
+        NewTextHeadupSlot(4, 0, 500, -1, s);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00446e00
 int C2_HOOK_FASTCALL GetSkyTextureOn(void) {
 
