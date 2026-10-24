@@ -238,7 +238,18 @@ int C2_HOOK_FASTCALL ResetFoxLighting(br_material* pMaterial) {
 
 // SetupAlternateFoxEffect
 
-// RestorePixelmap
+// FUNCTION: CARMA2_HW 0x004f9760
+// FUNCTION: CARMA2_SW 0x004f4de0
+int C2_HOOK_FASTCALL RestorePixelmap(br_material* pMaterial) {
+
+    if (pMaterial->colour_map != pMaterial->user) {
+        pMaterial->colour_map = pMaterial->user;
+        BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // STUB: CARMA2_HW 0x004f9620
 void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
