@@ -1,9 +1,11 @@
 #include "53-controls.h"
 
 #include "15-displays.h"
+#include "17-world2.h"
 #include "41-utility.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -206,7 +208,23 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 // CycleCarSimplificationLevel
 
-// ToggleAccessoryRendering
+// FUNCTION: CARMA2_HW 0x004448a0
+// FUNCTION: CARMA2_SW 0x00444980
+void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
+    int on;
+
+    if (gNet_mode != eNet_mode_none) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_net_games_always_accessorized));
+    } else {
+        on = !GetAccessoryRendering();
+        SetAccessoryRendering(on);
+        if (on) {
+            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_accessories_on));
+        } else {
+            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_accessories_off));
+        }
+    }
+}
 
 // UserSendMessage
 
