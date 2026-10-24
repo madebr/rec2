@@ -212,7 +212,7 @@ extern void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
 // NetWaitForGuaranteeReplies
 
-// NetPlayerFromID
+extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromID(tPlayer_ID pPlayer);
 
 extern tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer);
 
