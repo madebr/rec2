@@ -56,6 +56,8 @@ extern void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pix
 
 // DoSpecialCameraEffect
 
+extern void C2_HOOK_FASTCALL ReduceDepthStart(void);
+
 extern void C2_HOOK_FASTCALL AssertYons(void);
 
 extern void C2_HOOK_FASTCALL IncreaseYon(void);
