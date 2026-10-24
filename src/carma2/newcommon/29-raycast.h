@@ -5,6 +5,8 @@
 
 extern br_actor* gY_picking_camera;
 
+extern br_matrix34 gPick_model_to_view__raycast;
+
 // DRActorToRoot
 
 extern void C2_HOOK_FASTCALL InitRayCasting(void);
@@ -13,9 +15,9 @@ extern void C2_HOOK_FASTCALL InitRayCasting(void);
 
 // DRVector2AccumulateScale
 
-// PickBoundsTestRay
+extern int C2_HOOK_FASTCALL PickBoundsTestRay__raycast(br_bounds3* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far);
 
-// ActorPick2D
+extern int C2_HOOK_FASTCALL ActorPick2D(br_actor* pActor, br_model* pModel, br_material* pMaterial, dr_pick2d_cbfn* pCallback, void* pArg);
 
 // DRScenePick2DXY
 
