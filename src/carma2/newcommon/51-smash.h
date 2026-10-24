@@ -23,7 +23,7 @@ extern void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosio
 
 // Explode
 
-// RemoveExplosions
+extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
 // CalcRandomPointBetween
 
