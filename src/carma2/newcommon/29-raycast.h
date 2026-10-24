@@ -33,8 +33,8 @@ extern void C2_HOOK_FASTCALL InitRayCasting(void);
 
 // FindYVerticallyBelowCallBack
 
-// FindYVerticallyBelow
+extern br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow(br_vector3* pPosition);
 
-// FindYVerticallyBelow2
+extern br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point);
 
 #endif // GUARD_29_RAYCAST_H

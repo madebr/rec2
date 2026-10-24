@@ -51,7 +51,33 @@ void C2_HOOK_FASTCALL InitRayCasting(void) {
 
 // FindYVerticallyBelowCallBack
 
-// FindYVerticallyBelow
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// FindYVerticallyBelow2
+// STUB: CARMA2_HW 0x004e4370
+// STUB: CARMA2_SW 0x004e0700
+br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow(br_vector3* pPosition) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004e4600
+// FUNCTION: CARMA2_SW 0x004e0990
+br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
+    br_scalar result;
+    int number_of_attempts;
+    br_vector3 cast_point;
+
+    number_of_attempts = 0;
+    BrVector3Copy(&cast_point, pCast_point);
+    do {
+        result = FindYVerticallyBelow(&cast_point);
+        cast_point.v[1] += .2f;
+    } while (result < -100.f && number_of_attempts++ < 10);
+    return result;
+}
 
