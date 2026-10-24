@@ -88,7 +88,7 @@ extern int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tN
 
 extern tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2);
 
-// NetBuildGuaranteedMessage
+extern tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
 
 // NetGetToPlayerContentsSize
 
@@ -200,7 +200,7 @@ extern tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
 // NetGuaranteedSendMessageToEverybody
 
-// NetGuaranteedSendMessageToHost
+extern void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
 // AddToGuaranteeList
 

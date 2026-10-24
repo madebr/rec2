@@ -16,6 +16,8 @@ extern int C2_HOOK_FASTCALL PickARandomCar(void);
 
 // RequestCarDetails
 
+extern void C2_HOOK_FASTCALL PollCarDetails(tNet_game_details* pNet_game);
+
 extern void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions);
 
 extern void C2_HOOK_FASTCALL DefaultNetSettings(void);
