@@ -484,6 +484,15 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
     MungeHeadupWidth(the_headup);
 }
 
+// FUNCTION: CARMA2_HW 0x0044a920
+// FUNCTION: CARMA2_SW 0x0044aab0
+void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont) {
+
+    if (pHeadup_index >= 0) {
+        gHeadups[pHeadup_index].data.image_info.font = &gFonts[-pFont];
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x0044a9d0
 void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     int i;
