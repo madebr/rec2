@@ -178,7 +178,14 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
 
 // TeleportCopToStart
 
-// CalcDistanceFromHome
+// FUNCTION: CARMA2_HW 0x004ada90
+// FUNCTION: CARMA2_SW 0x004a9c00
+void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec) {
+    br_vector3 wank;
+
+    BrVector3Sub(&wank, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &pOpponent_spec->start_pos);
+    pOpponent_spec->distance_from_home = BrVector3Length(&wank);
+}
 
 // MassageOpponentPosition
 
