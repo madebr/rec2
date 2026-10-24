@@ -308,7 +308,7 @@ extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 // RQSingleExpand
 
-// RQDcmpV
+extern int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal);
 
 // MakeIdentity
 
@@ -330,7 +330,7 @@ extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 // RQMatrixSolveWithNegatives
 
-// MatrixProcess
+extern int C2_HOOK_FASTCALL MatrixProcess(br_scalar* pR, br_scalar* pQ, int pDim);
 
 extern void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const br_scalar* pRhs, br_scalar* pX, int pDim);
 
