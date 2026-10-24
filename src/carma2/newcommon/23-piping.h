@@ -104,9 +104,9 @@ extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // ARDoActionReplay
 
-// ReverseSound
+extern void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag pTag);
 
-// ARGoBackwards
+extern int C2_HOOK_FASTCALL ARGoBackwards(void);
 
 // ARGoForwards
 
