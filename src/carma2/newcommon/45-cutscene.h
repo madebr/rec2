@@ -11,6 +11,8 @@ extern void C2_HOOK_FASTCALL PlaySmackerFile(char* pSmack_name);
 
 extern void C2_HOOK_FASTCALL DoOpeningAnimation(void);
 
+extern void C2_HOOK_FASTCALL DoNewGameAnimation(void);
+
 extern void C2_HOOK_FASTCALL DoEndRaceAnimation(void);
 
 extern void C2_HOOK_FASTCALL DoGameOverAnimation(void);
