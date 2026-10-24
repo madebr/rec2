@@ -323,6 +323,17 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
     return result;
 }
 
+// FUNCTION: CARMA2_HW 0x00484f10
+// FUNCTION: CARMA2_SW 0x00482050
+void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode) {
+    int last_choice;
+
+    last_choice = gCurrent_choice;
+    gCurrent_choice = pNew_choice;
+    gCurrent_mode = pNew_mode;
+    ChangeSelection(gSpec, &last_choice, &gCurrent_choice, gCurrent_mode, 1);
+}
+
 // FUNCTION: CARMA2_HW 0x00484f40
 int C2_HOOK_FASTCALL WhichItemIsSelectedIn(tFrontend_spec* pFrontend, int pGroup) {
     int i;
