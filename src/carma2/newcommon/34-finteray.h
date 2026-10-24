@@ -16,7 +16,7 @@ extern br_matrix34 gPick_model_to_view__finteray;
 
 // DRVector2AccumulateScale
 
-// PickBoundsTestRay
+extern int C2_HOOK_FASTCALL PickBoundsTestRay(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far);
 
 extern int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vector3* pDir, br_model* model, br_material* material, dr_pick2d_cbfn* callback);
 
