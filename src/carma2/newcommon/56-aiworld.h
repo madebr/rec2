@@ -7,7 +7,7 @@
 
 // MakeVertexAndOffsetIt
 
-// MakeFaceAndTextureIt
+extern void C2_HOOK_FASTCALL MakeFaceAndTextureIt(br_model* pModel, int pFace_num, br_uint_16 pV0, br_uint_16 pV1, br_uint_16 pV2, br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL InitPanGameAIWorld(void);
 
