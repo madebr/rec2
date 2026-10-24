@@ -1,5 +1,6 @@
 #include "64-movie.h"
 
+#include "16-graphics1.h"
 #include "25-grafdata.h"
 #include "41-utility.h"
 #include "globvars.h"
@@ -129,7 +130,17 @@ int C2_HOOK_FASTCALL GetMovieHeight(void) {
     }
 }
 
-// TidyMovieARDisplay
+// FUNCTION: CARMA2_HW 0x004e2190
+// FUNCTION: CARMA2_SW 0x004de510
+void C2_HOOK_FASTCALL TidyMovieARDisplay(void) {
+    int old_state;
+
+    old_state = gNext_replay_record_state;
+    gNext_replay_record_state = 20;
+    RenderAFrame(1);
+    RenderAFrame(1);
+    gNext_replay_record_state = old_state;
+}
 
 // TrapS3SoundOutput
 
