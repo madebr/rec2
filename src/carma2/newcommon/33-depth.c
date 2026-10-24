@@ -244,7 +244,8 @@ void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* 
 #ifdef REC2_SW
     NOT_IMPLEMENTED();
 #endif
-}
+// FUNCTION: CARMA2_HW 0x00445ca0
+void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world) {
 
 // DepthEffectSky
 
