@@ -39,8 +39,14 @@ int gPickup_respawn_max_extra_time_ms;
 // GLOBAL: CARMA2_HW 0x007447d0
 int gBlind_pedestrians;
 
+// GLOBAL: CARMA2_HW 0x007447dc
+float gPed_gravity_multiplier;
+
 // GLOBAL: CARMA2_HW 0x007447e4
 int gPed_dismemberfest;
+
+// GLOBAL: CARMA2_HW 0x007447f8
+int gPanicking_peds;
 
 // GLOBAL: CARMA2_HW 0x007059c0
 int gCount_mutant_tail_parts;
@@ -508,11 +514,23 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SetGhostPeds
 
-// ResetDancingPeds
+// FUNCTION: CARMA2_HW 0x004de960
+void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// ResetPanickingPeds
+    gDancing_peds = 0;
+}
 
-// ResetLowGravityPeds
+// FUNCTION: CARMA2_HW 0x004de970
+void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPanicking_peds = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004de980
+void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_gravity_multiplier = 1.f;
+}
 
 // ResetPissedPeds
 
