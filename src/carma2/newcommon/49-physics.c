@@ -488,7 +488,7 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
 
 // STUB: CARMA2_HW 0x004c5830
 // STUB: CARMA2_SW 0x004c1f60
-int C2_HOOK_FASTCALL RQDcmpV(br_scalar* pR, int pDim, br_scalar* pQ) {
+int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal) {
     NOT_IMPLEMENTED();
 }
 

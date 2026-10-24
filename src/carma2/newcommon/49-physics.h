@@ -308,7 +308,7 @@ extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 // RQSingleExpand
 
-extern int C2_HOOK_FASTCALL RQDcmpV(br_scalar* pR, int pDim, br_scalar* pQ);
+extern int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal);
 
 // MakeIdentity
 
