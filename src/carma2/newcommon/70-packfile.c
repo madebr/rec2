@@ -273,6 +273,31 @@ int C2_HOOK_FASTCALL PFftell(FILE* pF) {
     return pos;
 }
 
+// FUNCTION: CARMA2_HW 0x004b4b30
+// FUNCTION: CARMA2_SW 0x004b0ca0
+int C2_HOOK_FASTCALL DRfsetpos(FILE* pFile, fpos_t* pPos) {
+    tTwatVfsFile* twtFile;
+    tU8* newpos;
+    tU8* start;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gTwatVfsFiles) != 51);
+
+    if ((uintptr_t)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
+        return fsetpos(pFile, pPos);
+    }
+    start = gTwatVfsFiles[(uintptr_t)pFile].start;
+    twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
+    newpos = (tU8*)pPos;
+    if (newpos >= start && newpos <= twtFile->end) {
+        twtFile->pos = newpos;
+        twtFile->error = 0;
+        return 0;
+    } else {
+        twtFile->error = -1;
+        return -1;
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x004b4b70
 // FUNCTION: CARMA2_SW 0x004b0ce0
 int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
