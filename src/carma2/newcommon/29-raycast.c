@@ -1,5 +1,7 @@
 #include "29-raycast.h"
 
+#include "globvars.h"
+
 // GLOBAL: CARMA2_HW 0x006a20d0
 br_actor* gY_picking_camera;
 
@@ -39,7 +41,20 @@ void C2_HOOK_FASTCALL InitRayCasting(void) {
 
 // DRScenePick2D
 
-// DRModelPick2D
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004e3d90
+// STUB: CARMA2_SW 0x004e0120
+int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, dr_modelpick2d_raycast_cbfn* pCallback, void* pArg) {
+
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FindHighestPolyCallBack
 
@@ -47,9 +62,22 @@ void C2_HOOK_FASTCALL InitRayCasting(void) {
 
 // FindBestY
 
-// FindYVerticallyBelowPolyCallBack
+// STUB: CARMA2_HW 0x004e45b0
+// STUB: CARMA2_SW 0x004e0940
+int C2_HOOK_CDECL FindYVerticallyBelowPolyCallBack(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pContext) {
 
-// FindYVerticallyBelowCallBack
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004e4570
+// FUNCTION: CARMA2_SW 0x004e0900
+int C2_HOOK_CDECL FindYVerticallyBelowCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT_near, float pT_far, void* pArg) {
+
+    if (gProgram_state.current_car.car_actor != pActor) {
+        DRModelPick2D_raycast(pModel, pMaterial, pRay_pos, pRay_dir, pT_near, pT_far, FindYVerticallyBelowPolyCallBack, pArg);
+    }
+    return 0;
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
