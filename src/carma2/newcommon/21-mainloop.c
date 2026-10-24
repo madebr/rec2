@@ -18,7 +18,11 @@ tU32 gNet_auto_increase_credits_dt[8];
 
 // LoseOldestWastedMassage
 
-// QueueWastedMassage
+// STUB: CARMA2_HW 0x00492620
+// STUB: CARMA2_SW 0x0048f840
+void C2_HOOK_FASTCALL QueueWastedMassage(int pIndex) {
+    NOT_IMPLEMENTED();
+}
 
 // MungeHeadups
 
