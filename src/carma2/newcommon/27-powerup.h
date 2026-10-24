@@ -211,7 +211,7 @@ extern int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetImmortalPeds
+extern int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetImmortalPeds
 

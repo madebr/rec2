@@ -2,6 +2,7 @@
 
 #include "16-graphics1.h"
 #include "32-spark.h"
+#include "49-physics.h"
 #include "61-pedestrn.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -363,7 +364,13 @@ int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetImmortalPeds
+// FUNCTION: CARMA2_HW 0x004dcf00
+// FUNCTION: CARMA2_SW 0x004d9400
+int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gImmortal_peds = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // ResetImmortalPeds
 
