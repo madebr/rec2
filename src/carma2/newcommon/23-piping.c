@@ -9,6 +9,10 @@
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
+// GLOBAL: CARMA2_HW 0x006768c0
+// GLOBAL: CARMA2_SW 0x00671030
+int gPlay_direction;
+
 // GLOBAL: CARMA2_HW 0x00676900
 float gReplay_rate;
 
@@ -38,9 +42,17 @@ void C2_HOOK_FASTCALL ARSetReplayRate(float pRate) {
     gReplay_rate = pRate;
 }
 
-// ARGetReplayDirection
+// FUNCTION: CARMA2_HW 0x004023b0
+// FUNCTION: CARMA2_SW 0x004023b0
+int C2_HOOK_FASTCALL ARGetReplayDirection(void) {
+    return gPlay_direction;
+}
 
-// ARSetReplayDirection
+// FUNCTION: CARMA2_HW 0x004023c0
+// FUNCTION: CARMA2_SW 0x004023c0
+void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection) {
+    gPlay_direction = (int)pDirection;
+}
 
 // ARResetPiping
 

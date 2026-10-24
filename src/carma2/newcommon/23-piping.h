@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 #include <s3/s3.h>
 
+extern int gPlay_direction;
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
 extern tU8* gPipe_play_ptr;
@@ -19,9 +20,9 @@ extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
 extern void C2_HOOK_FASTCALL ARSetReplayRate(float pRate);
 
-// ARGetReplayDirection
+extern int C2_HOOK_FASTCALL ARGetReplayDirection(void);
 
-// ARSetReplayDirection
+extern void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection);
 
 // ARResetPiping
 
