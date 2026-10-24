@@ -544,7 +544,14 @@ void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const 
 
 // GetPhysicsScratchPointer
 
-// IncreasePhysicsScratchPointer
+// FUNCTION: CARMA2_HW 0x004c5cb0
+void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize) {
+
+    if ((tU8*)gPhysics_scratch_ptr + pSize > (tU8*)gPhysics_other_buffer + gPhysics_other_buffer_capacity) {
+        PhysicsError(ePhysicsError_OutOfMemory, NULL);
+    }
+    gPhysics_scratch_ptr = (tU8*)gPhysics_scratch_ptr + pSize;
+}
 
 // FUNCTION: CARMA2_HW 0x004c5d00
 void C2_HOOK_FASTCALL ClearPhysicsScratchSpace(void) {
