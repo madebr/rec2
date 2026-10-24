@@ -50,9 +50,9 @@ extern int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType);
 
 // ARStartPipingSession
 
-// EndPipingSession2
+extern void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
-// AREndPipingSession
+extern void C2_HOOK_FASTCALL AREndPipingSession(void);
 
 // ARAddDataToSession
 
