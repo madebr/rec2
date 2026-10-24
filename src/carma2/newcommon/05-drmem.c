@@ -307,9 +307,9 @@ void C2_HOOK_FASTCALL ResetNonFatalAllocationErrors(void) {
 
 // FUNCTION: CARMA2_HW 0x0044c810
 // FUNCTION: CARMA2_SW 0x0044c5c0
-int C2_HOOK_STDCALL AllocationErrorsAreFatal(void) {
+int C2_HOOK_FASTCALL AllocationErrorsAreFatal(void) {
 
-    return gNon_fatal_allocation_errors == 0;
+    return !gNon_fatal_allocation_errors;
 }
 
 // FUNCTION: CARMA2_HW 0x0044c820
