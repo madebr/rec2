@@ -133,7 +133,7 @@ extern void C2_HOOK_FASTCALL F12Key(void);
 
 extern void C2_HOOK_FASTCALL ToggleTimerFreeze(void);
 
-// EarnDosh
+extern void C2_HOOK_FASTCALL EarnDosh(void);
 
 extern void C2_HOOK_FASTCALL LoseDosh(void);
 
