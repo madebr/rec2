@@ -48,7 +48,7 @@ int C2_HOOK_FASTCALL ReadUntilCharacter(FILE* pF, char* pBuffer, int pBuffer_siz
 
     strcpy(pBuffer, "");
     s[1] = '\0';
-    for (i = 0, s[0] = fgetc(pF); s[0] != pLimit_char && i < pBuffer_size && !feof(pF); i++, s[0] = fgetc(pF)) {
+    for (i = 0; (s[0] = fgetc(pF)) != pLimit_char && i < pBuffer_size && !feof(pF); i++) {
         strcat(pBuffer, s);
     }
     if (feof(pF)) {
