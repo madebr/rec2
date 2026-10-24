@@ -27,7 +27,56 @@ br_matrix34 gPick_model_to_view__finteray;
 
 // DRVector2AccumulateScale
 
-// PickBoundsTestRay
+// FUNCTION: CARMA2_HW 0x0045cd90
+// FUNCTION: CARMA2_SW 0x0045c7d0
+int C2_HOOK_FASTCALL PickBoundsTestRay(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far) {
+    int i;
+    br_scalar inverse;
+    br_scalar t;
+
+    for (i = 0; i < 3; i++) {
+        if (pRay_dir->v[i] < -2 * BR_SCALAR_EPSILON) {
+            inverse = pRay_dir->v[i];
+            inverse = -1.f / inverse;
+            t = (pRay_pos->v[i] - pBounds->max.v[i]) * inverse;
+            if (t > BR_SCALAR_MAX) {
+                pT_near = BR_SCALAR_MAX;
+            } else if (t > pT_near) {
+                pT_near = t;
+            }
+            t = (pRay_pos->v[i] - pBounds->min.v[i]) * inverse;
+            if (t < BR_SCALAR_MIN) {
+                pT_far = BR_SCALAR_MIN;
+            } else if (t < pT_far) {
+                pT_far = t;
+            }
+        } else if (pRay_dir->v[i] > 2 * BR_SCALAR_EPSILON) {
+            inverse = pRay_dir->v[i];
+            inverse = -1.f / inverse;
+            t = (pRay_pos->v[i] - pBounds->max.v[i]) * inverse;
+            if (t < BR_SCALAR_MIN) {
+                pT_far = BR_SCALAR_MIN;
+            } else if (t < pT_far) {
+                pT_far = t;
+            }
+            t = (pRay_pos->v[i] - pBounds->min.v[i]) * inverse;
+            if (t > BR_SCALAR_MAX) {
+                pT_near = BR_SCALAR_MAX;
+            } else if (t > pT_near) {
+                pT_near = t;
+            }
+        } else if (pRay_pos->v[i] > pBounds->max.v[i] || pRay_pos->v[i] < pBounds->min.v[i]) {
+            return 0;
+        }
+    }
+    if (pT_near <= pT_far) {
+        *pNew_t_near = pT_near;
+        *pNew_t_far = pT_far;
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
