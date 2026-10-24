@@ -9,6 +9,8 @@
 #include "globvrkm.h"
 #include "rec2_macros.h"
 
+#include "c2_stdio.h"
+
 // GLOBAL: CARMA2_HW 0x00591188
 int gSky_on = 1;
 
@@ -247,6 +249,19 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
 // DoSubaquaCam
 
 // DoSpecialCameraEffect
+
+// FUNCTION: CARMA2_HW 0x00446890
+// FUNCTION: CARMA2_SW 0x00446910
+void C2_HOOK_FASTCALL ReduceDepthStart(void) {
+    char s[256];
+
+    if (gProgram_state.current_depth_effect.start > 3) {
+        gProgram_state.current_depth_effect.start--;
+    }
+    sprintf(s, "Depth start reduced to %d", gProgram_state.current_depth_effect.start);
+    NewTextHeadupSlot(4, 0, 500, -1, s);
+    gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
+}
 
 // FUNCTION: CARMA2_HW 0x00446a10
 // FUNCTION: CARMA2_SW 0x00446a90
