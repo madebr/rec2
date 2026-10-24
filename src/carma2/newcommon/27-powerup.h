@@ -349,7 +349,7 @@ extern void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* 
 
 extern int C2_HOOK_FASTCALL GetPowerupCount(void);
 
-// GetPowerupPosition
+extern void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition);
 
 // ARPowerupGot
 
