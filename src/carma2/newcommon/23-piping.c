@@ -5,6 +5,8 @@
 #include "globvars.h"
 #include "platform.h"
 
+#include <s3/internal/audio.h>
+
 #include <stddef.h>
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
@@ -132,9 +134,17 @@ void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCou
 
 // ARDoActionReplay
 
-// ReverseSound
+// FUNCTION: CARMA2_HW 0x00403d10
+// FUNCTION: CARMA2_SW 0x00403d10
+void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag pTag) {
+    S3ReverseSample(pEffect, pTag);
+}
 
-// ARGoBackwards
+// FUNCTION: CARMA2_HW 0x00403d00
+// FUNCTION: CARMA2_SW 0x00403d00
+int C2_HOOK_FASTCALL ARGoBackwards(void) {
+    return S3SetSampleFilterCallbacks(ReverseSound, ReverseSound);
+}
 
 // ARGoForwards
 
