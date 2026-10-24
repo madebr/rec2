@@ -183,7 +183,32 @@ int C2_HOOK_FASTCALL PHILMakeObjectPassive(tPhysics_object* pObject) {
 
 // PHILMakeObjectActive
 
-// PHILSetPassiveObjectsMatrix
+// FUNCTION: CARMA2_HW 0x004b61a0
+// FUNCTION: CARMA2_SW 0x004b28c0
+int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const br_matrix34* pMatrix) {
+    tPHIL_queued_object_info* queued;
+    tPHIL_queued_header* info;
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    if (pObject->field_0x239 == 2) {
+        queued = pObject->field_0x240;
+        queued->field_0x30 = *pMatrix;
+        queued->flags |= 0x4;
+        return 0;
+    }
+    info = pObject->field_0x240;
+    if (info != NULL) {
+        if (info->field_0x8 != 1) {
+            return 4;
+        }
+        info->collision_info->actor->t.t.mat = *pMatrix;
+        return 0;
+    } else {
+        return 3;
+    }
+}
 
 // PHILAddActiveObject
 
