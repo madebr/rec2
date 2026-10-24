@@ -27,6 +27,8 @@ extern float C2_HOOK_FASTCALL ReadF32(FILE* pF);
 
 extern tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF);
 
+extern tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF);
+
 extern void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber);
 
 extern void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber);
