@@ -326,7 +326,7 @@ extern void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk);
 
 // ApplyRelink
 
-// ApplyIdentity
+extern void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk);
 
 // ApplySplitWeld
 
