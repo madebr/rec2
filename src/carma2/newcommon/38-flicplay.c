@@ -586,6 +586,17 @@ int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) 
     return 1;
 }
 
+// FUNCTION: CARMA2_HW 0x00462b80
+// FUNCTION: CARMA2_SW 0x00462610
+void C2_HOOK_FASTCALL FreeFlic(int pIndex) {
+
+    PossibleService();
+    if (gMain_flic_list[pIndex].data_ptr != NULL) {
+        BrMemFree(gMain_flic_list[pIndex].data_ptr);
+        gMain_flic_list[pIndex].data_ptr = NULL;
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00462cc0
 void C2_HOOK_FASTCALL InitFlicQueue(void) {
 
