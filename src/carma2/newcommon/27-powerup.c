@@ -215,7 +215,13 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetPedBrittle
+// FUNCTION: CARMA2_HW 0x004dc800
+// FUNCTION: CARMA2_SW 0x004d8d00
+int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_dismemberfest = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc830
 int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar) {
@@ -244,7 +250,13 @@ void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
     }
 }
 
-// SetStupidPedestrians
+// FUNCTION: CARMA2_HW 0x004dc8f0
+// FUNCTION: CARMA2_SW 0x004d8df0
+int C2_HOOK_FASTCALL SetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gBlind_pedestrians = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc920
 void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
