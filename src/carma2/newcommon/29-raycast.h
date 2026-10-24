@@ -15,7 +15,7 @@ extern void C2_HOOK_FASTCALL InitRayCasting(void);
 
 // DRVector2AccumulateScale
 
-extern int C2_HOOK_FASTCALL PickBoundsTestRay__raycast(br_bounds3* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far);
+extern int C2_HOOK_FASTCALL PickBoundsTestRay__raycast(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far);
 
 extern int C2_HOOK_FASTCALL ActorPick2D(br_actor* pActor, br_model* pModel, br_material* pMaterial, dr_pick2d_cbfn* pCallback, void* pArg);
 
