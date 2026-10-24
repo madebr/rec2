@@ -392,7 +392,11 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
 
 // DRMaskedStamp
 
-// SwitchToHiresMode
+// FUNCTION: CARMA2_HW 0x0047c650
+int C2_HOOK_FASTCALL SwitchToHiresMode(void) {
+
+    return 0;
+}
 
 // SwitchToLoresMode
 
