@@ -254,7 +254,17 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* pData) {
 
 // InitNetworkShapesStuff
 
-// IncreasingCompare
+// FUNCTION: CARMA2_HW 0x0042acb0
+// FUNCTION: CARMA2_SW 0x0042ad40
+int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2) {
+    if (*(const float*)pValue1 < *(const float*)pValue2) {
+        return -1;
+    } else if (*(const float*)pValue1 == *(const float*)pValue2) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042ace0
 int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
