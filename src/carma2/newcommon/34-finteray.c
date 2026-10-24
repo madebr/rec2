@@ -8,6 +8,9 @@ int gPling_materials = 1;
 // GLOBAL: CARMA2_HW 0x00686190
 br_scalar gNearest_T;
 
+// GLOBAL: CARMA2_HW 0x006861c8
+int gTemp_group;
+
 // GLOBAL: CARMA2_HW 0x006861cc
 br_actor* gNearest_actor;
 
@@ -46,7 +49,18 @@ int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vect
 
 // DRModelPick2D
 
-// FindHighestPolyCallBack
+// FUNCTION: CARMA2_HW 0x0045d570
+int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData) {
+
+    if (pT < gNearest_T) {
+        gNearest_T = pT;
+        gNearest_model = pModel;
+        gNearest_actor = pActor;
+        gNearest_face = pF;
+        gNearest_face_group = gTemp_group;
+    }
+    return 0;
+}
 
 // STUB: CARMA2_HW 0x0045cf20
 int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
