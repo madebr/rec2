@@ -2,6 +2,7 @@
 
 #include "05-drmem.h"
 #include "10-loading2.h"
+#include "18-graphics2.h"
 #include "57-drone.h"
 
 // MakeVertexAndOffsetIt
@@ -42,6 +43,23 @@ void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_v
     BrVector3Copy(&trans.t.look_up.look, pThe_vector);
     BrVector3Set(&trans.t.look_up.up, 0.f, 1.f, 0.f);
     BrTransformToTransform(&pThe_actor->t, &trans);
+}
+
+// FUNCTION: CARMA2_HW 0x00401760
+// FUNCTION: CARMA2_SW 0x00401760
+br_material* C2_HOOK_FASTCALL CreateSimpleMaterial(int pIndex) {
+    br_material* material;
+
+    material = BrMaterialAllocate(NULL);
+    material->colour = ((br_colour*)gRender_palette->pixels)[pIndex];
+    material->index_base = (br_uint_8)pIndex;
+    material->index_range = 1;
+    material->flags = BR_MATF_TWO_SIDED;
+    material->index_shade = NULL;
+    material->colour_map = NULL;
+    material->identifier = NULL;
+    BrMaterialAdd(material);
+    return material;
 }
 
 // MakeAIEditCubeHere
