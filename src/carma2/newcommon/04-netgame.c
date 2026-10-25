@@ -4,6 +4,7 @@
 #include "30-opponent.h"
 #include "63-loading3.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0075b8f8
@@ -155,11 +156,43 @@ void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
 
 // EverybodysLost
 
-// DeclareWinner
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0049a760
+// STUB: CARMA2_SW 0x004968e0
+void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // PlayerIsIt
 
-// CheckForVampireWinner
+// FUNCTION: CARMA2_HW 0x0049a940
+// FUNCTION: CARMA2_SW 0x00496ac0
+void C2_HOOK_FASTCALL CheckForVampireWinner(void) {
+    int i;
+    int players_left;
+    int winner_index;
+
+    players_left = 0;
+    winner_index = 0;
+    if (gProgram_state.racing && gNet_mode == eNet_mode_host) {
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            if (!gNet_players[i].field_0x80) {
+                players_left++;
+                winner_index = i;
+            }
+        }
+        if (players_left <= 1) {
+            DeclareWinner(winner_index);
+        }
+    }
+}
 
 // PlayerIsInfected
 
