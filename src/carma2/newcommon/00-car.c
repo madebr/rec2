@@ -250,7 +250,12 @@ void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car) {
 
 // ProcessForcesCallBack
 
-// ProcessJointForcesCallBack
+// FUNCTION: CARMA2_HW 0x0041e310
+// FUNCTION: CARMA2_SW 0x0041e340
+int C2_HOOK_FASTCALL ProcessJointForcesCallBack(void* pArg1, void* pArg2, void* pArg3) {
+
+    return 0;
+}
 
 // MultiFindFloorInBoxM
 
