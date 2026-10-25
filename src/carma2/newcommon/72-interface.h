@@ -203,7 +203,7 @@ extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_s
 
 // WrecksInFunc
 
-// KeepInRange
+extern int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange);
 
 // WrecksOutFunc
 

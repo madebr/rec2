@@ -1118,7 +1118,18 @@ int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size) {
 
 // WrecksInFunc
 
-// KeepInRange
+// FUNCTION: CARMA2_HW 0x0046eab0
+// FUNCTION: CARMA2_SW 0x0046e170
+int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange) {
+
+    while (pIndex < 0) {
+        pIndex += pRange;
+    }
+    while (pIndex >= pRange) {
+        pIndex -= pRange;
+    }
+    return pIndex;
+}
 
 // WrecksOutFunc
 
