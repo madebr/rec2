@@ -146,7 +146,7 @@ extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 // AllocateAndInitDrones
 
-// LoadInDronePaths
+extern void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
 // DronePreCollisionStuff
 
