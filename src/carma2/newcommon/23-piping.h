@@ -9,6 +9,10 @@ extern int gPlay_direction;
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
 extern tU8* gPipe_play_ptr;
+extern tU8* gPipe_buffer_oldest;
+extern tU8* gPipe_record_ptr;
+extern tU32 gPipe_sound_start_time;
+extern tU32 gPipe_sound_time_window;
 
 // ARReplayForwards
 
@@ -42,7 +46,7 @@ extern int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType);
 
 // ARIsActionReplayAvailable
 
-// ARSomeReplayLeft
+extern int C2_HOOK_FASTCALL ARSomeReplayLeft(void);
 
 // DisablePipedSounds
 
@@ -84,7 +88,7 @@ extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // CheckSound
 
-// SoundTimeout
+extern int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime);
 
 // ScanAndPlaySoundsToBe
 
