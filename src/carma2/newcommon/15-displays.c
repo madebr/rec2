@@ -432,6 +432,7 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pL
 #endif
 
 // FUNCTION: CARMA2_HW 0x0044a380
+// FUNCTION: CARMA2_SW 0x0044a510
 int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText) {
     return NewTextHeadupSlot2(pSlot_index, pFlash_rate, pLifetime, pFont_index, pText, 1);
 }

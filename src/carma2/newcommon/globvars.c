@@ -292,6 +292,7 @@ tU32 gWait_for_it;
 int gGame_to_load = -1;
 
 // GLOBAL: CARMA2_HW 0x007623a0
+// GLOBAL: CARMA2_SW 0x00758900
 tRace_info gCurrent_race;
 
 // GLOBAL: CARMA2_HW 0x0068be3c
@@ -415,6 +416,7 @@ br_pixelmap* gRearview_screen;
 //br_scalar gCut_delay_4;
 
 // GLOBAL: CARMA2_HW 0x00655ddc
+// GLOBAL: CARMA2_SW 0x00650cc4
 br_scalar gYon_multiplier = 1.f;
 //tSave_game* gPre_race_saved_game;
 //VFILE* gDiagnostic_file;

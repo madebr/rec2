@@ -10,6 +10,7 @@ tNet_mode gNet_mode;
 int gNumber_of_net_players;
 
 // GLOBAL: CARMA2_HW 0x0074bcc0
+// GLOBAL: CARMA2_SW 0x00742380
 tNet_game_player_info gNet_players[12];
 
 // GLOBAL: CARMA2_HW 0x0074b7d0

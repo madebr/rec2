@@ -122,6 +122,7 @@ void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
 // AddGroovidelics
 
 // FUNCTION: CARMA2_HW 0x00477160
+// FUNCTION: CARMA2_SW 0x004766c0
 void C2_HOOK_FASTCALL KillGroovadelic(int pOwner) {
     int i;
     tGroovidelic_spec* the_groove;
