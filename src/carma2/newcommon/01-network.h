@@ -32,7 +32,7 @@ extern void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void);
 
 extern void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
-// NetStartProducingJoinList
+extern void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc* pAdd_proc);
 
 // NetEndJoinList
 
