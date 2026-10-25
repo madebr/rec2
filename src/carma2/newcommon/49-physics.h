@@ -335,7 +335,7 @@ extern int C2_HOOK_FASTCALL MatrixProcess(br_scalar* pR, br_scalar* pQ, int pDim
 
 extern void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const br_scalar* pRhs, br_scalar* pX, int pDim);
 
-// GetPhysicsScratchPointer
+extern void* C2_HOOK_FASTCALL GetPhysicsScratchPointer(int pSize);
 
 extern void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize);
 
