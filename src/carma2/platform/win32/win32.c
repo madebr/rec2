@@ -181,7 +181,6 @@ const char gExtendedAsciiToNormalAscii[128] = {
     'd', '}', 'o', 'o', 'o', 'o', 'o', '/', '0', 'u', 'u', 'u', 'u', 'y', 'b', 'y',
 };
 
-
 // GLOBAL: CARMA2_HW 0x006ad4d4
 int gWin32ActionReplayBufferAllocated;
 
@@ -194,7 +193,6 @@ int gPDActionReplayBufferSize;
 // GLOBAL: CARMA2_HW 0x006ad46c
 HPALETTE gPDPalette;
 
-
 // GLOBAL: CARMA2_HW 0x0079ea84
 SYSTEM_INFO gSystem_info;
 
@@ -204,6 +202,20 @@ DWORD gPage_size;
 
 // GLOBAL: CARMA2_HW 0x00681fa0
 FILE *gActionReplayBufferFile;
+
+#ifdef REC2_SW
+// GLOBAL: CARMA2_SW 0x006a6c08
+void *gOffscreen_pixels;
+
+// GLOBAL: CARMA2_SW 0x006a6c0c
+br_pixelmap* gOffscreen_map;
+
+// GLOBAL: CARMA2_SW 0x006a6c10
+int gINT_006a6c10;
+
+// GLOBAL: CARMA2_SW 0x006a6c3c
+int gINT_006a6c3c;
+#endif
 
 #define Win32AllocateActionReplayBuffer PDReallyAllocateActionReplayBuffer
 
@@ -377,7 +389,7 @@ char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
 int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
     unsigned int key;
 
-    SDL3ServiceMessages();
+    Win32ServiceMessages();
     if (gKeyboardBufferLength != 0) {
         key = gKeyboardBuffer[0];
         if (gKeyboardBufferLength > 1) {
@@ -404,7 +416,9 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
     // GLOBAL: CARMA2_HW 0x006ad4d8
     static int been_here;
 
+#ifdef REC2_HW
     gBack_screen = NULL;
+#endif
     if (been_here) {
         PDDisposeActionReplayBuffer();
         ExitProcess(702);
@@ -420,7 +434,7 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
             SetWindowPos(gHWnd, NULL, -100, -100, 64, 64, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
         }
         dr_dprintf("Servicing messages...");
-        SDL3ServiceMessages();
+        Win32ServiceMessages();
         dr_dprintf("Sending WM_SHOWWINDOW broadcast message...");
         SendMessageA(HWND_BROADCAST, WM_SHOWWINDOW, TRUE, 0);
         if (gIsFatalError) {
@@ -686,7 +700,7 @@ void C2_HOOK_FASTCALL PDSetPalette(br_pixelmap *pixelmap) {
 // FUNCTION: CARMA2_HW 0x0051cbe0
 // FUNCTION: CARMA2_SW 0x00517fb0
 int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call) {
-    SDL3ServiceMessages();
+    Win32ServiceMessages();
     return 0;
 }
 
@@ -1005,11 +1019,12 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     if (result == 0) {
         SSDXStartDirectDraw();
     }
-    gBack_screen = BrPixelmapAllocate(BR_PMT_INDEX8,
+    gBack_screen = BrPixelmapAllocate(BR_PMT_INDEX_8,
         gGraf_specs[gGraf_spec_index].phys_width,
         gGraf_specs[gGraf_spec_index].phys_height,
         gOffscreen_pixels, 0);
     gScreen = gBack_screen;
+    SSDXResetSurface();
 #endif
 
 #ifdef REC2_HW
@@ -1070,6 +1085,139 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     dr_dprintf("PDAllocateScreenAndBack() - END.");
 }
 
+#ifdef REC2_SW
+// FUNCTION: CARMA2_SW 0x005164c0
+void C2_HOOK_FASTCALL SSDXStartDirectDraw(void) {
+    int result;
+    void* surface_pixels;
+    int row_bytes;
+
+    result = SSDXDirectDrawSetup(gGraf_specs[gGraf_spec_index].total_width,
+        gGraf_specs[gGraf_spec_index].total_height,
+        8,
+        &row_bytes);
+    if (result != 0) {
+        SSDXLogDirectDrawError(result);
+        PDFatalError("Unable to setup DirectDraw - please check that DirectX is installed");
+    }
+    gGraf_specs[gGraf_spec_index].row_bytes = row_bytes;
+    gGraf_specs[gGraf_spec_index].phys_width = row_bytes;
+    gGraf_specs[gGraf_spec_index].phys_height = gGraf_specs[gGraf_spec_index].total_height;
+    dr_dprintf(
+        "Graf spec info after screen allocation:\n"
+        "                 Total width:   %d\n"
+        "                 Total height:  %d\n"
+        "                 Phys width:    %d\n"
+        "                 Phys height:   %d\n"
+        "                 Row bytes:     %d\n",
+        gGraf_specs[gGraf_spec_index].total_width,
+        gGraf_specs[gGraf_spec_index].total_height,
+        gGraf_specs[gGraf_spec_index].phys_width,
+        gGraf_specs[gGraf_spec_index].phys_height,
+        gGraf_specs[gGraf_spec_index].row_bytes);
+    dr_dprintf("First attempt at locking surface...");
+    surface_pixels = SSDXLockAttachedSurface();
+    if (surface_pixels != NULL) {
+        gOffscreen_pixels = surface_pixels;
+        if (gINT_006a6c3c) {
+            gBack_screen->pixels = gOffscreen_map->pixels;
+        } else {
+            gBack_screen->pixels = gOffscreen_pixels;
+        }
+    }
+    dr_dprintf("Done first surface lock; gOffscreen_pixels 0x%p", gOffscreen_pixels);
+}
+
+// FUNCTION: CARMA2_SW 0x00516850
+void C2_HOOK_FASTCALL SSDXResetSurface(void) {
+    gNbPixelBits = 8;
+    gPixelFlags = 0x4;
+    gBack_screen->origin_x = 0;
+    gBack_screen->origin_y = 0;
+    gBack_screen->base_x = 0;
+    gBack_screen->base_y = 0;
+    gBack_screen->row_bytes = gGraf_specs[gGraf_spec_index].row_bytes;
+    if (gRender_screen != NULL) {
+        gRender_screen->row_bytes = gBack_screen->row_bytes;
+    }
+    gBack_screen->pixels = gOffscreen_pixels;
+    gBack_screen->width = gGraf_specs[gGraf_spec_index].phys_width;
+    gBack_screen->height = gGraf_specs[gGraf_spec_index].phys_height;
+    gOffscreen_map = BrPixelmapMatch(gBack_screen, BR_PMMATCH_OFFSCREEN);
+    gINT_006a6c10 = 1;
+    memset(gBack_screen->pixels, 0, gBack_screen->height * gBack_screen->row_bytes);
+    SSDXWindowPosOrSizeChanged(gHWnd);
+    PDScreenBufferFlip();
+}
+
+// STUB: CARMA2_SW 0x00516c80
+void C2_HOOK_FASTCALL PDSwitchToHiresMode(void) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_SW 0x00516f20
+void C2_HOOK_FASTCALL PDSwitchToLoresMode(void) {
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA@_SW 0x005171c0
+void C2_HOOK_FASTCALL FUN_005171c0(void) {
+    void* pixels;
+
+    pixels = SSDXLockAttachedSurface();
+    if (pixels != NULL) {
+        gOffscreen_pixels = pixels;
+        if (gBack_screen != NULL) {
+            if (gINT_006a6c3c) {
+                gBack_screen->pixels = gOffscreen_map->pixels;
+            } else {
+                gBack_screen->pixels = pixels;
+            }
+        }
+    }
+}
+
+// FUNCTION: CARMA2_SW 0x00517200
+void C2_HOOK_FASTCALL PDUnlockAttachedSurface(void) {
+    SSDXUnlockAttachedSurface();
+}
+
+// FUNCTION: CARMA2_SW 0x00517210
+void C2_HOOK_FASTCALL PDScreenBufferFlip(void) {
+    if (gINT_006a6c10 && gWindowActiveState != 0) {
+        if (gINT_006a6c3c) {
+            gBack_screen->pixels = gOffscreen_pixels;
+            DRPixelmapDoubledCopy(gBack_screen, gOffscreen_map, 320, 200, 0, 40);
+            gBack_screen->pixels = gOffscreen_map->pixels;
+        }
+        SSDXUnlockAttachedSurface();
+        dr_dprintf("Flipping...");
+        if (SSDXFlip()) {
+            PDFatalError("Problem while flipping...");
+        }
+        dr_dprintf("Flipped OK.");
+        FUN_005171c0();
+    }
+}
+
+// FUNCTION: CARMA2_SW 0x00517560
+void C2_HOOK_FASTCALL PDPixelmapRectangleCopy(br_pixelmap* pDest, int pDst_x, int pDst_y, br_pixelmap* pSrc, int pSrc_x, int pSrc_y, int width, int height) {
+    if (pSrc != pDest) {
+        BrPixelmapRectangleCopy(pDest, pDst_x, pDst_y, pSrc, pSrc_x, pSrc_y, width, height);
+    }
+}
+
+// FUNCTION: CARMA2_SW 0x005175b0
+void C2_HOOK_FASTCALL DPixelmapLine(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour) {
+    BrPixelmapLine(pDst, pX1, pY1, pX2, pY2, pColour);
+}
+
+// FUNCTION: CARMA2_SW 0x005175e0
+void C2_HOOK_FASTCALL DPixelmapLine2(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour) {
+    BrPixelmapLine(pDst, pX1, pY1, pX2, pY2, pColour);
+}
+#endif
+
 int PDGetRegisterSourceLocation(char *buffer, int *buffer_size) {
     HKEY hKey;
     LONG status;
@@ -1105,38 +1253,6 @@ void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
     gPD_mouse_position.x = *pX;
     gPD_mouse_position.y = *pY;
 }
-
-#ifdef CARMA2_SW
-void SSDXStartDirectDraw() {
-    int row_pitch;
-    int result_code;
-
-    result_code = SSDXDirectDrawSetup(gGraf_specs[gGraf_spec_index].total_width, gGraf_specs[gGraf_spec_index].total_height, gGraf_specs[gGraf_spec_index].total_width, &row_pitch);
-    if (result_code != 0) {
-        SSDXPrintDirectDrawError(result_code);
-        PDFatalError("Unable to setup DirectDraw - please check that DirectX is installed");
-    }
-    gGraf_specs[gGraf_spec_index].row_bytes = row_pitch;
-    gGraf_specs[gGraf_spec_index].phys_width = row_pitch;
-    gGraf_specs[gGraf_spec_index].phys_height = gGraf_specs[gGraf_spec_index].total_height;
-    dr_dprintf("Graf spec info after screen allocation:\n                 Total width:   %d\n                 Total height:  %d\n                 Phys width:    %d\n"
-        "                 Phys height:   %d\n"
-        "                 Row bytes:     %d\n",
-        gGraf_specs[gGraf_spec_index].total_width,
-        gGraf_specs[gGraf_spec_index].total_height,
-        gGraf_specs[gGraf_spec_index].phys_width,
-        gGraf_specs[gGraf_spec_index].phys_height,
-        gGraf_specs[gGraf_spec_index].row_bytes);
-    pixels = SSDXLockAttachedSurface();
-    if (pixels != NULL) {
-        gOffscreen_pixels = pixels;
-        if (gBack_screen != NULL) {
-        }
-        }
-    }
-
-}
-#endif
 
 // FUNCTION: CARMA2_HW 0x0051c280
 // FUNCTION: CARMA2_SW 0x00516160

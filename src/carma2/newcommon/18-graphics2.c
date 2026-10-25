@@ -589,6 +589,48 @@ int C2_HOOK_FASTCALL SwitchToLoresMode(void) {
     return 0;
 }
 
+#ifdef REC2_SW
+// FUNCTION: CARMA2_SW 0x0047ba20
+void DRPixelmapDoubledCopy(br_pixelmap* pDestn, br_pixelmap* pSource, int pSource_width, int pSource_height, int pX_offset, int pY_offset) {
+    tU16* sptr;
+    tU16 pixels;
+    tU8* dptr;
+    tU8* dptr2;
+    tU8 pixel_1;
+    tU8 pixel_2;
+    int i;
+    int j;
+    int dst_row_skip;
+    int src_row_skip;
+    int width_over_2;
+
+    dst_row_skip = 2 * pDestn->row_bytes - 2 * pSource_width;
+    src_row_skip = (pSource->row_bytes - pSource_width) / 2;
+    sptr = (tU16*)((tU8*)pSource->pixels + 2 * (pSource->row_bytes * pSource_height / 2) - 2 * src_row_skip);
+    dptr = (tU8*)pDestn->pixels + (2 * pSource_height + pY_offset) * pDestn->row_bytes - pDestn->row_bytes + 2 * pSource_width;
+    dptr2 = dptr - pDestn->row_bytes;
+    width_over_2 = pSource_width / 2;
+    for (i = 0; i < pSource_height; i++) {
+        for (j = 0; j < width_over_2; j++) {
+            pixels = *--sptr;
+            pixel_1 = pixels >> 8;
+            pixel_2 = pixels >> 0;
+            *--dptr = pixel_1;
+            *--dptr2 = pixel_1;
+            *--dptr = pixel_1;
+            *--dptr2 = pixel_1;
+            *--dptr = pixel_2;
+            *--dptr2 = pixel_2;
+            *--dptr = pixel_2;
+            *--dptr2 = pixel_2;
+        }
+        dptr -= dst_row_skip;
+        dptr2 -= dst_row_skip;
+        sptr -= src_row_skip;
+    }
+}
+#endif
+
 // PoshDrawLine
 
 #ifdef REC2_MATCHING

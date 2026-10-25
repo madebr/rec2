@@ -48,6 +48,9 @@ foreach(edition ${REC2_EDITIONS})
             target_link_libraries(c2_platform${edition} PRIVATE dsound)
             target_compile_definitions(c2_platform${edition} PRIVATE DSOUND_ENABLED)
         endif()
+        if(edition STREQUAL "_sw")
+            target_link_libraries(c2_platform${edition} PRIVATE ddraw)
+        endif()
     elseif(REC2_PLATFORM_SDL3)
         target_sources(c2_platform_brender${edition} PRIVATE
             sdl3/sdl3_br_platform.c

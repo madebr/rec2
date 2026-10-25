@@ -5,6 +5,7 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x006aaa1c
+// GLOBAL: CARMA2_SW 0x006a446c
 LPDIRECTSOUND gDirectSound;
 
 // GLOBAL: CARMA2_HW 0x006b2d9c
