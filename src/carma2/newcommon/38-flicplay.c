@@ -649,6 +649,12 @@ void C2_HOOK_FASTCALL FreeFlic(int pIndex) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00462c30
+// FUNCTION: CARMA2_SW 0x004626c0
+void C2_HOOK_FASTCALL PreloadBunchOfFlics(int pBunch_index) {
+
+}
+
 // FUNCTION: CARMA2_HW 0x00462cc0
 void C2_HOOK_FASTCALL InitFlicQueue(void) {
 
