@@ -367,7 +367,19 @@ int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetBouncey
+// FUNCTION: CARMA2_HW 0x004dce30
+// FUNCTION: CARMA2_SW 0x004d9330
+int C2_HOOK_FASTCALL SetBouncey(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, bounce_rate, 0x4c0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, bounce_amount, 0x4c4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, last_bounce, 0x1598);
+
+    pCar->bounce_rate = 1000.f / pPowerup->float_params[0];
+    pCar->bounce_amount = pPowerup->float_params[1];
+    pCar->last_bounce = 0;
+    return pPowerup - gPowerup_array;
+}
 
 // SetSuspension
 
