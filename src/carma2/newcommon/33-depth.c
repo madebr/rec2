@@ -336,6 +336,24 @@ void C2_HOOK_STDCALL IncreaseAngle(void) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00446c40
+// FUNCTION: CARMA2_SW 0x00446cc0
+void C2_HOOK_STDCALL DecreaseAngle(void) {
+    br_camera* camera_ptr;
+    int i;
+    char s[256];
+
+    for (i = 0; i < (int)REC2_ASIZE(gCamera_list); i++) {
+        camera_ptr = gCamera_list[i]->type_data;
+        camera_ptr->field_of_view -= BrDegreeToAngle(2.5);
+        if (camera_ptr->field_of_view < BrDegreeToAngle(10)) {
+            camera_ptr->field_of_view = BrDegreeToAngle(10);
+        }
+        sprintf(s, "Camera angle decreased to %d", gProgram_state.current_depth_effect.end);
+        NewTextHeadupSlot(4, 0, 500, -1, s);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00446e00
 int C2_HOOK_FASTCALL GetSkyTextureOn(void) {
 
