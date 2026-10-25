@@ -56,7 +56,11 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 
 // AddObjectObjectForce
 
-// RayCastThruFaceList
+// STUB: CARMA2_HW 0x004225f0
+// STUB: CARMA2_SW 0x00422670
+tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount) {
+    NOT_IMPLEMENTED();
+}
 
 // RayCastThruFaceList2
 

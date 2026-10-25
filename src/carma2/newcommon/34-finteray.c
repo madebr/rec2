@@ -1,5 +1,6 @@
 #include "34-finteray.h"
 
+#include "49-physics.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x005964c0
@@ -230,5 +231,20 @@ int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_ve
 
 // ShapeRayCastWithSphere
 
-// CastRayDownThruFaces
+// FUNCTION: CARMA2_HW 0x004618e0
+tFace_ref* C2_HOOK_FASTCALL CastRayDownThruFaces(br_vector3* pPosition, tFace_ref* pFaces, int pCount, br_scalar pOffset, br_vector3* pCollision_position) {
+    br_vector3 direction;
+    br_vector3 position;
+    br_vector3 normal;
+    br_scalar t;
+    tFace_ref* face;
+
+    BrVector3Set(&direction, 0.f, -1.f, 0.f);
+    face = RayCastThruFaceList(pPosition, &direction, &normal, &t, pCollision_position, pFaces, pCount);
+    if (face == NULL && pOffset != 0.f) {
+        BrVector3Set(&position, pPosition->v[0], pPosition->v[1] + pOffset, pPosition->v[2]);
+        face = RayCastThruFaceList(&position, &direction, &normal, &t, pCollision_position, pFaces, pCount);
+    }
+    return face;
+}
 
