@@ -5,6 +5,7 @@
 #include "05-drmem.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "12-menuoptions.h"
 #include "15-displays.h"
 #include "18-graphics2.h"
 #include "19-font.h"
@@ -2073,7 +2074,14 @@ int C2_HOOK_FASTCALL Options_Quit(tFrontend_spec* pFrontend) {
 
 // Graphics_Infunc
 
-// Graphics_Outfunc
+// FUNCTION: CARMA2_HW 0x00474850
+// FUNCTION: CARMA2_SW 0x00473db0
+int C2_HOOK_FASTCALL Graphics_Outfunc(tFrontend_spec* pFrontend) {
+
+    Generic_Outfunc(pFrontend);
+    SetGraphicsSettingsData(pFrontend);
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00474860
 void C2_HOOK_FASTCALL FrontEndShowMouse(void) {
