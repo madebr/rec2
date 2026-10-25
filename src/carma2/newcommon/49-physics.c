@@ -265,7 +265,18 @@ void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject) {
     }
 }
 
-// SetListDoingNothingFlag
+// FUNCTION: CARMA2_HW 0x004b9eb0
+// FUNCTION: CARMA2_SW 0x004b65d0
+void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, int pFlag) {
+    while (pObject != NULL) {
+        pObject->disable_move_rotate = pFlag;
+        pObject->field_0x1df = 0;
+        if (pObject->child != NULL) {
+            SetListDoingNothingFlag(pObject->child, pFlag);
+        }
+        pObject = pObject->next;
+    }
+}
 
 // SetGroupDoingNothingFlag
 
