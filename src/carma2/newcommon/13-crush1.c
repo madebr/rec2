@@ -221,9 +221,17 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // ReadCrushData
 
-// CreateDefaultCrushDataCB
+// STUB: CARMA2_HW 0x0042a220
+// STUB: CARMA2_SW 0x0042a2b0
+intptr_t C2_HOOK_CDECL CreateDefaultCrushDataCB(br_actor* pActor, void* pData) {
+    NOT_IMPLEMENTED();
+}
 
-// CreateDefaultCrushData
+// FUNCTION: CARMA2_HW 0x0042a210
+// FUNCTION: CARMA2_SW 0x0042a2a0
+void C2_HOOK_FASTCALL CreateDefaultCrushData(br_actor* pActor, tCar_spec* pCar_spec) {
+    DRActorEnumRecurse(pActor, CreateDefaultCrushDataCB, pCar_spec);
+}
 
 // ReadMasterCrushData
 
