@@ -96,7 +96,18 @@ int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vect
 
 // DRSceneRayPick2D
 
-// DRModelPick2D
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0045cf60
+int C2_HOOK_FASTCALL DRModelPick2D(br_model* pModel, br_material* pMaterial, br_actor* pActor, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, dr_modelpick2d_cbfn* pCallback, void* pArg) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x0045d570
 int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData) {
@@ -111,9 +122,12 @@ int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br
     return 0;
 }
 
-// STUB: CARMA2_HW 0x0045cf20
+// FUNCTION: CARMA2_HW 0x0045cf20
+// FUNCTION: CARMA2_SW 0x0045c960
 int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
-    NOT_IMPLEMENTED();
+
+    DRModelPick2D(pModel, pMaterial, pActor, pRay_pos, pRay_dir, pT_near, pT_far, FindHighestPolyCallBack, pArg);
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0045ca60
