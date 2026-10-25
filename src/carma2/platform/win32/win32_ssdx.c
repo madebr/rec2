@@ -31,6 +31,7 @@ HWND gHWnd_SSDX;
 int gEnumerate_DirectX_surfaces;
 
 // GLOBAL: CARMA2_HW 0x006aa5c8
+// GLOBAL: CARMA2_SW 0x006a4018
 RECT gSSDXRect;
 
 // GLOBAL: CARMA2_HW 0x006aa9f8
@@ -63,7 +64,7 @@ PALETTEENTRY gSSDX_system_palette[256];
 
 // GLOBAL: CARMA2_HW 0x006aa9dc
 // GLOBAL: CARMA2_SW 0x006a442c
-LPRECT gSSDXLockedRect;
+LPVOID gSSDXLockedSurfaceData;
 
 // GLOBAL: CARMA2_HW 0x006aaa0c
 // GLOBAL: CARMA2_SW 0x006a445c
@@ -168,7 +169,7 @@ void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch)
         SSDXLogDirectDrawError(res);
     }
     if (gAttached_surface_locked) {
-        res = IDirectDrawSurface_Unlock(gAttached_surface, gSSDXLockedRect);
+        res = IDirectDrawSurface_Unlock(gAttached_surface, gSSDXLockedSurfaceData);
         if (res == DD_OK) {
             gAttached_surface_locked = 0;
         } else {
@@ -388,51 +389,46 @@ int C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, int
         dr_dprintf("WARNING: Problems during SSDXDirectDrawSetup()");
         SSDXLogDirectDrawError(result);
     }
+    return result;
 }
 
 // FUNCTION: CARMA2_HW 0x00500a30
+// FUNCTION: CARMA2_SW 0x004fc390
 void* C2_HOOK_FASTCALL SSDXLockAttachedSurface(void) {
     HRESULT result;
     DDSURFACEDESC surfaceDesc;
 
     if (!gAttached_surface_locked) {
+        if (gAttached_surface != NULL) {
+            result = IDirectDrawSurface_IsLost(gPrimary_surface);
+            if (result == DDERR_SURFACELOST) {
+                dr_dprintf("SSDXLockAttachedSurface(): Primary surface is lost, restoring...");
+                result = IDirectDrawSurface_Restore(gPrimary_surface);
+            }
+            if (result == DD_OK) {
+                result = IDirectDrawSurface_IsLost(gAttached_surface);
+                if (result == DDERR_SURFACELOST) {
+                    dr_dprintf("SSDXLockAttachedSurface(): Attached surface is lost, restoring...");
+                    result = IDirectDrawSurface_Restore(gAttached_surface);
+                }
+                if (result == DD_OK) {
+                    memset(&surfaceDesc, 0, sizeof(surfaceDesc));
+                    surfaceDesc.dwSize = sizeof(surfaceDesc);
+                    result = IDirectDrawSurface_Lock(gAttached_surface, NULL, &surfaceDesc, DDLOCK_WAIT, NULL);
+                    if (result == DD_OK) {
+                        gAttached_surface_locked = 1;
+                        gSSDXLockedSurfaceData = surfaceDesc.lpSurface;
+                        gSSDXPitch = surfaceDesc.lPitch;
+                        return surfaceDesc.lpSurface;
+                    }
+                }
+            }
+            SSDXLogDirectDrawError(result);
+        }
+    }
+    if (gAttached_surface_locked) {
         dr_dprintf("WARNING: SSDXLockAttachedSurface() called but surface already locked");
-        goto error;
     }
-    if (gAttached_surface == NULL) {
-        goto error;
-    }
-    result = IDirectDrawSurface_IsLost(gPrimary_surface);
-    if (result == DDERR_SURFACELOST) {
-        dr_dprintf("SSDXLockAttachedSurface(): Primary surface is lost, restoring...");
-        result = IDirectDrawSurface_Restore(gPrimary_surface);
-    }
-    if (result != DD_OK) {
-        SSDXLogDirectDrawError(result);
-        goto error;
-    }
-    result = IDirectDrawSurface_IsLost(gAttached_surface);
-    if (result == DDERR_SURFACELOST) {
-        dr_dprintf("SSDXLockAttachedSurface(): Attached surface is lost, restoring...");
-        result = IDirectDrawSurface_Restore(gAttached_surface);
-    }
-    if (result != DD_OK) {
-        SSDXLogDirectDrawError(result);
-        goto error;
-    }
-    C2_HOOK_BUG_ON(sizeof(surfaceDesc) != 0x6c);
-    memset(&surfaceDesc, 0, sizeof(surfaceDesc));
-    surfaceDesc.dwSize = sizeof(surfaceDesc);
-    result = IDirectDrawSurface_Lock(gAttached_surface, NULL, &surfaceDesc, DDLOCK_WAIT, NULL);
-    if (result != DD_OK) {
-        SSDXLogDirectDrawError(result);
-        goto error;
-    }
-    gAttached_surface_locked = 1;
-    gSSDXLockedRect = surfaceDesc.lpSurface;
-    gSSDXPitch = surfaceDesc.lPitch;
-    return surfaceDesc.lpSurface;
-error:
     if (gAttached_surface == NULL) {
         dr_dprintf("WARNING: SSDXLockAttachedSurface() called but no attached surface available");
     }
@@ -444,7 +440,7 @@ error:
 void C2_HOOK_FASTCALL SSDXUnlockAttachedSurface(void) {
 
     if (gAttached_surface_locked) {
-        HRESULT result = IDirectDrawSurface_Unlock(gAttached_surface, gSSDXLockedRect);
+        HRESULT result = IDirectDrawSurface_Unlock(gAttached_surface, gSSDXLockedSurfaceData);
         if (result == DD_OK) {
             gAttached_surface_locked = 0;
         } else {
@@ -522,9 +518,12 @@ void C2_HOOK_FASTCALL SSDXWindowPosOrSizeChanged(HWND pHwnd) {
 }
 
 #ifdef REC2_SW
-// STUB: CARMA2_SW 0x004fc4f0
+// FUNCTION: CARMA2_SW 0x004fc4f0
 int C2_HOOK_FASTCALL SSDXFlip(void) {
-    NOT_IMPLEMENTED();
-    return 1;
+    if (gWindowed) {
+        return IDirectDrawSurface_Blt(gPrimary_surface, &gSSDXWindowPos, gAttached_surface, &gSSDXRect, DDBLT_WAIT, 0);
+    } else {
+        return IDirectDrawSurface_Flip(gPrimary_surface, 0, DDFLIP_WAIT);
+    }
 }
 #endif

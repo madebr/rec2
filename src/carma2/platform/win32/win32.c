@@ -1150,14 +1150,26 @@ void C2_HOOK_FASTCALL SSDXResetSurface(void) {
     PDScreenBufferFlip();
 }
 
-// STUB: CARMA2_SW 0x00516c80
+// FUNCTION: CARMA2_SW 0x00516c80
 void C2_HOOK_FASTCALL PDSwitchToHiresMode(void) {
-    NOT_IMPLEMENTED();
+    SSDXStop();
+    SSDXStartDirectDraw();
+    SSDXResetSurface();
+    SetWindowPos(gHWnd, NULL, 0, 0, gGraf_specs[gGraf_data_index].total_width, gGraf_specs[gGraf_data_index].total_height, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
+    SSDXWindowPosOrSizeChanged(gHWnd);
+    SSDXUnlockAttachedSurface();
+    Win32ServiceMessages();
 }
 
-// STUB: CARMA2_SW 0x00516f20
+// FUNCTION: CARMA2_SW 0x00516f20
 void C2_HOOK_FASTCALL PDSwitchToLoresMode(void) {
-    NOT_IMPLEMENTED();
+    SSDXStop();
+    SSDXStartDirectDraw();
+    SSDXResetSurface();
+    SetWindowPos(gHWnd, NULL, 0, 0, gGraf_specs[gGraf_data_index].total_width, gGraf_specs[gGraf_data_index].total_height, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
+    SSDXWindowPosOrSizeChanged(gHWnd);
+    SSDXUnlockAttachedSurface();
+    Win32ServiceMessages();
 }
 
 // FUNCTION: CARMA@_SW 0x005171c0
