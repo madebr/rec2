@@ -189,7 +189,11 @@ int C2_HOOK_FASTCALL ARGoBackwards(void) {
     return S3SetSampleFilterCallbacks(ReverseSound, ReverseSound);
 }
 
-// ARGoForwards
+// FUNCTION: CARMA2_HW 0x00403d20
+// FUNCTION: CARMA2_SW 0x00403d20
+int C2_HOOK_FASTCALL ARGoForwards(void) {
+    return S3SetSampleFilterCallbacks(NULL, NULL);
+}
 
 // FUNCTION: CARMA2_HW 0x00403d30
 void C2_HOOK_FASTCALL ARService(void) {
