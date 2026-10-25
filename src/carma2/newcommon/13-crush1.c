@@ -233,6 +233,34 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // LinkCrushDataToActors
 
+// FUNCTION: CARMA2_HW 0x0042a940
+// FUNCTION: CARMA2_SW 0x0042a9d0
+void C2_HOOK_FASTCALL LinkCarCrushDatas(br_actor* pActor, tCar_crush_buffer* pBuffer) {
+    DRActorEnumRecurse(pActor, LinkCarCrushData, pBuffer);
+}
+
+// FUNCTION: CARMA2_HW 0x0042a950
+// FUNCTION: CARMA2_SW 0x0042a9e0
+intptr_t C2_HOOK_CDECL LinkCarCrushData(br_actor* pActor, void* pData) {
+    int i;
+    tUser_crush_data* user_crush;
+    tCar_crush_buffer* car_crush_buffer;
+
+    car_crush_buffer = pData;
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 0;
+    }
+    user_crush->crush_data = NULL;
+    for (i = 0; i < car_crush_buffer->count_entries; i++) {
+        if (car_crush_buffer->entries[i] != NULL && DRStricmp(car_crush_buffer->entries[i]->actor_name, pActor->identifier) == 0) {
+            user_crush->crush_data = car_crush_buffer->entries[i];
+            return 0;
+        }
+    }
+    return 0;
+}
+
 // FUNCTION: CARMA2_HW 0x0042ac70
 intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* pData) {
     tAccumulateSquashVertices_UserData* context = pData;
