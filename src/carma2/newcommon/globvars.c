@@ -104,19 +104,24 @@ int gNumber_of_races;
 tBrender_storage gOur_car_storage_space;
 
 // GLOBAL: CARMA2_HW 0x00761ca0
+// GLOBAL: CARMA2_SW 0x00758200
 tBrender_storage gTheir_cars_storage_space;
 
 // GLOBAL: CARMA2_HW 0x00762340
+// GLOBAL: CARMA2_SW 0x007588a0
 tBrender_storage gDroneStorage;
 
 // GLOBAL: CARMA2_HW 0x0074d5a0
+// GLOBAL: CARMA2_SW 0x00743b00
 tBrender_storage gPedStorage;
 
 // GLOBAL: CARMA2_HW 0x0074d400
+// GLOBAL: CARMA2_SW 0x00743960
 tBrender_storage gTrack_storage_space;
 
 
 // GLOBAL: CARMA2_HW 0x0068b89c
+// GLOBAL: CARMA2_SW 0x00685dfc
 int gCD_is_in_drive;
 
 // GLOBAL: CARMA2_HW 0x0076211c
@@ -128,6 +133,7 @@ int gDev_initial_race;
 br_matrix34 gCamera_to_world;
 
 // GLOBAL: CARMA2_HW 0x0074d560
+// GLOBAL: CARMA2_SW 0x00743ac0
 br_matrix34 gRearview_camera_to_world;
 
 

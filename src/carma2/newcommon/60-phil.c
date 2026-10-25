@@ -7,6 +7,7 @@
 int gPHIL_disabled = 1;
 
 // GLOBAL: CARMA2_HW 0x0074a5f0
+// GLOBAL: CARMA2_SW 0x007410b0
 tPhysics_object* gPHIL_list_collision_infos;
 
 // ScalarToFraction
@@ -144,6 +145,7 @@ void C2_HOOK_FASTCALL PHILDisable(void) {
 // PHILAddObject
 
 // STUB: CARMA2_HW 0x004b5ea0
+// STUB: CARMA2_SW 0x004b25c0
 int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
@@ -151,6 +153,7 @@ int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b5fd0
+// FUNCTION: CARMA2_SW 0x004b26f0
 tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
     if (gPHIL_disabled) {
         return NULL;

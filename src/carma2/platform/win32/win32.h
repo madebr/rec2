@@ -85,9 +85,11 @@ extern void C2_HOOK_FASTCALL PDSwitchToLoresMode(void);
 extern void C2_HOOK_FASTCALL FUN_005171c0(void);
 
 extern void C2_HOOK_FASTCALL PDUnlockAttachedSurface(void);
+#endif
 
-extern void C2_HOOK_FASTCALL PDScreenBufferFlip(void);
+extern void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only);
 
+#ifdef REC2_SW
 extern void C2_HOOK_FASTCALL PDPixelmapRectangleCopy(br_pixelmap* pDest, int pDst_x, int pDst_y, br_pixelmap* pSrc, int pSrc_x, int pSrc_y, int width, int height);
 
 extern void C2_HOOK_FASTCALL DPixelmapLine(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour);

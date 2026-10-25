@@ -704,12 +704,6 @@ int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call) {
     return 0;
 }
 
-// FUNCTION: CARMA2_HW 0x0051c520
-// FUNCTION: CARMA2_SW 0x00517210
-void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only) {
-    BrPixelmapDoubleBuffer(gScreen, gBack_screen);
-}
-
 // FUNCTION: CARMA2_HW 0x0051d7c0
 // FUNCTION: CARMA2_SW 0x00518e30
 void C2_HOOK_FASTCALL PDInitTimer(void) {
@@ -1147,7 +1141,7 @@ void C2_HOOK_FASTCALL SSDXResetSurface(void) {
     gINT_006a6c10 = 1;
     memset(gBack_screen->pixels, 0, gBack_screen->height * gBack_screen->row_bytes);
     SSDXWindowPosOrSizeChanged(gHWnd);
-    PDScreenBufferFlip();
+    PDScreenBufferSwap(0);
 }
 
 // FUNCTION: CARMA2_SW 0x00516c80
@@ -1193,9 +1187,15 @@ void C2_HOOK_FASTCALL FUN_005171c0(void) {
 void C2_HOOK_FASTCALL PDUnlockAttachedSurface(void) {
     SSDXUnlockAttachedSurface();
 }
+#endif
 
+// FUNCTION: CARMA2_HW 0x0051c520
 // FUNCTION: CARMA2_SW 0x00517210
-void C2_HOOK_FASTCALL PDScreenBufferFlip(void) {
+void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only) {
+#ifdef REC2_HW
+    BrPixelmapDoubleBuffer(gScreen, gBack_screen);
+#endif
+#ifdef REC2_SW
     if (gINT_006a6c10 && gWindowActiveState != 0) {
         if (gINT_006a6c3c) {
             gBack_screen->pixels = gOffscreen_pixels;
@@ -1210,8 +1210,10 @@ void C2_HOOK_FASTCALL PDScreenBufferFlip(void) {
         dr_dprintf("Flipped OK.");
         FUN_005171c0();
     }
+#endif
 }
 
+#ifdef REC2_SW
 // FUNCTION: CARMA2_SW 0x00517560
 void C2_HOOK_FASTCALL PDPixelmapRectangleCopy(br_pixelmap* pDest, int pDst_x, int pDst_y, br_pixelmap* pSrc, int pSrc_x, int pSrc_y, int width, int height) {
     if (pSrc != pDest) {

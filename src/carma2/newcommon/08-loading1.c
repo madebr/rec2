@@ -61,7 +61,7 @@ const tU8 gOther_long_key[16] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00763540
-// GLOBAL: CARMA2_SW 0x00759aa4
+// GLOBAL: CARMA2_SW 0x00759aa0
 int gFunk_groove_flags[30];
 
 // GLOBAL: CARMA2_SW 0x00795220

@@ -423,6 +423,7 @@ int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
 #endif
 
 // STUB: CARMA2_HW 0x00449fd0
+// STUB: CARMA2_SW 0x0044a160
 int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it) {
     NOT_IMPLEMENTED();
 }

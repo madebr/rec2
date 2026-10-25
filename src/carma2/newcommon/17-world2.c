@@ -178,6 +178,7 @@ intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData) {
 }
 
 // FUNCTION: CARMA2_HW 0x004475c0
+// FUNCTION: CARMA2_SW 0x004479e0
 int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
     int x;
     int y;
@@ -476,6 +477,7 @@ br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pF
 // DisposeTexturingMaterials
 
 // FUNCTION: CARMA2_HW 0x00448ea0
+// FUNCTION: CARMA2_SW 0x004492c0
 intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
 
     if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
