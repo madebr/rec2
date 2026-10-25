@@ -10,8 +10,25 @@
 #include <s3/internal/audio.h>
 
 #include <stddef.h>
+#include <string.h>
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
+
+// GLOBAL: CARMA2_HW 0x006768b4
+// GLOBAL: CARMA2_SW 0x00671024
+tU8* gLocal_buffer;
+
+// GLOBAL: CARMA2_HW 0x006768f4
+// GLOBAL: CARMA2_SW 0x00671064
+tU32 gLocal_buffer_size;
+
+// GLOBAL: CARMA2_HW 0x006768a0
+// GLOBAL: CARMA2_SW 0x00671010
+tU8* gMr_chunky;
+
+// GLOBAL: CARMA2_HW 0x00676908
+// GLOBAL: CARMA2_SW 0x00671078
+tU8* gPipe_buffer_start;
 
 // GLOBAL: CARMA2_HW 0x006768c0
 // GLOBAL: CARMA2_SW 0x00671030
@@ -115,7 +132,29 @@ void C2_HOOK_FASTCALL AREndPipingSession(void) {
     EndPipingSession2(1);
 }
 
-// ARAddDataToSession
+// FUNCTION: CARMA2_HW 0x004028a0
+// FUNCTION: CARMA2_SW 0x004028a0
+void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize) {
+    tU32 new_size;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_session, count, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    (void)pType;
+    if (gPipe_buffer_start != NULL && !gAction_replay_mode && gProgram_state.racing) {
+        new_size = gLocal_buffer_size + pSize + offsetof(tPipe_chunk, data);
+        if (new_size < 15000) {
+            ((tPipe_session*)gLocal_buffer)->count++;
+            ((tPipe_chunk*)gMr_chunky)->subject_index = pOwner;
+            gMr_chunky += offsetof(tPipe_chunk, data);
+            if (pSize != 0) {
+                memcpy(gMr_chunky, pData, pSize);
+            }
+            gMr_chunky += pSize;
+            gLocal_buffer_size = new_size;
+        }
+    }
+}
 
 // STUB: CARMA2_HW 0x00402930
 void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...) {
