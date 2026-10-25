@@ -7,6 +7,7 @@
 #include "43-pratcam.h"
 #include "69-sound.h"
 #include "globvars.h"
+#include "globvrpb.h"
 
 // GLOBAL: CARMA2_HW 0x00655e48
 int gHud_tinted1 = -1;
@@ -132,7 +133,31 @@ int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness) {
     return i;
 }
 
-// SelectOpponents
+// FUNCTION: CARMA2_HW 0x005039e0
+// FUNCTION: CARMA2_SW 0x004ff330
+void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info) {
+    int i;
+
+    if (gNet_mode == eNet_mode_none) {
+        pRace_info->number_of_racers = pRace_info->race_spec->count_explicit_opponents;
+        for (i = 0; i < gNumber_of_racers; i++) {
+            gOpponents[i].picked = 0;
+        }
+        for (i = 0; i < pRace_info->race_spec->count_explicit_opponents; i++) {
+            if (pRace_info->race_spec->explicit_opponents[i] >= 0) {
+                gOpponents[pRace_info->race_spec->explicit_opponents[i]].picked = 1;
+                pRace_info->opponent_list[i].index = pRace_info->race_spec->explicit_opponents[i];
+                pRace_info->opponent_list[i].ranking = -(i + 1);
+            }
+        }
+        for (i = 0; i < pRace_info->race_spec->count_explicit_opponents; i++) {
+            if (pRace_info->race_spec->explicit_opponents[i] < 0) {
+                pRace_info->opponent_list[i].index = ChooseOpponent(-pRace_info->race_spec->explicit_opponents[i]);
+                pRace_info->opponent_list[i].ranking = IRandomBetween(0, 99);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00503ba0
 int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence) {

@@ -35,7 +35,7 @@ extern void C2_HOOK_FASTCALL TotalRepair(void);
 
 extern int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness);
 
-// SelectOpponents
+extern void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info);
 
 extern int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence);
 
