@@ -251,6 +251,18 @@ void C2_HOOK_FASTCALL DisposeOpponents(void) {
 
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 
+// FUNCTION: CARMA2_HW 0x004ae750
+// FUNCTION: CARMA2_SW 0x004aa8c0
+void C2_HOOK_FASTCALL ReportMurderToPoliceDepartment(tCar_spec* pCar_spec) {
+    int i;
+
+    if (pCar_spec == &gProgram_state.current_car) {
+        for (i = 0; i < gProgram_state.AI_vehicles.number_of_cops; i++) {
+            gProgram_state.AI_vehicles.cops[i].murder_reported = 1;
+        }
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x004ae790
 int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
     switch (pCategory) {
