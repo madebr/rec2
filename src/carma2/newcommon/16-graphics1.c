@@ -1,11 +1,14 @@
 #include "16-graphics1.h"
 
 #include "02-init.h"
+#include "07-structur.h"
 #include "15-displays.h"
 #include "19-font.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "62-graphics3.h"
 #include "63-loading3.h"
+#include "66-tintedpoly.h"
 #include "brender/brender.h"
 #include "globvars.h"
 #include "platform.h"
@@ -43,6 +46,9 @@ float gCosine_array[64];
 
 // GLOBAL: CARMA2_HW 0x0065fdc8
 tShadow_level gShadow_level = eShadow_us_only;
+
+// GLOBAL: CARMA2_HW 0x0065fb54
+int gHud_tinted4 = -1;
 
 // GLOBAL: CARMA2_HW 0x0068be38
 int gRender_indent;
@@ -259,19 +265,48 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
     BrMapAdd(gRear_pixelmap);
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x004e4b40
-// STUB: CARMA2_SW 0x004e0ed0
+// FUNCTION: CARMA2_HW 0x004e4b40
+// FUNCTION: CARMA2_SW 0x004e0ed0
 void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
-    NOT_IMPLEMENTED();
-}
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    ReinitialiseRenderStuff();
+    if (gMap_view == 2) {
+        gRender_screen->base_x = (br_uint_16)gMap_render_x_i;
+        gRender_screen->base_y = (br_uint_16)gMap_render_y_i;
+        gRender_screen->width = (br_uint_16)gMap_render_width_i;
+        gRender_screen->height = (br_uint_16)gMap_render_height_i;
+    } else {
+        gRender_screen->base_x = (br_uint_16)gProgram_state.current_render_left;
+        gRender_screen->base_y = (br_uint_16)gProgram_state.current_render_top;
+        gRender_screen->height = (br_uint_16)(gProgram_state.current_render_bottom - gProgram_state.current_render_top);
+        gRender_screen->width = (br_uint_16)(gProgram_state.current_render_right - gProgram_state.current_render_left);
+    }
+    if (gRender_screen->row_bytes != gRender_screen->width) {
+        gRender_screen->flags &= ~BR_PMF_ROW_WHOLEPIXELS;
+    } else {
+        gRender_screen->flags |= BR_PMF_ROW_WHOLEPIXELS;
+    }
+    gRender_screen->origin_x = gRender_screen->width / 2;
+    gRender_screen->origin_y = gRender_screen->height / 2;
+    gWidth = gRender_screen->width;
+    gHeight = gRender_screen->height;
+    ReinitialiseForwardCamera();
+    SetTintedPolySize(gHud_tinted1,
+        gRender_screen->base_x,
+        gRender_screen->base_y,
+        gRender_screen->width,
+        gRender_screen->height);
+    SetTintedPolySize(gHud_tinted2,
+        gRender_screen->base_x,
+        gRender_screen->base_y,
+        gRender_screen->width,
+        gRender_screen->height);
+    SetTintedPolySize(gHud_tinted4,
+        gRender_screen->base_x,
+        gRender_screen->base_y,
+        gRender_screen->width,
+        gRender_screen->height);
+}
 
 // FUNCTION: CARMA2_HW 0x004e4cd0
 void C2_HOOK_FASTCALL ScreenSmaller(void) {
