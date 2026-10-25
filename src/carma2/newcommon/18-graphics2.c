@@ -305,6 +305,16 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     gPalette_0074a670 = NULL;
 }
 
+// FUNCTION: CARMA2_HW 0x004b5230
+void C2_HOOK_FASTCALL SwitchToPalette(char* pPal_name) {
+    br_pixelmap* the_palette;
+
+    the_palette = BrTableFind(pPal_name);
+    if (the_palette != NULL) {
+        DRSetPalette(the_palette);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x004b52a0
 // FUNCTION: CARMA2_SW 0x004b1a00
 void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
