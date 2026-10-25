@@ -390,9 +390,9 @@ extern void C2_HOOK_FASTCALL RemoveTail(void);
 
 // MayQueuePowerupRespawn
 
-// ARDoPowerupRespawn
+extern void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor);
 
-// ARUndoPowerupRespawn
+extern void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime);
 

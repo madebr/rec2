@@ -685,9 +685,17 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
 
 // MayQueuePowerupRespawn
 
-// ARDoPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004e07d0
+// FUNCTION: CARMA2_SW 0x004dccd0
+void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor) {
+    pActor->render_style = BR_RSTYLE_FACES;
+}
 
-// ARUndoPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004e07e0
+// FUNCTION: CARMA2_SW 0x004dcce0
+void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor) {
+    pActor->render_style = BR_RSTYLE_NONE;
+}
 
 // FUNCTION: CARMA2_HW 0x004e07f0
 void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime) {
