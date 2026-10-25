@@ -20,6 +20,7 @@ extern br_model* gLollipop_model;
 extern tSmoke_column gSmoke_column[10];
 extern br_matrix4 gCameraToScreen;
 extern br_camera* gSpark_cam;
+extern tCar_spec* PTR_006a82a8;
 
 // DrawDot
 
@@ -75,7 +76,7 @@ extern void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec);
 
-// SetPixelmap
+extern int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar);
 
