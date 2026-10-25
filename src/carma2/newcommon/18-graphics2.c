@@ -411,6 +411,16 @@ int C2_HOOK_FASTCALL SwitchToLoresMode(void) {
 
 // PoshDrawLine
 
+// FUNCTION: CARMA2_HW 0x0047ca50
+// FUNCTION: CARMA2_SW 0x0047bd10
+void C2_HOOK_FASTCALL DrawRRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, br_uint_32 pColour) {
+
+    BrPixelmapLine(pPixelmap, pLeft + 1, pTop, pRight - 1, pTop, pColour);
+    BrPixelmapLine(pPixelmap, pLeft + 1, pBottom, pRight - 1, pBottom, pColour);
+    BrPixelmapLine(pPixelmap, pLeft, pTop + 1, pLeft, pBottom - 1, pColour);
+    BrPixelmapLine(pPixelmap, pRight, pTop + 1, pRight, pBottom - 1, pColour);
+}
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
