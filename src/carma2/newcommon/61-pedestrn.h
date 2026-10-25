@@ -324,6 +324,8 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // TurnOffGhostPeds
 
+extern void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_info);
+
 // MutatePed
 
 // FlushAllPedCaches

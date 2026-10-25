@@ -389,6 +389,12 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // TurnOffGhostPeds
 
+// FUNCTION: CARMA2_HW 0x004d6b90
+// FUNCTION: CARMA2_SW 0x004d3190
+void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_info) {
+    pCollision_info->flags |= 0x4;
+}
+
 // MutatePed
 
 // FlushAllPedCaches
