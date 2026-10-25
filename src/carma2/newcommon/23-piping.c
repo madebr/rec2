@@ -828,7 +828,17 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoEndShitMine
 
-// UndoTransformType
+// FUNCTION: CARMA2_HW 0x004ca3e0
+// FUNCTION: CARMA2_SW 0x004c6b10
+void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    (void)pPrev_chunk;
+    chunk = *pChunk;
+    ((br_actor*)chunk->subject_index)->t.type = chunk->data.transform_type.type_from;
+}
 
 // CalcCrushLength
 

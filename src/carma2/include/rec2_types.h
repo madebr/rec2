@@ -295,7 +295,7 @@ typedef struct {
 } tPipe_single_groove_on_of;
 
 typedef struct {
-    tS8 type_from;
+    tU8 type_from;
     tS8 type_to;
 } tPipe_single_transform_type;
 
@@ -534,6 +534,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_identity identity;
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
+        tPipe_single_transform_type transform_type;
         char raw_data[0];
     } data;
 } tPipe_chunk;
