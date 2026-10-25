@@ -24,7 +24,7 @@ extern int gMap_render_width_i;
 
 // CycleTargetLock
 
-// CycleMapOptions
+extern void C2_HOOK_FASTCALL CycleMapOptions(void);
 
 extern void C2_HOOK_FASTCALL ToggleMapTransparency(void);
 
