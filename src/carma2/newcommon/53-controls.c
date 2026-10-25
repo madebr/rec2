@@ -48,7 +48,15 @@ char* gAbuse_text[10];
 
 // CompleteRace
 
-// AbortRace
+// FUNCTION: CARMA2_HW 0x00441490
+// FUNCTION: CARMA2_SW 0x00441570
+int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend) {
+
+    if (!gRace_finished) {
+        gAbandon_game = 1;
+    }
+    return gRace_finished;
+}
 
 // F4Key
 
