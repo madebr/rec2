@@ -479,9 +479,13 @@ void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBloc
 
 // PipeSinglePowerupLose
 
-// STUB: CARMA2_HW 0x004c8de0
-void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x004c8de0
+// FUNCTION: CARMA2_SW 0x004c5510
+void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, tU16 pFlags) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_funk_enable, flags, 0x2);
+
+    ARDoSingleVariedSession(ePipe_funk_enable, (uintptr_t)pIndex, 1,
+        SIZE_OFFSET_PIPING(tPipe_funk_enable, flags), pFlags);
 }
 
 // PipeSingleVanishedDismembered
