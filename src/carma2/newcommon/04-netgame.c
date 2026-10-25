@@ -101,7 +101,21 @@ void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
     }
 }
 
-// EnableCar
+// FUNCTION: CARMA2_HW 0x004992e0
+// FUNCTION: CARMA2_SW 0x00495f10
+void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
+
+    if (pCar->driver_name[0] != '\0') {
+        if (pCar->disabled) {
+            pCar->disabled = 0;
+            ForceRebuildActiveCarList();
+        }
+        if (pCar->car_master_actor->t.t.mat.m[3][0] > 500.0f) {
+            BrVector3Sub(&pCar->car_master_actor->t.t.translate.t, &pCar->car_master_actor->t.t.translate.t, &gInitial_position);
+            BrVector3Copy((br_vector3*)pCar->old_frame_mat.m[3], &pCar->car_master_actor->t.t.translate.t);
+        }
+    }
+}
 
 // DoNetworkHeadups
 
