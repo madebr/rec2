@@ -410,6 +410,7 @@ void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_s
 }
 
 // FUNCTION: CARMA2_HW 0x0042c4f0
+// FUNCTION: CARMA2_SW 0x0042c580
 void C2_HOOK_FASTCALL DisposeCrushData(tCar_crush_buffer_entry* pCrush_data) {
 
     if (pCrush_data != NULL) {
@@ -425,6 +426,7 @@ void C2_HOOK_FASTCALL DisposeCrushData(tCar_crush_buffer_entry* pCrush_data) {
 }
 
 // FUNCTION: CARMA2_HW 0x0042c530
+// FUNCTION: CARMA2_SW 0x0042c5c0
 void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data) {
 
     if (pVertex_data != NULL) {
@@ -909,6 +911,7 @@ int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void*
 // SendReAttachAllBits
 
 // STUB: CARMA2_HW 0x00439510
+// STUB: CARMA2_SW 0x00439550
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }

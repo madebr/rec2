@@ -75,9 +75,11 @@ int gAttached_surface_locked;
 RECT gSSDXWindowPos;
 
 // GLOBAL: CARMA2_HW 0x007a0540
+// GLOBAL: CARMA2_SW 0x00796ae0
 MCI_OPEN_PARMS mci_open_params;
 
 // GLOBAL: CARMA2_HW 0x007a0530
+// GLOBAL: CARMA2_SW 0x00796ad0
 MCI_PLAY_PARMS mci_play_parms;
 
 // GLOBAL: CARMA2_HW 0x007a04e0

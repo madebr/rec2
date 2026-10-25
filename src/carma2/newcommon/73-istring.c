@@ -11,9 +11,11 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x0068c6e0
+// GLOBAL: CARMA2_SW 0x00686728
 int gCount_interface_strings;
 
 // GLOBAL: CARMA2_HW 0x0068c230
+// GLOBAL: CARMA2_SW 0x00686278
 char* gInterface_strings[300];
 
 // FUNCTION: CARMA2_HW 0x00484fd0

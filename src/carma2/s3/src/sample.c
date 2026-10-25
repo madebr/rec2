@@ -98,6 +98,7 @@ tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565b34
+// FUNCTION: CARMA2_SW 0x005611d4
 void C2_HOOK_CDECL s3_debug_disable_sound(void) {
 
 }

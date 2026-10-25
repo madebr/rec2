@@ -553,6 +553,7 @@ void C2_HOOK_FASTCALL NetService(int pIn_race) {
 // NetFinishRace
 
 // STUB: CARMA2_HW 0x004a57e0
+// STUB: CARMA2_SW 0x004a1960
 void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status) {
     NOT_IMPLEMENTED();
 }

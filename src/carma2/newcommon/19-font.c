@@ -58,6 +58,7 @@ br_pixelmap* gPixelmap_buffer[1000];
 size_t gPixelmap_buffer_size;
 
 // GLOBAL: CARMA2_HW 0x0076d960
+// GLOBAL: CARMA2_SW 0x00763ec0
 tPolyFont gPoly_fonts[27];
 
 // GLOBAL: CARMA2_HW 0x0068648c
@@ -90,6 +91,7 @@ br_actor* gPolyfont_glyph_actors[256];
 int gCount_polyfont_glyph_actors;
 
 // GLOBAL: CARMA2_HW 0x0059ada0
+// GLOBAL: CARMA2_SW 0x00595ce8
 int gDRFont_to_polyfont_mapping[24] = {
     kPolyfont_ingame_tiny_red,
     kPolyfont_ingame_tiny_yellow,
@@ -967,6 +969,7 @@ void C2_HOOK_FASTCALL PolyFontText(const char *pText, int pX, int pY, int pFont,
 }
 
 // FUNCTION: CARMA2_HW 0x00465380
+// FUNCTION: CARMA2_SW 0x00464ee0
 void C2_HOOK_FASTCALL TransparentPolyFontText(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor) {
     int text_len;
     int i;

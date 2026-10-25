@@ -9,6 +9,7 @@
 #include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x00655e48
+// GLOBAL: CARMA2_SW 0x00650d30
 int gHud_tinted1 = -1;
 
 // GLOBAL: CARMA2_HW 0x00655e4c

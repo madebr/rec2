@@ -194,12 +194,14 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 }
 
 // FUNCTION: CARMA2_HW 0x00513770
+// FUNCTION: CARMA2_SW 0x0050ebb0
 float C2_HOOK_STDCALL tandeg(float pAngle) {
 
     pAngle = (float)DEG_TO_RAD(pAngle);
     return (float)(sin(pAngle) / cos(pAngle));
 }
 
+// FUNCTION: CARMA2_SW 0x0050ebd0
 // FUNCTION: CARMA2_HW 0x00513790
 tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
     tU32 the_size;
@@ -237,6 +239,7 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
 }
 
 // FUNCTION: CARMA2_HW 0x00513870
+// FUNCTION: CARMA2_SW 0x0050ecb0
 br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* pPath) {
     tPath_name path_buffer;
     tPath_name directory;
@@ -1014,13 +1017,13 @@ void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPer
     if (pPercent != 0 && pPercent != 100) {
         switch (pPercent) {
         case 25:
-            s = "BLEND25.TAB";
+            s = "BLEND75.TAB";
             break;
         case 50:
             s = "BLEND50.TAB";
             break;
         case 75:
-            s = "BLEND75.TAB";
+            s = "BLEND25.TAB";
             break;
         default:
             return;
@@ -1037,18 +1040,21 @@ void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPer
 void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent) {
 
     // GLOBAL: CARMA2_HW 0x00661688
+    // GLOBAL: CARMA2_SW 0x0065bfe0
     static br_token_value alpha25[] = {
         { BRT_BLEND_B, { /*.b = */ 1 } },
         { BRT_OPACITY_X, { /*.x = */ BR_FIXED_INT(0x40) } },
         { 0 },
     };
     // GLOBAL: CARMA2_HW 0x006616a0
+    // GLOBAL: CARMA2_SW 0x0065bff8
     static br_token_value alpha50[] = {
         { BRT_BLEND_B, { /*.b = */ 1 } },
         { BRT_OPACITY_X, { /*.x = */ BR_FIXED_INT(0x80) } },
         { 0 },
     };
     // GLOBAL: CARMA2_HW 0x006616b8
+    // GLOBAL: CARMA2_SW 0x0065c010
     static br_token_value alpha75[] = {
         { BRT_BLEND_B, { /*.b = */ 1 } },
         { BRT_OPACITY_X, { /*.x = */ BR_FIXED_INT(0xc0) } },
@@ -1073,6 +1079,7 @@ void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pP
 }
 
 // FUNCTION: CARMA2_HW 0x00515e70
+// FUNCTION: CARMA2_SW 0x005112e0
 void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent) {
     br_uint_8 pixel_format = gScreen->type;
 

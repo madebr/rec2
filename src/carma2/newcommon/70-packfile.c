@@ -252,6 +252,7 @@ int C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, v
 }
 
 // FUNCTION: CARMA2_HW 0x004b4b00
+// FUNCTION: CARMA2_SW 0x004b0c70
 int C2_HOOK_FASTCALL PFftell(FILE* pF) {
     int pos;
 
@@ -389,6 +390,7 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
 }
 
 // STUB: CARMA2_HW 0x004b4e20
+// STUB: CARMA2_SW 0x004b0f90
 void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
 
     if (twt >= 0) {

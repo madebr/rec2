@@ -19,6 +19,7 @@ int gAlways_typing;
 int gDisabled_count;
 
 // GLOBAL: CARMA2_HW 0x0068c1f8
+// GLOBAL: CARMA2_SW 0x00686240
 int gDisabled_choices[10];
 
 // GLOBAL: CARMA2_HW 0x0075b8fc
@@ -26,6 +27,7 @@ int gDisabled_choices[10];
 int gTyping_slot;
 
 // GLOBAL: CARMA2_HW 0x0068c1e8
+// GLOBAL: CARMA2_SW 0x00686230
 const tInterface_spec* gSpec;
 
 // GLOBAL: CARMA2_HW 0x0068c220

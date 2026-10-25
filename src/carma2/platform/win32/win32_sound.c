@@ -9,6 +9,7 @@
 LPDIRECTSOUND gDirectSound;
 
 // GLOBAL: CARMA2_HW 0x006b2d9c
+// GLOBAL: CARMA2_SW 0x006ac524
 LPDIRECTSOUND gPD_S3_direct_sound;
 
 // GLOBAL: CARMA2_HW 0x007a00e0
@@ -18,6 +19,7 @@ int gPDS3_volume_factors[256];
 tPD_S3_config gPD_S3_config;
 
 // GLOBAL: CARMA2_HW 0x007a0500
+// GLOBAL: CARMA2_SW 0x00796aa0
 MCI_OPEN_PARMS gPDS3_mci_open_parms;
 
 // GLOBAL: CARMA2_HW 0x0079fec0
@@ -38,24 +40,29 @@ char gS3_working_directory[260];
 int gPDS3_midi_playing;
 
 // GLOBAL: CARMA2_HW 0x006b2dac
+// GLOBAL: CARMA2_SW 0x006ac534
 int gPDS3_cda_media_present;
 
 // GLOBAL: CARMA2_HW 0x006b2db0
 int gPDS3_cda_is_playing;
 
 // GLOBAL: CARMA2_HW 0x006b2db4
+// GLOBAL: CARMA2_SW 0x006ac53c
 int gPDS3_cda_paused;
 
 // GLOBAL: CARMA2_HW 0x006b2db8
+// GLOBAL: CARMA2_SW 0x006ac540
 int gPDS3_cda_track;
 
 // GLOBAL: CARMA2_HW 0x007a0520
 MCI_STATUS_PARMS gPDS3_cda_status_parms;
 
 // GLOBAL: CARMA2_HW 0x007a00ac
+// GLOBAL: CARMA2_SW 0x0079664c
 int gPDS3_Number_of_tracks;
 
 // GLOBAL: CARMA2_HW 0x007a0070
+// GLOBAL: CARMA2_SW 0x00796610
 MCI_STATUS_PARMS gPDS3_mci_midi_status_parms;
 
 // GLOBAL: CARMA2_HW 0x006b2dc4
@@ -220,6 +227,7 @@ int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056a0e1
+// FUNCTION: CARMA2_SW 0x00565781
 void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
     gPDS3_cda_status_parms.dwItem = MCI_STATUS_MEDIA_PRESENT;
     mciSendCommandA(gPDS3_mci_open_parms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&gPDS3_cda_status_parms);
@@ -238,6 +246,7 @@ void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056a093
+// FUNCTION: CARMA2_SW 0x00565733
 int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel) {
 
     PDS3CheckCDAMedia(pChannel);
@@ -312,6 +321,7 @@ void C2_HOOK_FASTCALL PDS3UpdateCDAVolume(tS3_channel* pChannel, int pVolume) {
 }
 
 // FUNCTION: CARMA2_HW 0x00569ae2
+// FUNCTION: CARMA2_SW 0x00565182
 void C2_HOOK_FASTCALL PDS3Stop(void) {
 
     if (gPD_S3_config.free_direct_sound) {
@@ -388,6 +398,7 @@ int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x00569b93
+// FUNCTION: CARMA2_SW 0x00565233
 tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
     char path[256];
     MCIERROR err;

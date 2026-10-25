@@ -53,6 +53,7 @@ int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* texture
 }
 
 // FUNCTION: CARMA2_HW 0x0048eb80
+// FUNCTION: CARMA2_SW 0x0048be20
 br_pixelmap* C2_HOOK_FASTCALL DRLdImg(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode) {
     br_pixelmap* textures[1000];
     int nb;
@@ -266,6 +267,7 @@ void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
 // FUNCTION: CARMA2_HW 0x0048f2e0
 // FUNCTION: CARMA2_SW 0x0048c580
 void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
+#ifdef REC2_HW
     br_actor* actor;
     br_light* light;
 
@@ -279,6 +281,18 @@ void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
     gLight_array[gNumber_of_lights] = actor;
     gNumber_of_lights++;
     EnableLights();
+#endif
+#ifdef REC2_SW
+    int count;
+    br_actor* lights[100];
+
+    PossibleService();
+    count = BrActorLoadMany(pPath_name, lights, BR_ASIZE(lights));
+    if (count > 0) {
+        memcpy(gLight_array + gNumber_of_lights, lights, count * sizeof(br_actor*));
+        gNumber_of_lights += count;
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0048f360

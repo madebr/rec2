@@ -780,6 +780,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 #endif
 
 // STUB: CARMA2_HW 0x0048c150
+// STUB: CARMA2_SW 0x00489390
 void C2_HOOK_FASTCALL LoadHeadupImages(void) {
     NOT_IMPLEMENTED();
 }
@@ -787,6 +788,7 @@ void C2_HOOK_FASTCALL LoadHeadupImages(void) {
 // OpenRaceFile
 
 // STUB: CARMA2_HW 0x0048c1c0
+// STUB: CARMA2_SW 0x00489400
 void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index) {
     NOT_IMPLEMENTED();
 }
@@ -1027,6 +1029,7 @@ void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions)
 // PrintNetOptions
 
 // STUB: CARMA2_HW 0x0048d190
+// STUB: CARMA2_SW 0x0048a3d0
 int C2_HOOK_FASTCALL SaveOptions(void) {
     NOT_IMPLEMENTED();
 }

@@ -34,6 +34,7 @@ tFloat_bunch_info gCar_softness;
 tFloat_bunch_info gCar_car_damage_multiplier;
 
 // GLOBAL: CARMA2_HW 0x0068b8d0
+// GLOBAL: CARMA2_SW 0x00685e30
 br_vector3 gZero_v__car;  // FIXME: make const?
 
 // GLOBAL: CARMA2_HW 0x006793dc

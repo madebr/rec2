@@ -51,6 +51,7 @@ int gNoTransients;
 br_pixelmap* gRender_palette;
 
 // GLOBAL: CARMA2_HW 0x0079ec14
+// GLOBAL: CARMA2_SW 0x00795174
 int gDim_amount;
 
 // GLOBAL: CARMA2_HW 0x0074a680
@@ -288,6 +289,7 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b52a0
+// FUNCTION: CARMA2_SW 0x004b1a00
 void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 
     gLast_palette_change = 0;
@@ -348,6 +350,7 @@ void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
 // DeallocateAllTransientBitmaps
 
 // STUB: CARMA2_HW 0x0043e010
+// STUB: CARMA2_SW 0x0043e060
 void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them) {
     NOT_IMPLEMENTED();
 }
@@ -399,6 +402,7 @@ void C2_HOOK_FASTCALL StartMouseCursor(void) {
 }
 
 // STUB: CARMA2_HW 0x0043e710
+// STUB: CARMA2_SW 0x0043e820
 void C2_HOOK_FASTCALL EndMouseCursor(void) {
     NOT_IMPLEMENTED();
 }
@@ -422,7 +426,9 @@ void C2_HOOK_FASTCALL ClearEntireScreen(void) {
     BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
     BrPixelmapFill(gDepth_buffer, 0xffffffff);
     PDScreenBufferSwap(0);
+#ifdef REC2_HW
     BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
+#endif
 }
 
 // DistanceFromPlane
@@ -656,10 +662,12 @@ void C2_HOOK_CDECL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int
     int line_skip;
     int width;
 
+#ifdef REC2_HW
     if (gDevious_2d) {
         DeviouslyDimRectangle(pPixelmap, pLeft, pTop, pRight, pBottom, pKnock_out_corners);
         return;
     }
+#endif
     ptr = (tU8*)pPixelmap->pixels + pLeft + pPixelmap->row_bytes * pTop;
     line_skip = pPixelmap->row_bytes - pRight + pLeft;
     depth_table_ptr = (tU8*)gDepth_shade_table->pixels + gDepth_shade_table->row_bytes * gDim_amount;

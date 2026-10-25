@@ -56,6 +56,7 @@ int gSwap_depth_effect_colour_green;
 int gHas_sky_texture;
 
 // GLOBAL: CARMA2_HW 0x0079ec20
+// GLOBAL: CARMA2_SW 0x00795180
 br_pixelmap* gDepth_shade_table;
 
 static void C2_HOOK_FASTCALL FrobFog(void);
@@ -234,6 +235,7 @@ void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* 
 // LoadDepthTable
 
 // STUB: CARMA2_HW 0x00445620
+// STUB: CARMA2_SW 0x00445450
 void C2_HOOK_FASTCALL InitDepthEffects(void) {
     NOT_IMPLEMENTED();
 }

@@ -89,14 +89,19 @@ void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStorage, tC
 }
 
 // FUNCTION: CARMA2_HW 0x004f6820
-// FUNCTION: CARMA2_SW 0x004f23d0
+// STUB: CARMA2_SW 0x004f23d0
 void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage) {
+#ifdef REC2_HW
     int i;
     for (i = 0; i < pStorage->materials_count; i++) {
         br_material* material = pStorage->materials[i];
 
         SmoothificateWorldMaterial(material);
     }
+#endif
+#ifdef REC2_SW
+    NOT_IMPLEMENTED();
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x004f6900
@@ -122,7 +127,6 @@ void C2_HOOK_FASTCALL SmoothificatePowerups(br_actor* pActor) {
 }
 
 // FUNCTION: CARMA2_HW 0x004f6a20
-// FUNCTION: CARMA2_SW 0x005112e0
 void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
     int need_update;
 
@@ -152,7 +156,7 @@ void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
 
 // FUNCTION: CARMA2_HW 0x004f6a90
 void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial) {
-
+#ifdef REC2_HW
     if (gNbPixelBits != 16) {
         return;
     }
@@ -162,11 +166,15 @@ void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial) {
         pMaterial->user = NULL;
         pMaterial->ka = gLighting_data.ambient_else;
         pMaterial->kd = gLighting_data.diffuse_else;
-        pMaterial->ks = 0.f;
+        pMaterial->ks = 0.0f;
         pMaterial->flags &= ~BR_MATF_PRELIT;
         pMaterial->flags |= BR_MATF_LIGHT | BR_MATF_SMOOTH;
         BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
     }
+#endif
+#ifdef REC2_SW
+    NOT_IMPLEMENTED();
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x004f6b50
@@ -211,9 +219,17 @@ void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* pRace_lighting_path)
 // FUNCTION: CARMA2_HW 0x00486dc0
 // FUNCTION: CARMA2_SW 0x00483ef0
 void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF) {
+#ifdef REC2_HW
     GetThreeInts(pF, &gLighting_data.directional.red, &gLighting_data.directional.green, &gLighting_data.directional.blue);
     GetPairOfScalars(pF, &gLighting_data.ambient_0, &gLighting_data.diffuse_0);
     GetPairOfScalars(pF, &gLighting_data.ambient_1, &gLighting_data.diffuse_1);
     GetPairOfScalars(pF, &gLighting_data.ambient_else, &gLighting_data.diffuse_else);
+#endif
+#ifdef REC2_SW
+    GetThreeInts(pF, &gLighting_data_ambient.directional.red, &gLighting_data_ambient.directional.green, &gLighting_data_ambient.directional.blue);
+    GetPairOfScalars(pF, &gLighting_data_ambient.ambient_0, &gLighting_data_diffuse.diffuse_0);
+    GetPairOfScalars(pF, &gLighting_data_ambient.ambient_1, &gLighting_data_diffuse.diffuse_1);
+    GetPairOfScalars(pF, &gLighting_data_ambient.ambient_else, &gLighting_data_diffuse.diffuse_else);
+#endif
 }
 

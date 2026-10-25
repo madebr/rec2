@@ -114,6 +114,7 @@ tPowerup* gPowerup_array;
 
 
 // STUB: CARMA2_HW 0x004d96c0
+// STUB: CARMA2_SW 0x004d5b90
 void C2_HOOK_FASTCALL LoadPowerups(void) {
     NOT_IMPLEMENTED();
 }
@@ -131,6 +132,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
 // InitMineShit
 
 // STUB: CARMA2_HW 0x004d9ea0
+// STUB: CARMA2_SW 0x004d6370
 void C2_HOOK_FASTCALL InitPowerups(void) {
     NOT_IMPLEMENTED();
 }
@@ -144,6 +146,7 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 // ResetPowerups
 
 // STUB: CARMA2_HW 0x004da730
+// STUB: CARMA2_SW 0x004d6c00
 void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
     NOT_IMPLEMENTED();
 }
@@ -707,6 +710,7 @@ void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition) {
 // CutOffTail
 
 // STUB: CARMA2_HW 0x004e06a0
+// STUB: CARMA2_SW 0x004dcba0
 void C2_HOOK_FASTCALL RemoveTail(void) {
     NOT_IMPLEMENTED();
 }

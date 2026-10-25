@@ -62,21 +62,26 @@ int gInitialisation_finished;
 tU32 gAustere_time;
 
 // GLOBAL: CARMA2_HW 0x0074b760
+// GLOBAL: CARMA2_SW 0x00741e20
 int gCredits_per_rank[3];
 
 // GLOBAL: CARMA2_HW 0x0074b76c
+// GLOBAL: CARMA2_SW 0x00741e2c
 int gInitial_rank;
 
 // GLOBAL: CARMA2_HW 0x00762110
+// GLOBAL: CARMA2_SW 0x00758670
 int gStarting_money[3];
 
 // GLOBAL: CARMA2_HW 0x00762160
 int gNet_starting_money[8];
 
 // GLOBAL: CARMA2_HW 0x0074d4c0
+// GLOBAL: CARMA2_SW 0x00743a20
 tSlot_info gInitial_APO[3];
 
 // GLOBAL: CARMA2_HW 0x007622a0
+// GLOBAL: CARMA2_SW 0x00758800
 tSlot_info gInitial_APO_potential[3];
 
 // GLOBAL: CARMA2_HW 0x0074cfa0
@@ -157,10 +162,17 @@ void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void) {
 // FUNCTION: CARMA2_SW 0x0047dc90
 void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
     if (gRearview_screen != NULL) {
+#ifdef REC2_SW
+        BrMemFree(gRearview_screen->pixels);
+#endif
         BrPixelmapFree(gRearview_screen);
+#ifdef REC2_SW
+        BrPixelmapFree(gRearview_depth_buffer);
+#endif
         gRearview_screen = NULL;
     }
     if (gProgram_state.mirror_on) {
+#ifdef REC2_HW
         gRearview_screen = BrPixelmapAllocateSub(
             gBack_screen,
             gProgram_state.current_car.mirror_left,
@@ -168,8 +180,27 @@ void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
             gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left,
             gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top);
         gRearview_depth_buffer = gDepth_buffer;
+#endif
+#ifdef REC2_SW
+        void *mirror_pixels = BrMemAllocate(
+            (gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top + 1)
+            * (gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left + 4)
+            * gGraf_specs[gGraf_spec_index].depth_bytes, kMem_back_pixels);
+        if (gScreen->row_bytes < 0) {
+            BrFatal("C:\\Carma2\\Source\\Common\\Init.c", 412,
+                "Bruce bug at line %d, file C:\\Carma2\\Source\\Common\\Init.c", 412);
+        }
+        gRearview_screen = DRPixelmapAllocate(gScreen->type,
+            gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left,
+            gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top,
+            mirror_pixels,
+            0);
+#endif
         gRearview_screen->origin_x = (br_int_16)(gRearview_screen->width / 2);
         gRearview_screen->origin_y = (br_int_16)(gRearview_screen->height / 2);
+#ifdef REC2_SW
+        gRearview_depth_buffer = BrPixelmapMatch(gRearview_screen, BR_PMMATCH_DEPTH_16);
+#endif
     }
 }
 
@@ -733,6 +764,17 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
 
 // CheckTimedDemo
 
+#ifdef REC2_HW
+#define CONFIGURE_DEFAULT_TRACK_MATERIAL(MAT) \
+    (MAT)->colour = ((br_colour*)gRender_palette->pixels)[227]; \
+    MAT)->ka = 1.0f; \
+    MAT)->kd = 0.0f; \
+    MAT)->ks = 0.0f;
+#endif
+#ifdef REC2_SW
+#define CONFIGURE_DEFAULT_TRACK_MATERIAL(MAT)
+#endif
+
 // void InitialiseApplication(int argc, char **argv);
 #define InitialiseApplication(pArgc, pArgv) \
     do { \
@@ -789,15 +831,16 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
         InitMap(); \
         PrintMemoryDump(0, "AFTER INITIALISING GENERAL STORAGE AND LOADING IN REG"); \
         Init2DStuffForPolyFonts(); \
-        InitLineStuff(); \
-        InitSmokeStuff(); \
-        PrintMemoryDump(0, "AFTER INITING LINE AND SMOKE STUFF"); \
-        Init2DStuff(); \
-        InitTintedPolyStuff(); \
-        gHud_tinted1 = CreateTintedPoly(0, 0, 640, 480, 2, 0, 0, 0); \
-        gHud_tinted2 = CreateTintedPoly(0, 0, 640, 480, 3, 2, 0, 0); \
-        PrintMemoryDump(0, "AFTER INITING 2D STUFF"); \
-        InitLightingEffects(); \
+        REC2_HW_RUN(InitLineStuff();) \
+        REC2_HW_RUN(InitSmokeStuff();) \
+        REC2_HW_RUN(PrintMemoryDump(0, "AFTER INITING LINE AND SMOKE STUFF");) \
+        REC2_HW_RUN(Init2DStuff();) \
+        REC2_HW_RUN(InitTintedPolyStuff();) \
+        REC2_SW_RUN(gHud_tinted1 = CreateTintedPoly(0, 0, 320, 240, 2, 0, 0, 0);) \
+        REC2_HW_RUN(gHud_tinted1 = CreateTintedPoly(0, 0, 640, 480, 2, 0, 0, 0);) \
+        REC2_HW_RUN(gHud_tinted2 = CreateTintedPoly(0, 0, 640, 480, 3, 2, 0, 0);) \
+        REC2_HW_RUN(PrintMemoryDump(0, "AFTER INITING 2D STUFF");) \
+        REC2_HW_RUN(InitLightingEffects();) \
         LoadInterfaceStrings(); \
         PrintMemoryDump(0, "AFTER INITING INTERFACE STRINGS"); \
         PrintMemoryDump(0, "AFTER INITING ACTION REPLAY"); \
@@ -817,10 +860,10 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
         gDefault_track_material = BrMaterialAllocate("gDefault_track_material"); \
         gDefault_track_material->index_base = 227; \
         gDefault_track_material->index_range = 1; \
-        gDefault_track_material->colour = ((br_colour*)gRender_palette->pixels)[227]; \
-        gDefault_track_material->ka = 1.0f; \
-        gDefault_track_material->kd = 0.0f; \
-        gDefault_track_material->ks = 0.0f; \
+        REC2_HW_RUN(gDefault_track_material->colour = ((br_colour*)gRender_palette->pixels)[227];) \
+        REC2_HW_RUN(gDefault_track_material->ka = 1.0f;) \
+        REC2_HW_RUN(gDefault_track_material->kd = 0.0f;) \
+        REC2_HW_RUN(gDefault_track_material->ks = 0.0f;) \
         BrMaterialAdd(gDefault_track_material); \
         InitPowerups(); \
         PrintMemoryDump(0, "AFTER INITING POWERUPS"); \

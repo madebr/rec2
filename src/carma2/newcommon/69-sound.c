@@ -29,9 +29,11 @@ int gCD_fully_installed;
 int gServicing_sound;
 
 // GLOBAL: CARMA2_HW 0x00684560
+// GLOBAL: CARMA2_SW 0x0067eca0
 int gSound_sources_inited;
 
 // GLOBAL: CARMA2_HW 0x00684544
+// GLOBAL: CARMA2_SW 0x0067ec84
 tU32 gLast_sound_service;
 
 // GLOBAL: CARMA2_HW 0x0068454c
@@ -47,33 +49,43 @@ tU32 gNext_track_finished_check;
 int gMusic_available;
 
 // GLOBAL: CARMA2_HW 0x00684568
+// GLOBAL: CARMA2_SW 0x0067eca8
 int gINT_00684568;
 
 // GLOBAL: CARMA2_HW 0x00684554
+// GLOBAL: CARMA2_SW 0x0067ec94
 int gINT_00684554;
 
 // GLOBAL: CARMA2_HW 0x00595c44
+// GLOBAL: CARMA2_SW 0x00590ba4
 int gINT_00595c44 = 1;
 
 // GLOBAL: CARMA2_HW 0x00595c20
+// GLOBAL: CARMA2_SW 0x00590b80
 int gINT_00595c20 = 9998;
 
 // GLOBAL: CARMA2_HW 0x0068455c
+// GLOBAL: CARMA2_SW 0x0067ec9c
 undefined4 gUNK_0068455c;
 
 // GLOBAL: CARMA2_HW 0x0079e13c
+// GLOBAL: CARMA2_SW 0x0079469c
 int gCD_is_disabled;
 
 // GLOBAL: CARMA2_HW 0x00595c78
+// GLOBAL: CARMA2_SW 0x00590bd8
 int gRandom_CDA_tunes[8] = { 9600, 9601, 9602, 9603, 9604, 9605, 9606, 9607 };
 
 // GLOBAL: CARMA2_HW 0x00595c98
+// GLOBAL: CARMA2_SW 0x00590bf8
 int gRandom_CDA_tunes_1[4] = { 9600, 9601, 9602, 9603 };
 
 // GLOBAL: CARMA2_HW 0x00595ca8
+// GLOBAL: CARMA2_SW 0x00590c08
 int gRandom_CDA_tunes_2[4] = { 9604, 9605, 9606, 9607 };
 
 // GLOBAL: CARMA2_HW 0x00595c50
+// GLOBAL: CARMA2_SW 0x00590bb0
 int gLast_tune = -1;
 
 // GLOBAL: CARMA2_HW 0x00595c28
@@ -85,9 +97,11 @@ const char* gSound_periodicity_choices[3] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00595c48
+// GLOBAL: CARMA2_SW 0x00590ba8
 int gSound_detail_level = 1;
 
 // GLOBAL: CARMA2_HW 0x00684570
+// GLOBAL: CARMA2_SW 0x0067ecb0
 tEnvironment_sound_source gEnvironment_sound_sources[5];
 
 // GLOBAL: CARMA2_HW 0x006845fc
@@ -115,6 +129,7 @@ tS3_outlet* gPedestrians_outlet;
 tS3_outlet* gMusic_outlet;
 
 // GLOBAL: CARMA2_HW 0x00684614
+// GLOBAL: CARMA2_SW 0x0067ed54
 tS3_outlet* gXXX_outlet;
 
 // GLOBAL: CARMA2_HW 0x0079e160
@@ -130,30 +145,39 @@ const char* gSound_generator_type_names[3] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00655dd8
+// GLOBAL: CARMA2_SW 0x00650cc0
 int gVirgin_pass = 1;
 
 // GLOBAL: CARMA2_HW 0x00595c4c
+// GLOBAL: CARMA2_SW 0x00590bac
 int gOld_sound_detail_level = -1;
 
 // GLOBAL: CARMA2_HW 0x0079e120
+// GLOBAL: CARMA2_SW 0x00794680
 br_vector3 gCamera_left;
 
 // GLOBAL: CARMA2_HW 0x0079e130
+// GLOBAL: CARMA2_SW 0x00794690
 br_vector3 gCamera_position;
 
 // GLOBAL: CARMA2_HW 0x0079e180
+// GLOBAL: CARMA2_SW 0x007946e0
 br_vector3 gOld_camera_position;
 
 // GLOBAL: CARMA2_HW 0x0079ea60
+// GLOBAL: CARMA2_SW 0x00794fc0
 br_vector3 gCamera_velocity;
 
 // GLOBAL: CARMA2_HW 0x00684540
+// GLOBAL: CARMA2_SW 0x0067ec80
 tU32 gNext_sound_generator_munging;
 
 // GLOBAL: CARMA2_HW 0x0079e18c
+// GLOBAL: CARMA2_SW 0x007946ec
 int gCount_environmental_sound_sources;
 
 // GLOBAL: CARMA2_HW 0x0079e17c
+// GLOBAL: CARMA2_SW 0x007946dc
 int gEnvironmental_sound_sources_buffer_index;
 
 // FUNCTION: CARMA2_HW 0x00500060

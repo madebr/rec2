@@ -6,12 +6,15 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0068b840
+// GLOBAL: CARMA2_SW 0x00685da0
 br_scalar gSight_distance_squared;
 
 // GLOBAL: CARMA2_HW 0x0068b84c
+// GLOBAL: CARMA2_SW 0x00685dac
 tFunkotronic_spec* gFunkotronics_array;
 
 // GLOBAL: CARMA2_HW 0x0068b850
+// GLOBAL: CARMA2_SW 0x00685db0
 tGroovidelic_spec* gGroovidelics_array;
 
 // GLOBAL: CARMA2_HW 0x0068b848
@@ -67,6 +70,7 @@ void C2_HOOK_FASTCALL ControlBoundFunkGroove(int pSlot_number, float pValue) {
 // AddNewFunkotronic
 
 // STUB: CARMA2_HW 0x00474950
+// STUB: CARMA2_SW 0x00473eb0
 void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
     NOT_IMPLEMENTED();
 }

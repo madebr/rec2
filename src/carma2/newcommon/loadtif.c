@@ -232,7 +232,8 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* pDirectory, const 
     return pm;
 }
 
-// STUB: CARMA2_HW 0x004856c0
+// FUNCTION: CARMA2_HW 0x004856c0
+// FUNCTION: CARMA2_SW 0x00482800
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex(const char* pDirectory, const char* pFile_stem, br_pixelmap* pPalette, int pFlags, int* pError_code) {
     br_pixelmap* texture;
 

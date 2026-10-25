@@ -32,24 +32,30 @@ br_vector3 gS3_listener_vel_now;
 br_vector3 gS3_listener_left_now;
 
 // GLOBAL: CARMA2_HW 0x006b2c50
+// GLOBAL: CARMA2_SW 0x006ac3d8
 int gS3_listener_pos_is_brender;
 
 // GLOBAL: CARMA2_HW 0x006b2c70
+// GLOBAL: CARMA2_SW 0x006ac3f8
 br_vector3* gS3_listener_pos_ptr;
 
 // GLOBAL: CARMA2_HW 0x006b2c40
 br_vector3 gS3_listener_position_old;
 
 // GLOBAL: CARMA2_HW 0x006b2c74
+// GLOBAL: CARMA2_SW 0x006ac3fc
 br_vector3* gS3_listener_vel_ptr;
 
 // GLOBAL: CARMA2_HW 0x006b2c64
+// GLOBAL: CARMA2_SW 0x006ac3ec
 int gS3_listener_vel_is_brender;
 
 // GLOBAL: CARMA2_HW 0x006b2c78
+// GLOBAL: CARMA2_SW 0x006ac400
 br_vector3* gS3_listener_left_ptr;
 
 // GLOBAL: CARMA2_HW 0x006b2c54
+// GLOBAL: CARMA2_SW 0x006ac3dc
 int gS3_listener_left_is_brender;
 
 
@@ -185,6 +191,7 @@ int C2_HOOK_STDCALL FUN_00565e39(float a1, float a2, float a3) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565d70
+// FUNCTION: CARMA2_SW 0x00561410
 int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
 
     S3_FUN_00565e39_MACRO(a1, a2, a3);
@@ -195,6 +202,7 @@ int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565ec7
+// FUNCTION: CARMA2_SW 0x00561567
 void C2_HOOK_FASTCALL S3CopyBrVector3(br_vector3* pDest, br_vector3* pSrc) {
 
     pDest->v[0] = pSrc->v[0];
@@ -211,6 +219,7 @@ void C2_HOOK_FASTCALL S3CopyS3Vector3(tS3_vector3* pDest, tS3_vector3* pSrc) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565faa
+// FUNCTION: CARMA2_SW 0x0056164a
 void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos) {
 
     gS3_listener_pos_is_brender = 1;
@@ -219,6 +228,7 @@ void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565ff1
+// FUNCTION: CARMA2_SW 0x00561691
 void C2_HOOK_FASTCALL S3BindListenerVelocityBRender(br_vector3* vel) {
 
     gS3_listener_vel_ptr = vel;
@@ -226,6 +236,7 @@ void C2_HOOK_FASTCALL S3BindListenerVelocityBRender(br_vector3* vel) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056602b
+// FUNCTION: CARMA2_SW 0x005616cb
 void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left) {
 
     gS3_listener_left_ptr = left;
@@ -327,6 +338,7 @@ int C2_HOOK_FASTCALL S3StartSound3D(tS3_outlet *pOutlet, int pSound, const br_ve
 }
 
 // FUNCTION: CARMA2_HW 0x0056773c
+// FUNCTION: CARMA2_SW 0x00562ddc
 int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound, tS3_sound_source* source, float pMax_distance, int pPeriod, int pRepeats, int pVolume, int pPitch, int pSpeed) {
     tS3_descriptor* desc;
 

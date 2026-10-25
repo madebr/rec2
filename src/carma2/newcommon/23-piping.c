@@ -495,6 +495,7 @@ void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBloc
 // PipeSinglePowerupLose
 
 // STUB: CARMA2_HW 0x004c8de0
+// STUB: CARMA2_SW 0x004c5510
 void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
     NOT_IMPLEMENTED();
 }
@@ -525,6 +526,7 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 // PipeSingleEndShitMine
 
 // FUNCTION: CARMA2_HW 0x004c8ff0
+// FUNCTION: CARMA2_SW 0x004c5720
 void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_type) {
     tU16 type_from = pActor->t.type;
 
@@ -614,6 +616,7 @@ void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk) {
 // ApplySplitWeld
 
 // FUNCTION: CARMA2_HW 0x004c9930
+// FUNCTION: CARMA2_SW 0x004c6060
 void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk) {
 }
 
@@ -631,6 +634,7 @@ void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk) {
 // ApplyNonCarCreation
 
 // FUNCTION: CARMA2_HW 0x004c99f0
+// FUNCTION: CARMA2_SW 0x004c6120
 void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
     tPipe_chunk* chunk;
 

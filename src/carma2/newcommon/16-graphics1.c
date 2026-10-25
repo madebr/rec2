@@ -15,9 +15,11 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00703e24
+// GLOBAL: CARMA2_SW 0x006fab04
 int gWidth;
 
 // GLOBAL: CARMA2_HW 0x00703e20
+// GLOBAL: CARMA2_SW 0x006fab00
 int gHeight;
 
 // GLOBAL: CARMA2_HW 0x00705060

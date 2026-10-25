@@ -152,6 +152,7 @@ tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048fa20
+// FUNCTION: CARMA2_SW 0x0048cc90
 tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
     tU8 raw_byte;
 
@@ -161,6 +162,7 @@ tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048fa40
+// FUNCTION: CARMA2_SW 0x0048ccb0
 tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr) {
     tS16 raw_short;
 
@@ -171,6 +173,7 @@ tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048fa50
+// FUNCTION: CARMA2_SW 0x0048ccc0
 tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr) {
     tS8 raw_byte;
 
@@ -180,12 +183,14 @@ tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048fa60
+// FUNCTION: CARMA2_SW 0x0048ccd0
 void C2_HOOK_FASTCALL MemSkipBytes(char** pPtr, int pBytes_to_skip) {
 
     *pPtr += pBytes_to_skip;
 }
 
 // FUNCTION: CARMA2_HW 0x0048fa70
+// FUNCTION: CARMA2_SW 0x0048cce0
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_list, int pCount) {
     int i;
     char s[256];
@@ -316,6 +321,7 @@ br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF) {
 }
 
 // FUNCTION: CARMA2_HW 0x00490130
+// FUNCTION: CARMA2_SW 0x0048d3a0
 void GetPairOfScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2) {
     float f1;
     float f2;
@@ -886,6 +892,7 @@ void C2_HOOK_FASTCALL DisposePhysicsObject(tPhysics_object* pObject) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044be80
+// FUNCTION: CARMA2_SW 0x0044bc30
 intptr_t C2_HOOK_CDECL DisposeCarActModDataCB(br_actor* pActor, void* pContext) {
     tUser_crush_data* crush_data = pActor->user;
     tCar_spec* car = pContext;

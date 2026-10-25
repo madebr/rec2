@@ -163,6 +163,7 @@ void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spe
 // RebuildActiveCarList
 
 // STUB: CARMA2_HW 0x004a7a60
+// STUB: CARMA2_SW 0x004a3bd0
 void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
     NOT_IMPLEMENTED();
 }
@@ -278,6 +279,7 @@ int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
 }
 
 // STUB: CARMA2_HW 0x004ae7e0
+// STUB: CARMA2_SW 0x004aa950
 tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
     NOT_IMPLEMENTED();
 }

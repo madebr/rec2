@@ -66,6 +66,7 @@ tU32 gFrame_period;
 
 
 // GLOBAL: CARMA2_HW 0x0075b9c0
+// GLOBAL: CARMA2_SW 0x00751f20
 tBrender_storage gMisc_storage_space;
 
 
@@ -138,6 +139,7 @@ br_matrix34 gRearview_camera_to_world;
 
 
 // GLOBAL: CARMA2_HW 0x00705b80
+// GLOBAL: CARMA2_SW 0x006fc640
 undefined4 gUnknown_00705b80[20];
 
 
@@ -238,13 +240,29 @@ br_actor* gActor_array[100];
 // GLOBAL: CARMA2_SW 0x00686770
 int gNumber_of_lights;
 
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x006572cc
 tLighting_data gLighting_data = {
     { 255, 255, 255 },
-    .2f, .8f,
-    .2f, .8f,
-    .2f, .8f,
+    0.2f, 0.8f,
+    0.2f, 0.8f,
+    0.2f, 0.8f,
 };
+#endif
+
+#ifdef REC2_SW
+// GLOBAL: CARMA2_SW 0x00651c84
+tLighting_data_ambient gLighting_data_ambient = {
+    { 255, 255, 255 },
+    1.0f,
+    1.0f,
+    1.0f,
+};
+
+// GLOBAL: CARMA2_SW 0x0068672c
+tLighting_data_diffuse gLighting_data_diffuse;
+
+#endif
 
 // GLOBAL: CARMA2_HW 0x0074b3e0
 // GLOBAL: CARMA2_SW 0x00741aa0
@@ -288,6 +306,7 @@ tBRender_smoke gBR_smoke_structs[35];
 int gNo_current_game = 1;
 
 // GLOBAL: CARMA2_HW 0x0074b7d8
+// GLOBAL: CARMA2_SW 0x00741e98
 int gWaiting_for_unpause;
 
 // GLOBAL: CARMA2_HW 0x0075b8f0
@@ -295,6 +314,7 @@ int gWaiting_for_unpause;
 tU32 gWait_for_it;
 
 // GLOBAL: CARMA2_HW 0x00655dd4
+// GLOBAL: CARMA2_SW 0x00650cbc
 int gGame_to_load = -1;
 
 // GLOBAL: CARMA2_HW 0x007623a0
@@ -302,9 +322,11 @@ int gGame_to_load = -1;
 tRace_info gCurrent_race;
 
 // GLOBAL: CARMA2_HW 0x0068be3c
+// GLOBAL: CARMA2_SW 0x00685e80
 int gGame_initialized;
 
 // GLOBAL: CARMA2_HW 0x0074d49c
+// GLOBAL: CARMA2_SW 0x007439fc
 int gNo_races_yet;
 
 // GLOBAL: CARMA2_HW 0x0074b750
@@ -328,9 +350,11 @@ int gNumber_of_racers;
 tOpponent* gOpponents;
 
 // GLOBAL: CARMA2_HW 0x00761f50
+// GLOBAL: CARMA2_SW 0x007584b0
 int gCurrent_APO_levels[3];
 
 // GLOBAL: CARMA2_HW 0x0074d490
+// GLOBAL: CARMA2_SW 0x007439f0
 int gCurrent_APO_potential_levels[3];
 
 // GLOBAL: CARMA2_HW 0x0074b784
@@ -461,6 +485,7 @@ br_vector3* gOur_pos;
 //float gCar_crush_max_fold;
 
 // GLOBAL: CARMA2_HW 0x00761f00
+// GLOBAL: CARMA2_SW 0x00758460
 tBrender_storage gNet_cars_storage_space;
 //float gNet_softness[7];
 //tS32 gJoystick_deadzone;
@@ -539,6 +564,7 @@ br_scalar gCamera_hither;
 //br_pixelmap* gRender_shade_table;
 
 // GLOBAL: CARMA2_HW 0x0075b93c
+// GLOBAL: CARMA2_SW 0x00751e9c
 br_pixelmap* gRearview_depth_buffer;
 //br_pixelmap* gWhole_screen;
 
@@ -633,6 +659,7 @@ int gFrame_rate;
 //int gNumber_of_racers;
 
 // GLOBAL: CARMA2_HW 0x00762328
+// GLOBAL: CARMA2_SW 0x00758888
 int gSound_enabled;
 //int gGraf_spec_index;
 
@@ -644,6 +671,7 @@ int gSound_available;
 
 
 // GLOBAL: CARMA2_HW 0x0074ca18
+// GLOBAL: CARMA2_SW 0x007430b8
 tPixelFlags gPixelFlags;
 
 // GLOBAL: CARMA2_HW 0x0074d358

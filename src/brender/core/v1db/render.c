@@ -425,6 +425,7 @@ void C2_HOOK_CDECL BrZbSceneRenderEnd(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x005226d0
+// FUNCTION: CARMA2_SW 0x0051dd70
 void C2_HOOK_CDECL BrZbSceneRender(br_actor* world, br_actor* camera, br_pixelmap* colour_buffer, br_pixelmap* depth_buffer) {
 
     if (v1db.renderer != NULL) {

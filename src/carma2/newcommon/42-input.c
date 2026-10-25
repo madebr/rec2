@@ -33,33 +33,42 @@ tKey_array gKey_array;
 int gKey_poll_counter;
 
 // GLOBAL: CARMA2_HW 0x006571f8
+// GLOBAL: CARMA2_SW 0x00651bb0
 tMouse_coord gCurrent_mouse_position = {-1, -1};
 
 // GLOBAL: CARMA2_HW 0x0068c144
+// GLOBAL: CARMA2_SW 0x0068618c
 tU32 gLast_roll;
 
 // GLOBAL: CARMA2_HW 0x0068c140
+// GLOBAL: CARMA2_SW 0x00686188
 int gCurrent_cursor;
 
 // GLOBAL: CARMA2_HW 0x0068be88
+// GLOBAL: CARMA2_SW 0x00685ed0
 tRolling_letter* gRolling_letters;
 
 // GLOBAL: CARMA2_HW 0x0068be90
+// GLOBAL: CARMA2_SW 0x00685ed8
 int gLetter_x_coords[15];
 
 // GLOBAL: CARMA2_HW 0x0068bed0
+// GLOBAL: CARMA2_SW 0x00685f18
 int gVisible_length;
 
 // GLOBAL: CARMA2_HW 0x0068be48
+// GLOBAL: CARMA2_SW 0x00685e90
 int gLetter_y_coords[15];
 
 // GLOBAL: CARMA2_HW 0x0068be84
+// GLOBAL: CARMA2_SW 0x00685ecc
 int gThe_length;
 
 // GLOBAL: CARMA2_HW 0x0068c150
 char gCurrent_typing[110];
 
 // GLOBAL: CARMA2_HW 0x0068c1c0
+// GLOBAL: CARMA2_SW 0x00686208
 int gCurrent_position;
 
 // GLOBAL: CARMA2_HW 0x0068c1c8
@@ -496,6 +505,7 @@ void C2_HOOK_FASTCALL EndRollingLetters(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00483cf0
+// FUNCTION: CARMA2_SW 0x00480e30
 int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type rolling_type) {
     tRolling_letter* let;
     int i;
@@ -540,6 +550,7 @@ void C2_HOOK_FASTCALL BlankSlot(int pIndex, int pName_length, int pVisible_lengt
 }
 
 // FUNCTION: CARMA2_HW 0x00484000
+// FUNCTION: CARMA2_SW 0x00481140
 int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_char) {
     int x_coord;
     int y_coord;

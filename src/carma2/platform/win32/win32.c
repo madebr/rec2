@@ -201,6 +201,7 @@ SYSTEM_INFO gSystem_info;
 DWORD gPage_size;
 
 // GLOBAL: CARMA2_HW 0x00681fa0
+// GLOBAL: CARMA2_SW 0x0067c6e0
 FILE *gActionReplayBufferFile;
 
 #ifdef REC2_SW
@@ -357,6 +358,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char *pThe_str) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051afb0
+// FUNCTION: CARMA2_SW 0x00514c30
 void C2_HOOK_FASTCALL PDNonFatalError(const char *pThe_str) {
 
     dr_dprintf("*** ERROR...");
@@ -371,6 +373,7 @@ int C2_HOOK_FASTCALL PDIsWindowInactive(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051afe0
+// FUNCTION: CARMA2_SW 0x00514c60
 char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
     tU8 b = pChar;
 
@@ -667,6 +670,7 @@ int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
 
 
 // FUNCTION: CARMA2_HW 0x0051d600
+// FUNCTION: CARMA2_SW 0x00518df0
 int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void) {
     return 0;
 }
@@ -1252,20 +1256,38 @@ int PDGetRegisterSourceLocation(char *buffer, int *buffer_size) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c900
+// FUNCTION: CARMA2_SW 0x00517cc0
 void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
-    POINT pnt;
+    POINT pos;
 
+#ifdef REC2_HW
     if (gWindowActiveState != 2) {
         *pX = gPD_mouse_position.x;
         *pY = gPD_mouse_position.y;
         return;
     }
-    GetCursorPos(&pnt);
-    ScreenToClient(gHWnd, &pnt);
-    *pX = pnt.x;
-    *pY = pnt.y;
+#endif
+    GetCursorPos(&pos);
+    ScreenToClient(gHWnd, &pos);
+#ifdef REC2_SW
+    if (gINT_006a6c3c != 0) {
+        *pX = pos.x / 2;
+        *pY = (pos.y -40) / 2;
+        return;
+    }
+#endif
+    *pX = pos.x;
+    *pY = pos.y;
+#ifdef REC2_HW
     gPD_mouse_position.x = *pX;
     gPD_mouse_position.y = *pY;
+#endif
+#ifdef REC2_SW
+    if (gGraf_spec_index == 0) {
+        *pX *= 2;
+        *pY = (int)((float)*pY + (float)*pY);
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0051c280
@@ -1359,6 +1381,7 @@ void C2_HOOK_FASTCALL PDFileDelete(const char *pPath, int pIgnore_read_only) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047d860
+// FUNCTION: CARMA2_SW 0x0047da20
 int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count) {
 
     return c2_memicmp(str1, str2, count);

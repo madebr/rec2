@@ -109,6 +109,7 @@ int gDancing_peds;
 // InitNapalmNolts
 
 // STUB: CARMA2_HW 0x004cadc0
+// STUB: CARMA2_SW 0x004c74f0
 void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
     NOT_IMPLEMENTED();
 }
@@ -118,6 +119,7 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
 // DisposeCharacterInstances
 
 // STUB: CARMA2_HW 0x004cb8d0
+// STUB: CARMA2_SW 0x004c7fd0
 void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
     NOT_IMPLEMENTED();

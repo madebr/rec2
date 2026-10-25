@@ -3433,6 +3433,7 @@ typedef struct {
     undefined field_0x2dd[3];
 } tSmashable_item_spec;
 
+#ifdef REC2_HW
 typedef struct {
     tRGB_colour directional;
     float ambient_else;
@@ -3442,6 +3443,20 @@ typedef struct {
     float ambient_0;
     float diffuse_0;
 } tLighting_data;
+#endif
+#ifdef REC2_SW
+typedef struct {
+    tRGB_colour directional;
+    float ambient_else;
+    float ambient_1;
+    float ambient_0;
+} tLighting_data_ambient;
+typedef struct {
+    float diffuse_else;
+    float diffuse_1;
+    float diffuse_0;
+} tLighting_data_diffuse;
+#endif
 
 typedef struct tMaterial_exception {
     struct tMaterial_exception* next;

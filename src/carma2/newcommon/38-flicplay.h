@@ -40,6 +40,8 @@ extern void C2_HOOK_FASTCALL TurnOffPanelFlics(void);
 
 extern void C2_HOOK_FASTCALL TurnOnPanelFlics(void);
 
+extern int C2_HOOK_FASTCALL GetPanelFlicFrameIndex(int pIndex);
+
 extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 // AssertFlicPixelmap

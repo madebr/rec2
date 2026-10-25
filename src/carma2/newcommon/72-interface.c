@@ -46,6 +46,7 @@ tStruct_00686508* gPTR_00686508;
 tFrontend_slider* gCurrent_frontend_scrollbars;
 
 // GLOBAL: CARMA2_HW 0x00604730
+// GLOBAL: CARMA2_SW 0x005ff660
 tFrontend_item_spec gDefault_last_interface_item = {
     0x401, temp, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 };
@@ -55,10 +56,11 @@ tFrontend_item_spec gDefault_last_interface_item = {
 int gFrontend_scrollbars_updated;
 
 // GLOBAL: CARMA2_HW 0x00686850
-// GLOBAL: CARMA2_SW 0x00680f94
+// GLOBAL: CARMA2_SW 0x00680f90
 br_pixelmap* gFrontend_images[100];
 
 // GLOBAL: CARMA2_HW 0x00687248
+// GLOBAL: CARMA2_SW 0x006817a8
 tFrontend_brender_item gFrontend_brender_items[100]; /* FIXME: parametrize size + index of last item */
 
 // GLOBAL: CARMA2_HW 0x00688770
@@ -74,12 +76,15 @@ tRace_group_spec* gRace_groups;
 char* gFrontend_current_input;
 
 // GLOBAL: CARMA2_HW 0x0068723c
+// GLOBAL: CARMA2_SW 0x0068179c
 int gFrontend_text_input_item_index;
 
 // GLOBAL: CARMA2_HW 0x00763900
+// GLOBAL: CARMA2_SW 0x00759e60
 char gFrontend_original_player_name[32];
 
 // GLOBAL: CARMA2_HW 0x0059b0d8
+// GLOBAL: CARMA2_SW 0x00596008
 int gINT_0059b0d8 = -1;
 
 // GLOBAL: CARMA2_HW 0x0059b0d4
@@ -354,7 +359,7 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* 
     size_t i;
 
     result = NULL;
-    PathCat(the_path, pFolder, "PIXIES.P16");
+    PathCat(the_path, pFolder, "PIXIES.P08");
     f = PFfopen(the_path, "rb");
     if (f != NULL) {
         PFfclose(f);
