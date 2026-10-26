@@ -10,6 +10,7 @@
 
 #include "10-loading2.h"
 #include "27-powerup.h"
+#include "41-utility.h"
 #include "63-loading3.h"
 #include "69-sound.h"
 #include "brender/brender.h"
@@ -391,6 +392,13 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 // TurnOffCollisions
 
 // TurnOnCollisions
+
+// FUNCTION: CARMA2_HW 0x004d6b70
+// FUNCTION: CARMA2_SW 0x004d3170
+void C2_HOOK_FASTCALL BlendifyMaterial25(br_material* pMaterial) {
+    BlendifyMaterial(pMaterial, 25);
+    BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+}
 
 // FUNCTION: CARMA2_HW 0x004d6ba0
 // FUNCTION: CARMA2_SW 0x004d31a0
