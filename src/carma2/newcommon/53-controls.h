@@ -163,7 +163,7 @@ extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
 // ResetRecoveryVouchers
 
-// CycleYonFactor
+extern void C2_HOOK_FASTCALL CycleYonFactor(void);
 
 // CycleSoundDetailLevel
 
