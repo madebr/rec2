@@ -152,7 +152,7 @@ extern void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec
 
 extern void C2_HOOK_FASTCALL LoadCopCars(void);
 
-// LoadInOppoPaths
+extern void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF);
 
 extern void C2_HOOK_FASTCALL DisposeOpponentPaths(void);
 

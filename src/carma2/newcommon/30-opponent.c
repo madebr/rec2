@@ -217,7 +217,11 @@ void C2_HOOK_FASTCALL LoadCopCars(void) {
     gProgram_state.AI_vehicles.number_of_cops = 0;
 }
 
-// LoadInOppoPaths
+// STUB: CARMA2_HW 0x004a9610
+// STUB: CARMA2_SW 0x004a5780
+void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004a9c50
 // FUNCTION: CARMA2_SW 0x004a5dc0
