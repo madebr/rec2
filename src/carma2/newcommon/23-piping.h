@@ -116,7 +116,7 @@ extern void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag 
 
 extern int C2_HOOK_FASTCALL ARGoBackwards(void);
 
-// ARGoForwards
+extern int C2_HOOK_FASTCALL ARGoForwards(void);
 
 extern void C2_HOOK_FASTCALL ARService(void);
 
