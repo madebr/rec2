@@ -170,7 +170,7 @@ extern int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_sp
 
 extern int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec);
 
-// GetOpponentsNextSection
+extern int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spec, tS16 pCurrent_section);
 
 // GetOpponentsSectionStartNodePoint
 

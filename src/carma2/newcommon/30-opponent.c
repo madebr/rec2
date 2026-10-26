@@ -319,7 +319,28 @@ int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_sp
     return 20000;
 }
 
-// GetOpponentsNextSection
+// FUNCTION: CARMA2_HW 0x004aea30
+// FUNCTION: CARMA2_SW 0x004aaba0
+int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spec, tS16 pCurrent_section) {
+    if (pCurrent_section >= 20000) {
+        if (pOpponent_spec->nnext_sections > pCurrent_section - 19999
+                && (pOpponent_spec->cheating || gProgram_state.AI_vehicles.path_sections[pCurrent_section - 19999].type != ePST_cheat_only)) {
+            return pCurrent_section + 1;
+        }
+        return -1;
+    }
+    if (pCurrent_section >= 15000) {
+        int trail_section = pCurrent_section - 15000;
+
+        if (trail_section >= pOpponent_spec->pursue_car_data.pursuee->my_trail.number_of_nodes - 2) {
+            trail_section = -1;
+        } else {
+            trail_section += 15001;
+        }
+        return (tS16)trail_section;
+    }
+    return -1;
+}
 
 // GetOpponentsSectionStartNodePoint
 
