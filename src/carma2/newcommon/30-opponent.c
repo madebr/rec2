@@ -15,6 +15,8 @@
 #include "globvrpb.h"
 #include "rec2_macros.h"
 
+#include <string.h>
+
 // GLOBAL: CARMA2_HW 0x0065a3c4
 // GLOBAL: CARMA2_SW 0x00654cdc
 int gBIG_APC_index = -1;
@@ -34,6 +36,22 @@ int gNumber_of_cops_before_faffage;
 // GLOBAL: CARMA2_HW 0x0069175c
 // GLOBAL: CARMA2_SW 0x0068b7b4
 tU8* gBit_per_node;
+
+// GLOBAL: CARMA2_HW 0x0069176c
+// GLOBAL: CARMA2_SW 0x0068b7c4
+int gRoute_search_calls;
+
+// GLOBAL: CARMA2_HW 0x0069174c
+// GLOBAL: CARMA2_SW 0x0068b7a4
+int gRoute_search_last_target_count;
+
+// GLOBAL: CARMA2_HW 0x0069172c
+// GLOBAL: CARMA2_SW 0x0068b784
+int gRoute_search_target_count;
+
+// GLOBAL: CARMA2_HW 0x0069171c
+// GLOBAL: CARMA2_SW 0x0068b774
+float gShortest_route_length;
 
 // FUNCTION: CARMA2_HW 0x004a8160
 void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
@@ -68,7 +86,80 @@ void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 // TopUpRandomRoute
 
-// SearchForSection
+// FUNCTION: CARMA2_HW 0x004ac180
+// FUNCTION: CARMA2_SW 0x004a82f0
+int C2_HOOK_FASTCALL SearchForSection(tRoute_section* pRoute, tRoute_section* pBest_route, int* pBest_count, tS16 pTarget, int pDepth, br_scalar pLength, tOpponent_spec* pOpponent_spec) {
+    char prefix[32];
+    const tPath_node* path_node;
+    tS16 node;
+    tS16 next_node;
+    tS16 section;
+    tS16 i;
+    int direction;
+    br_scalar length;
+
+    C2_HOOK_BUG_ON(sizeof(tRoute_section) != 4);
+
+    DoNotDprintf("%sSearchForSection() - START: depth %d", prefix, pDepth);
+    gRoute_search_calls++;
+    if (pDepth == 1) {
+        DoNotDprintf("%sSearchForSection() - First time called", prefix);
+        memset(gBit_per_node, 0, (gProgram_state.AI_vehicles.number_of_path_nodes + 7) / 8);
+        gShortest_route_length = BR_SCALAR_MAX;
+        gRoute_search_target_count = 0;
+        *pBest_count = 0;
+    }
+    if (pDepth >= 10) {
+        DoNotDprintf("%sSearchForSection() - *** Reached max depth ***", prefix);
+        return 0;
+    }
+    node = (tS16)gProgram_state.AI_vehicles.path_sections[pRoute[pDepth - 1].section_no].node_indices[pRoute[pDepth - 1].direction];
+    path_node = &gProgram_state.AI_vehicles.path_nodes[node];
+    gBit_per_node[node / 8] |= 1 << (node % 8);
+    DoNotDprintf("%sSearchForSection() - node #%d has %d sections", prefix, node, path_node->number_of_sections);
+    for (i = 0; i < path_node->number_of_sections; i++) {
+        section = (tS16)path_node->sections[i];
+        direction = node != (tS16)gProgram_state.AI_vehicles.path_sections[section].node_indices[1];
+        DoNotDprintf("%sSearchForSection() - node's section #%d is #%d", prefix, i, section);
+        next_node = (tS16)gProgram_state.AI_vehicles.path_sections[section].node_indices[direction];
+        if (gBit_per_node[next_node / 8] & (1 << (next_node % 8))) {
+            DoNotDprintf("%sSearchForSection() - *** node #%d already visited ***", prefix, next_node);
+            continue;
+        }
+        if (gProgram_state.AI_vehicles.path_sections[section].one_way && node == (tS16)gProgram_state.AI_vehicles.path_sections[section].node_indices[1]) {
+            DoNotDprintf("%sSearchForSection() - *** no entry ***", prefix);
+            continue;
+        }
+        if (!pOpponent_spec->cheating && gProgram_state.AI_vehicles.path_sections[section].type == ePST_cheat_only) {
+            continue;
+        }
+        DoNotDprintf("%sSearchForSection() - adding section #%d to list", prefix, section);
+        pRoute[pDepth].section_no = section;
+        pRoute[pDepth].direction = direction;
+        length = gProgram_state.AI_vehicles.path_sections[section].length + pLength;
+        if (section == pTarget && length < gShortest_route_length) {
+            gShortest_route_length = length;
+            *pBest_count = pDepth + 1;
+            memcpy(pBest_route, pRoute, (pDepth + 1) * sizeof(tRoute_section));
+            gRoute_search_last_target_count = gRoute_search_target_count + 1;
+            gRoute_search_target_count++;
+            if (gRoute_search_target_count >= 2) {
+                DoNotDprintf("%sSearchForSection() - Found final target", prefix);
+                return 1;
+            }
+            DoNotDprintf("%sSearchForSection() - Found a target", prefix);
+            DoNotDprintf("%sSearchForSection() - Returning to depth %d", prefix, pDepth - 1);
+            gBit_per_node[node / 8] &= ~(1 << (node % 8));
+            return 0;
+        }
+        if (pDepth < 9 && SearchForSection(pRoute, pBest_route, pBest_count, pTarget, pDepth + 1, length, pOpponent_spec)) {
+            return 1;
+        }
+    }
+    gBit_per_node[node / 8] &= ~(1 << (node % 8));
+    DoNotDprintf("%sSearchForSection() - Returning to depth %d", prefix, pDepth - 1);
+    return 0;
+}
 
 // UpdatePlayersSection
 
