@@ -112,7 +112,7 @@ extern void C2_HOOK_FASTCALL DisposeOpponentsCars(tRace_info* pRace_info);
 
 extern void C2_HOOK_FASTCALL DisposeRace(void);
 
-// DisposeGameIfNecessary
+extern void C2_HOOK_FASTCALL DisposeGameIfNecessary(void);
 
 // DisposeTrack
 
