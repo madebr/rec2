@@ -20,6 +20,7 @@
 #include "globvars.h"
 #include "globvrbm.h"
 #include "globvrkm.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
@@ -120,6 +121,10 @@ int gLast_time_credit_headup = -1;
 
 // GLOBAL: CARMA2_HW 0x0067fcc4
 tU32 gLast_time_earn_time;
+
+// GLOBAL: CARMA2_HW 0x0067f880
+// GLOBAL: CARMA2_SW 0x00679fec
+tU32 gLast_time_credit_amount;
 
 // GLOBAL: CARMA2_HW 0x0079eac0
 int gOld_times[10];
@@ -600,7 +605,35 @@ int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
     }
 }
 
-// AwardTime
+// FUNCTION: CARMA2_HW 0x0044b490
+// FUNCTION: CARMA2_SW 0x0044b620
+void C2_HOOK_FASTCALL AwardTime(tU32 pTime) {
+    char s[256];
+    tU32 original_amount;
+    tU32 the_time;
+    int i;
+
+    if (gRace_finished || gFreeze_timer || gNet_mode != eNet_mode_none || gCurrent_race.race_spec->no_time_awards) {
+        return;
+    }
+    the_time = GetTotalTime();
+    if (pTime != 0) {
+        for (i = REC2_ASIZE(gOld_times) - 1; i > 0; i--) {
+            gOld_times[i] = gOld_times[i - 1];
+        }
+        gOld_times[0] = pTime;
+        original_amount = pTime;
+        if (gLast_time_credit_headup >= 0 && the_time - gLast_time_earn_time < 2000) {
+            pTime += gLast_time_credit_amount;
+        }
+        gLast_time_credit_amount = pTime;
+        gTimer += original_amount * 1000;
+        s[0] = '+';
+        TimerString(1000 * pTime, &s[1], 0, 0, 0);
+        gLast_time_credit_headup = NewTextHeadupSlot2(11, 0, 2000, -2, s, 1);
+        gLast_time_earn_time = the_time;
+    }
+}
 
 // AwardTime5
 
