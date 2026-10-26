@@ -256,7 +256,7 @@ extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* p
 
 // MungeShatMines
 
-// ARDoShitMine
+extern void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor);
 
 // ARUndoShitMine
 
