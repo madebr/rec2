@@ -10,6 +10,7 @@
 
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "15-displays.h"
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
@@ -171,7 +172,13 @@ tSmashable_race_target gSmashable_race_targets[300];
 
 // CycleTargetLock
 
-// CycleMapOptions
+// FUNCTION: CARMA2_HW 0x00494840
+// FUNCTION: CARMA2_SW 0x00491b40
+void C2_HOOK_FASTCALL CycleMapOptions(void) {
+
+    gCheckpoint_finder_enabled = !gCheckpoint_finder_enabled;
+    NewTextHeadupSlot2(4, 0, 1500, -4, gCheckpoint_finder_enabled ? GetMiscString(eMiscString_checkpoint_finder_turned_on) : GetMiscString(eMiscString_checkpoint_finder_turned_off), 0);
+}
 
 // FUNCTION: CARMA2_HW 0x00494880
 // FUNCTION: CARMA2_SW 0x00491b80

@@ -21,6 +21,10 @@
 
 #include <stdio.h>
 
+// GLOBAL: CARMA2_HW 0x00659b28
+// GLOBAL: CARMA2_SW 0x00654510
+int gCheckpoint_finder_enabled = 1;
+
 // GLOBAL: CARMA2_HW 0x00659b2c
 float gMap_render_x = 80.f;
 
