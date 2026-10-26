@@ -62,7 +62,38 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 
 // AddObjectWallForce
 
-// AddObjectObjectForce
+// FUNCTION: CARMA2_HW 0x004268a0
+// FUNCTION: CARMA2_SW 0x00426940
+int C2_HOOK_FASTCALL AddObjectObjectForce(tPhysics_joint_force* pForces, const br_vector3* pPoint_a, br_scalar pT, const br_vector3* pPoint_b, const br_vector3* pNormal, int pCount, tPhysics_object* pObject_a, tPhysics_object* pObject_b, int pType, void* pUnused, br_scalar pValue) {
+    int i;
+    int j;
+    tPhysics_joint_force* force;
+
+    (void)pUnused;
+    if (pCount < 4) {
+        pForces[pCount].field_0x0 = 2.f;
+        pCount++;
+    }
+    for (i = 0, force = pForces; i < pCount; i++, force++) {
+        if (pT < force->field_0x0) {
+            for (j = MIN(3, pCount); j >= i; j--) {
+                pForces[j] = pForces[j - 1];
+            }
+            force->field_0x10 = pValue;
+            force->object_a = pObject_a;
+            force->object_b = pObject_b;
+            BrVector3Sub(&force->point_a, pPoint_a, &pObject_a->cmpos);
+            BrVector3Sub(&force->point_b, pPoint_b, &pObject_b->cmpos);
+            BrMatrix34TApplyV(&force->direction_a, pNormal, &pObject_a->transform_matrix);
+            BrMatrix34TApplyV(&force->direction_b, pNormal, &pObject_b->transform_matrix);
+            force->field_0x0 = pT;
+            force->type = pType;
+            force->field_0xc = NULL;
+            return pCount;
+        }
+    }
+    return pCount;
+}
 
 // STUB: CARMA2_HW 0x004225f0
 // STUB: CARMA2_SW 0x00422670
