@@ -17,6 +17,7 @@
 #include "52-errors.h"
 #include "globvars.h"
 #include "rec2_macros.h"
+#include "c2_math.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
 
@@ -533,19 +534,83 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
 
 // RQSingleExpand
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
+// FUNCTION: CARMA2_HW 0x004c5830
+// FUNCTION: CARMA2_SW 0x004c1f60
+int C2_HOOK_FASTCALL RQDcmpV(br_scalar* pMatrix, int pSize, br_scalar* pOrthogonal) {
+    int i;
+    int j;
+    int k;
+    int singular;
+    br_scalar scale;
+    br_scalar sum;
+    br_scalar sigma;
+    br_scalar divisor;
+    br_scalar matrix_sum;
+    br_scalar orthogonal_sum;
+    br_scalar tau;
+    br_scalar tau2;
+    br_scalar* row;
 
-// STUB: CARMA2_HW 0x004c5830
-// STUB: CARMA2_SW 0x004c1f60
-int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal) {
-    NOT_IMPLEMENTED();
+    singular = 0;
+    for (i = 0; i < pSize; i++) {
+        for (j = 0; j < pSize; j++) {
+            pOrthogonal[i * pSize + j] = 0.f;
+        }
+        pOrthogonal[i * pSize + i] = 1.f;
+    }
+    for (i = 0; i < pSize; i++) {
+        row = &pMatrix[i * pSize];
+        scale = 0.f;
+        for (j = i; j < pSize; j++) {
+            scale = MAX(scale, fabs(row[j]));
+        }
+        if (scale == 0.0) {
+            singular = 1;
+        } else {
+            for (j = i; j < pSize; j++) {
+                row[j] /= scale;
+            }
+            sum = 0.f;
+            for (j = i; j < pSize; j++) {
+                sum += row[j] * row[j];
+            }
+            sigma = row[i] > 0.0 ? fabs(sqrt(sum)) : -fabs(sqrt(sum));
+            divisor = sigma * (sigma + row[i]);
+            row[i] += sigma;
+            for (j = 0; j <= i; j++) {
+                sum = 0.f;
+                for (k = i; k < pSize; k++) {
+                    sum += row[k] * pOrthogonal[k * pSize + j];
+                }
+                tau = sum / divisor;
+                for (k = i; k < pSize; k++) {
+                    pOrthogonal[k * pSize + j] -= tau * row[k];
+                }
+            }
+            for (j = i + 1; j < pSize; j++) {
+                matrix_sum = 0.f;
+                for (k = i; k < pSize; k++) {
+                    matrix_sum += pMatrix[j * pSize + k] * row[k];
+                }
+                tau2 = matrix_sum / divisor;
+                orthogonal_sum = 0.f;
+                for (k = i; k < pSize; k++) {
+                    orthogonal_sum += pOrthogonal[k * pSize + j] * pMatrix[i * pSize + k];
+                }
+                tau = orthogonal_sum / divisor;
+                for (k = i; k < pSize; k++) {
+                    pMatrix[j * pSize + k] -= tau2 * row[k];
+                    pOrthogonal[k * pSize + j] -= tau * row[k];
+                }
+            }
+            row[i] = -(sigma * scale);
+            for (j = i + 1; j < pSize; j++) {
+                row[j] = 0.f;
+            }
+        }
+    }
+    return singular;
 }
-
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
 
 // MakeIdentity
 
