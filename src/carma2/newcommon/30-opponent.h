@@ -30,7 +30,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // ReallocExtraPathSections
 
-// PointVisibleFromHere
+extern int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo);
 
 // WeightedFindNearestNodeAndSection
 
