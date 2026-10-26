@@ -19,6 +19,14 @@ br_vector3 gRender_bounds_centre;
 // GLOBAL: CARMA2_HW 0x00684518
 int gTraffic_disabled;
 
+// GLOBAL: CARMA2_HW 0x00681fb0
+// GLOBAL: CARMA2_SW 0x0067c6f0
+int gINT_00681fb0;
+
+// GLOBAL: CARMA2_HW 0x00684514
+// GLOBAL: CARMA2_SW 0x0067ec54
+int gFrame;
+
 // DoNotDprintf
 
 // CrappyLittleVector3DPrintf
@@ -250,7 +258,12 @@ void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
     NOT_IMPLEMENTED();
 }
 
-// DronePreCollisionStuff
+// FUNCTION: CARMA2_HW 0x004512d0
+// FUNCTION: CARMA2_SW 0x00451060
+void C2_HOOK_FASTCALL DronePreCollisionStuff(void) {
+    gINT_00681fb0 = 0;
+    gFrame++;
+}
 
 // DoDronePerGameFrameStuff
 
