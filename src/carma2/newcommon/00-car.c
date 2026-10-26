@@ -9,6 +9,7 @@
 #include "00-car.h"
 
 #include "15-displays.h"
+#include "22-replay.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
@@ -343,6 +344,18 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 // DoComplexCarModels
 
 // ResetCarScreens
+
+// FUNCTION: CARMA2_HW 0x0041f360
+// FUNCTION: CARMA2_SW 0x0041f3e0
+void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void) {
+
+    gCar_car_collisions = !gCar_car_collisions;
+    if (gCar_car_collisions) {
+        NewTextHeadupSlot(4, 0, 3000, -4, "Car Car Collisions");
+    } else {
+        NewTextHeadupSlot(4, 0, 3000, -4, "Ghost Cars");
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0041f3b0
 // FUNCTION: CARMA2_SW 0x0041f430

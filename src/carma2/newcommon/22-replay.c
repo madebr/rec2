@@ -13,6 +13,10 @@
 // GLOBAL: CARMA2_HW 0x0058f620
 int gAR_camera_type = 2;
 
+// GLOBAL: CARMA2_HW 0x0058f6a4
+// GLOBAL: CARMA2_SW 0x0058a6a4
+int gCar_car_collisions = 1;
+
 // ActualActionReplayHeadups
 
 // DoActionReplayPostSwap
