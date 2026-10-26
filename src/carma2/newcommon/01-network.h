@@ -204,7 +204,7 @@ extern void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
 
 extern tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
-// NetGuaranteedSendMessageToAllPlayers
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
 // NetGuaranteedSendMessageToEverybody
 

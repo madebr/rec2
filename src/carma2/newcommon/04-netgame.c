@@ -247,7 +247,25 @@ void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
 
 // SendGameplay
 
-// SendGameplayToAllPlayers
+// FUNCTION: CARMA2_HW 0x0049bc70
+// FUNCTION: CARMA2_SW 0x00497df0
+void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
+    tNet_message* the_message;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, mess, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_1, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_2, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_3, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_4, 0x14);
+
+    the_message = NetBuildGuaranteedMessage(0x1b, 0);
+    the_message->contents.gameplay.mess = pMess;
+    the_message->contents.gameplay.param_1 = pParam_1;
+    the_message->contents.gameplay.param_2 = pParam_2;
+    the_message->contents.gameplay.param_3 = pParam_3;
+    the_message->contents.gameplay.param_4 = pParam_4;
+    NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, the_message, NULL);
+}
 
 // SendGameplayToHost
 
