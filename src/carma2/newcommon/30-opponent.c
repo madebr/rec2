@@ -282,6 +282,7 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
 // GetDriverName
 
 // FUNCTION: CARMA2_HW 0x004ae8e0
+// FUNCTION: CARMA2_SW 0x004aaa50
 tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec) {
     int i;
     tU16 car_ID;
