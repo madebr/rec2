@@ -147,7 +147,7 @@ extern int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector);
 
 // CrushPoint
 
-// ClipPointToLimits
+extern void C2_HOOK_FASTCALL ClipPointToLimits(br_vector3* pPoint, tU16 pLimit_bits, const tCar_crush_limits* pLimits);
 
 // CrushCollisionShapes
 
