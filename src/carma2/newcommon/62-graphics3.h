@@ -12,6 +12,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern const int gArrows[2][4][60];
 extern int gMini_map_visible;
 extern int gCount_smashable_race_targets;
 extern tSmashable_race_target gSmashable_race_targets[300];
@@ -42,7 +43,7 @@ extern void C2_HOOK_FASTCALL SetIntegerMapRenders(void);
 
 // OppositeColour
 
-// DrawArrow
+extern void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3* pPos, br_uint_32 pColour);
 
 // DrawMapBlip
 
