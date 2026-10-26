@@ -75,7 +75,7 @@ extern void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 pChunk_l
 
 // DoUncompressed
 
-// DoUncompressedTrans
+extern void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 pChunk_length);
 
 // DoMini
 

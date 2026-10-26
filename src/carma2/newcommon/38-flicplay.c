@@ -583,7 +583,35 @@ void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 pChunk_length) 
 
 // DoUncompressed
 
-// DoUncompressedTrans
+// FUNCTION: CARMA2_HW 0x004627f0
+// FUNCTION: CARMA2_SW 0x00462280
+void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int the_width;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+
+    (void)pChunk_length;
+    pixel_ptr = pFlic_info->first_pixel;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    the_width = pFlic_info->width;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = pixel_ptr;
+        for (j = 0; j < the_width; j++) {
+            the_byte = (tU8)MemReadU32(&pFlic_info->data);
+            if (the_byte != '\0') {
+                *line_pixel_ptr = the_byte;
+                line_pixel_ptr++;
+            } else {
+                line_pixel_ptr++;
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoMini
 
