@@ -258,7 +258,7 @@ extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* p
 
 // ARDoShitMine
 
-// ARUndoShitMine
+extern void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor);
 
 // PissOutOil
 
