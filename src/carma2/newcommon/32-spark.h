@@ -20,6 +20,7 @@ extern br_pixelmap* gIt_shade_table;
 extern int gSmoke_flags;
 extern tSmoke gSmoke[25];
 extern br_material* gBlack_material;
+extern tSmashable_environment_name* gSmashable_noncars;
 extern tBRender_smoke* gBR_smoke_pointers[35];
 extern int gN_BR_smoke_structs;
 extern int gColumn_flags;

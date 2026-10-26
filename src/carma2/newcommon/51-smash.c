@@ -9,6 +9,7 @@
 #include "51-smash.h"
 
 #include "08-loading1.h"
+#include "32-spark.h"
 #include "41-utility.h"
 #include "globvars.h"
 #include "rec2_types.h"
@@ -344,7 +345,12 @@ void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
 
 // ReadSmashableEnvironment
 
-// DisposeSmashEnvNonCars
+// FUNCTION: CARMA2_HW 0x004f0940
+// FUNCTION: CARMA2_SW 0x004ec5a0
+void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void) {
+
+    BrMemFree(gSmashable_noncars);
+}
 
 // CloneMemory
 
