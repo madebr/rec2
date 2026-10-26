@@ -1970,7 +1970,19 @@ int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
 
 // NetSync_Start
 
-// NetSync_Abort
+// FUNCTION: CARMA2_HW 0x004735d0
+// FUNCTION: CARMA2_SW 0x00472b40
+int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend) {
+
+    if (gProgram_state.racing || gNet_mode != eNet_mode_none) {
+        if (gProgram_state.racing) {
+            gAbandon_game = 1;
+        }
+        gProgram_state.prog_status = eProg_idling;
+        gNo_current_game = 1;
+    }
+    return 1;
+}
 
 // NetSync_Infunc
 
