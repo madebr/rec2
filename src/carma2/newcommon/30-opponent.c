@@ -394,7 +394,11 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
     NOT_IMPLEMENTED();
 }
 
-// GetDriverName
+// STUB: CARMA2_HW 0x004ae880
+// STUB: CARMA2_SW 0x004aa9f0
+char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004ae8e0
 // FUNCTION: CARMA2_SW 0x004aaa50
