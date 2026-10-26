@@ -10,6 +10,7 @@
 #define GUARD_53_CONTROLS_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 extern float gMap_render_x;
 extern float gMap_render_y;
@@ -23,7 +24,7 @@ extern int gHeadup_map_h;
 
 // CompleteRace
 
-// AbortRace
+extern int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend);
 
 // F4Key
 
