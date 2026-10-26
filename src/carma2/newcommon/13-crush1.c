@@ -639,7 +639,44 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 
 // SemiDetachBit
 
-// GetSDBJointPosAndBounds
+// FUNCTION: CARMA2_HW 0x0042dbd0
+// FUNCTION: CARMA2_SW 0x0042dc40
+int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, br_vector3* pP3, br_bounds3* pBounds, br_actor* pActor) {
+    tUser_crush_data* user_crush;
+    br_model* model;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_crush_detach_data* detach_data;
+    tCar_crush_flap_data* flap_data;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 1;
+    }
+    model = user_crush->models[0];
+    if (model == NULL) {
+        return 1;
+    }
+    crush_data = user_crush->crush_data;
+    if (crush_data == NULL) {
+        return 1;
+    }
+    detach_data = crush_data->detach_data;
+    if (detach_data == NULL) {
+        return 1;
+    }
+    DRBoundsCopy(pBounds, &model->bounds);
+    flap_data = crush_data->flap_data;
+    if (flap_data != NULL) {
+        BrVector3Copy(pP1, &model->vertices[flap_data->hinge0].p);
+        BrVector3Copy(pP2, &model->vertices[flap_data->hinge1].p);
+        BrVector3Copy(pP3, &model->vertices[flap_data->hinge2].p);
+    } else {
+        BrVector3Copy(pP1, &model->vertices[detach_data->field_0x30].p);
+        BrVector3Set(pP2, 0.f, 0.f, 0.f);
+        BrVector3Set(pP3, 0.f, 0.f, 0.f);
+    }
+    return 0;
+}
 
 // SendSemiDetachBit
 
