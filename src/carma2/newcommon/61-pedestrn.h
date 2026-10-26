@@ -106,7 +106,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // MakeActorRenderable
 
-// StopActorBeingRenderable
+extern void C2_HOOK_FASTCALL StopActorBeingRenderable(br_actor* pActor);
 
 extern int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor);
 
