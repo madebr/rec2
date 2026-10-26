@@ -340,7 +340,23 @@ int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_m
     return PDNetSendMessageToAddress(pDetails, pMessage, pAddress);
 }
 
-// NetReallySendMessageToPlayer
+// FUNCTION: CARMA2_HW 0x0049eea0
+// FUNCTION: CARMA2_SW 0x0049b020
+int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id) {
+    int i;
+
+    if (gNet_mode == eNet_mode_none) {
+        return -3;
+    }
+    pMessage->header.field_0x8 = gLocal_net_ID;
+    pMessage->header.field_0x10 = PDGetTotalTime();
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].ID == pPlayer_id) {
+            return PDNetSendMessageToAddress(pNet_game, pMessage, &gNet_players[i].pd_net_info);
+        }
+    }
+    return -3;
+}
 
 // NetSendMessageToPlayer
 
