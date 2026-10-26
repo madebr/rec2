@@ -623,7 +623,52 @@ void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 pChunk_length) 
     }
 }
 
-// DoRunLengthTrans
+// FUNCTION: CARMA2_HW 0x004626a0
+// FUNCTION: CARMA2_SW 0x00462130
+void C2_HOOK_FASTCALL DoRunLengthTrans(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int k;
+    int number_of_packets;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+
+    (void)pChunk_length;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = pixel_ptr;
+        number_of_packets = MemReadU8(&pFlic_info->data);
+        for (j = 0; j < number_of_packets; j++) {
+            size_count = MemReadS8(&pFlic_info->data);
+            if (size_count < 0) {
+                for (k = 0; k < -size_count; k++) {
+                    the_byte = MemReadU8(&pFlic_info->data);
+                    if (the_byte != 0) {
+                        *line_pixel_ptr = the_byte;
+                        line_pixel_ptr++;
+                    } else {
+                        line_pixel_ptr++;
+                    }
+                }
+            } else {
+                the_byte = MemReadU8(&pFlic_info->data);
+                if (the_byte != 0) {
+                    for (k = 0; k < size_count; k++) {
+                        *line_pixel_ptr = the_byte;
+                        line_pixel_ptr++;
+                    }
+                } else {
+                    line_pixel_ptr += size_count;
+                }
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoUncompressed
 
