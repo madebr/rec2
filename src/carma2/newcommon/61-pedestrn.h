@@ -518,7 +518,7 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // GetCharacterBoneModel
 
-// GetCharacterModelSet
+extern int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter);
 
 // BonerPassiveCollision
 

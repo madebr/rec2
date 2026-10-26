@@ -661,7 +661,13 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* p
 
 // GetCharacterBoneModel
 
-// GetCharacterModelSet
+// FUNCTION: CARMA2_HW 0x0040b590
+// FUNCTION: CARMA2_SW 0x0040b580
+int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0xa, 0xa);
+
+    return pCharacter->field_0xa;
+}
 
 // BonerPassiveCollision
 
