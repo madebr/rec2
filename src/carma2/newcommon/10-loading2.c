@@ -985,7 +985,25 @@ void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions)
     pOptions->starting_target = GetAnInt(pF);
 }
 
-// PrintNetOptions
+// FUNCTION: CARMA2_HW 0x0048d7d0
+// FUNCTION: CARMA2_SW 0x0048aa10
+int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex) {
+
+    fprintf(pF, "NETSETTINGS %d\n\n", pIndex);
+    fprintf(pF, "%d // Allow the sending of Abuse-o-Matic(tm) text messages\n", gNet_settings[pIndex].enable_text_messages);
+    fprintf(pF, "%d // Show cars on map\n", gNet_settings[pIndex].show_players_on_map);
+    fprintf(pF, "%d // Show pickups on map\n", gNet_settings[pIndex].show_powerups_on_map);
+    fprintf(pF, "%d // Pickup respawn\n", gNet_settings[pIndex].powerup_respawn);
+    fprintf(pF, "%d // Waste to transfer\n", gNet_settings[pIndex].waste_to_transfer);
+    fprintf(pF, "%d // Open game\n", gNet_settings[pIndex].open_game);
+    fprintf(pF, "%d // Grid start\n", gNet_settings[pIndex].grid_start);
+    fprintf(pF, "%d // Race order\n", gNet_settings[pIndex].race_sequence_type);
+    fprintf(pF, "%d // Auto-goody\n", gNet_settings[pIndex].random_car_choice);
+    fprintf(pF, "%d // Car choice mode\n", gNet_settings[pIndex].car_choice);
+    fprintf(pF, "%d // Starting credits\n\n", gNet_settings[pIndex].starting_credits);
+    fprintf(pF, "%d // Target\n\n", gNet_settings[pIndex].starting_target);
+    return 0;
+}
 
 // STUB: CARMA2_HW 0x0048d190
 int C2_HOOK_FASTCALL SaveOptions(void) {

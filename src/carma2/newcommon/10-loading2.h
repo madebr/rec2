@@ -116,7 +116,7 @@ extern void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race);
 
 extern void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions);
 
-// PrintNetOptions
+extern int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex);
 
 extern int C2_HOOK_FASTCALL SaveOptions(void);
 
