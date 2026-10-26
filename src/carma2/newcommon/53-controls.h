@@ -71,6 +71,8 @@ extern void C2_HOOK_FASTCALL F12Key(void);
 
 extern void C2_HOOK_FASTCALL DamageTest(void);
 
+extern void C2_HOOK_FASTCALL TDamageDriver(void);
+
 // ToggleMiniMap
 
 // CheckToggles
