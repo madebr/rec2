@@ -517,6 +517,16 @@ int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type 
     return -1;
 }
 
+// FUNCTION: CARMA2_HW 0x00483dd0
+// FUNCTION: CARMA2_SW 0x00480f10
+void C2_HOOK_FASTCALL AddRollingString(char* pStr, int pX, int pY, tRolling_type pRolling_type) {
+    int i;
+
+    for (i = 0; (size_t)i < strlen(pStr); i++) {
+        AddRollingLetter(pStr[i], pX + gCurrent_graf_data->rolling_letter_x_pitch * i, pY, pRolling_type);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00483fd0
 void C2_HOOK_FASTCALL BlankSlot(int pIndex, int pName_length, int pVisible_length) {
     int i;
