@@ -12,6 +12,7 @@
 #include "15-displays.h"
 #include "17-world2.h"
 #include "41-utility.h"
+#include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -250,7 +251,26 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 // CycleYonFactor
 
-// CycleSoundDetailLevel
+// FUNCTION: CARMA2_HW 0x004447c0
+// FUNCTION: CARMA2_SW 0x004448a0
+void C2_HOOK_FASTCALL CycleSoundDetailLevel(void) {
+    int new_level;
+
+    new_level = (gSound_detail_level + 1) % 3;
+    ReallySetSoundDetailLevel(new_level);
+    SetSoundDetailLevel(new_level);
+    switch (gSound_detail_level) {
+    case 0:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_fewest_sounds));
+        break;
+    case 1:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_partial_sound));
+        break;
+    case 2:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_all_sounds));
+        break;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00444820
 // FUNCTION: CARMA2_SW 0x00444900
