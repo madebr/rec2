@@ -832,7 +832,12 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // UndoSplitWeld
 
-// UndoBend
+// FUNCTION: CARMA2_HW 0x004ca050
+// FUNCTION: CARMA2_SW 0x004c6780
+void C2_HOOK_FASTCALL UndoBend(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    (void)pChunk;
+    (void)pPrev_chunk;
+}
 
 // UndoUnBend
 
