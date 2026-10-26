@@ -9,6 +9,10 @@ extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
 extern int gNumber_of_cops_before_faffage;
 extern tU8* gBit_per_node;
+extern int gRoute_search_calls;
+extern int gRoute_search_last_target_count;
+extern int gRoute_search_target_count;
+extern float gShortest_route_length;
 
 extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
@@ -40,7 +44,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // TopUpRandomRoute
 
-// SearchForSection
+extern int C2_HOOK_FASTCALL SearchForSection(tRoute_section* pRoute, tRoute_section* pBest_route, int* pBest_count, tS16 pTarget, int pDepth, br_scalar pLength, tOpponent_spec* pOpponent_spec);
 
 // UpdatePlayersSection
 
