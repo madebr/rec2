@@ -125,6 +125,8 @@ extern void C2_HOOK_FASTCALL TDamageDriver(void);
 
 // FlipUpCar
 
+extern void C2_HOOK_FASTCALL FlipUpCollisionInfo(tPhysics_object* pCollision_info);
+
 // GetPowerup
 
 // CheckSystemKeys
