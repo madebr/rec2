@@ -396,7 +396,7 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 // FUNCTION: CARMA2_SW 0x004d31a0
 void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel) {
 
-    BrModelUpdate(pModel, 0x10);
+    BrModelUpdate(pModel, BR_MODU_PRIMITIVE_MATERIALS);
 }
 
 // UpdateModels
