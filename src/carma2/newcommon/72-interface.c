@@ -511,6 +511,14 @@ void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend) {
     EdgeTriggerModeOn();
 }
 
+// FUNCTION: CARMA2_HW 0x00466b60
+// FUNCTION: CARMA2_SW 0x004668f0
+int C2_HOOK_FASTCALL GameMenuInfunc(tFrontend_spec* pFrontend) {
+
+    DefaultInfunc(pFrontend);
+    return 1;
+}
+
 // FindNextActiveItem
 
 // FUNCTION: CARMA2_HW 0x00467a30
