@@ -406,7 +406,10 @@ void C2_HOOK_FASTCALL SavePedStuff(void) {
 
 }
 
-// ComparePedStuff
+// FUNCTION: CARMA2_HW 0x004d6da0
+// FUNCTION: CARMA2_SW 0x004d33a0
+void C2_HOOK_FASTCALL ComparePedStuff(void) {
+}
 
 // AdjustPedDiagnostics
 
