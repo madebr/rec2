@@ -297,7 +297,7 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const
 
 // STUB: CARMA2_HW 0x004b6530
 // STUB: CARMA2_SW 0x004b2c50
-float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pCollision, int pParam) {
+float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pProperty) {
     NOT_IMPLEMENTED();
 }
 
