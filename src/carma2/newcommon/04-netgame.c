@@ -121,6 +121,7 @@ void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
 #endif
 
 // STUB: CARMA2_HW 0x00499a00
+// STUB: CARMA2_SW 0x004962a0
 void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores) {
     NOT_IMPLEMENTED();
 }
@@ -137,6 +138,7 @@ void C2_HOOK_FASTCALL DoNetScores(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049a710
+// FUNCTION: CARMA2_SW 0x00496890
 void C2_HOOK_FASTCALL InitNetHeadups(void) {
 
     gDigits_pix = LoadPixelmap("HDIGITS.PIX");

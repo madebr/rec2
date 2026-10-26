@@ -78,6 +78,7 @@ void C2_HOOK_FASTCALL GetOrientationFromMatrix(tFixed_quat* pOrientation, const 
 #endif
 
 // STUB: CARMA2_HW 0x0049c0d0
+// STUB: CARMA2_SW 0x00498250
 int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, tU32 pSize) {
 
     NOT_IMPLEMENTED();

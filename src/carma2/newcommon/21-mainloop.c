@@ -20,12 +20,15 @@ tU32 gActual_last_tick_count;
 tU32 gAverage_frame_period;
 
 // GLOBAL: CARMA2_HW 0x00761ef0
+// GLOBAL: CARMA2_SW 0x00758450
 int gCredits_per_second_time_bonus[3];  /* FIXME: rename to gPoints_per_second */
 
 // GLOBAL: CARMA2_HW 0x0074b740
+// GLOBAL: CARMA2_SW 0x00741e00
 int gAuto_increase_credits_dt[3];
 
 // GLOBAL: CARMA2_HW 0x0074b720
+// GLOBAL: CARMA2_SW 0x00741de0
 tU32 gNet_auto_increase_credits_dt[8];
 
 // CalculateFrameRate

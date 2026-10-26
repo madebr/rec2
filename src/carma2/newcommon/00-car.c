@@ -12,9 +12,11 @@
 #include "c2_stdio.h"
 
 // GLOBAL: CARMA2_HW 0x00763500
+// GLOBAL: CARMA2_SW 0x00759a60
 int gCunning_stunt_bonus[3];
 
 // GLOBAL: CARMA2_HW 0x0074d1c0
+// GLOBAL: CARMA2_SW 0x00743720
 float gArmour_starting_value[100];
 
 // GLOBAL: CARMA2_HW 0x00761f5c
@@ -22,15 +24,19 @@ float gArmour_starting_value[100];
 int gExplosion_sound_id;
 
 // GLOBAL: CARMA2_HW 0x00761f60
+// GLOBAL: CARMA2_SW 0x007584c0
 float gPower_starting_value[100];
 
 // GLOBAL: CARMA2_HW 0x00761d40
+// GLOBAL: CARMA2_SW 0x007582a0
 float gOffensive_starting_value[100];
 
 // GLOBAL: CARMA2_HW 0x0075ba20
+// GLOBAL: CARMA2_SW 0x00751f80
 tFloat_bunch_info gCar_softness;
 
 // GLOBAL: CARMA2_HW 0x0074d600
+// GLOBAL: CARMA2_SW 0x00743b60
 tFloat_bunch_info gCar_car_damage_multiplier;
 
 // GLOBAL: CARMA2_HW 0x0068b8d0

@@ -58,8 +58,10 @@ int gDim_amount;
 // GLOBAL: CARMA2_SW 0x00741140
 char* gCurrent_palette_pixels;
 
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x0074cf04
 int gPalette_changed;
+#endif
 
 // GLOBAL: CARMA2_HW 0x0074a678
 // GLOBAL: CARMA2_SW 0x00741138
@@ -121,7 +123,9 @@ void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_
         ((br_int_32*)pThe_palette->pixels)[0] = 0;
     }
     memcpy(gCurrent_palette_pixels + 4 * pFirst_colour, (char*)pThe_palette->pixels + 4 * pFirst_colour, 4 * pCount);
+#ifdef REC2_HW
     gPalette_changed = 0;
+#endif
     if (!gFaded_palette) {
         PDSetPaletteEntries(pThe_palette, pFirst_colour, pCount);
     }
@@ -133,7 +137,9 @@ void C2_HOOK_FASTCALL DRSetPalette3(br_pixelmap* pThe_palette, int pSet_current_
     if (pSet_current_palette) {
         memcpy(gCurrent_palette_pixels, pThe_palette->pixels, 256 * sizeof(br_colour));
     }
+#ifdef REC2_HW
     gPalette_changed = 0;
+#endif
     if (!gFaded_palette) {
         PDSetPalette(pThe_palette);
     }
@@ -239,7 +245,9 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     render_palette = gRender_palette;
     ((br_uint_32*)render_palette->pixels)[0] = 0;
     memcpy(gCurrent_palette_pixels, render_palette->pixels, 256 * sizeof(br_uint_32));
+#ifdef REC2_HW
     gPalette_changed = 0;
+#endif
     if (!gFaded_palette) {
         PDSetPalette(render_palette);
     }

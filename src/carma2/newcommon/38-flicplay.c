@@ -17,15 +17,19 @@
 tFlic_descriptor gPanel_flic[2];
 
 // GLOBAL: CARMA2_HW 0x0068b8b4
+// GLOBAL: CARMA2_SW 0x00685e14
 float gFlic_sound_delay_pre_smack;
 
 // GLOBAL: CARMA2_HW 0x0068b8b8
+// GLOBAL: CARMA2_SW 0x00685e18
 float gFlic_sound_delay_post_smack;
 
 // GLOBAL: CARMA2_HW 0x0068b8bc
+// GLOBAL: CARMA2_SW 0x00685e1c
 float gFlic_sound_delay_not_in_demo;
 
 // GLOBAL: CARMA2_HW 0x0068b8c0
+// GLOBAL: CARMA2_SW 0x00685e20
 float gFlic_sound_delay_post_demo;
 
 // GLOBAL: CARMA2_HW 0x006861dc

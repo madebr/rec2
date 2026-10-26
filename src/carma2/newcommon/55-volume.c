@@ -13,6 +13,7 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x00761b80
+// GLOBAL: CARMA2_SW 0x007580e0
 tSpecial_volume gDefault_default_water_spec_vol;
 
 // GLOBAL: CARMA2_HW 0x00761f44
@@ -35,6 +36,7 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
 // MungeSpecialVolume
 
 // FUNCTION: CARMA2_HW 0x004ff530
+// FUNCTION: CARMA2_SW 0x004fae10
 void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject) {
     br_vector3 direction;
     br_vector3 normal;

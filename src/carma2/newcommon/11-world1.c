@@ -79,6 +79,7 @@ void C2_HOOK_FASTCALL MungeMaterialSV(br_matrix34* pMat, br_material* pMat_1, br
 // DoSaveAdditionalStuff
 
 // STUB: CARMA2_HW 0x00507360
+// STUB: CARMA2_SW 0x005027b0
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
     NOT_IMPLEMENTED();
 }

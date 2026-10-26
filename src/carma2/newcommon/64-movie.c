@@ -102,6 +102,7 @@ void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 // MovieRecordButtonPressed
 
 // STUB: CARMA2_HW 0x004e1a20
+// STUB: CARMA2_SW 0x004ddd20
 void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
     NOT_IMPLEMENTED();
 }

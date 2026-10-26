@@ -1077,6 +1077,7 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
 }
 
 // STUB: CARMA2_HW 0x0046d8e0
+// STUB: CARMA2_SW 0x0046cfc0
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontend_type) {
     NOT_IMPLEMENTED();
 }

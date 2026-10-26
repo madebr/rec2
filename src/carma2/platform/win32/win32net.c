@@ -124,6 +124,7 @@ void C2_HOOK_FASTCALL NetNowIPXLocalTarget2String(char* pString, struct sockaddr
 }
 
 // FUNCTION: CARMA2_HW 0x00519560
+// FUNCTION: CARMA2_SW 0x00513040
 int C2_HOOK_FASTCALL PDNetInitialise(void) {
     char default_null;
     char s[32];
@@ -439,6 +440,7 @@ int C2_HOOK_FASTCALL PDNetGetNextJoinGame(tNet_game_details* pGame, int pIndex) 
 }
 
 // FUNCTION: CARMA2_HW 0x0051a6a0
+// FUNCTION: CARMA2_SW 0x00514180
 int C2_HOOK_FASTCALL PDNetGetHeaderSize(void) {
 
     return 0;

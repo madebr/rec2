@@ -12,12 +12,15 @@
 int gBIG_APC_index = -1;
 
 // GLOBAL: CARMA2_HW 0x0065a3cc
+// GLOBAL: CARMA2_SW 0x00654ce4
 float gOpponent_nastyness_frigger = 1.0f;
 
 // GLOBAL: CARMA2_HW 0x0074a684
+// GLOBAL: CARMA2_SW 0x00741144
 int gMinTimeOpponentRepair;
 
 // GLOBAL: CARMA2_HW 0x0074a688
+// GLOBAL: CARMA2_SW 0x00741148
 int gMaxTimeOpponentRepair;
 
 // GLOBAL: CARMA2_HW 0x00691744
@@ -337,6 +340,7 @@ int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_sp
 // GetOpponentsSectionMaxSpeed
 
 // FUNCTION: CARMA2_HW 0x004aee90
+// FUNCTION: CARMA2_SW 0x004ab000
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 
     gOpponents[pOpponent_index].psyche.grudge_against_player = 0;

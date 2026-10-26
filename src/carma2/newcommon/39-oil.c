@@ -13,6 +13,7 @@ const char* gOil_pixie_names[1] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00690c88
+// GLOBAL: CARMA2_SW 0x0068ace0
 br_pixelmap* gOil_pixies[1];
 
 // GLOBAL: CARMA2_HW 0x00690c90
@@ -54,7 +55,9 @@ void C2_HOOK_FASTCALL InitOilSpills(void) {
         oily_material->colour_map = gOil_pixies[0];
         BrMatrix23Identity(&oily_material->map_transform);
         oily_material->index_shade = BrTableFind("IDENTITY.TAB");
+#ifdef REC2_HW
         GlorifyMaterial(&oily_material, 1, kRendererShadingType_Specular);
+#endif
         BrMaterialUpdate(oily_material, BR_MATU_ALL);
         the_model = BrModelAllocate(NULL, 4, 2);
         the_model->flags |= BR_MODF_KEEP_ORIGINAL;
@@ -104,6 +107,7 @@ void C2_HOOK_FASTCALL ResetOilSpills(void) {
 #endif
 
 // STUB: CARMA2_HW 0x004a6c80
+// STUB: CARMA2_SW 0x004a2df0
 void C2_HOOK_FASTCALL QueueOilSpill2(tCar_spec* pCar, br_actor* pCar_actor, br_model* pCar_model, tU32 pTime_delay, br_scalar pMin_size, br_scalar pMax_size, br_scalar pMin_grow_rate, br_scalar pMax_grow_rate, br_scalar pInitial_size, br_scalar pField_0x48, br_scalar pField_0x4c, br_scalar pField_0x40, br_scalar pField_0x44, br_material* pMaterial, br_material* pField_0x50) {
     NOT_IMPLEMENTED();
 }

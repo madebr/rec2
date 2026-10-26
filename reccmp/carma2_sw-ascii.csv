@@ -1796,7 +1796,7 @@ address,type,x-text
 0x654c90,string,"Dodgy message in guarantee list"
 0x654cbc,string,"OIL.PIX"
 0x654cc4,string,"IDENTITY.TAB"
-0x654ce7,string,"?Innocent Civilian"
+0x654ce8,string,"Innocent Civilian"
 0x654cfc,string,"Faceless Cop"
 0x654d0c,string,"mGet_car_count( eVehicle_self ) > 1 - I didn't know this could happen!"
 0x654d54,string,"BIG ERROR - GetOpponentsSectionStartNodePoint()"

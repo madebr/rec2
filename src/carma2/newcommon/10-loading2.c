@@ -38,6 +38,7 @@
 #include "71-newgame.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
@@ -75,24 +76,31 @@ char gDecode_string[14] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0068c6f8
+// GLOBAL: CARMA2_SW 0x00686748
 char gUnderwater_screen_name[32];
 
 // GLOBAL: CARMA2_HW 0x00764ea0
+// GLOBAL: CARMA2_SW 0x0075b400
 char gDefault_car[32];
 
 // GLOBAL: CARMA2_HW 0x00764ec0
+// GLOBAL: CARMA2_SW 0x0075b420
 char gBasic_car_name[32];
 
 // GLOBAL: CARMA2_HW 0x007638c0
+// GLOBAL: CARMA2_SW 0x00759e20
 int gNet_score_targets[8];
 
 // GLOBAL: CARMA2_HW 0x0074b58c
+// GLOBAL: CARMA2_SW 0x00741c4c
 int gDemo_race_rank_equivalent;
 
 // GLOBAL: CARMA2_HW 0x0074b4fc
+// GLOBAL: CARMA2_SW 0x00741bbc
 int gCount_demo_opponents;
 
 // GLOBAL: CARMA2_HW 0x0074b4c0
+// GLOBAL: CARMA2_SW 0x00741b80
 int gDemo_opponents[15];
 
 // GLOBAL: CARMA2_HW 0x00679308
@@ -104,6 +112,7 @@ int gCamera_type;
 int gGroove_funk_offset;
 
 // GLOBAL: CARMA2_HW 0x00657558
+// GLOBAL: CARMA2_SW 0x00651f08
 const char* gNet_avail_names[4] = {
     "never",
     "eagle",
@@ -118,11 +127,17 @@ void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, 
 
     PathCat(the_path, pRoot, pSubDir);
     LoadInFiles(the_path, "PALETTES", DRLoadPalette);
-    LoadInFiles(the_path, "SHADETAB", DRLoadShadeTable);
-
+#ifdef REC2_SW
     if (pInitialize_palettes) {
         InitializePalettes();
     }
+#endif
+    LoadInFiles(the_path, "SHADETAB", DRLoadShadeTable);
+#ifdef REC2_HW
+    if (pInitialize_palettes) {
+        InitializePalettes();
+    }
+#endif
 
     PathCat(the_path2, the_path, "PIXELMAP");
     twt = OpenPackFileAndSetTiffLoading(the_path2);
@@ -412,7 +427,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     /* Number of demo opponents */
     gCount_demo_opponents = GetAnInt(gTempFile);
     /* Demo opponents */
-    for (i = 0; (int)i < gCount_demo_opponents; i++) {
+    for (i = 0; i < gCount_demo_opponents; i++) {
         gDemo_opponents[i] = GetAnInt(gTempFile);
     }
 
@@ -771,6 +786,7 @@ intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pDa
 #endif
 
 // STUB: CARMA2_HW 0x00488f70
+// STUB: CARMA2_SW 0x00486190
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
     NOT_IMPLEMENTED();
 }
@@ -1185,10 +1201,25 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
     }
     PFfclose(f);
     gMap_view = 1;
-    gMap_render_x = 80.f;
-    gMap_render_y = 400.f;
+#ifdef REC2_HW
+    gMap_render_x = 80.0f;
+    gMap_render_y = 400.0f;
     gMap_render_width = 128.f;
     gMap_render_height = 80.f;
+#endif
+#ifdef REC2_SW
+    if (gGraf_specs[gGraf_spec_index].total_width <= gHeadup_map_x + gHeadup_map_w
+        || gGraf_specs[gGraf_spec_index].total_height <= gHeadup_map_y + gHeadup_map_h) {
+        gHeadup_map_x = 228;
+        gHeadup_map_y = 150;
+        gHeadup_map_w = 48;
+        gHeadup_map_h = 48;
+    }
+    gMap_render_x = 80.0f;
+    gMap_render_y = 6.0f;
+    gMap_render_width = 64.0f;
+    gMap_render_height = 40.0f;
+#endif
     return 1;
 }
 

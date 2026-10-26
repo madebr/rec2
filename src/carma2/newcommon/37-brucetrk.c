@@ -113,6 +113,7 @@ br_scalar C2_HOOK_STDCALL GetYonFactor(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0040dff0
+// FUNCTION: CARMA2_SW 0x0040dfd0
 void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew) {
 
     gYon_factor = pNew;

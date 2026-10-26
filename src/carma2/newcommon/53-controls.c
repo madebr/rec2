@@ -50,6 +50,7 @@ int gHeadup_map_w;
 int gHeadup_map_h;
 
 // GLOBAL: CARMA2_HW 0x0067c400
+// GLOBAL: CARMA2_SW 0x00676b78
 char gString[84];
 
 // GLOBAL: CARMA2_HW 0x0067c3c8
@@ -261,6 +262,7 @@ void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
 // DisplayUserMessage
 
 // FUNCTION: CARMA2_HW 0x00444d70
+// FUNCTION: CARMA2_SW 0x00444e50
 void C2_HOOK_FASTCALL InitAbuseomatic(void) {
     char path[256];
     char s[256];

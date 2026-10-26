@@ -21,6 +21,7 @@ int gCount_saved_games;
 // MakeSavedGame
 
 // STUB: CARMA2_HW 0x00491ac0
+// STUB: CARMA2_SW 0x0048ed30
 void C2_HOOK_FASTCALL DoSaveGame(void) {
     NOT_IMPLEMENTED();
 }

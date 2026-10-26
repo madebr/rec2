@@ -19,6 +19,7 @@ int gHud_tinted2 = -1;
 int gHud_tinted3 = -1;
 
 // GLOBAL: CARMA2_HW 0x00762140
+// GLOBAL: CARMA2_SW 0x007586a0
 int gCredits_checkpoint[3];
 
 // FUNCTION: CARMA2_HW 0x00503050
@@ -180,6 +181,7 @@ int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race
 // InitialiseProgramState
 
 // STUB: CARMA2_HW 0x00503c50
+// STUB: CARMA2_SW 0x004ff5a0
 void C2_HOOK_FASTCALL DoProgram(void) {
     NOT_IMPLEMENTED();
 }

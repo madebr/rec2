@@ -90,15 +90,19 @@ int gNet_initialised;
 int gDont_allow_joiners;
 
 // GLOBAL: CARMA2_HW 0x0074a690
+// GLOBAL: CARMA2_SW 0x00741150
 tU32 gUINT_0074a690;
 
 // GLOBAL: CARMA2_HW 0x0074a718
+// GLOBAL: CARMA2_SW 0x007411d8
 tU32 gUINT_0074a718;
 
 // GLOBAL: CARMA2_HW 0x00659d30
+// GLOBAL: CARMA2_SW 0x00654648
 tU16 gGuarantee_number = 1;
 
 // GLOBAL: CARMA2_HW 0x0068d958
+// GLOBAL: CARMA2_SW 0x006879b0
 int gNext_guarantee;
 
 // FUNCTION: CARMA2_HW 0x0049d210
@@ -152,6 +156,7 @@ int C2_HOOK_FASTCALL NetShutdown(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049d370
+// FUNCTION: CARMA2_SW 0x004994f0
 void C2_HOOK_FASTCALL ShutdownNetIfRequired(void) {
 
     if (gNet_initialised) {
@@ -286,6 +291,7 @@ void C2_HOOK_FASTCALL NetLeaveGameLowLevel(void) {
 }
 
 // STUB: CARMA2_HW 0x0049dc90
+// STUB: CARMA2_SW 0x00499e10
 void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game) {
     NOT_IMPLEMENTED();
 }

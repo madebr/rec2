@@ -457,6 +457,7 @@ br_matrix34* C2_HOOK_CDECL BrBoundsToMatrix34(br_matrix34* mat, const br_bounds*
 }
 
 // FUNCTION: CARMA2_HW 0x00533350
+// FUNCTION: CARMA2_SW 0x0052e9f0
 void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, const br_matrix4* B) {
 
     A(0, 0) = B(0, 0);
@@ -477,6 +478,7 @@ void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, const br_matrix4* B) {
 }
 
 // FUNCTION: CARMA2_HW 0x005333a0
+// FUNCTION: CARMA2_SW 0x0052ea40
 void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
@@ -485,6 +487,7 @@ void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const
 }
 
 // FUNCTION: CARMA2_HW 0x00533410
+// FUNCTION: CARMA2_SW 0x0052eab0
 void C2_HOOK_CDECL BrMatrix34Apply(br_vector3* A, const br_vector4* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC4(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0), B->v[3], C(3, 0));

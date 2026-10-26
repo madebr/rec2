@@ -39,6 +39,7 @@ tExtra_render gExtra_renders[6];
 int gMirror_on__graphics;
 
 // GLOBAL: CARMA2_HW 0x0065cf30
+// GLOBAL: CARMA2_SW 0x00657848
 br_colour gRGB_colours[9] = {
     0x000000,   0xffffff,   0xff0000,   0x00ff00,
     0x0000ff,   0xffff00,   0x00ffff,   0xff00ff,
@@ -46,6 +47,7 @@ br_colour gRGB_colours[9] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0074a620
+// GLOBAL: CARMA2_SW 0x007410e0
 br_colour gColours[9];
 
 // FUNCTION: CARMA2_HW 0x004e5cb0
@@ -558,8 +560,14 @@ void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette) {
         for (j = 0; j < 256; j++) {
             // FIXME: big endian incompatible
             sum = sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 2) - red));
+#ifdef REC2_HW
             sum += sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j) - blue));
             sum += sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 1) - green));
+#endif
+#ifdef REC2_SW
+            sum += sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 1) - green));
+            sum += sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j) - blue));
+#endif
             distance = (float)sum;
             if (distance < nearest_distance) {
                 nearest_index = j;

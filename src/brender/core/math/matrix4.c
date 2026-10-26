@@ -316,6 +316,7 @@ void C2_HOOK_CDECL BrMatrix4TApplyV(br_vector4* A, const br_vector3* B, const br
 }
 
 // FUNCTION: CARMA2_HW 0x00536ca0
+// FUNCTION: CARMA2_SW 0x00532340
 void C2_HOOK_CDECL BrMatrix4Copy34(br_matrix4* A, const br_matrix34* B) {
 
     A(0, 0) = B(0, 0);

@@ -50,9 +50,11 @@ C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
     }
     PDRevertPalette();
     StopMusic();
+#ifdef REC2_HW
     if (gBr_initialized) {
         DRBrEnd();
     }
+#endif
     PDShutdownSystem();
     CloseDiagnostics();
     exit(0);

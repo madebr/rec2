@@ -19,24 +19,31 @@ const char* gPowerup_txt_path;
 tHeadup_icon gPickedup_powerups[20];
 
 // GLOBAL: CARMA2_HW 0x00763480
+// GLOBAL: CARMA2_SW 0x007599e0
 tSlot_info gCost_APO;
 
 // GLOBAL: CARMA2_HW 0x0075b900
+// GLOBAL: CARMA2_SW 0x00751e60
 tSlot_info gTrade_in_value_APO;
 
 // GLOBAL: CARMA2_HW 0x0074d380
+// GLOBAL: CARMA2_SW 0x007438e0
 tSlot_info gSubstitution_value_APO;
 
 // GLOBAL: CARMA2_HW 0x00761c60
+// GLOBAL: CARMA2_SW 0x007581c0
 tSlot_info gPotential_substitution_value_APO;
 
 // GLOBAL: CARMA2_HW 0x0074d1a4
+// GLOBAL: CARMA2_SW 0x00743704
 int gNet_powerup_time_replacement;
 
 // GLOBAL: CARMA2_HW 0x007447d8
+// GLOBAL: CARMA2_SW 0x0073b298
 int gPickup_respawn_min_time_ms;
 
 // GLOBAL: CARMA2_HW 0x007447e8
+// GLOBAL: CARMA2_SW 0x0073b2a8
 int gPickup_respawn_max_extra_time_ms;
 
 // GLOBAL: CARMA2_HW 0x007447d0
@@ -56,12 +63,15 @@ int gPanicking_peds;
 int gCount_mutant_tail_parts;
 
 // GLOBAL: CARMA2_HW 0x00705b78
+// GLOBAL: CARMA2_SW 0x006fc638
 float gMass_mutant_tail_link;
 
 // GLOBAL: CARMA2_HW 0x00705b74
+// GLOBAL: CARMA2_SW 0x006fc634
 float gMass_mutant_tail_ball;
 
 // GLOBAL: CARMA2_HW 0x0065ebbc
+// GLOBAL: CARMA2_SW 0x0065951c
 float gMass_mine = 1.0f;
 
 // GLOBAL: CARMA2_HW 0x006a0454

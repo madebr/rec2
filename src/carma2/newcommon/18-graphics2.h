@@ -19,7 +19,9 @@ extern int gPalette_index;
 extern int gNoTransients;
 extern br_pixelmap* gRender_palette;
 extern int gDim_amount;
+#ifdef REC2_HW
 extern int gPalette_changed;
+#endif
 extern br_pixelmap* gCurrent_palette;
 extern br_pixelmap* gCurrent_splash;
 

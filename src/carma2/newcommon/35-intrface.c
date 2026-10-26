@@ -362,6 +362,7 @@ void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode) {
 }
 
 // FUNCTION: CARMA2_HW 0x00484f40
+// FUNCTION: CARMA2_SW 0x00482080
 int C2_HOOK_FASTCALL WhichItemIsSelectedIn(tFrontend_spec* pFrontend, int pGroup) {
     int i;
 
@@ -376,6 +377,7 @@ int C2_HOOK_FASTCALL WhichItemIsSelectedIn(tFrontend_spec* pFrontend, int pGroup
 }
 
 // FUNCTION: CARMA2_HW 0x00484f70
+// FUNCTION: CARMA2_SW 0x004820b0
 void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, int pValue) {
     int i;
 

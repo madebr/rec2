@@ -234,6 +234,7 @@ int gDevious_2d;
 int gNumber_of_actors;
 
 // GLOBAL: CARMA2_HW 0x0074ac00
+// GLOBAL: CARMA2_SW 0x7412c0
 br_actor* gActor_array[100];
 
 // GLOBAL: CARMA2_HW 0x0068c720
@@ -395,6 +396,7 @@ int gCount_opponents;
 br_actor* gPlayer_car_master_actor;
 
 // GLOBAL: CARMA2_HW 0x00655de0
+// GLOBAL: CARMA2_SW 0x00650cc8
 br_vector3 gInitial_position = {{1000.f, 1000.f, 1000.f}};
 
 // GLOBAL: CARMA2_HW 0x0068b85c
@@ -499,9 +501,11 @@ float gGravity_multiplier;
 //float gCar_crush_wibble;
 
 // GLOBAL: CARMA2_HW 0x00761d00
+// GLOBAL: CARMA2_SW 0x00758260
 tFloat_bunch_info gRepair_cost;
 
 // GLOBAL: CARMA2_HW 0x007634c0
+// GLOBAL: CARMA2_SW 0x00759a20
 tFloat_bunch_info gRecovery_cost;
 
 // GLOBAL: CARMA2_HW 0x0074d634
@@ -569,7 +573,13 @@ br_pixelmap* gRearview_depth_buffer;
 //br_pixelmap* gWhole_screen;
 
 // GLOBAL: CARMA2_HW 0x0068b8ac
+// GLOBAL: CARMA2_SW 0x00685e0c
 br_pixelmap* gIcons_pix;
+
+#ifdef REC2_SW
+// GLOBAL: CARMA2_SW 0x00685e10
+br_pixelmap* gIcons_low_pix;
+#endif
 
 // GLOBAL: CARMA2_HW 0x0074d35c
 // GLOBAL: CARMA2_SW 0x007438bc
@@ -585,6 +595,7 @@ br_actor* gOther_selfs[4];
 //int gNo_races_yet;
 
 // GLOBAL: CARMA2_HW 0x0074d3d0
+// GLOBAL: CARMA2_SW 0x00743930
 int gJump_start_fine[3];
 //int gReal_graf_data_index;
 //float gCar_time_value[3];
@@ -592,6 +603,7 @@ int gJump_start_fine[3];
 //int gCunning_stunt_bonus[3];
 
 // GLOBAL: CARMA2_HW 0x007634f0
+// GLOBAL: CARMA2_SW 0x00759a50
 tU32 gKnobbled_frame_period;
 //int gWait_for_it;
 //int gCheck_point_cash[3];

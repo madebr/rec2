@@ -73,6 +73,7 @@ br_pixelmap* C2_HOOK_FASTCALL DRLdImg(const char* texturePathDir, const char* te
 }
 
 // FUNCTION: CARMA2_HW 0x0048ec20
+// FUNCTION: CARMA2_SW 0x0048bec0
 br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name) {
     const char* ext;
     tPath_name path;
@@ -242,7 +243,9 @@ void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
 
     PossibleService();
     number_of_models = BrModelLoadMany(pPath_name, model_array, REC2_ASIZE(model_array));
+#ifdef REC2_HW
     WhitenVertexRGB(model_array, number_of_models);
+#endif
     for (i = 0; i < number_of_models; i++) {
         model_array[i]->flags = BR_MODF_UPDATEABLE;
     }

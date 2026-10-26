@@ -31,6 +31,7 @@ br_model* gForward_sky_model;
 br_material* gMaterial[2];
 
 // GLOBAL: CARMA2_HW 0x0059118c
+// GLOBAL: CARMA2_SW 0x0058c184
 int gDepth_cueing_on = 1;
 
 // GLOBAL: CARMA2_HW 0x00591190
@@ -381,23 +382,30 @@ void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
 // ToggleSky
 
 // FUNCTION: CARMA2_HW 0x00446f90
+// FUNCTION: CARMA2_SW 0x004471d0
 int C2_HOOK_FASTCALL GetDepthCueingOn(void) {
 
     return gDepth_cueing_on;
 }
 
 // FUNCTION: CARMA2_HW 0x00446fa0
-// FUNCTION: CARMA2_SW 0x004471e0
+// STUB: CARMA2_SW 0x004471e0
 void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn) {
-
+#ifdef REC2_HW
     if (gDepth_cueing_on != pOn && gHorizon_material != NULL) {
         ToggleDepthCueingQuietly();
     }
     gDepth_cueing_on = pOn;
+#endif
+#ifdef REC2_SW
+    NOT_IMPLEMENTED();
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00447070
+// STUB: CARMA2_SW 0x00447350
 void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
+#ifdef REC2_HW
     int temp_red;
     int temp_green;
     int temp_blue;
@@ -426,6 +434,10 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
     gSwap_depth_effect_colour_red = temp_red;
     gSwap_depth_effect_colour_green = temp_green;
     gSwap_depth_effect_colour_blue = temp_blue;
+#endif
+#ifdef REC2_SW
+    NOT_IMPLEMENTED();
+#endif
 }
 
 // ToggleDepthCueing

@@ -74,6 +74,7 @@ int gInitial_rank;
 int gStarting_money[3];
 
 // GLOBAL: CARMA2_HW 0x00762160
+// GLOBAL: CARMA2_SW 0x007586c0
 int gNet_starting_money[8];
 
 // GLOBAL: CARMA2_HW 0x0074d4c0
@@ -85,6 +86,7 @@ tSlot_info gInitial_APO[3];
 tSlot_info gInitial_APO_potential[3];
 
 // GLOBAL: CARMA2_HW 0x0074cfa0
+// GLOBAL: CARMA2_SW 0x00743500
 tSlot_info gMax_APO[3];
 
 // GLOBAL: CARMA2_HW 0x0068d8e0
