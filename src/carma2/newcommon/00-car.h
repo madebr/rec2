@@ -19,6 +19,7 @@ extern float gOffensive_starting_value[100];
 extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
+extern int gFreeze_mechanics;
 extern int gNum_active_non_cars;
 extern int gEliminate_faces;
 extern int gInTheSea;
@@ -192,6 +193,8 @@ extern void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void);
 extern void C2_HOOK_FASTCALL SwapCar(void);
 
 extern void C2_HOOK_FASTCALL AdjustDownForce(void);
+
+extern void C2_HOOK_FASTCALL FreezeMechanics(void);
 
 // FlyCar
 
