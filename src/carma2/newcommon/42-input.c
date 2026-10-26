@@ -595,6 +595,13 @@ void C2_HOOK_FASTCALL StartTyping(int pSlot_index, char* pText, int pVisible_len
     gCurrent_cursor = ChangeCharTo(pSlot_index, gCurrent_position, ROLLING_LETTER_LOOP_RANDOM);
 }
 
+// FUNCTION: CARMA2_HW 0x00484510
+// FUNCTION: CARMA2_SW 0x00481650
+void C2_HOOK_FASTCALL SetSlotXY(int pSlot_index, int pX_coord, int pY_coord) {
+    gLetter_x_coords[pSlot_index] = pX_coord;
+    gLetter_y_coords[pSlot_index] = pY_coord;
+}
+
 // FUNCTION: CARMA2_HW 0x00484590
 // FUNCTION: CARMA2_SW 0x004816d0
 void C2_HOOK_FASTCALL KillCursor(int pSlot_index) {
