@@ -175,7 +175,7 @@ extern void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysic
 
 extern void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject);
 
-// SetListDoingNothingFlag
+extern void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, int pFlag);
 
 // SetGroupDoingNothingFlag
 
