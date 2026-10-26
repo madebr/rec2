@@ -205,7 +205,7 @@ extern void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_da
 
 // ReadSmashableEnvironment
 
-// DisposeSmashEnvNonCars
+extern void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void);
 
 // CloneMemory
 

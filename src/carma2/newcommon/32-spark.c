@@ -62,6 +62,10 @@ int gColumn_flags;
 // GLOBAL: CARMA2_HW 0x006b7880
 br_material* gBlack_material;
 
+// GLOBAL: CARMA2_HW 0x006b7888
+// GLOBAL: CARMA2_SW 0x006ae568
+tSmashable_environment_name* gSmashable_noncars;
+
 // GLOBAL: CARMA2_HW 0x006a8718
 br_matrix4 gCameraToScreen;
 
