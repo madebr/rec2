@@ -13,7 +13,7 @@
 
 #include "rec2_types.h"
 
-// MaxOutAPO
+extern void C2_HOOK_FASTCALL MaxOutAPO(void);
 
 extern void C2_HOOK_FASTCALL ImprovePSPowerup(tCar_spec* pCar, int pIndex);
 

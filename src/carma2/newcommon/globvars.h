@@ -206,6 +206,7 @@ extern br_actor* gSelf;
 extern br_pixelmap* gScreen;
 //extern br_pixelmap* gScreen;
 extern br_pixelmap* gRender_screen;
+extern int gInitial_powerup_slots[3];
 extern br_actor* gRearview_camera;
 extern br_scalar gCamera_hither;
 extern br_pixelmap* gBack_screen;
