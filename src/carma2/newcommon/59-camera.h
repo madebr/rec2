@@ -12,6 +12,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gAction_replay_manual_camera_target_type;
 extern int gCamera_frozen;
 extern br_actor* gPed_actor;
 
@@ -40,9 +41,9 @@ extern void C2_HOOK_FASTCALL ReallyViewOpponent(void);
 
 // IsCameraTypeAllowed
 
-// MungeCarMaterials
+extern void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_cam);
 
-// SetCameraType
+extern void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos);
 
 // ChangeCameraType
 
