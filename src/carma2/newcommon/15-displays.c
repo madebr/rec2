@@ -635,11 +635,9 @@ void C2_HOOK_FASTCALL AwardTime(tU32 pTime) {
     }
 }
 
-// AwardTime5
-
 // FUNCTION: CARMA2_HW 0x0044b590
 // FUNCTION: CARMA2_SW 0x0044b720
-void C2_HOOK_FASTCALL AwardRoundedTime(tU32 pTime) {
+void C2_HOOK_FASTCALL AwardTime5(tU32 pTime) {
     char s[256];
     tU32 original_amount;
     tU32 the_time;

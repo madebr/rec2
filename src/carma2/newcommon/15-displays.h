@@ -108,7 +108,7 @@ extern void C2_HOOK_FASTCALL AwardTime(tU32 pTime);
 
 // AwardTime5
 
-extern void C2_HOOK_FASTCALL AwardRoundedTime(tU32 pTime);
+extern void C2_HOOK_FASTCALL AwardTime5(tU32 pTime);
 
 // DoTestHeadup
 
