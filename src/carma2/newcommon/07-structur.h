@@ -8,6 +8,8 @@ extern int gHud_tinted1;
 extern int gHud_tinted2;
 extern int gHud_tinted3;
 extern int gCredits_checkpoint[3];
+extern tU32 gLast_checkpoint_time;
+extern int gLast_wrong_checkpoint;
 
 extern int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
 
@@ -21,7 +23,7 @@ extern void C2_HOOK_FASTCALL IncrementLap(void);
 
 // RayHitFace
 
-// WrongCheckpoint
+extern void C2_HOOK_FASTCALL WrongCheckpoint(int pCheckpoint_index);
 
 // CheckCheckpoints
 
