@@ -287,7 +287,22 @@ void C2_HOOK_FASTCALL ClearHeadup(int pIndex) {
     gHeadups[pIndex].type = eHeadup_unused;
 }
 
-// ClearHeadupSlot
+// FUNCTION: CARMA2_HW 0x00449650
+// FUNCTION: CARMA2_SW 0x004497a0
+void C2_HOOK_FASTCALL ClearHeadupSlot(int pSlot_index) {
+    int i;
+    tHeadup* the_headup;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gHeadups) != 37);
+
+    the_headup = gHeadups;
+    for (i = 0; i < (int)REC2_ASIZE(gHeadups); i++, the_headup++) {
+        if (the_headup->type != eHeadup_unused && the_headup->slot_index == pSlot_index) {
+            ClearHeadup(i);
+            return;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00449690
 void C2_HOOK_FASTCALL ClearHeadups(void) {
