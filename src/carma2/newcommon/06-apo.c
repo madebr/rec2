@@ -8,8 +8,10 @@
 
 #include "06-apo.h"
 
+#include "01-network.h"
 #include "08-loading1.h"
 #include "15-displays.h"
+#include "24-loadsave.h"
 #include "27-powerup.h"
 #include "41-utility.h"
 #include "globvars.h"
@@ -66,7 +68,18 @@ void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
 
 // BuyArmour
 
-// BuyPower
+// FUNCTION: CARMA2_HW 0x00502fd0
+// FUNCTION: CARMA2_SW 0x004fe920
+void C2_HOOK_FASTCALL BuyPower(void) {
+
+    if (gINT_0068b8e4 == 0 && gINT_0068b8e8 == 0) {
+        if (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_foxy && gThis_net_player_index == gIt_or_fox) {
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_fox_cant_do_that));
+        } else {
+            BuyPSPowerup(1);
+        }
+    }
+}
 
 // BuyOffense
 
