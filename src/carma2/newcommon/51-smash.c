@@ -196,6 +196,18 @@ void C2_HOOK_FASTCALL InitSmashQueue(void) {
 
 // ReadShrapnelSpec
 
+// FUNCTION: CARMA2_HW 0x004ee500
+// FUNCTION: CARMA2_SW 0x004ea1d0
+void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed) {
+
+    GetPairOfFloats(pFile, &pInitial_speed->min_speed, &pInitial_speed->max_speed);
+    pInitial_speed->impactee_velocity_factor = GetAScalar(pFile);
+    pInitial_speed->random_velocity_max = GetAScalar(pFile);
+    pInitial_speed->random_up_velocity_max = GetAScalar(pFile);
+    pInitial_speed->random_normal_velocity_max = GetAScalar(pFile);
+    pInitial_speed->random_spin_rate_max = GetAScalar(pFile) * 0.1f;
+}
+
 // FUNCTION: CARMA2_HW 0x004ee5a0
 // FUNCTION: CARMA2_SW 0x004ea270
 void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* pTimes) {
