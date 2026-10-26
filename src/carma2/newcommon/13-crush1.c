@@ -461,7 +461,24 @@ int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
 
 // CrushPoint
 
-// ClipPointToLimits
+// FUNCTION: CARMA2_HW 0x004368d0
+// FUNCTION: CARMA2_SW 0x00436900
+void C2_HOOK_FASTCALL ClipPointToLimits(br_vector3* pPoint, tU16 pLimit_bits, const tCar_crush_limits* pLimits) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(pPoint->v); i++) {
+        if (pPoint->v[i] < pLimits->limits[i][0].values[pLimit_bits & 0x3]) {
+            pPoint->v[i] = pLimits->limits[i][0].values[pLimit_bits & 0x3];
+            pLimit_bits >>= 4;
+        } else {
+            pLimit_bits >>= 2;
+            if (pPoint->v[i] > pLimits->limits[i][1].values[pLimit_bits & 0x3]) {
+                pPoint->v[i] = pLimits->limits[i][1].values[pLimit_bits & 0x3];
+            }
+            pLimit_bits >>= 2;
+        }
+    }
+}
 
 // CrushCollisionShapes
 
