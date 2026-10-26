@@ -47,6 +47,10 @@ br_pixelmap* gPalette;
 // GLOBAL: CARMA2_HW 0x00686210
 tTranslation_record* gTranslations;
 
+// GLOBAL: CARMA2_HW 0x00686218
+// GLOBAL: CARMA2_SW 0x00680958
+tFlic_descriptor gPanel_flic[2];
+
 // GLOBAL: CARMA2_HW 0x006861e0
 tDR_font* gTrans_fonts[2];
 
@@ -456,6 +460,13 @@ void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
 // FUNCTION: CARMA2_HW 0x00461a30
 void C2_HOOK_FASTCALL TurnOnPanelFlics(void) {
     gPanel_flic_disable = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00461a40
+// FUNCTION: CARMA2_SW 0x004614e0
+int C2_HOOK_FASTCALL GetPanelFlicFrameIndex(int pIndex) {
+
+    return gPanel_flic[pIndex].current_frame;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a60

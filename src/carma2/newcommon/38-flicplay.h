@@ -20,6 +20,7 @@ extern float gFlic_sound_delay_post_demo;
 extern void* gPalette_pixels;
 extern br_pixelmap* gPalette;
 extern tTranslation_record* gTranslations;
+extern tFlic_descriptor gPanel_flic[2];
 extern tDR_font* gTrans_fonts[2];
 extern int gTranslation_count;
 extern tFlic_spec gMain_flic_list[372];
@@ -47,6 +48,8 @@ extern void C2_HOOK_FASTCALL PlayFlicsFromMemory(void);
 extern void C2_HOOK_FASTCALL TurnOffPanelFlics(void);
 
 extern void C2_HOOK_FASTCALL TurnOnPanelFlics(void);
+
+extern int C2_HOOK_FASTCALL GetPanelFlicFrameIndex(int pIndex);
 
 extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
