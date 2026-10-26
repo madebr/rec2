@@ -37,6 +37,7 @@ extern int gLast_credit_headup__displays;
 extern tU32 gLast_earn_time;
 extern int gLast_time_credit_headup;
 extern tU32 gLast_time_earn_time;
+extern tU32 gLast_time_credit_amount;
 extern int gOld_times[10];
 extern int gQueued_headup_count;
 
@@ -95,7 +96,7 @@ extern void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
 extern int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
-// AwardTime
+extern void C2_HOOK_FASTCALL AwardTime(tU32 pTime);
 
 // AwardTime5
 
