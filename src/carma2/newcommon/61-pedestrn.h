@@ -326,6 +326,8 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // TurnOnCollisions
 
+extern void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel);
+
 // UpdateModels
 
 // TurnOnGhostPeds
