@@ -74,6 +74,8 @@ extern void C2_HOOK_FASTCALL EndRollingLetters(void);
 
 extern int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type rolling_type);
 
+extern void C2_HOOK_FASTCALL AddRollingString(char* pStr, int pX, int pY, tRolling_type pRolling_type);
+
 extern void C2_HOOK_FASTCALL BlankSlot(int pIndex, int pName_length, int pVisible_length);
 
 extern int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_char);
