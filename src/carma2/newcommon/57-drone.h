@@ -106,7 +106,7 @@ extern int C2_HOOK_FASTCALL DroneCarWithinProcessingDistance(const br_vector3* p
 
 // DronePlaneWithinProcessingDistance
 
-// DroneTrainWithinProcessingDistance
+extern int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3* pPos);
 
 // CalcRenderBoundsCentre
 
