@@ -68,6 +68,10 @@ br_matrix4 gCameraToScreen;
 // GLOBAL: CARMA2_HW 0x006a82b0
 br_camera* gSpark_cam;
 
+// GLOBAL: CARMA2_HW 0x006a82a8
+// GLOBAL: CARMA2_SW 0x006a2308
+tCar_spec* PTR_006a82a8;
+
 // DrawDot
 
 // SetWorldToScreen
@@ -208,7 +212,17 @@ void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar) {
     NOT_IMPLEMENTED();
 }
 
-// SetPixelmap
+// FUNCTION: CARMA2_HW 0x004f8ff0
+// FUNCTION: CARMA2_SW 0x004f4670
+int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
+    if (pMaterial->colour_map != PTR_006a82a8->field_0x1960) {
+        pMaterial->colour_map = PTR_006a82a8->field_0x1960;
+        BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // STUB: CARMA2_HW 0x004f8f30
 void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
