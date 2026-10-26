@@ -281,7 +281,29 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
 
 // GetDriverName
 
-// GetOpponentSpecFromCarSpec
+// FUNCTION: CARMA2_HW 0x004ae8e0
+tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec) {
+    int i;
+    tU16 car_ID;
+    int car_category;
+
+    car_ID = pCar_spec->car_ID;
+    car_category = car_ID & ~0xff;
+    if (car_category == 0x200) {
+        for (i = 0; i < GetCarCount(eVehicle_opponent); i++) {
+            if (gProgram_state.AI_vehicles.opponents[i].car_spec == pCar_spec) {
+                return &gProgram_state.AI_vehicles.opponents[i];
+            }
+        }
+    } else if (car_category == 0x300) {
+        for (i = 0; i < GetCarCount(eVehicle_rozzer); i++) {
+            if (gProgram_state.AI_vehicles.cops[i].car_spec == pCar_spec) {
+                return &gProgram_state.AI_vehicles.cops[i];
+            }
+        }
+    }
+    return NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x004ae970
 tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
