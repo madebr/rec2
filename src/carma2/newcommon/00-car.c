@@ -725,7 +725,11 @@ void C2_HOOK_FASTCALL AdjustDownForce(void) {
 
 // GetCarOverallBoundsMinY
 
-// SetCarSuspGiveAndHeight
+// STUB: CARMA2_HW 0x0041fc60
+// STUB: CARMA2_SW 0x0041fce0
+void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height) {
+    NOT_IMPLEMENTED();
+}
 
 // TestForCarInSensiblePlace
 
