@@ -8,6 +8,7 @@
 
 #include "53-controls.h"
 
+#include "00-car.h"
 #include "15-displays.h"
 #include "17-world2.h"
 #include "41-utility.h"
@@ -134,6 +135,16 @@ void C2_HOOK_FASTCALL F12Key(void) {
 // FUNCTION: CARMA2_SW 0x004420b0
 void C2_HOOK_FASTCALL DamageTest(void) {
 
+}
+
+// FUNCTION: CARMA2_HW 0x00441ff0
+// FUNCTION: CARMA2_SW 0x004420d0
+void C2_HOOK_FASTCALL TDamageDriver(void) {
+    if (gProgram_state.current_car.damage_units[eDamage_driver].damage_level < 80) {
+        DamageUnit(&gProgram_state.current_car, eDamage_driver, 80 - gProgram_state.current_car.damage_units[eDamage_driver].damage_level);
+    } else {
+        DamageUnit(&gProgram_state.current_car, eDamage_driver, 2);
+    }
 }
 
 // ToggleMiniMap
