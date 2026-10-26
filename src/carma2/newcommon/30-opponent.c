@@ -11,6 +11,7 @@
 #include <c2_hooks.h>
 #include "00-car.h"
 #include "08-loading1.h"
+#include "60-phil.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
@@ -256,7 +257,18 @@ void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spe
 
 // AddIfNotInList
 
-// RemoveAnythingStillInList
+// FUNCTION: CARMA2_HW 0x004a7ef0
+// FUNCTION: CARMA2_SW 0x004a4060
+void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCount) {
+    int i;
+
+    for (i = 0; i < pCount; i++) {
+        if (pList[i] != NULL) {
+            PHILRemoveObject(pList[i]);
+            pList[i]->field183_0x1d8 = 0;
+        }
+    }
+}
 
 // RebuildActiveCarList
 

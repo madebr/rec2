@@ -118,7 +118,7 @@ extern void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOppon
 
 // AddIfNotInList
 
-// RemoveAnythingStillInList
+extern void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCount);
 
 // RebuildActiveCarList
 
