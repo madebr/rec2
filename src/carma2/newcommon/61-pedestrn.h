@@ -516,7 +516,7 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // SetCharacterAllBonesModel
 
-// GetCharacterBoneModel
+extern br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
 
 // GetCharacterModelSet
 
