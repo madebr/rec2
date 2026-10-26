@@ -179,10 +179,12 @@ int C2_HOOK_CDECL FindHighestPolyCallBack__raycast(br_model* pModel, br_material
             gBelow_face_index = pF;
             gBelow_model = pModel;
         }
-    } else if (the_y < gLowest_y_above) {
-        gLowest_y_above = the_y;
-        gAbove_face_index = pF;
-        gAbove_model = pModel;
+    } else {
+        if (the_y < gLowest_y_above) {
+            gLowest_y_above = the_y;
+            gAbove_face_index = pF;
+            gAbove_model = pModel;
+        }
     }
     return 0;
 }
