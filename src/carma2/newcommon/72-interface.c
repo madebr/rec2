@@ -1919,7 +1919,16 @@ int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// Controls_KeyDown
+// FUNCTION: CARMA2_HW 0x004725c0
+// FUNCTION: CARMA2_SW 0x00471b50
+int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend) {
+
+    if (gControls_scroller.field_0x8 < gControls_scroller.field_0x0 - gControls_scroller.range_length) {
+        gControls_scroller.field_0x8 += 1;
+        RefreshScrollSet(pFrontend);
+    }
+    return 0;
+}
 
 // Controls_Infunc
 
