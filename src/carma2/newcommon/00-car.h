@@ -148,7 +148,7 @@ extern void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car);
 
 // ProcessForcesCallBack
 
-// ProcessJointForcesCallBack
+extern int C2_HOOK_FASTCALL ProcessJointForcesCallBack(void* pArg1, void* pArg2, void* pArg3);
 
 // MultiFindFloorInBoxM
 
