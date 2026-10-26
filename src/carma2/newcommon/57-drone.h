@@ -49,7 +49,7 @@ extern void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone);
 
 // PreprocessDronePaths
 
-// LinkyCallback
+extern int C2_HOOK_CDECL LinkyCallback(br_actor* pActor, void* pData);
 
 // LinkDroneActorsToModelsAndSetRenderStyle
 
