@@ -291,6 +291,7 @@ void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
     gWidth = gRender_screen->width;
     gHeight = gRender_screen->height;
     ReinitialiseForwardCamera();
+#ifdef REC2_HW
     SetTintedPolySize(gHud_tinted1,
         gRender_screen->base_x,
         gRender_screen->base_y,
@@ -306,6 +307,7 @@ void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
         gRender_screen->base_y,
         gRender_screen->width,
         gRender_screen->height);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x004e4cd0
