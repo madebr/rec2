@@ -64,7 +64,7 @@ extern void C2_HOOK_FASTCALL ReceivedCopInfo(void);
 
 extern void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar);
 
-// EnableCar
+extern void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar);
 
 // DoNetworkHeadups
 
