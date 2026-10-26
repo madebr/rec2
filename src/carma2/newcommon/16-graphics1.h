@@ -32,6 +32,7 @@ extern br_actor* gHud_actor_storage[128];
 extern int gSaved_table_count;
 extern tSaved_table gSaved_shade_tables[100];
 extern int gNumber_of_lollipops;
+extern int gHud_tinted4;
 
 // MungeClipPlane
 
