@@ -106,11 +106,27 @@ tPowerup* gPowerup_array;
 
 // GotPowerupXX
 
-// GotPowerupEarwig
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004d8d40
+// STUB: CARMA2_SW 0x004d5270
+void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // AutoGoody
 
-// GotPowerup
+// FUNCTION: CARMA2_HW 0x004d8d30
+// FUNCTION: CARMA2_SW 0x004d5260
+void C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex) {
+    GotPowerupEarwig(pCar, pIndex, 1, 1);
+}
 
 // DRMapFindMeAPixie
 

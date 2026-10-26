@@ -54,11 +54,11 @@ extern int gInstant_handbrake;
 
 // GotPowerupXX
 
-// GotPowerupEarwig
+extern void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory);
 
 // AutoGoody
 
-// GotPowerup
+extern void C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex);
 
 // DRMapFindMeAPixie
 
