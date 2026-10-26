@@ -13,7 +13,16 @@
 
 extern br_actor* gY_picking_camera;
 
+extern br_model* gBelow_model;
+extern int gBelow_face_index;
+extern float gLowest_y_above;
+extern float gCurrent_y;
+extern br_model* gAbove_model;
+extern int gAbove_face_index;
+
 extern br_matrix34 gPick_model_to_view__raycast;
+
+extern float gHighest_y_below;
 
 // DRActorToRoot
 
