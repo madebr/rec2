@@ -100,6 +100,6 @@ extern int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, cons
 
 // ShapeRayCastWithSphere
 
-// CastRayDownThruFaces
+extern tFace_ref* C2_HOOK_FASTCALL CastRayDownThruFaces(br_vector3* pPosition, tFace_ref* pFaces, int pCount, br_scalar pOffset, br_vector3* pCollision_position);
 
 #endif // GUARD_34_FINTERAY_H
