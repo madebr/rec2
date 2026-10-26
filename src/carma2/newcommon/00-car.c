@@ -47,6 +47,10 @@ br_vector3 gZero_v__car;  // FIXME: make const?
 // GLOBAL: CARMA2_HW 0x006793dc
 int gNum_active_non_cars;
 
+// GLOBAL: CARMA2_HW 0x00679364
+// GLOBAL: CARMA2_SW 0x00673ad4
+int gInTheSea;
+
 // GLOBAL: CARMA2_HW 0x0065d010
 int gFace_num__car = 1;
 
@@ -104,7 +108,12 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // NewFaceListCallBack
 
-// IsCarInTheSea
+// FUNCTION: CARMA2_HW 0x00414ca0
+// FUNCTION: CARMA2_SW 0x00414cd0
+int C2_HOOK_FASTCALL IsCarInTheSea(void) {
+
+    return gInTheSea;
+}
 
 // RememberSafePosition
 

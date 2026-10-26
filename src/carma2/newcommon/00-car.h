@@ -20,6 +20,7 @@ extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
 extern int gNum_active_non_cars;
+extern int gInTheSea;
 extern int gFace_num__car;
 
 extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount);
@@ -42,7 +43,7 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // NewFaceListCallBack
 
-// IsCarInTheSea
+extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 // RememberSafePosition
 
