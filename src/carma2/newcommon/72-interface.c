@@ -1886,7 +1886,16 @@ void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider) {
 
 // Controls_SwitchKeymapSet
 
-// Controls_KeyUp
+// FUNCTION: CARMA2_HW 0x004725a0
+// FUNCTION: CARMA2_SW 0x00471b30
+int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend) {
+
+    if (gControls_scroller.field_0x8 != 0) {
+        gControls_scroller.field_0x8 -= 1;
+        RefreshScrollSet(pFrontend);
+    }
+    return 0;
+}
 
 // Controls_KeyDown
 
