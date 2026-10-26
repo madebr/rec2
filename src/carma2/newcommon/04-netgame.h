@@ -88,11 +88,11 @@ extern void C2_HOOK_FASTCALL DisposeNetHeadups(void);
 
 // EverybodysLost
 
-// DeclareWinner
+extern void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index);
 
 // PlayerIsIt
 
-// CheckForVampireWinner
+extern void C2_HOOK_FASTCALL CheckForVampireWinner(void);
 
 // PlayerIsInfected
 
