@@ -4249,7 +4249,7 @@ typedef struct tPhysics_object {
     br_vector3 omega;
     br_vector3 pos;
     br_matrix34 transform_matrix;
-    undefined field_0xbc[48];
+    br_matrix34 field_0xbc;
     tU8 disable_move_rotate; /* FIXME: rename to doing_nothing_flag? */
     undefined field_0xed;
     undefined field_0xee[2];

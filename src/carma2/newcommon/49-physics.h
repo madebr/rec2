@@ -275,9 +275,9 @@ extern void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObjec
 
 // GetFacesNearObject
 
-// ResetObjectAndChildren
+extern void C2_HOOK_FASTCALL ResetObjectAndChildren(tPhysics_object* pObject);
 
-// ResetObjectList
+extern void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects);
 
 // RepositionObjectGroup
 

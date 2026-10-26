@@ -440,9 +440,33 @@ void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, unde
 
 // GetFacesNearObject
 
-// ResetObjectAndChildren
+// FUNCTION: CARMA2_HW 0x004c25a0
+// FUNCTION: CARMA2_SW 0x004becd0
+void C2_HOOK_FASTCALL ResetObjectAndChildren(tPhysics_object* pObject) {
+    tPhysics_object* child;
 
-// ResetObjectList
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0xbc, 0xbc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0xf0, 0xf0);
+
+    if (pObject->field_0xf0 == 1) {
+        BrMatrix34Copy(&pObject->actor->t.t.mat, &pObject->field_0xbc);
+    } else {
+        BrMatrix34LPNormalise(&pObject->actor->t.t.mat, &pObject->transform_matrix);
+    }
+    for (child = pObject->child; child != NULL; child = child->next) {
+        ResetObjectAndChildren(child);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c2600
+// FUNCTION: CARMA2_SW 0x004bed30
+void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects) {
+
+    while (pObjects != NULL) {
+        ResetObjectAndChildren(pObjects);
+        pObjects = pObjects->next;
+    }
+}
 
 // RepositionObjectGroup
 
