@@ -268,9 +268,9 @@ extern void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor);
 
 // NapalmPeds
 
-// RepulseOpponents2
+extern int C2_HOOK_FASTCALL RepulseOpponents2(tPowerup* pPowerup, tCar_spec* pCar, int pSend_message);
 
-// RepulseOpponents
+extern int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* pPowerup, tCar_spec* pCar);
 
 // RepulsePedestrians
 

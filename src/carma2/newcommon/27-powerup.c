@@ -481,9 +481,26 @@ void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
 
 // NapalmPeds
 
-// RepulseOpponents2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// RepulseOpponents
+// STUB: CARMA2_HW 0x004de1f0
+// STUB: CARMA2_SW 0x004da6f0
+int C2_HOOK_FASTCALL RepulseOpponents2(tPowerup* pPowerup, tCar_spec* pCar, int pSend_message) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004de1e0
+// FUNCTION: CARMA2_SW 0x004da6e0
+int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    return RepulseOpponents2(pPowerup, pCar, 1);
+}
 
 // RepulsePedestrians
 
