@@ -159,6 +159,28 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector
 
 // GetObjectObjectForceInfo
 
+// FUNCTION: CARMA2_HW 0x00428480
+// FUNCTION: CARMA2_SW 0x00428510
+void C2_HOOK_FASTCALL GetWireFrameVector3(br_vector3* pPoint, tPhysics_shape* pShape, tU32 pIndex) {
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        break;
+    case kCollisionShapeType_Wireframe:
+        BrVector3Copy(pPoint, &pShape->wireframe.wireframe.points[pIndex]);
+        return;
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        BrVector3Copy(pPoint, &pShape->polyhedron.polyhedron.points[pIndex]);
+        return;
+    default:
+        return;
+    }
+    BrVector3Set(pPoint,
+        (pIndex & 0x2) ? pShape->common.bb.min.v[0] : pShape->common.bb.max.v[0],
+        (pIndex & 0x1) ? pShape->common.bb.min.v[1] : pShape->common.bb.max.v[1],
+        (pIndex & 0x4) ? pShape->common.bb.min.v[2] : pShape->common.bb.max.v[2]);
+}
+
 // AddOldForces
 
 // TestShapeEdgeIntersection
