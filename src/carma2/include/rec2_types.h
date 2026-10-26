@@ -3407,9 +3407,9 @@ typedef struct {
     float field_0x64;
     float field_0x68;
     undefined4 field_0x6c;
-    undefined4 field_0x70;
+    void* field_0x70;
     undefined4 field_0x74;
-    undefined4 field_0x78;
+    void* field_0x78;
 } tSmashable_item_spec_texture_change;
 
 typedef struct {
@@ -3758,24 +3758,7 @@ typedef struct tSmashable_level {
     br_pixelmap * pixelmaps[3];
     int count_pixelmaps;
     float trigger_threshold;
-    int count_sounds;
-    int sounds[3];
-    int count_shrapnels;
-    tShrapnel_spec shrapnels[6];
-    tExplosion_animation animation;
-    tSlick_spec slick;
-    int count_noncar_activations;
-    tNoncar_activation* noncar_activations;
-    tShrapnel_side_effects side_effects;
-    int field_0x280;
-    int extension_flags;
-    int room_turn_on_code;
-    tAward_info award;
-    undefined field_0x2a0[4];
-    tU8 count_runtime_variable_changes;
-    undefined field_0x2a5;
-    tSmash_run_time_variable_change runtime_variable_changes[1]; /* FIXME: unknown size */
-    undefined field_0x2aa[18];
+    tConnotations connotations;
     int flags;
     tSmashable_texture_level_collision_type collision_type;
 } tSmashable_level;

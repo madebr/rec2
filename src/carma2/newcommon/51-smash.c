@@ -373,6 +373,40 @@ void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void) {
 
 // CloneEnvSmash
 
+// FUNCTION: CARMA2_HW 0x004f09c0
+// FUNCTION: CARMA2_SW 0x004ec620
+void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tSmashable_level) != 0x2c4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_level, connotations, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, count_levels, 0x48);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, levels, 0x50);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, field_0x70, 0x70);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, field_0x78, 0x78);
+
+    if (pSmash->trigger_type != -1) {
+        if ((pSmash->mode == kSmashableMode_Decal || pSmash->mode == kSmashableMode_TextureChange) && pSmash->mode_data.texture_change.levels != NULL) {
+            if (pSmash->mode_data.texture_change.field_0x70 != NULL) {
+                BrMemFree(pSmash->mode_data.texture_change.field_0x70);
+            }
+            if (pSmash->mode_data.texture_change.field_0x78 != NULL) {
+                BrMemFree(pSmash->mode_data.texture_change.field_0x78);
+            }
+            for (i = 1; i < pSmash->mode_data.texture_change.count_levels; i++) {
+                FreeConnotations(&pSmash->mode_data.texture_change.levels[i].connotations, pSmash->field_0x2dc);
+            }
+            BrMemFree(pSmash->mode_data.texture_change.levels);
+        } else {
+            FreeConnotations(&pSmash->mode_data.shrapnel.connotations, pSmash->field_0x2dc);
+        }
+        if (pSmash->flags & 0x80000000) {
+            BrMaterialRemove(pSmash->trigger_object.material);
+            BrMaterialFree(pSmash->trigger_object.material);
+        }
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x004f0a80
 void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors) {
     int i;
@@ -407,8 +441,6 @@ void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_a
         BrMemFree(pConnotations->side_effects.side_effects.side_effects);
     }
 }
-
-// FreeEnvSmash
 
 // DisposeSmashableEnvironment
 
