@@ -73,7 +73,7 @@ extern intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData
 
 // LinkCarModelsToActor
 
-// GetSimpleMaterial
+extern br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type);
 
 // ReadShrapnelMaterials
 
