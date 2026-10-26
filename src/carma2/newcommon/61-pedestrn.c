@@ -575,7 +575,15 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // GetBoneMatrixPtr
 
-// GetCharacterActorPtr
+// FUNCTION: CARMA2_HW 0x00407b10
+// FUNCTION: CARMA2_SW 0x00407b00
+br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter) {
+
+    if (pCharacter->field_0x4 < 0) {
+        return NULL;
+    }
+    return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0];
+}
 
 // SetCharacterBonePositions
 

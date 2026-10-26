@@ -440,7 +440,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // GetBoneMatrixPtr
 
-// GetCharacterActorPtr
+extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
 
 // SetCharacterBonePositions
 
