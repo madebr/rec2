@@ -21,6 +21,10 @@ int gAllow_material_adapt;
 // GLOBAL: CARMA2_HW 0x006a3340
 br_material* gMaterials_to_adapt[200];
 
+// GLOBAL: CARMA2_HW 0x006a3338
+// GLOBAL: CARMA2_SW 0x0069d398
+int gShrapnel_ghost_actor_count;
+
 // FUNCTION: CARMA2_HW 0x004ea760
 void C2_HOOK_FASTCALL InitFogificateMaterials(void) {
 
