@@ -454,7 +454,7 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // UndoBend
 
-// UndoUnBend
+extern void C2_HOOK_FASTCALL UndoUnBend(void);
 
 // UndoShrapnelShower
 

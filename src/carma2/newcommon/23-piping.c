@@ -834,7 +834,10 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // UndoBend
 
-// UndoUnBend
+// FUNCTION: CARMA2_HW 0x004ca060
+// FUNCTION: CARMA2_SW 0x004c6790
+void C2_HOOK_FASTCALL UndoUnBend(void) {
+}
 
 // UndoShrapnelShower
 
