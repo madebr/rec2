@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gCar_simplification_level;
+
 extern void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
 extern void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);

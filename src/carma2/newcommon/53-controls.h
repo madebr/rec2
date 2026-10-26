@@ -165,7 +165,7 @@ extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
 // CycleSoundDetailLevel
 
-// CycleCarSimplificationLevel
+extern void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void);
 
 extern void C2_HOOK_FASTCALL ToggleAccessoryRendering(void);
 
