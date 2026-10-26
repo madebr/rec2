@@ -216,7 +216,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
 
 // PipeSinglePedIncident
 
-// PipeSingleWallIncident
+extern void C2_HOOK_FASTCALL PipeSingleWallIncident(float pSeverity, br_vector3* pImpact_point);
 
 // PipeSingleSkidAdjustment
 

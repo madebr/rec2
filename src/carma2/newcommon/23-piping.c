@@ -445,7 +445,10 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
 
 // PipeSinglePedIncident
 
-// PipeSingleWallIncident
+// FUNCTION: CARMA2_HW 0x004c85b0
+// FUNCTION: CARMA2_SW 0x004c4ce0
+void C2_HOOK_FASTCALL PipeSingleWallIncident(float pSeverity, br_vector3* pImpact_point) {
+}
 
 // PipeSingleSkidAdjustment
 
