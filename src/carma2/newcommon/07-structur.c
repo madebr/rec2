@@ -56,11 +56,19 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     return result;
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // STUB: CARMA2_HW 0x005030b0
 // STUB: CARMA2_SW 0x004fea00
 void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
     NOT_IMPLEMENTED();
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x00503270
 void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
@@ -73,19 +81,46 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
     }
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x005032a0
-// STUB: CARMA2_SW 0x004febf0
+// FUNCTION: CARMA2_HW 0x005032a0
+// FUNCTION: CARMA2_SW 0x004febf0
 void C2_HOOK_FASTCALL IncrementCheckpoint(void) {
-    NOT_IMPLEMENTED();
-}
+    int done_voice;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    done_voice = 0;
+    if (gRace_finished) {
+        return;
+    }
+    if (gCurrent_race.race_spec->race_type != kRaceType_Carma1
+            && gCurrent_race.race_spec->race_type != kRaceType_Checkpoints) {
+        return;
+    }
+    gLast_checkpoint_time = GetTotalTime();
+    if (gCheckpoint >= gCheckpoint_count) {
+        gCheckpoint = 1;
+        if (gLap++ >= gTotal_laps) {
+            gLap = gTotal_laps;
+            gCheckpoint = gCheckpoint_count;
+            RaceCompleted(eRace_over_0);
+        } else if (gLap == gTotal_laps) {
+            PratcamEvent(33);
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_final_lap));
+            DRS3StartSound(gPedestrians_outlet, eSoundId_FinalLap);
+            done_voice = 1;
+        }
+    } else {
+        gCheckpoint += 1;
+    }
+    if (!gRace_finished) {
+        PratcamEvent(33);
+        DoFancyHeadup(21);
+        if (!done_voice) {
+            DRS3StartSound(gPedestrians_outlet, eSoundId_Checkpoint);
+        }
+        if (gCredits_checkpoint[gProgram_state.skill_level] != 0) {
+            EarnCredits(gCredits_checkpoint[gProgram_state.skill_level]);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005033b0
 // FUNCTION: CARMA2_SW 0x004fed00
