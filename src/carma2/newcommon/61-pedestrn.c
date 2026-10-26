@@ -12,6 +12,7 @@
 #include "27-powerup.h"
 #include "63-loading3.h"
 #include "69-sound.h"
+#include "brender/brender.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x006a0414
@@ -390,6 +391,13 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 // TurnOffCollisions
 
 // TurnOnCollisions
+
+// FUNCTION: CARMA2_HW 0x004d6ba0
+// FUNCTION: CARMA2_SW 0x004d31a0
+void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel) {
+
+    BrModelUpdate(pModel, BR_MODU_PRIMITIVE_MATERIALS);
+}
 
 // UpdateModels
 
