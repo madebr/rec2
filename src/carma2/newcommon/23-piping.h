@@ -13,6 +13,10 @@
 #include "rec2_types.h"
 #include <s3/s3.h>
 
+extern tU8* gLocal_buffer;
+extern tU32 gLocal_buffer_size;
+extern tU8* gMr_chunky;
+extern tU8* gPipe_buffer_start;
 extern int gPlay_direction;
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
@@ -68,7 +72,7 @@ extern void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
 extern void C2_HOOK_FASTCALL AREndPipingSession(void);
 
-// ARAddDataToSession
+extern void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize);
 
 extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
 
