@@ -794,7 +794,10 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // ApplyDroneStraightPos
 
-// ApplyDroneUnused
+// FUNCTION: CARMA2_HW 0x004c9d10
+// FUNCTION: CARMA2_SW 0x004c6440
+void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk) {
+}
 
 // ApplyNapalmBolt
 
