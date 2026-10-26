@@ -290,13 +290,13 @@ tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec
 
     car_ID = pCar_spec->car_ID;
     car_category = car_ID & ~0xff;
-    if (car_category == 0x200) {
+    if (car_category == eVehicle_opponent << 8) {
         for (i = 0; i < GetCarCount(eVehicle_opponent); i++) {
             if (gProgram_state.AI_vehicles.opponents[i].car_spec == pCar_spec) {
                 return &gProgram_state.AI_vehicles.opponents[i];
             }
         }
-    } else if (car_category == 0x300) {
+    } else if (car_category == eVehicle_rozzer << 8) {
         for (i = 0; i < GetCarCount(eVehicle_rozzer); i++) {
             if (gProgram_state.AI_vehicles.cops[i].car_spec == pCar_spec) {
                 return &gProgram_state.AI_vehicles.cops[i];
