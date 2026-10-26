@@ -266,7 +266,7 @@ extern void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, in
 
 // PipeSinglePowerupLose
 
-extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
+extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, tU16 pFlags);
 
 // PipeSingleVanishedDismembered
 
