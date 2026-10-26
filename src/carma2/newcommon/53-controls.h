@@ -165,7 +165,7 @@ extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
 // CycleYonFactor
 
-// CycleSoundDetailLevel
+extern void C2_HOOK_FASTCALL CycleSoundDetailLevel(void);
 
 // CycleCarSimplificationLevel
 
