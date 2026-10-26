@@ -435,7 +435,14 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // MungeShatMines
 
-// ARDoShitMine
+// FUNCTION: CARMA2_HW 0x004de000
+// FUNCTION: CARMA2_SW 0x004da500
+void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor) {
+    if (pActor->parent == NULL) {
+        BrActorAdd(gNon_track_actor, pActor);
+    }
+    pActor->render_style = BR_RSTYLE_FACES;
+}
 
 // ARUndoShitMine
 
