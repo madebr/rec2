@@ -559,7 +559,26 @@ void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_cru
 
 // DoDroneCrushing
 
-// AddDroneCrush
+// FUNCTION: CARMA2_HW 0x0042d390
+// FUNCTION: CARMA2_SW 0x0042d400
+void C2_HOOK_FASTCALL AddDroneCrush(tQueued_drone_crush_item* pCrush, const br_vector3* pVector, float pScale, int pCount, const br_vector3* pPoints) {
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, points, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tQueued_drone_crush_item, points, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x34, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x38, 0x38);
+
+    if (pCount > (int)REC2_ASIZE(pCrush->points)) {
+        pCount = REC2_ASIZE(pCrush->points);
+    }
+    BrVector3Copy(&pCrush->field_0x38, pVector);
+    pCrush->field_0x34 = pScale;
+    pCrush->count = pCount;
+    for (i = 0; i < pCrush->count; i++) {
+        BrVector3Copy(&pCrush->points[i], &pPoints[i]);
+    }
+}
 
 // QueueDroneCrush
 
