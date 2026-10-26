@@ -192,6 +192,8 @@ extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
 
 extern void C2_HOOK_FASTCALL PrintScreen(void);
 
+extern intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
+
 // FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
 
 // GetBlenficatiousnessOfMaterialTablishly
