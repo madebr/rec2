@@ -1577,6 +1577,102 @@ void C2_HOOK_FASTCALL PrintScreen(void) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00518b00
+// FUNCTION: CARMA2_SW 0x005125c0
+intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
+
+    if (pActor->render_style != BR_RSTYLE_NONE) {
+        const char* str;
+
+        switch (pActor->type) {
+        case BR_ACTOR_NONE:
+            printf("DUMMY ACTOR\n");
+            break;
+        case BR_ACTOR_MODEL:
+            printf("MODEL ACTOR\n");
+            break;
+        case BR_ACTOR_LIGHT:
+            printf("LIGHT ACTOR\n");
+            break;
+        case BR_ACTOR_CAMERA:
+            printf("CAMERA ACTOR\n");
+            break;
+        case BR_ACTOR_BOUNDS:
+            printf("BOUNDS ACTOR\n");
+            break;
+        case BR_ACTOR_BOUNDS_CORRECT:
+            printf("BOUNDS-CORRECT ACTOR\n");
+            break;
+        case BR_ACTOR_CLIP_PLANE:
+            printf("CLIP-PLANE ACTOR\n");
+            break;
+        default:
+            printf("******** UNKNOWN ********\n");
+            break;
+        }
+        str = pActor->identifier;
+        if (str == NULL) {
+            str = "No Identifier";
+        }
+        printf("\tName:\t\t\"%s\"\n", str);
+        printf("\tAddress:\t%08x\n", (unsigned int)(uintptr_t)pActor);
+        printf("\tParent:\t\t%08x\n", (unsigned int)(uintptr_t)pActor->parent);
+        printf("\tDepth:\t\t%i\n", pActor->depth);
+        printf("\tModelPtr:\t0x%08x", (unsigned int)(uintptr_t)pActor->model);
+        if (pActor->model != NULL) {
+            str = pActor->model->identifier;
+            if (str == NULL) {
+                str = "No Identifier";
+            }
+            printf(" (\"%s\")\n", str);
+        } else {
+            printf("\n");
+        }
+        printf("\tMaterialPtr:\t0x%08x", (unsigned int)(uintptr_t)pActor->material);
+        if (pActor->material != NULL) {
+            str = pActor->material->identifier;
+            if (str == NULL) {
+                str = "No Identifier";
+            }
+            printf(" (\"%s\")\n", str);
+        } else {
+            printf("\n");
+        }
+        switch (pActor->render_style) {
+        case BR_RSTYLE_DEFAULT:
+            str = "BR_RSTYLE_DEFAULT";
+            break;
+        case BR_RSTYLE_NONE:
+            str = "BR_RSTYLE_NONE";
+            break;
+        case BR_RSTYLE_POINTS:
+            str = "BR_RSTYLE_POINTS";
+            break;
+        case BR_RSTYLE_EDGES:
+            str = "BR_RSTYLE_EDGES";
+            break;
+        case BR_RSTYLE_FACES:
+            str = "BR_RSTYLE_FACES";
+            break;
+        case BR_RSTYLE_BOUNDING_POINTS:
+            str = "BR_RSTYLE_BOUNDING_POINTS";
+            break;
+        case BR_RSTYLE_BOUNDING_EDGES:
+            str = "BR_RSTYLE_BOUNDING_EDGES";
+            break;
+        case BR_RSTYLE_BOUNDING_FACES:
+            str = "BR_RSTYLE_BOUNDING_FACES";
+            break;
+        default:
+            str = "******** UNKNOWN ********";
+            break;
+        }
+        printf("\tRenderStyle:\t%s\n", str);
+        printf("\n");
+    }
+    return BrActorEnum(pActor, DumpVisibleActorsCB, pData);
+}
+
 // FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
 
 // GetBlenficatiousnessOfMaterialTablishly
