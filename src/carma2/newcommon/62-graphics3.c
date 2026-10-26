@@ -221,6 +221,14 @@ int gCheckpoint_digit_center_x;
 // GLOBAL: CARMA2_SW 0x006868b4
 tU32 gCheckpoint_digit_center_y;
 
+// GLOBAL: CARMA2_HW 0x0068d8f0
+// GLOBAL: CARMA2_SW 0x00687940
+tU32 last_flash;
+
+// GLOBAL: CARMA2_HW 0x0068d8f4
+// GLOBAL: CARMA2_SW 0x00687944
+int flash_state;
+
 // GLOBAL: CARMA2_HW 0x0068d6f8
 // GLOBAL: CARMA2_SW 0x00687750
 tOppo_status_messages gOppo_status_messages[9];
@@ -499,7 +507,29 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU3
 
 // DrawCheckpoint
 
-// DrawOffsetCheckpoint
+// FUNCTION: CARMA2_HW 0x00495d00
+// FUNCTION: CARMA2_SW 0x00493350
+void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    tRace_checkpoint_spec* checkpoint;
+
+    if ((pCheckpoint >= 0 && pCheckpoint < gCurrent_race.check_point_count
+            && gTrack_version > 0 && pTarget == 0) || Flash(300, &last_flash, &flash_state)) {
+        checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
+        if (checkpoint->map_position.v[0] >= 0.f
+                && checkpoint->map_position.v[0] < (float)pMap->width
+                && checkpoint->map_position.v[1] >= 0.f
+                && checkpoint->map_position.v[1] < (float)pMap->height) {
+            DRPixelmapRectangleMaskedCopy(pMap,
+                (br_int_16)(int)(checkpoint->map_position.v[0] + 8.f - (float)gCheckpoint_digit_center_x),
+                (br_int_16)(int)(checkpoint->map_position.v[1] - (float)(int)gCheckpoint_digit_center_y),
+                gCheckpoint_numbers,
+                0,
+                (br_int_16)(pCheckpoint * gCheckpoint_digit_height),
+                gCheckpoint_numbers->width,
+                (br_int_16)gCheckpoint_digit_height);
+        }
+    }
+}
 
 // DoMapOverlays
 

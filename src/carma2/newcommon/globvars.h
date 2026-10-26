@@ -174,6 +174,7 @@ extern float gOpponent_speed_factor;
 //extern float gNet_recovery_cost[7];
 //extern float gCar_crush_softness;
 extern br_vector3* gOur_pos;
+extern int gTrack_version;
 //extern float gCar_crush_max_fold;
 extern tBrender_storage gNet_cars_storage_space;
 //extern float gNet_softness[7];

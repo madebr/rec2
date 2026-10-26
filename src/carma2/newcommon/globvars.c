@@ -500,6 +500,10 @@ float gOpponent_speed_factor;
 
 // GLOBAL: CARMA2_HW 0x007634b0
 br_vector3* gOur_pos;
+
+// GLOBAL: CARMA2_HW 0x007634b4
+// GLOBAL: CARMA2_SW 0x00759a14
+int gTrack_version;
 //float gCar_crush_max_fold;
 
 // GLOBAL: CARMA2_HW 0x00761f00

@@ -28,6 +28,8 @@ extern int gMap_render_y_i;
 extern int gMap_render_x_i;
 extern int gMap_render_height_i;
 extern int gMap_render_width_i;
+extern tU32 last_flash;
+extern int flash_state;
 
 // CarArrowColour
 
@@ -65,7 +67,7 @@ extern void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoi
 
 // DrawCheckpoint
 
-// DrawOffsetCheckpoint
+extern void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
 
 // DoMapOverlays
 
