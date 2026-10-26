@@ -694,7 +694,16 @@ void C2_HOOK_FASTCALL ApplyEndMyBend(tPipe_chunk** pChunk) {
 
 // ApplyShrapnelShower
 
-// ApplyExplosion
+// FUNCTION: CARMA2_HW 0x004c99d0
+// FUNCTION: CARMA2_SW 0x004c6100
+void C2_HOOK_FASTCALL ApplyExplosion(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    chunk = *pChunk;
+    CopyExplosionData(chunk->subject_index, (tExplosion*)chunk->data.raw_data);
+}
 
 // ApplyNonCarCreation
 
