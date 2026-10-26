@@ -212,7 +212,7 @@ extern void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* p
 
 // AddToGuaranteeList
 
-// NetGuaranteedSendMessageToPlayer
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToPlayer(tNet_game_details* pDetails, tNet_message* pMessage, tPlayer_ID pPlayer, void* pNotifyFail);
 
 // NetGuaranteedSendMessageToAddress
 
