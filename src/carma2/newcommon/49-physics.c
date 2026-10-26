@@ -562,7 +562,7 @@ int C2_HOOK_FASTCALL RQDcmpV(br_scalar* pMatrix, int pSize, br_scalar* pOrthogon
         row = &pMatrix[i * pSize];
         scale = 0.f;
         for (j = i; j < pSize; j++) {
-            scale = MAX(scale, fabs(row[j]));
+            scale = (br_scalar)MAX(scale, fabs(row[j]));
         }
         if (scale == 0.0) {
             singular = 1;
@@ -574,7 +574,7 @@ int C2_HOOK_FASTCALL RQDcmpV(br_scalar* pMatrix, int pSize, br_scalar* pOrthogon
             for (j = i; j < pSize; j++) {
                 sum += row[j] * row[j];
             }
-            sigma = row[i] > 0.0 ? fabs(sqrt(sum)) : -fabs(sqrt(sum));
+            sigma = (br_scalar)(row[i] > 0.0 ? fabs(sqrt(sum)) : -fabs(sqrt(sum)));
             divisor = sigma * (sigma + row[i]);
             row[i] += sigma;
             for (j = 0; j <= i; j++) {
