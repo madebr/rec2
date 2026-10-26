@@ -12,6 +12,8 @@
 #include "07-structur.h"
 #include "15-displays.h"
 #include "19-font.h"
+#include "27-powerup.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "62-graphics3.h"
@@ -113,9 +115,68 @@ int gNumber_of_lollipops;
 
 // TryThisEdge
 
-// ProcessShadow
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// RenderShadows
+// STUB: CARMA2_HW 0x004e7650
+// STUB: CARMA2_SW 0x004e3470
+void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform, br_scalar pDistance_factor) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004e74d0
+// FUNCTION: CARMA2_SW 0x004e32f0
+void C2_HOOK_FASTCALL RenderShadows(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform) {
+    int i;
+    int cat;
+    int car_count;
+    tCar_spec* the_car;
+    br_vector3 camera_to_car;
+    br_scalar distance_factor;
+
+    if (gShadow_level != eShadow_none) {
+        for (cat = eVehicle_self; cat <= (gShadow_level == eShadow_everyone ? eVehicle_drone : gShadow_level == eShadow_us_and_opponents ? eVehicle_rozzer : eVehicle_self); cat++) {
+            if (cat == eVehicle_self) {
+                car_count = 1;
+            } else {
+                car_count = GetCarCount(cat);
+            }
+            for (i = 0; i < car_count; i++) {
+                if (cat == eVehicle_self) {
+                    the_car = &gProgram_state.current_car;
+                } else {
+                    the_car = GetCarSpec(cat, i);
+                }
+                if (!the_car->active) {
+                    continue;
+                }
+                if (IsCarCloaked(the_car)) {
+                    continue;
+                }
+                if (!gAction_replay_mode) {
+                    BrVector3Sub(&camera_to_car, (br_vector3*)gCamera_to_world.m[3], &the_car->car_master_actor->t.t.translate.t);
+                    distance_factor = BrVector3LengthSquared(&camera_to_car);
+                    if (distance_factor > 36.0f) {
+                        continue;
+                    }
+                }
+                ProcessShadow(the_car, gUniverse_actor, &gProgram_state.track_spec, gCamera, &gCamera_to_world, distance_factor);
+            }
+        }
+        if (gFancy_shadow) {
+            for (i = 0; i < gSaved_table_count; i++) {
+                gSaved_shade_tables[i].original->height = gSaved_shade_tables[i].copy->height;
+                gSaved_shade_tables[i].original->pixels = gSaved_shade_tables[i].copy->pixels;
+                BrTableUpdate(gSaved_shade_tables[i].original, BR_TABU_ALL);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e9940
 void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel) {
