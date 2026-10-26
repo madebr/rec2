@@ -12,6 +12,7 @@
 #include "18-graphics2.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "60-phil.h"
 #include "globvars.h"
 #include "rec2_macros.h"
 
@@ -677,7 +678,21 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
 
 // ClearSplashReplay
 
-// GetSplashIndex
+// FUNCTION: CARMA2_HW 0x004fee10
+// FUNCTION: CARMA2_SW 0x004fa6f0
+void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
+
+    if (PHILGetObjectProperty(pObject, 6) != 0.f) {
+        return pObject;
+    }
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        return pObject->actor;
+    }
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 >= 2 && pObject->flags_0x238 <= 4) {
+        return pObject->owner;
+    }
+    return NULL;
+}
 
 // ClearSplashes
 
