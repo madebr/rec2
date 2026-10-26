@@ -2111,7 +2111,14 @@ int C2_HOOK_FASTCALL Options_Quit(tFrontend_spec* pFrontend) {
     return 2;
 }
 
-// Graphics_Infunc
+// FUNCTION: CARMA2_HW 0x004747e0
+// FUNCTION: CARMA2_SW 0x00473d40
+int C2_HOOK_FASTCALL Graphics_Infunc(tFrontend_spec* pFrontend) {
+
+    Generic_Infunc(pFrontend);
+    GetGraphicsSettingsData(pFrontend);
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00474850
 // FUNCTION: CARMA2_SW 0x00473db0
