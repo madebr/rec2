@@ -464,7 +464,14 @@ void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor) {
     pActor->render_style = BR_RSTYLE_FACES;
 }
 
-// ARUndoShitMine
+// FUNCTION: CARMA2_HW 0x004de020
+// FUNCTION: CARMA2_SW 0x004da520
+void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
+    if (pActor->parent != NULL) {
+        BrActorRemove(pActor);
+    }
+    pActor->render_style = BR_RSTYLE_NONE;
+}
 
 // PissOutOil
 
