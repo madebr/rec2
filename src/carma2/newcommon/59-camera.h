@@ -5,6 +5,7 @@
 #include "rec2_types.h"
 
 extern int gCamera_frozen;
+extern tSave_camera gSave_camera[2];
 extern br_actor* gPed_actor;
 
 extern float gCamera_cockpit_hither;
@@ -60,7 +61,7 @@ extern int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime);
 
 // SetUpPanningCamera
 
-// SaveCameraPosition
+extern void C2_HOOK_FASTCALL SaveCameraPosition(int pIndex);
 
 // RestoreCameraPosition
 

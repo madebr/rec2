@@ -12,6 +12,10 @@ br_actor* gPed_actor;
 // GLOBAL: CARMA2_HW 0x006792b8
 int gCamera_frozen;
 
+// GLOBAL: CARMA2_HW 0x006792c8
+// GLOBAL: CARMA2_SW 0x00673a38
+tSave_camera gSave_camera[2];
+
 // GLOBAL: CARMA2_HW 0x007634ac
 float gCamera_cockpit_hither;
 
@@ -120,7 +124,17 @@ int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime) {
 
 // SetUpPanningCamera
 
-// SaveCameraPosition
+// FUNCTION: CARMA2_HW 0x00410be0
+// FUNCTION: CARMA2_SW 0x00410bc0
+void C2_HOOK_FASTCALL SaveCameraPosition(int pIndex) {
+
+    if (gSave_camera[pIndex].saved == 1) {
+        return;
+    }
+    gSave_camera[pIndex].zoom = gCamera_zoom;
+    gSave_camera[pIndex].yaw = gCamera_yaw;
+    gSave_camera[pIndex].saved = 1;
+}
 
 // RestoreCameraPosition
 

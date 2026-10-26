@@ -12,6 +12,7 @@ extern tCar_spec* gCar_to_view;
 extern tU32 gCar_to_view_id;
 extern int gCamera_reset;
 extern int gCamera_sign;
+extern br_scalar gCamera_zoom;
 extern br_angle gCamera_yaw;
 extern br_scalar gCamera_height;
 extern br_vector3 gView_direction;
