@@ -452,6 +452,10 @@ br_actor* gSelf;
 // GLOBAL: CARMA2_HW 0x00762128
 br_pixelmap* gRender_screen;
 
+// GLOBAL: CARMA2_HW 0x00762130
+// GLOBAL: CARMA2_SW 0x00758690
+int gInitial_powerup_slots[3];
+
 // GLOBAL: CARMA2_HW 0x0075b940
 br_actor* gRearview_camera;
 

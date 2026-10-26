@@ -7,10 +7,22 @@
 #include "globvars.h"
 #include "globvrpb.h"
 
+#include "rec2_macros.h"
+
 #include "c2_stdio.h"
 #include "c2_string.h"
 
-// MaxOutAPO
+// FUNCTION: CARMA2_HW 0x00502e00
+// FUNCTION: CARMA2_SW 0x004fe750
+void C2_HOOK_FASTCALL MaxOutAPO(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gInitial_powerup_slots) != 3);
+    for (i = 0; i < (int)REC2_ASIZE(gInitial_powerup_slots); i++) {
+        gProgram_state.current_car.power_up_levels[i] = gInitial_powerup_slots[i];
+        gProgram_state.current_car.power_up_slots[i] = gInitial_powerup_slots[i];
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00502e20
 void C2_HOOK_FASTCALL ImprovePSPowerup(tCar_spec* pCar, int pIndex) {
