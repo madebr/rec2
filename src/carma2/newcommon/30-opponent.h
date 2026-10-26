@@ -74,7 +74,7 @@ extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOppone
 
 // ProcessCompleteRace
 
-// StartRecordingTrail
+extern void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee);
 
 // RecordNextTrailNode
 
