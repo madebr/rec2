@@ -252,7 +252,20 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 // CycleSoundDetailLevel
 
-// CycleCarSimplificationLevel
+// FUNCTION: CARMA2_HW 0x00444820
+// FUNCTION: CARMA2_SW 0x00444900
+void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void) {
+    const char* src;
+    char* dst;
+
+    gCar_simplification_level++;
+    gCar_simplification_level = gCar_simplification_level % 5u;
+    src = GetMiscString(eMiscString_car_simplification_level_D);
+    dst = BrMemAllocate(strlen(src) + 21, kMem_simp_level);
+    sprintf(dst, src, gCar_simplification_level);
+    NewTextHeadupSlot(4, 0, 2000, -4, dst);
+    BrMemFree(dst);
+}
 
 // FUNCTION: CARMA2_HW 0x004448a0
 // FUNCTION: CARMA2_SW 0x00444980
