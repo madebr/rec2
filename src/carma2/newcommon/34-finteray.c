@@ -232,6 +232,7 @@ int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_ve
 // ShapeRayCastWithSphere
 
 // FUNCTION: CARMA2_HW 0x004618e0
+// FUNCTION: CARMA2_SW 0x00461380
 tFace_ref* C2_HOOK_FASTCALL CastRayDownThruFaces(br_vector3* pPosition, tFace_ref* pFaces, int pCount, br_scalar pOffset, br_vector3* pCollision_position) {
     br_vector3 direction;
     br_vector3 position;
