@@ -11,6 +11,10 @@
 #include "globvars.h"
 
 
+// GLOBAL: CARMA2_HW 0x00655f40
+// GLOBAL: CARMA2_SW 0x00650d50
+br_scalar gCamera_zoom = 0.2f;
+
 // GLOBAL: CARMA2_HW 0x0074c7b0
 br_actor* gCamera_list[2];
 
