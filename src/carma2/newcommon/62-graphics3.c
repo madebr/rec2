@@ -28,6 +28,7 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x006593a0
+// GLOBAL: CARMA2_SW 0x00653d88
 const int gArrows[2][4][60] = {
     {
         // inner arrow (=fill)
@@ -230,6 +231,7 @@ void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
 // OppositeColour
 
 // FUNCTION: CARMA2_HW 0x00495a00
+// STUB: CARMA2_SW 0x00492400
 void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3* pPos, br_uint_32 pColour) {
     int colours[2];
     int colour;
