@@ -342,7 +342,7 @@ extern void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk);
 
-// ApplyEndMyBend
+extern void C2_HOOK_FASTCALL ApplyEndMyBend(tPipe_chunk** pChunk);
 
 // ApplyShrapnelShower
 
