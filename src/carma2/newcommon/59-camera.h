@@ -72,7 +72,7 @@ extern int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime);
 
 extern void C2_HOOK_FASTCALL SaveCameraPosition(int pIndex);
 
-// RestoreCameraPosition
+extern void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex);
 
 // DrVector3RotateY
 
