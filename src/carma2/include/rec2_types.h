@@ -4405,7 +4405,7 @@ typedef struct {
 
 typedef struct {
     int count;
-    undefined field_0x4[0x30];
+    br_vector3 points[4];
     float field_0x34;
     br_vector3 field_0x38;
 } tQueued_drone_crush_item;
