@@ -576,11 +576,17 @@ tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromID(tPlayer_ID pPlayer) {
     return NULL;
 }
 
-// STUB: CARMA2_HW 0x004a6960
-// STUB: CARMA2_SW 0x004a2ae0
+// FUNCTION: CARMA2_HW 0x004a6960
+// FUNCTION: CARMA2_SW 0x004a2ae0
 tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer) {
+    tNet_game_player_info* player;
 
-    NOT_IMPLEMENTED();
+    player = NetPlayerFromID(pPlayer);
+    if (player != NULL) {
+        return player->car;
+    } else {
+        return NULL;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004a69b0
