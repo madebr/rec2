@@ -299,6 +299,11 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 
 // ResetCarScreens
 
+// FUNCTION: CARMA2_HW 0x0041f3b0
+// FUNCTION: CARMA2_SW 0x0041f430
+void C2_HOOK_FASTCALL SwapCar(void) {
+}
+
 // FUNCTION: CARMA2_HW 0x0041f3c0
 // FUNCTION: CARMA2_SW 0x0041f440
 void C2_HOOK_FASTCALL AdjustDownForce(void) {
