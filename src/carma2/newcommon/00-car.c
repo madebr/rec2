@@ -158,7 +158,52 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // MoveAndCollideNonCar
 
-// ControlCar2
+// FUNCTION: CARMA2_HW 0x00417180
+// FUNCTION: CARMA2_SW 0x004171b0
+void C2_HOOK_FAKE_THISCALL ControlCar2(tCar_spec* pCar, void* pUnused, br_scalar pDt) {
+    br_scalar time_steps;
+
+    (void)pUnused;
+    pCar->acc_force = 0.0f;
+    if (pCar->keys.acc) {
+        pCar->acc_force = 7.0f * pCar->collision_info->M;
+    }
+    if (pCar->keys.dec) {
+        pCar->acc_force = -(7.0f * pCar->collision_info->M);
+    }
+    if (pCar->keys.left) {
+        if (pCar->turn_speed < 0.0f) {
+            pCar->turn_speed = 0.0f;
+        }
+        if (pCar->curvature < 0.0f) {
+            pCar->turn_speed = (float)(pCar->turn_speed + 0.01 * pDt / 0.04f / 2.0);
+        } else {
+            time_steps = pDt / 0.04f;
+            pCar->turn_speed += time_steps * (0.05f / (5.0f + BrVector3Length(&pCar->collision_info->v))) / 2.0f;
+        }
+    }
+    if (pCar->keys.right) {
+        if (pCar->turn_speed > 0.0f) {
+            pCar->turn_speed = 0.0f;
+        }
+        if (pCar->curvature > 0.0f) {
+            pCar->turn_speed = (float)(pCar->turn_speed - 0.01 * pDt / 0.04f / 2.0);
+        } else {
+            time_steps = pDt / 0.04f;
+            pCar->turn_speed -= time_steps * (0.05f / (5.0f + BrVector3Length(&pCar->collision_info->v))) / 2.0f;
+        }
+    }
+    if (!pCar->keys.left && !pCar->keys.right) {
+        pCar->turn_speed = 0.0f;
+    }
+    pCar->curvature += pCar->turn_speed;
+    if (pCar->curvature > pCar->maxcurve) {
+        pCar->curvature = pCar->maxcurve;
+    }
+    if (pCar->curvature < -pCar->maxcurve) {
+        pCar->curvature = -pCar->maxcurve;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004173b0
 // FUNCTION: CARMA2_SW 0x004173e0
