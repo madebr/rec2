@@ -1122,6 +1122,8 @@ int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size) {
 // FUNCTION: CARMA2_SW 0x0046e170
 int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange) {
 
+    C2_HOOK_ASSERT(pRange > 0);
+
     while (pIndex < 0) {
         pIndex += pRange;
     }
