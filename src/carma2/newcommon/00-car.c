@@ -345,7 +345,17 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 
 // MungeCarGraphics
 
-// TurnOffNonGroovers
+// FUNCTION: CARMA2_HW 0x0041f280
+// FUNCTION: CARMA2_SW 0x0041f300
+intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData) {
+    tUser_crush_data* crush_data = pActor->user;
+
+    (void)pData;
+    if (crush_data != NULL && crush_data->groove == NULL) {
+        pActor->type = BR_ACTOR_NONE;
+    }
+    return 0;
+}
 
 // DoLODCarModels
 
