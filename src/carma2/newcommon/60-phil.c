@@ -97,6 +97,19 @@ int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffe
 
 // SizeOfObjectNetworkStuff
 
+// FUNCTION: CARMA2_HW 0x0049c5e0
+// FUNCTION: CARMA2_SW 0x00498760
+int C2_HOOK_STDCALL FloatToFixedFraction(float pValue, float pMin, float pMax) {
+    if (pValue > pMax) {
+        pValue = pMax;
+    }
+    if (pValue < pMin) {
+        pValue = pMin;
+    }
+    pValue = ((pValue - pMin) / (pMax - pMin)) * 65534.f;
+    return (int)(pValue + .5f);
+}
+
 // WriteObjectNetworkStuff
 
 // FUNCTION: CARMA2_HW 0x0049cd00
