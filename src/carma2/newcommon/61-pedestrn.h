@@ -514,7 +514,7 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // DisposeAllBonerData
 
-// SetCharacterBoneModel
+extern int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index, int pModel_index, int pModel_set);
 
 // SetCharacterBoneModelP
 

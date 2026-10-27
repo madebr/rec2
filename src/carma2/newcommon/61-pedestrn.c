@@ -676,7 +676,47 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* p
 
 // DisposeAllBonerData
 
-// SetCharacterBoneModel
+// FUNCTION: CARMA2_HW 0x0040b420
+// FUNCTION: CARMA2_SW 0x0040b410
+int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index, int pModel_index, int pModel_set) {
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pCharacter->personality->bones[0].models) != 4);
+
+    if (pModel_index >= (int)REC2_ASIZE(pCharacter->personality->bones[0].models)
+            || pBone_index >= pCharacter->personality->form->count_bones
+            || pBone_index < 0
+            || pCharacter->field_0x4 < 0) {
+        return 0;
+    }
+    if (pModel_index < 0) {
+        br_actor* actor;
+        br_model* old_model;
+        int i;
+
+        actor = pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index];
+        old_model = actor->model;
+        for (i = 0; i < (int)REC2_ASIZE(pCharacter->personality->bones[pBone_index].models); i++) {
+            if (pCharacter->personality->bones[pBone_index].models[i].models[pCharacter->field_0xa] == old_model) {
+                break;
+            }
+        }
+        if (i == REC2_ASIZE(pCharacter->personality->bones[pBone_index].models)) {
+            i = 0;
+        }
+        actor->model = pCharacter->personality->bones[pBone_index].models[i].models[pModel_set];
+        pCharacter->field_0xa = (tS8)pModel_set;
+    } else {
+        br_model* model;
+
+        pCharacter->field_0xa = (tS8)pModel_set;
+        model = pCharacter->personality->bones[pBone_index].models[pModel_index].models[pCharacter->field_0xa];
+        if (model == NULL) {
+            return 0;
+        }
+        pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index]->model = model;
+    }
+    return 1;
+}
 
 // SetCharacterBoneModelP
 
