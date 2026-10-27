@@ -39,7 +39,7 @@ extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
 // ApplyTimeSpec
 
-// FindShrapnelFragment
+extern tSmash_vertex* C2_HOOK_FASTCALL FindShrapnelFragment(br_model* pModel, tU32 pId, int pPriority);
 
 // SetShrapnelFragment
 
