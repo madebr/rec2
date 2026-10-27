@@ -121,7 +121,7 @@ extern void C2_HOOK_FASTCALL TDamageDriver(void);
 
 // SetFlipUpCar
 
-// AlignChildren
+extern void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info);
 
 // FlipUpCar
 

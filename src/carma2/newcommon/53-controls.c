@@ -187,7 +187,26 @@ void C2_HOOK_FASTCALL TDamageDriver(void) {
 
 // SetFlipUpCar
 
-// AlignChildren
+
+// FUNCTION: CARMA2_HW 0x00442e10
+// FUNCTION: CARMA2_SW 0x00442ef0
+void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info) {
+    tPhysics_object* child;
+
+    for (child = pCollision_info->child; child != NULL; child = child->next) {
+        int i;
+        int j;
+
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                child->transform_matrix.m[i][j] = pCollision_info->transform_matrix.m[i][j];
+            }
+        }
+        BrVector3SetFloat(&child->v, 0.f, 0.f, 0.f);
+        BrVector3SetFloat(&child->omega, 0.f, 0.f, 0.f);
+        AlignChildren(child);
+    }
+}
 
 // FlipUpCar
 
