@@ -329,7 +329,7 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 // Joystick_BackupSettings
 
-// Controls_JoystickToggle
+extern int C2_HOOK_FASTCALL Controls_JoystickToggle(tFrontend_spec* pFrontend);
 
 // Controls_JoystickDpadToggle
 
@@ -339,7 +339,7 @@ extern void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider);
 
 extern void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider);
 
-// DisplayJoystickSettings
+extern void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec* pFrontend);
 
 // SaveAllJoystickData
 
