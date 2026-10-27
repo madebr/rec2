@@ -10,6 +10,7 @@
 
 #include "15-displays.h"
 #include "22-replay.h"
+#include "23-piping.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
@@ -20,6 +21,8 @@
 #include "globvrpb.h"
 
 #include "c2_stdio.h"
+
+#include <math.h>
 
 // GLOBAL: CARMA2_HW 0x00763500
 int gCunning_stunt_bonus[3];
@@ -134,7 +137,17 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // PrepareCars
 
-// CalcGraphicalWheelStuff
+// FUNCTION: CARMA2_HW 0x004157e0
+// FUNCTION: CARMA2_SW 0x00415810
+void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar) {
+
+    pCar->steering_angle = (br_scalar)BrRadianToDegree(atan((pCar->wpos[0].v[2] - pCar->wpos[2].v[2]) * (pCar->field_0x1260 + pCar->curvature)));
+    pCar->lr_sus_position = (br_scalar)((pCar->wpos[0].v[1] - pCar->oldd[0]) / 6.9);
+    pCar->rr_sus_position = (br_scalar)((pCar->wpos[1].v[1] - pCar->oldd[1]) / 6.9);
+    pCar->lf_sus_position = (br_scalar)((pCar->wpos[2].v[1] - pCar->oldd[2]) / 6.9);
+    pCar->rf_sus_position = (br_scalar)((pCar->wpos[3].v[1] - pCar->oldd[3]) / 6.9);
+    PipeSingleGraphicalWheelStuff(pCar);
+}
 
 // FinishCars
 

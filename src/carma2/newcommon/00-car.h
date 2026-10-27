@@ -57,7 +57,7 @@ extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 // PrepareCars
 
-// CalcGraphicalWheelStuff
+extern void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 // FinishCars
 
