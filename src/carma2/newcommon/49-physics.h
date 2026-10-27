@@ -23,6 +23,8 @@ extern int gPhysics_other_buffer_capacity;
 extern br_actor* gPed_limbed_actors[30];
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
+extern int gFace_count;
+extern tFace_ref gFace_list__car[300];
 
 // count
 
