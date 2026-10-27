@@ -14,6 +14,10 @@
 
 extern br_vector3 gRender_bounds_centre;
 
+extern int gCurrent_selected_drone;
+
+extern tDrone_spec* gDrone_specs;
+
 // DoNotDprintf
 
 // CrappyLittleVector3DPrintf
@@ -170,7 +174,7 @@ extern void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
 extern int C2_HOOK_FASTCALL OKToViewDrones(void);
 
-// GetCurrentViewDroneMat
+extern br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
 
 // GetCurrentViewDroneDirection
 

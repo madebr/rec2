@@ -16,6 +16,14 @@
 // GLOBAL: CARMA2_SW 0x0067c800
 br_vector3 gRender_bounds_centre;
 
+// GLOBAL: CARMA2_HW 0x006844f8
+// GLOBAL: CARMA2_SW 0x0067ec38
+int gCurrent_selected_drone;
+
+// GLOBAL: CARMA2_HW 0x00684504
+// GLOBAL: CARMA2_SW 0x0067ec44
+tDrone_spec* gDrone_specs;
+
 // GLOBAL: CARMA2_HW 0x00684518
 int gTraffic_disabled;
 
@@ -267,7 +275,11 @@ int C2_HOOK_FASTCALL OKToViewDrones(void) {
     return 0;
 }
 
-// GetCurrentViewDroneMat
+// FUNCTION: CARMA2_HW 0x00452690
+// FUNCTION: CARMA2_SW 0x00452420
+br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void) {
+    return &gDrone_specs[gCurrent_selected_drone].actor->t.t.mat;
+}
 
 // GetCurrentViewDroneDirection
 
