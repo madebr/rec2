@@ -537,7 +537,18 @@ float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_vector3
 
 // LimitImpactScale
 
-// GetImpactScale
+// FUNCTION: CARMA2_HW 0x00436850
+// FUNCTION: CARMA2_SW 0x00436880
+float C2_HOOK_FASTCALL GetImpactScale(const br_vector3* pP, int pCount, const br_vector3* pVertices, float pMax_dist_sq) {
+    float dist_sq;
+
+    dist_sq = DistSq(pP, pCount, pVertices);
+    if (dist_sq > gMax_crush_dist_sq) {
+        return 0.0f;
+    } else {
+        return 1.0f - (float)sqrt(dist_sq / pMax_dist_sq);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042d0e0
 int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq) {
