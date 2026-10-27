@@ -25,6 +25,7 @@ extern tDR_font* gTrans_fonts[2];
 extern int gTranslation_count;
 extern tFlic_spec gMain_flic_list[372];
 extern int gPalette_fuck_prevention;
+extern int gDark_mode;
 extern int gTransparency_on;
 extern int gPlay_from_disk;
 extern int gPanel_flic_disable;
@@ -36,6 +37,8 @@ extern int C2_HOOK_FASTCALL TranslationMode(void);
 extern void C2_HOOK_FASTCALL DontLetFlicFuckWithPalettes(void);
 
 extern void C2_HOOK_FASTCALL LetFlicFuckWithPalettes(void);
+
+extern void C2_HOOK_STDCALL PlayFlicsInDarkness(void);
 
 extern void C2_HOOK_FASTCALL TurnFlicTransparencyOn(void);
 
