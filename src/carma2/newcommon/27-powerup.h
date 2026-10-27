@@ -32,6 +32,7 @@ extern float gMass_mine;
 extern int gInstant_handbrake;
 extern int gInventory_cycling;
 extern tU32 gInventory_timeout;
+extern tU32* gReal_render_palette;
 
 // GetNextGoodyTime
 
@@ -283,7 +284,7 @@ extern int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* pPowerup, tCar_spec* pCar
 
 extern void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar);
 
-// PukeDrugsBackUp
+extern void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetOpponentsSpeed
 
