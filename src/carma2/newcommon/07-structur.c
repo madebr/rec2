@@ -21,11 +21,13 @@
 // GLOBAL: CARMA2_SW 0x00650d30
 int gHud_tinted1 = -1;
 
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x00655e4c
 int gHud_tinted2 = -1;
 
 // GLOBAL: CARMA2_HW 0x00655e50
 int gHud_tinted3 = -1;
+#endif
 
 // GLOBAL: CARMA2_HW 0x00762140
 // GLOBAL: CARMA2_SW 0x007586a0
@@ -74,6 +76,7 @@ void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00503270
+// FUNCTION: CARMA2_SW 0x004febc0
 void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
     (void)pCheckpoint_index;
 

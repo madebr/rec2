@@ -84,6 +84,7 @@ void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
 }
 
 // FUNCTION: CARMA2_HW 0x004761e0
+// FUNCTION: CARMA2_SW 0xCalcProximities
 br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData) {
     tFunkotronic_spec* the_funk;
     br_face* the_face;
@@ -196,6 +197,7 @@ void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, in
 #endif
 
 // FUNCTION: CARMA2_HW 0x00478c00
+// FUNCTION: CARMA2_SW 0x00478160
 void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
     tGroovidelic_spec* the_groove;
     float f_the_time;
@@ -214,6 +216,7 @@ void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b0e0
+// FUNCTION: CARMA2_SW 0x0047a640
 void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor) {
     tGroovidelic_spec* the_groove;
     int i;
@@ -260,6 +263,7 @@ void C2_HOOK_FASTCALL EnableGroovidelic(br_actor* pActor, tU32 pBlock_flags) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b1a0
+// FUNCTION: CARMA2_SW 0x0047a700
 void C2_HOOK_FASTCALL SetGrooveInterrupt(int pIndex, const br_matrix34* pMatrix, tInterrupt_status pPath_interrupt_status, tInterrupt_status pObject_interrupt_status, float pPath_resumption_value, float pObject_resumption_value) {
     tGroovidelic_spec* the_groove;
 
@@ -310,6 +314,7 @@ void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b280
+// FUNCTION: CARMA2_SW 0x0047a7e0
 void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex) {
     gFunkotronics_array[pIndex].flags &= ~0x1;
     PipeSingleFunkEnable(pIndex, 1);
@@ -322,11 +327,13 @@ void C2_HOOK_FASTCALL MasterDisableFunkotronic(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b2e0
+// FUNCTION: CARMA2_SW 0x0047a840
 void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pIndex) {
     gFunkotronics_array[pIndex].flags &= ~0x2;
 }
 
 // FUNCTION: CARMA2_HW 0x0047b310
+// FUNCTION: CARMA2_SW 0x0047a870
 void C2_HOOK_FASTCALL AdjustFunkEnable(int pIndex, tS16 pFlags) {
     if (pFlags != 0) {
         EnableFunkotronic(pIndex);

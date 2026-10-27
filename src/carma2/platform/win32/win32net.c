@@ -113,6 +113,7 @@ void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051a010
+// FUNCTION: CARMA2_SW 0x00513af0
 void C2_HOOK_FASTCALL NetNowIPXLocalTarget2String(char* pString, struct sockaddr* pSock_addr) {
 
     sprintf(pString,
@@ -408,6 +409,7 @@ int C2_HOOK_FASTCALL ReceiveHostResponses(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00519ab0
+// FUNCTION: CARMA2_SW 0x00513590
 int C2_HOOK_FASTCALL PDNetGetNextJoinGame(tNet_game_details* pGame, int pIndex) {
     static tU32 next_broadcast_time = 0;
     int i;
@@ -455,6 +457,7 @@ int C2_HOOK_FASTCALL PDNetGetHeaderSize(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051a0a0
+// FUNCTION: CARMA2_SW 0x00513b80
 int C2_HOOK_FASTCALL PDNetJoinGame(tNet_game_details* pGame_details, const char* pName) {
 
     dr_dprintf("PDNetJoinGame()");
@@ -462,12 +465,14 @@ int C2_HOOK_FASTCALL PDNetJoinGame(tNet_game_details* pGame_details, const char*
 }
 
 // FUNCTION: CARMA2_HW 0x0051a0c0
+// FUNCTION: CARMA2_SW 0x00513ba0
 void C2_HOOK_FASTCALL PDNetHostFinishGame(void) {
 
     dr_dprintf("PDNetHostFinishGame()");
 }
 
 // FUNCTION: CARMA2_HW 0x0051a0b0
+// FUNCTION: CARMA2_SW 0x00513b90
 void C2_HOOK_FASTCALL PDNetLeaveGame(void) {
 
     dr_dprintf("PDNetLeaveGame()");

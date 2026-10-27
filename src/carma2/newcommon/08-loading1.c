@@ -74,8 +74,10 @@ const tU8 gOther_long_key[16] = {
 // GLOBAL: CARMA2_SW 0x00759aa0
 int gFunk_groove_flags[30];
 
+#ifdef REC2_SW
 // GLOBAL: CARMA2_SW 0x00795220
 br_pixelmap* gCursors[8];
+#endif
 
 // FUNCTION: CARMA2_HW 0x0048f830
 // FUNCTION: CARMA2_SW 0x0048caa0

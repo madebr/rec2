@@ -19,6 +19,7 @@
 #endif
 
 // GLOBAL: CARMA2_HW 0x006815c8
+// GLOBAL: CARMA2_SW 0x0067bd08
 br_resource_class gStainless_classes[126];
 
 // GLOBAL: CARMA2_HW 0x005937e8

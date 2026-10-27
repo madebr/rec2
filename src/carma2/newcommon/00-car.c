@@ -495,6 +495,7 @@ void C2_HOOK_FASTCALL AdjustDownForce(void) {
 // CheckForDeAttachmentOfNonCars
 
 // FUNCTION: CARMA2_HW 0x004207e0
+// FUNCTION: CARMA2_SW 0x00420860
 void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix) {
     tU8 column_x;
     tU8 column_z;
@@ -515,11 +516,13 @@ void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix)
 // GetPrecalculatedFacesUnderCar
 
 // FUNCTION: CARMA2_HW 0x004208f0
+// FUNCTION: CARMA2_SW 0x00420970
 void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_FACES;
 }
 
 // FUNCTION: CARMA2_HW 0x00420900
+// FUNCTION: CARMA2_SW 0x00420980
 void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_NONE;
 }

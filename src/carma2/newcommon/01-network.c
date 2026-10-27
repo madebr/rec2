@@ -192,6 +192,7 @@ void C2_HOOK_FASTCALL ReenableNetService(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049d400
+// FUNCTION: CARMA2_SW 0x00499580
 int C2_HOOK_FASTCALL PermitNetServiceReentrancy(void) {
 
     if (gIn_net_service) {
@@ -202,15 +203,22 @@ int C2_HOOK_FASTCALL PermitNetServiceReentrancy(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049d420
+// FUNCTION: CARMA2_SW 0x004995a0
 void C2_HOOK_FASTCALL HaltNetServiceReentrancy(void) {
 
     gIn_net_service = 1;
 }
 
+// STUB: CARMA2_HW 0x0049d430
+// STUB: CARMA2_SW 0x004995b0
 // NetSendHeadupToAllPlayers
 
+// STUB: CARMA2_HW 0x0049d780
+// STUB: CARMA2_SW 0x00499900
 // NetSendHeadupToEverybody
 
+// STUB: CARMA2_HW 0x0049daf0
+// STUB: CARMA2_SW 0x00499c70
 // NetSendHeadupToPlayer
 
 // InitialisePlayerStati
@@ -233,6 +241,7 @@ void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void) {
 }
 
 // STUB: CARMA2_HW 0x0049ec70
+// STUB: CARMA2_SW 0x0049adf0
 void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
 
     if (gTime_for_next_one) {

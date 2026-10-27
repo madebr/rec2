@@ -60,6 +60,7 @@ tU32 gLast_tick_count;
 char gCurrent_load_directory[256];
 
 // FUNCTION: CARMA2_HW 0x00513400
+// FUNCTION: CARMA2_SW 0x0050e840
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     br_device *dev;
 
@@ -146,6 +147,7 @@ int C2_HOOK_FASTCALL PercentageChance(int pC) {
 }
 
 // FUNCTION: CARMA2_HW 0x00513580
+// FUNCTION: CARMA2_SW 0x0050e9c0
 int C2_HOOK_FASTCALL IRandomPosNeg(int pN) {
 
     return IRandomBetween(-pN, pN);
@@ -377,6 +379,7 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbf
 }
 
 // FUNCTION: CARMA2_HW 0x005147b0
+// FUNCTION: CARMA2_SW 0x0050fbf0
 intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg) {
 
     if (pActor->identifier != NULL && strcmp(pActor->identifier, (const char*)pArg) == 0) {
@@ -394,6 +397,7 @@ br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char
 }
 
 // FUNCTION: CARMA2_HW 0x00514800
+// FUNCTION: CARMA2_SW 0x0050fc40
 br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_material* pMat, recurse_with_mat_cbfn* pCall_back, void* pArg) {
     br_uint_32 result;
 
@@ -414,6 +418,7 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_mater
 }
 
 // FUNCTION: CARMA2_HW 0x00514850
+// FUNCTION: CARMA2_SW 0x0050fc90
 br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_matrix34* pMatrix, recurse_with_trans_cbfn* pCall_back, void* pArg) {
     br_uint_32 result;
     br_matrix34 combined_transform;
@@ -436,9 +441,12 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_mat
     return 0;
 }
 
+// STUB: CARMA2_HW 0x005148c0
+// STUB: CARMA2_SW 0x0050fd00
 // DRActorEnumRecurseWithSnart
 
 // FUNCTION: CARMA2_HW 0x00514930
+// FUNCTION: CARMA2_SW 0x0050fd70
 int C2_HOOK_FASTCALL sign(int pNumber) {
 
     if (pNumber > 0) {
@@ -451,6 +459,7 @@ int C2_HOOK_FASTCALL sign(int pNumber) {
 }
 
 // FUNCTION: CARMA2_HW 0x005149a0
+// FUNCTION: CARMA2_SW 0x0050fde0
 FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
     int index;
     FILE* f;

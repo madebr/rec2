@@ -50,6 +50,7 @@ int C2_HOOK_CDECL DRStdioGetChr(void* f) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044c6c0
+// FUNCTION: CARMA2_SW 0x0044c470
 br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f) {
 
     PFfgets(buf, buf_len, f);

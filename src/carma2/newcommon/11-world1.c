@@ -48,6 +48,7 @@ br_uint_32 C2_HOOK_FASTCALL DeleteBastards(br_actor* pActor, br_matrix34* pMatri
 // DeleteAnyZeroBastards
 
 // FUNCTION: CARMA2_HW 0x005072b0
+// FUNCTION: CARMA2_SW 0x00502700
 br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pMatrix, void* pArg) {
     int i;
     br_vector3 temp_point;
@@ -68,6 +69,7 @@ br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pM
 // FindSpecVolIndex
 
 // FUNCTION: CARMA2_HW 0x005074d0
+// FUNCTION: CARMA2_SW 0x00502920
 void C2_HOOK_FASTCALL MungeMaterialSV(br_matrix34* pMat, br_material* pMat_1, br_material* pMat_2, int pAxis_0, int pAxis_1) {
     pMat_1->map_transform.m[0][0] = 6.f * BrVector3Length((br_vector3*)pMat->m[pAxis_0]);
     pMat_1->map_transform.m[1][1] = 6.f * BrVector3Length((br_vector3*)pMat->m[pAxis_1]);

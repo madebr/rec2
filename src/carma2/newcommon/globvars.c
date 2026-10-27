@@ -286,7 +286,6 @@ br_actor* gHUD_root;
 // GLOBAL: CARMA2_SW 0x007434e8
 br_actor* gHUD_camera;
 
-
 // GLOBAL: CARMA2_HW 0x0074ca34
 br_actor* gLine_actor;
 
@@ -295,7 +294,6 @@ br_model* gLine_model;
 
 // GLOBAL: CARMA2_HW 0x0074ca4c
 br_material* gLine_material;
-
 
 // GLOBAL: CARMA2_HW 0x0074cf30
 br_model* gBlend_model;

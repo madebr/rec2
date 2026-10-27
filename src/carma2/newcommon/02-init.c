@@ -12,6 +12,7 @@
 #include "04-netgame.h"
 #include "05-drmem.h"
 #include "07-structur.h"
+#include "08-loading1.h"
 #include "09-funks.h"
 #include "10-loading2.h"
 #include "13-crush1.h"
@@ -98,20 +99,30 @@ tSlot_info gInitial_APO_potential[3];
 tSlot_info gMax_APO[3];
 
 // GLOBAL: CARMA2_HW 0x0068d8e0
-br_pixelmap* gLit_up_stat;
+// GLOBAL: CARMA2_SW 0x00687938
+br_pixelmap* gLit_op_stat_bloc;
 
 
 // FUNCTION: CARMA2_HW 0x0047d880
+// FUNCTION: CARMA2_SW 0x0047da40
 void C2_HOOK_FASTCALL Modify2DCopyPixelmaps(void) {
     int i;
     int pixel_type;
 
     pixel_type = gBack_screen->type;
+#ifdef REC2_SW
+    for (i = 0; i < (int)REC2_ASIZE(gCursors); i++) {
+        BRPM_convert(gCursors[i], pixel_type);
+    }
+#endif
     for (i = 0; i < (int)REC2_ASIZE(gFonts); i++) {
         BRPM_convert(gFonts[i].images, pixel_type);
     }
     BRPM_convert(gIcons_pix, pixel_type);
-    BRPM_convert(gLit_up_stat, pixel_type);
+#ifdef REC2_SW
+    BRPM_convert(gIcons_low_pix, pixel_type);
+#endif
+    BRPM_convert(gLit_op_stat_bloc, pixel_type);
 }
 
 // SetupFFBValues
@@ -215,6 +226,7 @@ void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047db30
+// FUNCTION: CARMA2_SW 0x0047ddb0
 void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void) {
     br_camera* camera_ptr;
     float width;
@@ -234,6 +246,7 @@ void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047dc30
+// FUNCTION: CARMA2_SW 0x0047de40
 void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
     int index;
     int x_diff;
@@ -252,6 +265,7 @@ void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
         x_diff = width / 18 & ~0x3;
         height = gGraf_specs[gGraf_spec_index].total_height;
         y_diff = height / 18 & ~0x1;
+#ifdef REC2_HW
         if (gNo_render_indent) {
             gProgram_state.current_render_left = 0;
             gProgram_state.current_render_top = 0;
@@ -263,6 +277,13 @@ void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
             gProgram_state.current_render_top = gRender_indent * y_diff;
             gProgram_state.current_render_bottom = height - gRender_indent * y_diff;
         }
+#endif
+#ifdef REC2_SW
+        gProgram_state.current_render_left = gRender_indent * x_diff;
+        gProgram_state.current_render_top = gRender_indent * y_diff;
+        gProgram_state.current_render_right = width - gRender_indent * x_diff;
+        gProgram_state.current_render_bottom = height - gRender_indent * y_diff;
+#endif
     }
 }
 

@@ -1250,6 +1250,7 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048e9e0
+// FUNCTION: CARMA2_SW 0x0048bc80
 void C2_HOOK_FASTCALL InitFunkGrooveFlags(void) {
     int i;
 

@@ -47,6 +47,7 @@ void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, i
 // DistanceBetweenCars
 
 // FUNCTION: CARMA2_HW 0x00498370
+// FUNCTION: CARMA2_SW 0x00494fa0
 int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pShapes, int pPlayer_id) {
     int i;
 
@@ -77,6 +78,7 @@ int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pSh
 // ReceivedMechanics
 
 // FUNCTION: CARMA2_HW 0x00498bb0
+// FUNCTION: CARMA2_SW 0x004957e0
 void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 }
 
@@ -270,6 +272,7 @@ void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
 // NetSendEnvironmentChanges
 
 // STUB: CARMA2_HW 0x0049b9a0
+// STUB: CARMA2_SW 0x00497b20
 void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
     NOT_IMPLEMENTED();
 }

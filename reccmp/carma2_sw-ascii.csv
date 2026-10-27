@@ -323,6 +323,7 @@ address,type,x-text
 0x58ab14,string,"Oooh no. I can't split that sort of shape, Mrs Jabberwok."
 0x58ab50,string,"Oh my goodness, there's a lot of vertices on that model."
 0x58ab8c,string,"Well stone the crows, there's a lot of vertices on that model."
+0x58abcc,string,"NaN"
 0x58abd0,string,"Alas, there's a lot of vertices on that model."
 0x58ac00,string,"TotallyRepairACar() - Point 12"
 0x58ac20,string,"TotallyRepairACar() - Point 11"
