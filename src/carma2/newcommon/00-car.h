@@ -175,7 +175,7 @@ extern void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 // SetTextureBits
 
-// MungeSomeOtherCarGraphics
+extern void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void);
 
 // MungeCarGraphics
 
