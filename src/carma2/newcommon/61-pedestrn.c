@@ -44,6 +44,10 @@ int gExploding_pedestrians;
 // GLOBAL: CARMA2_HW 0x0069b9f0
 tNapalm_bolt gNapalm_bolts[5];
 
+// GLOBAL: CARMA2_HW 0x00694490
+// GLOBAL: CARMA2_SW 0x0068e4e8
+int gPed_nearness;
+
 // GLOBAL: CARMA2_HW 0x007447a8
 int gDancing_peds;
 
@@ -382,7 +386,12 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // FindNearestPed
 
-// ResetPedNearness
+// FUNCTION: CARMA2_HW 0x004d6390
+// FUNCTION: CARMA2_SW 0x004d2990
+void C2_HOOK_FASTCALL ResetPedNearness(void) {
+
+    gPed_nearness = 1;
+}
 
 // PedPreCollisionStuff
 
