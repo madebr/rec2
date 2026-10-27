@@ -530,7 +530,7 @@ extern int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pChara
 
 // DismemberCharacter
 
-// GetClearanceFromCharacterInstance
+extern float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance* pCharacter, int pMoveNum);
 
 // VectorScaleVector
 

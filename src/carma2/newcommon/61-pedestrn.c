@@ -690,7 +690,15 @@ int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter) {
 
 // DismemberCharacter
 
-// GetClearanceFromCharacterInstance
+// FUNCTION: CARMA2_HW 0x0040bae0
+// FUNCTION: CARMA2_SW 0x0040bad0
+float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance* pCharacter, int pMoveNum) {
+
+    if (pMoveNum < 0 || pMoveNum > pCharacter->personality->form->count_moves) {
+        BrFailure("MoveNum out of range in GetClearance()");
+    }
+    return pCharacter->personality->moves[pMoveNum].grounding_offset;
+}
 
 // VectorScaleVector
 
