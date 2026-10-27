@@ -11,6 +11,7 @@
 #include "00-car.h"
 #include "15-displays.h"
 #include "17-world2.h"
+#include "27-powerup.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "69-sound.h"
@@ -214,7 +215,12 @@ void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info) {
 
 // FlipUpCar
 
-// GetPowerup
+// FUNCTION: CARMA2_HW 0x00442e80
+// FUNCTION: CARMA2_SW 0x00442f60
+void C2_HOOK_FASTCALL GetPowerup(int pNum) {
+
+    GotPowerup(&gProgram_state.current_car, pNum);
+}
 
 // CheckSystemKeys
 
