@@ -141,7 +141,14 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // MakeActorRenderable
 
-// StopActorBeingRenderable
+// FUNCTION: CARMA2_HW 0x004cbca0
+// FUNCTION: CARMA2_SW 0x004c83a0
+void C2_HOOK_FASTCALL StopActorBeingRenderable(br_actor* pActor) {
+
+    if (pActor->parent != NULL) {
+        BrActorRemove(pActor);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004cbcc0
 int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
