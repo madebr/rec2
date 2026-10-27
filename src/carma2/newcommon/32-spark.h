@@ -235,7 +235,7 @@ extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
 // ClearSplashReplay
 
-// GetSplashIndex
+extern void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject);
 
 // ClearSplashes
 
