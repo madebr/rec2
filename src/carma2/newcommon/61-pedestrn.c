@@ -667,7 +667,12 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* p
 
 // SetCharacterAllBonesModel
 
-// GetCharacterBoneModel
+// FUNCTION: CARMA2_HW 0x0040b570
+// FUNCTION: CARMA2_SW 0x0040b560
+br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index) {
+
+    return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index]->model;
+}
 
 // FUNCTION: CARMA2_HW 0x0040b590
 // FUNCTION: CARMA2_SW 0x0040b580
