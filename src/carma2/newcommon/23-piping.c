@@ -10,6 +10,7 @@
 
 #include "00-car.h"
 #include "16-graphics1.h"
+#include "32-spark.h"
 #include "51-smash.h"
 #include "69-sound.h"
 #include "globvars.h"
@@ -633,7 +634,17 @@ void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk) {
 
 // ApplySmoke
 
-// ApplySmokeColumn
+// FUNCTION: CARMA2_HW 0x004c9280
+// FUNCTION: CARMA2_SW 0x004c59b0
+void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke_column, vertex, 0x10);
+
+    AdjustSmokeColumn((*pChunk)->subject_index & 0x3fff,
+        &((tPipe_chunk_smoke_column*)(*pChunk)->data.raw_data)->core,
+        ((tPipe_chunk_smoke_column*)(*pChunk)->data.raw_data)->vertex,
+        (*pChunk)->subject_index >> 14);
+}
 
 // ApplyFlame
 
