@@ -321,7 +321,34 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
     }
 }
 
-// CrushLimitNumber
+// FUNCTION: CARMA2_HW 0x0042b4c0
+// FUNCTION: CARMA2_SW 0x0042b550
+tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid) {
+    int number;
+    int i;
+    int mi;
+    int ma;
+
+    *pInvalid = 1;
+    number = 0;
+    for (i = REC2_ASIZE(pPoint->v) - 1; i >= 0; i--) {
+        for (mi = 0; mi < pCount_limits->counts[i][1] - 1; mi++) {
+            if (pPoint->v[i] < pLimits->limits[i][1].values[mi]) {
+                *pInvalid = 0;
+                break;
+            }
+        }
+        number = (number << 2) | mi;
+        for (ma = 0; ma < pCount_limits->counts[i][0] - 1; ma++) {
+            if (pLimits->limits[i][0].values[ma] < pPoint->v[i]) {
+                *pInvalid = 0;
+                break;
+            }
+        }
+        number = (number << 2) | ma;
+    }
+    return (tU16)number;
+}
 
 // SoftnessOfNearestPointCB
 
