@@ -10,6 +10,7 @@
 
 #include "08-loading1.h"
 #include "32-spark.h"
+#include "39-oil.h"
 #include "41-utility.h"
 #include "50-fog.h"
 #include "globvars.h"
@@ -137,7 +138,14 @@ void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec) {
 
 // DoAward
 
-// DoSpillage
+// FUNCTION: CARMA2_HW 0x004ecc40
+// FUNCTION: CARMA2_SW 0x004e8910
+void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor) {
+    QueueOilSpill2(NULL, pActor, pActor->model, pSlick->field_0x0,
+        pSlick->field_0x4, pSlick->field_0x8, pSlick->field_0xc, pSlick->field_0x10,
+        pSlick->field_0x14, pSlick->field_0x20, pSlick->field_0x24, pSlick->field_0x18,
+        pSlick->field_0x1c, pSlick->material, pSlick->material2);
+}
 
 // DoSpecial
 
