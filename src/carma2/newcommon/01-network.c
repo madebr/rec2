@@ -17,6 +17,8 @@
 
 #include "rec2_macros.h"
 
+#include "c2_string.h"
+
 #include <stdlib.h>
 
 // GLOBAL: CARMA2_HW 0x0068d95c
@@ -417,7 +419,49 @@ int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tNet_mess
     }
 }
 
-// NetSendMessageToAllPlayers
+// FUNCTION: CARMA2_HW 0x0049f2c0
+// FUNCTION: CARMA2_SW 0x0049b440
+int C2_HOOK_FASTCALL NetSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage) {
+    int i;
+    int size;
+    tNet_game_player_info* player;
+    tNet_message* message;
+    void* contents;
+
+    C2_HOOK_BUG_ON(sizeof(tNet_message_header) != 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents, 0x18);
+
+    size = pMessage->header.field_0x16 - sizeof(tNet_message_header);
+    pMessage->contents.raw.header.size = size;
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (i != gThis_net_player_index) {
+            player = &gNet_players[i];
+            if (player == &gNet_players[gThis_net_player_index]) {
+                PDFatalError("Trying to send network message to self");
+            }
+            message = player->field_0xcc;
+            if (message != NULL && message->header.field_0x16 + size > 512) {
+                NetReallySendMessageToPlayer(gCurrent_net_game, message, player->ID);
+                message = NULL;
+                player->field_0xcc = NULL;
+            }
+            if (message == NULL) {
+                message = NetAllocateMessage(512);
+                player->field_0xcc = message;
+                message->header.field_0x16 = sizeof(tNet_message_header);
+                message->header.field_0x14 = 0;
+            }
+            contents = (char*)message + message->header.field_0x16;
+            message->header.field_0x14++;
+            message->header.field_0x16 += size;
+            if (contents != NULL) {
+                memcpy(contents, &pMessage->contents, size);
+            }
+        }
+    }
+    NetDisposeMessage(pDetails, pMessage);
+    return 0;
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
