@@ -632,7 +632,16 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* p
 
 // CharacterNoLongerCollideworthy
 
-// SetObjectV
+// FUNCTION: CARMA2_HW 0x00409300
+// FUNCTION: CARMA2_SW 0x00409300
+void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vector3* pV) {
+    tPhysics_object* child;
+
+    BrVector3Copy(&pObject->v, pV);
+    for (child = pObject->child; child != NULL; child = child->next) {
+        SetObjectV(child, pV);
+    }
+}
 
 // SetObjectOmega
 
