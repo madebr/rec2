@@ -13,6 +13,8 @@
 #include "rec2_types.h"
 
 extern br_vector3 gRender_bounds_centre;
+extern int gINT_00681fb0;
+extern int gFrame;
 
 extern int gCurrent_selected_drone;
 
@@ -160,7 +162,7 @@ extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 extern void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
-// DronePreCollisionStuff
+extern void C2_HOOK_FASTCALL DronePreCollisionStuff(void);
 
 // DoDronePerGameFrameStuff
 
