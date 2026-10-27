@@ -256,7 +256,12 @@ int C2_HOOK_FASTCALL GetRecoverVoucherCount(void) {
 
 // AddVouchers
 
-// ResetRecoveryVouchers
+// FUNCTION: CARMA2_HW 0x00444710
+// FUNCTION: CARMA2_SW 0x004447f0
+void C2_HOOK_FASTCALL ResetRecoveryVouchers(void) {
+
+    gRecovery_voucher_count = 0;
+}
 
 // CycleYonFactor
 

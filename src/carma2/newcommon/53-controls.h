@@ -162,7 +162,7 @@ extern int C2_HOOK_FASTCALL GetRecoverVoucherCount(void);
 
 // AddVouchers
 
-// ResetRecoveryVouchers
+extern void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 
 // CycleYonFactor
 
