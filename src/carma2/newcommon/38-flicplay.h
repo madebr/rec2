@@ -32,6 +32,7 @@ extern void* gPalette_pixels;
 extern br_pixelmap* gPalette;
 extern tTranslation_record* gTranslations;
 extern tFlic_descriptor gPanel_flic[2];
+extern br_pixelmap* gPanel_buffer[2];
 extern tDR_font* gTrans_fonts[2];
 extern int gTranslation_count;
 extern tFlic_spec gMain_flic_list[372];
@@ -118,6 +119,8 @@ extern int C2_HOOK_FASTCALL FlicQueueFinished(void);
 extern void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval);
 
 extern void C2_HOOK_FASTCALL FlushFlicQueue(void);
+
+extern void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex);
 
 extern void C2_HOOK_FASTCALL LoadInterfaceStrings(void);
 

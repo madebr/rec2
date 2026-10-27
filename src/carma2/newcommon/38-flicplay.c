@@ -126,6 +126,10 @@ tTranslation_record* gTranslations;
 // GLOBAL: CARMA2_SW 0x00680958
 tFlic_descriptor gPanel_flic[2];
 
+// GLOBAL: CARMA2_HW 0x00686320
+// GLOBAL: CARMA2_SW 0x00680a60
+br_pixelmap* gPanel_buffer[2];
+
 // GLOBAL: CARMA2_HW 0x006861e0
 tDR_font* gTrans_fonts[2];
 
@@ -983,6 +987,16 @@ void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
 // STUB: CARMA2_HW 0x00462dc0
 void C2_HOOK_FASTCALL FlushFlicQueue(void) {
     NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004630b0
+// FUNCTION: CARMA2_SW 0x00462b40
+void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex) {
+
+    EndFlic(&gPanel_flic[pIndex]);
+    BrMemFree(gPanel_buffer[pIndex]->pixels);
+    BrPixelmapFree(gPanel_buffer[pIndex]);
+    gPanel_buffer[pIndex] = NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x00463340
