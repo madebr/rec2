@@ -13,6 +13,7 @@
 #include "rec2_types.h"
 
 extern int gShade_list[16];
+extern tSmash_vertex gSmash_glass_fragments[200];
 extern int* gShade_table;
 extern int gNum_dust_tables;
 extern int gSpark_flags;
