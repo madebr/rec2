@@ -11,10 +11,14 @@
 #include <c2_hooks.h>
 #include "00-car.h"
 #include "08-loading1.h"
+#include "13-crush1.h"
+#include "41-utility.h"
 #include "60-phil.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
+
+#include "c2_stdio.h"
 
 #include <string.h>
 
@@ -317,7 +321,37 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
 
 // OpponentRepairNecessary
 
-// PossiblyRepairOpponent
+// FUNCTION: CARMA2_HW 0x004ad910
+// FUNCTION: CARMA2_SW 0x004a9a80
+void C2_HOOK_FASTCALL PossiblyRepairOpponent(tOpponent_spec* pOpponent_spec) {
+    int i;
+    tDamage_unit* damage;
+    char message[256];
+    char headup[256];
+
+    if (((tU16)pOpponent_spec->car_spec->car_ID >> 8) != eVehicle_rozzer
+            && gTime_stamp_for_this_munging > pOpponent_spec->next_repair_check
+            && pOpponent_spec->cheating
+            && pOpponent_spec->current_objective != eOOT_levitate
+            && pOpponent_spec->current_objective != eOOT_knackered_and_freewheeling
+            && !pOpponent_spec->car_spec->knackered) {
+        pOpponent_spec->next_repair_check = IRandomBetween(0, 2000) + 3000 + gTime_stamp_for_this_munging;
+        if (pOpponent_spec->car_spec->last_time_we_touched_a_player + pOpponent_spec->repair_interval < gTime_stamp_for_this_munging) {
+            for (i = 0, damage = pOpponent_spec->car_spec->damage_units; i < (int)REC2_ASIZE(pOpponent_spec->car_spec->damage_units); i++, damage++) {
+                if (i != eDamage_driver && damage != NULL) {
+                    DoNotDprintf("*** Opponent %d, REPAIRING, timestamp %d", pOpponent_spec->car_spec->driver_name, gTime_stamp_for_this_munging);
+                    TotallyRepairACar(pOpponent_spec->car_spec);
+                    sprintf(message, "%s %s", pOpponent_spec->car_spec->driver_name, GetMiscString(273));
+                    strcpy(headup, message);
+                    pOpponent_spec->repair_interval = IRandomBetween(gMinTimeOpponentRepair, gMaxTimeOpponentRepair) * 60000;
+                    pOpponent_spec->last_repair_time = gTime_stamp_for_this_munging;
+                    DoNotDprintf("*** Opponent %s, repair_interval is %d", pOpponent_spec->car_spec->driver_name, pOpponent_spec->repair_interval);
+                    return;
+                }
+            }
+        }
+    }
+}
 
 // DisplayOpponentRecoveringHeadup
 

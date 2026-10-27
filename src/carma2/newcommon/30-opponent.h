@@ -126,7 +126,7 @@ extern void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
 
 // OpponentRepairNecessary
 
-// PossiblyRepairOpponent
+extern void C2_HOOK_FASTCALL PossiblyRepairOpponent(tOpponent_spec* pOpponent_spec);
 
 // DisplayOpponentRecoveringHeadup
 
