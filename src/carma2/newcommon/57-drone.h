@@ -15,15 +15,15 @@
 extern br_vector3 gRender_bounds_centre;
 extern int gINT_00681fb0;
 extern int gFrame;
-
 extern int gCurrent_selected_drone;
 extern int gCount_drones;
 extern tDrone_form gDrone_forms[64];
 extern int gCount_drone_forms;
 extern int gCount_drone_path_nodes;
-
 extern tDrone_spec* gDrone_specs;
 extern tDrone_path_node* gDrone_path_nodes;
+extern int gCount_drones;
+extern int gCurrent_selected_drone;
 
 // DoNotDprintf
 
@@ -180,6 +180,8 @@ extern void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec* pDrone);
 // MoveMyDroneBaby
 
 // DroneLookWhereYoureGoingYouBlindCunt
+
+extern void C2_HOOK_FASTCALL SelectNextDrone(void);
 
 extern int C2_HOOK_FASTCALL OKToViewDrones(void);
 
