@@ -95,7 +95,7 @@ extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pAc
 
 // CalculateReferencePoints
 
-// InitModelCrushDataCB
+extern intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* pActor, void* pData);
 
 // InitModelCrushData
 

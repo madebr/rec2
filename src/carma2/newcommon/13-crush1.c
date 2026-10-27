@@ -376,7 +376,49 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br
 
 // CalculateReferencePoints
 
-// InitModelCrushDataCB
+// FUNCTION: CARMA2_HW 0x0042be20
+// FUNCTION: CARMA2_SW 0x0042beb0
+intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush_data;
+    tCar_crush_detach_data* detach_data;
+
+    user_crush_data = pActor->user;
+    if (user_crush_data != NULL && user_crush_data->models[0] != NULL
+            && user_crush_data->crush_data != NULL && (detach_data = user_crush_data->crush_data->detach_data) != NULL) {
+        tUser_crush_data* parent_user_crush_data;
+        br_model* model;
+        br_model* parent_model;
+        tU16 i;
+        float d_min, d_max;
+        br_vector3 min_v, max_v;
+
+        model = user_crush_data->models[0];
+        parent_user_crush_data = pActor->parent->user;
+        parent_model = parent_user_crush_data->models[0];
+        d_max = d_min = BR_SCALAR_MAX;
+        BrMatrix34ApplyP(&min_v, &model->bounds.min, &pActor->t.t.mat);
+        BrMatrix34ApplyP(&max_v, &model->bounds.max, &pActor->t.t.mat);
+
+        for (i = 0; i < parent_model->nvertices; i++) {
+            float d;
+            br_vector3 delta;
+
+            BrVector3Sub(&delta, &min_v, &parent_model->vertices[i].p);
+            d = BrVector3LengthSquared(&delta);
+            if (d < d_min) {
+                detach_data->min_vertex = i;
+                d_min = d;
+            }
+            BrVector3Sub(&delta, &max_v, &parent_model->vertices[i].p);
+            d = BrVector3LengthSquared(&delta);
+            if (d < d_max) {
+                detach_data->max_vertex = i;
+                d_max = d;
+            }
+        }
+    }
+    return 0;
+}
 
 // InitModelCrushData
 
