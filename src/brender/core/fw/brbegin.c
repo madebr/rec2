@@ -18,6 +18,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x006b09b4
+// GLOBAL: CARMA2_SW 0x006aa140
 br_boolean active;
 
 // FUNCTION: CARMA2_HW 0x0052cf20

@@ -31,6 +31,7 @@ br_error C2_HOOK_CDECL AddRequestedDrivers(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00528490
+// FUNCTION: CARMA2_SW 0x00523b10
 br_error C2_HOOK_STDCALL devAdd(br_device** pdev, br_device_begin_fn* dev_begin, const char* args, br_image* image) {
     int i;
     br_device* dev;

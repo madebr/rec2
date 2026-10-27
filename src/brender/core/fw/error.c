@@ -13,6 +13,7 @@
 #include "brender/br_types.h"
 
 // FUNCTION: CARMA2_HW 0x0052fea0
+// FUNCTION: CARMA2_SW 0x0052b540
 br_error C2_HOOK_CDECL BrLastErrorGet(void** valuep) {
 
     *valuep = fw.last_error_value;
@@ -20,6 +21,7 @@ br_error C2_HOOK_CDECL BrLastErrorGet(void** valuep) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052feb0
+// FUNCTION: CARMA2_SW 0x0052b550
 void C2_HOOK_CDECL BrLastErrorSet(br_error type, void* value) {
 
     fw.last_error_type = type;

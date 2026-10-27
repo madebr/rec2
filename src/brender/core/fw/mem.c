@@ -30,6 +30,7 @@ void C2_HOOK_CDECL BrMemFree(void* block) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527610
+// FUNCTION: CARMA2_SW 0x00522cb0
 br_size_t C2_HOOK_CDECL BrMemInquire(br_uint_8 type) {
     br_size_t i;
 
@@ -38,6 +39,7 @@ br_size_t C2_HOOK_CDECL BrMemInquire(br_uint_8 type) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527630
+// FUNCTION: CARMA2_SW 0x00522cd0
 br_int_32 C2_HOOK_CDECL BrMemAlign(br_uint_8 type) {
     br_int_32 i = 0;
 

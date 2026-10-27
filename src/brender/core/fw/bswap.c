@@ -25,6 +25,7 @@ br_uint_32 C2_HOOK_CDECL BrSwap32(br_uint_32 l) {
 }
 
 // FUNCTION: CARMA2_HW 0x005281d0
+// FUNCTION: CARMA2_SW 0x00523870
 br_uint_16 C2_HOOK_CDECL BrSwap16(br_uint_16 s) {
     union { // size: 0x2
         unsigned short s; // @0x0
@@ -37,6 +38,7 @@ br_uint_16 C2_HOOK_CDECL BrSwap16(br_uint_16 s) {
 }
 
 // FUNCTION: CARMA2_HW 0x00528200
+// FUNCTION: CARMA2_SW 0x005238a0
 br_float C2_HOOK_CDECL BrSwapFloat(br_float f) {
     union { // size: 0x4
         br_float f; // @0x0
