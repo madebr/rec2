@@ -8,12 +8,14 @@
 
 #include "62-graphics3.h"
 
+#include "01-network.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
 #include "15-displays.h"
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
@@ -25,6 +27,7 @@
 #include "rec2_macros.h"
 
 #include <limits.h>
+#include <stdio.h>
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x006593a0
@@ -58,6 +61,14 @@ tCar_icon gCar_icons[128];
 
 // GLOBAL: CARMA2_HW 0x0074ab84
 br_actor* gCar_icons_model_actor;
+
+// GLOBAL: CARMA2_HW 0x0068d8c4
+// GLOBAL: CARMA2_SW 0x0068791c
+tCar_spec* gTarget_lock_car_1;
+
+// GLOBAL: CARMA2_HW 0x0068d6f0
+// GLOBAL: CARMA2_SW 0x00687748
+tCar_spec* gTarget_lock_car_2;
 
 // GLOBAL: CARMA2_HW 0x0068d8c8
 int gTarget_lock_enabled;
@@ -191,7 +202,37 @@ tSmashable_race_target gSmashable_race_targets[300];
 
 // CarArrowColour
 
-// ToggleTargetLock
+// FUNCTION: CARMA2_HW 0x004945f0
+// FUNCTION: CARMA2_SW 0x004918f0
+void C2_HOOK_FASTCALL ToggleTargetLock(void) {
+    char name[256];
+    char s[256];
+
+    if (gNet_mode != eNet_mode_none) {
+        if (gCurrent_net_game->type == eNet_game_type_foxy) {
+            return;
+        }
+        if (!gCurrent_net_game->options.show_players_on_map) {
+            return;
+        }
+    }
+    if (gTarget_lock_car_1 == NULL) {
+        NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_no_target_to_lock_onto), 0);
+    } else {
+        gTarget_lock_enabled = !gTarget_lock_enabled;
+        if (gTarget_lock_enabled) {
+            if (gNet_mode != eNet_mode_none) {
+                strcpy(name, NetPlayerFromCar(gTarget_lock_car_2)->player_name);
+            } else {
+                strcpy(name, GetDriverName((tU16)gTarget_lock_car_2->car_ID >> 8, (tU16)gTarget_lock_car_2->car_ID & 0xff));
+            }
+            sprintf(s, "%s %s", GetMiscString(eMiscString_locked_onto), name);
+            NewTextHeadupSlot2(4, 0, 1500, -4, s, 0);
+        } else {
+            NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_target_lock_off), 0);
+        }
+    }
+}
 
 // CycleTargetLock
 
