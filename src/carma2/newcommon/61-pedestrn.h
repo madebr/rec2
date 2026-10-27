@@ -336,6 +336,8 @@ extern void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel);
 
 extern void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_info);
 
+extern void C2_HOOK_FASTCALL BlendifyMaterial100(br_material* pMaterial);
+
 // MutatePed
 
 // FlushAllPedCaches

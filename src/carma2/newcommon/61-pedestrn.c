@@ -10,6 +10,7 @@
 
 #include "10-loading2.h"
 #include "27-powerup.h"
+#include "41-utility.h"
 #include "63-loading3.h"
 #include "69-sound.h"
 #include "brender/brender.h"
@@ -409,6 +410,14 @@ void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel) {
 // FUNCTION: CARMA2_SW 0x004d3190
 void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_info) {
     pCollision_info->flags |= 0x4;
+}
+
+// FUNCTION: CARMA2_HW 0x004d6be0
+// FUNCTION: CARMA2_SW 0x004d31e0
+void C2_HOOK_FASTCALL BlendifyMaterial100(br_material* pMaterial) {
+
+    BlendifyMaterial(pMaterial, 100);
+    BrMaterialUpdate(pMaterial, BR_MATU_ALL);
 }
 
 // MutatePed
