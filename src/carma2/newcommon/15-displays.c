@@ -638,6 +638,8 @@ void C2_HOOK_FASTCALL AwardTime(tU32 pTime) {
 // FUNCTION: CARMA2_HW 0x0044b590
 // FUNCTION: CARMA2_SW 0x0044b720
 void C2_HOOK_FASTCALL AwardTime5(tU32 pTime) {
+    // FIXME: AwardTime should be inlined in matched build
+#ifdef REC2_MATCHING
     char s[256];
     tU32 original_amount;
     tU32 the_time;
@@ -665,6 +667,9 @@ void C2_HOOK_FASTCALL AwardTime5(tU32 pTime) {
         gLast_time_credit_headup = NewTextHeadupSlot2(11, 0, 2000, -2, s, 1);
         gLast_time_earn_time = the_time;
     }
+#else
+    AwardTime(pTime - (pTime + 2) % 5 + 2);
+#endif
 }
 
 // DoTestHeadup
