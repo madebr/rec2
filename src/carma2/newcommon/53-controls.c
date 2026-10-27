@@ -61,6 +61,10 @@ char gString[84];
 // GLOBAL: CARMA2_HW 0x0067c3c8
 char* gAbuse_text[10];
 
+// GLOBAL: CARMA2_HW 0x0067c3f8
+// GLOBAL: CARMA2_SW 0x00676b70
+int gRecovery_voucher_count;
+
 // CompleteRace
 
 // FUNCTION: CARMA2_HW 0x00441490
@@ -263,11 +267,21 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 // ToggleMap
 
-// GetRecoverVoucherCount
+// FUNCTION: CARMA2_HW 0x004446f0
+// FUNCTION: CARMA2_SW 0x004447d0
+int C2_HOOK_FASTCALL GetRecoverVoucherCount(void) {
+
+    return gRecovery_voucher_count;
+}
 
 // AddVouchers
 
-// ResetRecoveryVouchers
+// FUNCTION: CARMA2_HW 0x00444710
+// FUNCTION: CARMA2_SW 0x004447f0
+void C2_HOOK_FASTCALL ResetRecoveryVouchers(void) {
+
+    gRecovery_voucher_count = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00444720
 // FUNCTION: CARMA2_SW 0x00444800

@@ -22,6 +22,7 @@ extern int gHeadup_map_x;
 extern int gHeadup_map_y;
 extern int gHeadup_map_w;
 extern int gHeadup_map_h;
+extern int gRecovery_voucher_count;
 
 // CompleteRace
 
@@ -157,11 +158,11 @@ extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
 // ToggleMap
 
-// GetRecoverVoucherCount
+extern int C2_HOOK_FASTCALL GetRecoverVoucherCount(void);
 
 // AddVouchers
 
-// ResetRecoveryVouchers
+extern void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 
 extern void C2_HOOK_FASTCALL CycleYonFactor(void);
 
