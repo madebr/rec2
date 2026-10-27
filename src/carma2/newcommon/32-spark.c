@@ -8,9 +8,11 @@
 
 #include "32-spark.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "52-errors.h"
 #include "globvars.h"
 #include "rec2_macros.h"
@@ -228,9 +230,28 @@ int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
     }
 }
 
-// STUB: CARMA2_HW 0x004f8f30
+// FUNCTION: CARMA2_HW 0x004f8f30
+// FUNCTION: CARMA2_SW 0x004f45b0
 void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
-    NOT_IMPLEMENTED();
+    br_vector3 direction;
+    br_vector3 position;
+    br_vector3 collision_position;
+    br_vector3 normal;
+    br_scalar t;
+    tFace_ref* face;
+
+    BrVector3Set(&direction, 0.f, -0.5f, 0.f);
+    t = 10.f;
+    BrMatrix34ApplyP(&position, &pCar->collision_info->cmpos, &pCar->collision_info->transform_matrix);
+    face = RayCastThruFaceList2(&position, &direction, &normal, &t, &collision_position,
+        &gFace_list__car[pCar->collision_info->box_face_start],
+        pCar->collision_info->box_face_end - pCar->collision_info->box_face_start);
+    if (face != NULL && face->material != NULL && face->material->colour_map != NULL
+        && face->material->colour_map != pCar->field_0x1960) {
+        pCar->field_0x1960 = face->material->colour_map;
+        PTR_006a82a8 = pCar;
+        ForEveryCarMaterial(pCar, SetPixelmap, 1);
+    }
 }
 
 // DoSolidGraniteThing
