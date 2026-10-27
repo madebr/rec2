@@ -61,6 +61,10 @@ int gPanicking_peds;
 // GLOBAL: CARMA2_HW 0x007059c0
 int gCount_mutant_tail_parts;
 
+// GLOBAL: CARMA2_HW 0x006a0908
+// GLOBAL: CARMA2_SW 0x0069a960
+tPhysics_object* gMutant_tail_first_collision_info;
+
 // GLOBAL: CARMA2_HW 0x00705b78
 float gMass_mutant_tail_link;
 
@@ -758,7 +762,15 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
 
 // DoInitialTail
 
-// UndoInitialTail
+// FUNCTION: CARMA2_HW 0x004e0730
+// FUNCTION: CARMA2_SW 0x004dcc30
+void C2_HOOK_FASTCALL UndoInitialTail(void) {
+    tPhysics_object* collision_info;
+
+    for (collision_info = gMutant_tail_first_collision_info; collision_info != NULL; collision_info = collision_info->child) {
+        collision_info->actor->render_style = BR_RSTYLE_NONE;
+    }
+}
 
 // MayQueuePowerupRespawn
 
