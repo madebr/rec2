@@ -71,6 +71,7 @@ void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int p
 }
 
 // FUNCTION: CARMA2_HW 0x00413d00
+// FUNCTION: CARMA2_SW 0x00413d30
 void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
     DamageUnit(&gProgram_state.current_car, eDamage_engine, pDamage_amount);
     SortOutSmoke(&gProgram_state.current_car);
