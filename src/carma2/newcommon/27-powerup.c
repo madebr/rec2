@@ -240,7 +240,15 @@ int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetPedSize
+// FUNCTION: CARMA2_HW 0x004dc750
+// FUNCTION: CARMA2_SW 0x004d8c50
+int C2_HOOK_FASTCALL SetPedSize(tPowerup* pPowerup, tCar_spec* pCar) {
+    br_vector3 scale;
+
+    BrVector3Set(&scale, pPowerup->float_params[0], pPowerup->float_params[1], pPowerup->float_params[2]);
+    ChangePedScaling(&scale);
+    return pPowerup - gPowerup_array;
+}
 
 // SetPedHeadSize
 

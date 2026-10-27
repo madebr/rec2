@@ -156,7 +156,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 extern int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPedSize
+extern int C2_HOOK_FASTCALL SetPedSize(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPedHeadSize
 
