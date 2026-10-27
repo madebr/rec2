@@ -680,6 +680,7 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* p
 // DismemberCharacter
 
 // FUNCTION: CARMA2_HW 0x0040bae0
+// FUNCTION: CARMA2_SW 0x0040bad0
 float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance* pCharacter, int pMoveNum) {
 
     if (pMoveNum < 0 || pMoveNum > pCharacter->personality->form->count_moves) {
