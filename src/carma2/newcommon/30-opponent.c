@@ -34,6 +34,18 @@ int gMaxTimeOpponentRepair;
 // GLOBAL: CARMA2_HW 0x00691744
 int gNumber_of_cops_before_faffage;
 
+// GLOBAL: CARMA2_HW 0x00691758
+// GLOBAL: CARMA2_SW 0x0068b7b0
+int gNum_of_opponents_completing_race;
+
+// GLOBAL: CARMA2_HW 0x00691740
+// GLOBAL: CARMA2_SW 0x0068b798
+int gNum_of_opponents_getting_near;
+
+// GLOBAL: CARMA2_HW 0x00691718
+// GLOBAL: CARMA2_SW 0x0068b770
+int gNum_of_opponents_pursuing;
+
 // GLOBAL: CARMA2_HW 0x0069175c
 // GLOBAL: CARMA2_SW 0x0068b7b4
 tU8* gBit_per_node;
@@ -281,7 +293,25 @@ void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spe
 
 // LastTwatterAPlayer
 
-// ObjectiveComplete
+// FUNCTION: CARMA2_HW 0x004ace20
+// FUNCTION: CARMA2_SW 0x004a8f90
+void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec) {
+    DoNotDprintf("%s: Objective Completed", pOpponent_spec->car_spec->driver_name);
+    pOpponent_spec->new_objective_required = 1;
+    switch (pOpponent_spec->current_objective) {
+    case eOOT_complete_race:
+        gNum_of_opponents_completing_race--;
+        break;
+    case eOOT_get_near_player:
+        gNum_of_opponents_getting_near--;
+        break;
+    case eOOT_pursue_and_twat:
+        gNum_of_opponents_pursuing--;
+        break;
+    default:
+        break;
+    }
+}
 
 // TeleportOpponentToNearestSafeLocation
 
