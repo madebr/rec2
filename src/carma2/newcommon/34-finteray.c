@@ -256,7 +256,11 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // SphereFaceCollide
 
-// CheckSingleFace
+// STUB: CARMA2_HW 0x0045ecc0
+// STUB: CARMA2_SW 0x0045e730
+void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* pRay_pos, br_vector3* pRay_dir, br_vector3* pNormal, br_scalar* pRt, br_vector3* pColl_pos) {
+    NOT_IMPLEMENTED();
+}
 
 // MultiRayCheckSingleFace
 
