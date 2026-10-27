@@ -31,6 +31,10 @@ int gMinTimeOpponentRepair;
 // GLOBAL: CARMA2_HW 0x0074a688
 int gMaxTimeOpponentRepair;
 
+// GLOBAL: CARMA2_HW 0x0069173c
+// GLOBAL: CARMA2_SW 0x0068b794
+int gActive_car_list_rebuild_required;
+
 // GLOBAL: CARMA2_HW 0x00691744
 int gNumber_of_cops_before_faffage;
 
@@ -308,11 +312,27 @@ void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCo
     }
 }
 
-// RebuildActiveCarList
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// STUB: CARMA2_HW 0x004a7a60
-void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
+// STUB: CARMA2_HW 0x004a7a80
+// STUB: CARMA2_SW 0x004a3bf0
+void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
     NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004a7a60
+// FUNCTION: CARMA2_SW 0x004a3bd0
+void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
+    gActive_car_list_rebuild_required = 1;
+    if (gProgram_state.racing) {
+        RebuildActiveCarList();
+    }
 }
 
 // OpponentRepairNecessary
