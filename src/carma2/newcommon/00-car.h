@@ -103,7 +103,7 @@ extern void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br
 
 // ControlCar4
 
-// ControlCar5
+extern void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* pCar, void* pUnused, br_scalar pDt);
 
 // ControlCar1
 
