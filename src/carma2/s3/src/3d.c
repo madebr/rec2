@@ -334,7 +334,7 @@ int C2_HOOK_FASTCALL S3StartSound3D(tS3_outlet *pOutlet, int pSound, const br_ve
             channel->source_rate = gS3_channel_template.source_rate;
             channel->max_distance_squared = gS3_channel_template.max_distance_squared;
             S3ExecuteSampleFilterFuncs(channel);
-            if (!S3PlaySample(channel)) {
+            if (!S3PlaySample(channel, descriptor)) {
                 channel->needs_service = 1;
                 gS3_last_error = eS3_error_start_sound;
                 return 0;
@@ -507,7 +507,7 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
             channel->needs_service = 0;
             channel->termination_reason = 0;
             S3ExecuteSampleFilterFuncs(channel);
-            if (S3PlaySample(channel) == 0) {
+            if (S3PlaySample(channel, descriptor) == 0) {
                 channel->needs_service = 1;
                 gS3_last_error = eS3_error_start_sound;
                 return 0;

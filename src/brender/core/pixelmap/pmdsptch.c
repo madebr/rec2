@@ -388,6 +388,7 @@ br_error C2_HOOK_STDCALL DispatchRectangleCopy(br_device_pixelmap* self, br_poin
 }
 
 // FUNCTION: CARMA2_HW 0x005384e0
+// FUNCTION: CARMA2_SW 0x00533b80
 br_error C2_HOOK_STDCALL DispatchRectangleStretchCopy(br_device_pixelmap* self, br_rectangle* r, br_device_pixelmap* src, br_rectangle* s) {
 
     CheckDispatch((br_device_pixelmap*)self);

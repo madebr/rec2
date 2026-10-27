@@ -804,7 +804,7 @@ void C2_HOOK_FASTCALL PDEnumPath(const char *path, tEnumPathCallback pCallback, 
                      FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_HIDDEN)) == 0) {
                 lenFilename = strlen(findFileData.cFileName);
                 lenLnk = strlen(".lnk");
-                if (lenFilename > lenLnk && strcasecmp(&findFileData.cFileName[lenFilename - lenLnk], ".lnk") == 0) {
+                if (lenFilename > lenLnk && PDstricmp(&findFileData.cFileName[lenFilename - lenLnk], ".lnk") == 0) {
                     memmove(filePath, findFileData.cFileName, lenFilename - lenLnk);
                     filePath[lenFilename - lenLnk] = '\0';
                 } else {
@@ -1386,6 +1386,12 @@ void C2_HOOK_FASTCALL PDFileDelete(const char *pPath, int pIgnore_read_only) {
         }
     }
     DeleteFileA(pPath);
+}
+
+// FUNCTION: CARMA2_SW 0x0047da1b
+int C2_HOOK_FASTCALL PDstricmp(const char* str1, const char* str2) {
+
+    return strcasecmp(str1, str2);
 }
 
 // FUNCTION: CARMA2_HW 0x0047d860

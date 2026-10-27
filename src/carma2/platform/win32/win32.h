@@ -81,6 +81,8 @@ extern void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void);
 
 extern int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count);
 
+extern int C2_HOOK_FASTCALL PDstricmp(const char* str1, const char* str2);
+
 #ifdef REC2_SW
 extern void C2_HOOK_FASTCALL SSDXStartDirectDraw(void);
 

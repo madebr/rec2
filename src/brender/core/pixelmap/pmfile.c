@@ -75,6 +75,7 @@ br_file_struct br_pixelmap_F = { "br_pixelmap", BR_ASIZE(br_pixelmap_FM), br_pix
 br_file_struct br_old_pixelmap_F = { "br_old_pixelmap", BR_ASIZE(br_old_pixelmap_FM), br_old_pixelmap_FM, sizeof(br_pixelmap) };
 
 // GLOBAL: CARMA2_HW 0x0066d958
+// GLOBAL: CARMA2_SW 0x006680e8
 br_chunks_table_entry PixelmapLoadEntries[5] = {
     { CHUNKID_END, 0u, FopRead_END },
     { CHUNKID_PIXELMAP, 0u, FopRead_PIXELMAP },
@@ -82,7 +83,9 @@ br_chunks_table_entry PixelmapLoadEntries[5] = {
     { CHUNKID_PIXELMAP_ADD_MAP, 0u, FopRead_ADD_MAP },
     { CHUNKID_OLD_PIXELMAP, 0u, FopRead_OLD_PIXELMAP },
 };
+
 // GLOBAL: CARMA2_HW 0x0066d998
+// GLOBAL: CARMA2_SW 0x00668128
 br_chunks_table PixelmapLoadTable = { BR_ASIZE(PixelmapLoadEntries), PixelmapLoadEntries };
 
 int C2_HOOK_STDCALL FopWrite_PIXELMAP(br_datafile* df, br_pixelmap* pixelmap) {
@@ -96,6 +99,7 @@ int C2_HOOK_STDCALL FopWrite_PIXELMAP(br_datafile* df, br_pixelmap* pixelmap) {
 }
 
 // FUNCTION: CARMA2_HW 0x00538da0
+// FUNCTION: CARMA2_SW 0x00534440
 int C2_HOOK_STDCALL FopRead_OLD_PIXELMAP(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_pixelmap* pp;
 
@@ -109,6 +113,7 @@ int C2_HOOK_STDCALL FopRead_OLD_PIXELMAP(br_datafile* df, br_uint_32 id, br_uint
 }
 
 // FUNCTION: CARMA2_HW 0x00538e00
+// FUNCTION: CARMA2_SW 0x005344a0
 int C2_HOOK_STDCALL FopRead_PIXELMAP(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_pixelmap* pp;
 
@@ -145,6 +150,7 @@ static int FopWrite_PIXELS(br_datafile* df, br_pixelmap* pixelmap) {
 }
 
 // FUNCTION: CARMA2_HW 0x00538e60
+// FUNCTION: CARMA2_SW 0x00534500
 int C2_HOOK_STDCALL FopRead_PIXELS(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     int icount;
     br_pixelmap* pp;
@@ -166,6 +172,7 @@ int C2_HOOK_STDCALL FopWrite_ADD_MAP(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00538ec0
+// FUNCTION: CARMA2_SW 0x00534560
 int C2_HOOK_STDCALL FopRead_ADD_MAP(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_pixelmap* pp;
     br_pixelmap* map;
