@@ -8,6 +8,7 @@
 
 #include "27-powerup.h"
 
+#include "01-network.h"
 #include "16-graphics1.h"
 #include "32-spark.h"
 #include "49-physics.h"
@@ -250,7 +251,16 @@ int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// ResetInvulnerability
+// FUNCTION: CARMA2_HW 0x004dc860
+// FUNCTION: CARMA2_SW 0x004d8d60
+void C2_HOOK_FASTCALL ResetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (gNet_mode != eNet_mode_none && NetPlayerFromCar(pCar)->field_0x80 != 0) {
+        return;
+    }
+    pCar->invulnerable_no_crushage = 0;
+    pCar->invulnerable_no_damage = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc8a0
 int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar) {
