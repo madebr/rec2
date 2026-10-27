@@ -77,10 +77,31 @@ void C2_HOOK_FASTCALL ReallyViewOpponent(void) {
 #pragma auto_inline(off)
 #endif
 
-// STUB: CARMA2_HW 0x0040e700
-// STUB: CARMA2_SW 0x0040e6e0
+// FUNCTION: CARMA2_HW 0x0040e700
+// FUNCTION: CARMA2_SW 0x0040e6e0
 void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_cam) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < pCar->count_window_materials; i++) {
+        int internal_map_missing = pInternal_cam;
+
+        if (pInternal_cam) {
+            int j;
+
+            for (j = 0; j < pCar->window_materials[i].count_maps; j++) {
+                if (pCar->window_materials[i].material->colour_map == pCar->window_materials[i].maps[j]) {
+                    internal_map_missing = 0;
+                }
+            }
+            if (internal_map_missing) {
+                pCar->window_materials[i].material->flags &= ~BR_MATF_TWO_SIDED;
+            }
+        }
+        if (!internal_map_missing) {
+            pCar->window_materials[i].material->flags |= BR_MATF_TWO_SIDED;
+        }
+        BrMaterialUpdate(pCar->window_materials[i].material, BR_MATU_RENDERING);
+    }
 }
 
 #ifdef REC2_MATCHING
