@@ -28,33 +28,40 @@ int gFlic_bunch0[29] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00599998
+// GLOBAL: CARMA2_SW 0x005948e0
+
 int gFlic_bunch1[31] = {
     140, 141, 42, 43, 144, 145, 146, 147, 45, 150, 151, 42, 43, 154, 155,
     156, 160, 161, 42, 43, 154, 170, 171, 176, 177, 172, 180, 181, 42, 43, 154
 };
 
 // GLOBAL: CARMA2_HW 0x00599a18
+// GLOBAL: CARMA2_SW 0x00594960
 int gFlic_bunch2[8] = {
     70, 71, 72, 73, 74, 56, 57, 59
 };
 
 // GLOBAL: CARMA2_HW 0x00599a38
+// GLOBAL: CARMA2_SW 0x00594980
 int gFlic_bunch3[13] = {
     40, 41, 42, 43, 44, 45, 50, 51, 73, 74, 56, 57, 59
 };
 
 // GLOBAL: CARMA2_HW 0x00599a70
+// GLOBAL: CARMA2_SW 0x005949b8
 int gFlic_bunch4[22] = {
     80, 81, 82, 83, 84, 85, 42, 43, 88, 45, 110, 111, 42, 43, 45, 115,
     116, 117, 118, 119, 120, 121
 };
 
 // GLOBAL: CARMA2_HW 0x00599ac8
+// GLOBAL: CARMA2_SW 0x00594a10
 int gFlic_bunch5[5] = {
     100, 101, 42, 43, 45
 };
 
 // GLOBAL: CARMA2_HW 0x00599ae0
+// GLOBAL: CARMA2_SW 0x00594a28
 int gFlic_bunch6[51] = {
     190, 191, 192, 42, 43, 195, 200, 201, 210, 212, 213, 220, 221, 222,
     220, 221, 225, 230, 231, 42, 43, 154, 45, 220, 221, 222, 220, 221,
@@ -63,11 +70,13 @@ int gFlic_bunch6[51] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00599bb0
+// GLOBAL: CARMA2_SW 0x00594af8
 int gFlic_bunch7[7] = {
     130, 131, 132, 42, 43, 135, 45
 };
 
 // GLOBAL: CARMA2_HW 0x00599bd0
+// GLOBAL: CARMA2_SW 0x00594b18
 int gFlic_bunch8[16] = {
     290, 291, 292, 293, 294, 295, 296, 297, 42, 43, 154, 301, 42, 43, 304, 305
 };
