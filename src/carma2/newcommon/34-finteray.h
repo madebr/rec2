@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // SphereFaceCollide
 
-extern void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* pRay_pos, br_vector3* pRay_dir, br_vector3* pNormal, br_scalar* pRt, br_vector3* pColl_pos);
+extern void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt, br_vector3* coll_pos);
 
 // MultiRayCheckSingleFace
 

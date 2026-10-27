@@ -258,7 +258,7 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // STUB: CARMA2_HW 0x0045ecc0
 // STUB: CARMA2_SW 0x0045e730
-void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* pRay_pos, br_vector3* pRay_dir, br_vector3* pNormal, br_scalar* pRt, br_vector3* pColl_pos) {
+void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt, br_vector3* coll_pos) {
     NOT_IMPLEMENTED();
 }
 
