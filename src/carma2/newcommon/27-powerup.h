@@ -129,7 +129,7 @@ extern void C2_HOOK_FASTCALL ToggleInventory(void);
 
 // GotPowerup1
 
-// GotPowerup2
+extern void C2_HOOK_FASTCALL GotPowerup2(void);
 
 // GotPowerup3
 
