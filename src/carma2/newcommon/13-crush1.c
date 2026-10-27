@@ -978,7 +978,23 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // TotallySpamTheCar
 
-// DRActorEnumRecurseUltraPlus
+// FUNCTION: CARMA2_HW 0x00435dd0
+// FUNCTION: CARMA2_SW 0x00435e00
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, br_actor_enum_cbfn* pCallback, void* pArg) {
+    intptr_t result;
+    br_actor* actor;
+    br_actor* next;
+
+    actor = pActor;
+    for (pActor = pActor->children; pActor != NULL; pActor = next) {
+        next = pActor->next;
+        result = DRActorEnumRecurseUltraPlus(pActor, pCallback, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return pCallback(actor, pArg);
+}
 
 // FireOffBitsCB
 

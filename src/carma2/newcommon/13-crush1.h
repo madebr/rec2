@@ -373,7 +373,7 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // TotallySpamTheCar
 
-// DRActorEnumRecurseUltraPlus
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, br_actor_enum_cbfn* pCallback, void* pArg);
 
 // FireOffBitsCB
 
