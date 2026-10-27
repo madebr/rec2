@@ -178,7 +178,17 @@ void C2_HOOK_FASTCALL SaveCameraPosition(int pIndex) {
     gSave_camera[pIndex].saved = 1;
 }
 
-// RestoreCameraPosition
+// FUNCTION: CARMA2_HW 0x00410c20
+// FUNCTION: CARMA2_SW 0x00410c00
+void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex) {
+
+    if (gSave_camera[pIndex].saved == 0) {
+        return;
+    }
+    gCamera_zoom = gSave_camera[pIndex].zoom;
+    gCamera_yaw = gSave_camera[pIndex].yaw;
+    gSave_camera[pIndex].saved = 0;
+}
 
 // DrVector3RotateY
 
