@@ -35,6 +35,7 @@ struct {
 
 
 // FUNCTION: CARMA2_HW 0x00540086
+// FUNCTION: CARMA2_SW 0x0053b726
 br_error C2_HOOK_CDECL HostSelectorReal(br_uint_16 *selp) {
 
     *selp = _RealSelector;
@@ -43,6 +44,7 @@ br_error C2_HOOK_CDECL HostSelectorReal(br_uint_16 *selp) {
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053ff34
+// FUNCTION: CARMA2_SW 0x0053b5d4
 __declspec(naked) br_error C2_HOOK_CDECL HostRealAllocate(struct host_real_memory *mem, br_uint_32 size_arg) {
 
     __asm {
@@ -69,6 +71,7 @@ br_error C2_HOOK_CDECL HostRealAllocate(struct host_real_memory *mem, br_uint_32
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053ff51
+// FUNCTION: CARMA2_SW 0x0053b5f1
 __declspec(naked) br_error C2_HOOK_CDECL HostRealFree(struct host_real_memory *mem) {
 
     __asm {
@@ -90,6 +93,7 @@ br_error C2_HOOK_CDECL HostRealFree(struct host_real_memory *mem) {
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053ff5a
+// FUNCTION: CARMA2_SW 0x0053b5fa
 __declspec(naked) br_error C2_HOOK_CDECL HostRealInterruptGet(br_uint_32 vector, br_uint_16 *offp, br_uint_16 *vsegp) {
 
     __asm {
@@ -120,6 +124,7 @@ br_error C2_HOOK_CDECL HostRealInterruptGet(br_uint_32 vector, br_uint_16 *offp,
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053ff7e
+// FUNCTION: CARMA2_SW 0x0053b61e
 __declspec(naked) br_error C2_HOOK_CDECL HostRealInterruptSet(br_uint_32 vector, br_uint_32 voff, br_uint_32 vseg) {
     __asm {
         push    ebp
@@ -146,6 +151,7 @@ br_error C2_HOOK_CDECL HostRealInterruptSet(br_uint_32 vector, br_uint_32 voff, 
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053ff9c
+// FUNCTION: CARMA2_SW 0x0053b63c
 __declspec(naked) br_error C2_HOOK_CDECL HostRealInterruptCall(br_uint_32 vector, union host_regs *regs) {
 
     __asm {

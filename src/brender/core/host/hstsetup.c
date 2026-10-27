@@ -19,7 +19,8 @@
 #include "core/fw/image.h"
 
 // GLOBAL: CARMA2_HW 0x006700a8
-host_info hostInfo = {
+// GLOBAL: CARMA2_SW 0x0066a838
+host_info const hostInfo = {
     sizeof(host_info),
     "Microsoft WIN32",
     0,
@@ -82,6 +83,7 @@ void* functionPointers_BRHOST1[50] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0066fe70
+// GLOBAL: CARMA2_SW 0x0066a600
 const char* namePointers_BRHOST1[50] = {
     "_HostExceptionHook",
     "_HostExceptionUnhook",
@@ -224,8 +226,8 @@ void C2_HOOK_CDECL HostEnd(void) {
     RealSelectorEnd();
 }
 
-// IDA: br_error __cdecl HostInfo(host_info *buffer, br_size_t buffersize)
 // FUNCTION: CARMA2_HW 0x0053faf0
+// FUNCTION: CARMA2_SW 0x0053b190
 br_error C2_HOOK_CDECL HostInfo(host_info* buffer, br_size_t buffersize) {
     br_uint_32 features;
 
