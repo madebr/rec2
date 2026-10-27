@@ -122,7 +122,7 @@ extern void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
 
 // SendGameplay
 
-// SendGameplayToAllPlayers
+extern void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
 
 // SendGameplayToHost
 

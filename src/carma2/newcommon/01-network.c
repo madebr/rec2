@@ -570,7 +570,11 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
     return gNet_players[gThis_net_player_index].player_status;
 }
 
-// NetGuaranteedSendMessageToAllPlayers
+// STUB: CARMA2_HW 0x004a5b50
+// STUB: CARMA2_SW 0x004a1cd0
+int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
+    NOT_IMPLEMENTED();
+}
 
 // NetGuaranteedSendMessageToEverybody
 

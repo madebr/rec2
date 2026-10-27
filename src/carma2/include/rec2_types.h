@@ -5205,6 +5205,15 @@ typedef struct {
 
 typedef struct {
     tNet_message_chunk_header header;
+    tNet_gameplay_mess mess;
+    int param_1;
+    int param_2;
+    int param_3;
+    int param_4;
+} tNet_message_chunk_gameplay;
+
+typedef struct {
+    tNet_message_chunk_header header;
 } tNet_message_guaranteed;
 
 typedef struct {
@@ -5301,6 +5310,7 @@ typedef struct {
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_scores scores; /* type = 0x18 */
+    tNet_message_chunk_gameplay gameplay; /* type = 0x1b */
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
