@@ -11,6 +11,7 @@
 #include "08-loading1.h"
 #include "32-spark.h"
 #include "41-utility.h"
+#include "50-fog.h"
 #include "globvars.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
@@ -223,6 +224,17 @@ void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* p
 // ReadSpillData
 
 // ReadExplosion
+
+// FUNCTION: CARMA2_HW 0x004ef440
+// FUNCTION: CARMA2_SW 0x004eb0a0
+intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* pData) {
+    br_actor** actor_buffer;
+
+    actor_buffer = pData;
+    actor_buffer[gShrapnel_ghost_actor_count] = pActor;
+    gShrapnel_ghost_actor_count += 1;
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004ef460
 // FUNCTION: CARMA2_SW 0x004eb0c0
