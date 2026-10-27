@@ -41,6 +41,10 @@
 // GLOBAL: CARMA2_HW 0x00764eec
 tFrontendMenuType gFrontend_next_menu;
 
+// GLOBAL: CARMA2_HW 0x00764ee8
+// GLOBAL: CARMA2_SW 0x0075b448
+int gFrontend_change_car_selected_car;
+
 // GLOBAL: CARMA2_HW 0x00688b20
 int gFrontend_suppress_mouse;
 
@@ -748,7 +752,13 @@ int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// ChangeCarOK
+// FUNCTION: CARMA2_HW 0x0046b620
+// FUNCTION: CARMA2_SW 0x0046b340
+int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend) {
+
+    gProgram_state.current_car_index = gProgram_state.cars_available[gFrontend_change_car_selected_car];
+    return 0;
+}
 
 // CarClickPrev
 
