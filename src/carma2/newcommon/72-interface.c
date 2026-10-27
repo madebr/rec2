@@ -700,7 +700,59 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 
 // NetJoinChooseThisGame
 
-// ChooseNetCar
+// FUNCTION: CARMA2_HW 0x00468d70
+// FUNCTION: CARMA2_SW 0x00468af0
+int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_options* pOptions, int* pCar_index, int pIm_the_host_so_fuck_off) {
+    int i;
+    int cars[2 * REC2_ASIZE(gCar_details)];
+    int array_size;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(cars) != 120);
+
+    if (!pIm_the_host_so_fuck_off) {
+        return 1;
+    }
+    gNet_options = pOptions;
+    for (i = 0; i < gNumber_of_racers; i++) {
+        switch (gOpponents[i].network_availability) {
+        case eNet_avail_never:
+            gCar_details[i].ownership = eCar_owner_not_allowed;
+            break;
+        case eNet_avail_eagle:
+            if (pOptions->car_choice == eNet_car_all || pOptions->car_choice == eNet_car_eagle) {
+                gCar_details[i].ownership = eCar_owner_none;
+            } else {
+                gCar_details[i].ownership = eCar_owner_not_allowed;
+            }
+            break;
+        case eNet_avail_all:
+            if (pOptions->car_choice == eNet_car_all || pOptions->car_choice == eNet_car_novelty) {
+                gCar_details[i].ownership = eCar_owner_none;
+            } else {
+                gCar_details[i].ownership = eCar_owner_not_allowed;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    array_size = 0;
+    for (i = 0; i < gNumber_of_racers; i++) {
+        if (gCar_details[i].ownership == eCar_owner_none) {
+            cars[array_size] = i;
+            array_size++;
+            if (gOpponents[i].network_availability == eNet_avail_all) {
+                cars[array_size] = i;
+                array_size++;
+            }
+        }
+    }
+    *pCar_index = cars[IRandomBetween(0, array_size - 1)];
+    if (*pCar_index >= 0) {
+        gCar_details[*pCar_index].ownership = eCar_owner_someone;
+    }
+    return 1;
+}
 
 // InitNetStorageSpace
 

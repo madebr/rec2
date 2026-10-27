@@ -24,6 +24,10 @@ int gThis_net_player_index;
 // GLOBAL: CARMA2_HW 0x0074c6d8
 int gPending_race;
 
+// GLOBAL: CARMA2_HW 0x0074c6cc
+// GLOBAL: CARMA2_SW 0x00742d8c
+tNet_game_options* gNet_options;
+
 // GLOBAL: CARMA2_HW 0x0074b800
 tCar_detail_info gCar_details[60];
 
