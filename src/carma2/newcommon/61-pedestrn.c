@@ -9,6 +9,7 @@
 #include "61-pedestrn.h"
 
 #include "10-loading2.h"
+#include "21-mainloop.h"
 #include "27-powerup.h"
 #include "41-utility.h"
 #include "63-loading3.h"
@@ -291,7 +292,11 @@ void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality) {
 
 // CBMovedByPhysics
 
-// GetPedCount
+// FUNCTION: CARMA2_HW 0x004d2c40
+// FUNCTION: CARMA2_SW 0x004cf330
+int C2_HOOK_FASTCALL GetPedCount(void) {
+    return gPed_count;
+}
 
 // GetPedPosition
 

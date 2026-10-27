@@ -232,7 +232,7 @@ extern void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality
 
 // CBMovedByPhysics
 
-// GetPedCount
+extern int C2_HOOK_FASTCALL GetPedCount(void);
 
 // GetPedPosition
 

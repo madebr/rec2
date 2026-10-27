@@ -36,6 +36,10 @@ int gAuto_increase_credits_dt[3];
 // GLOBAL: CARMA2_HW 0x0074b720
 tU32 gNet_auto_increase_credits_dt[8];
 
+// GLOBAL: CARMA2_HW 0x007447d4
+// GLOBAL: CARMA2_SW 0x0073b294
+int gPed_count;
+
 // CalculateFrameRate
 
 // LoseOldestWastedMassage
