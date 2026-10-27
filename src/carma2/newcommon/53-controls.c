@@ -185,13 +185,10 @@ void C2_HOOK_FASTCALL TDamageDriver(void) {
 
 // SetFlipUpCar
 
-// AlignChildren
-
-// FlipUpCar
 
 // FUNCTION: CARMA2_HW 0x00442e10
 // FUNCTION: CARMA2_SW 0x00442ef0
-void C2_HOOK_FASTCALL FlipUpCollisionInfo(tPhysics_object* pCollision_info) {
+void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info) {
     tPhysics_object* child;
 
     for (child = pCollision_info->child; child != NULL; child = child->next) {
@@ -205,9 +202,11 @@ void C2_HOOK_FASTCALL FlipUpCollisionInfo(tPhysics_object* pCollision_info) {
         }
         BrVector3SetFloat(&child->v, 0.f, 0.f, 0.f);
         BrVector3SetFloat(&child->omega, 0.f, 0.f, 0.f);
-        FlipUpCollisionInfo(child);
+        AlignChildren(child);
     }
 }
+
+// FlipUpCar
 
 // GetPowerup
 
