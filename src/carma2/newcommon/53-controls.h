@@ -74,7 +74,7 @@ extern void C2_HOOK_FASTCALL F12Key(void);
 
 // NumberKey9
 
-// LookLeft
+extern void C2_HOOK_FASTCALL LookLeft(void);
 
 // LookForward
 
