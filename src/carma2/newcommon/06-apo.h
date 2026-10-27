@@ -21,7 +21,7 @@ extern void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex);
 
 // BuyArmour
 
-// BuyPower
+extern void C2_HOOK_FASTCALL BuyPower(void);
 
 // BuyOffense
 

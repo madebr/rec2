@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gIt_or_fox;
+
 extern int C2_HOOK_FASTCALL NetInitialise(void);
 
 extern int C2_HOOK_FASTCALL NetShutdown(void);

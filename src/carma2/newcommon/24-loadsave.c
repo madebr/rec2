@@ -14,6 +14,10 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x0068b8e8
+// GLOBAL: CARMA2_SW 0x00685e48
+int gINT_0068b8e8;
+
 // GLOBAL: CARMA2_HW 0x0068b8ec
 int gSave_game_out_of_sync;
 

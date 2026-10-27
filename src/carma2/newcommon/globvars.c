@@ -375,6 +375,10 @@ br_scalar gYon_multiplier = 1.f;
 
 // GLOBAL: CARMA2_HW 0x0068b8e0
 tU32 gI_am_cheating;
+
+// GLOBAL: CARMA2_HW 0x0068b8e4
+// GLOBAL: CARMA2_SW 0x00685e44
+int gINT_0068b8e4;
 //char gNet_player_name[32];
 //br_matrix34 gRearview_camera_to_world;
 //tSpecial_volume gDefault_default_water_spec_vol;
