@@ -83,7 +83,7 @@ extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 // APTCPreCollision
 
-// SetCollisionFlagsAndStuff
+extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject);
 
 // APTCPostCollision
 
