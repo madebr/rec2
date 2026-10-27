@@ -10,6 +10,7 @@
 
 #include "01-network.h"
 #include "30-opponent.h"
+#include "41-utility.h"
 #include "63-loading3.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -230,7 +231,33 @@ void C2_HOOK_FASTCALL CheckForVampireWinner(void) {
 
 // DoNetGameManagement
 
-// InitialisePlayerScore
+// FUNCTION: CARMA2_HW 0x0049b690
+// FUNCTION: CARMA2_SW 0x00497810
+void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
+
+    PossibleService();
+    switch (gCurrent_net_game->type) {
+    case eNet_game_type_fight_to_death:
+        pPlayer->score2 = 100;
+        break;
+    case eNet_game_type_1:
+    case eNet_game_type_2:
+    case eNet_game_type_4:
+    case eNet_game_type_5:
+    case eNet_game_type_6:
+        pPlayer->score2 = 0;
+        break;
+    case eNet_game_type_checkpoint:
+        pPlayer->score2 = 0xffff;
+        break;
+    case eNet_game_type_foxy:
+        pPlayer->score2 = 0;
+        break;
+    }
+    pPlayer->credits = gCurrent_net_game->options.starting_credits;
+    pPlayer->wasted = 0;
+    pPlayer->reposition_time = 0;
+}
 
 // InitPlayers
 

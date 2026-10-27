@@ -108,7 +108,7 @@ extern void C2_HOOK_FASTCALL CheckForVampireWinner(void);
 
 // DoNetGameManagement
 
-// InitialisePlayerScore
+extern void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer);
 
 // InitPlayers
 
