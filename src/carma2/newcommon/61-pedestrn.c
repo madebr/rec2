@@ -8,13 +8,17 @@
 
 #include "61-pedestrn.h"
 
+#include "08-loading1.h"
 #include "10-loading2.h"
 #include "27-powerup.h"
 #include "41-utility.h"
 #include "63-loading3.h"
 #include "69-sound.h"
 #include "brender/brender.h"
+#include "globvars.h"
 #include "rec2_macros.h"
+
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a0414
 const char* gPedsFolder;
@@ -128,7 +132,17 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
     NOT_IMPLEMENTED();
 }
 
-// BonerOpenCharacterForm
+// FUNCTION: CARMA2_HW 0x004cb980
+// FUNCTION: CARMA2_SW 0x004c8080
+FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, gApplication_path, gPedsFolder);
+    PathCat(path, path, "FORMS");
+    PathCat(path, path, pName);
+    strcat(path, ".TXT");
+    return DRfopen(path, "rt");
+}
 
 // BonerOpenDefaultMoves
 
