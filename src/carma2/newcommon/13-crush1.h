@@ -529,7 +529,7 @@ extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vect
 
 // GetNetShapeDataLengthFromData
 
-// EncodeNetShapeData
+extern void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar);
 
 // DecodeNetShapeData
 
