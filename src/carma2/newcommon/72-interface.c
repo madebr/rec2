@@ -10,6 +10,7 @@
 
 #include "01-network.h"
 #include "02-init.h"
+#include "04-netgame.h"
 #include "05-drmem.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
@@ -1986,7 +1987,18 @@ int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
 
 // NetSync_Draw
 
-// NetSync_Start
+// FUNCTION: CARMA2_HW 0x004735a0
+// FUNCTION: CARMA2_SW 0x00472b10
+int C2_HOOK_FASTCALL NetSync_Start(tFrontend_spec* pFrontend) {
+
+    if (gNumber_of_net_players <= 1) {
+        return 0;
+    }
+    SignalToStartRace();
+    gStart_race_sent = 1;
+    gNo_races_yet = 0;
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x004735d0
 // FUNCTION: CARMA2_SW 0x00472b40

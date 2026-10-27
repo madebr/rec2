@@ -383,7 +383,7 @@ extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
 // NetSync_Draw
 
-// NetSync_Start
+extern int C2_HOOK_FASTCALL NetSync_Start(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
