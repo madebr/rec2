@@ -33,7 +33,7 @@ extern int gMap_render_width_i;
 
 extern void C2_HOOK_FASTCALL ToggleTargetLock(void);
 
-// CycleTargetLock
+extern void C2_HOOK_FASTCALL CycleTargetLock(void);
 
 extern void C2_HOOK_FASTCALL CycleMapOptions(void);
 

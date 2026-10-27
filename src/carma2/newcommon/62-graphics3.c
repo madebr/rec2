@@ -234,7 +234,67 @@ void C2_HOOK_FASTCALL ToggleTargetLock(void) {
     }
 }
 
-// CycleTargetLock
+// FUNCTION: CARMA2_HW 0x00494700
+// FUNCTION: CARMA2_SW 0x00491a00
+void C2_HOOK_FASTCALL CycleTargetLock(void) {
+    tVehicle_type category;
+    int i;
+    int car_index;
+    int car_count;
+    tCar_spec* car;
+
+    if (gNet_mode == eNet_mode_none || (gCurrent_net_game->type != eNet_game_type_foxy && gCurrent_net_game->options.show_players_on_map)) {
+        category = gNet_mode != eNet_mode_none ? eVehicle_net_player : eVehicle_opponent;
+        if (gTarget_lock_car_1 == NULL) {
+            if (category == eVehicle_self) {
+                gTarget_lock_car_1 = &gProgram_state.current_car;
+            } else {
+                gTarget_lock_car_1 = GetCarSpec(category, 0);
+            }
+        }
+        if (category == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(category);
+        }
+        for (i = 0;; i++) {
+            if (i >= car_count) {
+                return;
+            }
+            if (category == eVehicle_self) {
+                car = &gProgram_state.current_car;
+            } else {
+                car = GetCarSpec(category, i);
+            }
+            if (car == gTarget_lock_car_1) {
+                break;
+            }
+        }
+        if (i == car_count - 1) {
+            car_index = 0;
+        } else {
+            car_index = i + 1;
+        }
+        do {
+            if (category == eVehicle_self) {
+                car = &gProgram_state.current_car;
+            } else {
+                car = GetCarSpec(category, car_index);
+            }
+            if (car_index == car_count - 1) {
+                car_index = 0;
+            } else {
+                car_index++;
+            }
+        } while ((car != gTarget_lock_car_1 && car->knackered)
+            || (gNet_mode == eNet_mode_none && gCurrent_race.race_spec->race_type == kRaceType_Cars && !car->is_race_goal)
+            || (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_6 && NetPlayerFromCar(car)->field_0x80));
+        gTarget_lock_car_1 = car;
+        gTarget_lock_car_2 = car;
+        gTarget_lock_enabled = 0;
+        ToggleTargetLock();
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00494840
 // FUNCTION: CARMA2_SW 0x00491b40
