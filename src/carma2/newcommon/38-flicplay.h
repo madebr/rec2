@@ -12,6 +12,17 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gFlic_bunch0[29];
+extern int gFlic_bunch1[31];
+extern int gFlic_bunch2[8];
+extern int gFlic_bunch3[13];
+extern int gFlic_bunch4[22];
+extern int gFlic_bunch5[5];
+extern int gFlic_bunch6[51];
+extern int gFlic_bunch7[7];
+extern int gFlic_bunch8[16];
+extern tFlic_bunch gFlic_bunch[9];
+
 extern float gFlic_sound_delay_pre_smack;
 extern float gFlic_sound_delay_post_smack;
 extern float gFlic_sound_delay_not_in_demo;
@@ -97,6 +108,8 @@ extern int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_l
 extern void C2_HOOK_FASTCALL FreeFlic(int pIndex);
 
 extern void C2_HOOK_FASTCALL PreloadBunchOfFlics(int pBunch_index);
+
+extern void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index);
 
 extern void C2_HOOK_FASTCALL InitFlicQueue(void);
 
