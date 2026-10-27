@@ -213,9 +213,9 @@ extern void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void);
 
 // CloneEnvSmash
 
-extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors);
+extern void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash);
 
-// FreeEnvSmash
+extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors);
 
 // DisposeSmashableEnvironment
 
