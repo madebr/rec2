@@ -653,7 +653,20 @@ void C2_HOOK_FASTCALL AddDroneCrush(tQueued_drone_crush_item* pCrush, const br_v
 
 // DoCrushing
 
-// SetCrush
+// FUNCTION: CARMA2_HW 0x0042d770
+// FUNCTION: CARMA2_SW 0x0042d7e0
+void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br_vector3* pVectors, br_vector3* pVector1, br_vector3* pVector2, float pScalar, tU32 pValue) {
+    int i;
+
+    pCrush->count = pCount_vectors;
+    for (i = 0; i < pCount_vectors; i++) {
+        BrVector3Copy(&pCrush->vectors[i], &pVectors[i]);
+    }
+    BrVector3Copy(&pCrush->field_0x34, pVector1);
+    BrVector3Copy(&pCrush->field_0x44, pVector2);
+    pCrush->field_0x40 = pScalar;
+    pCrush->field_0x50 = pValue;
+}
 
 // QueueCarCrush
 
