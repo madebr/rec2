@@ -736,7 +736,16 @@ int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
 
 // MainMenuInfunc
 
-// MainMenuOutfunc
+// FUNCTION: CARMA2_HW 0x00469df0
+// FUNCTION: CARMA2_SW 0x00469b50
+int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend) {
+
+    KillAPOactor(gFrontend_billboard_actors[0]);
+    BrActorFree(gFrontend_menu_camera);
+    gFrontend_menu_camera = NULL;
+    SaveOptions();
+    return 1;
+}
 
 // MainMenuSelectRace
 
