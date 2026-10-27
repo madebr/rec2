@@ -12,7 +12,9 @@
 #include "matrix4.h"
 #include "quat.h"
 
-order_info OrderAxes[32] = {
+// GLOBAL: CARMA2_HW 0x0066cba0
+// GLOBAL: CARMA2_SW 0x00667330
+const order_info OrderAxes[32] = {
     { 0, 1, 2, },
     { 1, 2, 0, },
     { 2, 0, 1, },
@@ -48,6 +50,7 @@ order_info OrderAxes[32] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00531de0
+// FUNCTION: CARMA2_SW 0x0052d480
 br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* euler) {
     br_uint_8 o;
     br_angle ti;
@@ -190,6 +193,7 @@ br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* ma
 }
 
 // FUNCTION: CARMA2_HW 0x00532320
+// FUNCTION: CARMA2_SW 0x0052d9c0
 br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, const br_euler* euler) {
     br_matrix34 tmp;
 
@@ -199,6 +203,7 @@ br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, const br_euler* eule
 }
 
 // FUNCTION: CARMA2_HW 0x00532350
+// FUNCTION: CARMA2_SW 0x0052d9f0
 br_euler* C2_HOOK_CDECL BrMatrix4ToEuler(br_euler* dest, const br_matrix4* mat) {
     br_matrix34 tmp;
 
@@ -207,6 +212,7 @@ br_euler* C2_HOOK_CDECL BrMatrix4ToEuler(br_euler* dest, const br_matrix4* mat) 
 }
 
 // FUNCTION: CARMA2_HW 0x00532380
+// FUNCTION: CARMA2_SW 0x0052da20
 br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, const br_euler* euler) {
     br_uint_8 o;
     br_angle ti;
@@ -275,6 +281,7 @@ br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, const br_euler* euler) {
 }
 
 // FUNCTION: CARMA2_HW 0x005325a0
+// FUNCTION: CARMA2_SW 0x0052dc40
 br_euler* C2_HOOK_CDECL BrQuatToEuler(br_euler* euler, const br_quat* q) {
     br_matrix34 mat;
 

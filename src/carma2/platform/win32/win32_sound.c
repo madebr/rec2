@@ -82,7 +82,7 @@ tU32 gPDS3_last_cda_status_update;
 
 // FUNCTION: CARMA2_SW 0x00583271
 MCIERROR C2_HOOK_STDCALL mciSendCommandA_impl(MCIDEVICEID mciId, UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2) {
-
+    return 0;
 }
 
 // GLOBAL: CARMA2_SW 0x0058423c

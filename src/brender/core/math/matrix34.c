@@ -14,9 +14,11 @@
 
 
 // GLOBAL: CARMA2_HW 0x006b09c0
+// GLOBAL: CARMA2_SW 0x006aa148
 br_matrix34 mattmp1;
 
 // GLOBAL: CARMA2_HW 0x006b09f0
+// GLOBAL: CARMA2_SW 0x006aa178
 br_matrix34 mattmp2;
 
 #define M(x, y) mat->m[x][y]
@@ -90,6 +92,7 @@ void C2_HOOK_CDECL BrMatrix34Identity(br_matrix34* mat) {
 }
 
 // FUNCTION: CARMA2_HW 0x005327f0
+// FUNCTION: CARMA2_SW 0x0052de90
 void C2_HOOK_CDECL BrMatrix34RotateX(br_matrix34* mat, br_angle rx) {
     br_scalar s;
     br_scalar c;
@@ -135,6 +138,7 @@ void C2_HOOK_CDECL BrMatrix34RotateY(br_matrix34* mat, br_angle ry) {
 }
 
 // FUNCTION: CARMA2_HW 0x005328d0
+// FUNCTION: CARMA2_SW 0x0052df70
 void C2_HOOK_CDECL BrMatrix34RotateZ(br_matrix34* mat, br_angle rz) {
     br_scalar s;
     br_scalar c;
@@ -232,6 +236,7 @@ void C2_HOOK_CDECL BrMatrix34Scale(br_matrix34* mat, br_scalar sx, br_scalar sy,
 }
 
 // FUNCTION: CARMA2_HW 0x00532b10
+// FUNCTION: CARMA2_SW 0x0052e1b0
 void C2_HOOK_CDECL BrMatrix34ShearX(br_matrix34* mat, br_scalar sy, br_scalar sz) {
 
     M(0, 0) = 1.f;
@@ -249,6 +254,7 @@ void C2_HOOK_CDECL BrMatrix34ShearX(br_matrix34* mat, br_scalar sy, br_scalar sz
 }
 
 // FUNCTION: CARMA2_HW 0x00532b50
+// FUNCTION: CARMA2_SW 0x0052e1f0
 void C2_HOOK_CDECL BrMatrix34ShearY(br_matrix34* mat, br_scalar sx, br_scalar sz) {
 
     M(0, 0) = 1.f;
@@ -266,6 +272,7 @@ void C2_HOOK_CDECL BrMatrix34ShearY(br_matrix34* mat, br_scalar sx, br_scalar sz
 }
 
 // FUNCTION: CARMA2_HW 0x00532b90
+// FUNCTION: CARMA2_SW 0x0052e230
 void C2_HOOK_CDECL BrMatrix34ShearZ(br_matrix34* mat, br_scalar sx, br_scalar sy) {
 
     M(0, 0) = 1.f;
@@ -394,6 +401,7 @@ void C2_HOOK_CDECL BrMatrix34LPNormalise(br_matrix34* A, const br_matrix34* B) {
 }
 
 // FUNCTION: CARMA2_HW 0x00533100
+// FUNCTION: CARMA2_SW 0x0052e7a0
 void C2_HOOK_CDECL BrMatrix34RollingBall(br_matrix34* mat, int dx, int dy, int radius) {
     br_scalar nx;
     br_scalar ny;
@@ -435,6 +443,7 @@ void C2_HOOK_CDECL BrMatrix34RollingBall(br_matrix34* mat, int dx, int dy, int r
 }
 
 // FUNCTION: CARMA2_HW 0x00533290
+// FUNCTION: CARMA2_SW 0x0052e930
 br_matrix34* C2_HOOK_CDECL BrBoundsToMatrix34(br_matrix34* mat, const br_bounds* bounds) {
     int i;
     br_vector3 tr;
@@ -522,6 +531,7 @@ void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, const br_vector3* B, const br
 }
 
 // FUNCTION: CARMA2_HW 0x00533590
+// FUNCTION: CARMA2_SW 0x0052ec30
 void C2_HOOK_CDECL BrMatrix34TApply(br_vector4* A, const br_vector4* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
@@ -531,6 +541,7 @@ void C2_HOOK_CDECL BrMatrix34TApply(br_vector4* A, const br_vector4* B, const br
 }
 
 // FUNCTION: CARMA2_HW 0x00533620
+// FUNCTION: CARMA2_SW 0x0052ecc0
 void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
 
     // translation elements are presumed zero or irrelevant
@@ -620,6 +631,7 @@ void C2_HOOK_CDECL BrMatrix34PostRotateZ(br_matrix34* mat, br_angle rz) {
 }
 
 // FUNCTION: CARMA2_HW 0x00533d40
+// FUNCTION: CARMA2_SW 0x0052f3e0
 void C2_HOOK_CDECL BrMatrix34PreRotate(br_matrix34* mat, br_angle r, const br_vector3* axis) {
 
     BrMatrix34Rotate(&mattmp2, r, axis);
@@ -628,6 +640,7 @@ void C2_HOOK_CDECL BrMatrix34PreRotate(br_matrix34* mat, br_angle r, const br_ve
 }
 
 // FUNCTION: CARMA2_HW 0x00533d80
+// FUNCTION: CARMA2_SW 0x0052f420
 void C2_HOOK_CDECL BrMatrix34PostRotate(br_matrix34* mat, br_angle r, const br_vector3* axis) {
 
     BrMatrix34Rotate(&mattmp2, r, axis);
@@ -654,6 +667,7 @@ void C2_HOOK_CDECL BrMatrix34PostTranslate(br_matrix34* mat, br_scalar x, br_sca
 }
 
 // FUNCTION: CARMA2_HW 0x00533e90
+// FUNCTION: CARMA2_SW 0x0052f530
 void C2_HOOK_CDECL BrMatrix34PreScale(br_matrix34* mat, br_scalar sx, br_scalar sy, br_scalar sz) {
 
     BrMatrix34Scale(&mattmp2, sx, sy, sz);
@@ -671,6 +685,7 @@ void C2_HOOK_CDECL BrMatrix34PostScale(br_matrix34* mat, br_scalar sx, br_scalar
 }
 
 // FUNCTION: CARMA2_HW 0x00533fd0
+// FUNCTION: CARMA2_SW 0x0052f670
 void C2_HOOK_CDECL BrMatrix34PreShearX(br_matrix34* mat, br_scalar sy, br_scalar sz) {
 
     BrMatrix34ShearX(&mattmp2, sy, sz);
@@ -679,6 +694,7 @@ void C2_HOOK_CDECL BrMatrix34PreShearX(br_matrix34* mat, br_scalar sy, br_scalar
 }
 
 // FUNCTION: CARMA2_HW 0x00534070
+// FUNCTION: CARMA2_SW 0x0052f710
 void C2_HOOK_CDECL BrMatrix34PostShearX(br_matrix34* mat, br_scalar sy, br_scalar sz) {
 
     BrMatrix34ShearX(&mattmp2, sy, sz);
@@ -687,6 +703,7 @@ void C2_HOOK_CDECL BrMatrix34PostShearX(br_matrix34* mat, br_scalar sy, br_scala
 }
 
 // FUNCTION: CARMA2_HW 0x00534110
+// FUNCTION: CARMA2_SW 0x0052f7b0
 void C2_HOOK_CDECL BrMatrix34PreShearY(br_matrix34* mat, br_scalar sx, br_scalar sz) {
 
     BrMatrix34ShearY(&mattmp2, sx, sz);
@@ -695,6 +712,7 @@ void C2_HOOK_CDECL BrMatrix34PreShearY(br_matrix34* mat, br_scalar sx, br_scalar
 }
 
 // FUNCTION: CARMA2_HW 0x005341b0
+// FUNCTION: CARMA2_SW 0x0052f850
 void C2_HOOK_CDECL BrMatrix34PostShearY(br_matrix34* mat, br_scalar sx, br_scalar sz) {
 
     BrMatrix34ShearY(&mattmp2, sx, sz);
@@ -703,6 +721,7 @@ void C2_HOOK_CDECL BrMatrix34PostShearY(br_matrix34* mat, br_scalar sx, br_scala
 }
 
 // FUNCTION: CARMA2_HW 0x00534250
+// FUNCTION: CARMA2_SW 0x0052f8f0
 void C2_HOOK_CDECL BrMatrix34PreShearZ(br_matrix34* mat, br_scalar sx, br_scalar sy) {
 
     BrMatrix34ShearZ(&mattmp2, sx, sy);

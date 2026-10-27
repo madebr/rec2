@@ -18,6 +18,7 @@
 
 
 // FUNCTION: CARMA2_HW 0x00535cd0
+// FUNCTION: CARMA2_SW 0x00531370
 void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, const br_matrix4* B) {
 
     A(0, 0) = B(0, 0);
@@ -61,6 +62,7 @@ void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, const br_matrix4* B, const br_mat
 }
 
 // FUNCTION: CARMA2_HW 0x00535ff0
+// FUNCTION: CARMA2_SW 0x00531690
 void C2_HOOK_CDECL BrMatrix4Identity(br_matrix4* mat) {
 
     M(0, 0) = BR_SCALAR(1.f);
@@ -128,6 +130,7 @@ br_scalar C2_HOOK_CDECL BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B) {
 }
 
 // FUNCTION: CARMA2_HW 0x005367b0
+// FUNCTION: CARMA2_SW 0x00531790
 br_scalar C2_HOOK_STDCALL Determinant3(br_scalar a1, br_scalar a2, br_scalar a3, br_scalar b1, br_scalar b2, br_scalar b3, br_scalar c1, br_scalar c2, br_scalar c3) {
 
     return BR_MAC3(a1, BR_MAC2(b2, c3, -b3, c2),
@@ -136,6 +139,7 @@ br_scalar C2_HOOK_STDCALL Determinant3(br_scalar a1, br_scalar a2, br_scalar a3,
 }
 
 // FUNCTION: CARMA2_HW 0x005360f0
+// FUNCTION: CARMA2_SW 0x00531960
 br_scalar C2_HOOK_CDECL BrMatrix4Determinant(const br_matrix4* mat) {
     br_scalar a1;
     br_scalar a2;
@@ -181,6 +185,7 @@ br_scalar C2_HOOK_CDECL BrMatrix4Determinant(const br_matrix4* mat) {
 }
 
 // FUNCTION: CARMA2_HW 0x005362c0
+// FUNCTION: CARMA2_SW 0x00531e50
 void C2_HOOK_CDECL BrMatrix4Adjoint(br_matrix4* A, const br_matrix4* B) {
     br_scalar a1;
     br_scalar a2;
@@ -269,6 +274,7 @@ void C2_HOOK_CDECL BrMatrix4Perspective(br_matrix4* mat, br_angle field_of_view,
 }
 
 // FUNCTION: CARMA2_HW 0x005368e0
+// FUNCTION: CARMA2_SW 0x00531f80
 void C2_HOOK_CDECL BrMatrix4Apply(br_vector4* A, const br_vector4* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC4(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0), B->v[3], C(3, 0));
@@ -288,6 +294,7 @@ void C2_HOOK_CDECL BrMatrix4ApplyP(br_vector4* A, const br_vector3* B, const br_
 }
 
 // FUNCTION: CARMA2_HW 0x00536a30
+// FUNCTION: CARMA2_SW 0x005320d0
 void C2_HOOK_CDECL BrMatrix4ApplyV(br_vector4* A, const br_vector3* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0));
@@ -297,6 +304,7 @@ void C2_HOOK_CDECL BrMatrix4ApplyV(br_vector4* A, const br_vector3* B, const br_
 }
 
 // FUNCTION: CARMA2_HW 0x00536ac0
+// FUNCTION: CARMA2_SW 0x00532160
 void C2_HOOK_CDECL BrMatrix4TApply(br_vector4* A, const br_vector4* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC4(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2), B->v[3], C(0, 3));
@@ -306,6 +314,7 @@ void C2_HOOK_CDECL BrMatrix4TApply(br_vector4* A, const br_vector4* B, const br_
 }
 
 // FUNCTION: CARMA2_HW 0x00536b70
+// FUNCTION: CARMA2_SW 0x00532210
 void C2_HOOK_CDECL BrMatrix4TApplyP(br_vector4* A, const br_vector3* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2)) + C(0, 3);
@@ -315,6 +324,7 @@ void C2_HOOK_CDECL BrMatrix4TApplyP(br_vector4* A, const br_vector3* B, const br
 }
 
 // FUNCTION: CARMA2_HW 0x00536c10
+// FUNCTION: CARMA2_SW 0x005322b0
 void C2_HOOK_CDECL BrMatrix4TApplyV(br_vector4* A, const br_vector3* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
@@ -368,6 +378,7 @@ void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, const br_matrix34* B, const br_
 }
 
 // FUNCTION: CARMA2_HW 0x00536f30
+// FUNCTION: CARMA2_SW 0x005325d0
 void C2_HOOK_CDECL BrMatrix4Pre34(br_matrix4* A, const br_matrix34* B) {
     br_matrix4 C;
 
@@ -376,6 +387,7 @@ void C2_HOOK_CDECL BrMatrix4Pre34(br_matrix4* A, const br_matrix34* B) {
 }
 
 // FUNCTION: CARMA2_HW 0x00536f60
+// FUNCTION: CARMA2_SW 0x00532600
 void C2_HOOK_CDECL BrMatrix4ShearZ(br_matrix4* mat, br_scalar sx, br_scalar sy) {
 
     M(0, 0) = BR_SCALAR(1.f);
