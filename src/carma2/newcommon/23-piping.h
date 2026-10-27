@@ -452,7 +452,7 @@ extern void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk);
 
 // UndoSplitWeld
 
-// UndoBend
+extern void C2_HOOK_FASTCALL UndoBend(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoUnBend
 
