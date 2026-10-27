@@ -41,6 +41,8 @@ extern void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
 
+extern int C2_HOOK_FASTCALL GameMenuInfunc(tFrontend_spec* pFrontend);
+
 // FindNextActiveItem
 
 extern int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index);
