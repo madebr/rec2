@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_41_UTILITY_H
 #define GUARD_41_UTILITY_H
 
@@ -50,7 +58,7 @@ extern int C2_HOOK_FASTCALL DRLoadMultiplePix(char* pName, br_pixelmap** pMaps, 
 
 extern int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity);
 
-// WaitFor
+extern void C2_HOOK_FASTCALL WaitFor(tU32);
 
 extern intptr_t DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
 
@@ -170,7 +178,7 @@ extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
 extern tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry);
 
-// Colour24BitTo16Bit
+extern tU16 C2_HOOK_FASTCALL Colour24BitTo16Bit(br_colour pColour);
 
 extern br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc);
 
@@ -191,6 +199,8 @@ extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
 
 extern void C2_HOOK_FASTCALL PrintScreen(void);
+
+extern intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
 
 // FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
 

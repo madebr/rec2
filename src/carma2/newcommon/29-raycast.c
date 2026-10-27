@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "29-raycast.h"
 
 #include "globvars.h"
@@ -6,9 +14,37 @@
 // GLOBAL: CARMA2_SW 0x0069c128
 br_actor* gY_picking_camera;
 
+// GLOBAL: CARMA2_HW 0x006a20d4
+// GLOBAL: CARMA2_SW 0x0069c12c
+br_model* gBelow_model;
+
+// GLOBAL: CARMA2_HW 0x006a20d8
+// GLOBAL: CARMA2_SW 0x0069c130
+int gBelow_face_index;
+
+// GLOBAL: CARMA2_HW 0x006a20dc
+// GLOBAL: CARMA2_SW 0x0069c134
+float gLowest_y_above;
+
+// GLOBAL: CARMA2_HW 0x006a20e0
+// GLOBAL: CARMA2_SW 0x0069c138
+float gCurrent_y;
+
+// GLOBAL: CARMA2_HW 0x006a20e4
+// GLOBAL: CARMA2_SW 0x0069c13c
+br_model* gAbove_model;
+
+// GLOBAL: CARMA2_HW 0x006a20e8
+// GLOBAL: CARMA2_SW 0x0069c140
+int gAbove_face_index;
+
 // GLOBAL: CARMA2_HW 0x006a20f0
 // GLOBAL: CARMA2_SW 0x0069c148
 br_matrix34 gPick_model_to_view__raycast;
+
+// GLOBAL: CARMA2_HW 0x006a2120
+// GLOBAL: CARMA2_SW 0x0069c178
+float gHighest_y_below;
 
 // DRActorToRoot
 
@@ -141,10 +177,26 @@ int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* pModel, br_material* pMater
 #pragma auto_inline(on)
 #endif
 
-// STUB: CARMA2_HW 0x004e4300
-// STUB: CARMA2_SW 0x004e0690
+// FUNCTION: CARMA2_HW 0x004e4300
+// FUNCTION: CARMA2_SW 0x004e0690
 int C2_HOOK_CDECL FindHighestPolyCallBack__raycast(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pArg) {
-    NOT_IMPLEMENTED();
+    br_scalar the_y;
+
+    the_y = pPoint->v[1];
+    if (the_y <= gCurrent_y) {
+        if (the_y > gHighest_y_below) {
+            gHighest_y_below = the_y;
+            gBelow_face_index = pF;
+            gBelow_model = pModel;
+        }
+    } else {
+        if (the_y < gLowest_y_above) {
+            gLowest_y_above = the_y;
+            gAbove_face_index = pF;
+            gAbove_model = pModel;
+        }
+    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004e3d50

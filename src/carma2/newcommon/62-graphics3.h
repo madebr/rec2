@@ -1,14 +1,25 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_62_GRAPHICS3_H
 #define GUARD_62_GRAPHICS3_H
 
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern const int gArrows[2][4][60];
 extern int gMini_map_visible;
 extern int gCount_smashable_race_targets;
 extern tSmashable_race_target gSmashable_race_targets[300];
 extern tCar_icon gCar_icons[128];
 extern br_actor* gCar_icons_model_actor;
+extern tCar_spec* gTarget_lock_car_1;
+extern tCar_spec* gTarget_lock_car_2;
 extern int gTarget_lock_enabled;
 extern br_matrix23 gMatrix23_0068c880;
 extern br_vector3 gOrigin_map;
@@ -20,11 +31,11 @@ extern int gMap_render_width_i;
 
 // CarArrowColour
 
-// ToggleTargetLock
+extern void C2_HOOK_FASTCALL ToggleTargetLock(void);
 
 // CycleTargetLock
 
-// CycleMapOptions
+extern void C2_HOOK_FASTCALL CycleMapOptions(void);
 
 extern void C2_HOOK_FASTCALL ToggleMapTransparency(void);
 
@@ -34,7 +45,7 @@ extern void C2_HOOK_FASTCALL SetIntegerMapRenders(void);
 
 // OppositeColour
 
-// DrawArrow
+extern void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3* pPos, br_uint_32 pColour);
 
 // DrawMapBlip
 

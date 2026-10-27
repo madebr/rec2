@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_33_DEPTH_H
 #define GUARD_33_DEPTH_H
 
@@ -58,6 +66,8 @@ extern void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pix
 
 extern void C2_HOOK_FASTCALL ReduceDepthStart(void);
 
+extern void C2_HOOK_FASTCALL IncreaseDepthEnd(void);
+
 extern void C2_HOOK_FASTCALL AssertYons(void);
 
 extern void C2_HOOK_FASTCALL IncreaseYon(void);
@@ -69,6 +79,8 @@ extern void C2_HOOK_STDCALL SetYon(br_scalar pYon);
 extern br_scalar C2_HOOK_STDCALL GetYon(void);
 
 extern void C2_HOOK_STDCALL IncreaseAngle(void);
+
+extern void C2_HOOK_STDCALL DecreaseAngle(void);
 
 extern int C2_HOOK_FASTCALL GetSkyTextureOn(void);
 

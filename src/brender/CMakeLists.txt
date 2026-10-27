@@ -1,3 +1,9 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#
+# Copyright 2022-2026 rec2 developers
+
 add_library(brender_headers INTERFACE)
 add_library(BRender::Headers ALIAS brender_headers)
 target_include_directories(brender_headers INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")

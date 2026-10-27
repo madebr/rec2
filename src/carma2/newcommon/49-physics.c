@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "49-physics.h"
 
 #include "00-car.h"
@@ -62,9 +70,44 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 
 // AddObjectWallForce
 
-// AddObjectObjectForce
+// FUNCTION: CARMA2_HW 0x004268a0
+// FUNCTION: CARMA2_SW 0x00426940
+int C2_HOOK_FASTCALL AddObjectObjectForce(tPhysics_joint_force* pForces, const br_vector3* pPoint_a, br_scalar pT, const br_vector3* pPoint_b, const br_vector3* pNormal, int pCount, tPhysics_object* pObject_a, tPhysics_object* pObject_b, int pType, void* pUnused, br_scalar pValue) {
+    int i;
+    int j;
+    tPhysics_joint_force* force;
 
-// RayCastThruFaceList
+    (void)pUnused;
+    if (pCount < 4) {
+        pForces[pCount].field_0x0 = 2.f;
+        pCount++;
+    }
+    for (i = 0, force = pForces; i < pCount; i++, force++) {
+        if (pT < force->field_0x0) {
+            for (j = MIN(3, pCount); j >= i; j--) {
+                pForces[j] = pForces[j - 1];
+            }
+            force->field_0x10 = pValue;
+            force->object_a = pObject_a;
+            force->object_b = pObject_b;
+            BrVector3Sub(&force->point_a, pPoint_a, &pObject_a->cmpos);
+            BrVector3Sub(&force->point_b, pPoint_b, &pObject_b->cmpos);
+            BrMatrix34TApplyV(&force->direction_a, pNormal, &pObject_a->transform_matrix);
+            BrMatrix34TApplyV(&force->direction_b, pNormal, &pObject_b->transform_matrix);
+            force->field_0x0 = pT;
+            force->type = pType;
+            force->field_0xc = NULL;
+            return pCount;
+        }
+    }
+    return pCount;
+}
+
+// STUB: CARMA2_HW 0x004225f0
+// STUB: CARMA2_SW 0x00422670
+tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount) {
+    NOT_IMPLEMENTED();
+}
 
 // RayCastThruFaceList2
 
@@ -123,6 +166,28 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 // GetNonSphereShapeForceInfo
 
 // GetObjectObjectForceInfo
+
+// FUNCTION: CARMA2_HW 0x00428480
+// FUNCTION: CARMA2_SW 0x00428510
+void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, tU32 pIndex) {
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        BrVector3Set(pPoint,
+            (pIndex & 0x2) ? pShape->common.bb.min.v[0] : pShape->common.bb.max.v[0],
+            (pIndex & 0x1) ? pShape->common.bb.min.v[1] : pShape->common.bb.max.v[1],
+            (pIndex & 0x4) ? pShape->common.bb.min.v[2] : pShape->common.bb.max.v[2]);
+        break;
+    case kCollisionShapeType_Wireframe:
+        BrVector3Copy(pPoint, &pShape->wireframe.wireframe.points[pIndex]);
+        return;
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        BrVector3Copy(pPoint, &pShape->polyhedron.polyhedron.points[pIndex]);
+        return;
+    default:
+        return;
+    }
+}
 
 // AddOldForces
 
@@ -274,7 +339,18 @@ void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject) {
     }
 }
 
-// SetListDoingNothingFlag
+// FUNCTION: CARMA2_HW 0x004b9eb0
+// FUNCTION: CARMA2_SW 0x004b65d0
+void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, int pFlag) {
+    while (pObject != NULL) {
+        pObject->disable_move_rotate = pFlag;
+        pObject->field_0x1df = 0;
+        if (pObject->child != NULL) {
+            SetListDoingNothingFlag(pObject->child, pFlag);
+        }
+        pObject = pObject->next;
+    }
+}
 
 // SetGroupDoingNothingFlag
 
@@ -426,9 +502,33 @@ void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, unde
 
 // GetFacesNearObject
 
-// ResetObjectAndChildren
+// FUNCTION: CARMA2_HW 0x004c25a0
+// FUNCTION: CARMA2_SW 0x004becd0
+void C2_HOOK_FASTCALL ResetObjectAndChildren(tPhysics_object* pObject) {
+    tPhysics_object* child;
 
-// ResetObjectList
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0xbc, 0xbc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0xf0, 0xf0);
+
+    if (pObject->field_0xf0 == 1) {
+        BrMatrix34Copy(&pObject->actor->t.t.mat, &pObject->field_0xbc);
+    } else {
+        BrMatrix34LPNormalise(&pObject->actor->t.t.mat, &pObject->transform_matrix);
+    }
+    for (child = pObject->child; child != NULL; child = child->next) {
+        ResetObjectAndChildren(child);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c2600
+// FUNCTION: CARMA2_SW 0x004bed30
+void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects) {
+
+    while (pObjects != NULL) {
+        ResetObjectAndChildren(pObjects);
+        pObjects = pObjects->next;
+    }
+}
 
 // RepositionObjectGroup
 
@@ -571,7 +671,14 @@ void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const 
     }
 }
 
-// GetPhysicsScratchPointer
+// FUNCTION: CARMA2_HW 0x004c5c70
+void* C2_HOOK_FASTCALL GetPhysicsScratchPointer(int pSize) {
+
+    if ((tU8*)gPhysics_scratch_ptr + pSize > (tU8*)gPhysics_other_buffer + gPhysics_other_buffer_capacity) {
+        PhysicsError(ePhysicsError_OutOfMemory, NULL);
+    }
+    return gPhysics_scratch_ptr;
+}
 
 // FUNCTION: CARMA2_HW 0x004c5cb0
 void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize) {
@@ -747,7 +854,24 @@ void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics_object
     pChild->parent = pParent;
 }
 
-// PhysicsAddObjectList
+// FUNCTION: CARMA2_HW 0x004c63d0
+// FUNCTION: CARMA2_SW 0x004c2b00
+void C2_HOOK_FASTCALL PhysicsAddObjectList(tPhysics_object* pParent, tPhysics_object* pChild) {
+    tPhysics_object* last;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, next, 0x220);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, child, 0x224);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, parent, 0x228);
+
+    pChild->parent = pParent;
+    last = pChild;
+    while (last->next != NULL) {
+        last = last->next;
+        last->parent = pParent;
+    }
+    last->next = pParent->child;
+    pParent->child = pChild;
+}
 
 // PhysicsRemoveObject
 

@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef REC2_GLOBVRKM_H
 #define REC2_GLOBVRKM_H
 
@@ -12,6 +20,7 @@ extern tCar_spec* gCar_to_view;
 extern tU32 gCar_to_view_id;
 extern int gCamera_reset;
 extern int gCamera_sign;
+extern br_scalar gCamera_zoom;
 extern br_angle gCamera_yaw;
 extern br_scalar gCamera_height;
 extern br_vector3 gView_direction;

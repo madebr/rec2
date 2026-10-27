@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "07-structur.h"
 
 #include "13-crush1.h"
@@ -7,6 +15,7 @@
 #include "43-pratcam.h"
 #include "69-sound.h"
 #include "globvars.h"
+#include "globvrpb.h"
 
 // GLOBAL: CARMA2_HW 0x00655e48
 // GLOBAL: CARMA2_SW 0x00650d30
@@ -21,6 +30,14 @@ int gHud_tinted3 = -1;
 // GLOBAL: CARMA2_HW 0x00762140
 // GLOBAL: CARMA2_SW 0x007586a0
 int gCredits_checkpoint[3];
+
+// GLOBAL: CARMA2_HW 0x006aaa34
+// GLOBAL: CARMA2_SW 0x006a4484
+tU32 gLast_checkpoint_time;
+
+// GLOBAL: CARMA2_HW 0x00660cdc
+// GLOBAL: CARMA2_SW 0x0065b650
+int gLast_wrong_checkpoint = -1;
 
 // FUNCTION: CARMA2_HW 0x00503050
 // FUNCTION: CARMA2_SW 0x004fe9a0
@@ -42,11 +59,19 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     return result;
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // STUB: CARMA2_HW 0x005030b0
 // STUB: CARMA2_SW 0x004fea00
 void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
     NOT_IMPLEMENTED();
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x00503270
 void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
@@ -59,19 +84,46 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
     }
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x005032a0
-// STUB: CARMA2_SW 0x004febf0
+// FUNCTION: CARMA2_HW 0x005032a0
+// FUNCTION: CARMA2_SW 0x004febf0
 void C2_HOOK_FASTCALL IncrementCheckpoint(void) {
-    NOT_IMPLEMENTED();
-}
+    int done_voice;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    done_voice = 0;
+    if (gRace_finished) {
+        return;
+    }
+    if (gCurrent_race.race_spec->race_type != kRaceType_Carma1
+            && gCurrent_race.race_spec->race_type != kRaceType_Checkpoints) {
+        return;
+    }
+    gLast_checkpoint_time = GetTotalTime();
+    if (gCheckpoint >= gCheckpoint_count) {
+        gCheckpoint = 1;
+        if (gLap++ >= gTotal_laps) {
+            gLap = gTotal_laps;
+            gCheckpoint = gCheckpoint_count;
+            RaceCompleted(eRace_over_0);
+        } else if (gLap == gTotal_laps) {
+            PratcamEvent(33);
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_final_lap));
+            DRS3StartSound(gPedestrians_outlet, eSoundId_FinalLap);
+            done_voice = 1;
+        }
+    } else {
+        gCheckpoint += 1;
+    }
+    if (!gRace_finished) {
+        PratcamEvent(33);
+        DoFancyHeadup(21);
+        if (!done_voice) {
+            DRS3StartSound(gPedestrians_outlet, eSoundId_Checkpoint);
+        }
+        if (gCredits_checkpoint[gProgram_state.skill_level] != 0) {
+            EarnCredits(gCredits_checkpoint[gProgram_state.skill_level]);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005033b0
 // FUNCTION: CARMA2_SW 0x004fed00
@@ -85,7 +137,39 @@ void C2_HOOK_FASTCALL IncrementLap(void) {
 
 // RayHitFace
 
-// WrongCheckpoint
+// FUNCTION: CARMA2_HW 0x005033e0
+// FUNCTION: CARMA2_SW 0x004fed30
+void C2_HOOK_FASTCALL WrongCheckpoint(int pCheckpoint_index) {
+    int next_checkpoint;
+
+    if (gRace_finished) {
+        return;
+    }
+    if (gCurrent_race.race_spec->race_type != kRaceType_Carma1
+            && gCurrent_race.race_spec->race_type != kRaceType_Checkpoints) {
+        return;
+    }
+    if ((gLast_wrong_checkpoint == pCheckpoint_index && GetTotalTime() - gLast_checkpoint_time > 20000)
+            || (gLast_wrong_checkpoint != pCheckpoint_index && GetTotalTime() - gLast_checkpoint_time > 2000)) {
+        if (gNet_mode == eNet_mode_none) {
+            next_checkpoint = pCheckpoint_index + 2;
+            if (next_checkpoint > gCurrent_race.check_point_count) {
+                if (gLap == 1) {
+                    next_checkpoint = -1;
+                } else {
+                    next_checkpoint = 1;
+                }
+            }
+            if (next_checkpoint == gCheckpoint) {
+                return;
+            }
+        }
+        NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_wrong_checkpoint));
+        DRS3StartSound(gPedestrians_outlet, eSoundId_WrongCheckpoint);
+        gLast_checkpoint_time = GetTotalTime();
+        gLast_wrong_checkpoint = pCheckpoint_index;
+    }
+}
 
 // CheckCheckpoints
 
@@ -135,7 +219,31 @@ int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness) {
     return i;
 }
 
-// SelectOpponents
+// FUNCTION: CARMA2_HW 0x005039e0
+// FUNCTION: CARMA2_SW 0x004ff330
+void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info) {
+    int i;
+
+    if (gNet_mode == eNet_mode_none) {
+        pRace_info->number_of_racers = pRace_info->race_spec->count_explicit_opponents;
+        for (i = 0; i < gNumber_of_racers; i++) {
+            gOpponents[i].picked = 0;
+        }
+        for (i = 0; i < pRace_info->race_spec->count_explicit_opponents; i++) {
+            if (pRace_info->race_spec->explicit_opponents[i] >= 0) {
+                gOpponents[pRace_info->race_spec->explicit_opponents[i]].picked = 1;
+                pRace_info->opponent_list[i].index = pRace_info->race_spec->explicit_opponents[i];
+                pRace_info->opponent_list[i].ranking = -(i + 1);
+            }
+        }
+        for (i = 0; i < pRace_info->race_spec->count_explicit_opponents; i++) {
+            if (pRace_info->race_spec->explicit_opponents[i] < 0) {
+                pRace_info->opponent_list[i].index = ChooseOpponent(-pRace_info->race_spec->explicit_opponents[i]);
+                pRace_info->opponent_list[i].ranking = IRandomBetween(0, 99);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00503ba0
 // FUNCTION: CARMA2_SW 0x004ff4f0

@@ -1,7 +1,19 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "globvrkm.h"
 
 #include "globvars.h"
 
+
+// GLOBAL: CARMA2_HW 0x00655f40
+// GLOBAL: CARMA2_SW 0x00650d50
+br_scalar gCamera_zoom = 0.2f;
 
 // GLOBAL: CARMA2_HW 0x0074c7b0
 // GLOBAL: CARMA2_SW 0x00742e70

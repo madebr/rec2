@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_15_DISPLAYS_H
 #define GUARD_15_DISPLAYS_H
 
@@ -37,6 +45,7 @@ extern int gLast_credit_headup__displays;
 extern tU32 gLast_earn_time;
 extern int gLast_time_credit_headup;
 extern tU32 gLast_time_earn_time;
+extern tU32 gLast_time_credit_amount;
 extern int gOld_times[10];
 extern int gQueued_headup_count;
 
@@ -47,7 +56,7 @@ extern void C2_HOOK_FASTCALL InitHeadups(void);
 
 extern void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
-// ClearHeadupSlot
+extern void C2_HOOK_FASTCALL ClearHeadupSlot(int pSlot_index);
 
 extern void C2_HOOK_FASTCALL ClearHeadups(void);
 
@@ -95,9 +104,11 @@ extern void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
 extern int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
-// AwardTime
+extern void C2_HOOK_FASTCALL AwardTime(tU32 pTime);
 
 // AwardTime5
+
+extern void C2_HOOK_FASTCALL AwardTime5(tU32 pTime);
 
 // DoTestHeadup
 

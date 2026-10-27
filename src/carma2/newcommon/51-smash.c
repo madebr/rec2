@@ -1,7 +1,18 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "51-smash.h"
 
 #include "08-loading1.h"
+#include "32-spark.h"
+#include "39-oil.h"
 #include "41-utility.h"
+#include "50-fog.h"
 #include "globvars.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
@@ -132,7 +143,14 @@ void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec) {
 
 // DoAward
 
-// DoSpillage
+// FUNCTION: CARMA2_HW 0x004ecc40
+// FUNCTION: CARMA2_SW 0x004e8910
+void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor) {
+    QueueOilSpill2(NULL, pActor, pActor->model, pSlick->field_0x0,
+        pSlick->field_0x4, pSlick->field_0x8, pSlick->field_0xc, pSlick->field_0x10,
+        pSlick->field_0x14, pSlick->field_0x20, pSlick->field_0x24, pSlick->field_0x18,
+        pSlick->field_0x1c, pSlick->material, pSlick->material2);
+}
 
 // DoSpecial
 
@@ -194,6 +212,18 @@ void C2_HOOK_FASTCALL InitSmashQueue(void) {
 
 // ReadShrapnelSpec
 
+// FUNCTION: CARMA2_HW 0x004ee500
+// FUNCTION: CARMA2_SW 0x004ea1d0
+void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed) {
+
+    GetPairOfFloats(pFile, &pInitial_speed->min_speed, &pInitial_speed->max_speed);
+    pInitial_speed->impactee_velocity_factor = GetAScalar(pFile);
+    pInitial_speed->random_velocity_max = GetAScalar(pFile);
+    pInitial_speed->random_up_velocity_max = GetAScalar(pFile);
+    pInitial_speed->random_normal_velocity_max = GetAScalar(pFile);
+    pInitial_speed->random_spin_rate_max = GetAScalar(pFile) * 0.1f;
+}
+
 // FUNCTION: CARMA2_HW 0x004ee5a0
 // FUNCTION: CARMA2_SW 0x004ea270
 void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* pTimes) {
@@ -208,6 +238,34 @@ void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* p
 // ReadSpillData
 
 // ReadExplosion
+
+// FUNCTION: CARMA2_HW 0x004ef440
+// FUNCTION: CARMA2_SW 0x004eb0a0
+intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* pData) {
+    br_actor** actor_buffer;
+
+    actor_buffer = pData;
+    actor_buffer[gShrapnel_ghost_actor_count] = pActor;
+    gShrapnel_ghost_actor_count += 1;
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004ef460
+// FUNCTION: CARMA2_SW 0x004eb0c0
+void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
+    float x1, x2;
+    float y1, y2;
+    float z1, z2;
+
+    GetThreeFloats(pF, &x1, &y1, &z1);
+    GetThreeFloats(pF, &x2, &y2, &z2);
+    pBounds->min.v[0] = MIN(x1, x2);
+    pBounds->min.v[1] = MIN(y1, y2);
+    pBounds->min.v[2] = MIN(z1, z2);
+    pBounds->max.v[0] = MAX(x1, x2);
+    pBounds->max.v[1] = MAX(y1, y2);
+    pBounds->max.v[2] = MAX(z1, z2);
+}
 
 // FreeExplosion
 
@@ -334,11 +392,50 @@ void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
 
 // ReadSmashableEnvironment
 
-// DisposeSmashEnvNonCars
+// FUNCTION: CARMA2_HW 0x004f0940
+// FUNCTION: CARMA2_SW 0x004ec5a0
+void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void) {
+
+    BrMemFree(gSmashable_noncars);
+}
 
 // CloneMemory
 
 // CloneEnvSmash
+
+// FUNCTION: CARMA2_HW 0x004f09c0
+// FUNCTION: CARMA2_SW 0x004ec620
+void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tSmashable_level) != 0x2c4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_level, connotations, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, count_levels, 0x48);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, levels, 0x50);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, field_0x70, 0x70);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, field_0x78, 0x78);
+
+    if (pSmash->trigger_type != -1) {
+        if ((pSmash->mode == kSmashableMode_Decal || pSmash->mode == kSmashableMode_TextureChange) && pSmash->mode_data.texture_change.levels != NULL) {
+            if (pSmash->mode_data.texture_change.field_0x70 != NULL) {
+                BrMemFree(pSmash->mode_data.texture_change.field_0x70);
+            }
+            if (pSmash->mode_data.texture_change.field_0x78 != NULL) {
+                BrMemFree(pSmash->mode_data.texture_change.field_0x78);
+            }
+            for (i = 1; i < pSmash->mode_data.texture_change.count_levels; i++) {
+                FreeConnotations(&pSmash->mode_data.texture_change.levels[i].connotations, pSmash->field_0x2dc);
+            }
+            BrMemFree(pSmash->mode_data.texture_change.levels);
+        } else {
+            FreeConnotations(&pSmash->mode_data.shrapnel.connotations, pSmash->field_0x2dc);
+        }
+        if (pSmash->flags & 0x80000000) {
+            BrMaterialRemove(pSmash->trigger_object.material);
+            BrMaterialFree(pSmash->trigger_object.material);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004f0a80
 void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors) {
@@ -374,8 +471,6 @@ void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_a
         BrMemFree(pConnotations->side_effects.side_effects.side_effects);
     }
 }
-
-// FreeEnvSmash
 
 // DisposeSmashableEnvironment
 

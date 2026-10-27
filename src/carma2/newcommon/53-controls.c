@@ -1,8 +1,19 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "53-controls.h"
 
+#include "00-car.h"
 #include "15-displays.h"
 #include "17-world2.h"
+#include "37-brucetrk.h"
 #include "41-utility.h"
+#include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -12,6 +23,10 @@
 #include "c2_string.h"
 
 #include <stdio.h>
+
+// GLOBAL: CARMA2_HW 0x00659b28
+// GLOBAL: CARMA2_SW 0x00654510
+int gCheckpoint_finder_enabled = 1;
 
 // GLOBAL: CARMA2_HW 0x00659b2c
 // GLOBAL: CARMA2_SW 0x00654514
@@ -57,9 +72,21 @@ char gString[84];
 // GLOBAL: CARMA2_SW 0x00676b40
 char* gAbuse_text[10];
 
+// GLOBAL: CARMA2_HW 0x0067c3f8
+// GLOBAL: CARMA2_SW 0x00676b70
+int gRecovery_voucher_count;
+
 // CompleteRace
 
-// AbortRace
+// FUNCTION: CARMA2_HW 0x00441490
+// FUNCTION: CARMA2_SW 0x00441570
+int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend) {
+
+    if (!gRace_finished) {
+        gAbandon_game = 1;
+    }
+    return gRace_finished;
+}
 
 // F4Key
 
@@ -130,6 +157,16 @@ void C2_HOOK_FASTCALL DamageTest(void) {
 
 }
 
+// FUNCTION: CARMA2_HW 0x00441ff0
+// FUNCTION: CARMA2_SW 0x004420d0
+void C2_HOOK_FASTCALL TDamageDriver(void) {
+    if (gProgram_state.current_car.damage_units[eDamage_driver].damage_level < 80) {
+        DamageUnit(&gProgram_state.current_car, eDamage_driver, 80 - gProgram_state.current_car.damage_units[eDamage_driver].damage_level);
+    } else {
+        DamageUnit(&gProgram_state.current_car, eDamage_driver, 2);
+    }
+}
+
 // ToggleMiniMap
 
 // CheckToggles
@@ -168,7 +205,26 @@ void C2_HOOK_FASTCALL DamageTest(void) {
 
 // SetFlipUpCar
 
-// AlignChildren
+
+// FUNCTION: CARMA2_HW 0x00442e10
+// FUNCTION: CARMA2_SW 0x00442ef0
+void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info) {
+    tPhysics_object* child;
+
+    for (child = pCollision_info->child; child != NULL; child = child->next) {
+        int i;
+        int j;
+
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                child->transform_matrix.m[i][j] = pCollision_info->transform_matrix.m[i][j];
+            }
+        }
+        BrVector3SetFloat(&child->v, 0.f, 0.f, 0.f);
+        BrVector3SetFloat(&child->omega, 0.f, 0.f, 0.f);
+        AlignChildren(child);
+    }
+}
 
 // FlipUpCar
 
@@ -225,17 +281,78 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 // ToggleMap
 
-// GetRecoverVoucherCount
+// FUNCTION: CARMA2_HW 0x004446f0
+// FUNCTION: CARMA2_SW 0x004447d0
+int C2_HOOK_FASTCALL GetRecoverVoucherCount(void) {
+
+    return gRecovery_voucher_count;
+}
 
 // AddVouchers
 
-// ResetRecoveryVouchers
+// FUNCTION: CARMA2_HW 0x00444710
+// FUNCTION: CARMA2_SW 0x004447f0
+void C2_HOOK_FASTCALL ResetRecoveryVouchers(void) {
 
-// CycleYonFactor
+    gRecovery_voucher_count = 0;
+}
 
-// CycleSoundDetailLevel
+// FUNCTION: CARMA2_HW 0x00444720
+// FUNCTION: CARMA2_SW 0x00444800
+void C2_HOOK_FASTCALL CycleYonFactor(void) {
+    float factor;
 
-// CycleCarSimplificationLevel
+    factor = 0.5f * GetYonFactor();
+    if (factor < 0.1f) {
+        factor = 1.0f;
+    }
+    SetYonFactor(factor);
+    if (factor > 0.75f) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_track_appears_very_quickly));
+    } else if (factor > 0.375f) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_track_appears_quite_quickly));
+    } else if (factor > 0.187f) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_track_appears_quite_late));
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_track_appears_very_late));
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004447c0
+// FUNCTION: CARMA2_SW 0x004448a0
+void C2_HOOK_FASTCALL CycleSoundDetailLevel(void) {
+    int new_level;
+
+    new_level = (gSound_detail_level + 1) % 3;
+    ReallySetSoundDetailLevel(new_level);
+    SetSoundDetailLevel(new_level);
+    switch (gSound_detail_level) {
+    case 0:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_fewest_sounds));
+        break;
+    case 1:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_partial_sound));
+        break;
+    case 2:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_all_sounds));
+        break;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00444820
+// FUNCTION: CARMA2_SW 0x00444900
+void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void) {
+    const char* src;
+    char* dst;
+
+    gCar_simplification_level++;
+    gCar_simplification_level = gCar_simplification_level % 5u;
+    src = GetMiscString(eMiscString_car_simplification_level_D);
+    dst = BrMemAllocate(strlen(src) + 21, kMem_simp_level);
+    sprintf(dst, src, gCar_simplification_level);
+    NewTextHeadupSlot(4, 0, 2000, -4, dst);
+    BrMemFree(dst);
+}
 
 // FUNCTION: CARMA2_HW 0x004448a0
 // FUNCTION: CARMA2_SW 0x00444980

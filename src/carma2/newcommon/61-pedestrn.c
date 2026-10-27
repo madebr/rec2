@@ -1,9 +1,19 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "61-pedestrn.h"
 
 #include "10-loading2.h"
 #include "27-powerup.h"
+#include "41-utility.h"
 #include "63-loading3.h"
 #include "69-sound.h"
+#include "brender/brender.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x006a0414
@@ -139,7 +149,14 @@ void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
 // MakeActorRenderable
 
-// StopActorBeingRenderable
+// FUNCTION: CARMA2_HW 0x004cbca0
+// FUNCTION: CARMA2_SW 0x004c83a0
+void C2_HOOK_FASTCALL StopActorBeingRenderable(br_actor* pActor) {
+
+    if (pActor->parent != NULL) {
+        BrActorRemove(pActor);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004cbcc0
 int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
@@ -391,11 +408,31 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // TurnOnCollisions
 
+// FUNCTION: CARMA2_HW 0x004d6b70
+// FUNCTION: CARMA2_SW 0x004d3170
+void C2_HOOK_FASTCALL BlendifyMaterial25(br_material* pMaterial) {
+    BlendifyMaterial(pMaterial, 25);
+    BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+}
+
+// FUNCTION: CARMA2_HW 0x004d6ba0
+// FUNCTION: CARMA2_SW 0x004d31a0
+void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel) {
+
+    BrModelUpdate(pModel, BR_MODU_PRIMITIVE_MATERIALS);
+}
+
 // UpdateModels
 
 // TurnOnGhostPeds
 
 // TurnOffGhostPeds
+
+// FUNCTION: CARMA2_HW 0x004d6b90
+// FUNCTION: CARMA2_SW 0x004d3190
+void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_info) {
+    pCollision_info->flags |= 0x4;
+}
 
 // MutatePed
 
@@ -406,7 +443,10 @@ void C2_HOOK_FASTCALL SavePedStuff(void) {
 
 }
 
-// ComparePedStuff
+// FUNCTION: CARMA2_HW 0x004d6da0
+// FUNCTION: CARMA2_SW 0x004d33a0
+void C2_HOOK_FASTCALL ComparePedStuff(void) {
+}
 
 // AdjustPedDiagnostics
 
@@ -578,7 +618,15 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // GetBoneMatrixPtr
 
-// GetCharacterActorPtr
+// FUNCTION: CARMA2_HW 0x00407b10
+// FUNCTION: CARMA2_SW 0x00407b00
+br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter) {
+
+    if (pCharacter->field_0x4 < 0) {
+        return NULL;
+    }
+    return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0];
+}
 
 // SetCharacterBonePositions
 
@@ -654,9 +702,20 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // SetCharacterAllBonesModel
 
-// GetCharacterBoneModel
+// FUNCTION: CARMA2_HW 0x0040b570
+// FUNCTION: CARMA2_SW 0x0040b560
+br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index) {
 
-// GetCharacterModelSet
+    return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index]->model;
+}
+
+// FUNCTION: CARMA2_HW 0x0040b590
+// FUNCTION: CARMA2_SW 0x0040b580
+int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0xa, 0xa);
+
+    return pCharacter->field_0xa;
+}
 
 // BonerPassiveCollision
 
@@ -666,7 +725,15 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // DismemberCharacter
 
-// GetClearanceFromCharacterInstance
+// FUNCTION: CARMA2_HW 0x0040bae0
+// FUNCTION: CARMA2_SW 0x0040bad0
+float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance* pCharacter, int pMoveNum) {
+
+    if (pMoveNum < 0 || pMoveNum > pCharacter->personality->form->count_moves) {
+        BrFailure("MoveNum out of range in GetClearance()");
+    }
+    return pCharacter->personality->moves[pMoveNum].grounding_offset;
+}
 
 // VectorScaleVector
 

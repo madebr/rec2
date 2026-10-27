@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "38-flicplay.h"
 
 #include "08-loading1.h"
@@ -12,9 +20,80 @@
 #include "c2_stdio.h"
 #include "c2_string.h"
 
-// GLOBAL: CARMA2_HW 0x00686218
-// GLOBAL: CARMA2_SW 0x00680958
-tFlic_descriptor gPanel_flic[2];
+// GLOBAL: CARMA2_HW 0x00599920
+// GLOBAL: CARMA2_SW 0x00594868
+int gFlic_bunch0[29] = {
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 35, 26,
+    27, 36, 28, 29, 130, 131, 132, 42, 43, 135, 45
+};
+
+// GLOBAL: CARMA2_HW 0x00599998
+// GLOBAL: CARMA2_SW 0x005948e0
+
+int gFlic_bunch1[31] = {
+    140, 141, 42, 43, 144, 145, 146, 147, 45, 150, 151, 42, 43, 154, 155,
+    156, 160, 161, 42, 43, 154, 170, 171, 176, 177, 172, 180, 181, 42, 43, 154
+};
+
+// GLOBAL: CARMA2_HW 0x00599a18
+// GLOBAL: CARMA2_SW 0x00594960
+int gFlic_bunch2[8] = {
+    70, 71, 72, 73, 74, 56, 57, 59
+};
+
+// GLOBAL: CARMA2_HW 0x00599a38
+// GLOBAL: CARMA2_SW 0x00594980
+int gFlic_bunch3[13] = {
+    40, 41, 42, 43, 44, 45, 50, 51, 73, 74, 56, 57, 59
+};
+
+// GLOBAL: CARMA2_HW 0x00599a70
+// GLOBAL: CARMA2_SW 0x005949b8
+int gFlic_bunch4[22] = {
+    80, 81, 82, 83, 84, 85, 42, 43, 88, 45, 110, 111, 42, 43, 45, 115,
+    116, 117, 118, 119, 120, 121
+};
+
+// GLOBAL: CARMA2_HW 0x00599ac8
+// GLOBAL: CARMA2_SW 0x00594a10
+int gFlic_bunch5[5] = {
+    100, 101, 42, 43, 45
+};
+
+// GLOBAL: CARMA2_HW 0x00599ae0
+// GLOBAL: CARMA2_SW 0x00594a28
+int gFlic_bunch6[51] = {
+    190, 191, 192, 42, 43, 195, 200, 201, 210, 212, 213, 220, 221, 222,
+    220, 221, 225, 230, 231, 42, 43, 154, 45, 220, 221, 222, 220, 221,
+    225, 250, 251, 42, 43, 254, 255, 256, 154, 42, 43, 260, 220, 221,
+    222, 220, 221, 225, 280, 281, 42, 43, 284
+};
+
+// GLOBAL: CARMA2_HW 0x00599bb0
+// GLOBAL: CARMA2_SW 0x00594af8
+int gFlic_bunch7[7] = {
+    130, 131, 132, 42, 43, 135, 45
+};
+
+// GLOBAL: CARMA2_HW 0x00599bd0
+// GLOBAL: CARMA2_SW 0x00594b18
+int gFlic_bunch8[16] = {
+    290, 291, 292, 293, 294, 295, 296, 297, 42, 43, 154, 301, 42, 43, 304, 305
+};
+
+// GLOBAL: CARMA2_HW 0x00599c10
+// GLOBAL: CARMA2_SW 0x00594b58
+tFlic_bunch gFlic_bunch[9] = {
+    { REC2_ASIZE(gFlic_bunch0), gFlic_bunch0 },
+    { REC2_ASIZE(gFlic_bunch1), gFlic_bunch1 },
+    { REC2_ASIZE(gFlic_bunch2), gFlic_bunch2 },
+    { REC2_ASIZE(gFlic_bunch3), gFlic_bunch3 },
+    { REC2_ASIZE(gFlic_bunch4), gFlic_bunch4 },
+    { REC2_ASIZE(gFlic_bunch5), gFlic_bunch5 },
+    { REC2_ASIZE(gFlic_bunch6), gFlic_bunch6 },
+    { REC2_ASIZE(gFlic_bunch7), gFlic_bunch7 },
+    { REC2_ASIZE(gFlic_bunch8), gFlic_bunch8 },
+};
 
 // GLOBAL: CARMA2_HW 0x0068b8b4
 // GLOBAL: CARMA2_SW 0x00685e14
@@ -52,6 +131,10 @@ br_pixelmap* gPalette;
 // GLOBAL: CARMA2_SW 0x00680950
 tTranslation_record* gTranslations;
 
+// GLOBAL: CARMA2_HW 0x00686218
+// GLOBAL: CARMA2_SW 0x00680958
+tFlic_descriptor gPanel_flic[2];
+
 // GLOBAL: CARMA2_HW 0x006861e0
 // GLOBAL: CARMA2_SW 0x00680920
 tDR_font* gTrans_fonts[2];
@@ -59,6 +142,10 @@ tDR_font* gTrans_fonts[2];
 // GLOBAL: CARMA2_HW 0x00686308
 // GLOBAL: CARMA2_SW 0x00680a48
 int gPalette_fuck_prevention;
+
+// GLOBAL: CARMA2_HW 0x0068630c
+// GLOBAL: CARMA2_SW 0x00680a4c
+int gDark_mode;
 
 // GLOBAL: CARMA2_HW 0x00686310
 // GLOBAL: CARMA2_SW 0x00680a50
@@ -443,6 +530,12 @@ void C2_HOOK_FASTCALL LetFlicFuckWithPalettes(void) {
     gPalette_fuck_prevention = 0;
 }
 
+// FUNCTION: CARMA2_HW 0x004619c0
+// FUNCTION: CARMA2_SW 0x00461460
+void C2_HOOK_STDCALL PlayFlicsInDarkness(void) {
+    gDark_mode = 1;
+}
+
 // FUNCTION: CARMA2_HW 0x004619e0
 // FUNCTION: CARMA2_SW 0x00461480
 void C2_HOOK_FASTCALL TurnFlicTransparencyOn(void) {
@@ -515,7 +608,51 @@ int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
 
 // DoColourMap
 
-// DoDifferenceX
+// FUNCTION: CARMA2_HW 0x00462390
+// FUNCTION: CARMA2_SW 0x00461e20
+void C2_HOOK_FASTCALL DoDifferenceX(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int k;
+    int skipped_lines;
+    int number_of_lines;
+    int number_of_packets;
+    int skip_count;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+
+    (void)pChunk_length;
+    skipped_lines = MemReadU16(&pFlic_info->data);
+    number_of_lines = MemReadU16(&pFlic_info->data);
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel + skipped_lines * the_row_bytes;
+    for (i = 0; i < number_of_lines; i++) {
+        line_pixel_ptr = pixel_ptr;
+        number_of_packets = MemReadU8(&pFlic_info->data);
+        for (j = 0; j < number_of_packets; j++) {
+            skip_count = MemReadU8(&pFlic_info->data);
+            size_count = MemReadS8(&pFlic_info->data);
+            line_pixel_ptr += skip_count;
+            if (size_count >= 0) {
+                for (k = 0; k < size_count; k++) {
+                    *line_pixel_ptr++ = *pFlic_info->data;
+                    pFlic_info->data++;
+                }
+            } else {
+                the_byte = *pFlic_info->data;
+                pFlic_info->data++;
+                for (k = 0; k < -size_count; k++) {
+                    *line_pixel_ptr = the_byte;
+                    line_pixel_ptr++;
+                }
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00462480
 // FUNCTION: CARMA2_SW 0x00461f10
@@ -598,11 +735,107 @@ void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 pChunk_length) 
     }
 }
 
-// DoRunLengthTrans
+// FUNCTION: CARMA2_HW 0x004626a0
+// FUNCTION: CARMA2_SW 0x00462130
+void C2_HOOK_FASTCALL DoRunLengthTrans(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int k;
+    int number_of_packets;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
 
-// DoUncompressed
+    (void)pChunk_length;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = pixel_ptr;
+        number_of_packets = MemReadU8(&pFlic_info->data);
+        for (j = 0; j < number_of_packets; j++) {
+            size_count = MemReadS8(&pFlic_info->data);
+            if (size_count < 0) {
+                for (k = 0; k < -size_count; k++) {
+                    the_byte = MemReadU8(&pFlic_info->data);
+                    if (the_byte != 0) {
+                        *line_pixel_ptr = the_byte;
+                        line_pixel_ptr++;
+                    } else {
+                        line_pixel_ptr++;
+                    }
+                }
+            } else {
+                the_byte = MemReadU8(&pFlic_info->data);
+                if (the_byte != 0) {
+                    for (k = 0; k < size_count; k++) {
+                        *line_pixel_ptr = the_byte;
+                        line_pixel_ptr++;
+                    }
+                } else {
+                    line_pixel_ptr += size_count;
+                }
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
-// DoUncompressedTrans
+// FUNCTION: CARMA2_HW 0x00462780
+// FUNCTION: CARMA2_SW 0x00462210
+void C2_HOOK_FASTCALL DoUncompressed(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int the_width;
+    tU8* pixel_ptr;
+    tU32 the_row_bytes;
+    tU32* line_pixel_ptr;
+
+    (void)pChunk_length;
+    pixel_ptr = pFlic_info->first_pixel;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    the_width = pFlic_info->width >> 2;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = (tU32*)pixel_ptr;
+        for (j = 0; j < the_width; j++) {
+            // FIXME: big endian incompatible
+            *line_pixel_ptr = MemReadU32(&pFlic_info->data);
+            line_pixel_ptr++;
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004627f0
+// FUNCTION: CARMA2_SW 0x00462280
+void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 pChunk_length) {
+    int i;
+    int j;
+    int the_width;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+
+    (void)pChunk_length;
+    pixel_ptr = pFlic_info->first_pixel;
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    the_width = pFlic_info->width;
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = pixel_ptr;
+        for (j = 0; j < the_width; j++) {
+            the_byte = (tU8)MemReadU32(&pFlic_info->data);
+            if (the_byte != '\0') {
+                *line_pixel_ptr = the_byte;
+                line_pixel_ptr++;
+            } else {
+                line_pixel_ptr++;
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+}
 
 // DoMini
 
@@ -687,6 +920,33 @@ void C2_HOOK_FASTCALL FreeFlic(int pIndex) {
     if (gMain_flic_list[pIndex].data_ptr != NULL) {
         BrMemFree(gMain_flic_list[pIndex].data_ptr);
         gMain_flic_list[pIndex].data_ptr = NULL;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00462c30
+// FUNCTION: CARMA2_SW 0x004626c0
+void C2_HOOK_FASTCALL PreloadBunchOfFlics(int pBunch_index) {
+
+}
+
+// FUNCTION: CARMA2_HW 0x00462c40
+// FUNCTION: CARMA2_SW 0x004626d0
+void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch0) != 29);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch1) != 31);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch2) != 8);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch3) != 13);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch4) != 22);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch5) != 5);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch6) != 51);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch7) != 7);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch8) != 16);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlic_bunch) != 9);
+
+    for (i = 0; i < gFlic_bunch[pBunch_index].count; i++) {
+        UnlockFlic(gFlic_bunch[pBunch_index].indexes[i]);
     }
 }
 

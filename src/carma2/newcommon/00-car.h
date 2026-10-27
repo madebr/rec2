@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_00_CAR_H
 #define GUARD_00_CAR_H
 
@@ -12,9 +20,12 @@ extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
 extern int gNum_active_non_cars;
+extern int gInTheSea;
 extern int gFace_num__car;
 
 extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount);
 
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
@@ -34,7 +45,7 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // NewFaceListCallBack
 
-// IsCarInTheSea
+extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 // RememberSafePosition
 
@@ -88,13 +99,13 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // MoveAndCollideNonCar
 
-// ControlCar2
+extern void C2_HOOK_FAKE_THISCALL ControlCar2(tCar_spec* pCar, void* pUnused, br_scalar pDt);
 
 extern void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br_scalar pDt);
 
 // ControlCar4
 
-// ControlCar5
+extern void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* pCar, void* pUnused, br_scalar pDt);
 
 // ControlCar1
 
@@ -140,7 +151,7 @@ extern void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car);
 
 // ProcessForcesCallBack
 
-// ProcessJointForcesCallBack
+extern int C2_HOOK_FASTCALL ProcessJointForcesCallBack(void* pArg1, void* pArg2, void* pArg3);
 
 // MultiFindFloorInBoxM
 
@@ -164,13 +175,17 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 
 // MungeCarGraphics
 
-// TurnOffNonGroovers
+extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
 
 // DoLODCarModels
 
 // DoComplexCarModels
 
 // ResetCarScreens
+
+extern void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void);
+
+extern void C2_HOOK_FASTCALL SwapCar(void);
 
 extern void C2_HOOK_FASTCALL AdjustDownForce(void);
 

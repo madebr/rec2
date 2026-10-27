@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "72-interface.h"
 
 #include "01-network.h"
@@ -5,6 +13,7 @@
 #include "05-drmem.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "12-menuoptions.h"
 #include "15-displays.h"
 #include "18-graphics2.h"
 #include "19-font.h"
@@ -531,6 +540,14 @@ void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend) {
     EdgeTriggerModeOn();
 }
 
+// FUNCTION: CARMA2_HW 0x00466b60
+// FUNCTION: CARMA2_SW 0x004668f0
+int C2_HOOK_FASTCALL GameMenuInfunc(tFrontend_spec* pFrontend) {
+
+    DefaultInfunc(pFrontend);
+    return 1;
+}
+
 // FindNextActiveItem
 
 // FUNCTION: CARMA2_HW 0x00467a30
@@ -800,7 +817,17 @@ int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFrontend) {
 
 // CreditsScreenInfunc
 
-// CreditsScreenOutfunc
+// FUNCTION: CARMA2_HW 0x0046c090
+// FUNCTION: CARMA2_SW 0x0046bdc0
+int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < gCredits_line_count; i++) {
+        free(gCredits_texts[i]);
+    }
+    free(gCredits_texts);
+    return 1;
+}
 
 // FRONTEND_GenericMenuHandler
 
@@ -1160,7 +1187,20 @@ int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size) {
 
 // WrecksInFunc
 
-// KeepInRange
+// FUNCTION: CARMA2_HW 0x0046eab0
+// FUNCTION: CARMA2_SW 0x0046e170
+int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange) {
+
+    C2_HOOK_ASSERT(pRange > 0);
+
+    while (pIndex < 0) {
+        pIndex += pRange;
+    }
+    while (pIndex >= pRange) {
+        pIndex -= pRange;
+    }
+    return pIndex;
+}
 
 // WrecksOutFunc
 
@@ -1931,9 +1971,27 @@ void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider) {
 
 // Controls_SwitchKeymapSet
 
-// Controls_KeyUp
+// FUNCTION: CARMA2_HW 0x004725a0
+// FUNCTION: CARMA2_SW 0x00471b30
+int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend) {
 
-// Controls_KeyDown
+    if (gControls_scroller.field_0x8 != 0) {
+        gControls_scroller.field_0x8 -= 1;
+        RefreshScrollSet(pFrontend);
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004725c0
+// FUNCTION: CARMA2_SW 0x00471b50
+int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend) {
+
+    if (gControls_scroller.field_0x8 < gControls_scroller.field_0x0 - gControls_scroller.range_length) {
+        gControls_scroller.field_0x8 += 1;
+        RefreshScrollSet(pFrontend);
+    }
+    return 0;
+}
 
 // Controls_Infunc
 
@@ -1975,7 +2033,19 @@ int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
 
 // NetSync_Start
 
-// NetSync_Abort
+// FUNCTION: CARMA2_HW 0x004735d0
+// FUNCTION: CARMA2_SW 0x00472b40
+int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend) {
+
+    if (gProgram_state.racing || gNet_mode != eNet_mode_none) {
+        if (gProgram_state.racing) {
+            gAbandon_game = 1;
+        }
+        gProgram_state.prog_status = eProg_idling;
+        gNo_current_game = 1;
+    }
+    return 1;
+}
 
 // NetSync_Infunc
 
@@ -2116,9 +2186,23 @@ int C2_HOOK_FASTCALL Options_Quit(tFrontend_spec* pFrontend) {
     return 2;
 }
 
-// Graphics_Infunc
+// FUNCTION: CARMA2_HW 0x004747e0
+// FUNCTION: CARMA2_SW 0x00473d40
+int C2_HOOK_FASTCALL Graphics_Infunc(tFrontend_spec* pFrontend) {
 
-// Graphics_Outfunc
+    Generic_Infunc(pFrontend);
+    GetGraphicsSettingsData(pFrontend);
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x00474850
+// FUNCTION: CARMA2_SW 0x00473db0
+int C2_HOOK_FASTCALL Graphics_Outfunc(tFrontend_spec* pFrontend) {
+
+    Generic_Outfunc(pFrontend);
+    SetGraphicsSettingsData(pFrontend);
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00474860
 void C2_HOOK_FASTCALL FrontEndShowMouse(void) {

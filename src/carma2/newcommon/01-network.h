@@ -1,8 +1,18 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_01_NETWORK_H
 #define GUARD_01_NETWORK_H
 
 #include "c2_hooks.h"
 #include "rec2_types.h"
+
+extern int gIt_or_fox;
 
 extern int C2_HOOK_FASTCALL NetInitialise(void);
 
@@ -32,11 +42,11 @@ extern void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void);
 
 extern void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
-// NetStartProducingJoinList
+extern void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc* pAdd_proc);
 
 // NetEndJoinList
 
-// NetDisposePIDGameInfo
+extern void C2_HOOK_FASTCALL NetDisposePIDGameInfo(tNet_game_details* pDetails);
 
 extern void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails);
 
@@ -74,7 +84,7 @@ extern void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_lengt
 
 extern int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
 
-// NetReallySendMessageToPlayer
+extern int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id);
 
 // NetSendMessageToPlayer
 
@@ -196,7 +206,7 @@ extern void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
 
 extern tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
-// NetGuaranteedSendMessageToAllPlayers
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
 // NetGuaranteedSendMessageToEverybody
 
@@ -204,7 +214,7 @@ extern void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* p
 
 // AddToGuaranteeList
 
-// NetGuaranteedSendMessageToPlayer
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToPlayer(tNet_game_details* pDetails, tNet_message* pMessage, tPlayer_ID pPlayer, void* pNotifyFail);
 
 // NetGuaranteedSendMessageToAddress
 

@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_61_PEDESTRN_H
 #define GUARD_61_PEDESTRN_H
 
@@ -98,7 +106,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // MakeActorRenderable
 
-// StopActorBeingRenderable
+extern void C2_HOOK_FASTCALL StopActorBeingRenderable(br_actor* pActor);
 
 extern int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor);
 
@@ -318,11 +326,17 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // TurnOnCollisions
 
+extern void C2_HOOK_FASTCALL BlendifyMaterial25(br_material* pMaterial);
+
+extern void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel);
+
 // UpdateModels
 
 // TurnOnGhostPeds
 
 // TurnOffGhostPeds
+
+extern void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_info);
 
 // MutatePed
 
@@ -330,7 +344,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 extern void C2_HOOK_FASTCALL SavePedStuff(void);
 
-// ComparePedStuff
+extern void C2_HOOK_FASTCALL ComparePedStuff(void);
 
 // AdjustPedDiagnostics
 
@@ -430,7 +444,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // GetBoneMatrixPtr
 
-// GetCharacterActorPtr
+extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
 
 // SetCharacterBonePositions
 
@@ -506,9 +520,9 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // SetCharacterAllBonesModel
 
-// GetCharacterBoneModel
+extern br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
 
-// GetCharacterModelSet
+extern int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter);
 
 // BonerPassiveCollision
 
@@ -518,7 +532,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // DismemberCharacter
 
-// GetClearanceFromCharacterInstance
+extern float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance* pCharacter, int pMoveNum);
 
 // VectorScaleVector
 

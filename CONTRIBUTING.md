@@ -2,6 +2,11 @@
 
 Documenting a complete game is no easy task. So every little help is much appreciated.
 
+## What executables are we targeting?
+
+`CARMA2_HW.EXE` and `Carma2_SW.exe` v1.04 as provided by [Steam](https://store.steampowered.com/app/282030/Carmageddon_2_Carpocalypse_Now/) and [gog.com](https://www.gog.com/en/game/carmageddon_2_carpocalypse_now).
+See [`reccmp-project.yml`](/reccmp-project.yml) for the sha256 hashes.
+
 ## Start documenting yourself
 
 This projects uses [reccmp](https://github.com/isledecomp/reccmp).
@@ -20,8 +25,26 @@ This collection of tools allows writing equivalent C code for every function.
 
 - Must be as faithful as possible to the binary code.
 - Every single commit must build and work. This is a requirement to be able to use `git-bisect`.
-- Prefer small commits and/or pull requests.
+- Prefer small commits and/or pull requests. Ideally do one function per Pull Request.
 - Must build warning-free on MSVC and MinGW. If you don't know how to fix a warning, please ask for help on discord and/or open a pr with the WIP code.
+
+## Legal
+
+To give the rec2 project full flexibility to choose whatever license is best to protect the project,
+new contributors must add the following message in their commit message or pull request:
+(**Replace `[full name or GitHub username]` and `[YYYY-MM-DD]` with your name and actual date**)
+```
+Contributor License Authorization
+
+I grant madebr <anonymous.maarten@gmail.com> a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to use, reproduce, modify, distribute, sublicense, and relicense my contributions to rec2 under any license, including proprietary and open-source licenses, subject to applicable law.
+
+I confirm that I have the right to grant these permissions for the contributions covered by this agreement, excluding third-party material and contributions subject to separate terms.
+
+Date: [YYYY-MM-DD]
+
+Name: [full name or GitHub username]
+```
+
 
 # Hints
 

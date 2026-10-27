@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_51_SMASH_H
 #define GUARD_51_SMASH_H
 
@@ -57,7 +65,7 @@ extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
 // DoAward
 
-// DoSpillage
+extern void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor);
 
 // DoSpecial
 
@@ -115,11 +123,17 @@ extern void C2_HOOK_FASTCALL InitSmashQueue(void);
 
 // ReadShrapnelSpec
 
+extern void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed);
+
 extern void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* pTimes);
 
 // ReadSpillData
 
 // ReadExplosion
+
+extern intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* pData);
+
+extern void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);
 
 // FreeExplosion
 
@@ -193,15 +207,15 @@ extern void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_da
 
 // ReadSmashableEnvironment
 
-// DisposeSmashEnvNonCars
+extern void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void);
 
 // CloneMemory
 
 // CloneEnvSmash
 
-extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors);
+extern void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash);
 
-// FreeEnvSmash
+extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors);
 
 // DisposeSmashableEnvironment
 

@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_49_PHYSICS_H
 #define GUARD_49_PHYSICS_H
 
@@ -19,9 +27,9 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 
 // AddObjectWallForce
 
-// AddObjectObjectForce
+extern int C2_HOOK_FASTCALL AddObjectObjectForce(tPhysics_joint_force* pForces, const br_vector3* pPoint_a, br_scalar pT, const br_vector3* pPoint_b, const br_vector3* pNormal, int pCount, tPhysics_object* pObject_a, tPhysics_object* pObject_b, int pType, void* pUnused, br_scalar pValue);
 
-// RayCastThruFaceList
+extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount);
 
 // RayCastThruFaceList2
 
@@ -80,6 +88,8 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 // GetNonSphereShapeForceInfo
 
 // GetObjectObjectForceInfo
+
+extern void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, tU32 pIndex);
 
 // AddOldForces
 
@@ -167,7 +177,7 @@ extern void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysic
 
 extern void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject);
 
-// SetListDoingNothingFlag
+extern void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, int pFlag);
 
 // SetGroupDoingNothingFlag
 
@@ -267,9 +277,9 @@ extern void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObjec
 
 // GetFacesNearObject
 
-// ResetObjectAndChildren
+extern void C2_HOOK_FASTCALL ResetObjectAndChildren(tPhysics_object* pObject);
 
-// ResetObjectList
+extern void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects);
 
 // RepositionObjectGroup
 
@@ -335,7 +345,7 @@ extern int C2_HOOK_FASTCALL MatrixProcess(br_scalar* pR, br_scalar* pQ, int pDim
 
 extern void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const br_scalar* pRhs, br_scalar* pX, int pDim);
 
-// GetPhysicsScratchPointer
+extern void* C2_HOOK_FASTCALL GetPhysicsScratchPointer(int pSize);
 
 extern void C2_HOOK_FASTCALL IncreasePhysicsScratchPointer(int pSize);
 
@@ -377,7 +387,7 @@ extern void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_c
 
 extern void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics_object* pChild);
 
-// PhysicsAddObjectList
+extern void C2_HOOK_FASTCALL PhysicsAddObjectList(tPhysics_object* pParent, tPhysics_object* pChild);
 
 // PhysicsRemoveObject
 

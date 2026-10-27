@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_13_CRUSH1_H
 #define GUARD_13_CRUSH1_H
 
@@ -29,9 +37,9 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 // ReadCrushData
 
-// CreateDefaultCrushDataCB
+extern intptr_t C2_HOOK_CDECL CreateDefaultCrushDataCB(br_actor* pActor, void* pData);
 
-// CreateDefaultCrushData
+extern void C2_HOOK_FASTCALL CreateDefaultCrushData(br_actor* pActor, tCar_spec* pCar_spec);
 
 // ReadMasterCrushData
 
@@ -40,6 +48,10 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 // LinkCrushDataToActor
 
 // LinkCrushDataToActors
+
+extern void C2_HOOK_FASTCALL LinkCarCrushDatas(br_actor* pActor, tCar_crush_buffer* pBuffer);
+
+extern intptr_t C2_HOOK_CDECL LinkCarCrushData(br_actor* pActor, void* pData);
 
 extern intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* pData);
 
@@ -51,7 +63,7 @@ extern int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pVal
 
 extern int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
 
-// CrushLimitNumber
+extern tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid);
 
 // SoftnessOfNearestPointCB
 
@@ -83,7 +95,7 @@ extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pAc
 
 // CalculateReferencePoints
 
-// InitModelCrushDataCB
+extern intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* pActor, void* pData);
 
 // InitModelCrushData
 
@@ -135,7 +147,7 @@ extern int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector);
 
 // CrushPoint
 
-// ClipPointToLimits
+extern void C2_HOOK_FASTCALL ClipPointToLimits(br_vector3* pPoint, tU16 pLimit_bits, const tCar_crush_limits* pLimits);
 
 // CrushCollisionShapes
 
@@ -161,7 +173,7 @@ extern void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const t
 
 // DoDroneCrushing
 
-// AddDroneCrush
+extern void C2_HOOK_FASTCALL AddDroneCrush(tQueued_drone_crush_item* pCrush, const br_vector3* pVector, float pScale, int pCount, const br_vector3* pPoints);
 
 // QueueDroneCrush
 
@@ -211,7 +223,7 @@ extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // SemiDetachBit
 
-// GetSDBJointPosAndBounds
+extern int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, br_vector3* pP3, br_bounds3* pBounds, br_actor* pActor);
 
 // SendSemiDetachBit
 

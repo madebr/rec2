@@ -1,9 +1,19 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "04-netgame.h"
 
 #include "01-network.h"
 #include "30-opponent.h"
+#include "41-utility.h"
 #include "63-loading3.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0075b8f8
@@ -102,7 +112,21 @@ void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
     }
 }
 
-// EnableCar
+// FUNCTION: CARMA2_HW 0x004992e0
+// FUNCTION: CARMA2_SW 0x00495f10
+void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
+
+    if (pCar->driver_name[0] != '\0') {
+        if (pCar->disabled) {
+            pCar->disabled = 0;
+            ForceRebuildActiveCarList();
+        }
+        if (pCar->car_master_actor->t.t.mat.m[3][0] > 500.0f) {
+            BrVector3Sub(&pCar->car_master_actor->t.t.translate.t, &pCar->car_master_actor->t.t.translate.t, &gInitial_position);
+            BrVector3Copy((br_vector3*)pCar->old_frame_mat.m[3], &pCar->car_master_actor->t.t.translate.t);
+        }
+    }
+}
 
 // DoNetworkHeadups
 
@@ -159,11 +183,43 @@ void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
 
 // EverybodysLost
 
-// DeclareWinner
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0049a760
+// STUB: CARMA2_SW 0x004968e0
+void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // PlayerIsIt
 
-// CheckForVampireWinner
+// FUNCTION: CARMA2_HW 0x0049a940
+// FUNCTION: CARMA2_SW 0x00496ac0
+void C2_HOOK_FASTCALL CheckForVampireWinner(void) {
+    int i;
+    int players_left;
+    int winner_index;
+
+    players_left = 0;
+    winner_index = 0;
+    if (gProgram_state.racing && gNet_mode == eNet_mode_host) {
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            if (!gNet_players[i].field_0x80) {
+                players_left++;
+                winner_index = i;
+            }
+        }
+        if (players_left <= 1) {
+            DeclareWinner(winner_index);
+        }
+    }
+}
 
 // PlayerIsInfected
 
@@ -179,7 +235,33 @@ void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
 
 // DoNetGameManagement
 
-// InitialisePlayerScore
+// FUNCTION: CARMA2_HW 0x0049b690
+// FUNCTION: CARMA2_SW 0x00497810
+void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
+
+    PossibleService();
+    switch (gCurrent_net_game->type) {
+    case eNet_game_type_fight_to_death:
+        pPlayer->score2 = 100;
+        break;
+    case eNet_game_type_1:
+    case eNet_game_type_2:
+    case eNet_game_type_4:
+    case eNet_game_type_5:
+    case eNet_game_type_6:
+        pPlayer->score2 = 0;
+        break;
+    case eNet_game_type_checkpoint:
+        pPlayer->score2 = 0xffff;
+        break;
+    case eNet_game_type_foxy:
+        pPlayer->score2 = 0;
+        break;
+    }
+    pPlayer->credits = gCurrent_net_game->options.starting_credits;
+    pPlayer->wasted = 0;
+    pPlayer->reposition_time = 0;
+}
 
 // InitPlayers
 
@@ -196,7 +278,25 @@ void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
 
 // SendGameplay
 
-// SendGameplayToAllPlayers
+// FUNCTION: CARMA2_HW 0x0049bc70
+// FUNCTION: CARMA2_SW 0x00497df0
+void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
+    tNet_message* the_message;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, mess, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_1, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_2, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_3, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_4, 0x14);
+
+    the_message = NetBuildGuaranteedMessage(0x1b, 0);
+    the_message->contents.gameplay.mess = pMess;
+    the_message->contents.gameplay.param_1 = pParam_1;
+    the_message->contents.gameplay.param_2 = pParam_2;
+    the_message->contents.gameplay.param_3 = pParam_3;
+    the_message->contents.gameplay.param_4 = pParam_4;
+    NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, the_message, NULL);
+}
 
 // SendGameplayToHost
 

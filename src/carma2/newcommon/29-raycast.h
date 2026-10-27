@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_29_RAYCAST_H
 #define GUARD_29_RAYCAST_H
 
@@ -5,7 +13,16 @@
 
 extern br_actor* gY_picking_camera;
 
+extern br_model* gBelow_model;
+extern int gBelow_face_index;
+extern float gLowest_y_above;
+extern float gCurrent_y;
+extern br_model* gAbove_model;
+extern int gAbove_face_index;
+
 extern br_matrix34 gPick_model_to_view__raycast;
+
+extern float gHighest_y_below;
 
 // DRActorToRoot
 

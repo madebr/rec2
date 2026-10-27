@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_30_OPPONENT_H
 #define GUARD_30_OPPONENT_H
 
@@ -9,6 +17,10 @@ extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
 extern int gNumber_of_cops_before_faffage;
 extern tU8* gBit_per_node;
+extern int gRoute_search_calls;
+extern int gRoute_search_last_target_count;
+extern int gRoute_search_target_count;
+extern float gShortest_route_length;
 
 extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
@@ -18,7 +30,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // ReallocExtraPathSections
 
-// PointVisibleFromHere
+extern int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo);
 
 // WeightedFindNearestNodeAndSection
 
@@ -40,7 +52,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // TopUpRandomRoute
 
-// SearchForSection
+extern int C2_HOOK_FASTCALL SearchForSection(tRoute_section* pRoute, tRoute_section* pBest_route, int* pBest_count, tS16 pTarget, int pDepth, br_scalar pLength, tOpponent_spec* pOpponent_spec);
 
 // UpdatePlayersSection
 
@@ -62,7 +74,7 @@ extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOppone
 
 // ProcessCompleteRace
 
-// StartRecordingTrail
+extern void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee);
 
 // RecordNextTrailNode
 
@@ -106,7 +118,7 @@ extern void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOppon
 
 // AddIfNotInList
 
-// RemoveAnythingStillInList
+extern void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCount);
 
 // RebuildActiveCarList
 
@@ -144,7 +156,7 @@ extern void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec
 
 extern void C2_HOOK_FASTCALL LoadCopCars(void);
 
-// LoadInOppoPaths
+extern void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF);
 
 extern void C2_HOOK_FASTCALL DisposeOpponentPaths(void);
 
@@ -156,13 +168,15 @@ extern void C2_HOOK_FASTCALL DisposeOpponents(void);
 
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 
+extern void C2_HOOK_FASTCALL ReportMurderToPoliceDepartment(tCar_spec* pCar_spec);
+
 extern int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory);
 
 extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
 
-// GetDriverName
+extern char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex);
 
-// GetOpponentSpecFromCarSpec
+extern tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec);
 
 extern tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex);
 
@@ -170,7 +184,7 @@ extern int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_sp
 
 extern int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec);
 
-// GetOpponentsNextSection
+extern int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spec, tS16 pCurrent_section);
 
 // GetOpponentsSectionStartNodePoint
 

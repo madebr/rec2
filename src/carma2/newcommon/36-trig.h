@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_36_TRIG_H
 #define GUARD_36_TRIG_H
 
@@ -19,6 +27,8 @@ extern float gFloat_sine_table[91];
 // FastScalarCosAngle
 
 extern float C2_HOOK_STDCALL FastFloatArcSin(float pValue);
+
+extern float C2_HOOK_STDCALL FastFloatArcCos(float pValue);
 
 extern float C2_HOOK_STDCALL FastFloatArcTan2(float pY, float pX);
 

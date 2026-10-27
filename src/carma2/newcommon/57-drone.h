@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_57_DRONE_H
 #define GUARD_57_DRONE_H
 
@@ -5,6 +13,12 @@
 #include "rec2_types.h"
 
 extern br_vector3 gRender_bounds_centre;
+extern int gINT_00681fb0;
+extern int gFrame;
+
+extern int gCurrent_selected_drone;
+
+extern tDrone_spec* gDrone_specs;
 
 // DoNotDprintf
 
@@ -14,7 +28,7 @@ extern br_vector3 gRender_bounds_centre;
 
 // DroneStraightestArcForCorner2D
 
-// OpenDroneFile
+extern FILE* C2_HOOK_FASTCALL OpenDroneFile(char* pDrone_name);
 
 // LoadDroneTypeInfo
 
@@ -94,11 +108,11 @@ extern int C2_HOOK_FASTCALL DroneTrainWithinRenderingDistance(const br_vector3* 
 
 // StartProcessingThisDrone
 
-// DroneCarWithinProcessingDistance
+extern int C2_HOOK_FASTCALL DroneCarWithinProcessingDistance(const br_vector3* pPos);
 
-// DronePlaneWithinProcessingDistance
+extern int C2_HOOK_FASTCALL DronePlaneWithinProcessingDistance(const br_vector3* pPos);
 
-// DroneTrainWithinProcessingDistance
+extern int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3* pPos);
 
 // CalcRenderBoundsCentre
 
@@ -146,9 +160,9 @@ extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 // AllocateAndInitDrones
 
-// LoadInDronePaths
+extern void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
-// DronePreCollisionStuff
+extern void C2_HOOK_FASTCALL DronePreCollisionStuff(void);
 
 // DoDronePerGameFrameStuff
 
@@ -162,7 +176,7 @@ extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 extern int C2_HOOK_FASTCALL OKToViewDrones(void);
 
-// GetCurrentViewDroneMat
+extern br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
 
 // GetCurrentViewDroneDirection
 

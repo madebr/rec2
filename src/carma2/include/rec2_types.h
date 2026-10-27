@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef REC2_TYPES_H
 #define REC2_TYPES_H
 
@@ -295,7 +303,7 @@ typedef struct {
 } tPipe_single_groove_on_of;
 
 typedef struct {
-    tS8 type_from;
+    tU8 type_from;
     tS8 type_to;
 } tPipe_single_transform_type;
 
@@ -534,6 +542,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_identity identity;
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
+        tPipe_single_transform_type transform_type;
         char raw_data[0];
     } data;
 } tPipe_chunk;
@@ -3398,9 +3407,9 @@ typedef struct {
     float field_0x64;
     float field_0x68;
     undefined4 field_0x6c;
-    undefined4 field_0x70;
+    void* field_0x70;
     undefined4 field_0x74;
-    undefined4 field_0x78;
+    void* field_0x78;
 } tSmashable_item_spec_texture_change;
 
 typedef struct {
@@ -3764,24 +3773,7 @@ typedef struct tSmashable_level {
     br_pixelmap * pixelmaps[3];
     int count_pixelmaps;
     float trigger_threshold;
-    int count_sounds;
-    int sounds[3];
-    int count_shrapnels;
-    tShrapnel_spec shrapnels[6];
-    tExplosion_animation animation;
-    tSlick_spec slick;
-    int count_noncar_activations;
-    tNoncar_activation* noncar_activations;
-    tShrapnel_side_effects side_effects;
-    int field_0x280;
-    int extension_flags;
-    int room_turn_on_code;
-    tAward_info award;
-    undefined field_0x2a0[4];
-    tU8 count_runtime_variable_changes;
-    undefined field_0x2a5;
-    tSmash_run_time_variable_change runtime_variable_changes[1]; /* FIXME: unknown size */
-    undefined field_0x2aa[18];
+    tConnotations connotations;
     int flags;
     tSmashable_texture_level_collision_type collision_type;
 } tSmashable_level;
@@ -4255,7 +4247,7 @@ typedef struct tPhysics_object {
     br_vector3 omega;
     br_vector3 pos;
     br_matrix34 transform_matrix;
-    undefined field_0xbc[48];
+    br_matrix34 field_0xbc;
     tU8 disable_move_rotate; /* FIXME: rename to doing_nothing_flag? */
     undefined field_0xed;
     undefined field_0xee[2];
@@ -4411,7 +4403,7 @@ typedef struct {
 
 typedef struct {
     int count;
-    undefined field_0x4[0x30];
+    br_vector3 points[4];
     float field_0x34;
     br_vector3 field_0x38;
 } tQueued_drone_crush_item;
@@ -4623,7 +4615,7 @@ typedef struct {
     tS8 field_0x7;
     tS8 field_0x8;
     tU8 field_0x9;
-    undefined field_0xa;
+    tS8 field_0xa;
     undefined field_0xb;
     undefined4 field_0xc;
     undefined4 field_0x10;
@@ -5211,6 +5203,15 @@ typedef struct {
 
 typedef struct {
     tNet_message_chunk_header header;
+    tNet_gameplay_mess mess;
+    int param_1;
+    int param_2;
+    int param_3;
+    int param_4;
+} tNet_message_chunk_gameplay;
+
+typedef struct {
+    tNet_message_chunk_header header;
 } tNet_message_guaranteed;
 
 typedef struct {
@@ -5307,6 +5308,7 @@ typedef struct {
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_scores scores; /* type = 0x18 */
+    tNet_message_chunk_gameplay gameplay; /* type = 0x1b */
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */

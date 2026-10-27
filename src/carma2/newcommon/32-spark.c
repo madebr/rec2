@@ -1,9 +1,18 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "32-spark.h"
 
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "60-phil.h"
 #include "globvars.h"
 #include "rec2_macros.h"
 
@@ -60,11 +69,19 @@ int gColumn_flags;
 // GLOBAL: CARMA2_SW 0x006ae560
 br_material* gBlack_material;
 
+// GLOBAL: CARMA2_HW 0x006b7888
+// GLOBAL: CARMA2_SW 0x006ae568
+tSmashable_environment_name* gSmashable_noncars;
+
 // GLOBAL: CARMA2_HW 0x006a8718
 br_matrix4 gCameraToScreen;
 
 // GLOBAL: CARMA2_HW 0x006a82b0
 br_camera* gSpark_cam;
+
+// GLOBAL: CARMA2_HW 0x006a82a8
+// GLOBAL: CARMA2_SW 0x006a2308
+tCar_spec* PTR_006a82a8;
 
 // DrawDot
 
@@ -207,7 +224,17 @@ void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar) {
     NOT_IMPLEMENTED();
 }
 
-// SetPixelmap
+// FUNCTION: CARMA2_HW 0x004f8ff0
+// FUNCTION: CARMA2_SW 0x004f4670
+int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
+    if (pMaterial->colour_map != PTR_006a82a8->field_0x1960) {
+        pMaterial->colour_map = PTR_006a82a8->field_0x1960;
+        BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // STUB: CARMA2_HW 0x004f8f30
 void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
@@ -665,7 +692,21 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
 
 // ClearSplashReplay
 
-// GetSplashIndex
+// FUNCTION: CARMA2_HW 0x004fee10
+// FUNCTION: CARMA2_SW 0x004fa6f0
+void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
+
+    if (PHILGetObjectProperty(pObject, 6) != 0.f) {
+        return pObject;
+    }
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        return pObject->actor;
+    }
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 >= 2 && pObject->flags_0x238 <= 4) {
+        return pObject->owner;
+    }
+    return NULL;
+}
 
 // ClearSplashes
 

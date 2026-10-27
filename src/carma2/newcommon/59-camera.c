@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "59-camera.h"
 
 #include "37-brucetrk.h"
@@ -5,12 +13,20 @@
 #include "globvrkm.h"
 #include "globvrpb.h"
 
+// GLOBAL: CARMA2_HW 0x00679278
+// GLOBAL: CARMA2_SW 0x006739e8
+int gAction_replay_manual_camera_target_type;
+
 // GLOBAL: CARMA2_HW 0x006792b4
 // GLOBAL: CARMA2_SW 0x00673a24
 br_actor* gPed_actor;
 
 // GLOBAL: CARMA2_HW 0x006792b8
 int gCamera_frozen;
+
+// GLOBAL: CARMA2_HW 0x006792c8
+// GLOBAL: CARMA2_SW 0x00673a38
+tSave_camera gSave_camera[2];
 
 // GLOBAL: CARMA2_HW 0x007634ac
 // GLOBAL: CARMA2_SW 0x00759a0c
@@ -59,9 +75,39 @@ void C2_HOOK_FASTCALL ReallyViewOpponent(void) {
 
 // IsCameraTypeAllowed
 
-// MungeCarMaterials
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// SetCameraType
+// STUB: CARMA2_HW 0x0040e700
+// STUB: CARMA2_SW 0x0040e6e0
+void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_cam) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x0040e790
+// FUNCTION: CARMA2_SW 0x0040e770
+void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
+
+    gAction_replay_camera_mode = pCamPos;
+    switch (pCamPos) {
+    case kActionReplayCameraMode_Standard:
+    case kActionReplayCameraMode_Rigid:
+    case kActionReplayCameraMode_Reversing:
+        InitialiseExternalCamera();
+        break;
+    case kActionReplayCameraMode_Manual:
+        gAction_replay_manual_camera_target_type = 0;
+        break;
+    default:
+        break;
+    }
+    MungeCarMaterials(&gProgram_state.current_car, gAction_replay_camera_mode == kActionReplayCameraMode_Internal);
+}
 
 // ChangeCameraType
 
@@ -122,9 +168,29 @@ int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime) {
 
 // SetUpPanningCamera
 
-// SaveCameraPosition
+// FUNCTION: CARMA2_HW 0x00410be0
+// FUNCTION: CARMA2_SW 0x00410bc0
+void C2_HOOK_FASTCALL SaveCameraPosition(int pIndex) {
 
-// RestoreCameraPosition
+    if (gSave_camera[pIndex].saved == 1) {
+        return;
+    }
+    gSave_camera[pIndex].zoom = gCamera_zoom;
+    gSave_camera[pIndex].yaw = gCamera_yaw;
+    gSave_camera[pIndex].saved = 1;
+}
+
+// FUNCTION: CARMA2_HW 0x00410c20
+// FUNCTION: CARMA2_SW 0x00410c00
+void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex) {
+
+    if (gSave_camera[pIndex].saved == 0) {
+        return;
+    }
+    gCamera_zoom = gSave_camera[pIndex].zoom;
+    gCamera_yaw = gSave_camera[pIndex].yaw;
+    gSave_camera[pIndex].saved = 0;
+}
 
 // DrVector3RotateY
 

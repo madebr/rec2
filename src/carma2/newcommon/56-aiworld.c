@@ -1,8 +1,17 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "56-aiworld.h"
 
 #include "05-drmem.h"
 #include "10-loading2.h"
 #include "18-graphics2.h"
+#include "30-opponent.h"
 #include "57-drone.h"
 
 // MakeVertexAndOffsetIt
@@ -29,7 +38,16 @@ void C2_HOOK_FASTCALL InitPanGameAIWorld(void) {
     PrintMemoryDump(0, "AFTER LoadPanGameDroneInfo()");
 }
 
-// LoadAIWorldTrackInfo
+// FUNCTION: CARMA2_HW 0x00401030
+// FUNCTION: CARMA2_SW 0x00401030
+void C2_HOOK_FASTCALL LoadAIWorldTrackInfo(FILE* pF) {
+
+    PrintMemoryDump(0, "BEFORE LoadInOppoPaths()");
+    LoadInOppoPaths(pF);
+    PrintMemoryDump(0, "AFTER LoadInOppoPaths(), BEFORE LoadInDronePaths()");
+    LoadInDronePaths(pF);
+    PrintMemoryDump(0, "AFTER LoadInDronePaths()");
+}
 
 // LoadAIWorldForRace
 

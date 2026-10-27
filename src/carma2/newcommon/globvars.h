@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef REC2_GLOBVARS_H
 #define REC2_GLOBVARS_H
 
@@ -153,6 +161,7 @@ extern br_scalar gYon_multiplier;
 //extern VFILE* gDiagnostic_file;
 //extern br_vector3 gDisabled_vector;
 extern tU32 gI_am_cheating;
+extern int gINT_0068b8e4;
 //extern char gNet_player_name[32];
 //extern br_matrix34 gRearview_camera_to_world;
 //extern tSpecial_volume gDefault_default_water_spec_vol;
@@ -204,6 +213,7 @@ extern br_actor* gSelf;
 extern br_pixelmap* gScreen;
 //extern br_pixelmap* gScreen;
 extern br_pixelmap* gRender_screen;
+extern int gInitial_powerup_slots[3];
 extern br_actor* gRearview_camera;
 extern br_scalar gCamera_hither;
 extern br_pixelmap* gBack_screen;

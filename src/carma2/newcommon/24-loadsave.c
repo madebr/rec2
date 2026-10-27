@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "24-loadsave.h"
 
 #include "globvars.h"
@@ -5,6 +13,10 @@
 #include "rec2_types.h"
 
 #include "c2_string.h"
+
+// GLOBAL: CARMA2_HW 0x0068b8e8
+// GLOBAL: CARMA2_SW 0x00685e48
+int gINT_0068b8e8;
 
 // GLOBAL: CARMA2_HW 0x0068b8ec
 // GLOBAL: CARMA2_SW 0x00685e4c

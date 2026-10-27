@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "13-crush1.h"
 
 #include "08-loading1.h"
@@ -253,9 +261,17 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // ReadCrushData
 
-// CreateDefaultCrushDataCB
+// STUB: CARMA2_HW 0x0042a220
+// STUB: CARMA2_SW 0x0042a2b0
+intptr_t C2_HOOK_CDECL CreateDefaultCrushDataCB(br_actor* pActor, void* pData) {
+    NOT_IMPLEMENTED();
+}
 
-// CreateDefaultCrushData
+// FUNCTION: CARMA2_HW 0x0042a210
+// FUNCTION: CARMA2_SW 0x0042a2a0
+void C2_HOOK_FASTCALL CreateDefaultCrushData(br_actor* pActor, tCar_spec* pCar_spec) {
+    DRActorEnumRecurse(pActor, CreateDefaultCrushDataCB, pCar_spec);
+}
 
 // ReadMasterCrushData
 
@@ -264,6 +280,34 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 // LinkCrushDataToActor
 
 // LinkCrushDataToActors
+
+// FUNCTION: CARMA2_HW 0x0042a940
+// FUNCTION: CARMA2_SW 0x0042a9d0
+void C2_HOOK_FASTCALL LinkCarCrushDatas(br_actor* pActor, tCar_crush_buffer* pBuffer) {
+    DRActorEnumRecurse(pActor, LinkCarCrushData, pBuffer);
+}
+
+// FUNCTION: CARMA2_HW 0x0042a950
+// FUNCTION: CARMA2_SW 0x0042a9e0
+intptr_t C2_HOOK_CDECL LinkCarCrushData(br_actor* pActor, void* pData) {
+    int i;
+    tUser_crush_data* user_crush;
+    tCar_crush_buffer* car_crush_buffer;
+
+    car_crush_buffer = pData;
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 0;
+    }
+    user_crush->crush_data = NULL;
+    for (i = 0; i < car_crush_buffer->count_entries; i++) {
+        if (car_crush_buffer->entries[i] != NULL && DRStricmp(car_crush_buffer->entries[i]->actor_name, pActor->identifier) == 0) {
+            user_crush->crush_data = car_crush_buffer->entries[i];
+            return 0;
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0042ac70
 intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* pData) {
@@ -309,7 +353,34 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
     }
 }
 
-// CrushLimitNumber
+// FUNCTION: CARMA2_HW 0x0042b4c0
+// FUNCTION: CARMA2_SW 0x0042b550
+tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid) {
+    int number;
+    int i;
+    int mi;
+    int ma;
+
+    *pInvalid = 1;
+    number = 0;
+    for (i = REC2_ASIZE(pPoint->v) - 1; i >= 0; i--) {
+        for (mi = 0; mi < pCount_limits->counts[i][1] - 1; mi++) {
+            if (pPoint->v[i] < pLimits->limits[i][1].values[mi]) {
+                *pInvalid = 0;
+                break;
+            }
+        }
+        number = (number << 2) | mi;
+        for (ma = 0; ma < pCount_limits->counts[i][0] - 1; ma++) {
+            if (pLimits->limits[i][0].values[ma] < pPoint->v[i]) {
+                *pInvalid = 0;
+                break;
+            }
+        }
+        number = (number << 2) | ma;
+    }
+    return (tU16)number;
+}
 
 // SoftnessOfNearestPointCB
 
@@ -364,7 +435,49 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br
 
 // CalculateReferencePoints
 
-// InitModelCrushDataCB
+// FUNCTION: CARMA2_HW 0x0042be20
+// FUNCTION: CARMA2_SW 0x0042beb0
+intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush_data;
+    tCar_crush_detach_data* detach_data;
+
+    user_crush_data = pActor->user;
+    if (user_crush_data != NULL && user_crush_data->models[0] != NULL
+            && user_crush_data->crush_data != NULL && (detach_data = user_crush_data->crush_data->detach_data) != NULL) {
+        tUser_crush_data* parent_user_crush_data;
+        br_model* model;
+        br_model* parent_model;
+        tU16 i;
+        float d_min, d_max;
+        br_vector3 min_v, max_v;
+
+        model = user_crush_data->models[0];
+        parent_user_crush_data = pActor->parent->user;
+        parent_model = parent_user_crush_data->models[0];
+        d_max = d_min = BR_SCALAR_MAX;
+        BrMatrix34ApplyP(&min_v, &model->bounds.min, &pActor->t.t.mat);
+        BrMatrix34ApplyP(&max_v, &model->bounds.max, &pActor->t.t.mat);
+
+        for (i = 0; i < parent_model->nvertices; i++) {
+            float d;
+            br_vector3 delta;
+
+            BrVector3Sub(&delta, &min_v, &parent_model->vertices[i].p);
+            d = BrVector3LengthSquared(&delta);
+            if (d < d_min) {
+                detach_data->min_vertex = i;
+                d_min = d;
+            }
+            BrVector3Sub(&delta, &max_v, &parent_model->vertices[i].p);
+            d = BrVector3LengthSquared(&delta);
+            if (d < d_max) {
+                detach_data->max_vertex = i;
+                d_max = d;
+            }
+        }
+    }
+    return 0;
+}
 
 // InitModelCrushData
 
@@ -496,7 +609,24 @@ int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
 
 // CrushPoint
 
-// ClipPointToLimits
+// FUNCTION: CARMA2_HW 0x004368d0
+// FUNCTION: CARMA2_SW 0x00436900
+void C2_HOOK_FASTCALL ClipPointToLimits(br_vector3* pPoint, tU16 pLimit_bits, const tCar_crush_limits* pLimits) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(pPoint->v); i++) {
+        if (pPoint->v[i] < pLimits->limits[i][0].values[pLimit_bits & 0x3]) {
+            pPoint->v[i] = pLimits->limits[i][0].values[pLimit_bits & 0x3];
+            pLimit_bits >>= 4;
+        } else {
+            pLimit_bits >>= 2;
+            if (pPoint->v[i] > pLimits->limits[i][1].values[pLimit_bits & 0x3]) {
+                pPoint->v[i] = pLimits->limits[i][1].values[pLimit_bits & 0x3];
+            }
+            pLimit_bits >>= 2;
+        }
+    }
+}
 
 // CrushCollisionShapes
 
@@ -534,7 +664,26 @@ void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_cru
 
 // DoDroneCrushing
 
-// AddDroneCrush
+// FUNCTION: CARMA2_HW 0x0042d390
+// FUNCTION: CARMA2_SW 0x0042d400
+void C2_HOOK_FASTCALL AddDroneCrush(tQueued_drone_crush_item* pCrush, const br_vector3* pVector, float pScale, int pCount, const br_vector3* pPoints) {
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, points, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tQueued_drone_crush_item, points, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x34, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x38, 0x38);
+
+    if (pCount > (int)REC2_ASIZE(pCrush->points)) {
+        pCount = REC2_ASIZE(pCrush->points);
+    }
+    BrVector3Copy(&pCrush->field_0x38, pVector);
+    pCrush->field_0x34 = pScale;
+    pCrush->count = pCount;
+    for (i = 0; i < pCrush->count; i++) {
+        BrVector3Copy(&pCrush->points[i], &pPoints[i]);
+    }
+}
 
 // QueueDroneCrush
 
@@ -614,7 +763,44 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 
 // SemiDetachBit
 
-// GetSDBJointPosAndBounds
+// FUNCTION: CARMA2_HW 0x0042dbd0
+// FUNCTION: CARMA2_SW 0x0042dc40
+int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, br_vector3* pP3, br_bounds3* pBounds, br_actor* pActor) {
+    tUser_crush_data* user_crush;
+    br_model* model;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_crush_detach_data* detach_data;
+    tCar_crush_flap_data* flap_data;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 1;
+    }
+    model = user_crush->models[0];
+    if (model == NULL) {
+        return 1;
+    }
+    crush_data = user_crush->crush_data;
+    if (crush_data == NULL) {
+        return 1;
+    }
+    detach_data = crush_data->detach_data;
+    if (detach_data == NULL) {
+        return 1;
+    }
+    DRBoundsCopy(pBounds, &model->bounds);
+    flap_data = crush_data->flap_data;
+    if (flap_data != NULL) {
+        BrVector3Copy(pP1, &model->vertices[flap_data->hinge0].p);
+        BrVector3Copy(pP2, &model->vertices[flap_data->hinge1].p);
+        BrVector3Copy(pP3, &model->vertices[flap_data->hinge2].p);
+    } else {
+        BrVector3Copy(pP1, &model->vertices[detach_data->field_0x30].p);
+        BrVector3Set(pP2, 0.f, 0.f, 0.f);
+        BrVector3Set(pP3, 0.f, 0.f, 0.f);
+    }
+    return 0;
+}
 
 // SendSemiDetachBit
 

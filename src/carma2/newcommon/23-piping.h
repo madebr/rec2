@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_23_PIPING_H
 #define GUARD_23_PIPING_H
 
@@ -5,10 +13,18 @@
 #include "rec2_types.h"
 #include <s3/s3.h>
 
+extern tU8* gLocal_buffer;
+extern tU32 gLocal_buffer_size;
+extern tU8* gMr_chunky;
+extern tU8* gPipe_buffer_start;
 extern int gPlay_direction;
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
 extern tU8* gPipe_play_ptr;
+extern tU8* gPipe_buffer_oldest;
+extern tU8* gPipe_record_ptr;
+extern tU32 gPipe_sound_start_time;
+extern tU32 gPipe_sound_time_window;
 
 // ARReplayForwards
 
@@ -42,7 +58,7 @@ extern int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType);
 
 // ARIsActionReplayAvailable
 
-// ARSomeReplayLeft
+extern int C2_HOOK_FASTCALL ARSomeReplayLeft(void);
 
 // DisablePipedSounds
 
@@ -56,7 +72,7 @@ extern void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
 extern void C2_HOOK_FASTCALL AREndPipingSession(void);
 
-// ARAddDataToSession
+extern void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize);
 
 extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
 
@@ -84,7 +100,7 @@ extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // CheckSound
 
-// SoundTimeout
+extern int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime);
 
 // ScanAndPlaySoundsToBe
 
@@ -108,7 +124,7 @@ extern void C2_HOOK_FASTCALL ReverseSound(tS3_effect_tag pEffect, tS3_sound_tag 
 
 extern int C2_HOOK_FASTCALL ARGoBackwards(void);
 
-// ARGoForwards
+extern int C2_HOOK_FASTCALL ARGoForwards(void);
 
 extern void C2_HOOK_FASTCALL ARService(void);
 
@@ -200,7 +216,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
 
 // PipeSinglePedIncident
 
-// PipeSingleWallIncident
+extern void C2_HOOK_FASTCALL PipeSingleWallIncident(float pSeverity, br_vector3* pImpact_point);
 
 // PipeSingleSkidAdjustment
 
@@ -254,7 +270,7 @@ extern void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, in
 
 // PipeSinglePowerupLose
 
-extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
+extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, tU16 pFlags);
 
 // PipeSingleVanishedDismembered
 
@@ -334,11 +350,11 @@ extern void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk);
 
-// ApplyEndMyBend
+extern void C2_HOOK_FASTCALL ApplyEndMyBend(tPipe_chunk** pChunk);
 
 // ApplyShrapnelShower
 
-// ApplyExplosion
+extern void C2_HOOK_FASTCALL ApplyExplosion(tPipe_chunk** pChunk);
 
 // ApplyNonCarCreation
 
@@ -398,7 +414,7 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // ApplyDroneStraightPos
 
-// ApplyDroneUnused
+extern void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk);
 
 // ApplyNapalmBolt
 
@@ -436,9 +452,9 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // UndoSplitWeld
 
-// UndoBend
+extern void C2_HOOK_FASTCALL UndoBend(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
-// UndoUnBend
+extern void C2_HOOK_FASTCALL UndoUnBend(void);
 
 // UndoShrapnelShower
 
@@ -490,7 +506,7 @@ extern void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_
 
 // UndoEndShitMine
 
-// UndoTransformType
+extern void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // CalcCrushLength
 

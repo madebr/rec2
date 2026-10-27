@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "42-input.h"
 
 #include "41-utility.h"
@@ -540,6 +548,16 @@ int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type 
     return -1;
 }
 
+// FUNCTION: CARMA2_HW 0x00483dd0
+// FUNCTION: CARMA2_SW 0x00480f10
+void C2_HOOK_FASTCALL AddRollingString(char* pStr, int pX, int pY, tRolling_type pRolling_type) {
+    int i;
+
+    for (i = 0; (size_t)i < strlen(pStr); i++) {
+        AddRollingLetter(pStr[i], pX + gCurrent_graf_data->rolling_letter_x_pitch * i, pY, pRolling_type);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00483fd0
 void C2_HOOK_FASTCALL BlankSlot(int pIndex, int pName_length, int pVisible_length) {
     int i;
@@ -608,6 +626,13 @@ void C2_HOOK_FASTCALL StartTyping(int pSlot_index, char* pText, int pVisible_len
     gCurrent_position = (int)strlen(gCurrent_typing);
     gVisible_length = pVisible_length;
     gCurrent_cursor = ChangeCharTo(pSlot_index, gCurrent_position, ROLLING_LETTER_LOOP_RANDOM);
+}
+
+// FUNCTION: CARMA2_HW 0x00484510
+// FUNCTION: CARMA2_SW 0x00481650
+void C2_HOOK_FASTCALL SetSlotXY(int pSlot_index, int pX_coord, int pY_coord) {
+    gLetter_x_coords[pSlot_index] = pX_coord;
+    gLetter_y_coords[pSlot_index] = pY_coord;
 }
 
 // FUNCTION: CARMA2_HW 0x00484590

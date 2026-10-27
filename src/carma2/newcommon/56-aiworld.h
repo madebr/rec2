@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_56_AIWORLD_H
 #define GUARD_56_AIWORLD_H
 
@@ -5,13 +13,15 @@
 
 #include "brender/brender.h"
 
+#include <stdio.h>
+
 // MakeVertexAndOffsetIt
 
 extern void C2_HOOK_FASTCALL MakeFaceAndTextureIt(br_model* pModel, int pFace_num, br_uint_16 pV0, br_uint_16 pV1, br_uint_16 pV2, br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL InitPanGameAIWorld(void);
 
-// LoadAIWorldTrackInfo
+extern void C2_HOOK_FASTCALL LoadAIWorldTrackInfo(FILE* pF);
 
 // LoadAIWorldForRace
 

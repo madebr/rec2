@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "50-fog.h"
 
 #include "33-depth.h"
@@ -14,6 +22,10 @@ int gAllow_material_adapt;
 
 // GLOBAL: CARMA2_HW 0x006a3340
 br_material* gMaterials_to_adapt[200];
+
+// GLOBAL: CARMA2_HW 0x006a3338
+// GLOBAL: CARMA2_SW 0x0069d398
+int gShrapnel_ghost_actor_count;
 
 // FUNCTION: CARMA2_HW 0x004ea760
 // FUNCTION: CARMA2_SW 0x004e6500

@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_10_LOADING2_H
 #define GUARD_10_LOADING2_H
 
@@ -108,7 +116,7 @@ extern void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race);
 
 extern void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions);
 
-// PrintNetOptions
+extern int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex);
 
 extern int C2_HOOK_FASTCALL SaveOptions(void);
 

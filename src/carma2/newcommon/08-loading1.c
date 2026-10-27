@@ -1,6 +1,16 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "08-loading1.h"
 
+#include "01-network.h"
 #include "09-funks.h"
+#include "10-loading2.h"
 #include "13-crush1.h"
 #include "16-graphics1.h"
 #include "19-font.h"
@@ -1085,7 +1095,35 @@ void C2_HOOK_FASTCALL DisposeRace(void) {
     PossibleService();
 }
 
-// DisposeGameIfNecessary
+// FUNCTION: CARMA2_HW 0x0044c130
+// FUNCTION: CARMA2_SW 0x0044bee0
+void C2_HOOK_FASTCALL DisposeGameIfNecessary(void) {
+    int i;
+
+    dr_dprintf("DisposeGameIfNecessary() - START");
+    if (gNet_mode != eNet_mode_none) {
+        NetLeaveGame(gCurrent_net_game);
+    }
+    dr_dprintf("DisposeGameIfNecessary() - Point 1");
+    if (gGame_initialized) {
+        gGame_initialized = 0;
+        dr_dprintf("DisposeGameIfNecessary() - Point 2");
+        if (gNet_mode_of_last_game != eNet_mode_none) {
+            for (i = 0; i < gNumber_of_net_players; i++) {
+                DisposeCar(gNet_players[i].car, gNet_players[i].car_index);
+            }
+            dr_dprintf("DisposeGameIfNecessary() - Point 3");
+            PossibleService();
+            LoadRaces(gRace_list, &gNumber_of_races, -1);
+            DisposeStorageSpace(&gNet_cars_storage_space);
+            gNo_current_game = 1;
+            dr_dprintf("DisposeGameIfNecessary() - Point 4");
+        }
+        dr_dprintf("DisposeGameIfNecessary() - Point 5");
+    }
+    ShutdownNetIfRequired();
+    dr_dprintf("DisposeGameIfNecessary() - END");
+}
 
 // DisposeTrack
 

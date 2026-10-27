@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_60_PHIL_H
 #define GUARD_60_PHIL_H
 
@@ -28,6 +36,8 @@ extern int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8*
 // GetVelocityAndPosition
 
 // SizeOfObjectNetworkStuff
+
+extern int C2_HOOK_STDCALL FloatToFixedFraction(float pValue, float pMin, float pMax);
 
 // WriteObjectNetworkStuff
 
@@ -71,7 +81,7 @@ extern int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject
 
 // PHILSetObjectProperty
 
-// PHILGetObjectProperty
+extern float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pProperty);
 
 // FlushQueuedAddsAndRemoves
 

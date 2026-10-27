@@ -1,10 +1,21 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "62-graphics3.h"
 
+#include "01-network.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "15-displays.h"
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
@@ -16,7 +27,31 @@
 #include "rec2_macros.h"
 
 #include <limits.h>
+#include <stdio.h>
 #include <string.h>
+
+// GLOBAL: CARMA2_HW 0x006593a0
+// GLOBAL: CARMA2_SW 0x00653d88
+const int gArrows[2][4][60] = {
+    {
+        // inner arrow (=fill)
+        { 10,  0,  0, -1,  0,  1,  0,  0, -1,  0, -2,  0,  1, -1,  1,  1,  1, -2,  2,  2,  2, },
+        { 11,  0,  0, -1,  0,  1,  0,  0, -1,  1, -1,  1, -2, -2,  1, -1,  1,  0,  1,  1,  1,  1,  2, },
+        {  9,  0,  0, -2,  0, -1,  0,  1,  0,  0, -1,  1, -1,  2, -2,  0,  1,  0,  2, },
+        { 11,  0,  0, -1,  0,  1,  0, -2, -1, -1, -1,  0, -1,  1, -1,  2, -1, -1,  1,  0,  1, -1,  2, },
+    },
+    {
+        // outer arrow (=border)
+        { 26,  1, -3,  1, -2,  1, -1,  2, -1,  2,  0,  2,  1,  3,  1,  3,  2,  3,  3,  2,  3,  1,  3,  1,  2,  0,  2, -1,  2,
+          -1,  3, -2,  3, -3,  3, -3,  2, -3,  1, -2,  1, -2,  0, -2, -1, -1, -1, -1, -2, -1, -3,  0, -3, },
+        { 22,  0, -3,  1, -3,  2, -3,  2, -2,  2, -1,  2,  0,  2,  1,  2,  2,  2,  3,  1,  3,  0,  3,  0,  2, -1,  2, -2,  2,
+          -3,  2, -3,  1, -3,  0, -2,  0, -2, -1, -1, -1, -1, -2,  0, -2, },
+        { 24,  1, -3,  2, -3,  3, -3,  3, -2,  3, -1,  2, -1,  2,  0,  2,  1,  1,  1,  1,  2,  1,  3,  0,  3, -1,  3, -1,  2,
+          -1,  1, -2,  1, -3,  1, -3,  0, -3, -1, -2, -1, -1, -1, -1, -2,  0, -2,  1, -2, },
+        { 22, -3, -2, -2, -2, -1, -2,  0, -2,  1, -2,  2, -2,  3, -2,  3, -1,  3,  0,  2,  0,  2,  1,  1,  1,  1,  2,  0,  2,
+           0,  3, -1,  3, -2,  3, -2,  2, -2,  1, -2,  0, -3,  0, -3, -1, },
+    },
+};
 
 // GLOBAL: CARMA2_HW 0x00655dfc
 // GLOBAL: CARMA2_SW 0x00650ce4
@@ -27,6 +62,14 @@ tCar_icon gCar_icons[128];
 
 // GLOBAL: CARMA2_HW 0x0074ab84
 br_actor* gCar_icons_model_actor;
+
+// GLOBAL: CARMA2_HW 0x0068d8c4
+// GLOBAL: CARMA2_SW 0x0068791c
+tCar_spec* gTarget_lock_car_1;
+
+// GLOBAL: CARMA2_HW 0x0068d6f0
+// GLOBAL: CARMA2_SW 0x00687748
+tCar_spec* gTarget_lock_car_2;
 
 // GLOBAL: CARMA2_HW 0x0068d8c8
 int gTarget_lock_enabled;
@@ -190,11 +233,47 @@ tSmashable_race_target gSmashable_race_targets[300];
 
 // CarArrowColour
 
-// ToggleTargetLock
+// FUNCTION: CARMA2_HW 0x004945f0
+// FUNCTION: CARMA2_SW 0x004918f0
+void C2_HOOK_FASTCALL ToggleTargetLock(void) {
+    char name[256];
+    char s[256];
+
+    if (gNet_mode != eNet_mode_none) {
+        if (gCurrent_net_game->type == eNet_game_type_foxy) {
+            return;
+        }
+        if (!gCurrent_net_game->options.show_players_on_map) {
+            return;
+        }
+    }
+    if (gTarget_lock_car_1 == NULL) {
+        NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_no_target_to_lock_onto), 0);
+    } else {
+        gTarget_lock_enabled = !gTarget_lock_enabled;
+        if (gTarget_lock_enabled) {
+            if (gNet_mode != eNet_mode_none) {
+                strcpy(name, NetPlayerFromCar(gTarget_lock_car_2)->player_name);
+            } else {
+                strcpy(name, GetDriverName((tU16)gTarget_lock_car_2->car_ID >> 8, (tU16)gTarget_lock_car_2->car_ID & 0xff));
+            }
+            sprintf(s, "%s %s", GetMiscString(eMiscString_locked_onto), name);
+            NewTextHeadupSlot2(4, 0, 1500, -4, s, 0);
+        } else {
+            NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_target_lock_off), 0);
+        }
+    }
+}
 
 // CycleTargetLock
 
-// CycleMapOptions
+// FUNCTION: CARMA2_HW 0x00494840
+// FUNCTION: CARMA2_SW 0x00491b40
+void C2_HOOK_FASTCALL CycleMapOptions(void) {
+
+    gCheckpoint_finder_enabled = !gCheckpoint_finder_enabled;
+    NewTextHeadupSlot2(4, 0, 1500, -4, gCheckpoint_finder_enabled ? GetMiscString(eMiscString_checkpoint_finder_turned_on) : GetMiscString(eMiscString_checkpoint_finder_turned_off), 0);
+}
 
 // FUNCTION: CARMA2_HW 0x00494880
 // FUNCTION: CARMA2_SW 0x00491b80
@@ -223,7 +302,69 @@ void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
 
 // OppositeColour
 
-// DrawArrow
+// FUNCTION: CARMA2_HW 0x00495a00
+// STUB: CARMA2_SW 0x00492400
+void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3* pPos, br_uint_32 pColour) {
+    int colours[2];
+    int colour;
+    int x;
+    int y;
+    int temp;
+    int point_count;
+    const int* arrow_ptr;
+    int i;
+    int j;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gArrows) != 2);
+    C2_HOOK_BUG_ON(sizeof(gArrows) != 1920);
+
+    if (pColour == 0xffffffff) {
+        colours[0] = 0;
+        colours[1] = 0x84;
+    } else {
+        colours[0] = pColour;
+        if ((int)pColour < 0xe0) {
+            if ((int)(pColour & 0x7) < 4) {
+                colours[1] = 0xff;
+            } else {
+                colours[1] = 0;
+            }
+        } else {
+            if ((int)(pColour & 0xf) < 8) {
+                colours[1] = 0xff;
+            } else {
+                colours[1] = 0;
+            }
+        }
+    }
+    if (gBack_screen->type != BR_PMT_INDEX_8) {
+        colours[0] = PaletteEntry16Bit(gRender_palette, colours[0]);
+        colours[1] = PaletteEntry16Bit(gRender_palette, colours[1]);
+        if (pColour == 0xffffffff) {
+            colours[1] = Colour24BitTo16Bit(0xff00ff);
+        }
+    }
+    for (i = 0; i < REC2_ASIZE(colours); i++) {
+        arrow_ptr = &gArrows[i][pArrow_index & 0x3][0];
+        point_count = *arrow_ptr++;
+        for (j = 0; j < point_count; j++) {
+            colour = colours[i];
+            if (pArrow_index & 0x8) {
+                x = -*arrow_ptr++;
+                y = -*arrow_ptr++;
+            } else {
+                x = *arrow_ptr++;
+                y = *arrow_ptr++;
+            }
+            if (pArrow_index & 0x4) {
+                temp = x;
+                x = -y;
+                y = temp;
+            }
+            BrPixelmapPixelSet(pScreen, (int)(pPos->v[0] + x), (int)(pPos->v[1] + y), colour);
+        }
+    }
+}
 
 // DrawMapBlip
 

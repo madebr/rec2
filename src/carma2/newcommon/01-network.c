@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "01-network.h"
 
 #include "04-netgame.h"
@@ -96,6 +104,10 @@ tU32 gUINT_0074a690;
 // GLOBAL: CARMA2_HW 0x0074a718
 // GLOBAL: CARMA2_SW 0x007411d8
 tU32 gUINT_0074a718;
+
+// GLOBAL: CARMA2_HW 0x0074a734
+// GLOBAL: CARMA2_SW 0x007411f4
+int gIt_or_fox;
 
 // GLOBAL: CARMA2_HW 0x00659d30
 // GLOBAL: CARMA2_SW 0x00654648
@@ -259,11 +271,29 @@ void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
     }
 }
 
-// NetStartProducingJoinList
+// FUNCTION: CARMA2_HW 0x0049dbd0
+// FUNCTION: CARMA2_SW 0x00499d50
+void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc* pAdd_proc) {
+
+    gAdd_proc = pAdd_proc;
+    gJoin_list_mode = 1;
+    gBastard_has_answered = 0;
+    gTime_for_next_one = 1;
+    gJoin_poll_index = 0;
+    gCurrent_join_poll_game = NULL;
+    PDNetStartProducingJoinList();
+}
 
 // NetEndJoinList
 
-// NetDisposePIDGameInfo
+// FUNCTION: CARMA2_HW 0x0049dc70
+// FUNCTION: CARMA2_SW 0x00499df0
+void C2_HOOK_FASTCALL NetDisposePIDGameInfo(tNet_game_details* pDetails) {
+
+    if (pDetails != NULL) {
+        BrMemFree(pDetails);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0049dc80
 // FUNCTION: CARMA2_SW 0x00499e00
@@ -342,7 +372,23 @@ int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_m
     return PDNetSendMessageToAddress(pDetails, pMessage, pAddress);
 }
 
-// NetReallySendMessageToPlayer
+// FUNCTION: CARMA2_HW 0x0049eea0
+// FUNCTION: CARMA2_SW 0x0049b020
+int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id) {
+    int i;
+
+    if (gNet_mode == eNet_mode_none) {
+        return -3;
+    }
+    pMessage->header.field_0x8 = gLocal_net_ID;
+    pMessage->header.field_0x10 = PDGetTotalTime();
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].ID == pPlayer_id) {
+            return PDNetSendMessageToAddress(pNet_game, pMessage, &gNet_players[i].pd_net_info);
+        }
+    }
+    return -3;
+}
 
 // NetSendMessageToPlayer
 
@@ -570,19 +616,35 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
     return gNet_players[gThis_net_player_index].player_status;
 }
 
-// NetGuaranteedSendMessageToAllPlayers
+// STUB: CARMA2_HW 0x004a5b50
+// STUB: CARMA2_SW 0x004a1cd0
+int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
+    NOT_IMPLEMENTED();
+}
 
 // NetGuaranteedSendMessageToEverybody
 
-// STUB: CARMA2_HW 0x004a5c80
-// STUB: CARMA2_SW 0x004a1e00
+// FUNCTION: CARMA2_HW 0x004a5c80
+// FUNCTION: CARMA2_SW 0x004a1e00
 void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
-    NOT_IMPLEMENTED();
+    NetGuaranteedSendMessageToPlayer(pDetails, pMessage, gNet_players[0].ID, pNotifyFail);
 }
 
 // AddToGuaranteeList
 
-// NetGuaranteedSendMessageToPlayer
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004a5e20
+// STUB: CARMA2_SW 0x004a1fa0
+int C2_HOOK_FASTCALL NetGuaranteedSendMessageToPlayer(tNet_game_details* pDetails, tNet_message* pMessage, tPlayer_ID pPlayer, void* pNotifyFail) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // NetGuaranteedSendMessageToAddress
 
@@ -606,11 +668,17 @@ tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromID(tPlayer_ID pPlayer) {
     return NULL;
 }
 
-// STUB: CARMA2_HW 0x004a6960
-// STUB: CARMA2_SW 0x004a2ae0
+// FUNCTION: CARMA2_HW 0x004a6960
+// FUNCTION: CARMA2_SW 0x004a2ae0
 tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer) {
+    tNet_game_player_info* player;
 
-    NOT_IMPLEMENTED();
+    player = NetPlayerFromID(pPlayer);
+    if (player != NULL) {
+        return player->car;
+    } else {
+        return NULL;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004a69b0

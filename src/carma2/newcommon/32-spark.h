@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_32_SPARK_H
 #define GUARD_32_SPARK_H
 
@@ -12,6 +20,7 @@ extern br_pixelmap* gIt_shade_table;
 extern int gSmoke_flags;
 extern tSmoke gSmoke[25];
 extern br_material* gBlack_material;
+extern tSmashable_environment_name* gSmashable_noncars;
 extern tBRender_smoke* gBR_smoke_pointers[35];
 extern int gN_BR_smoke_structs;
 extern int gColumn_flags;
@@ -20,6 +29,7 @@ extern br_model* gLollipop_model;
 extern tSmoke_column gSmoke_column[10];
 extern br_matrix4 gCameraToScreen;
 extern br_camera* gSpark_cam;
+extern tCar_spec* PTR_006a82a8;
 
 // DrawDot
 
@@ -75,7 +85,7 @@ extern void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec);
 
-// SetPixelmap
+extern int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar);
 
@@ -225,7 +235,7 @@ extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
 // ClearSplashReplay
 
-// GetSplashIndex
+extern void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject);
 
 // ClearSplashes
 

@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "globvars.h"
 
 
@@ -457,6 +465,10 @@ br_scalar gYon_multiplier = 1.f;
 // GLOBAL: CARMA2_HW 0x0068b8e0
 // GLOBAL: CARMA2_SW 0x00685e40
 tU32 gI_am_cheating;
+
+// GLOBAL: CARMA2_HW 0x0068b8e4
+// GLOBAL: CARMA2_SW 0x00685e44
+int gINT_0068b8e4;
 //char gNet_player_name[32];
 //br_matrix34 gRearview_camera_to_world;
 //tSpecial_volume gDefault_default_water_spec_vol;
@@ -555,6 +567,10 @@ br_actor* gSelf;
 // GLOBAL: CARMA2_HW 0x00762128
 // GLOBAL: CARMA2_SW 0x00758688
 br_pixelmap* gRender_screen;
+
+// GLOBAL: CARMA2_HW 0x00762130
+// GLOBAL: CARMA2_SW 0x00758690
+int gInitial_powerup_slots[3];
 
 // GLOBAL: CARMA2_HW 0x0075b940
 // GLOBAL: CARMA2_SW 0x00751ea0

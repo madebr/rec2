@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "33-depth.h"
 
 #include "00-car.h"
@@ -276,6 +284,19 @@ void C2_HOOK_FASTCALL ReduceDepthStart(void) {
     gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
 }
 
+// FUNCTION: CARMA2_HW 0x004469b0
+// FUNCTION: CARMA2_SW 0x00446a30
+void C2_HOOK_FASTCALL IncreaseDepthEnd(void) {
+    char s[256];
+
+    if (gProgram_state.current_depth_effect.end > 0) {
+        gProgram_state.current_depth_effect.end--;
+    }
+    sprintf(s, "Depth end increased to %d", gProgram_state.current_depth_effect.end);
+    NewTextHeadupSlot(4, 0, 500, -1, s);
+    gProgram_state.default_depth_effect.end = gProgram_state.current_depth_effect.end;
+}
+
 // FUNCTION: CARMA2_HW 0x00446a10
 // FUNCTION: CARMA2_SW 0x00446a90
 void C2_HOOK_FASTCALL AssertYons(void) {
@@ -343,6 +364,24 @@ void C2_HOOK_STDCALL IncreaseAngle(void) {
             camera_ptr->field_of_view = BrDegreeToAngle(170);
         }
         sprintf(s, "Camera angle increased to %d", gProgram_state.current_depth_effect.end);
+        NewTextHeadupSlot(4, 0, 500, -1, s);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00446c40
+// FUNCTION: CARMA2_SW 0x00446cc0
+void C2_HOOK_STDCALL DecreaseAngle(void) {
+    br_camera* camera_ptr;
+    int i;
+    char s[256];
+
+    for (i = 0; i < (int)REC2_ASIZE(gCamera_list); i++) {
+        camera_ptr = gCamera_list[i]->type_data;
+        camera_ptr->field_of_view -= BrDegreeToAngle(2.5);
+        if (camera_ptr->field_of_view < BrDegreeToAngle(10)) {
+            camera_ptr->field_of_view = BrDegreeToAngle(10);
+        }
+        sprintf(s, "Camera angle decreased to %d", gProgram_state.current_depth_effect.end);
         NewTextHeadupSlot(4, 0, 500, -1, s);
     }
 }

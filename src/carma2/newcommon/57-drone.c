@@ -1,6 +1,19 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "57-drone.h"
 
+#include "08-loading1.h"
 #include "41-utility.h"
+#include "52-errors.h"
+#include "globvars.h"
+
+#include "c2_string.h"
 
 #include <math.h>
 
@@ -8,9 +21,25 @@
 // GLOBAL: CARMA2_SW 0x0067c800
 br_vector3 gRender_bounds_centre;
 
+// GLOBAL: CARMA2_HW 0x006844f8
+// GLOBAL: CARMA2_SW 0x0067ec38
+int gCurrent_selected_drone;
+
+// GLOBAL: CARMA2_HW 0x00684504
+// GLOBAL: CARMA2_SW 0x0067ec44
+tDrone_spec* gDrone_specs;
+
 // GLOBAL: CARMA2_HW 0x00684518
 // GLOBAL: CARMA2_SW 0x0067ec58
 int gTraffic_disabled;
+
+// GLOBAL: CARMA2_HW 0x00681fb0
+// GLOBAL: CARMA2_SW 0x0067c6f0
+int gINT_00681fb0;
+
+// GLOBAL: CARMA2_HW 0x00684514
+// GLOBAL: CARMA2_SW 0x0067ec54
+int gFrame;
 
 // DoNotDprintf
 
@@ -20,7 +49,23 @@ int gTraffic_disabled;
 
 // DroneStraightestArcForCorner2D
 
-// OpenDroneFile
+// FUNCTION: CARMA2_HW 0x0044f640
+// FUNCTION: CARMA2_SW 0x0044f3e0
+FILE* C2_HOOK_FASTCALL OpenDroneFile(char* pDrone_name) {
+    tPath_name the_path;
+    FILE* f;
+
+    strcpy(the_path, gApplication_path);
+    PathCat(the_path, the_path, "DRONES");
+    PathCat(the_path, the_path, pDrone_name);
+    PathCat(the_path, the_path, pDrone_name);
+    strcat(the_path, ".TXT");
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, the_path);
+    }
+    return f;
+}
 
 // LoadDroneTypeInfo
 
@@ -142,11 +187,44 @@ int C2_HOOK_FASTCALL DroneTrainWithinRenderingDistance(const br_vector3* pPos) {
 
 // StartProcessingThisDrone
 
-// DroneCarWithinProcessingDistance
+// FUNCTION: CARMA2_HW 0x0044cb80
+// FUNCTION: CARMA2_SW 0x0044c930
+int C2_HOOK_FASTCALL DroneCarWithinProcessingDistance(const br_vector3* pPos) {
 
-// DronePlaneWithinProcessingDistance
+    if ((float)fabs(gRender_bounds_centre.v[0] - pPos->v[0]) < 18.f
+        && (float)fabs(gRender_bounds_centre.v[1] - pPos->v[1]) < 13.f
+        && (float)fabs(gRender_bounds_centre.v[2] - pPos->v[2]) < 18.f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
-// DroneTrainWithinProcessingDistance
+// FUNCTION: CARMA2_HW 0x0044cbd0
+// FUNCTION: CARMA2_SW 0x0044c980
+int C2_HOOK_FASTCALL DronePlaneWithinProcessingDistance(const br_vector3* pPos) {
+
+    if ((float)fabs(gRender_bounds_centre.v[0] - pPos->v[0]) < 43.f
+        && (float)fabs(gRender_bounds_centre.v[1] - pPos->v[1]) < 31.f
+        && (float)fabs(gRender_bounds_centre.v[2] - pPos->v[2]) < 43.f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0044cc20
+// FUNCTION: CARMA2_SW 0x0044c9d0
+int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3* pPos) {
+
+    if ((float)fabs(gRender_bounds_centre.v[0] - pPos->v[0]) < 43.f
+        && (float)fabs(gRender_bounds_centre.v[1] - pPos->v[1]) < 31.f
+        && (float)fabs(gRender_bounds_centre.v[2] - pPos->v[2]) < 43.f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // CalcRenderBoundsCentre
 
@@ -207,9 +285,18 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
 
 // AllocateAndInitDrones
 
-// LoadInDronePaths
+// STUB: CARMA2_HW 0x00450bf0
+// STUB: CARMA2_SW 0x00450980
+void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
+    NOT_IMPLEMENTED();
+}
 
-// DronePreCollisionStuff
+// FUNCTION: CARMA2_HW 0x004512d0
+// FUNCTION: CARMA2_SW 0x00451060
+void C2_HOOK_FASTCALL DronePreCollisionStuff(void) {
+    gINT_00681fb0 = 0;
+    gFrame++;
+}
 
 // DoDronePerGameFrameStuff
 
@@ -227,7 +314,11 @@ int C2_HOOK_FASTCALL OKToViewDrones(void) {
     return 0;
 }
 
-// GetCurrentViewDroneMat
+// FUNCTION: CARMA2_HW 0x00452690
+// FUNCTION: CARMA2_SW 0x00452420
+br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void) {
+    return &gDrone_specs[gCurrent_selected_drone].actor->t.t.mat;
+}
 
 // GetCurrentViewDroneDirection
 

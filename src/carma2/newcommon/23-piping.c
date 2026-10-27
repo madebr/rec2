@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "23-piping.h"
 
 #include "00-car.h"
@@ -10,8 +18,25 @@
 #include <s3/internal/audio.h>
 
 #include <stddef.h>
+#include <string.h>
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
+
+// GLOBAL: CARMA2_HW 0x006768b4
+// GLOBAL: CARMA2_SW 0x00671024
+tU8* gLocal_buffer;
+
+// GLOBAL: CARMA2_HW 0x006768f4
+// GLOBAL: CARMA2_SW 0x00671064
+tU32 gLocal_buffer_size;
+
+// GLOBAL: CARMA2_HW 0x006768a0
+// GLOBAL: CARMA2_SW 0x00671010
+tU8* gMr_chunky;
+
+// GLOBAL: CARMA2_HW 0x00676908
+// GLOBAL: CARMA2_SW 0x00671078
+tU8* gPipe_buffer_start;
 
 // GLOBAL: CARMA2_HW 0x006768c0
 // GLOBAL: CARMA2_SW 0x00671030
@@ -28,6 +53,22 @@ const tReplay_callback* gPipe_callbacks;
 // GLOBAL: CARMA2_HW 0x006768b8
 // GLOBAL: CARMA2_SW 0x00671028
 tU8* gPipe_play_ptr;
+
+// GLOBAL: CARMA2_HW 0x006768ac
+// GLOBAL: CARMA2_SW 0x0067101c
+tU8* gPipe_buffer_oldest;
+
+// GLOBAL: CARMA2_HW 0x006768bc
+// GLOBAL: CARMA2_SW 0x0067102c
+tU8* gPipe_record_ptr;
+
+// GLOBAL: CARMA2_HW 0x00676904
+// GLOBAL: CARMA2_SW 0x00671074
+tU32 gPipe_sound_start_time;
+
+// GLOBAL: CARMA2_HW 0x006768a8
+// GLOBAL: CARMA2_SW 0x00671018
+tU32 gPipe_sound_time_window;
 
 // ARReplayForwards
 
@@ -89,7 +130,12 @@ int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType) {
 
 // ARIsActionReplayAvailable
 
-// ARSomeReplayLeft
+// FUNCTION: CARMA2_HW 0x004025b0
+// FUNCTION: CARMA2_SW 0x004025b0
+int C2_HOOK_FASTCALL ARSomeReplayLeft(void) {
+    return (gPlay_direction > 0 && gPipe_play_ptr != gPipe_record_ptr)
+        || (gPlay_direction < 0 && gPipe_play_ptr != gPipe_buffer_oldest);
+}
 
 // DisablePipedSounds
 
@@ -120,7 +166,29 @@ void C2_HOOK_FASTCALL AREndPipingSession(void) {
     EndPipingSession2(1);
 }
 
-// ARAddDataToSession
+// FUNCTION: CARMA2_HW 0x004028a0
+// FUNCTION: CARMA2_SW 0x004028a0
+void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize) {
+    tU32 new_size;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_session, count, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    (void)pType;
+    if (gPipe_buffer_start != NULL && !gAction_replay_mode && gProgram_state.racing) {
+        new_size = gLocal_buffer_size + pSize + offsetof(tPipe_chunk, data);
+        if (new_size < 15000) {
+            ((tPipe_session*)gLocal_buffer)->count++;
+            ((tPipe_chunk*)gMr_chunky)->subject_index = pOwner;
+            gMr_chunky += offsetof(tPipe_chunk, data);
+            if (pSize != 0) {
+                memcpy(gMr_chunky, pData, pSize);
+            }
+            gMr_chunky += pSize;
+            gLocal_buffer_size = new_size;
+        }
+    }
+}
 
 // STUB: CARMA2_HW 0x00402930
 void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...) {
@@ -162,7 +230,12 @@ void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
 
 // CheckSound
 
-// SoundTimeout
+// FUNCTION: CARMA2_HW 0x00403c50
+// FUNCTION: CARMA2_SW 0x00403c50
+int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime) {
+    return gPipe_sound_start_time < pTime
+        || gPipe_sound_start_time - pTime < gPipe_sound_time_window;
+}
 
 // ScanAndPlaySoundsToBe
 
@@ -194,7 +267,11 @@ int C2_HOOK_FASTCALL ARGoBackwards(void) {
     return S3SetSampleFilterCallbacks(ReverseSound, ReverseSound);
 }
 
-// ARGoForwards
+// FUNCTION: CARMA2_HW 0x00403d20
+// FUNCTION: CARMA2_SW 0x00403d20
+int C2_HOOK_FASTCALL ARGoForwards(void) {
+    return S3SetSampleFilterCallbacks(NULL, NULL);
+}
 
 // FUNCTION: CARMA2_HW 0x00403d30
 // FUNCTION: CARMA2_SW 0x00403d30
@@ -382,7 +459,10 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
 
 // PipeSinglePedIncident
 
-// PipeSingleWallIncident
+// FUNCTION: CARMA2_HW 0x004c85b0
+// FUNCTION: CARMA2_SW 0x004c4ce0
+void C2_HOOK_FASTCALL PipeSingleWallIncident(float pSeverity, br_vector3* pImpact_point) {
+}
 
 // PipeSingleSkidAdjustment
 
@@ -494,10 +574,13 @@ void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBloc
 
 // PipeSinglePowerupLose
 
-// STUB: CARMA2_HW 0x004c8de0
-// STUB: CARMA2_SW 0x004c5510
-void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x004c8de0
+// FUNCTION: CARMA2_SW 0x004c5510
+void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, tU16 pFlags) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_funk_enable, flags, 0x2);
+
+    ARDoSingleVariedSession(ePipe_funk_enable, (uintptr_t)pIndex, 1,
+        SIZE_OFFSET_PIPING(tPipe_funk_enable, flags), pFlags);
 }
 
 // PipeSingleVanishedDismembered
@@ -625,11 +708,23 @@ void C2_HOOK_FASTCALL ApplyBend(tPipe_chunk** pChunk) {
 void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk) {
 }
 
-// ApplyEndMyBend
+// FUNCTION: CARMA2_HW 0x004c9950
+// FUNCTION: CARMA2_SW 0x004c6080
+void C2_HOOK_FASTCALL ApplyEndMyBend(tPipe_chunk** pChunk) {
+}
 
 // ApplyShrapnelShower
 
-// ApplyExplosion
+// FUNCTION: CARMA2_HW 0x004c99d0
+// FUNCTION: CARMA2_SW 0x004c6100
+void C2_HOOK_FASTCALL ApplyExplosion(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    chunk = *pChunk;
+    CopyExplosionData(chunk->subject_index, (tExplosion*)chunk->data.raw_data);
+}
 
 // ApplyNonCarCreation
 
@@ -721,7 +816,10 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // ApplyDroneStraightPos
 
-// ApplyDroneUnused
+// FUNCTION: CARMA2_HW 0x004c9d10
+// FUNCTION: CARMA2_SW 0x004c6440
+void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk) {
+}
 
 // ApplyNapalmBolt
 
@@ -759,9 +857,17 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // UndoSplitWeld
 
-// UndoBend
+// FUNCTION: CARMA2_HW 0x004ca050
+// FUNCTION: CARMA2_SW 0x004c6780
+void C2_HOOK_FASTCALL UndoBend(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    (void)pChunk;
+    (void)pPrev_chunk;
+}
 
-// UndoUnBend
+// FUNCTION: CARMA2_HW 0x004ca060
+// FUNCTION: CARMA2_SW 0x004c6790
+void C2_HOOK_FASTCALL UndoUnBend(void) {
+}
 
 // UndoShrapnelShower
 
@@ -848,7 +954,17 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoEndShitMine
 
-// UndoTransformType
+// FUNCTION: CARMA2_HW 0x004ca3e0
+// FUNCTION: CARMA2_SW 0x004c6b10
+void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    (void)pPrev_chunk;
+    chunk = *pChunk;
+    ((br_actor*)chunk->subject_index)->t.type = chunk->data.transform_type.type_from;
+}
 
 // CalcCrushLength
 

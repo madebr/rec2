@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_27_POWERUP_H
 #define GUARD_27_POWERUP_H
 
@@ -46,11 +54,11 @@ extern int gInstant_handbrake;
 
 // GotPowerupXX
 
-// GotPowerupEarwig
+extern void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory);
 
 // AutoGoody
 
-// GotPowerup
+extern void C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex);
 
 // DRMapFindMeAPixie
 
@@ -158,7 +166,7 @@ extern int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetInvulnerability
+extern void C2_HOOK_FASTCALL ResetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -206,7 +214,7 @@ extern int C2_HOOK_FASTCALL SetPinball(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetBouncey
+extern int C2_HOOK_FASTCALL SetBouncey(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetSuspension
 
@@ -248,9 +256,9 @@ extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* p
 
 // MungeShatMines
 
-// ARDoShitMine
+extern void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor);
 
-// ARUndoShitMine
+extern void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor);
 
 // PissOutOil
 
@@ -260,9 +268,9 @@ extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* p
 
 // NapalmPeds
 
-// RepulseOpponents2
+extern int C2_HOOK_FASTCALL RepulseOpponents2(tPowerup* pPowerup, tCar_spec* pCar, int pSend_message);
 
-// RepulseOpponents
+extern int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* pPowerup, tCar_spec* pCar);
 
 // RepulsePedestrians
 
@@ -390,9 +398,9 @@ extern void C2_HOOK_FASTCALL RemoveTail(void);
 
 // MayQueuePowerupRespawn
 
-// ARDoPowerupRespawn
+extern void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor);
 
-// ARUndoPowerupRespawn
+extern void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime);
 

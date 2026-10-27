@@ -1,5 +1,14 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "34-finteray.h"
 
+#include "49-physics.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x005964c0
@@ -82,22 +91,104 @@ int C2_HOOK_FASTCALL PickBoundsTestRay_finteray(br_bounds* pBounds, br_vector3* 
     }
 }
 
+// FUNCTION: CARMA2_HW 0x0045cb70
+// FUNCTION: CARMA2_SW 0x0045c5b0
+int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* pActor, br_vector3* pPosition, br_vector3* pDir, br_model* pModel, br_material* pMaterial, dr_pick2d_cbfn* pCallback) {
+    br_actor* a;
+    br_model* this_model;
+    br_material* this_material;
+    br_scalar t_near;
+    br_scalar t_far;
+    int r;
+    br_matrix34 mat;
+    br_matrix34 invmat;
+    br_vector3 pos;
+    br_vector3 dir;
+    void* arg;
+
+    t_near = 0.f;
+    t_far = 1.f;
+    r = 0;
+    arg = NULL;
+    if (pActor->model != NULL) {
+        this_model = pActor->model;
+    } else {
+        this_model = pModel;
+    }
+    if (pActor->material != NULL) {
+        this_material = pActor->material;
+    } else {
+        this_material = pMaterial;
+    }
+    if (pActor->render_style == BR_RSTYLE_NONE) {
+        return 0;
+    }
+    if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
+        BrTransformToMatrix34(&mat, &pActor->t);
+        BrMatrix34Inverse(&invmat, &mat);
+        BrMatrix34ApplyP(&pos, pPosition, &invmat);
+        BrMatrix34ApplyV(&dir, pDir, &invmat);
+        pPosition = &pos;
+        pDir = &dir;
+    }
+    switch (pActor->type) {
+    case BR_ACTOR_MODEL:
+        if (this_model != NULL) {
+            if (PickBoundsTestRay_finteray(&this_model->bounds, pPosition, pDir, t_near, t_far, &t_near, &t_far)) {
+                t_near = 0.f;
+                if (gNearest_T > 1.f) {
+                    t_far = 1.f;
+                } else {
+                    t_far = gNearest_T;
+                }
+                r = pCallback(pActor, this_model, this_material, pPosition, pDir, t_near, t_far, arg);
+                if (r) {
+                    break;
+                }
+            }
+            if (r) {
+                break;
+            }
+        }
+        /* fall through */
+    default:
+        for (a = pActor->children; a != NULL; a = a->next) {
+            r = ActorRayPick2D(a, pPosition, pDir, this_model, this_material, pCallback);
+            if (r) {
+                break;
+            }
+        }
+        break;
+    case BR_ACTOR_BOUNDS:
+    case BR_ACTOR_BOUNDS_CORRECT:
+        if (PickBoundsTestRay_finteray(pActor->type_data, pPosition, pDir, t_near, t_far, &t_near, &t_far)) {
+            for (a = pActor->children; a != NULL; a = a->next) {
+                r = ActorRayPick2D(a, pPosition, pDir, this_model, this_material, pCallback);
+                if (r) {
+                    break;
+                }
+            }
+        }
+        break;
+    }
+    return r;
+}
+
+// DRSceneRayPick2D
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
 
-// STUB: CARMA2_HW 0x0045cb70
-int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vector3* pDir, br_model* model, br_material* material, dr_pick2d_cbfn* callback) {
+// STUB: CARMA2_HW 0x0045cf60
+// STUB: CARMA2_SW 0x0045c9a0
+int C2_HOOK_FASTCALL DRModelPick2D_finteray(br_model* pModel, br_material* pMaterial, br_actor* pActor, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, dr_modelpick2d_cbfn* pCallback, void* pArg) {
     NOT_IMPLEMENTED();
 }
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(on)
 #endif
-
-// DRSceneRayPick2D
-
-// DRModelPick2D
 
 // FUNCTION: CARMA2_HW 0x0045d570
 int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData) {
@@ -112,9 +203,12 @@ int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br
     return 0;
 }
 
-// STUB: CARMA2_HW 0x0045cf20
+// FUNCTION: CARMA2_HW 0x0045cf20
+// FUNCTION: CARMA2_SW 0x0045c960
 int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
-    NOT_IMPLEMENTED();
+
+    DRModelPick2D_finteray(pModel, pMaterial, pActor, pRay_pos, pRay_dir, pT_near, pT_far, FindHighestPolyCallBack, pArg);
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0045ca60
@@ -234,5 +328,21 @@ int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_ve
 
 // ShapeRayCastWithSphere
 
-// CastRayDownThruFaces
+// FUNCTION: CARMA2_HW 0x004618e0
+// FUNCTION: CARMA2_SW 0x00461380
+tFace_ref* C2_HOOK_FASTCALL CastRayDownThruFaces(br_vector3* pPosition, tFace_ref* pFaces, int pCount, br_scalar pOffset, br_vector3* pCollision_position) {
+    br_vector3 direction;
+    br_vector3 position;
+    br_vector3 normal;
+    br_scalar t;
+    tFace_ref* face;
+
+    BrVector3Set(&direction, 0.f, -1.f, 0.f);
+    face = RayCastThruFaceList(pPosition, &direction, &normal, &t, pCollision_position, pFaces, pCount);
+    if (face == NULL && pOffset != 0.f) {
+        BrVector3Set(&position, pPosition->v[0], pPosition->v[1] + pOffset, pPosition->v[2]);
+        face = RayCastThruFaceList(&position, &direction, &normal, &t, pCollision_position, pFaces, pCount);
+    }
+    return face;
+}
 

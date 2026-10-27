@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_07_STRUCTUR_H
 #define GUARD_07_STRUCTUR_H
 
@@ -10,6 +18,8 @@ extern int gHud_tinted2;
 extern int gHud_tinted3;
 #endif
 extern int gCredits_checkpoint[3];
+extern tU32 gLast_checkpoint_time;
+extern int gLast_wrong_checkpoint;
 
 extern int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
 
@@ -23,7 +33,7 @@ extern void C2_HOOK_FASTCALL IncrementLap(void);
 
 // RayHitFace
 
-// WrongCheckpoint
+extern void C2_HOOK_FASTCALL WrongCheckpoint(int pCheckpoint_index);
 
 // CheckCheckpoints
 
@@ -37,7 +47,7 @@ extern void C2_HOOK_FASTCALL TotalRepair(void);
 
 extern int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness);
 
-// SelectOpponents
+extern void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info);
 
 extern int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence);
 

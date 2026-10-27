@@ -1,5 +1,14 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "27-powerup.h"
 
+#include "01-network.h"
 #include "16-graphics1.h"
 #include "32-spark.h"
 #include "49-physics.h"
@@ -114,11 +123,27 @@ tPowerup* gPowerup_array;
 
 // GotPowerupXX
 
-// GotPowerupEarwig
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004d8d40
+// STUB: CARMA2_SW 0x004d5270
+void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // AutoGoody
 
-// GotPowerup
+// FUNCTION: CARMA2_HW 0x004d8d30
+// FUNCTION: CARMA2_SW 0x004d5260
+void C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex) {
+    GotPowerupEarwig(pCar, pIndex, 1, 1);
+}
 
 // DRMapFindMeAPixie
 
@@ -264,7 +289,16 @@ int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// ResetInvulnerability
+// FUNCTION: CARMA2_HW 0x004dc860
+// FUNCTION: CARMA2_SW 0x004d8d60
+void C2_HOOK_FASTCALL ResetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (gNet_mode != eNet_mode_none && NetPlayerFromCar(pCar)->field_0x80 != 0) {
+        return;
+    }
+    pCar->invulnerable_no_crushage = 0;
+    pCar->invulnerable_no_damage = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc8a0
 // FUNCTION: CARMA2_SW 0x004d8da0
@@ -400,7 +434,19 @@ int C2_HOOK_FASTCALL SetWallclimb(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetBouncey
+// FUNCTION: CARMA2_HW 0x004dce30
+// FUNCTION: CARMA2_SW 0x004d9330
+int C2_HOOK_FASTCALL SetBouncey(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, bounce_rate, 0x4c0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, bounce_amount, 0x4c4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, last_bounce, 0x1598);
+
+    pCar->bounce_rate = 1000.f / pPowerup->float_params[0];
+    pCar->bounce_amount = pPowerup->float_params[1];
+    pCar->last_bounce = 0;
+    return pPowerup - gPowerup_array;
+}
 
 // SetSuspension
 
@@ -470,9 +516,23 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // MungeShatMines
 
-// ARDoShitMine
+// FUNCTION: CARMA2_HW 0x004de000
+// FUNCTION: CARMA2_SW 0x004da500
+void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor) {
+    if (pActor->parent == NULL) {
+        BrActorAdd(gNon_track_actor, pActor);
+    }
+    pActor->render_style = BR_RSTYLE_FACES;
+}
 
-// ARUndoShitMine
+// FUNCTION: CARMA2_HW 0x004de020
+// FUNCTION: CARMA2_SW 0x004da520
+void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
+    if (pActor->parent != NULL) {
+        BrActorRemove(pActor);
+    }
+    pActor->render_style = BR_RSTYLE_NONE;
+}
 
 // PissOutOil
 
@@ -482,9 +542,26 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // NapalmPeds
 
-// RepulseOpponents2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// RepulseOpponents
+// STUB: CARMA2_HW 0x004de1f0
+// STUB: CARMA2_SW 0x004da6f0
+int C2_HOOK_FASTCALL RepulseOpponents2(tPowerup* pPowerup, tCar_spec* pCar, int pSend_message) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004de1e0
+// FUNCTION: CARMA2_SW 0x004da6e0
+int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    return RepulseOpponents2(pPowerup, pCar, 1);
+}
 
 // RepulsePedestrians
 
@@ -731,9 +808,17 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
 
 // MayQueuePowerupRespawn
 
-// ARDoPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004e07d0
+// FUNCTION: CARMA2_SW 0x004dccd0
+void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor) {
+    pActor->render_style = BR_RSTYLE_FACES;
+}
 
-// ARUndoPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004e07e0
+// FUNCTION: CARMA2_SW 0x004dcce0
+void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor) {
+    pActor->render_style = BR_RSTYLE_NONE;
+}
 
 // FUNCTION: CARMA2_HW 0x004e07f0
 void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime) {

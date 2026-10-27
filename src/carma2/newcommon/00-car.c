@@ -1,9 +1,19 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "00-car.h"
 
 #include "15-displays.h"
+#include "22-replay.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
+#include "58-crush2.h"
 #include "brender/brender.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -47,6 +57,10 @@ br_vector3 gZero_v__car;  // FIXME: make const?
 // GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
 
+// GLOBAL: CARMA2_HW 0x00679364
+// GLOBAL: CARMA2_SW 0x00673ad4
+int gInTheSea;
+
 // GLOBAL: CARMA2_HW 0x0065d010
 int gFace_num__car = 1;
 
@@ -63,6 +77,13 @@ void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int p
     if (the_damage->damage_level >= 100) {
         the_damage->damage_level = 99;
     }
+}
+
+// FUNCTION: CARMA2_HW 0x00413d00
+// FUNCTION: CARMA2_SW 0x00413d30
+void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_engine, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
 }
 
 // FUNCTION: CARMA2_HW 0x00413f10
@@ -105,7 +126,12 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // NewFaceListCallBack
 
-// IsCarInTheSea
+// FUNCTION: CARMA2_HW 0x00414ca0
+// FUNCTION: CARMA2_SW 0x00414cd0
+int C2_HOOK_FASTCALL IsCarInTheSea(void) {
+
+    return gInTheSea;
+}
 
 // RememberSafePosition
 
@@ -159,7 +185,52 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // MoveAndCollideNonCar
 
-// ControlCar2
+// FUNCTION: CARMA2_HW 0x00417180
+// FUNCTION: CARMA2_SW 0x004171b0
+void C2_HOOK_FAKE_THISCALL ControlCar2(tCar_spec* pCar, void* pUnused, br_scalar pDt) {
+    br_scalar time_steps;
+
+    (void)pUnused;
+    pCar->acc_force = 0.0f;
+    if (pCar->keys.acc) {
+        pCar->acc_force = 7.0f * pCar->collision_info->M;
+    }
+    if (pCar->keys.dec) {
+        pCar->acc_force = -(7.0f * pCar->collision_info->M);
+    }
+    if (pCar->keys.left) {
+        if (pCar->turn_speed < 0.0f) {
+            pCar->turn_speed = 0.0f;
+        }
+        if (pCar->curvature < 0.0f) {
+            pCar->turn_speed = (float)(pCar->turn_speed + 0.01 * pDt / 0.04f / 2.0);
+        } else {
+            time_steps = pDt / 0.04f;
+            pCar->turn_speed += time_steps * (0.05f / (5.0f + BrVector3Length(&pCar->collision_info->v))) / 2.0f;
+        }
+    }
+    if (pCar->keys.right) {
+        if (pCar->turn_speed > 0.0f) {
+            pCar->turn_speed = 0.0f;
+        }
+        if (pCar->curvature > 0.0f) {
+            pCar->turn_speed = (float)(pCar->turn_speed - 0.01 * pDt / 0.04f / 2.0);
+        } else {
+            time_steps = pDt / 0.04f;
+            pCar->turn_speed -= time_steps * (0.05f / (5.0f + BrVector3Length(&pCar->collision_info->v))) / 2.0f;
+        }
+    }
+    if (!pCar->keys.left && !pCar->keys.right) {
+        pCar->turn_speed = 0.0f;
+    }
+    pCar->curvature += pCar->turn_speed;
+    if (pCar->curvature > pCar->maxcurve) {
+        pCar->curvature = pCar->maxcurve;
+    }
+    if (pCar->curvature < -pCar->maxcurve) {
+        pCar->curvature = -pCar->maxcurve;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004173b0
 // FUNCTION: CARMA2_SW 0x004173e0
@@ -203,7 +274,66 @@ void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br_scalar
 
 // ControlCar4
 
-// ControlCar5
+// FUNCTION: CARMA2_HW 0x00417a20
+// FUNCTION: CARMA2_SW 0x00417a50
+void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* pCar, void* pUnused, br_scalar pDt) {
+    br_scalar time_steps;
+
+    (void)pUnused;
+    pCar->acc_force = 0.0f;
+    if (pCar->keys.acc) {
+        pCar->acc_force = 7.0f * pCar->collision_info->M;
+    }
+    if (pCar->keys.dec) {
+        pCar->acc_force = -(7.0f * pCar->collision_info->M);
+    }
+    if (pCar->keys.left) {
+        if (pCar->turn_speed < 0.0f) {
+            pCar->turn_speed = 0.0f;
+        }
+        if (pCar->curvature < 0.0f) {
+            pCar->turn_speed = (float)(pCar->turn_speed + 0.01 * pDt / 0.04f / 2.0 * 0.5);
+        } else {
+            time_steps = pDt / 0.04f;
+            pCar->turn_speed = (float)(pCar->turn_speed + time_steps * (0.05f / (5.0f + BrVector3Length(&pCar->collision_info->v))) / 2.0f * 0.5);
+        }
+    }
+    if (pCar->keys.right) {
+        if (pCar->turn_speed > 0.0f) {
+            pCar->turn_speed = 0.0f;
+        }
+        if (pCar->curvature > 0.0f) {
+            pCar->turn_speed = (float)(pCar->turn_speed - 0.01 * pDt / 0.04f / 2.0 * 0.5);
+        } else {
+            time_steps = pDt / 0.04f;
+            pCar->turn_speed = (float)(pCar->turn_speed - time_steps * (0.05f / (5.0f + BrVector3Length(&pCar->collision_info->v))) / 2.0f * 0.5);
+        }
+    }
+    if (!pCar->keys.left && !pCar->keys.right) {
+        pCar->turn_speed = 0.0f;
+        if (pCar->curvature < 0.0f && !pCar->keys.holdw) {
+            time_steps = pDt / 0.04f;
+            pCar->curvature = (float)(pCar->curvature + (0.05f / (5.0f + BrVector3Length(&pCar->collision_info->v))) * time_steps / 2.0f * 4.0);
+            if (pCar->curvature > 0.0f) {
+                pCar->curvature = 0.0f;
+            }
+        } else if (pCar->curvature > 0.0f && !pCar->keys.holdw) {
+            time_steps = pDt / 0.04f;
+            pCar->curvature = (float)(pCar->curvature - (0.05f / (5.0f + BrVector3Length(&pCar->collision_info->v))) * time_steps / 2.0f * 4.0);
+            if (pCar->curvature < 0.0f) {
+                pCar->curvature = 0.0f;
+            }
+        }
+    }
+    pCar->curvature += pCar->turn_speed;
+    if (pCar->curvature > pCar->maxcurve) {
+        pCar->curvature = pCar->maxcurve;
+    }
+    if (pCar->curvature < -pCar->maxcurve) {
+        pCar->curvature = -pCar->maxcurve;
+    }
+    pCar->keys.left = 1;
+}
 
 // ControlCar1
 
@@ -259,7 +389,12 @@ void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car) {
 
 // ProcessForcesCallBack
 
-// ProcessJointForcesCallBack
+// FUNCTION: CARMA2_HW 0x0041e310
+// FUNCTION: CARMA2_SW 0x0041e340
+int C2_HOOK_FASTCALL ProcessJointForcesCallBack(void* pArg1, void* pArg2, void* pArg3) {
+
+    return 0;
+}
 
 // MultiFindFloorInBoxM
 
@@ -288,13 +423,40 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 
 // MungeCarGraphics
 
-// TurnOffNonGroovers
+// FUNCTION: CARMA2_HW 0x0041f280
+// FUNCTION: CARMA2_SW 0x0041f300
+intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData) {
+    tUser_crush_data* crush_data = pActor->user;
+
+    (void)pData;
+    if (crush_data != NULL && crush_data->groove == NULL) {
+        pActor->type = BR_ACTOR_NONE;
+    }
+    return 0;
+}
 
 // DoLODCarModels
 
 // DoComplexCarModels
 
 // ResetCarScreens
+
+// FUNCTION: CARMA2_HW 0x0041f360
+// FUNCTION: CARMA2_SW 0x0041f3e0
+void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void) {
+
+    gCar_car_collisions = !gCar_car_collisions;
+    if (gCar_car_collisions) {
+        NewTextHeadupSlot(4, 0, 3000, -4, "Car Car Collisions");
+    } else {
+        NewTextHeadupSlot(4, 0, 3000, -4, "Ghost Cars");
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0041f3b0
+// FUNCTION: CARMA2_SW 0x0041f430
+void C2_HOOK_FASTCALL SwapCar(void) {
+}
 
 // FUNCTION: CARMA2_HW 0x0041f3c0
 // FUNCTION: CARMA2_SW 0x0041f440

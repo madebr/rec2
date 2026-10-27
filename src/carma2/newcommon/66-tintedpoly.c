@@ -1,7 +1,17 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "66-tintedpoly.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
 #include "28-world3.h"
+#include "34-finteray.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "globvars.h"
@@ -496,7 +506,39 @@ void C2_HOOK_FASTCALL RenderTintedPolys(void) {
     BrZbsSceneRender(gTintedPolyCamera, gTintedPolyCamera, gBack_screen, gDepth_buffer);
 }
 
-// SetTintedPolyRefMaterial
+// FUNCTION: CARMA2_HW 0x004d8350
+// FUNCTION: CARMA2_SW 0x004d4880
+void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPosition) {
+    tSpecial_volume* volume;
+    br_vector3 dir;
+    br_vector3 nor;
+    br_scalar t;
+    br_material* mat;
+
+    volume = gCar_to_view->collision_info->last_special_volume;
+    if ((volume != NULL && volume->gravity_multiplier < 1.0f) || gAction_replay_mode) {
+        BrVector3Set(&dir, 0.0f, 200.0f, 0.0f);
+        DisablePlingMaterials();
+        FindFace(pPosition, &dir, &nor, &t, &mat);
+        EnablePlingMaterials();
+        if (!(t < 100.0f) || mat == NULL || mat->identifier == NULL || strlen(mat->identifier) == 0) {
+            gTintedPolys[pTintedIndex].field_0x28 = 0;
+            gTintedPolys[pTintedIndex].material2 = NULL;
+        } else if (mat->identifier[0] == '!' || mat->identifier[0] == '#') {
+            gTintedPolys[pTintedIndex].field_0x28 = '#';
+            gTintedPolys[pTintedIndex].material2 = mat;
+        } else if (mat->identifier[0] == '@') {
+            gTintedPolys[pTintedIndex].field_0x28 = '@';
+            gTintedPolys[pTintedIndex].material2 = mat;
+        } else {
+            gTintedPolys[pTintedIndex].field_0x28 = 0;
+            gTintedPolys[pTintedIndex].material2 = NULL;
+        }
+    } else {
+        gTintedPolys[pTintedIndex].field_0x28 = 0;
+        gTintedPolys[pTintedIndex].material2 = NULL;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004d82b0
 void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {

@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef BR_TYPES_H
 #define BR_TYPES_H
 
@@ -3219,7 +3227,7 @@ enum {
     BR_MODU_VERTEX_COLOURS = 0x0002,
     BR_MODU_VERTEX_MAPPING = 0x0004,
     BR_MODU_VERTEX_NORMALS = 0x0008,
-    BR_MODU_BOUNDING_BOX = 0x0010,
+    BR_MODU_PRIMITIVE_MATERIALS = 0x0010,
     BR_MODU_PRIMITIVE_COLOURS = 0x0020,
     BR_MODU_VERTICES = 0x0040,
     BR_MODU_FACES = 0x0080,
@@ -3227,6 +3235,7 @@ enum {
     BR_MODU_ALL = 0x7fff
 };
 
+#define BR_MODU_FACE_MATERIALS  BR_MODU_PRIMITIVE_MATERIALS
 #define BR_MODU_FACE_COLOURS    BR_MODU_PRIMITIVE_COLOURS
 #define BR_MODU_NORMALS         BR_MODU_VERTEX_POSITIONS
 #define BR_MODU_EDGES           BR_MODU_FACES

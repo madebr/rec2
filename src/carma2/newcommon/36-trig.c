@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "36-trig.h"
 
 #include "c2_math.h"
@@ -138,6 +146,13 @@ float C2_HOOK_STDCALL FastFloatArcSin(float pValue) {
         }
     }
     return low_limit;
+}
+
+// FUNCTION: CARMA2_HW 0x00511a80
+// FUNCTION: CARMA2_SW 0x0050ced0
+float C2_HOOK_STDCALL FastFloatArcCos(float pValue) {
+
+    return 90.f - FastFloatArcSin(pValue);
 }
 
 // FUNCTION: CARMA2_HW 0x00511ce0

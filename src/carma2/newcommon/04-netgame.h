@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_04_NETGAME_H
 #define GUARD_04_NETGAME_H
 
@@ -56,7 +64,7 @@ extern void C2_HOOK_FASTCALL ReceivedCopInfo(void);
 
 extern void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar);
 
-// EnableCar
+extern void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar);
 
 // DoNetworkHeadups
 
@@ -80,11 +88,11 @@ extern void C2_HOOK_FASTCALL DisposeNetHeadups(void);
 
 // EverybodysLost
 
-// DeclareWinner
+extern void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index);
 
 // PlayerIsIt
 
-// CheckForVampireWinner
+extern void C2_HOOK_FASTCALL CheckForVampireWinner(void);
 
 // PlayerIsInfected
 
@@ -100,7 +108,7 @@ extern void C2_HOOK_FASTCALL DisposeNetHeadups(void);
 
 // DoNetGameManagement
 
-// InitialisePlayerScore
+extern void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer);
 
 // InitPlayers
 
@@ -114,7 +122,7 @@ extern void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
 
 // SendGameplay
 
-// SendGameplayToAllPlayers
+extern void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
 
 // SendGameplayToHost
 

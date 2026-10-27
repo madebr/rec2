@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "41-utility.h"
 
 #include "01-network.h"
@@ -339,7 +347,16 @@ int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelma
     return 1;
 }
 
-// WaitFor
+// FUNCTION: CARMA2_HW 0x005146c0
+// FUNCTION: CARMA2_SW 0x0050fb00
+void C2_HOOK_FASTCALL WaitFor(tU32 pDelay) {
+    tU32 start_time;
+
+    start_time = PDGetTotalTime();
+    while (PDGetTotalTime() < start_time + pDelay && !AnyKeyDown()) {
+        SoundService();
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005146f0
 // FUNCTION: CARMA2_SW 0x0050fb30
@@ -1326,7 +1343,10 @@ tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
     }
 }
 
-// Colour24BitTo16Bit
+// STUB: CARMA2_HW 0x00517050
+tU16 C2_HOOK_FASTCALL Colour24BitTo16Bit(br_colour pColour) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x005170c0
 br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
@@ -1614,6 +1634,102 @@ void C2_HOOK_FASTCALL PrintScreen(void) {
         }
         PFfclose(f);
     }
+}
+
+// FUNCTION: CARMA2_HW 0x00518b00
+// FUNCTION: CARMA2_SW 0x005125c0
+intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
+
+    if (pActor->render_style != BR_RSTYLE_NONE) {
+        const char* str;
+
+        switch (pActor->type) {
+        case BR_ACTOR_NONE:
+            printf("DUMMY ACTOR\n");
+            break;
+        case BR_ACTOR_MODEL:
+            printf("MODEL ACTOR\n");
+            break;
+        case BR_ACTOR_LIGHT:
+            printf("LIGHT ACTOR\n");
+            break;
+        case BR_ACTOR_CAMERA:
+            printf("CAMERA ACTOR\n");
+            break;
+        case BR_ACTOR_BOUNDS:
+            printf("BOUNDS ACTOR\n");
+            break;
+        case BR_ACTOR_BOUNDS_CORRECT:
+            printf("BOUNDS-CORRECT ACTOR\n");
+            break;
+        case BR_ACTOR_CLIP_PLANE:
+            printf("CLIP-PLANE ACTOR\n");
+            break;
+        default:
+            printf("******** UNKNOWN ********\n");
+            break;
+        }
+        str = pActor->identifier;
+        if (str == NULL) {
+            str = "No Identifier";
+        }
+        printf("\tName:\t\t\"%s\"\n", str);
+        printf("\tAddress:\t%08x\n", (unsigned int)(uintptr_t)pActor);
+        printf("\tParent:\t\t%08x\n", (unsigned int)(uintptr_t)pActor->parent);
+        printf("\tDepth:\t\t%i\n", pActor->depth);
+        printf("\tModelPtr:\t0x%08x", (unsigned int)(uintptr_t)pActor->model);
+        if (pActor->model != NULL) {
+            str = pActor->model->identifier;
+            if (str == NULL) {
+                str = "No Identifier";
+            }
+            printf(" (\"%s\")\n", str);
+        } else {
+            printf("\n");
+        }
+        printf("\tMaterialPtr:\t0x%08x", (unsigned int)(uintptr_t)pActor->material);
+        if (pActor->material != NULL) {
+            str = pActor->material->identifier;
+            if (str == NULL) {
+                str = "No Identifier";
+            }
+            printf(" (\"%s\")\n", str);
+        } else {
+            printf("\n");
+        }
+        switch (pActor->render_style) {
+        case BR_RSTYLE_DEFAULT:
+            str = "BR_RSTYLE_DEFAULT";
+            break;
+        case BR_RSTYLE_NONE:
+            str = "BR_RSTYLE_NONE";
+            break;
+        case BR_RSTYLE_POINTS:
+            str = "BR_RSTYLE_POINTS";
+            break;
+        case BR_RSTYLE_EDGES:
+            str = "BR_RSTYLE_EDGES";
+            break;
+        case BR_RSTYLE_FACES:
+            str = "BR_RSTYLE_FACES";
+            break;
+        case BR_RSTYLE_BOUNDING_POINTS:
+            str = "BR_RSTYLE_BOUNDING_POINTS";
+            break;
+        case BR_RSTYLE_BOUNDING_EDGES:
+            str = "BR_RSTYLE_BOUNDING_EDGES";
+            break;
+        case BR_RSTYLE_BOUNDING_FACES:
+            str = "BR_RSTYLE_BOUNDING_FACES";
+            break;
+        default:
+            str = "******** UNKNOWN ********";
+            break;
+        }
+        printf("\tRenderStyle:\t%s\n", str);
+        printf("\n");
+    }
+    return BrActorEnum(pActor, DumpVisibleActorsCB, pData);
 }
 
 // FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport

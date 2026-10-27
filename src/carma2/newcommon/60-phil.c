@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #include "60-phil.h"
 
 #include "55-volume.h"
@@ -91,6 +99,19 @@ int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffe
 // GetVelocityAndPosition
 
 // SizeOfObjectNetworkStuff
+
+// FUNCTION: CARMA2_HW 0x0049c5e0
+// FUNCTION: CARMA2_SW 0x00498760
+int C2_HOOK_STDCALL FloatToFixedFraction(float pValue, float pMin, float pMax) {
+    if (pValue > pMax) {
+        pValue = pMax;
+    }
+    if (pValue < pMin) {
+        pValue = pMin;
+    }
+    pValue = ((pValue - pMin) / (pMax - pMin)) * 65534.f;
+    return (int)(pValue + .5f);
+}
 
 // WriteObjectNetworkStuff
 
@@ -281,7 +302,11 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const
 
 // PHILSetObjectProperty
 
-// PHILGetObjectProperty
+// STUB: CARMA2_HW 0x004b6530
+// STUB: CARMA2_SW 0x004b2c50
+float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pProperty) {
+    NOT_IMPLEMENTED();
+}
 
 // FlushQueuedAddsAndRemoves
 

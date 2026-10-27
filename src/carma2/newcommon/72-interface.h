@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_72_INTERFACE_H
 #define GUARD_72_INTERFACE_H
 
@@ -32,6 +40,8 @@ extern void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend);
 // LoadMenuModels
 
 extern void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL GameMenuInfunc(tFrontend_spec* pFrontend);
 
 // FindNextActiveItem
 
@@ -161,7 +171,7 @@ extern int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFront
 
 // CreditsScreenInfunc
 
-// CreditsScreenOutfunc
+extern int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend);
 
 // FRONTEND_GenericMenuHandler
 
@@ -203,7 +213,7 @@ extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_s
 
 // WrecksInFunc
 
-// KeepInRange
+extern int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange);
 
 // WrecksOutFunc
 
@@ -335,9 +345,9 @@ extern void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider);
 
 // Controls_SwitchKeymapSet
 
-// Controls_KeyUp
+extern int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend);
 
-// Controls_KeyDown
+extern int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend);
 
 // Controls_Infunc
 
@@ -375,7 +385,7 @@ extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
 // NetSync_Start
 
-// NetSync_Abort
+extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
 // NetSync_Infunc
 
@@ -413,9 +423,9 @@ extern int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Options_Quit(tFrontend_spec* pFrontend);
 
-// Graphics_Infunc
+extern int C2_HOOK_FASTCALL Graphics_Infunc(tFrontend_spec* pFrontend);
 
-// Graphics_Outfunc
+extern int C2_HOOK_FASTCALL Graphics_Outfunc(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL FrontEndShowMouse(void);
 

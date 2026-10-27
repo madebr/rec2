@@ -1,3 +1,11 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Copyright 2022-2026 rec2 developers
+ */
+
 #ifndef GUARD_16_GRAPHICS1_H
 #define GUARD_16_GRAPHICS1_H
 
@@ -24,14 +32,15 @@ extern br_actor* gHud_actor_storage[128];
 extern int gSaved_table_count;
 extern tSaved_table gSaved_shade_tables[100];
 extern int gNumber_of_lollipops;
+extern int gHud_tinted4;
 
 // MungeClipPlane
 
 // TryThisEdge
 
-// ProcessShadow
+extern void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform, br_scalar pDistance_factor);
 
-// RenderShadows
+extern void C2_HOOK_FASTCALL RenderShadows(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform);
 
 extern void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel);
 

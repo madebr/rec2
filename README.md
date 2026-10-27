@@ -31,6 +31,10 @@ When enough functions have been replaced, it should become possible to not need 
 - Matching binary
 - Every single commit should compile and work: this enables `git-bisect` to search for regressions
 
+## License
+
+rec2 is licensed under the [MPL-2.0 (Mozilla Public License 2.0)](https://www.mozilla.org/en-US/MPL/)
+
 ## Credits
 
 - The [DethRace](https://github.com/dethrace-labs/dethrace/) project: Carmageddon 2 is a continuation of Carmageddon 1.
