@@ -772,7 +772,17 @@ int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFrontend) {
 
 // CreditsScreenInfunc
 
-// CreditsScreenOutfunc
+// FUNCTION: CARMA2_HW 0x0046c090
+// FUNCTION: CARMA2_SW 0x0046bdc0
+int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < gCredits_line_count; i++) {
+        free(gCredits_texts[i]);
+    }
+    free(gCredits_texts);
+    return 1;
+}
 
 // FRONTEND_GenericMenuHandler
 

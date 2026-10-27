@@ -169,7 +169,7 @@ extern int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFront
 
 // CreditsScreenInfunc
 
-// CreditsScreenOutfunc
+extern int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend);
 
 // FRONTEND_GenericMenuHandler
 
