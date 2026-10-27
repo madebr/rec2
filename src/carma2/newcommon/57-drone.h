@@ -26,7 +26,7 @@ extern tDrone_spec* gDrone_specs;
 
 // DroneStraightestArcForCorner2D
 
-// OpenDroneFile
+extern FILE* C2_HOOK_FASTCALL OpenDroneFile(char* pDrone_name);
 
 // LoadDroneTypeInfo
 
