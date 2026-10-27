@@ -586,10 +586,23 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
     return gNet_players[gThis_net_player_index].player_status;
 }
 
-// STUB: CARMA2_HW 0x004a5b50
-// STUB: CARMA2_SW 0x004a1cd0
+// FUNCTION: CARMA2_HW 0x004a5b50
+// FUNCTION: CARMA2_SW 0x004a1cd0
 int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
-    NOT_IMPLEMENTED();
+    int i;
+    int err;
+
+    err = 0;
+    if (gNumber_of_net_players == 1) {
+        pMessage->contents.raw.header.type = eNetMsg_none;
+        return err;
+    }
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gThis_net_player_index != i) {
+            err |= NetGuaranteedSendMessageToPlayer(pDetails, pMessage, gNet_players[i].ID, pNotifyFail);
+        }
+    }
+    return err;
 }
 
 // NetGuaranteedSendMessageToEverybody
