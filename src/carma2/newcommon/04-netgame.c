@@ -14,10 +14,19 @@
 #include "63-loading3.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0075b8f8
 br_pixelmap* gDigits_pix;
+
+// GLOBAL: CARMA2_HW 0x0068d924
+// GLOBAL: CARMA2_SW 0x0068797c
+tNet_game_player_info* gLast_lepper;
+
+// GLOBAL: CARMA2_HW 0x0068d928
+// GLOBAL: CARMA2_SW 0x00687980
+int gLast_it_change;
 
 // SendShapeNumbers
 
@@ -193,8 +202,6 @@ void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index) {
 #pragma auto_inline(on)
 #endif
 
-// PlayerIsIt
-
 // FUNCTION: CARMA2_HW 0x0049a940
 // FUNCTION: CARMA2_SW 0x00496ac0
 void C2_HOOK_FASTCALL CheckForVampireWinner(void) {
@@ -221,7 +228,34 @@ void C2_HOOK_FASTCALL CheckForVampireWinner(void) {
 
 // FarEnoughAway
 
-// CarInContactWithFox
+// FUNCTION: CARMA2_HW 0x0049a990
+// FUNCTION: CARMA2_SW 0x00496b10
+void C2_HOOK_FASTCALL CarInContactWithFox(tNet_game_player_info* pPlayer) {
+
+    if ((int)(PDGetTotalTime() - gLast_it_change) > 500) {
+        if (gLast_lepper != pPlayer) {
+            gLast_it_change = PDGetTotalTime();
+            if (gIt_or_fox >= 0) {
+                gLast_lepper = &gNet_players[gIt_or_fox];
+            }
+            PlayerIsIt(pPlayer);
+        }
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0049a9e0
+// STUB: CARMA2_SW 0x00496b60
+void C2_HOOK_FASTCALL PlayerIsIt(tNet_game_player_info* pPlayer) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SelectRandomFox
 
