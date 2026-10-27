@@ -14,6 +14,8 @@
 
 extern int gAR_camera_type;
 
+extern int gCar_car_collisions;
+
 // ActualActionReplayHeadups
 
 // DoActionReplayPostSwap
