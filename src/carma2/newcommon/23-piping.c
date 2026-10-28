@@ -732,7 +732,14 @@ void C2_HOOK_FASTCALL ApplyExplosion(tPipe_chunk** pChunk) {
     CopyExplosionData(chunk->subject_index, (tExplosion*)chunk->data.raw_data);
 }
 
-// ApplyNonCarCreation
+// FUNCTION: CARMA2_HW 0x004c99e0
+// FUNCTION: CARMA2_SW 0x004c6110
+void C2_HOOK_FASTCALL ApplyNonCarCreation(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    chunk = *pChunk;
+    TurnOnNonCar(chunk->subject_index);
+}
 
 // FUNCTION: CARMA2_HW 0x004c99f0
 // FUNCTION: CARMA2_SW 0x004c6120
