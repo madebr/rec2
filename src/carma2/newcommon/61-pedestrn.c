@@ -472,7 +472,14 @@ void C2_HOOK_FASTCALL SavePedStuff(void) {
 void C2_HOOK_FASTCALL ComparePedStuff(void) {
 }
 
-// AdjustPedDiagnostics
+// FUNCTION: CARMA2_HW 0x004d6db0
+// FUNCTION: CARMA2_SW 0x004d33b0
+void C2_HOOK_FASTCALL AdjustPedDiagnostics(tU32 pSubject_index, void* pUnused2, void* pUnused3, void* pUnused4) {
+    (void)pSubject_index;
+    (void)pUnused2;
+    (void)pUnused3;
+    (void)pUnused4;
+}
 
 // CalmDownAllPeds
 
