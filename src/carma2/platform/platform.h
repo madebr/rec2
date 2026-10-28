@@ -24,6 +24,7 @@ extern int gINT_00595f9c;
 extern void* gHWnd;
 extern void* gPDActionReplayBuffer;
 extern int gPDActionReplayBufferSize;
+extern int gDefault_spec_index;
 
 extern int PDGetRegisterSourceLocation(char* buffer, int* buffer_size);
 

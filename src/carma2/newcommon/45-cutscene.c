@@ -12,10 +12,12 @@
 #include "42-input.h"
 
 // FUNCTION: CARMA2_HW 0x0043e750
+// FUNCTION: CARMA2_SW 0x0043e860
 void C2_HOOK_FASTCALL DoSCILogo(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0043e760
+// FUNCTION: CARMA2_SW 0x0043e870
 void C2_HOOK_STDCALL DoStainlessLogo(void) {
 }
 
@@ -47,6 +49,7 @@ void C2_HOOK_FASTCALL DoNewGameAnimation(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0043f370
+// FUNCTION: CARMA2_SW 0x0043f450
 void C2_HOOK_FASTCALL DoEndRaceAnimation(void) {
     FadePaletteDown();
 }

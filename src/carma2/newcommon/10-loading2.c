@@ -46,21 +46,26 @@
 #include "71-newgame.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x0068c6ec
+// GLOBAL: CARMA2_SW 0x0068673c
 FILE* gTempFile;
 
 // GLOBAL: CARMA2_HW 0x0068c718
+// GLOBAL: CARMA2_SW 0x00686768
 const char* gPedTextTxtPath;
 
 // GLOBAL: CARMA2_HW 0x0068b88c
+// GLOBAL: CARMA2_SW 0x00685dec
 int gKey_map_index;
 
 #define DECODE_OFFSET 50
 // GLOBAL: CARMA2_HW 0x00655e38
+// GLOBAL: CARMA2_SW 0x00650d20
 char gDecode_string[14] = {
     (char)('i' + DECODE_OFFSET),
     (char)(' ' + DECODE_OFFSET),
@@ -79,33 +84,43 @@ char gDecode_string[14] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0068c6f8
+// GLOBAL: CARMA2_SW 0x00686748
 char gUnderwater_screen_name[32];
 
 // GLOBAL: CARMA2_HW 0x00764ea0
+// GLOBAL: CARMA2_SW 0x0075b400
 char gDefault_car[32];
 
 // GLOBAL: CARMA2_HW 0x00764ec0
+// GLOBAL: CARMA2_SW 0x0075b420
 char gBasic_car_name[32];
 
 // GLOBAL: CARMA2_HW 0x007638c0
+// GLOBAL: CARMA2_SW 0x00759e20
 int gNet_score_targets[8];
 
 // GLOBAL: CARMA2_HW 0x0074b58c
+// GLOBAL: CARMA2_SW 0x00741c4c
 int gDemo_race_rank_equivalent;
 
 // GLOBAL: CARMA2_HW 0x0074b4fc
+// GLOBAL: CARMA2_SW 0x00741bbc
 int gCount_demo_opponents;
 
 // GLOBAL: CARMA2_HW 0x0074b4c0
+// GLOBAL: CARMA2_SW 0x00741b80
 int gDemo_opponents[15];
 
 // GLOBAL: CARMA2_HW 0x00679308
+// GLOBAL: CARMA2_SW 0x00673a78
 int gCamera_type;
 
 // GLOBAL: CARMA2_HW 0x0074b4a8
+// GLOBAL: CARMA2_SW 0x00741b68
 int gGroove_funk_offset;
 
 // GLOBAL: CARMA2_HW 0x00657558
+// GLOBAL: CARMA2_SW 0x00651f08
 const char* gNet_avail_names[4] = {
     "never",
     "eagle",
@@ -120,11 +135,17 @@ void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, 
 
     PathCat(the_path, pRoot, pSubDir);
     LoadInFiles(the_path, "PALETTES", DRLoadPalette);
-    LoadInFiles(the_path, "SHADETAB", DRLoadShadeTable);
-
+#ifdef REC2_SW
     if (pInitialize_palettes) {
         InitializePalettes();
     }
+#endif
+    LoadInFiles(the_path, "SHADETAB", DRLoadShadeTable);
+#ifdef REC2_HW
+    if (pInitialize_palettes) {
+        InitializePalettes();
+    }
+#endif
 
     PathCat(the_path2, the_path, "PIXELMAP");
     twt = OpenPackFileAndSetTiffLoading(the_path2);
@@ -138,6 +159,7 @@ void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, 
 }
 
 // FUNCTION: CARMA2_HW 0x00486e10
+// FUNCTION: CARMA2_SW 0x00483f40
 void C2_HOOK_FASTCALL LoadInRegistees(void) {
 
     LoadInRegisteeDir(gApplication_path, "REG", 1);
@@ -196,6 +218,7 @@ void C2_HOOK_FASTCALL GetHithers(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00486ef0
+// FUNCTION: CARMA2_SW 0x00484020
 void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     tPath_name the_path;
     int i;
@@ -412,7 +435,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     /* Number of demo opponents */
     gCount_demo_opponents = GetAnInt(gTempFile);
     /* Demo opponents */
-    for (i = 0; (int)i < gCount_demo_opponents; i++) {
+    for (i = 0; i < gCount_demo_opponents; i++) {
         gDemo_opponents[i] = GetAnInt(gTempFile);
     }
 
@@ -470,6 +493,7 @@ void C2_HOOK_FASTCALL FinishLoadingGeneral(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00487e10
+// FUNCTION: CARMA2_SW 0x00484f40
 void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     FILE* f;
     tPath_name the_path;
@@ -489,20 +513,49 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00487ea0
+// FUNCTION: CARMA2_SW 0x00484fd0
 void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
+#ifdef REC2_SW
+    tPath_name path;
 
-    // empty
+    if (gProgram_state.sausage_eater_mode) {
+        strcpy(path, "GHANDX.PIX");
+    } else {
+        strcpy(path, "HANDX.PIX");
+    }
+    PossibleService();
+    if (gCursors[0] == NULL && LoadInterfacePixelmaps(path, gCursors, 4) == 0) {
+        FatalError(kFatalError_CannotLoadCursorImage);
+    }
+    if (gProgram_state.sausage_eater_mode) {
+        strcpy(path, "GHANDPX.PIX");
+    } else {
+        strcpy(path, "HANDPX.PIX");
+    }
+    PossibleService();
+    if (gCursors[4] == NULL && LoadInterfacePixelmaps(path, &gCursors[4], 4) == 0) {
+        FatalError(kFatalError_CannotLoadCursorImage);
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00487eb0
+// FUNCTION: CARMA2_SW 0x004850e0
 void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
+#ifdef REC2_SW
+    int i;
 
-    // empty
+    // original code uses 4, not BR_ASIZE(gCursors). Bug?
+    for (i = 0; i < 4; i++) {
+        gCursors[i] = NULL;
+    }
+#endif
 }
 
 // AdjustCarCoordinates
 
 // FUNCTION: CARMA2_HW 0x0048b560
+// FUNCTION: CARMA2_SW 0x004887a0
 void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char s[256];
     char* str;
@@ -552,6 +605,7 @@ void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048b810
+// FUNCTION: CARMA2_SW 0x00488a50
 void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char s[256];
     char* str;
@@ -663,6 +717,7 @@ void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 // GetDamageProgram
 
 // FUNCTION: CARMA2_HW 0x0048bf20
+// FUNCTION: CARMA2_SW 0x00489160
 intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData) {
 
     C2_HOOK_BUG_ON(sizeof(tUser_crush_data) != 0x10);
@@ -711,6 +766,7 @@ intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData) {
 // FindCarShellModel
 
 // FUNCTION: CARMA2_HW 0x0048c130
+// FUNCTION: CARMA2_SW 0x00489370
 intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pData) {
     tUser_crush_data* user_crush;
 
@@ -738,6 +794,7 @@ intptr_t C2_HOOK_CDECL LinkCarActorsToGroovidelicsCB(br_actor* pActor, void* pDa
 #endif
 
 // STUB: CARMA2_HW 0x00488f70
+// STUB: CARMA2_SW 0x00486190
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
     NOT_IMPLEMENTED();
 }
@@ -747,6 +804,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 #endif
 
 // STUB: CARMA2_HW 0x0048c150
+// STUB: CARMA2_SW 0x00489390
 void C2_HOOK_FASTCALL LoadHeadupImages(void) {
     NOT_IMPLEMENTED();
 }
@@ -754,11 +812,13 @@ void C2_HOOK_FASTCALL LoadHeadupImages(void) {
 // OpenRaceFile
 
 // STUB: CARMA2_HW 0x0048c1c0
+// STUB: CARMA2_SW 0x00489400
 void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index) {
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x0048c860
+// FUNCTION: CARMA2_SW 0x00489aa0
 void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
     int i;
 
@@ -779,6 +839,7 @@ void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048c930
+// FUNCTION: CARMA2_SW 0x00489b70
 void C2_HOOK_FASTCALL LoadOpponents(void) {
     FILE* f;
     tPath_name the_path;
@@ -861,6 +922,7 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048cd80
+// FUNCTION: CARMA2_SW 0x00489fc0
 void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
 
     InitFunkGrooveFlags();
@@ -924,6 +986,7 @@ void C2_HOOK_FASTCALL LoadOpponentsCars(tRace_info* pRace_info) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048cfc0
+// FUNCTION: CARMA2_SW 0x0048a200
 void C2_HOOK_FASTCALL LoadMiscStrings(void) {
     int i;
     FILE *f;
@@ -959,6 +1022,7 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048d0e0
+// FUNCTION: CARMA2_SW 0x0048a320
 void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, track_file_name, 0x1a1e);
@@ -969,6 +1033,7 @@ void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048d110
+// FUNCTION: CARMA2_SW 0x0048a350
 void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions) {
 
     pOptions->enable_text_messages = GetAnInt(pF);
@@ -1006,11 +1071,13 @@ int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex) {
 }
 
 // STUB: CARMA2_HW 0x0048d190
+// STUB: CARMA2_SW 0x0048a3d0
 int C2_HOOK_FASTCALL SaveOptions(void) {
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x0048d8f0
+// FUNCTION: CARMA2_SW 0x0048ab30
 int C2_HOOK_FASTCALL RestoreOptions(void) {
     tPath_name the_path;
     FILE* f;
@@ -1160,14 +1227,30 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
     }
     PFfclose(f);
     gMap_view = 1;
-    gMap_render_x = 80.f;
-    gMap_render_y = 400.f;
+#ifdef REC2_HW
+    gMap_render_x = 80.0f;
+    gMap_render_y = 400.0f;
     gMap_render_width = 128.f;
     gMap_render_height = 80.f;
+#endif
+#ifdef REC2_SW
+    if (gGraf_specs[gGraf_spec_index].total_width <= gHeadup_map_x + gHeadup_map_w
+        || gGraf_specs[gGraf_spec_index].total_height <= gHeadup_map_y + gHeadup_map_h) {
+        gHeadup_map_x = 228;
+        gHeadup_map_y = 150;
+        gHeadup_map_w = 48;
+        gHeadup_map_h = 48;
+    }
+    gMap_render_x = 80.0f;
+    gMap_render_y = 6.0f;
+    gMap_render_width = 64.0f;
+    gMap_render_height = 40.0f;
+#endif
     return 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0048e9e0
+// FUNCTION: CARMA2_SW 0x0048bc80
 void C2_HOOK_FASTCALL InitFunkGrooveFlags(void) {
     int i;
 
@@ -1180,21 +1263,25 @@ void C2_HOOK_FASTCALL InitFunkGrooveFlags(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048ea00
+// FUNCTION: CARMA2_SW 0x0048bca0
 void C2_HOOK_FASTCALL SetDefaultTextFileName(void) {
     gPedTextTxtPath = "TEXT.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x0048ea10
+// FUNCTION: CARMA2_SW 0x0048bcb0
 void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void) {
     gPedTextTxtPath = "TEXT.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x0048ea20
+// FUNCTION: CARMA2_SW 0x0048bcc0
 void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void) {
     gPedTextTxtPath = "ZOMTEXT.TXT";
 }
 
 // FUNCTION: CARMA2_HW 0x0048ea30
+// FUNCTION: CARMA2_SW 0x0048bcd0
 void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void) {
     gPedTextTxtPath = "ALTEXT.TXT";
 }

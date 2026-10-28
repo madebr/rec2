@@ -11,6 +11,7 @@
 #include "72-interface.h"
 
 // GLOBAL: CARMA2_HW 0x00632c60
+// GLOBAL: CARMA2_SW 0x0062db90
 tFrontend_spec gFrontend_OPTIONS = {
 #if 0 // FIXME: enable this
     "Options",

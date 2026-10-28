@@ -19,6 +19,7 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x00763960
+// GLOBAL: CARMA2_SW 0x00759ec0
 tNet_game_options gNet_settings[9];
 
 // SetGameTarget
@@ -28,6 +29,7 @@ tNet_game_options gNet_settings[9];
 // ReadNetGameChoices
 
 // FUNCTION: CARMA2_HW 0x004662c0
+// FUNCTION: CARMA2_SW 0x00466050
 int C2_HOOK_FASTCALL PickARandomCar(void) {
     int i;
     int cars[2 * REC2_ASIZE(gCar_details)];
@@ -67,6 +69,7 @@ void C2_HOOK_FASTCALL PollCarDetails(tNet_game_details* pNet_game) {
 }
 
 // FUNCTION: CARMA2_HW 0x00466370
+// FUNCTION: CARMA2_SW 0x00466100
 void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions) {
     int i;
 
@@ -96,6 +99,7 @@ void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions) {
 }
 
 // FUNCTION: CARMA2_HW 0x004663e0
+// FUNCTION: CARMA2_SW 0x00466170
 void C2_HOOK_FASTCALL DefaultNetSettings(void) {
     FILE* file;
     tNet_game_options* pOptions;

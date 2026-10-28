@@ -18,9 +18,11 @@
 
 
 // GLOBAL: CARMA2_HW 0x006b09b4
+// GLOBAL: CARMA2_SW 0x006aa140
 br_boolean active;
 
 // FUNCTION: CARMA2_HW 0x0052cf20
+// FUNCTION: CARMA2_SW 0x005285c0
 br_error C2_HOOK_CDECL BrBegin(void) {
     if (active) {
         return 4103;
@@ -36,6 +38,7 @@ br_error C2_HOOK_CDECL BrBegin(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cf50
+// FUNCTION: CARMA2_SW 0x005285f0
 br_error C2_HOOK_CDECL BrEnd(void) {
     br_device* dev;
 

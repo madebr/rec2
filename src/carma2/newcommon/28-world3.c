@@ -22,27 +22,34 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x006b75c0
+// GLOBAL: CARMA2_SW 0x006ae2a0
 br_actor* gAdditional_actors;
 
 // GLOBAL: CARMA2_HW 0x006b7820
+// GLOBAL: CARMA2_SW 0x006ae500
 tBrender_storage* gStorage_for_callbacks;
 
 // GLOBAL: CARMA2_HW 0x006aaa2c
+// GLOBAL: CARMA2_SW 0x006a447c
 int gDisallow_duplicates;
 
 // GLOBAL: CARMA2_HW 0x006aaa20
+// GLOBAL: CARMA2_SW 0x006a4470
 br_pixelmap* gDuplicate_pixelmap;
 
 // GLOBAL: CARMA2_HW 0x006aaa28
+// GLOBAL: CARMA2_SW 0x006a4478
 br_material* gDuplicate_material;
 
 // GLOBAL: CARMA2_HW 0x006aaa24
 br_model* gDuplicate_model;
 
 // GLOBAL: CARMA2_HW 0x00660cb8
+// GLOBAL: CARMA2_SW 0x0065b62c
 tRendererShadingType gMaterial_shading_for_callback = kRendererShadingType_Undefined;
 
 // FUNCTION: CARMA2_HW 0x00504b30
+// FUNCTION: CARMA2_SW 0x005002f0
 void C2_HOOK_FASTCALL InitTreeSurgery(void) {
     tPath_name the_path;
     FILE* file;
@@ -104,6 +111,7 @@ void C2_HOOK_FASTCALL InitTreeSurgery(void) {
 // CheckNonCarModelBounds
 
 // FUNCTION: CARMA2_HW 0x00500d50
+// FUNCTION: CARMA2_SW 0x004fc6b0
 void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pStorage_space, int pMax_pixelmaps, int pMax_shade_tables, int pMax_materials, int pMax_models, int pMax_sounds) {
 
     pStorage_space->pixelmaps_count = 0;
@@ -126,6 +134,7 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
 }
 
 // FUNCTION: CARMA2_HW 0x00500e10
+// FUNCTION: CARMA2_SW 0x004fc770
 void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage) {
 
     BrMemFree(pStorage->pixelmaps);
@@ -137,6 +146,7 @@ void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage) {
 }
 
 // FUNCTION: CARMA2_HW 0x00500e60
+// FUNCTION: CARMA2_SW 0x004fc7c0
 void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pStart, int pEnd) {
     int i;
     int move_to;
@@ -162,6 +172,7 @@ void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStor
 }
 
 // FUNCTION: CARMA2_HW 0x00500f30
+// FUNCTION: CARMA2_SW 0x004fc890
 void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space) {
     int i;
 
@@ -197,6 +208,7 @@ void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space) {
 }
 
 // FUNCTION: CARMA2_HW 0x00501020
+// FUNCTION: CARMA2_SW 0x004fc980
 tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {
     int i;
 
@@ -219,6 +231,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
 }
 
 // FUNCTION: CARMA2_HW 0x005010e0
+// FUNCTION: CARMA2_SW 0x004fca40
 tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st) {
     int i;
 
@@ -239,6 +252,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage*
 }
 
 // FUNCTION: CARMA2_HW 0x00501190
+// FUNCTION: CARMA2_SW 0x004fcaf0
 tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat) {
     int i;
 
@@ -262,11 +276,12 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
 }
 
 // FUNCTION: CARMA2_HW 0x00501260
+// FUNCTION: CARMA2_SW 0x004fcbc0
 tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod) {
     int i;
 
     gDuplicate_model = NULL;
-    if (pStorage_space->materials_count < pStorage_space->max_models) {
+    if (pStorage_space->models_count < pStorage_space->max_models) {
         if (pStorage_space->flags & 0x1) { /* FIXME: add enum (0x1 -> eStorage_space_flags_No_duplicates*/
             for (i = 0; i < pStorage_space->models_count; i++) {
                 if (pStorage_space->models[i] != NULL
@@ -287,6 +302,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pSto
 }
 
 // FUNCTION: CARMA2_HW 0x00501330
+// FUNCTION: CARMA2_SW 0x004fcc90
 tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pStorage_space, int pSound_id) {
     int i;
 
@@ -305,6 +321,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pSto
 }
 
 // FUNCTION: CARMA2_HW 0x005024f0
+// FUNCTION: CARMA2_SW 0x004fde40
 int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* path) {
     int i;
     int new_ones;
@@ -348,6 +365,7 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
 }
 
 // FUNCTION: CARMA2_HW 0x00501560
+// FUNCTION: CARMA2_SW 0x004fcec0
 br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, const char* pName) {
     br_pixelmap* map;
     tAdd_to_storage_result addResult;
@@ -377,6 +395,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, con
 }
 
 // FUNCTION: CARMA2_HW 0x005016a0
+// FUNCTION: CARMA2_SW 0x004fd000
 br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_space, const char* pName) {
     br_pixelmap* temp;
 
@@ -405,6 +424,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_sp
 }
 
 // FUNCTION: CARMA2_HW 0x005017e0
+// FUNCTION: CARMA2_SW 0x004fd140
 br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_space, const char* pName) {
     br_material* material;
 
@@ -434,6 +454,7 @@ br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_spac
 }
 
 // FUNCTION: CARMA2_HW 0x00501930
+// FUNCTION: CARMA2_SW 0x004fd290
 tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id) {
 
     if (S3GetBufferDescription(pSound_id) != NULL) {
@@ -488,6 +509,7 @@ int C2_HOOK_FASTCALL AddShadeTables(tBrender_storage* pStorage_space, const char
 }
 
 // FUNCTION: CARMA2_HW 0x00501e40
+// FUNCTION: CARMA2_SW 0x004fd7a0
 int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath) {
     int i;
     int new_ones;
@@ -526,6 +548,7 @@ int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPa
 }
 
 // FUNCTION: CARMA2_HW 0x00502060
+// FUNCTION: CARMA2_SW 0x004fd9b0
 int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading) {
     int i;
     int new_ones;
@@ -562,6 +585,7 @@ int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* 
 }
 
 // FUNCTION: CARMA2_HW 0x00502210
+// FUNCTION: CARMA2_SW 0x004fdb60
 void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
 
     BrResFree(pM->faces);
@@ -573,6 +597,7 @@ void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
 }
 
 // FUNCTION: CARMA2_HW 0x005024b0
+// FUNCTION: CARMA2_SW 0x004fde00
 void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath) {
     char s[256];
 
@@ -583,6 +608,7 @@ void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath) {
 }
 
 // FUNCTION: CARMA2_HW 0x00502490
+// FUNCTION: CARMA2_SW 0x004fdde0
 void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
     gStorage_for_callbacks = pStorage;
@@ -590,6 +616,7 @@ void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, co
 }
 
 // FUNCTION: CARMA2_HW 0x005026b0
+// FUNCTION: CARMA2_SW 0x004fe000
 int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList) {
     tPath_name pathCopy;
     tPath_name pathUpper;
@@ -611,6 +638,7 @@ int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList) {
 }
 
 // FUNCTION: CARMA2_HW 0x00502780
+// FUNCTION: CARMA2_SW 0x004fe0d0
 int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) {
     tPath_name pathCopy;
     tPath_name upperPath;
@@ -646,6 +674,7 @@ int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) 
 }
 
 // FUNCTION: CARMA2_HW 0x005028f0
+// FUNCTION: CARMA2_SW 0x004fe240
 void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path) {
     tPath_name pathCopy;
     tPath_name pixPath;
@@ -681,6 +710,7 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
 }
 
 // FUNCTION: CARMA2_HW 0x00502a70
+// FUNCTION: CARMA2_SW 0x004fe3c0
 void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
     char path[256];
     tRendererShadingType shading;
@@ -697,6 +727,7 @@ void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
 }
 
 // FUNCTION: CARMA2_HW 0x00502ad0
+// FUNCTION: CARMA2_SW 0x004fe420
 void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
     gMaterial_shading_for_callback = pShading;
@@ -706,6 +737,7 @@ void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, co
 }
 
 // FUNCTION: CARMA2_HW 0x00502b20
+// FUNCTION: CARMA2_SW 0x004fe470
 void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath) {
     char s[256];
 
@@ -716,6 +748,7 @@ void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath) {
 }
 
 // FUNCTION: CARMA2_HW 0x00502b00
+// FUNCTION: CARMA2_SW 0x004fe450
 void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath) {
 
     gStorage_for_callbacks = pStorage;
@@ -723,6 +756,7 @@ void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const
 }
 
 // FUNCTION: CARMA2_HW 0x00502b80
+// FUNCTION: CARMA2_SW 0x004fe4d0
 void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
     char path[256];
 
@@ -733,6 +767,7 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
 }
 
 // FUNCTION: CARMA2_HW 0x00502b60
+// FUNCTION: CARMA2_SW 0x004fe4b0
 void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
     gStorage_for_callbacks = pStorage;
@@ -740,6 +775,7 @@ void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, 
 }
 
 // FUNCTION: CARMA2_HW 0x00502cf0
+// FUNCTION: CARMA2_SW 0x004fe640
 void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
     LoadAllShadeTablesInDirectory(pStorage, pPath);
@@ -750,12 +786,14 @@ void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const 
 }
 
 // FUNCTION: CARMA2_HW 0x00502d60
+// FUNCTION: CARMA2_SW 0x004fe6b0
 void C2_HOOK_FASTCALL DisallowDuplicates(void) {
 
     // empty
 }
 
 // FUNCTION: CARMA2_HW 0x00502d70
+// FUNCTION: CARMA2_SW 0x004fe6c0
 void C2_HOOK_FASTCALL AllowDuplicates(void) {
 
     gDisallow_duplicates = 0;

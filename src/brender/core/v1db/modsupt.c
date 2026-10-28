@@ -100,12 +100,14 @@ br_matrix34* C2_HOOK_CDECL BrModelFitMap(br_model* model, int axis_0, int axis_1
 }
 
 // FUNCTION: CARMA2_HW 0x005217e0
+// FUNCTION: CARMA2_SW 0x0051ce80
 void C2_HOOK_CDECL BrModelFree(br_model* m) {
 
     BrResFree(m);
 }
 
 // FUNCTION: CARMA2_HW 0x005217f0
+// FUNCTION: CARMA2_SW 0x0051ce90
 br_model* C2_HOOK_CDECL BrModelAllocate(const char* name, int nvertices, int nfaces) {
     br_model* m;
 
