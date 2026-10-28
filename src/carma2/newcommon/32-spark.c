@@ -36,6 +36,10 @@ br_pixelmap* gShade_list[16];
 br_pixelmap** gShade_table = &gShade_list[8];
 #endif
 
+// GLOBAL: CARMA2_HW 0x006b78e0
+// GLOBAL: CARMA2_SW 0x006ae5c0
+tSmash_vertex gSmash_glass_fragments[200];
+
 // GLOBAL: CARMA2_HW 0x006a82b4
 // GLOBAL: CARMA2_SW 0x006a2314
 int gNum_dust_tables;
