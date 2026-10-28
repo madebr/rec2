@@ -356,7 +356,7 @@ extern void C2_HOOK_FASTCALL ApplyEndMyBend(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyExplosion(tPipe_chunk** pChunk);
 
-// ApplyNonCarCreation
+extern void C2_HOOK_FASTCALL ApplyNonCarCreation(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk);
 
