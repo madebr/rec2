@@ -62,42 +62,49 @@ void C2_HOOK_STDCALL actorDisable(br_v1db_enable* e, br_actor* a) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524e30
+// FUNCTION: CARMA2_SW 0x005204d0
 void C2_HOOK_CDECL BrLightEnable(br_actor* l) {
 
     actorEnable(&v1db.enabled_lights, l);
 }
 
 // FUNCTION: CARMA2_HW 0x00524ec0
+// FUNCTION: CARMA2_SW 0x00520560
 void C2_HOOK_CDECL BrLightDisable(br_actor* l) {
 
     actorDisable(&v1db.enabled_lights, l);
 }
 
 // FUNCTION: CARMA2_HW 0x00524f10
+// FUNCTION: CARMA2_SW 0x005205b0
 void C2_HOOK_CDECL BrClipPlaneEnable(br_actor* c) {
 
     actorEnable(&v1db.enabled_clip_planes, c);
 }
 
 // FUNCTION: CARMA2_HW 0x00524fa0
+// FUNCTION: CARMA2_SW 0x00520640
 void C2_HOOK_CDECL BrClipPlaneDisable(br_actor* c) {
 
     actorDisable(&v1db.enabled_clip_planes, c);
 }
 
 // FUNCTION: CARMA2_HW 0x00524ff0
+// FUNCTION: CARMA2_SW 0x00520690
 void C2_HOOK_CDECL BrHorizonPlaneEnable(br_actor* h) {
 
     actorEnable(&v1db.enabled_horizon_planes, h);
 }
 
 // FUNCTION: CARMA2_HW 0x00525080
+// FUNCTION: CARMA2_SW 0x00520720
 void C2_HOOK_CDECL BrHorizonPlaneDisable(br_actor* h) {
 
     actorDisable(&v1db.enabled_horizon_planes, h);
 }
 
 // FUNCTION: CARMA2_HW 0x005250d0
+// FUNCTION: CARMA2_SW 0x00520770
 br_actor* C2_HOOK_CDECL BrEnvironmentSet(br_actor* a) {
     br_actor* old_a;
 

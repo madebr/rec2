@@ -47,6 +47,7 @@ br_error C2_HOOK_CDECL _M_br_object_queryAllSize(br_object* self, br_size_t* psi
 }
 
 // FUNCTION: CARMA2_HW 0x0052d170
+// FUNCTION: CARMA2_SW 0x00528810
 void C2_HOOK_CDECL _BrObjectFree(void* res, br_uint_8 res_class, br_size_t size) {
 
     br_object* o;

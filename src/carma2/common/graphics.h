@@ -28,11 +28,10 @@ extern br_pixelmap* gOrig_render_palette;
 extern br_pixelmap* gFlic_palette;
 extern br_colour* gScratch_pixels;
 extern br_pixelmap* gScratch_palette;
-extern br_pixelmap* gPalette_0074a604;
-extern br_pixelmap* gPalette_0074a600;
-extern br_pixelmap* gMini_map_glowing_line_palettes[3];
-extern br_pixelmap* gPalette_0074a66c;
-extern br_pixelmap* gPalette_0074a5fc;
+extern br_pixelmap* gBlend25_table;
+extern br_pixelmap* gBlend50_table;
+extern br_pixelmap* gBlend_palettes[3];
+extern br_pixelmap* gBlend75_table;
 extern br_pixelmap* gPalette_0074a670;
 
 extern int gGraf_data_index;

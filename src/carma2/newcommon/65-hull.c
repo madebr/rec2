@@ -9,9 +9,11 @@
 #include "65-hull.h"
 
 // GLOBAL: CARMA2_HW 0x0067942c
+// GLOBAL: CARMA2_SW 0x00673b9c
 tCollision_shape_polyhedron_data* gPolyhedron_to_sort;
 
 // GLOBAL: CARMA2_HW 0x00679420
+// GLOBAL: CARMA2_SW 0x00673b90
 br_vector3 gPhysics_reference_normal_comparison;
 
 // FUNCTION: CARMA2_HW 0x00420d60
@@ -31,6 +33,7 @@ br_scalar C2_HOOK_FASTCALL SignedTwiceAreaOf3DTriangle(const br_vector3* pV1, co
 #endif
 
 // FUNCTION: CARMA2_HW 0x00420dc0
+// FUNCTION: CARMA2_SW 0x00420e40
 int C2_HOOK_CDECL CompareAngle(const void *pLhs, const void *pRhs) {
     tCollision_shape_polyhedron_data* polyhedron;
     br_scalar s1, s2;
@@ -64,6 +67,7 @@ int C2_HOOK_CDECL CompareAngle(const void *pLhs, const void *pRhs) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00420ef0
+// FUNCTION: CARMA2_SW 0x00420f70
 int C2_HOOK_FASTCALL Collinear(const br_vector3* pV1, const br_vector3* pV2, const br_vector3* pV3) {
 
     return (float)fabs((pV3->v[2] - pV1->v[2]) * (pV2->v[1] - pV1->v[1]) - (pV3->v[1] - pV1->v[1]) * (pV2->v[2] - pV1->v[2])) < 1e-6f
