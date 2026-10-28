@@ -117,7 +117,7 @@ int gCamera_type;
 
 // GLOBAL: CARMA2_HW 0x00679324
 // GLOBAL: CARMA2_SW 0x00673a94
-tActionReplayCameraMode tActionReplayCameraMode_00679324;
+tActionReplayCameraMode gAction_replay_camera_mode_00679324;
 
 // GLOBAL: CARMA2_HW 0x0074b4a8
 // GLOBAL: CARMA2_SW 0x00741b68

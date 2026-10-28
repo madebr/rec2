@@ -147,19 +147,19 @@ void C2_HOOK_FASTCALL ToggleCockpit(void) {
         return;
     }
     if (gAction_replay_camera_mode == kActionReplayCameraMode_Internal) {
-        tActionReplayCameraMode old_camera_mode = tActionReplayCameraMode_00679324;
+        tActionReplayCameraMode old_camera_mode = gAction_replay_camera_mode_00679324;
 
-        if ((gAction_replay_mode && !gCamera_type_allowed_replay[tActionReplayCameraMode_00679324])
-                || (!gAction_replay_mode && !gCamera_type_allowed_gameplay[tActionReplayCameraMode_00679324])
-                || tActionReplayCameraMode_00679324 >= (int)REC2_ASIZE(gCamera_type_allowed_replay)
-                || (tActionReplayCameraMode_00679324 == kActionReplayCameraMode_Drone && !OKToViewDrones())
+        if ((gAction_replay_mode && !gCamera_type_allowed_replay[gAction_replay_camera_mode_00679324])
+                || (!gAction_replay_mode && !gCamera_type_allowed_gameplay[gAction_replay_camera_mode_00679324])
+                || gAction_replay_camera_mode_00679324 >= (int)REC2_ASIZE(gCamera_type_allowed_replay)
+                || (gAction_replay_camera_mode_00679324 == kActionReplayCameraMode_Drone && !OKToViewDrones())
                 || (old_camera_mode == kActionReplayCameraMode_Peds && !gPed_count)) {
             SetCameraType(kActionReplayCameraMode_Standard);
         } else {
-            SetCameraType(tActionReplayCameraMode_00679324);
+            SetCameraType(gAction_replay_camera_mode_00679324);
         }
     } else {
-        tActionReplayCameraMode_00679324 = gAction_replay_camera_mode;
+        gAction_replay_camera_mode_00679324 = gAction_replay_camera_mode;
         SetCameraType(kActionReplayCameraMode_Internal);
     }
 }
