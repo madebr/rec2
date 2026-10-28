@@ -458,7 +458,7 @@ extern void C2_HOOK_FASTCALL UndoUnBend(void);
 
 // UndoShrapnelShower
 
-// UndoNonCarCreation
+extern void C2_HOOK_FASTCALL UndoNonCarCreation(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 extern void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
