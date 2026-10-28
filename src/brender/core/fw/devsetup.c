@@ -23,21 +23,25 @@
 
 
 // GLOBAL: CARMA2_HW 0x006ad9ac
+// GLOBAL: CARMA2_SW 0x006aa13c
 br_pixelmap* last_begin_screen;
 
 // FUNCTION: CARMA2_HW 0x00528d50
+// FUNCTION: CARMA2_SW 0x00527ab0
 br_pixelmap* C2_HOOK_CDECL BrDevLastBeginQuery(void) {
 
     return last_begin_screen;
 }
 
 // FUNCTION: CARMA2_HW 0x00528d60
+// FUNCTION: CARMA2_SW 0x00527ac0
 void C2_HOOK_STDCALL BrDevLastBeginSet(br_pixelmap* pm) {
 
     last_begin_screen = pm;
 }
 
 // FUNCTION: CARMA2_HW 0x00528d70
+// FUNCTION: CARMA2_SW 0x00527ad0
 br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string, ...) {
     va_list vl;
     br_uint_32 i;
@@ -61,12 +65,14 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string
 }
 
 // FUNCTION: CARMA2_HW 0x00528df0
+// FUNCTION: CARMA2_SW 0x00527b50
 br_error C2_HOOK_CDECL BrDevBegin(br_pixelmap** ppm, const char* setup_string) {
 
     return BrDevBeginTV(ppm, setup_string, NULL);
 }
 
 // FUNCTION: CARMA2_HW 0x00528e10
+// FUNCTION: CARMA2_SW 0x00527b70
 br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, const char* setup_string, br_token_value* setup_tv) {
     char str[512];
     char* args;
@@ -214,6 +220,7 @@ br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, const char* setup_string,
 }
 
 // FUNCTION: CARMA2_HW 0x00529270
+// FUNCTION: CARMA2_SW 0x00527fd0
 br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(const char* setup_string) {
     br_pixelmap* s;
 
@@ -227,6 +234,7 @@ br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(const char* setup_string) {
 }
 
 // FUNCTION: CARMA2_HW 0x005292c0
+// FUNCTION: CARMA2_SW 0x00528020
 void C2_HOOK_CDECL BrDevEndOld(void) {
 
     if (BrDevLastBeginQuery() != NULL) {
@@ -236,6 +244,7 @@ void C2_HOOK_CDECL BrDevEndOld(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x005292e0
+// FUNCTION: CARMA2_SW 0x00528040
 void C2_HOOK_CDECL BrDevPaletteSetOld(br_pixelmap* pm) {
 
     if (BrDevLastBeginQuery() != NULL) {
@@ -244,6 +253,7 @@ void C2_HOOK_CDECL BrDevPaletteSetOld(br_pixelmap* pm) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529300
+// FUNCTION: CARMA2_SW 0x00528060
 void C2_HOOK_CDECL BrDevPaletteSetEntryOld(int i, br_colour colour) {
 
     if (BrDevLastBeginQuery() != NULL) {
@@ -252,6 +262,7 @@ void C2_HOOK_CDECL BrDevPaletteSetEntryOld(int i, br_colour colour) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529320
+// FUNCTION: CARMA2_SW 0x00528080
 br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_device_pixelmap* destination, br_token scalar_type) {
     br_renderer_facility* renderer_facility;
     br_error r;
@@ -308,6 +319,7 @@ br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_dev
 }
 
 // FUNCTION: CARMA2_HW 0x005294d0
+// FUNCTION: CARMA2_SW 0x00528230
 br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_device_pixelmap* destination, br_token scalar_type) {
     br_primitive_library* primitive_library;
     br_error r;
@@ -364,6 +376,7 @@ br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_dev
 }
 
 // FUNCTION: CARMA2_HW 0x00529680
+// FUNCTION: CARMA2_SW 0x005283e0
 br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* renderer, br_renderer_facility* renderer_facility, br_token scalar_type, br_token format_type) {
     br_error r;
     br_geometry* gf;

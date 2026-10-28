@@ -12,6 +12,7 @@
 C2_NAKED
 #endif
 // FUNCTION: CARMA2_HW 0x0053e682
+// FUNCTION: CARMA2_SW 0x00539d22
 br_uint_16 C2_HOOK_CDECL GetSysQual(void) {
 #if defined(__I86__) || defined(_M_IX86)
 #if defined(_MSC_VER)

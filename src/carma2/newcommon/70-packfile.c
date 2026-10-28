@@ -24,15 +24,19 @@ tTwatVfsMountPoint gTwatVfsMountPoints[5];
 tTwatVfsFile gTwatVfsFiles[51];
 
 // GLOBAL: CARMA2_HW 0x006923a0
+// GLOBAL: CARMA2_SW 0x0068c3f8
 int gDisableTiffConversionStackPos;
 
 // GLOBAL: CARMA2_HW 0x00692068
+// GLOBAL: CARMA2_SW 0x0068c0c0
 int gDisableTiffConversionStack[2];
 
 // GLOBAL: CARMA2_HW 0x0068c724
+// GLOBAL: CARMA2_SW 0x00686774
 int gDisableTiffConversion;
 
 // FUNCTION: CARMA2_HW 0x004b4570
+// FUNCTION: CARMA2_SW 0x004b06e0
 void C2_HOOK_FASTCALL InitPackFiles(void) {
     int i;
 
@@ -49,6 +53,7 @@ void C2_HOOK_FASTCALL InitPackFiles(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b45b0
+// FUNCTION: CARMA2_SW 0x004b0720
 tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
     tPath_name twatFilePath;
     FILE* f;
@@ -95,6 +100,7 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4730
+// FUNCTION: CARMA2_SW 0x004b08a0
 void C2_HOOK_FASTCALL ClosePackFile(tTWTVFS twt) {
 
     if (twt >= 0) {
@@ -104,6 +110,7 @@ void C2_HOOK_FASTCALL ClosePackFile(tTWTVFS twt) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4760
+// FUNCTION: CARMA2_SW 0x004b08d0
 void C2_HOOK_FASTCALL PFfclose(FILE* pFile) {
 
     if ((uintptr_t)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
@@ -114,6 +121,7 @@ void C2_HOOK_FASTCALL PFfclose(FILE* pFile) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4780
+// FUNCTION: CARMA2_SW 0x004b08f0
 FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
     int twt;
     int i;
@@ -144,6 +152,7 @@ FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4880
+// FUNCTION: CARMA2_SW 0x004b09f0
 int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
     tTwatVfsFile* twtFile;
     int result;
@@ -165,6 +174,7 @@ int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
 // PFgetc
 
 // FUNCTION: CARMA2_HW 0x004b4900
+// FUNCTION: CARMA2_SW 0x004b0a70
 char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
     tTwatVfsFile* twtFile;
     int c;
@@ -197,6 +207,7 @@ char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b49a0
+// FUNCTION: CARMA2_SW 0x004b0b10
 int C2_HOOK_FASTCALL PFungetc(int ch, FILE* pFile) {
     tTwatVfsFile* twtFile;
 
@@ -216,6 +227,7 @@ int C2_HOOK_FASTCALL PFungetc(int ch, FILE* pFile) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b49f0
+// FUNCTION: CARMA2_SW 0x004b0b60
 br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, void* f) {
     int read_size;
     tU8 *pos;
@@ -249,6 +261,7 @@ int C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, v
 }
 
 // FUNCTION: CARMA2_HW 0x004b4b00
+// FUNCTION: CARMA2_SW 0x004b0c70
 int C2_HOOK_FASTCALL PFftell(FILE* pF) {
     int pos;
 
@@ -261,6 +274,7 @@ int C2_HOOK_FASTCALL PFftell(FILE* pF) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4b70
+// FUNCTION: CARMA2_SW 0x004b0ce0
 int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
     tTwatVfsFile* twtFile;
     tU8 *newpos;
@@ -291,6 +305,7 @@ int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4be0
+// FUNCTION: CARMA2_SW 0x004b0d50
 void C2_HOOK_FASTCALL PFrewind(FILE* pF) {
     tTwatVfsFile* twtFile;
 
@@ -304,6 +319,7 @@ void C2_HOOK_FASTCALL PFrewind(FILE* pF) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4c10
+// FUNCTION: CARMA2_SW 0x004b0d80
 int C2_HOOK_FASTCALL PFfeof(FILE* pFile) {
     tTwatVfsFile* twtFile;
 
@@ -327,6 +343,7 @@ int C2_HOOK_FASTCALL DRferror(FILE* pFile) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4c80
+// FUNCTION: CARMA2_SW 0x004b0df0
 void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     int twt;
     int i;
@@ -349,6 +366,7 @@ void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecur
 }
 
 // FUNCTION: CARMA2_HW 0x004b4d30
+// FUNCTION: CARMA2_SW 0x004b0ea0
 void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallback, void* data) {
     int twt;
     int i;
@@ -367,6 +385,7 @@ void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallb
 }
 
 // FUNCTION: CARMA2_HW 0x004b4df0
+// FUNCTION: CARMA2_SW 0x004b0f60
 tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
     tTWTVFS res;
 
@@ -380,6 +399,7 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
 }
 
 // STUB: CARMA2_HW 0x004b4e20
+// STUB: CARMA2_SW 0x004b0f90
 void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
 
     if (twt >= 0) {
@@ -390,6 +410,7 @@ void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4e60
+// FUNCTION: CARMA2_SW 0x004b0fd0
 void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void) {
     int count;
 
@@ -401,6 +422,7 @@ void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4e90
+// FUNCTION: CARMA2_SW 0x004b1000
 void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void) {
 
     if (gDisableTiffConversionStackPos != 0) {
