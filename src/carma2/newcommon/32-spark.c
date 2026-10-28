@@ -11,14 +11,17 @@
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "52-errors.h"
 #include "60-phil.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00660110
+// GLOBAL: CARMA2_SW 0x0065aa58
 int gSmoke_on = 1;
 
 #ifdef REC2_HW
@@ -56,6 +59,10 @@ br_pixelmap* gIt_shade_table;
 // GLOBAL: CARMA2_HW 0x006aa590
 // GLOBAL: CARMA2_SW 0x006a3fe0
 int gSmoke_flags;
+
+// GLOBAL: CARMA2_HW 0x006aa594
+// GLOBAL: CARMA2_SW 0x006a3fe4
+int gSmoke_num;
 
 // GLOBAL: CARMA2_HW 0x006a8ce0
 // GLOBAL: CARMA2_SW 0x006a2730
@@ -385,7 +392,50 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
 
 // RenderSmoke
 
-// CreatePuffOfSmoke
+// FUNCTION: CARMA2_HW 0x004fb330
+// FUNCTION: CARMA2_SW 0x004f6870
+void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType) {
+    br_vector3 tv;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmoke) != 25);
+
+    if (!gSmoke_on) {
+        return;
+    }
+    BrVector3Sub(&tv, pPos, &gProgram_state.current_car.pos);
+    if (BrVector3LengthSquared(&tv) > 625.f) {
+        if (gCar_to_view == &gProgram_state.current_car) {
+            return;
+        }
+        BrVector3Sub(&tv, pPos, &gCar_to_view->pos);
+        if (BrVector3LengthSquared(&tv) > 625.f) {
+            return;
+        }
+    }
+    BrVector3InvScale(&gSmoke[gSmoke_num].v, pV, WORLD_SCALE);
+    gSmoke[gSmoke_num].v.v[1] = (br_scalar)(gSmoke[gSmoke_num].v.v[1] + 1.0 / 6.9);
+    BrVector3Copy(&gSmoke[gSmoke_num].pos, pPos);
+    gSmoke[gSmoke_num].radius = 0.05f;
+    if ((pType & 0xf) == 7) {
+        gSmoke[gSmoke_num].radius = 0.1f;
+    } else {
+        gSmoke[gSmoke_num].pos.v[1] += 0.04f;
+    }
+    gSmoke[gSmoke_num].pos.v[1] += 0.04f;
+    if (pStrength > 1.f) {
+        pStrength = 1.f;
+    }
+    gSmoke[gSmoke_num].strength = pStrength;
+    gSmoke_flags |= 1 << gSmoke_num;
+    gSmoke[gSmoke_num].time_sync = gPHIL_mechanics_time_sync;
+    gSmoke[gSmoke_num].type = (tU8)pType;
+    gSmoke[gSmoke_num].decay_factor = pDecay_factor;
+    gSmoke[gSmoke_num].pipe_me = 1;
+    gSmoke_num++;
+    if (gSmoke_num >= (int)REC2_ASIZE(gSmoke)) {
+        gSmoke_num = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004fb510
 // FUNCTION: CARMA2_SW 0x004f6a50

@@ -45,6 +45,10 @@ int gImmortal_peds;
 // GLOBAL: CARMA2_SW 0x007410a0
 void* gPhysics_buffer3_ptr;
 
+// GLOBAL: CARMA2_HW 0x0074a5e4
+// GLOBAL: CARMA2_SW 0x007410a4
+int gPHIL_mechanics_time_sync;
+
 // GLOBAL: CARMA2_HW 0x006940c8
 // GLOBAL: CARMA2_SW 0x0068e120
 int gPhysics_other_buffer_capacity;
