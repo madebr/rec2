@@ -11,6 +11,11 @@
 #include "72-interface.h"
 
 
+// GLOBAL: CARMA2_HW 0x0059c7e8
+int gNet_grid_starts[10] = {
+    1, 0, 0, 0, 1, 1, 1, 0, 0, 0,
+};
+
 // GLOBAL: CARMA2_HW 0x0059c828
 tFrontend_spec gFrontend_START_GAME = {
 #if 0 // FIXME: enable this
