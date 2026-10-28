@@ -171,9 +171,9 @@ extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush
 
 // InitGlassFragments
 
-// InitDecals
+//static void C2_HOOK_FASTCALL InitDecals(void);
 
-// RemoveAllDecals
+//static void C2_HOOK_FASTCALL RemoveAllDecals(void);
 
 extern void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF);
 

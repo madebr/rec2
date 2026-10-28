@@ -316,24 +316,10 @@ void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer
     }
 }
 
-// InitGlassFragments
 
-// InitDecals
-
-// RemoveAllDecals
-
-// STUB: CARMA2_HW 0x004efa00
-// STUB: CARMA2_SW 0x004eb660
-void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF) {
-    NOT_IMPLEMENTED();
-}
-
-// FUNCTION: CARMA2_HW 0x004efe00
-// FUNCTION: CARMA2_SW 0x004eba60
-void C2_HOOK_FASTCALL InitSmashing(void) {
+static void C2_HOOK_FASTCALL InitGlassFragments(void) {
     int i;
     tSmash_vertex* smash_vertex;
-    tDecal* smash_quad;
 
     C2_HOOK_BUG_ON(REC2_ASIZE(gSmash_glass_fragments) != 200);
     C2_HOOK_BUG_ON(REC2_ASIZE(gDecals) != 50);
@@ -350,6 +336,12 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
         smash_vertex->actor->render_style = BR_RSTYLE_FACES;
         smash_vertex->end_time = 0;
     }
+}
+
+static void C2_HOOK_FASTCALL InitDecals(void) {
+    int i;
+    tDecal* smash_quad;
+
     for (i = REC2_ASIZE(gDecals), smash_quad = gDecals; i > 0; i--, smash_quad++) {
         smash_quad->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
         smash_quad->actor->model = BrModelAllocate(NULL, 4, 2);
@@ -364,6 +356,22 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
         smash_quad->actor->render_style = BR_RSTYLE_FACES;
         smash_quad->time = 0;
     }
+}
+
+// RemoveAllDecals
+
+// STUB: CARMA2_HW 0x004efa00
+// STUB: CARMA2_SW 0x004eb660
+void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF) {
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004efe00
+// FUNCTION: CARMA2_SW 0x004eba60
+void C2_HOOK_FASTCALL InitSmashing(void) {
+
+    InitGlassFragments();
+    InitDecals();
 }
 
 // VerySimpleRotate
