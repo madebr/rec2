@@ -128,7 +128,7 @@ extern void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info);
 
 // FlipUpCar
 
-// GetPowerup
+extern void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 // CheckSystemKeys
 
