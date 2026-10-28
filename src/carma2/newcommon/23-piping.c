@@ -838,7 +838,7 @@ void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
 
     BrVector3Add((br_vector3*)(*pChunk)->subject_index,
-        &((tPipe_single_vector*)(*pChunk)->data.raw_data)->vector,
+        &(*pChunk)->data.vector.vector,
         (br_vector3*)(*pChunk)->subject_index);
 }
 

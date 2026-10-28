@@ -533,7 +533,7 @@ typedef struct {
 } tPipe_smash_texture_change;
 
 typedef struct tPipe_chunk {
-    tU32 subject_index;
+    uintptr_t subject_index;
     union {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
@@ -543,6 +543,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
         tPipe_single_transform_type transform_type;
+        tPipe_single_vector vector;
         char raw_data[0];
     } data;
 } tPipe_chunk;
