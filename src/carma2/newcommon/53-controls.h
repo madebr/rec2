@@ -84,6 +84,8 @@ extern void C2_HOOK_FASTCALL DamageTest(void);
 
 extern void C2_HOOK_FASTCALL TDamageDriver(void);
 
+extern void C2_HOOK_FASTCALL TDamageLFWheel(void);
+
 // ToggleMiniMap
 
 // CheckToggles
