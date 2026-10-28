@@ -25,6 +25,7 @@ extern int gPed_dismemberfest;
 extern int gPanicking_peds;
 extern float gPed_gravity_multiplier;
 extern int gCount_mutant_tail_parts;
+extern tPhysics_object* gMutant_tail_first_collision_info;
 extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
 extern float gMass_mine;
@@ -54,11 +55,11 @@ extern int gInstant_handbrake;
 
 // GotPowerupXX
 
-// GotPowerupEarwig
+extern void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory);
 
 // AutoGoody
 
-// GotPowerup
+extern void C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex);
 
 // DRMapFindMeAPixie
 
@@ -166,7 +167,7 @@ extern int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetInvulnerability
+extern void C2_HOOK_FASTCALL ResetInvulnerability(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -268,9 +269,9 @@ extern void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor);
 
 // NapalmPeds
 
-// RepulseOpponents2
+extern int C2_HOOK_FASTCALL RepulseOpponents2(tPowerup* pPowerup, tCar_spec* pCar, int pSend_message);
 
-// RepulseOpponents
+extern int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* pPowerup, tCar_spec* pCar);
 
 // RepulsePedestrians
 
@@ -392,7 +393,7 @@ extern void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPositio
 
 extern void C2_HOOK_FASTCALL RemoveTail(void);
 
-// DoInitialTail
+extern void C2_HOOK_FASTCALL DoInitialTail(void);
 
 // UndoInitialTail
 

@@ -13,6 +13,12 @@
 #include "rec2_types.h"
 
 extern br_vector3 gRender_bounds_centre;
+extern int gINT_00681fb0;
+extern int gFrame;
+
+extern int gCurrent_selected_drone;
+
+extern tDrone_spec* gDrone_specs;
 
 // DoNotDprintf
 
@@ -22,7 +28,7 @@ extern br_vector3 gRender_bounds_centre;
 
 // DroneStraightestArcForCorner2D
 
-// OpenDroneFile
+extern FILE* C2_HOOK_FASTCALL OpenDroneFile(char* pDrone_name);
 
 // LoadDroneTypeInfo
 
@@ -156,7 +162,7 @@ extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 extern void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
-// DronePreCollisionStuff
+extern void C2_HOOK_FASTCALL DronePreCollisionStuff(void);
 
 // DoDronePerGameFrameStuff
 
@@ -170,7 +176,7 @@ extern void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
 extern int C2_HOOK_FASTCALL OKToViewDrones(void);
 
-// GetCurrentViewDroneMat
+extern br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
 
 // GetCurrentViewDroneDirection
 

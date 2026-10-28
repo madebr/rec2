@@ -3407,9 +3407,9 @@ typedef struct {
     float field_0x64;
     float field_0x68;
     undefined4 field_0x6c;
-    undefined4 field_0x70;
+    void* field_0x70;
     undefined4 field_0x74;
-    undefined4 field_0x78;
+    void* field_0x78;
 } tSmashable_item_spec_texture_change;
 
 typedef struct {
@@ -3442,6 +3442,7 @@ typedef struct {
     undefined field_0x2dd[3];
 } tSmashable_item_spec;
 
+#ifdef REC2_HW
 typedef struct {
     tRGB_colour directional;
     float ambient_else;
@@ -3451,6 +3452,20 @@ typedef struct {
     float ambient_0;
     float diffuse_0;
 } tLighting_data;
+#endif
+#ifdef REC2_SW
+typedef struct {
+    tRGB_colour directional;
+    float ambient_else;
+    float ambient_1;
+    float ambient_0;
+} tLighting_data_ambient;
+typedef struct {
+    float diffuse_else;
+    float diffuse_1;
+    float diffuse_0;
+} tLighting_data_diffuse;
+#endif
 
 typedef struct tMaterial_exception {
     struct tMaterial_exception* next;
@@ -3758,24 +3773,7 @@ typedef struct tSmashable_level {
     br_pixelmap * pixelmaps[3];
     int count_pixelmaps;
     float trigger_threshold;
-    int count_sounds;
-    int sounds[3];
-    int count_shrapnels;
-    tShrapnel_spec shrapnels[6];
-    tExplosion_animation animation;
-    tSlick_spec slick;
-    int count_noncar_activations;
-    tNoncar_activation* noncar_activations;
-    tShrapnel_side_effects side_effects;
-    int field_0x280;
-    int extension_flags;
-    int room_turn_on_code;
-    tAward_info award;
-    undefined field_0x2a0[4];
-    tU8 count_runtime_variable_changes;
-    undefined field_0x2a5;
-    tSmash_run_time_variable_change runtime_variable_changes[1]; /* FIXME: unknown size */
-    undefined field_0x2aa[18];
+    tConnotations connotations;
     int flags;
     tSmashable_texture_level_collision_type collision_type;
 } tSmashable_level;
@@ -4617,7 +4615,7 @@ typedef struct {
     tS8 field_0x7;
     tS8 field_0x8;
     tU8 field_0x9;
-    undefined field_0xa;
+    tS8 field_0xa;
     undefined field_0xb;
     undefined4 field_0xc;
     undefined4 field_0x10;
@@ -5205,6 +5203,15 @@ typedef struct {
 
 typedef struct {
     tNet_message_chunk_header header;
+    tNet_gameplay_mess mess;
+    int param_1;
+    int param_2;
+    int param_3;
+    int param_4;
+} tNet_message_chunk_gameplay;
+
+typedef struct {
+    tNet_message_chunk_header header;
 } tNet_message_guaranteed;
 
 typedef struct {
@@ -5301,6 +5308,7 @@ typedef struct {
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_scores scores; /* type = 0x18 */
+    tNet_message_chunk_gameplay gameplay; /* type = 0x1b */
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
@@ -5641,6 +5649,7 @@ enum {
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
     kFatalError_CannotLoadFontImage_S = 0x14,
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
+    kFatalError_CannotLoadCursorImage = 0x16,
     kFatalError_ScreenWidthHeightDoesNotMatchGrafData = 0x18,
     kFatalError_CannotLoadCarResolutionIndependentFile = 0x19,
     kFatalError_CannotLoadDamageImage = 0x1b,

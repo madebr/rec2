@@ -22,6 +22,7 @@ extern int gHeadup_map_x;
 extern int gHeadup_map_y;
 extern int gHeadup_map_w;
 extern int gHeadup_map_h;
+extern int gRecovery_voucher_count;
 
 // CompleteRace
 
@@ -121,7 +122,7 @@ extern void C2_HOOK_FASTCALL TDamageDriver(void);
 
 // SetFlipUpCar
 
-// AlignChildren
+extern void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info);
 
 // FlipUpCar
 
@@ -157,13 +158,13 @@ extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
 // ToggleMap
 
-// GetRecoverVoucherCount
+extern int C2_HOOK_FASTCALL GetRecoverVoucherCount(void);
 
 // AddVouchers
 
-// ResetRecoveryVouchers
+extern void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 
-// CycleYonFactor
+extern void C2_HOOK_FASTCALL CycleYonFactor(void);
 
 extern void C2_HOOK_FASTCALL CycleSoundDetailLevel(void);
 

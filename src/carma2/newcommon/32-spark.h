@@ -12,8 +12,14 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+#ifdef REC2_HW
 extern int gShade_list[16];
 extern int* gShade_table;
+#endif
+#ifdef REC2_SW
+extern br_pixelmap* gShade_list[16];
+extern br_pixelmap** gShade_table;
+#endif
 extern int gNum_dust_tables;
 extern int gSpark_flags;
 extern br_pixelmap* gIt_shade_table;
@@ -30,6 +36,8 @@ extern tSmoke_column gSmoke_column[10];
 extern br_matrix4 gCameraToScreen;
 extern br_camera* gSpark_cam;
 extern tCar_spec* gCar_of_material;
+extern br_pixelmap* gFog_shade_table;
+extern br_pixelmap* gAcid_shade_table;
 
 // DrawDot
 
@@ -235,7 +243,7 @@ extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
 // ClearSplashReplay
 
-// GetSplashIndex
+extern void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject);
 
 // ClearSplashes
 

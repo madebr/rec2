@@ -13,6 +13,7 @@
 #include "core/v1db/dbsetup.h"
 
 // FUNCTION: CARMA2_HW 0x00526940
+// FUNCTION: CARMA2_SW 0x00521fe0
 br_material* C2_HOOK_CDECL SetupDefaultMaterial(void) {
     // GLOBAL: CARMA2_HW 0x006ad520
     static br_material* default_mat;

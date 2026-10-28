@@ -23,7 +23,7 @@ extern int gCredits_per_rank[3];
 extern tSlot_info gInitial_APO[3];
 extern tSlot_info gInitial_APO_potential[3];
 extern tSlot_info gMax_APO[3];
-extern br_pixelmap* gLit_up_stat;
+extern br_pixelmap* gLit_op_stat_bloc;
 
 
 extern void C2_HOOK_FASTCALL Modify2DCopyPixelmaps(void);
@@ -52,9 +52,11 @@ extern void C2_HOOK_FASTCALL AllocateStandardLamp(void);
 
 extern void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void);
 
+#ifdef REC2_HW
 extern void C2_HOOK_FASTCALL InitLineStuff(void);
 
 extern void C2_HOOK_FASTCALL Init2DStuff(void);
+#endif
 
 extern void C2_HOOK_FASTCALL CheckTimedDemo(void);
 

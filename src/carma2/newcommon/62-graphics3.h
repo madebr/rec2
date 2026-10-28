@@ -18,6 +18,8 @@ extern int gCount_smashable_race_targets;
 extern tSmashable_race_target gSmashable_race_targets[300];
 extern tCar_icon gCar_icons[128];
 extern br_actor* gCar_icons_model_actor;
+extern tCar_spec* gTarget_lock_car_1;
+extern tCar_spec* gTarget_lock_car_2;
 extern int gTarget_lock_enabled;
 extern br_matrix23 gMatrix23_0068c880;
 extern br_vector3 gOrigin_map;
@@ -29,7 +31,7 @@ extern int gMap_render_width_i;
 
 // CarArrowColour
 
-// ToggleTargetLock
+extern void C2_HOOK_FASTCALL ToggleTargetLock(void);
 
 // CycleTargetLock
 
@@ -95,7 +97,9 @@ extern void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, 
 
 extern void C2_HOOK_FASTCALL InitMap(void);
 
+#ifdef REC2_HW
 extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
+#endif
 
 // static void C2_HOOK_FASTCALL MapChanged(void);
 

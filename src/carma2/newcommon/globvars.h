@@ -79,7 +79,13 @@ extern int gDevious_2d;
 extern int gNumber_of_actors;
 extern br_actor* gActor_array[100];
 extern int gNumber_of_lights;
+#ifdef REC2_HW
 extern tLighting_data gLighting_data;
+#endif
+#ifdef REC2_SW
+extern tLighting_data_ambient gLighting_data_ambient;
+extern tLighting_data_diffuse gLighting_data_diffuse;
+#endif
 extern br_actor* gLight_array[50];
 
 extern br_actor* gHUD_root;
@@ -155,6 +161,7 @@ extern br_scalar gYon_multiplier;
 //extern VFILE* gDiagnostic_file;
 //extern br_vector3 gDisabled_vector;
 extern tU32 gI_am_cheating;
+extern int gINT_0068b8e4;
 //extern char gNet_player_name[32];
 //extern br_matrix34 gRearview_camera_to_world;
 //extern tSpecial_volume gDefault_default_water_spec_vol;
@@ -218,6 +225,9 @@ extern int gHas_double_back_screen;
 extern br_pixelmap* gRearview_depth_buffer;
 //extern br_pixelmap* gWhole_screen;
 extern br_pixelmap* gIcons_pix;
+#ifdef REC2_SW
+extern br_pixelmap* gIcons_low_pix;
+#endif
 extern br_scalar gCamera_yon;
 extern br_actor* gCamera;
 extern br_actor* gOther_selfs[4];

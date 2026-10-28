@@ -524,7 +524,9 @@ void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
 
 // FUNCTION: CARMA2_HW 0x004d8290
 void C2_HOOK_FASTCALL RenderTintedPolys(void) {
+#ifdef REC2_HW
     BrZbsSceneRender(gTintedPolyCamera, gTintedPolyCamera, gBack_screen, gDepth_buffer);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x004d82b0

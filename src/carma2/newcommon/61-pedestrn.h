@@ -106,7 +106,7 @@ extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 // MakeActorRenderable
 
-// StopActorBeingRenderable
+extern void C2_HOOK_FASTCALL StopActorBeingRenderable(br_actor* pActor);
 
 extern int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor);
 
@@ -320,11 +320,13 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // MakeMaterialBlendy
 
-// UnmakeMaterialBlendy
+extern void C2_HOOK_FASTCALL UnmakeMaterialBlendy(br_material* pMaterial);
 
 // TurnOffCollisions
 
 // TurnOnCollisions
+
+extern void C2_HOOK_FASTCALL BlendifyMaterial25(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel);
 
@@ -518,9 +520,9 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // SetCharacterAllBonesModel
 
-// GetCharacterBoneModel
+extern br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
 
-// GetCharacterModelSet
+extern int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter);
 
 // BonerPassiveCollision
 
@@ -530,7 +532,7 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // DismemberCharacter
 
-// GetClearanceFromCharacterInstance
+extern float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance* pCharacter, int pMoveNum);
 
 // VectorScaleVector
 

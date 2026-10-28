@@ -89,6 +89,8 @@ extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, b
 
 // GetObjectObjectForceInfo
 
+extern void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, tU32 pIndex);
+
 // AddOldForces
 
 // TestShapeEdgeIntersection

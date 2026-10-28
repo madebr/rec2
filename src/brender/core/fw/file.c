@@ -18,6 +18,7 @@
 #include <stddef.h>
 
 // FUNCTION: CARMA2_HW 0x0052cc60
+// FUNCTION: CARMA2_SW 0x005277f0
 void C2_HOOK_CDECL _BrFileFree(void* res, br_uint_8 res_class, br_size_t size) {
     br_file* file;
 
@@ -26,12 +27,14 @@ void C2_HOOK_CDECL _BrFileFree(void* res, br_uint_8 res_class, br_size_t size) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cc80
+// FUNCTION: CARMA2_SW 0x00527810
 br_uint_32 C2_HOOK_CDECL BrFileAttributes(void) {
 
     return fw.fsys->attributes();
 }
 
 // FUNCTION: CARMA2_HW 0x0052cc90
+// FUNCTION: CARMA2_SW 0x00527820
 void* C2_HOOK_CDECL BrFileOpenRead(const char* name, br_size_t n_magics, br_mode_test_cbfn* mode_test, int* mode_result) {
     void* raw_file;
     br_file* file;
@@ -61,6 +64,7 @@ void* C2_HOOK_CDECL BrFileOpenRead(const char* name, br_size_t n_magics, br_mode
 }
 
 // FUNCTION: CARMA2_HW 0x0052cd40
+// FUNCTION: CARMA2_SW 0x005278d0
 void* C2_HOOK_CDECL BrFileOpenWrite(const char* name, int mode) {
     void* raw_file;
     br_file* file;
@@ -78,36 +82,43 @@ void* C2_HOOK_CDECL BrFileOpenWrite(const char* name, int mode) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cdb0
+// FUNCTION: CARMA2_SW 0x00527940
 void C2_HOOK_CDECL BrFileClose(void* f) {
     BrResFree(f);
 }
 
 // FUNCTION: CARMA2_HW 0x0052cdc0
+// FUNCTION: CARMA2_SW 0x00527950
 int C2_HOOK_CDECL BrFileEof(void* f) {
     return fw.fsys->eof(((br_file*)f)->raw_file);
 }
 
 // FUNCTION: CARMA2_HW 0x0052cde0
+// FUNCTION: CARMA2_SW 0x00527970
 int C2_HOOK_CDECL BrFileGetChar(void* f) {
     return fw.fsys->getchr(((br_file*)f)->raw_file);
 }
 
 // FUNCTION: CARMA2_HW 0x0052ce00
+// FUNCTION: CARMA2_SW 0x00527990
 void C2_HOOK_CDECL BrFilePutChar(int c, void* f) {
     fw.fsys->putchr(c, ((br_file*)f)->raw_file);
 }
 
 // FUNCTION: CARMA2_HW 0x0052ce20
+// FUNCTION: CARMA2_SW 0x005279b0
 int C2_HOOK_CDECL BrFileRead(void* buf, int size, int n, void* f) {
     return fw.fsys->read(buf, size, n, ((br_file*)f)->raw_file);
 }
 
 // FUNCTION: CARMA2_HW 0x0052ce50
+// FUNCTION: CARMA2_SW 0x005279e0
 int C2_HOOK_CDECL BrFileWrite(const void* buf, int size, int n, void* f) {
     return fw.fsys->write(buf, size, n, ((br_file*)f)->raw_file);
 }
 
 // FUNCTION: CARMA2_HW 0x0052ce80
+// FUNCTION: CARMA2_SW 0x00527a10
 int C2_HOOK_CDECL BrFileGetLine(char* buf, br_size_t buf_len, void* f) {
     return fw.fsys->getline(buf, buf_len, ((br_file*)f)->raw_file);
 }
@@ -118,11 +129,13 @@ void C2_HOOK_CDECL BrFilePutLine(char* buf, void* f) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cec0
+// FUNCTION: CARMA2_SW 0x00527a50
 void C2_HOOK_CDECL BrFileAdvance(long count, void* f) {
     fw.fsys->advance(count, ((br_file*)f)->raw_file);
 }
 
 // FUNCTION: CARMA2_HW 0x0052cee0
+// FUNCTION: CARMA2_SW 0x00527a70
 int C2_HOOK_CDECL BrFilePrintf(void* f, char* fmt, ...) {
     int n;
     va_list args;

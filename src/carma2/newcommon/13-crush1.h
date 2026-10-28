@@ -63,7 +63,7 @@ extern int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pVal
 
 extern int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
 
-// CrushLimitNumber
+extern tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid);
 
 // SoftnessOfNearestPointCB
 
@@ -95,7 +95,7 @@ extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pAc
 
 // CalculateReferencePoints
 
-// InitModelCrushDataCB
+extern intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* pActor, void* pData);
 
 // InitModelCrushData
 
@@ -223,7 +223,7 @@ extern void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel);
 
 // SemiDetachBit
 
-// GetSDBJointPosAndBounds
+extern int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, br_vector3* pP3, br_bounds3* pBounds, br_actor* pActor);
 
 // SendSemiDetachBit
 

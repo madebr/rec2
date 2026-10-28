@@ -30,7 +30,7 @@ extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
 // ReallocExtraPathSections
 
-// PointVisibleFromHere
+extern int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo);
 
 // WeightedFindNearestNodeAndSection
 
@@ -74,7 +74,7 @@ extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOppone
 
 // ProcessCompleteRace
 
-// StartRecordingTrail
+extern void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee);
 
 // RecordNextTrailNode
 
@@ -118,7 +118,7 @@ extern void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOppon
 
 // AddIfNotInList
 
-// RemoveAnythingStillInList
+extern void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCount);
 
 // RebuildActiveCarList
 
@@ -174,7 +174,7 @@ extern int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory);
 
 extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
 
-// GetDriverName
+extern char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex);
 
 extern tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec);
 

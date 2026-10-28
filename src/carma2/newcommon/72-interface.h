@@ -14,6 +14,7 @@
 
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
+extern int gFrontend_change_car_selected_car;
 
 extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
@@ -40,6 +41,8 @@ extern void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend);
 // LoadMenuModels
 
 extern void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL GameMenuInfunc(tFrontend_spec* pFrontend);
 
 // FindNextActiveItem
 
@@ -153,7 +156,7 @@ extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend);
 
-// ChangeCarOK
+extern int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend);
 
 // CarClickPrev
 
@@ -169,7 +172,7 @@ extern int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFront
 
 // CreditsScreenInfunc
 
-// CreditsScreenOutfunc
+extern int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend);
 
 // FRONTEND_GenericMenuHandler
 
@@ -383,7 +386,7 @@ extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
 // NetSync_Start
 
-// NetSync_Abort
+extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
 // NetSync_Infunc
 
@@ -421,7 +424,7 @@ extern int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Options_Quit(tFrontend_spec* pFrontend);
 
-// Graphics_Infunc
+extern int C2_HOOK_FASTCALL Graphics_Infunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Graphics_Outfunc(tFrontend_spec* pFrontend);
 

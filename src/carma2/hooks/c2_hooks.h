@@ -65,4 +65,16 @@ typedef unsigned char undefined;
 typedef unsigned short undefined2;
 typedef unsigned int undefined4;
 
+#ifdef REC2_HW
+#define REC2_HW_RUN(X) X
+#else
+#define REC2_HW_RUN(X)
+#endif
+
+#ifdef REC2_SW
+#define REC2_SW_RUN(X) X
+#else
+#define REC2_SW_RUN(X)
+#endif
+
 #endif // C2_HOOKS_H

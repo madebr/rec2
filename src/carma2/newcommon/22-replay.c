@@ -11,7 +11,12 @@
 #include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x0058f620
+// GLOBAL: CARMA2_SW 0x0058a620
 int gAR_camera_type = 2;
+
+// GLOBAL: CARMA2_HW 0x0058f6a4
+// GLOBAL: CARMA2_SW 0x0058a6a4
+int gCar_car_collisions = 1;
 
 // ActualActionReplayHeadups
 
@@ -52,6 +57,7 @@ int gAR_camera_type = 2;
 // DisplayMovieStatusPanel
 
 // FUNCTION: CARMA2_HW 0x004022e0
+// FUNCTION: CARMA2_SW 0x004022e0
 void C2_HOOK_FASTCALL ApplyTime(tU32 pTime) {
     gLast_replay_frame_time = pTime;
 }

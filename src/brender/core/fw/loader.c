@@ -46,6 +46,7 @@
 #define ENTRY_OFFSET(e) ((e) & 0xfff)
 
 // FUNCTION: CARMA2_HW 0x00530e70
+// FUNCTION: CARMA2_SW 0x0052c510
 br_image* C2_HOOK_STDCALL ImageLoad(const char* name) {
     void* fh;
 	int mode = BR_FS_MODE_BINARY;

@@ -12,6 +12,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tNet_game_player_info* gLast_lepper;
+extern int gLast_it_change;
+
 // SendShapeNumbers
 
 extern void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, int pPlayer_id);
@@ -90,15 +93,15 @@ extern void C2_HOOK_FASTCALL DisposeNetHeadups(void);
 
 extern void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index);
 
-// PlayerIsIt
-
 extern void C2_HOOK_FASTCALL CheckForVampireWinner(void);
 
 // PlayerIsInfected
 
 // FarEnoughAway
 
-// CarInContactWithFox
+extern void C2_HOOK_FASTCALL CarInContactWithFox(tNet_game_player_info* pPlayer);
+
+extern void C2_HOOK_FASTCALL PlayerIsIt(tNet_game_player_info* pPlayer);
 
 // SelectRandomFox
 
@@ -108,7 +111,7 @@ extern void C2_HOOK_FASTCALL CheckForVampireWinner(void);
 
 // DoNetGameManagement
 
-// InitialisePlayerScore
+extern void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer);
 
 // InitPlayers
 
@@ -122,7 +125,7 @@ extern void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
 
 // SendGameplay
 
-// SendGameplayToAllPlayers
+extern void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
 
 // SendGameplayToHost
 

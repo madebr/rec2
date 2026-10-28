@@ -40,6 +40,7 @@ br_boolean C2_HOOK_STDCALL Is_Valid_Sys_Config_Token(br_token t) {
 }
 
 // FUNCTION: CARMA2_HW 0x005308b0
+// FUNCTION: CARMA2_SW 0x0052bf50
 br_boolean C2_HOOK_STDCALL LoadIniEntry(char* ini_file, char* section_name, br_token t, char* Entry) {
     br_uint_16 size;
     char temp[255];
@@ -68,6 +69,7 @@ br_error C2_HOOK_STDCALL LoadIniConfig(char* ini_file, char* section_name) {
 }
 
 // FUNCTION: CARMA2_HW 0x00530920
+// FUNCTION: CARMA2_SW 0x0052bfc0
 br_boolean C2_HOOK_STDCALL LoadRegistryEntry(char* Reg_Path, void* hKey, br_token t, char* Entry) {
     char Temp[255];
     br_uint_16 size;
@@ -104,6 +106,7 @@ br_error C2_HOOK_STDCALL LoadRegistryConfig(char* Reg_Path, void* hKey) {
 }
 
 // FUNCTION: CARMA2_HW 0x00530990
+// FUNCTION: CARMA2_SW 0x0052c030
 br_error C2_HOOK_STDCALL BrSetDefaultConfig(br_token t, char* Entry) {
     char Reg_Path[255];
     int v0;
@@ -131,6 +134,7 @@ br_error C2_HOOK_STDCALL BrSetDefaultConfig(br_token t, char* Entry) {
 }
 
 // FUNCTION: CARMA2_HW 0x00530460
+// FUNCTION: CARMA2_SW 0x0052bb00
 br_error C2_HOOK_CDECL BrSystemConfigBegin(void) {
     char temp[255];
     br_value v;
@@ -190,6 +194,7 @@ br_error C2_HOOK_CDECL BrSystemConfigSetString(br_token t, const char* string) {
 }
 
 // FUNCTION: CARMA2_HW 0x00530de0
+// FUNCTION: CARMA2_SW 0x0052c480
 br_error C2_HOOK_CDECL BrSystemConfigQueryString(br_token t, char* string, int max_size) {
     br_error r;
     br_value v;

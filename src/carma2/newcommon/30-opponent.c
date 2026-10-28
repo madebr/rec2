@@ -11,6 +11,7 @@
 #include <c2_hooks.h>
 #include "00-car.h"
 #include "08-loading1.h"
+#include "60-phil.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
@@ -22,15 +23,19 @@
 int gBIG_APC_index = -1;
 
 // GLOBAL: CARMA2_HW 0x0065a3cc
+// GLOBAL: CARMA2_SW 0x00654ce4
 float gOpponent_nastyness_frigger = 1.0f;
 
 // GLOBAL: CARMA2_HW 0x0074a684
+// GLOBAL: CARMA2_SW 0x00741144
 int gMinTimeOpponentRepair;
 
 // GLOBAL: CARMA2_HW 0x0074a688
+// GLOBAL: CARMA2_SW 0x00741148
 int gMaxTimeOpponentRepair;
 
 // GLOBAL: CARMA2_HW 0x00691744
+// GLOBAL: CARMA2_SW 0x0068b79c
 int gNumber_of_cops_before_faffage;
 
 // GLOBAL: CARMA2_HW 0x0069175c
@@ -54,6 +59,7 @@ int gRoute_search_target_count;
 float gShortest_route_length;
 
 // FUNCTION: CARMA2_HW 0x004a8160
+// FUNCTION: CARMA2_SW 0x004a42d0
 void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 }
@@ -64,7 +70,26 @@ void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 // ReallocExtraPathSections
 
-// PointVisibleFromHere
+// FUNCTION: CARMA2_HW 0x004aa400
+// FUNCTION: CARMA2_SW 0x004a6570
+int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo) {
+    br_vector3 from;
+    br_vector3 dir;
+    br_vector3 norm;
+    br_scalar t;
+    br_material* material;
+
+    BrVector3Sub(&dir, pTo, pFrom);
+    BrVector3Copy(&from, pFrom);
+    from.v[1] += 0.15f;
+    dir.v[1] += 0.15f;
+    FindFace(&from, &dir, &norm, &t, &material);
+    if (t > 1.0f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // WeightedFindNearestNodeAndSection
 
@@ -198,7 +223,26 @@ int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
 
 // ProcessCompleteRace
 
-// StartRecordingTrail
+// FUNCTION: CARMA2_HW 0x004aa490
+// FUNCTION: CARMA2_SW 0x004a6600
+void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee) {
+
+    if (pPursuee->no_of_processes_recording_my_trail == 0) {
+        DoNotDprintf("StartRecordingTrail - starting from scratch");
+        pPursuee->no_of_processes_recording_my_trail = 1;
+        pPursuee->my_trail.nodes_shifted_this_frame = 0;
+        pPursuee->my_trail.has_deviated_recently = 0;
+        pPursuee->my_trail.number_of_nodes = 2;
+        pPursuee->my_trail.time_of_next_recording = gTime_stamp_for_this_munging + 500;
+        BrVector3Copy(&pPursuee->my_trail.base_heading, &pPursuee->direction);
+        BrVector3Copy(&pPursuee->my_trail.trail_nodes[0], &pPursuee->car_master_actor->t.t.translate.t);
+        BrVector3Copy(&pPursuee->my_trail.trail_nodes[1], &pPursuee->car_master_actor->t.t.translate.t);
+        pPursuee->my_trail.trail_nodes[0].v[2] += 0.2f;
+    } else {
+        DoNotDprintf("StartRecordingTrail - another pursuer attaching");
+        pPursuee->no_of_processes_recording_my_trail++;
+    }
+}
 
 // RecordNextTrailNode
 
@@ -256,11 +300,23 @@ void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spe
 
 // AddIfNotInList
 
-// RemoveAnythingStillInList
+// FUNCTION: CARMA2_HW 0x004a7ef0
+// FUNCTION: CARMA2_SW 0x004a4060
+void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCount) {
+    int i;
+
+    for (i = 0; i < pCount; i++) {
+        if (pList[i] != NULL) {
+            PHILRemoveObject(pList[i]);
+            pList[i]->field183_0x1d8 = 0;
+        }
+    }
+}
 
 // RebuildActiveCarList
 
 // STUB: CARMA2_HW 0x004a7a60
+// STUB: CARMA2_SW 0x004a3bd0
 void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
     NOT_IMPLEMENTED();
 }
@@ -303,6 +359,7 @@ void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec) {
 // ResetPredominantJobbies
 
 // FUNCTION: CARMA2_HW 0x004a9600
+// FUNCTION: CARMA2_SW 0x004a5770
 void C2_HOOK_FASTCALL LoadCopCars(void) {
 
     gProgram_state.AI_vehicles.number_of_cops = 0;
@@ -367,6 +424,7 @@ void C2_HOOK_FASTCALL ReportMurderToPoliceDepartment(tCar_spec* pCar_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x004ae790
+// FUNCTION: CARMA2_SW 0x004aa900
 int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
     switch (pCategory) {
     case eVehicle_self:
@@ -390,11 +448,16 @@ int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
 }
 
 // STUB: CARMA2_HW 0x004ae7e0
+// STUB: CARMA2_SW 0x004aa950
 tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
     NOT_IMPLEMENTED();
 }
 
-// GetDriverName
+// STUB: CARMA2_HW 0x004ae880
+// STUB: CARMA2_SW 0x004aa9f0
+char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004ae8e0
 // FUNCTION: CARMA2_SW 0x004aaa50
@@ -422,6 +485,7 @@ tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec
 }
 
 // FUNCTION: CARMA2_HW 0x004ae970
+// FUNCTION: CARMA2_SW 0x004aaae0
 tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
     int i;
 
@@ -434,6 +498,7 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x004ae9e0
+// FUNCTION: CARMA2_SW 0x004aab50
 int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no) {
 
     if (pSection_no >= 20000) {
@@ -446,6 +511,7 @@ int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int
 }
 
 // FUNCTION: CARMA2_HW 0x004aea00
+// FUNCTION: CARMA2_SW 0x004aab70
 int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
     if (pOpponent_spec->current_objective == eOOT_pursue_and_twat) {
         if (pOpponent_spec->pursue_car_data.state == ePCS_following_trail) {
@@ -491,6 +557,7 @@ int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spe
 // GetOpponentsSectionMaxSpeed
 
 // FUNCTION: CARMA2_HW 0x004aee90
+// FUNCTION: CARMA2_SW 0x004ab000
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 
     gOpponents[pOpponent_index].psyche.grudge_against_player = 0;
@@ -499,6 +566,7 @@ void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 // ClearTwattageOccurrenceVariables
 
 // FUNCTION: CARMA2_HW 0x004aeeb0
+// FUNCTION: CARMA2_SW 0x004ab020
 void C2_HOOK_FASTCALL TwoCarsHitEachOther(tCar_spec* pA_car, tCar_spec* pAnother_car) {
 
     if (pA_car != NULL && pA_car->driver == eDriver_local_human) {

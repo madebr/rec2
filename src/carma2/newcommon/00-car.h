@@ -26,6 +26,8 @@ extern tFace_ref gFace_list__car[300];
 
 extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount);
 
+extern void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount);
+
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
 extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
@@ -104,7 +106,7 @@ extern void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br
 
 // ControlCar4
 
-// ControlCar5
+extern void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* pCar, void* pUnused, br_scalar pDt);
 
 // ControlCar1
 
@@ -174,13 +176,15 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 
 // MungeCarGraphics
 
-// TurnOffNonGroovers
+extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
 
 // DoLODCarModels
 
 // DoComplexCarModels
 
 // ResetCarScreens
+
+extern void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void);
 
 extern void C2_HOOK_FASTCALL SwapCar(void);
 

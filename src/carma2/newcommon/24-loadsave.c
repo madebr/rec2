@@ -14,13 +14,20 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x0068b8e8
+// GLOBAL: CARMA2_SW 0x00685e48
+int gINT_0068b8e8;
+
 // GLOBAL: CARMA2_HW 0x0068b8ec
+// GLOBAL: CARMA2_SW 0x00685e4c
 int gSave_game_out_of_sync;
 
 // GLOBAL: CARMA2_HW 0x0068c72c
+// GLOBAL: CARMA2_SW 0x0068677c
 tSave_game* gSaved_games;
 
 // GLOBAL: CARMA2_HW 0x0068c728
+// GLOBAL: CARMA2_SW 0x00686778
 int gCount_saved_games;
 
 // Encryptificate
@@ -28,6 +35,7 @@ int gCount_saved_games;
 // MakeSavedGame
 
 // STUB: CARMA2_HW 0x00491ac0
+// STUB: CARMA2_SW 0x0048ed30
 void C2_HOOK_FASTCALL DoSaveGame(void) {
     NOT_IMPLEMENTED();
 }
@@ -35,6 +43,7 @@ void C2_HOOK_FASTCALL DoSaveGame(void) {
 // StartSavedGamesList
 
 // FUNCTION: CARMA2_HW 0x00491c90
+// FUNCTION: CARMA2_SW 0x0048ef00
 void C2_HOOK_FASTCALL EndSavedGamesList(void) {
 
     if (gSaved_games != NULL) {
@@ -44,6 +53,7 @@ void C2_HOOK_FASTCALL EndSavedGamesList(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00491cb0
+// FUNCTION: CARMA2_SW 0x0048ef20
 tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
 
     if (gSaved_games != NULL && pN < gCount_saved_games) {
@@ -53,6 +63,7 @@ tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
 }
 
 // FUNCTION: CARMA2_HW 0x00491ce0
+// FUNCTION: CARMA2_SW 0x0048ef50
 int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game) {
     int i;
 
@@ -85,6 +96,7 @@ int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game) {
 }
 
 // FUNCTION: CARMA2_HW 0x00491e20
+// FUNCTION: CARMA2_SW 0x0048f090
 int C2_HOOK_FASTCALL DoLoadGame(int pIndex) {
 
     if (gSaved_games != NULL && pIndex >= 0 && pIndex < gCount_saved_games) {
