@@ -10,6 +10,18 @@
 
 #include "globvars.h"
 
+// GLOBAL: CARMA2_HW 0x0058f600
+// GLOBAL: CARMA2_SW 0x0058a600
+tU8 gCamera_type_allowed_replay[9] = {
+    1, 1, 1, 1, 1, 0, 0, 1, 1,
+};
+
+// GLOBAL: CARMA2_HW 0x0058f610
+// GLOBAL: CARMA2_SW 0x0058a610
+tU8 gCamera_type_allowed_gameplay[9] = {
+    1, 0, 0, 0, 1, 0, 0, 1, 1,
+};
+
 // GLOBAL: CARMA2_HW 0x0058f620
 // GLOBAL: CARMA2_SW 0x0058a620
 int gAR_camera_type = 2;
