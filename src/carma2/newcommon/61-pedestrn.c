@@ -230,7 +230,7 @@ void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality) {
 
 // FUNCTION: CARMA2_HW 0x004ccab0
 // FUNCTION: CARMA2_SW 0x004c91b0
-void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, int pType) {
+void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x1a0, 0x1a0);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x1a4, 0x1a4);
