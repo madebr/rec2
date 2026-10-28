@@ -25,6 +25,7 @@ extern int gNum_dust_tables;
 extern int gSpark_flags;
 extern br_pixelmap* gIt_shade_table;
 extern int gSmoke_flags;
+extern int gSmoke_num;
 extern tSmoke gSmoke[25];
 extern br_material* gBlack_material;
 extern tSmashable_environment_name* gSmashable_noncars;
@@ -138,7 +139,7 @@ extern void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
 
 // RenderSmoke
 
-// CreatePuffOfSmoke
+extern void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
 
 extern void C2_HOOK_FASTCALL ResetSmoke(void);
 
