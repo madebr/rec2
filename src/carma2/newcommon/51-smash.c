@@ -116,13 +116,34 @@ void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec) {
 
 // CalcRandomPointBetween
 
-// ApplyInitialMovement
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004eb180
+// STUB: CARMA2_SW 0x004e6e60
+void C2_HOOK_FASTCALL ApplyInitialMovement(tSmashable_initial_speed_spec* pSpeed_info, br_vector3* pImpactee_velocity, br_vector3* pVelocity, br_vector3* pOmega, float pScale, br_vector3* pNormal, br_vector3* pSource_position, br_vector3* pPosition) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // ApplyTimeSpec
 
 // FindShrapnelFragment
 
-// SetShrapnelFragment
+// FUNCTION: CARMA2_HW 0x004eb120
+// FUNCTION: CARMA2_SW 0x004e6e00
+void C2_HOOK_FASTCALL SetShrapnelFragment(tSmash_vertex* pFragment, tSmashable_initial_speed_spec* pSpeed_info, br_vector3* pImpactee_velocity, float pScale, tMin_max_time* pTime_spec, tU32 pTime, br_vector3* pNormal, br_vector3* pSource_position, br_vector3* pPosition) {
+
+    ApplyInitialMovement(pSpeed_info, pImpactee_velocity, &pFragment->v, &pFragment->omega, pScale, pNormal, pSource_position, pPosition);
+    pFragment->field_0xc = pTime;
+    pFragment->time_last_move = pTime;
+    pFragment->end_time = pTime + pTime_spec->max_time;
+    pFragment->field_0x10 = pTime + IRandomBetween(pTime_spec->min_time, pTime_spec->max_time);
+}
 
 // ShatterObject
 
