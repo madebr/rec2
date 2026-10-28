@@ -552,7 +552,7 @@ extern float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_i
 
 extern void C2_HOOK_FASTCALL DisableOverallMovement(void);
 
-// EnableOverallMovement
+extern void C2_HOOK_FASTCALL EnableOverallMovement(void);
 
 // EnableRetainRootMode
 
