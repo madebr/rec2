@@ -39,6 +39,10 @@
 #include "c2_string.h"
 #include <ctype.h>
 
+// GLOBAL: CARMA2_HW 0x00763960
+// GLOBAL: CARMA2_SW 0x00759ec0
+tNet_game_options gNet_settings[9];
+
 // GLOBAL: CARMA2_HW 0x00764eec
 // GLOBAL: CARMA2_SW 0x0075b44c
 tFrontendMenuType gFrontend_next_menu;
@@ -131,6 +135,10 @@ int* gCredits_throbs;
 // GLOBAL: CARMA2_HW 0x00688448
 // GLOBAL: CARMA2_SW 0x006829a8
 char** gCredits_texts;
+
+// GLOBAL: CARMA2_HW 0x0068843c
+// GLOBAL: CARMA2_SW 0x0068299c
+tU32 gFrontend_last_scroll;
 
 // GLOBAL: CARMA2_HW 0x0068682c
 // GLOBAL: CARMA2_SW 0x00680f6c
@@ -280,15 +288,120 @@ const int gControls_frontend_to_key_mapping_lut[29] = {
     59, 70, 72, 73, 75, 76, 35, 65, 66,
 };
 
+// SetGameTarget
+
+// SetOptions
+
+// ReadNetGameChoices
+
+// FUNCTION: CARMA2_HW 0x004662c0
+// FUNCTION: CARMA2_SW 0x00466050
+int C2_HOOK_FASTCALL PickARandomCar(void) {
+    int i;
+    int cars[2 * REC2_ASIZE(gCar_details)];
+    int array_size;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(cars) != 120);
+
+    array_size = 0;
+    for (i = 0; i < gNumber_of_racers; i++) {
+        if (gCar_details[i].ownership == eCar_owner_none) {
+            cars[array_size] = i;
+            array_size++;
+            if (gOpponents[i].network_availability == eNet_avail_all) {
+                cars[array_size] = i;
+                array_size++;
+            }
+        }
+    }
+    return cars[IRandomBetween(0, array_size - 1)];
+}
+
+// RequestCarDetails
+
+// FUNCTION: CARMA2_HW 0x00466330
+// FUNCTION: CARMA2_SW 0x004660c0
+void C2_HOOK_FASTCALL PollCarDetails(tNet_game_details* pNet_game) {
+    tNet_message* message;
+
+    if (gReceived_car_details) {
+        gReceived_car_details = 0;
+        if (gNet_mode == eNet_mode_none) {
+            gNet_mode = eNet_mode_thinking_about_it;
+        }
+        message = NetBuildGuaranteedMessage(6, 0);
+        NetGuaranteedSendMessageToHost(pNet_game, message, NULL);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00466370
+// FUNCTION: CARMA2_SW 0x00466100
+void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions) {
+    int i;
+
+    for (i = 0; i < gNumber_of_racers; i++) {
+        switch (gOpponents[i].network_availability) {
+        case eNet_avail_never:
+            gCar_details[i].ownership = eCar_owner_not_allowed;
+            break;
+        case eNet_avail_eagle:
+            if (pOptions->car_choice == eNet_car_all || pOptions->car_choice == eNet_car_eagle) {
+                gCar_details[i].ownership = eCar_owner_none;
+            } else {
+                gCar_details[i].ownership = eCar_owner_not_allowed;
+            }
+            break;
+        case eNet_avail_all:
+            if (pOptions->car_choice == eNet_car_all || pOptions->car_choice == eNet_car_novelty) {
+                gCar_details[i].ownership = eCar_owner_none;
+            } else {
+                gCar_details[i].ownership = eCar_owner_not_allowed;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004663e0
+// FUNCTION: CARMA2_SW 0x00466170
+void C2_HOOK_FASTCALL DefaultNetSettings(void) {
+    FILE* file;
+    tNet_game_options* pOptions;
+    tPath_name the_path;
+    int i;
+
+    PathCat(the_path, gApplication_path, "NETDEFLT.TXT");
+    file = DRfopen(the_path, "rt");
+    if (file == NULL) {
+        return;
+    }
+    ReadNetworkSettings(file, &gNet_settings[0]);
+    PFrewind(file);
+    for (i = 1; i < (int)REC2_ASIZE(gNet_settings); i++) {
+        pOptions = &gNet_settings[i];
+        ReadNetworkSettings(file, pOptions);
+    }
+    PFfclose(file);
+}
+
+// DisposeJoinableGame
+
+// InitGamesToJoin
+
+// DisposeJoinList
+
+// AddToJoinList
+
+// FillInRaceDescription
+
 // FUNCTION: CARMA2_HW 0x00466450
 // FUNCTION: CARMA2_SW 0x004661e0
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
     return 0;
 }
-
-// int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY); // Moved for inlining purposes
-
 // FUNCTION: CARMA2_HW 0x00466ce0
 // FUNCTION: CARMA2_SW 0x00466a70
 void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_index) {
@@ -309,6 +422,8 @@ void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_i
 // ScrollUp
 
 // ScrollDn
+
+// int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY); // Moved for inlining purposes
 
 static void C2_HOOK_FASTCALL SetLevelBar(tFrontend_spec* pFrontend, int pLevel_index, int pSelected_item) {
     int i;
@@ -795,7 +910,21 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 
 // NetJoinChooseThisGame
 
-// ChooseNetCar
+// FUNCTION: CARMA2_HW 0x00468d70
+// FUNCTION: CARMA2_SW 0x00468af0
+int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_options* pOptions, int* pCar_index, int pIm_the_host_so_fuck_off) {
+
+    if (!pIm_the_host_so_fuck_off) {
+        return 1;
+    }
+    gNet_options = pOptions;
+    SetNetAvailability(pOptions);
+    *pCar_index = PickARandomCar();
+    if (pIm_the_host_so_fuck_off && *pCar_index >= 0) {
+        gCar_details[*pCar_index].ownership = eCar_owner_someone;
+    }
+    return 1;
+}
 
 // InitNetStorageSpace
 
@@ -847,7 +976,19 @@ int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend) {
 
 // testUp
 
-// testDn
+// FUNCTION: CARMA2_HW 0x0046a080
+// FUNCTION: CARMA2_SW 0x00469de0
+int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
+
+    if (PDGetTotalTime() - gFrontend_last_scroll > 400) {
+        gFrontend_last_scroll = PDGetTotalTime();
+        if ((gCurrent_race_group - gRace_groups) % 10 < 9) {
+            gCurrent_race_group += 1;
+        }
+        RefreshRacesScroller(pFrontend);
+    }
+    return 0;
+}
 
 // FRONTEND_MainMenuHandler
 
@@ -881,7 +1022,26 @@ int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend) {
 
 // FRONTEND_ChangeCarMenuHandler
 
-// StartGameInfunc
+// FUNCTION: CARMA2_HW 0x0046bcb0
+// FUNCTION: CARMA2_SW 0x0046b9e0
+int C2_HOOK_FASTCALL StartGameInfunc(tFrontend_spec* pFrontend) {
+    char backdrop_name[sizeof(pFrontend->backdrop_name)];
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tFrontend_spec, backdrop_name, 256);
+
+    if (!pFrontend->loaded) {
+        strcpy(backdrop_name, pFrontend->backdrop_name);
+        LoadMenuSettings(pFrontend);
+        strcpy(pFrontend->backdrop_name, backdrop_name);
+        FuckWithWidths(pFrontend);
+        if (pFrontend->previous != NULL) {
+            pFrontend->previous->isPreviousSomeOtherMenu = 1;
+        }
+    }
+    gFrontend_scrollbars_updated = 0;
+    pFrontend->unknownLastInt = 0;
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x0046bd50
 int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFrontend) {

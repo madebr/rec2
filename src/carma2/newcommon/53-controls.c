@@ -209,6 +209,12 @@ void C2_HOOK_FASTCALL DamageTest(void) {
 
 }
 
+// FUNCTION: CARMA2_HW 0x00441fe0
+// FUNCTION: CARMA2_SW 0x004420c0
+void C2_HOOK_FASTCALL TDamageEngine(void) {
+    DamageEngine(21);
+}
+
 // FUNCTION: CARMA2_HW 0x00441ff0
 // FUNCTION: CARMA2_SW 0x004420d0
 void C2_HOOK_FASTCALL TDamageDriver(void) {

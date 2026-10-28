@@ -82,6 +82,8 @@ extern void C2_HOOK_FASTCALL LookRight(void);
 
 extern void C2_HOOK_FASTCALL DamageTest(void);
 
+extern void C2_HOOK_FASTCALL TDamageEngine(void);
+
 extern void C2_HOOK_FASTCALL TDamageDriver(void);
 
 // ToggleMiniMap

@@ -8,12 +8,14 @@
 
 #include "00-car.h"
 
+#include "13-crush1.h"
 #include "15-displays.h"
 #include "22-replay.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "58-crush2.h"
+#include "60-phil.h"
 #include "brender/brender.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -83,6 +85,13 @@ void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int p
 // FUNCTION: CARMA2_SW 0x00413d30
 void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
     DamageUnit(&gProgram_state.current_car, eDamage_engine, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413d90
+// FUNCTION: CARMA2_SW 0x00413dc0
+void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lf_wheel, pDamage_amount);
     SortOutSmoke(&gProgram_state.current_car);
 }
 
@@ -194,7 +203,33 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // APTCPreCollision
 
-// SetCollisionFlagsAndStuff
+// FUNCTION: CARMA2_HW 0x004161a0
+// FUNCTION: CARMA2_SW 0x004161d0
+void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject) {
+    tPhysics_object* child;
+    tCar_spec* car;
+    int collided;
+
+    for (; pObject != NULL; pObject = pObject->next) {
+        if (gNet_mode == eNet_mode_host) {
+            collided = (pObject->collision_flag & 0x2) != 0 || (pObject->flags & 0x1000) != 0;
+            for (child = pObject->child; child != NULL; child = child->next) {
+                collided |= child->collision_flag & 0x2;
+            }
+            if (collided) {
+                pObject->field_0x49c = gPHIL_last_physics_tick + 40;
+                if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+                    car = pObject->owner;
+                    if (car->driver > 5 && car->car_crush_spec != NULL) {
+                        SetAllShapeStatusFlags(car->car_crush_spec->network_stuff);
+                    }
+                }
+            }
+        }
+        pObject->disable_move_rotate &= ~0x2;
+        SetCollisionFlagsAndStuff(pObject->child);
+    }
+}
 
 // APTCPostCollision
 
