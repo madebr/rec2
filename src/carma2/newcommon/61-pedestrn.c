@@ -780,7 +780,11 @@ float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance
 
 // MungeAllCharacterModels
 
-// DisableOverallMovement
+// FUNCTION: CARMA2_HW 0x0040c600
+// FUNCTION: CARMA2_SW 0x0040c5f0
+void C2_HOOK_FASTCALL DisableOverallMovement(void) {
+    gPed_overall_movement_disabled = 1;
+}
 
 // EnableOverallMovement
 

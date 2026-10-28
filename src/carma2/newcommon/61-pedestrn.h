@@ -550,7 +550,7 @@ extern float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_i
 
 // MungeAllCharacterModels
 
-// DisableOverallMovement
+extern void C2_HOOK_FASTCALL DisableOverallMovement(void);
 
 // EnableOverallMovement
 
