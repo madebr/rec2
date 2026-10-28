@@ -140,7 +140,7 @@ extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
 // MainMenuInfunc
 
-// MainMenuOutfunc
+extern int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend);
 
 // MainMenuSelectRace
 
