@@ -17,6 +17,8 @@ extern int gHud_tinted2;
 extern int gHud_tinted3;
 extern int gCredits_checkpoint[3];
 extern tU32 gLast_checkpoint_time;
+extern int gHud_tinted1_visible;
+extern int gHud_tinted2_visible;
 extern int gLast_wrong_checkpoint;
 
 extern int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
@@ -63,6 +65,6 @@ extern void C2_HOOK_FASTCALL DoProgram(void);
 
 // GoingToInterfaceFromRace
 
-// GoingBackToRaceFromInterface
+extern void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void);
 
 #endif // GUARD_07_STRUCTUR_H
