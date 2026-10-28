@@ -884,7 +884,15 @@ void C2_HOOK_FASTCALL UndoUnBend(void) {
 
 // UndoShrapnelShower
 
-// UndoNonCarCreation
+// FUNCTION: CARMA2_HW 0x004ca100
+// FUNCTION: CARMA2_SW 0x004c6830
+void C2_HOOK_FASTCALL UndoNonCarCreation(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+
+    (void)pPrev_chunk;
+    chunk = *pChunk;
+    TurnOffNonCar(chunk->subject_index);
+}
 
 // FUNCTION: CARMA2_HW 0x004ca110
 void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
