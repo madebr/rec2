@@ -26,8 +26,8 @@ void C2_HOOK_CDECL HostFarBlockFill(br_uint_32 offset, br_uint_16 sel, br_uint_8
     NOT_IMPLEMENTED();
 }
 
-// FUNCTION: CARMA2_HW 0x005403dc
-// FUNCTION: CARMA2_SW 0x0053ba7c
+// STUB: CARMA2_HW 0x005403dc
+// STUB: CARMA2_SW 0x0053ba7c
 void C2_HOOK_CDECL HostFarBlockRead(br_uint_32 offset, br_uint_16 sel, void *block, br_uint_32 count) {
     NOT_IMPLEMENTED();
 }

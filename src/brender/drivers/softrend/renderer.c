@@ -107,6 +107,7 @@ br_tv_template_entry rendererTemplateEntries[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0058bd20
+// GLOBAL: CARMA2_SW 0x00586ce8
 const br_token RendererPartsTokens[] = {
     BRT_CULL,
     BRT_SURFACE,
@@ -229,7 +230,7 @@ br_error C2_HOOK_CDECL softrend_renderer_customPartsQuery(br_uint_32* pvalue, vo
 }
 
 // FUNCTION: CARMA2_HW 0x005409f0
-// FUNCTION: CARMA2_SW 0xFUN_0053c090
+// FUNCTION: CARMA2_SW 0x0053c090
 br_size_t C2_HOOK_CDECL softrend_renderer_customPartsExtra(void* block, br_tv_template_entry* tep) {
     br_soft_renderer* self = block;
     br_size_t s;

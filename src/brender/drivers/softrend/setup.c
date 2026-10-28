@@ -15,6 +15,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x0079f980
+// GLOBAL: CARMA2_SW 0x00795f20
 rend_block_soft rend;
 
 

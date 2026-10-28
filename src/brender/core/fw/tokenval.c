@@ -21,6 +21,7 @@
 static br_error parseTokenValue(br_lexer* l, br_token_value* tv, br_size_t size);
 
 // FUNCTION: CARMA2_HW 0x0052d740
+// FUNCTION: CARMA2_SW 0x00528de0
 br_tv_template* C2_HOOK_CDECL BrTVTemplateAllocate(void* res, br_tv_template_entry* entries, int n_entries) {
     br_tv_template* t;
 
@@ -32,6 +33,7 @@ br_tv_template* C2_HOOK_CDECL BrTVTemplateAllocate(void* res, br_tv_template_ent
 }
 
 // FUNCTION: CARMA2_HW 0x0052d770
+// FUNCTION: CARMA2_SW 0x00528e10
 void C2_HOOK_CDECL BrTVTemplateFree(br_tv_template* t) {
 
     BrResFree(t);

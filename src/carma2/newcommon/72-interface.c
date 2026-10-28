@@ -47,12 +47,15 @@ tFrontendMenuType gFrontend_next_menu;
 int gFrontend_suppress_mouse;
 
 // GLOBAL: CARMA2_HW 0x00688ab0
+// GLOBAL: CARMA2_SW 0x00683010
 tConnected_items* gConnected_items;
 
 // GLOBAL: CARMA2_HW 0x00686508
+// GLOBAL: CARMA2_SW 0x00680c48
 tStruct_00686508* gPTR_00686508;
 
 // GLOBAL: CARMA2_HW 0x00686820
+// GLOBAL: CARMA2_SW 0x00680f60
 tFrontend_slider* gCurrent_frontend_scrollbars;
 
 // GLOBAL: CARMA2_HW 0x00604730

@@ -16,21 +16,27 @@
 int gPling_materials = 1;
 
 // GLOBAL: CARMA2_HW 0x00686190
+// GLOBAL: CARMA2_SW 0x006808d0
 br_scalar gNearest_T;
 
 // GLOBAL: CARMA2_HW 0x006861c8
+// GLOBAL: CARMA2_SW 0x00680908
 int gTemp_group;
 
 // GLOBAL: CARMA2_HW 0x006861cc
+// GLOBAL: CARMA2_SW 0x0068090c
 br_actor* gNearest_actor;
 
 // GLOBAL: CARMA2_HW 0x00686188
+// GLOBAL: CARMA2_SW 0x006808c8
 int gNearest_face;
 
 // GLOBAL: CARMA2_HW 0x00686194
+// GLOBAL: CARMA2_SW 0x006808d4
 int gNearest_face_group;
 
 // GLOBAL: CARMA2_HW 0x0068618c
+// GLOBAL: CARMA2_SW 0x006808cc
 br_model* gNearest_model;
 
 // GLOBAL: CARMA2_HW 0x00686198
@@ -191,6 +197,7 @@ int C2_HOOK_FASTCALL DRModelPick2D_finteray(br_model* pModel, br_material* pMate
 #endif
 
 // FUNCTION: CARMA2_HW 0x0045d570
+// FUNCTION: CARMA2_SW 0x0045cfb0
 int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData) {
 
     if (pT < gNearest_T) {
