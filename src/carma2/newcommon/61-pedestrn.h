@@ -470,7 +470,7 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // CharacterNoLongerCollideworthy
 
-// SetObjectV
+extern void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vector3* pV);
 
 // SetObjectOmega
 
