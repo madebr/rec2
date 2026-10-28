@@ -11,6 +11,7 @@
 #include "01-network.h"
 #include "16-graphics1.h"
 #include "32-spark.h"
+#include "41-utility.h"
 #include "49-physics.h"
 #include "61-pedestrn.h"
 #include "globvars.h"
@@ -94,6 +95,14 @@ int gCount_cloaked_cars;
 // GLOBAL: CARMA2_HW 0x006a0910
 // GLOBAL: CARMA2_SW 0x0069a968
 tCar_spec* gCloaked_cars[12];
+
+// GLOBAL: CARMA2_HW 0x006a0940
+// GLOBAL: CARMA2_SW 0x0069a998
+int gInventory_cycling;
+
+// GLOBAL: CARMA2_HW 0x006a0954
+// GLOBAL: CARMA2_SW 0x0069a9ac
+tU32 gInventory_timeout;
 
 // GLOBAL: CARMA2_HW 0x0079ec50
 // GLOBAL: CARMA2_SW 0x007951b0
@@ -206,7 +215,15 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // DrawKeyPowerups
 
-// ToggleInventory
+// FUNCTION: CARMA2_HW 0x004da9d0
+// FUNCTION: CARMA2_SW 0x004d6ea0
+void C2_HOOK_FASTCALL ToggleInventory(void) {
+
+    gInventory_cycling = !gInventory_cycling;
+    if (gInventory_cycling) {
+        gInventory_timeout = GetTotalTime() + 3000;
+    }
+}
 
 // RightInventory
 
