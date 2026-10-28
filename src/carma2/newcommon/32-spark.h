@@ -29,7 +29,7 @@ extern br_model* gLollipop_model;
 extern tSmoke_column gSmoke_column[10];
 extern br_matrix4 gCameraToScreen;
 extern br_camera* gSpark_cam;
-extern tCar_spec* PTR_006a82a8;
+extern tCar_spec* gCar_of_material;
 
 // DrawDot
 

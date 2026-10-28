@@ -76,7 +76,7 @@ br_camera* gSpark_cam;
 
 // GLOBAL: CARMA2_HW 0x006a82a8
 // GLOBAL: CARMA2_SW 0x006a2308
-tCar_spec* PTR_006a82a8;
+tCar_spec* gCar_of_material;
 
 // DrawDot
 
@@ -221,8 +221,8 @@ void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar) {
 // FUNCTION: CARMA2_HW 0x004f8ff0
 // FUNCTION: CARMA2_SW 0x004f4670
 int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
-    if (pMaterial->colour_map != PTR_006a82a8->field_0x1960) {
-        pMaterial->colour_map = PTR_006a82a8->field_0x1960;
+    if (pMaterial->colour_map != gCar_of_material->field_0x1960) {
+        pMaterial->colour_map = gCar_of_material->field_0x1960;
         BrMaterialUpdate(pMaterial, BR_MATU_ALL);
         return 1;
     } else {
@@ -249,7 +249,7 @@ void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
     if (face != NULL && face->material != NULL && face->material->colour_map != NULL
         && face->material->colour_map != pCar->field_0x1960) {
         pCar->field_0x1960 = face->material->colour_map;
-        PTR_006a82a8 = pCar;
+        gCar_of_material = pCar;
         ForEveryCarMaterial(pCar, SetPixelmap, 1);
     }
 }
