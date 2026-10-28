@@ -182,7 +182,7 @@ extern void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, i
 
 // SetGroupDoingNothingFlag
 
-// SetHierarchyDoingNothingFlag
+extern void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, int pFlag);
 
 // CheckDoingNothingFlag
 
