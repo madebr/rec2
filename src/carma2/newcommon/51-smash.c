@@ -653,19 +653,55 @@ void C2_HOOK_FASTCALL NonCarSnapSmashCallback(tPhysics_object* pObject, br_vecto
 
 // SmashFaceMustBeUpdateable
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x004f55d0
-// STUB: CARMA2_SW 0x004f1230
+// FUNCTION: CARMA2_HW 0x004f55d0
+// FUNCTION: CARMA2_SW 0x004f1230
 intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* pData) {
-    NOT_IMPLEMENTED();
-}
+    tMungeMaterialCB_Context* context;
+    br_face* face;
+    int face_i;
+    int i;
+    int j;
+    int found;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    context = pData;
+    if (pActor->model != NULL) {
+        for (face_i = 0, face = pActor->model->faces; face_i < pActor->model->nfaces; face_i++, face++) {
+            if (face->material == context->material_0x0) {
+                face->material = context->material_0x4;
+                if (context->indices != NULL && context->count_indices < context->capacity_indices) {
+                    for (i = 0; i < (int)REC2_ASIZE(face->vertices); i++) {
+                        found = 0;
+                        for (j = 0; j < context->count_indices; j++) {
+                            if (face->vertices[i] == context->indices[j]) {
+                                if (context->vertices != NULL && context->count_vertices < context->capacity_vertices) {
+                                    context->vertices[context->count_vertices].field_0x0[i] = (tU16)j;
+                                }
+                                found = 1;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            if (context->count_indices != 0) {
+                                BrVector3Accumulate(&context->field_0x20, &face->n);
+                            } else {
+                                BrVector3Copy(&context->field_0x20, &face->n);
+                            }
+                            if (context->vertices != NULL && context->count_vertices < context->capacity_vertices) {
+                                context->vertices[context->count_vertices].field_0x0[i] = (tU16)context->count_indices;
+                            }
+                            context->indices[context->count_indices] = face->vertices[i];
+                            context->count_indices++;
+                        }
+                    }
+                }
+                if (context->vertices != NULL && context->count_vertices < context->capacity_vertices) {
+                    context->count_vertices++;
+                }
+            }
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004f54d0
 // FUNCTION: CARMA2_SW 0x004f1130
