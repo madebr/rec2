@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tU32 gFrontend_last_scroll;
+
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
 extern int gFrontend_change_car_selected_car;
@@ -146,7 +148,7 @@ extern int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend);
 
 // testUp
 
-// testDn
+extern int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend);
 
 // FRONTEND_MainMenuHandler
 

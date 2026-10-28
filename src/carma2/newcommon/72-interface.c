@@ -132,6 +132,10 @@ int* gCredits_throbs;
 // GLOBAL: CARMA2_SW 0x006829a8
 char** gCredits_texts;
 
+// GLOBAL: CARMA2_HW 0x0068843c
+// GLOBAL: CARMA2_SW 0x0068299c
+tU32 gFrontend_last_scroll;
+
 // GLOBAL: CARMA2_HW 0x0068682c
 // GLOBAL: CARMA2_SW 0x00680f6c
 int* gCredits_fonts;
@@ -847,7 +851,19 @@ int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend) {
 
 // testUp
 
-// testDn
+// FUNCTION: CARMA2_HW 0x0046a080
+// FUNCTION: CARMA2_SW 0x00469de0
+int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
+
+    if (PDGetTotalTime() - gFrontend_last_scroll > 400) {
+        gFrontend_last_scroll = PDGetTotalTime();
+        if ((gCurrent_race_group - gRace_groups) % 10 < 9) {
+            gCurrent_race_group += 1;
+        }
+        RefreshRacesScroller(pFrontend);
+    }
+    return 0;
+}
 
 // FRONTEND_MainMenuHandler
 
