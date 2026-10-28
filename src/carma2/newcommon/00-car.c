@@ -118,9 +118,34 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // InitialiseCarsEtc
 
-// SetInitialPosition
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// SetInitialPositions
+// STUB: CARMA2_HW 0x00414510
+// STUB: CARMA2_SW 0x00414540
+void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, tU32 pGrid_index) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004148d0
+// FUNCTION: CARMA2_SW 0x00414900
+void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
+    int i;
+
+    for (i = 0; i < pThe_race->number_of_racers; i++) {
+        int grid_index = pThe_race->opponent_list[i].ranking;
+
+        if (grid_index >= 0) {
+            grid_index = i;
+        }
+        SetInitialPosition(pThe_race, i, grid_index);
+    }
+}
 
 // InitialiseNonCar
 
