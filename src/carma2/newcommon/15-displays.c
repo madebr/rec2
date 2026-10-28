@@ -781,13 +781,26 @@ int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044bac0
+// FUNCTION: CARMA2_SW 0x0044b8a0
 void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY) {
+#ifdef REC2_HW
     gCar_icons_model_actor->material->colour_map = gTexture_maps[gCar_icons[pCar_index].index];
     BrMaterialUpdate(gCar_icons_model_actor->material, BR_MATU_COLOURMAP);
     gCar_icons_model_actor->model = gCar_icons[pCar_index].model;
-    BrMatrix34Translate(&gCar_icons_model_actor->t.t.mat, (br_scalar)pX, (br_scalar)-pY, 0.f);
+    BrMatrix34Translate(&gCar_icons_model_actor->t.t.mat, (br_scalar)pX, (br_scalar)-pY, 0.0f);
     BrActorAdd(g2d_camera, gCar_icons_model_actor);
     BrZbsSceneRender(g2d_camera, g2d_camera, gBack_screen, gDepth_buffer);
     BrActorRemove(gCar_icons_model_actor);
+#endif
+#ifdef REC2_SW
+    DRPixelmapRectangleMaskedCopy(gBack_screen,
+        pX,
+        pY,
+        gIcons_pix,
+        0,
+        pCar_index * gCurrent_graf_data->car_icon_height,
+        gIcons_pix->width,
+        gCurrent_graf_data->car_icon_height);
+#endif
 }
 

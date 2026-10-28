@@ -108,24 +108,31 @@ int gFrontend_maximum_input_length = 9;
 int gHierarchy_has_actor;
 
 // GLOBAL: CARMA2_HW 0x00686834
+// GLOBAL: CARMA2_SW 0x00680f74
 tU32 gCredits_scroll_start;
 
 // GLOBAL: CARMA2_HW 0x006883c0
+// GLOBAL: CARMA2_SW 0x00682920
 int gCredits_line_count;
 
 // GLOBAL: CARMA2_HW 0x00686f04
+// GLOBAL: CARMA2_SW 0x00681644
 int* gCredits_heights;
 
 // GLOBAL: CARMA2_HW 0x00687238
+// GLOBAL: CARMA2_SW 0x00681798
 int* gCredits_throbs;
 
 // GLOBAL: CARMA2_HW 0x00688448
+// GLOBAL: CARMA2_SW 0x006829a8
 char** gCredits_texts;
 
 // GLOBAL: CARMA2_HW 0x0068682c
+// GLOBAL: CARMA2_SW 0x00680f6c
 int* gCredits_fonts;
 
 // GLOBAL: CARMA2_HW 0x00686f90
+// GLOBAL: CARMA2_SW 0x006816d0
 int gCredits_total_height;
 
 // GLOBAL: CARMA2_HW 0x006886d0
@@ -1263,6 +1270,7 @@ void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_m
 }
 
 // FUNCTION: CARMA2_HW 0x0046f630
+// FUNCTION: CARMA2_SW 0x0046ece0
 void C2_HOOK_FASTCALL ScrollCredits(void) {
     int y;
     int i;
@@ -1272,8 +1280,14 @@ void C2_HOOK_FASTCALL ScrollCredits(void) {
         y += gCredits_heights[i];
         if (y < 430 && y > 30) {
             if (gCredits_throbs[i]) {
+
                 SolidPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i] - 1, eJust_centre, 1);
+#ifdef REC2_HW
                 TransparentPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i], eJust_centre, 1, gFrontend_throb_factor);
+#endif
+#ifdef REC2_SW
+                PolyFontText(gCredits_texts[i], 320, y, gFrontend_throb_factor <= 0.5 ? gCredits_fonts[i] - 1 : gCredits_fonts[i], eJust_centre, 1);
+#endif
             } else {
                 SolidPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i], eJust_centre, 1);
             }

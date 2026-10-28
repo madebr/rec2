@@ -52,9 +52,11 @@ extern void C2_HOOK_FASTCALL AllocateStandardLamp(void);
 
 extern void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void);
 
+#ifdef REC2_HW
 extern void C2_HOOK_FASTCALL InitLineStuff(void);
 
 extern void C2_HOOK_FASTCALL Init2DStuff(void);
+#endif
 
 extern void C2_HOOK_FASTCALL CheckTimedDemo(void);
 

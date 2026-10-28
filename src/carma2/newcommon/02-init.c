@@ -322,6 +322,7 @@ void C2_HOOK_FASTCALL InstallFindFailedHooks(void) {
 
 // Init2DStuffForPolyFonts
 
+#ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x0047e610
 void C2_HOOK_FASTCALL InitLineStuff(void) {
 
@@ -792,6 +793,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelToDim(gOffence_model, gOffence_dim_x, gOffence_dim_y, gOffence_dim_w, gOffence_dim_h);
     BrModelUpdate(gOffence_model, BR_MODU_VERTEX_POSITIONS);
 }
+#endif
 
 // CheckTimedDemo
 

@@ -89,6 +89,7 @@ int gInterface_polyfont_texture_pages;
 br_material* gPoly_font_materials[80];
 
 // GLOBAL: CARMA2_HW 0x0074cf10
+// GLOBAL: CARMA2_SW 0x007434e0
 br_actor* gString_root_actor;
 
 // GLOBAL: CARMA2_HW 0x0074cae0
@@ -857,6 +858,7 @@ void C2_HOOK_FASTCALL InitPolyFontMaterials(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00465250
+// FUNCTION: CARMA2_SW 0x00464db0
 br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pChar) {
     tU8 uchar;
     br_material* material;
@@ -901,6 +903,7 @@ br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pChar) {
 }
 
 // FUNCTION: CARMA2_HW 0x00464e40
+// FUNCTION: CARMA2_SW 0x004649a0
 void C2_HOOK_FASTCALL PolyFontText(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
     int text_len;
     int i;
@@ -1077,6 +1080,7 @@ void C2_HOOK_FASTCALL DrawDigitAt(const br_pixelmap* pSource, br_pixelmap* pDest
 }
 
 // FUNCTION: CARMA2_HW 0x004657c0
+// FUNCTION: CARMA2_SW 0x00465320
 void C2_HOOK_FASTCALL DrawNumberAt(const br_pixelmap* pSrc, br_pixelmap* pDest, int pX, int pY, int pX_pitch, int pY_pitch, int pValue, int pDigit_count, int pLeading_zeroes) {
     int i;
     int digit;
@@ -1159,6 +1163,7 @@ void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, con
 }
 
 // FUNCTION: CARMA2_HW 0x00465aa0
+// FUNCTION: CARMA2_SW 0x00465770
 void C2_HOOK_FASTCALL DRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge) {
     int i;
     char s[512];
