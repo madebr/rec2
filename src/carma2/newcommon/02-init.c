@@ -867,7 +867,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
         REC2_HW_RUN(PrintMemoryDump(0, "AFTER INITING LINE AND SMOKE STUFF");) \
         REC2_HW_RUN(Init2DStuff();) \
         REC2_HW_RUN(InitTintedPolyStuff();) \
-        REC2_SW_RUN(gHud_tinted1 = CreateTintedPoly(0, 0, 320, 240, 2, 0, 0, 0);) \
+        REC2_SW_RUN(gHud_tinted1 = CreateTintedPoly(0, 0, 320, 200, 2, 0, 0, 0);) \
         REC2_HW_RUN(gHud_tinted1 = CreateTintedPoly(0, 0, 640, 480, 2, 0, 0, 0);) \
         REC2_HW_RUN(gHud_tinted2 = CreateTintedPoly(0, 0, 640, 480, 3, 2, 0, 0);) \
         REC2_HW_RUN(PrintMemoryDump(0, "AFTER INITING 2D STUFF");) \
