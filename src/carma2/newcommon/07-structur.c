@@ -8,11 +8,14 @@
 
 #include "07-structur.h"
 
+#include "04-netgame.h"
 #include "13-crush1.h"
 #include "15-displays.h"
+#include "18-graphics2.h"
 #include "30-opponent.h"
 #include "41-utility.h"
 #include "43-pratcam.h"
+#include "66-tintedpoly.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -36,6 +39,14 @@ int gCredits_checkpoint[3];
 // GLOBAL: CARMA2_HW 0x006aaa34
 // GLOBAL: CARMA2_SW 0x006a4484
 tU32 gLast_checkpoint_time;
+
+// GLOBAL: CARMA2_HW 0x006aaa38
+// GLOBAL: CARMA2_SW 0x006a4488
+int gHud_tinted1_visible;
+
+// GLOBAL: CARMA2_HW 0x006aaa3c
+// GLOBAL: CARMA2_SW 0x006a448c
+int gHud_tinted2_visible;
 
 // GLOBAL: CARMA2_HW 0x00660cdc
 // GLOBAL: CARMA2_SW 0x0065b650
@@ -301,5 +312,20 @@ void C2_HOOK_FASTCALL DoProgram(void) {
 
 // GoingToInterfaceFromRace
 
-// GoingBackToRaceFromInterface
+// FUNCTION: CARMA2_HW 0x005042a0
+// FUNCTION: CARMA2_SW 0x004ffbf0
+void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void) {
+
+    gInterface_within_race_mode = 0;
+    if (gHud_tinted1_visible) {
+        TurnTintedPolyOn(gHud_tinted1);
+    }
+    if (gHud_tinted2_visible) {
+        TurnTintedPolyOn(gHud_tinted2);
+    }
+    SwitchToLoresMode();
+    if (gNet_mode == eNet_mode_host) {
+        SendGameplayToAllPlayers(eNet_gameplay_host_unpaused, 0, 0, 0, 0);
+    }
+}
 

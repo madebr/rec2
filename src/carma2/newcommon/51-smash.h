@@ -129,7 +129,7 @@ extern void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_
 
 // ReadSpillData
 
-// ReadExplosion
+extern void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation);
 
 extern intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* pData);
 
