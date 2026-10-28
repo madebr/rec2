@@ -289,42 +289,39 @@ void C2_HOOK_FASTCALL CycleTargetLock(void) {
         } else {
             car_count = GetCarCount(category);
         }
-        for (i = 0;; i++) {
-            if (i >= car_count) {
-                return;
-            }
+        for (i = 0; i < car_count; i++) {
             if (category == eVehicle_self) {
                 car = &gProgram_state.current_car;
             } else {
                 car = GetCarSpec(category, i);
             }
             if (car == gTarget_lock_car_1) {
+                if (i == car_count - 1) {
+                    car_index = 0;
+                } else {
+                    car_index = i + 1;
+                }
+                do {
+                    if (category == eVehicle_self) {
+                        car = &gProgram_state.current_car;
+                    } else {
+                        car = GetCarSpec(category, car_index);
+                    }
+                    if (car_index == car_count - 1) {
+                        car_index = 0;
+                    } else {
+                        car_index++;
+                    }
+                } while ((car != gTarget_lock_car_1 && car->knackered)
+                    || (gNet_mode == eNet_mode_none && gCurrent_race.race_spec->race_type == kRaceType_Cars && !car->is_race_goal)
+                    || (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_6 && NetPlayerFromCar(car)->field_0x80));
+                gTarget_lock_car_1 = car;
+                gTarget_lock_car_2 = car;
+                gTarget_lock_enabled = 0;
+                ToggleTargetLock();
                 break;
             }
         }
-        if (i == car_count - 1) {
-            car_index = 0;
-        } else {
-            car_index = i + 1;
-        }
-        do {
-            if (category == eVehicle_self) {
-                car = &gProgram_state.current_car;
-            } else {
-                car = GetCarSpec(category, car_index);
-            }
-            if (car_index == car_count - 1) {
-                car_index = 0;
-            } else {
-                car_index++;
-            }
-        } while ((car != gTarget_lock_car_1 && car->knackered)
-            || (gNet_mode == eNet_mode_none && gCurrent_race.race_spec->race_type == kRaceType_Cars && !car->is_race_goal)
-            || (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_6 && NetPlayerFromCar(car)->field_0x80));
-        gTarget_lock_car_1 = car;
-        gTarget_lock_car_2 = car;
-        gTarget_lock_enabled = 0;
-        ToggleTargetLock();
     }
 }
 
