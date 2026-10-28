@@ -1093,7 +1093,16 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoVanishDismembered
 
-// UndoVector3
+// FUNCTION: CARMA2_HW 0x004ca360
+// FUNCTION: CARMA2_SW 0x004c6a90
+void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    (void)pPrev_chunk;
+    BrVector3Sub((br_vector3*)(*pChunk)->subject_index,
+        (br_vector3*)(*pChunk)->subject_index,
+        &((tPipe_single_vector*)(*pChunk)->data.raw_data)->vector);
+}
 
 // UndoNapalmBolt
 
