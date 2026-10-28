@@ -74,7 +74,7 @@ extern void C2_HOOK_FASTCALL ScreenSmaller(void);
 
 extern void C2_HOOK_FASTCALL ScreenLarger(void);
 
-// ClearWobbles
+extern void C2_HOOK_FASTCALL ClearWobbles(void);
 
 extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
