@@ -542,7 +542,14 @@ void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_mate
 
 // PipeSinglePedStatus
 
-// PipeSinglePedDir
+// FUNCTION: CARMA2_HW 0x004c8b10
+// FUNCTION: CARMA2_SW 0x004c5240
+void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_dir_data, direction, 0xc);
+
+    ARDoSingleVariedSession(ePipe_chunk_ped_dir, pId, 1,
+        SIZE_OFFSET_PIPING(tPipe_ped_dir_data, direction), pDir);
+}
 
 // PipeSinglePedMove
 
