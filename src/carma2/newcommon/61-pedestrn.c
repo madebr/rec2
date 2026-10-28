@@ -93,7 +93,11 @@ int gDancing_peds;
 
 // PedApplyPedPos
 
-// PedApplyVanishDismembered
+// FUNCTION: CARMA2_HW 0x004ca890
+// FUNCTION: CARMA2_SW 0x004c6fc0
+void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 pValue) {
+    pPedestrian->character->field_0x10 = pValue;
+}
 
 // SetCharacterPositionAR
 

@@ -54,7 +54,7 @@ extern int gDancing_peds;
 
 // PedApplyPedPos
 
-// PedApplyVanishDismembered
+extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 pValue);
 
 // SetCharacterPositionAR
 
