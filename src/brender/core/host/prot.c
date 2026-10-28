@@ -12,6 +12,7 @@
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053fd90
+// FUNCTION: CARMA2_SW 0x0053b430
 __declspec(naked) br_error C2_HOOK_CDECL HostInterruptGet(br_uint_8 vector, br_uint_32 *offp, br_uint_16 *selp) {
 
     __asm {
@@ -46,6 +47,7 @@ br_error C2_HOOK_CDECL HostInterruptGet(br_uint_8 vector, br_uint_32 *offp, br_u
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053fdb1
+// FUNCTION: CARMA2_SW 0x0053b451
 __declspec(naked) br_error C2_HOOK_CDECL HostInterruptSet(br_uint_8 vector, br_uint_32 off, br_uint_16 sel) {
 
     __asm {
@@ -76,6 +78,7 @@ br_error C2_HOOK_CDECL HostInterruptSet(br_uint_8 vector, br_uint_32 off, br_uin
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053fdcd
+// FUNCTION: CARMA2_SW 0x0053b46d
 __declspec(naked) br_error C2_HOOK_CDECL HostExceptionGet(br_uint_8 exception, br_uint_32 *offp, br_uint_16 *selp) {
 
     __asm {
@@ -107,6 +110,7 @@ br_error C2_HOOK_CDECL HostExceptionGet(br_uint_8 exception, br_uint_32 *offp, b
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053fdec
+// FUNCTION: CARMA2_SW 0x0053b48c
 __declspec(naked) br_error C2_HOOK_CDECL HostExceptionSet(br_uint_8 exception, br_uint_32 off, br_uint_16 sel) {
 
     __asm {
@@ -135,6 +139,7 @@ br_error C2_HOOK_CDECL HostExceptionSet(br_uint_8 exception, br_uint_32 off, br_
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053fe06
+// FUNCTION: CARMA2_SW 0x0053b4a6
 __declspec(naked) br_error C2_HOOK_CDECL HostInterruptCall(br_uint_32 vector, union host_regs *regs) {
     __asm {
         push        ebp
@@ -215,6 +220,7 @@ br_error C2_HOOK_CDECL HostInterruptCall(br_uint_32 vector, union host_regs *reg
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053febc
+// FUNCTION: CARMA2_SW 0x0053b55c
 __declspec(naked) br_error C2_HOOK_CDECL HostRegistersGet(union host_regs *regs) {
 
     __asm {
@@ -252,6 +258,7 @@ br_error C2_HOOK_CDECL HostRegistersGet(union host_regs *regs) {
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053fefd
+// FUNCTION: CARMA2_SW 0x0053b59d
 __declspec(naked) br_error C2_HOOK_CDECL HostSelectorDS(br_uint_16 *selp) {
 
     __asm {
@@ -274,6 +281,7 @@ br_error C2_HOOK_CDECL HostSelectorDS(br_uint_16 *selp) {
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053ff0a
+// FUNCTION: CARMA2_SW 0x0053b5aa
 __declspec(naked) br_error C2_HOOK_CDECL HostSelectorCS(br_uint_16 *selp) {
 
     __asm {
@@ -296,6 +304,7 @@ br_error C2_HOOK_CDECL HostSelectorCS(br_uint_16 *selp) {
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053ff17
+// FUNCTION: CARMA2_SW 0x0053b5b7
 __declspec(naked) br_error C2_HOOK_CDECL HostSelectorSS(br_uint_16 *selp) {
 
     __asm {
@@ -318,6 +327,7 @@ br_error C2_HOOK_CDECL HostSelectorSS(br_uint_16 *selp) {
 
 #ifdef REC2_MATCHING
 // FUNCTION: CARMA2_HW 0x0053ff24
+// FUNCTION: CARMA2_SW 0x0053b5c4
 __declspec(naked) br_error C2_HOOK_CDECL HostSelectorES(br_uint_16 *selp) {
 
     __asm {

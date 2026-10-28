@@ -113,6 +113,7 @@ br_tv_template_entry partClipTemplateEntries[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0058c6f8
+// GLOBAL: CARMA2_SW 0x005876c0
 const soft_state_surface partSurfaceDefault = {
     BR_COLOUR_RGB(0xff, 0xff, 0xff),
     1.f,
@@ -134,6 +135,7 @@ const soft_state_surface partSurfaceDefault = {
 };
 
 // GLOBAL: CARMA2_HW 0x0058c740
+// GLOBAL: CARMA2_SW 0x00587708
 const soft_state_light partLightDefault = {
     BRT_NONE,
     BRT_MODEL,
@@ -149,12 +151,14 @@ const soft_state_light partLightDefault = {
 };
 
 // GLOBAL: CARMA2_HW 0x0058c780
+// GLOBAL: CARMA2_SW 0x00587748
 const soft_state_clip partClipDefault = {
     BRT_NONE,
     { { 0.f, 0.f, -1.f, 0.f, } },
 };
 
 // GLOBAL: CARMA2_HW 0x0058c798
+// GLOBAL: CARMA2_SW 0x00587760
 const soft_state_matrix partMatrixDefault = {
     {{
         { 1.f, 0.f, 0.f, },
@@ -184,12 +188,14 @@ const soft_state_matrix partMatrixDefault = {
 };
 
 // GLOBAL: CARMA2_HW 0x0058c858
+// GLOBAL: CARMA2_SW 0x00587820
 const soft_state_enable partEnableDefault = {
     0x2a,
     0,
 };
 
 // GLOBAL: CARMA2_HW 0x0058c860
+// GLOBAL: CARMA2_SW 0x00587828
 const soft_state_hidden partHiddenSurfaceDefault = {
     BRT_NONE,
     NULL,
@@ -201,12 +207,14 @@ const soft_state_hidden partHiddenSurfaceDefault = {
 };
 
 // GLOBAL: CARMA2_HW 0x0058c880
+// GLOBAL: CARMA2_SW 0x00587848
 const soft_state_bounds partBoundsDefault = {
     {{ BR_SCALAR_MAX, BR_SCALAR_MAX, }},
     {{ BR_SCALAR_MIN, BR_SCALAR_MIN, }},
 };
 
 // GLOBAL: CARMA2_HW 0x0058c6e8
+// GLOBAL: CARMA2_SW 0x005876b0
 const soft_state_cull partCullDefault = {
     BRT_NONE,
     BRT_MODEL,
@@ -214,6 +222,7 @@ const soft_state_cull partCullDefault = {
 };
 
 // FUNCTION: CARMA2_HW 0x005414a0
+// FUNCTION: CARMA2_SW 0x0053cb40
 int C2_HOOK_STDCALL StateInitialise(soft_state_all* state) {
     int i;
 
@@ -251,6 +260,7 @@ int C2_HOOK_STDCALL StateInitialise(soft_state_all* state) {
 }
 
 // FUNCTION: CARMA2_HW 0x00541580
+// FUNCTION: CARMA2_SW 0x0053cc20
 br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_state_all** state, br_token part, br_int_32 index) {
     br_tv_template_entry* entries;
     br_tv_template** tpp;
@@ -435,6 +445,7 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
 }
 
 // FUNCTION: CARMA2_HW 0x00541770
+// FUNCTION: CARMA2_SW 0x0053ce10
 void C2_HOOK_STDCALL TemplateActions(soft_state_all *state, br_token part, br_int_32 index, br_uint_32 mask) {
 
     C2_HOOK_BUG_ON(TM_CLEAR_M2V_HINT != 0x80);
@@ -474,6 +485,7 @@ void C2_HOOK_STDCALL TemplateActions(soft_state_all *state, br_token part, br_in
 }
 
 // FUNCTION: CARMA2_HW 0x005417d0
+// FUNCTION: CARMA2_SW 0x0053ce70
 void C2_HOOK_STDCALL TouchModelToView(br_soft_renderer* self) {
 
     scache.valid_v2m = 0;

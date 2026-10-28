@@ -15,12 +15,15 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00655e60
+// GLOBAL: CARMA2_SW 0x00650d48
 br_scalar gYon_factor = 0.25f;
 
 // GLOBAL: CARMA2_HW 0x0074b74c
+// GLOBAL: CARMA2_SW 0x00741e0c
 br_material* gDefault_track_material;
 
 // GLOBAL: CARMA2_HW 0x00679260
+// GLOBAL: CARMA2_SW 0x006739d0
 int gCount_track_non_cars;
 
 // GLOBAL: CARMA2_HW 0x00679268
@@ -36,6 +39,7 @@ br_vector3 gAverage_grid_position;
 // DisposeRuntimeBuiltModels
 
 // FUNCTION: CARMA2_HW 0x0040ca90
+// FUNCTION: CARMA2_SW 0x0040ca80
 void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec) {
     int z;
     int x;
@@ -72,6 +76,7 @@ void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x0040cb90
+// FUNCTION: CARMA2_SW 0x0040cb80
 void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX, br_scalar pZ, tTrack_spec* pTrack_spec) {
     br_scalar x;
     br_scalar z;
@@ -109,12 +114,14 @@ void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX,
 // RenderTrack
 
 // FUNCTION: CARMA2_HW 0x0040dfe0
+// FUNCTION: CARMA2_SW 0x0040dfc0
 br_scalar C2_HOOK_STDCALL GetYonFactor(void) {
 
     return gYon_factor;
 }
 
 // FUNCTION: CARMA2_HW 0x0040dff0
+// FUNCTION: CARMA2_SW 0x0040dfd0
 void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew) {
 
     gYon_factor = pNew;

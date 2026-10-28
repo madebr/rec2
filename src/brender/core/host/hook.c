@@ -13,6 +13,7 @@
 #include "c2_stdlib.h"
 
 // FUNCTION: CARMA2_HW 0x00540240
+// FUNCTION: CARMA2_SW 0x0053b8e0
 br_error C2_HOOK_CDECL HostInterruptHook(host_interrupt_hook *h, br_uint_8 vector, br_uint_32 off, br_uint_16 sel) {
     br_error r;
 
@@ -37,6 +38,7 @@ br_error C2_HOOK_CDECL HostInterruptHook(host_interrupt_hook *h, br_uint_8 vecto
 }
 
 // FUNCTION: CARMA2_HW 0x005402b0
+// FUNCTION: CARMA2_SW 0x0053b950
 br_error C2_HOOK_CDECL HostInterruptUnhook(host_interrupt_hook *h) {
     br_error r;
 
@@ -53,6 +55,7 @@ br_error C2_HOOK_CDECL HostInterruptUnhook(host_interrupt_hook *h) {
 }
 
 // FUNCTION: CARMA2_HW 0x005402f0
+// FUNCTION: CARMA2_SW 0x0053b990
 br_error C2_HOOK_CDECL HostExceptionHook(host_exception_hook *h, br_uint_8 exception, br_uint_32 off, br_uint_16 sel) {
     br_error r;
 
@@ -77,6 +80,7 @@ br_error C2_HOOK_CDECL HostExceptionHook(host_exception_hook *h, br_uint_8 excep
 }
 
 // FUNCTION: CARMA2_HW 0x00540360
+// FUNCTION: CARMA2_SW 0x0053ba00
 br_error C2_HOOK_CDECL HostExceptionUnhook(host_exception_hook *h) {
     br_error r;
 

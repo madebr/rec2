@@ -29,6 +29,6 @@ void C2_HOOK_CDECL s3_dprintf(const char* pFormat, ...);
 
 void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_desc);
 
-int C2_HOOK_FASTCALL S3PlaySample(tS3_channel* pChannel);
+int C2_HOOK_FASTCALL S3PlaySample(tS3_channel* pChannel, tS3_descriptor* pDesc);
 
 #endif /* S3_SAMPLE_H */

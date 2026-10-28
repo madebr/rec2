@@ -30,6 +30,7 @@ const float gScreenZOffsetPresetChoices[7] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00540560
+// FUNCTION: CARMA2_SW 0x0053bc00
 void C2_HOOK_CDECL BrSetScreenZOffset(br_uint_32 pOffset) {
 
     C2_HOOK_BUG_ON(BR_ASIZE(gScreenZOffsetPresetChoices) != 7);
