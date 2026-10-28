@@ -514,7 +514,7 @@ extern void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vecto
 
 // DisposeAllBonerData
 
-// SetCharacterBoneModel
+extern int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index, int pModel_index, int pModel_set);
 
 // SetCharacterBoneModelP
 
