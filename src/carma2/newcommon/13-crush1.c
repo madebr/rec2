@@ -261,10 +261,27 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // ReadCrushData
 
-// STUB: CARMA2_HW 0x0042a220
-// STUB: CARMA2_SW 0x0042a2b0
+// FUNCTION: CARMA2_HW 0x0042a220
+// FUNCTION: CARMA2_SW 0x0042a2b0
 intptr_t C2_HOOK_CDECL CreateDefaultCrushDataCB(br_actor* pActor, void* pData) {
-    NOT_IMPLEMENTED();
+    tUser_crush_data* user_crush;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_buffer_entry) != 0x40);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tCar_crush_buffer_entry, actor_name, 0x10);
+
+    if (pActor->type != BR_ACTOR_MODEL) {
+        return 0;
+    }
+    user_crush = pActor->user;
+    if (user_crush == NULL || user_crush->crush_data != NULL || user_crush->groove != NULL) {
+        return 0;
+    }
+    user_crush->crush_data = BrMemAllocate(sizeof(tCar_crush_buffer_entry), kMem_crush_data);
+    strncpy(user_crush->crush_data->actor_name, pActor->identifier, sizeof(user_crush->crush_data->actor_name) - 1);
+    user_crush->crush_data->id = 0xe9;
+    user_crush->crush_data->softness_factor = 1.f;
+    user_crush->crush_data->field_0x2c = 0;
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0042a210
