@@ -14,13 +14,13 @@
 
 #ifdef REC2_HW
 extern int gShade_list[16];
-extern tSmash_vertex gSmash_glass_fragments[200];
 extern int* gShade_table;
 #endif
 #ifdef REC2_SW
 extern br_pixelmap* gShade_list[16];
 extern br_pixelmap** gShade_table;
 #endif
+extern tSmash_vertex gSmash_glass_fragments[200];
 extern int gNum_dust_tables;
 extern int gSpark_flags;
 extern br_pixelmap* gIt_shade_table;
