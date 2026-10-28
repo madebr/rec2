@@ -25,6 +25,7 @@
 tExplosion gExplosions[50];
 
 // GLOBAL: CARMA2_HW 0x006a80f8
+// GLOBAL: CARMA2_SW 0x006a2158
 tDecal gDecals[50];
 
 // GLOBAL: CARMA2_HW 0x006a828c
