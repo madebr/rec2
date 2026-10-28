@@ -20,6 +20,7 @@ rend_block_soft rend;
 
 
 // GLOBAL: CARMA2_HW 0x0079fa00
+// GLOBAL: CARMA2_SW 0x00795fa0
 static_cache_soft scache;
 
 static void eyeInModel(br_soft_renderer* self) {

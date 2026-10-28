@@ -18,6 +18,7 @@
 #include "core/fw/tokenval.h"
 
 // GLOBAL: CARMA2_HW 0x0058be98
+// GLOBAL: CARMA2_SW 0x00586e60
 br_geometry_v1_model_dispatch geometryV1ModelDispatch = {
     NULL,
     NULL,
@@ -46,6 +47,7 @@ br_geometry_v1_model_dispatch geometryV1ModelDispatch = {
 };
 
 // GLOBAL: CARMA2_HW 0x0058be50
+// GLOBAL: CARMA2_SW 0x00586e18
 br_tv_template_entry geometryV1ModelTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,      NULL, offsetof(br_geometry_v1_model_soft, identifier),           5,  3,  0,  0, },
     { BRT_RENDERER_FACILITY_O,  NULL, offsetof(br_geometry_v1_model_soft, renderer_facility),    5,  3,  0,  0, },
