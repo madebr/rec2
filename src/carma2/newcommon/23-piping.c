@@ -427,6 +427,7 @@ void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
 // PipeSingleFrameFinish
 
 // STUB: CARMA2_HW 0x004c83f0
+// STUB: CARMA2_SW 0x004c4b20
 void C2_HOOK_FASTCALL PipeSingleGraphicalWheelStuff(tCar_spec* pCar) {
     NOT_IMPLEMENTED();
 }
