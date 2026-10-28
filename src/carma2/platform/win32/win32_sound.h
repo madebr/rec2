@@ -37,6 +37,7 @@ extern MCI_PLAY_PARMS mci_play_parms;
 extern MCI_PLAY_PARMS gPDS3_cda_play_parms;
 
 enum tSSDXFlags {
+    SSDX_InitDirectDraw = 0x1,
     SSDX_InitDirectSound = 0x2,
 };
 

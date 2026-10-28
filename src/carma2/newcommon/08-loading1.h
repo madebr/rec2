@@ -17,6 +17,7 @@
 extern int gDecode_thing;
 extern tU32 gTime_stamp_for_this_munging;
 extern int gFunk_groove_flags[30];
+extern br_pixelmap* gCursors[8];
 
 extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 

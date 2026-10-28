@@ -28,6 +28,7 @@ void C2_HOOK_FASTCALL MakeFaceAndTextureIt(br_model* pModel, int pFace_num, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00401000
+// FUNCTION: CARMA2_SW 0x00401000
 void C2_HOOK_FASTCALL InitPanGameAIWorld(void) {
 
     PrintMemoryDump(0, "BEFORE LoadOpponents()");
@@ -53,6 +54,7 @@ void C2_HOOK_FASTCALL LoadAIWorldTrackInfo(FILE* pF) {
 // InitialiseAIWorldForRace
 
 // STUB: CARMA2_HW 0x00401160
+// STUB: CARMA2_SW 0x00401160
 void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void) {
 
     NOT_IMPLEMENTED();

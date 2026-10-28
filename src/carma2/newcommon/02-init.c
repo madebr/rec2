@@ -12,6 +12,7 @@
 #include "04-netgame.h"
 #include "05-drmem.h"
 #include "07-structur.h"
+#include "08-loading1.h"
 #include "09-funks.h"
 #include "10-loading2.h"
 #include "13-crush1.h"
@@ -58,50 +59,70 @@
 #include <time.h>
 
 // GLOBAL: CARMA2_HW 0x0068be2c
+// GLOBAL: CARMA2_SW 0x00685e70
 int gBr_initialized;
 
 // GLOBAL: CARMA2_HW 0x0068be34
+// GLOBAL: CARMA2_SW 0x00685e78
 int gInitialisation_finished;
 
 // GLOBAL: CARMA2_HW 0x0068be24
+// GLOBAL: CARMA2_SW 0x00685e68
 tU32 gAustere_time;
 
 // GLOBAL: CARMA2_HW 0x0074b760
+// GLOBAL: CARMA2_SW 0x00741e20
 int gCredits_per_rank[3];
 
 // GLOBAL: CARMA2_HW 0x0074b76c
+// GLOBAL: CARMA2_SW 0x00741e2c
 int gInitial_rank;
 
 // GLOBAL: CARMA2_HW 0x00762110
+// GLOBAL: CARMA2_SW 0x00758670
 int gStarting_money[3];
 
 // GLOBAL: CARMA2_HW 0x00762160
+// GLOBAL: CARMA2_SW 0x007586c0
 int gNet_starting_money[8];
 
 // GLOBAL: CARMA2_HW 0x0074d4c0
+// GLOBAL: CARMA2_SW 0x00743a20
 tSlot_info gInitial_APO[3];
 
 // GLOBAL: CARMA2_HW 0x007622a0
+// GLOBAL: CARMA2_SW 0x00758800
 tSlot_info gInitial_APO_potential[3];
 
 // GLOBAL: CARMA2_HW 0x0074cfa0
+// GLOBAL: CARMA2_SW 0x00743500
 tSlot_info gMax_APO[3];
 
 // GLOBAL: CARMA2_HW 0x0068d8e0
-br_pixelmap* gLit_up_stat;
+// GLOBAL: CARMA2_SW 0x00687938
+br_pixelmap* gLit_op_stat_bloc;
 
 
 // FUNCTION: CARMA2_HW 0x0047d880
+// FUNCTION: CARMA2_SW 0x0047da40
 void C2_HOOK_FASTCALL Modify2DCopyPixelmaps(void) {
     int i;
     int pixel_type;
 
     pixel_type = gBack_screen->type;
+#ifdef REC2_SW
+    for (i = 0; i < (int)REC2_ASIZE(gCursors); i++) {
+        BRPM_convert(gCursors[i], pixel_type);
+    }
+#endif
     for (i = 0; i < (int)REC2_ASIZE(gFonts); i++) {
         BRPM_convert(gFonts[i].images, pixel_type);
     }
     BRPM_convert(gIcons_pix, pixel_type);
-    BRPM_convert(gLit_up_stat, pixel_type);
+#ifdef REC2_SW
+    BRPM_convert(gIcons_low_pix, pixel_type);
+#endif
+    BRPM_convert(gLit_op_stat_bloc, pixel_type);
 }
 
 // SetupFFBValues
@@ -159,12 +180,20 @@ void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047dab0
+// FUNCTION: CARMA2_SW 0x0047dc90
 void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
     if (gRearview_screen != NULL) {
+#ifdef REC2_SW
+        BrMemFree(gRearview_screen->pixels);
+#endif
         BrPixelmapFree(gRearview_screen);
+#ifdef REC2_SW
+        BrPixelmapFree(gRearview_depth_buffer);
+#endif
         gRearview_screen = NULL;
     }
     if (gProgram_state.mirror_on) {
+#ifdef REC2_HW
         gRearview_screen = BrPixelmapAllocateSub(
             gBack_screen,
             gProgram_state.current_car.mirror_left,
@@ -172,12 +201,32 @@ void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
             gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left,
             gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top);
         gRearview_depth_buffer = gDepth_buffer;
+#endif
+#ifdef REC2_SW
+        void *mirror_pixels = BrMemAllocate(
+            (gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top + 1)
+            * (gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left + 4)
+            * gGraf_specs[gGraf_spec_index].depth_bytes, kMem_back_pixels);
+        if (gScreen->row_bytes < 0) {
+            BrFatal("C:\\Carma2\\Source\\Common\\Init.c", 412,
+                "Bruce bug at line %d, file C:\\Carma2\\Source\\Common\\Init.c", 412);
+        }
+        gRearview_screen = DRPixelmapAllocate(gScreen->type,
+            gProgram_state.current_car.mirror_right - gProgram_state.current_car.mirror_left,
+            gProgram_state.current_car.mirror_bottom - gProgram_state.current_car.mirror_top,
+            mirror_pixels,
+            0);
+#endif
         gRearview_screen->origin_x = (br_int_16)(gRearview_screen->width / 2);
         gRearview_screen->origin_y = (br_int_16)(gRearview_screen->height / 2);
+#ifdef REC2_SW
+        gRearview_depth_buffer = BrPixelmapMatch(gRearview_screen, BR_PMMATCH_DEPTH_16);
+#endif
     }
 }
 
 // FUNCTION: CARMA2_HW 0x0047db30
+// FUNCTION: CARMA2_SW 0x0047ddb0
 void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void) {
     br_camera* camera_ptr;
     float width;
@@ -197,6 +246,7 @@ void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047dc30
+// FUNCTION: CARMA2_SW 0x0047de40
 void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
     int index;
     int x_diff;
@@ -215,6 +265,7 @@ void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
         x_diff = width / 18 & ~0x3;
         height = gGraf_specs[gGraf_spec_index].total_height;
         y_diff = height / 18 & ~0x1;
+#ifdef REC2_HW
         if (gNo_render_indent) {
             gProgram_state.current_render_left = 0;
             gProgram_state.current_render_top = 0;
@@ -226,6 +277,13 @@ void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
             gProgram_state.current_render_top = gRender_indent * y_diff;
             gProgram_state.current_render_bottom = height - gRender_indent * y_diff;
         }
+#endif
+#ifdef REC2_SW
+        gProgram_state.current_render_left = gRender_indent * x_diff;
+        gProgram_state.current_render_top = gRender_indent * y_diff;
+        gProgram_state.current_render_right = width - gRender_indent * x_diff;
+        gProgram_state.current_render_bottom = height - gRender_indent * y_diff;
+#endif
     }
 }
 
@@ -264,6 +322,7 @@ void C2_HOOK_FASTCALL InstallFindFailedHooks(void) {
 
 // Init2DStuffForPolyFonts
 
+#ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x0047e610
 void C2_HOOK_FASTCALL InitLineStuff(void) {
 
@@ -734,8 +793,20 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelToDim(gOffence_model, gOffence_dim_x, gOffence_dim_y, gOffence_dim_w, gOffence_dim_h);
     BrModelUpdate(gOffence_model, BR_MODU_VERTEX_POSITIONS);
 }
+#endif
 
 // CheckTimedDemo
+
+#ifdef REC2_HW
+#define CONFIGURE_DEFAULT_TRACK_MATERIAL(MAT) \
+    (MAT)->colour = ((br_colour*)gRender_palette->pixels)[227]; \
+    MAT)->ka = 1.0f; \
+    MAT)->kd = 0.0f; \
+    MAT)->ks = 0.0f;
+#endif
+#ifdef REC2_SW
+#define CONFIGURE_DEFAULT_TRACK_MATERIAL(MAT)
+#endif
 
 // void InitialiseApplication(int argc, char **argv);
 #define InitialiseApplication(pArgc, pArgv) \
@@ -793,15 +864,16 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
         InitMap(); \
         PrintMemoryDump(0, "AFTER INITIALISING GENERAL STORAGE AND LOADING IN REG"); \
         Init2DStuffForPolyFonts(); \
-        InitLineStuff(); \
-        InitSmokeStuff(); \
-        PrintMemoryDump(0, "AFTER INITING LINE AND SMOKE STUFF"); \
-        Init2DStuff(); \
-        InitTintedPolyStuff(); \
-        gHud_tinted1 = CreateTintedPoly(0, 0, 640, 480, 2, 0, 0, 0); \
-        gHud_tinted2 = CreateTintedPoly(0, 0, 640, 480, 3, 2, 0, 0); \
-        PrintMemoryDump(0, "AFTER INITING 2D STUFF"); \
-        InitLightingEffects(); \
+        REC2_HW_RUN(InitLineStuff();) \
+        REC2_HW_RUN(InitSmokeStuff();) \
+        REC2_HW_RUN(PrintMemoryDump(0, "AFTER INITING LINE AND SMOKE STUFF");) \
+        REC2_HW_RUN(Init2DStuff();) \
+        REC2_HW_RUN(InitTintedPolyStuff();) \
+        REC2_SW_RUN(gHud_tinted1 = CreateTintedPoly(0, 0, 320, 200, 2, 0, 0, 0);) \
+        REC2_HW_RUN(gHud_tinted1 = CreateTintedPoly(0, 0, 640, 480, 2, 0, 0, 0);) \
+        REC2_HW_RUN(gHud_tinted2 = CreateTintedPoly(0, 0, 640, 480, 3, 2, 0, 0);) \
+        REC2_HW_RUN(PrintMemoryDump(0, "AFTER INITING 2D STUFF");) \
+        REC2_HW_RUN(InitLightingEffects();) \
         LoadInterfaceStrings(); \
         PrintMemoryDump(0, "AFTER INITING INTERFACE STRINGS"); \
         PrintMemoryDump(0, "AFTER INITING ACTION REPLAY"); \
@@ -821,10 +893,10 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
         gDefault_track_material = BrMaterialAllocate("gDefault_track_material"); \
         gDefault_track_material->index_base = 227; \
         gDefault_track_material->index_range = 1; \
-        gDefault_track_material->colour = ((br_colour*)gRender_palette->pixels)[227]; \
-        gDefault_track_material->ka = 1.0f; \
-        gDefault_track_material->kd = 0.0f; \
-        gDefault_track_material->ks = 0.0f; \
+        REC2_HW_RUN(gDefault_track_material->colour = ((br_colour*)gRender_palette->pixels)[227];) \
+        REC2_HW_RUN(gDefault_track_material->ka = 1.0f;) \
+        REC2_HW_RUN(gDefault_track_material->kd = 0.0f;) \
+        REC2_HW_RUN(gDefault_track_material->ks = 0.0f;) \
         BrMaterialAdd(gDefault_track_material); \
         InitPowerups(); \
         PrintMemoryDump(0, "AFTER INITING POWERUPS"); \
@@ -882,6 +954,7 @@ void C2_HOOK_FASTCALL DoDevelopmentThings(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047dd20
+// FUNCTION: CARMA2_SW 0x0047df00
 void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 
     PDInitialiseSystem();
@@ -891,6 +964,7 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 }
 
 // FUNCTION: CARMA2_HW 0x00481620
+// FUNCTION: CARMA2_SW 0x0047e7a0
 void C2_HOOK_FASTCALL InitGameAccordingToSkillLevel(void) {
     int i;
 
@@ -904,6 +978,7 @@ void C2_HOOK_FASTCALL InitGameAccordingToSkillLevel(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004816b0
+// FUNCTION: CARMA2_SW 0x0047e830
 void C2_HOOK_FASTCALL InitGame(int pStart_race) {
     int i;
 
@@ -942,12 +1017,14 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 // InitRace
 
 // FUNCTION: CARMA2_HW 0x00481e90
+// FUNCTION: CARMA2_SW 0x0047efd0
 int C2_HOOK_FASTCALL GetScreenSize(void) {
 
     return gRender_indent;
 }
 
 // FUNCTION: CARMA2_HW 0x00481ea0
+// FUNCTION: CARMA2_SW 0x0047efe0
 void C2_HOOK_FASTCALL SetScreenSize(int pNew_size) {
 
     gRender_indent = pNew_size;

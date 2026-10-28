@@ -133,7 +133,7 @@ extern float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_
 
 // LimitImpactScale
 
-// GetImpactScale
+extern float C2_HOOK_FASTCALL GetImpactScale(const br_vector3* pP, int pCount, const br_vector3* pVertices, float pMax_dist_sq);
 
 extern int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq);
 
@@ -373,7 +373,7 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // TotallySpamTheCar
 
-// DRActorEnumRecurseUltraPlus
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, br_actor_enum_cbfn* pCallback, void* pArg);
 
 // FireOffBitsCB
 

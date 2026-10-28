@@ -3442,6 +3442,7 @@ typedef struct {
     undefined field_0x2dd[3];
 } tSmashable_item_spec;
 
+#ifdef REC2_HW
 typedef struct {
     tRGB_colour directional;
     float ambient_else;
@@ -3451,6 +3452,20 @@ typedef struct {
     float ambient_0;
     float diffuse_0;
 } tLighting_data;
+#endif
+#ifdef REC2_SW
+typedef struct {
+    tRGB_colour directional;
+    float ambient_else;
+    float ambient_1;
+    float ambient_0;
+} tLighting_data_ambient;
+typedef struct {
+    float diffuse_else;
+    float diffuse_1;
+    float diffuse_0;
+} tLighting_data_diffuse;
+#endif
 
 typedef struct tMaterial_exception {
     struct tMaterial_exception* next;
@@ -3495,7 +3510,8 @@ typedef struct {
     br_vector3 v;
     br_vector3 omega;
     undefined field_0x34;
-    undefined field_0x35[0x38-0x35];
+    tU8 priority;
+    undefined field_0x36[0x38-0x36];
 } tSmash_vertex;
 
 typedef struct {
@@ -5634,6 +5650,7 @@ enum {
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
     kFatalError_CannotLoadFontImage_S = 0x14,
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
+    kFatalError_CannotLoadCursorImage = 0x16,
     kFatalError_ScreenWidthHeightDoesNotMatchGrafData = 0x18,
     kFatalError_CannotLoadCarResolutionIndependentFile = 0x19,
     kFatalError_CannotLoadDamageImage = 0x1b,

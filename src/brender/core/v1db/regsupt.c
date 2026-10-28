@@ -17,6 +17,7 @@
 #include "core/fw/register.h"
 
 // FUNCTION: CARMA2_HW 0x0051ed00
+// FUNCTION: CARMA2_SW 0x0051a3a0
 br_model* C2_HOOK_CDECL BrModelAdd(br_model* model) {
 
     BrRegistryAdd(&v1db.reg_models, model);
@@ -25,6 +26,7 @@ br_model* C2_HOOK_CDECL BrModelAdd(br_model* model) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051ed30
+// FUNCTION: CARMA2_SW 0x0051a3d0
 br_model* C2_HOOK_CDECL BrModelRemove(br_model* model) {
 
     BrModelClear(model);
@@ -32,6 +34,7 @@ br_model* C2_HOOK_CDECL BrModelRemove(br_model* model) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051ed50
+// FUNCTION: CARMA2_SW 0x0051a3f0
 br_model* C2_HOOK_CDECL BrModelFind(const char* pattern) {
 
     return BrRegistryFind(&v1db.reg_models, pattern);
@@ -49,6 +52,7 @@ br_model_find_cbfn* C2_HOOK_CDECL BrModelFindHook(br_model_find_cbfn* hook) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051ed70
+// FUNCTION: CARMA2_SW 0x0051a410
 br_uint_32 C2_HOOK_CDECL BrModelAddMany(br_model** items, int n) {
     int i;
     int r;
@@ -86,18 +90,21 @@ br_uint_32 C2_HOOK_CDECL BrModelFindMany(const char* pattern, br_model** items, 
 }
 
 // FUNCTION: CARMA2_HW 0x0051ee20
+// FUNCTION: CARMA2_SW 0x0051a4c0
 br_uint_32 C2_HOOK_CDECL BrModelCount(const char* pattern) {
 
     return BrRegistryCount(&v1db.reg_models, pattern);
 }
 
 // FUNCTION: CARMA2_HW 0x0051ee30
+// FUNCTION: CARMA2_SW 0x0051a4d0
 br_uint_32 C2_HOOK_CDECL BrModelEnum(const char* pattern, br_model_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&v1db.reg_models, pattern, (br_enum_cbfn*)callback, arg);
 }
 
 // FUNCTION: CARMA2_HW 0x0051ee50
+// FUNCTION: CARMA2_SW 0x0051a4f0
 br_material* C2_HOOK_CDECL BrMaterialAdd(br_material* material) {
 
     BrRegistryAdd(&v1db.reg_materials, material);
@@ -106,6 +113,7 @@ br_material* C2_HOOK_CDECL BrMaterialAdd(br_material* material) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051ee80
+// FUNCTION: CARMA2_SW 0x0051a520
 br_material* C2_HOOK_CDECL BrMaterialRemove(br_material* material) {
 
     BrMaterialClear(material);
@@ -113,6 +121,7 @@ br_material* C2_HOOK_CDECL BrMaterialRemove(br_material* material) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051eea0
+// FUNCTION: CARMA2_SW 0x0051a540
 br_material* C2_HOOK_CDECL BrMaterialFind(const char* pattern) {
 
     return BrRegistryFind(&v1db.reg_materials, pattern);
@@ -130,6 +139,7 @@ br_material_find_cbfn* C2_HOOK_CDECL BrMaterialFindHook(br_material_find_cbfn* h
 }
 
 // FUNCTION: CARMA2_HW 0x0051eec0
+// FUNCTION: CARMA2_SW 0x0051a560
 br_uint_32 C2_HOOK_CDECL BrMaterialAddMany(br_material** items, int n) {
     int i;
     int r;
@@ -165,18 +175,21 @@ br_uint_32 C2_HOOK_CDECL BrMaterialFindMany(const char* pattern, br_material** i
 }
 
 // FUNCTION: CARMA2_HW 0x0051ef70
+// FUNCTION: CARMA2_SW 0x0051a610
 br_uint_32 C2_HOOK_CDECL BrMaterialCount(const char* pattern) {
 
     return BrRegistryCount(&v1db.reg_materials, pattern);
 }
 
 // FUNCTION: CARMA2_HW 0x0051ef80
+// FUNCTION: CARMA2_SW 0x0051a620
 br_uint_32 C2_HOOK_CDECL BrMaterialEnum(const char* pattern, br_material_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&v1db.reg_materials, pattern, (br_enum_cbfn*)callback, arg);
 }
 
 // FUNCTION: CARMA2_HW 0x0051efa0
+// FUNCTION: CARMA2_SW 0x0051a640
 br_pixelmap* C2_HOOK_CDECL BrMapAdd(br_pixelmap* pixelmap) {
 
     BrRegistryAdd(&v1db.reg_textures, pixelmap);
@@ -185,6 +198,7 @@ br_pixelmap* C2_HOOK_CDECL BrMapAdd(br_pixelmap* pixelmap) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051efd0
+// FUNCTION: CARMA2_SW 0x0051a670
 br_pixelmap* C2_HOOK_CDECL BrMapRemove(br_pixelmap* pixelmap) {
 
     BrBufferClear(pixelmap);
@@ -192,6 +206,7 @@ br_pixelmap* C2_HOOK_CDECL BrMapRemove(br_pixelmap* pixelmap) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051eff0
+// FUNCTION: CARMA2_SW 0x0051a690
 br_pixelmap* C2_HOOK_CDECL BrMapFind(const char* pattern) {
 
     return BrRegistryFind(&v1db.reg_textures, pattern);
@@ -209,6 +224,7 @@ br_map_find_cbfn* C2_HOOK_CDECL BrMapFindHook(br_map_find_cbfn* hook) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f010
+// FUNCTION: CARMA2_SW 0x0051a6b0
 br_uint_32 C2_HOOK_CDECL BrMapAddMany(br_pixelmap** items, int n) {
     int i;
     int r;
@@ -251,12 +267,14 @@ br_uint_32 C2_HOOK_CDECL BrMapCount(const char* pattern) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f0d0
+// FUNCTION: CARMA2_SW 0x0051a770
 br_uint_32 C2_HOOK_CDECL BrMapEnum(const char* pattern, br_map_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&v1db.reg_textures, pattern, (br_enum_cbfn*)callback, arg);
 }
 
 // FUNCTION: CARMA2_HW 0x0051f0f0
+// FUNCTION: CARMA2_SW 0x0051a790
 br_pixelmap* C2_HOOK_CDECL BrTableAdd(br_pixelmap* pixelmap) {
 
     BrRegistryAdd(&v1db.reg_tables, pixelmap);
@@ -265,6 +283,7 @@ br_pixelmap* C2_HOOK_CDECL BrTableAdd(br_pixelmap* pixelmap) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f120
+// FUNCTION: CARMA2_SW 0x0051a7c0
 br_pixelmap* C2_HOOK_CDECL BrTableRemove(br_pixelmap* pixelmap) {
 
     BrBufferClear(pixelmap);
@@ -272,6 +291,7 @@ br_pixelmap* C2_HOOK_CDECL BrTableRemove(br_pixelmap* pixelmap) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f140
+// FUNCTION: CARMA2_SW 0x0051a7e0
 br_pixelmap* C2_HOOK_CDECL BrTableFind(const char* pattern) {
 
     return BrRegistryFind(&v1db.reg_tables, pattern);
@@ -289,6 +309,7 @@ br_table_find_cbfn* C2_HOOK_CDECL BrTableFindHook(br_table_find_cbfn* hook) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f160
+// FUNCTION: CARMA2_SW 0x0051a800
 br_uint_32 C2_HOOK_CDECL BrTableAddMany(br_pixelmap** items, int n) {
     int i;
     int r = 0;
@@ -331,6 +352,7 @@ br_uint_32 C2_HOOK_CDECL BrTableCount(const char* pattern) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f220
+// FUNCTION: CARMA2_SW 0x0051a8c0
 br_uint_32 C2_HOOK_CDECL BrTableEnum(const char* pattern, br_table_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&v1db.reg_tables, pattern, (br_enum_cbfn*)callback, arg);

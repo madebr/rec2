@@ -14,6 +14,7 @@
 
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
+extern int gFrontend_change_car_selected_car;
 
 extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
@@ -81,9 +82,9 @@ extern int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend);
 
-// NewGameOutfunc
+extern int C2_HOOK_FASTCALL NewGameOutfunc(tFrontend_spec* pFrontend);
 
-// NewGameInfunc
+extern int C2_HOOK_FASTCALL NewGameInfunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend);
 
@@ -155,7 +156,7 @@ extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend);
 
-// ChangeCarOK
+extern int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend);
 
 // CarClickPrev
 
@@ -329,7 +330,7 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 // Joystick_BackupSettings
 
-// Controls_JoystickToggle
+extern int C2_HOOK_FASTCALL Controls_JoystickToggle(tFrontend_spec* pFrontend);
 
 // Controls_JoystickDpadToggle
 
@@ -339,7 +340,7 @@ extern void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider);
 
 extern void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider);
 
-// DisplayJoystickSettings
+extern void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec* pFrontend);
 
 // SaveAllJoystickData
 
@@ -383,7 +384,7 @@ extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
 // NetSync_Draw
 
-// NetSync_Start
+extern int C2_HOOK_FASTCALL NetSync_Start(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
