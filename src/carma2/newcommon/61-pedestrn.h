@@ -320,7 +320,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // MakeMaterialBlendy
 
-// UnmakeMaterialBlendy
+extern void C2_HOOK_FASTCALL UnmakeMaterialBlendy(br_material* pMaterial);
 
 // TurnOffCollisions
 
@@ -335,8 +335,6 @@ extern void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel);
 // TurnOffGhostPeds
 
 extern void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_info);
-
-extern void C2_HOOK_FASTCALL BlendifyMaterial100(br_material* pMaterial);
 
 // MutatePed
 

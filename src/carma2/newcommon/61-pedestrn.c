@@ -387,7 +387,13 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // MakeMaterialBlendy
 
-// UnmakeMaterialBlendy
+// FUNCTION: CARMA2_HW 0x004d6be0
+// FUNCTION: CARMA2_SW 0x004d31e0
+void C2_HOOK_FASTCALL UnmakeMaterialBlendy(br_material* pMaterial) {
+
+  BlendifyMaterial(pMaterial, 100);
+  BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+}
 
 // TurnOffCollisions
 
@@ -410,14 +416,6 @@ void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel) {
 // FUNCTION: CARMA2_SW 0x004d3190
 void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_info) {
     pCollision_info->flags |= 0x4;
-}
-
-// FUNCTION: CARMA2_HW 0x004d6be0
-// FUNCTION: CARMA2_SW 0x004d31e0
-void C2_HOOK_FASTCALL BlendifyMaterial100(br_material* pMaterial) {
-
-    BlendifyMaterial(pMaterial, 100);
-    BrMaterialUpdate(pMaterial, BR_MATU_ALL);
 }
 
 // MutatePed
