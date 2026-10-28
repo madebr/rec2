@@ -12,6 +12,7 @@
 #include "16-graphics1.h"
 #include "32-spark.h"
 #include "49-physics.h"
+#include "53-controls.h"
 #include "61-pedestrn.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -658,7 +659,12 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // GotVouchers
 
-// MungeVouchers
+// FUNCTION: CARMA2_HW 0x004de810
+// FUNCTION: CARMA2_SW 0x004dad10
+void C2_HOOK_FASTCALL MungeVouchers(tPowerup* pPowerup, tU32 pPeriod) {
+
+    pPowerup->current_value = GetRecoverVoucherCount();
+}
 
 // FUNCTION: CARMA2_HW 0x004de820
 // FUNCTION: CARMA2_SW 0x004dad20
