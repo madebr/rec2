@@ -22,24 +22,31 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0074d3b0
+// GLOBAL: CARMA2_SW 0x00743910
 int gCredits_wasting_car[3];
 
 // GLOBAL: CARMA2_HW 0x0075b930
+// GLOBAL: CARMA2_SW 0x00751e90
 float gCredits_per_unit_car_damage[3];
 
 // GLOBAL: CARMA2_HW 0x0075b9b0
+// GLOBAL: CARMA2_SW 0x00751f10
 int gTime_rolling_car[3];
 
 // GLOBAL: CARMA2_HW 0x00761a50
+// GLOBAL: CARMA2_SW 0x00757fb0
 int gCredits_rolling_car[3];
 
 // GLOBAL: CARMA2_HW 0x00761ed0
+// GLOBAL: CARMA2_SW 0x_00758430
 float gSeconds_per_unit_car_damage[3];
 
 // GLOBAL: CARMA2_HW 0x00763520
+// GLOBAL: CARMA2_SW 0x00759a80
 int gTime_wasting_car[3];
 
 // GLOBAL: CARMA2_HW 0x00763530
+// GLOBAL: CARMA2_SW 0x00759a90
 int gTime_per_ped_kill[3];
 
 // CheckLastCar

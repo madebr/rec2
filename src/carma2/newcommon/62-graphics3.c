@@ -54,6 +54,7 @@ const int gArrows[2][4][60] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00655dfc
+// GLOBAL: CARMA2_SW 0x00650ce4
 int gMini_map_visible = 2;
 
 // GLOBAL: CARMA2_HW 0x0074a780
@@ -71,57 +72,74 @@ tCar_spec* gTarget_lock_car_1;
 tCar_spec* gTarget_lock_car_2;
 
 // GLOBAL: CARMA2_HW 0x0068d8c8
+// GLOBAL: CARMA2_SW 0x00687920
 int gTarget_lock_enabled;
 
 // GLOBAL: CARMA2_HW 0x0068d8cc
+// GLOBAL: CARMA2_SW 0x00687924
 int gInitMap_done;
 
 // GLOBAL: CARMA2_HW 0x0074abdc
+// GLOBAL: CARMA2_SW 0x00741288
 float gHeadup_map_x_float;
 
 // GLOBAL: CARMA2_HW 0x0074abd8
+// GLOBAL: CARMA2_SW 0x00741284
 float gHeadup_map_y_float;
 
 // GLOBAL: CARMA2_HW 0x0074abcc
+// GLOBAL: CARMA2_SW 0x00741278
 float gHeadup_map_w_float;
 
 // GLOBAL: CARMA2_HW 0x0074ab80
+// GLOBAL: CARMA2_SW 0x00741230
 float gHeadup_map_h_float;
 
 // GLOBAL: CARMA2_HW 0x0074ab88
+// GLOBAL: CARMA2_SW 0x00741234
 int gINT_0074ab88;
 
 // GLOBAL: CARMA2_HW 0x0074ab8c
+// GLOBAL: CARMA2_SW 0x00741238
 int gINT_0074ab8c;
 
 // GLOBAL: CARMA2_HW 0x0074ab94
+// GLOBAL: CARMA2_SW 0x00741240
 int gINT_0074ab94;
 
 // GLOBAL: CARMA2_HW 0x0074ab98
+// GLOBAL: CARMA2_SW 0x00741244
 int gHeadup_map_half_height;
 
 // GLOBAL: CARMA2_HW 0x0074abe4
+// GLOBAL: CARMA2_SW 0x00741290
 int gHeadup_map_half_width;
 
 // GLOBAL: CARMA2_HW 0x0074abec
+// GLOBAL: CARMA2_SW 0x00741298
 int gINT_0074abec;
 
 // GLOBAL: CARMA2_HW 0x0068d8d8
 br_pixelmap* gMap_overlay;
 
 // GLOBAL: CARMA2_HW 0x0074aba0
+// GLOBAL: CARMA2_SW 0x0074124c
 int gMini_map_x;
 
 // GLOBAL: CARMA2_HW 0x0074aba4
+// GLOBAL: CARMA2_SW 0x00741250
 int gMini_map_y;
 
 // GLOBAL: CARMA2_HW 0x0074abd4
+// GLOBAL: CARMA2_SW 0x00741280
 int gINT_0074abd4;
 
 // GLOBAL: CARMA2_HW 0x0074abd0
+// GLOBAL: CARMA2_SW 0x0074127c
 int gINT_0074abd0;
 
 // GLOBAL: CARMA2_HW 0x0068d8dc
+// GLOBAL: CARMA2_SW 0x00687934
 br_pixelmap* gMini_map;
 
 // GLOBAL: CARMA2_HW 0x00655f04
@@ -131,18 +149,23 @@ int gINT_00655f04;
 int gINT_00655f08;
 
 // GLOBAL: CARMA2_HW 0x0068d8a0
+// GLOBAL: CARMA2_SW 0x006878f8
 float gFLOAT_0068d8a0;
 
 // GLOBAL: CARMA2_HW 0x0068d8a4
+// GLOBAL: CARMA2_SW 0x006878fc
 float gFLOAT_0068d8a4;
 
 // GLOBAL: CARMA2_HW 0x0068d8a8
+// GLOBAL: CARMA2_SW 0x00687900
 float gMini_map_arrow_z;
 
 // GLOBAL: CARMA2_HW 0x0074ab9c
+// GLOBAL: CARMA2_SW 0x00741248
 float gFLOAT_0074ab9c;
 
 // GLOBAL: CARMA2_HW 0x0074abb8
+// GLOBAL: CARMA2_SW 0x00741264
 float gFLOAT_0074abb8;
 
 // GLOBAL: CARMA2_HW 0x0074abbc
@@ -162,12 +185,15 @@ int gMap_render_height_i;
 int gMap_render_width_i;
 
 // GLOBAL: CARMA2_HW 0x0068d6e4
+// GLOBAL: CARMA2_SW 0x0068773c
 br_pixelmap* gCheckpoint_numbers;
 
 // GLOBAL: CARMA2_HW 0x0068d884
+// GLOBAL: CARMA2_SW 0x006878dc
 br_pixelmap* gSmashy_dot;
 
 // GLOBAL: CARMA2_HW 0x0068c87c
+// GLOBAL: CARMA2_SW 0x006868d4
 br_pixelmap* gAlt_meter;
 
 // GLOBAL: CARMA2_HW 0x0068c880
@@ -183,21 +209,27 @@ br_vector3 gOrigin_map;
 br_vector2 gOrigin_headup_map;
 
 // GLOBAL: CARMA2_HW 0x0068c860
+// GLOBAL: CARMA2_SW 0x006868b8
 int gCheckpoint_digit_height;
 
 // GLOBAL: CARMA2_HW 0x0068d8bc
+// GLOBAL: CARMA2_SW 0x00687914
 int gCheckpoint_digit_center_x;
 
 // GLOBAL: CARMA2_HW 0x0068c85c
+// GLOBAL: CARMA2_SW 0x006868b4
 tU32 gCheckpoint_digit_center_y;
 
 // GLOBAL: CARMA2_HW 0x0068d6f8
+// GLOBAL: CARMA2_SW 0x00687750
 tOppo_status_messages gOppo_status_messages[9];
 
 // GLOBAL: CARMA2_HW 0x0074abe0
+// GLOBAL: CARMA2_SW 0x0074128c
 int gCount_smashable_race_targets;
 
 // GLOBAL: CARMA2_HW 0x0068c898
+// GLOBAL: CARMA2_SW 0x006868f0
 tSmashable_race_target gSmashable_race_targets[300];
 
 // CarArrowColour
@@ -547,6 +579,7 @@ static void C2_HOOK_FASTCALL ReadMoodMessages(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00496e30
+// FUNCTION: CARMA2_SW 0x00493ca0
 void C2_HOOK_FASTCALL InitMap(void) {
 
     if (!gInitMap_done) {
@@ -587,6 +620,11 @@ void C2_HOOK_FASTCALL InitMap(void) {
     gINT_0074abec = gHeadup_map_h + 2 * gINT_0074ab88;
     gHeadup_map_half_width = gHeadup_map_w / 2;
     gHeadup_map_half_height = gHeadup_map_h / 2;
+#ifdef REC2_SW
+    if (gMap_overlay != NULL) {
+        BrPixelmapFree(gMap_overlay);
+    }
+#endif
     if (gMap_overlay == NULL) {
         gMap_overlay = DRPixelmapAllocate(gBack_screen->type, MAX(gINT_0074abec, gINT_0074ab94), MAX(gINT_0074abec, gINT_0074ab94), NULL, 0);
     }
@@ -600,8 +638,10 @@ void C2_HOOK_FASTCALL InitMap(void) {
     if (gMini_map != NULL) {
         BrPixelmapFree(gMini_map);
     }
+#ifdef REC2_HW
     gINT_00655f04 = gHeadup_map_x;
     gINT_00655f08 = gHeadup_map_y;
+#endif
     gMini_map = DRPixelmapAllocateSub(gBack_screen,
         gMini_map_x,
         gMini_map_y,
@@ -613,7 +653,8 @@ void C2_HOOK_FASTCALL InitMap(void) {
     gFLOAT_0068d8a0 = (float)gINT_0074abd4;
     gFLOAT_0068d8a4 = (float)gINT_0074abd0;
     gMini_map_arrow_z = 0.0f;
-    gFLOAT_0074ab9c = (float)REC2_SQR((double)(gHeadup_map_half_height + gHeadup_map_half_width) * 0.45);
+    gFLOAT_0074ab9c = (float)((double)(gHeadup_map_half_height + gHeadup_map_half_width) * 0.45);
+    gFLOAT_0074ab9c = REC2_SQR(gFLOAT_0074ab9c);
     gFLOAT_0074abb8 = (float)REC2_SQR(gCurrent_graf_data->field_0x51c + 1);
     if (!gInitMap_done) {
         gCheckpoint_numbers = LoadPixelmap("CPNUMB.PIX");
@@ -633,6 +674,12 @@ void C2_HOOK_FASTCALL InitMap(void) {
         gCheckpoint_digit_height = gCheckpoint_numbers->height / 10;
         gCheckpoint_digit_center_y = gCheckpoint_digit_height / 2;
         gCheckpoint_digit_center_x = gCheckpoint_numbers->width / 2;
+#ifdef REC2_SW
+        gIcons_low_pix = LoadPixelmap("CARICONSLO.pix");
+        if (gIcons_low_pix != NULL) {
+            BrMapAdd(gIcons_low_pix);
+        }
+#endif
         gIcons_pix = LoadPixelmap("CARICONS.PIX");
         if (gIcons_pix != NULL) {
             BRPM_convert(gIcons_pix, gBack_screen->type);
@@ -643,6 +690,7 @@ void C2_HOOK_FASTCALL InitMap(void) {
     gInitMap_done = 1;
 }
 
+#ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x004973b0
 void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
     int i;
@@ -715,6 +763,7 @@ void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
     gCar_icons_model_actor->material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE;
     BrMaterialAdd(gCar_icons_model_actor->material);
 }
+#endif
 
 static void C2_HOOK_FASTCALL MapChanged(void) {
 
@@ -723,6 +772,7 @@ static void C2_HOOK_FASTCALL MapChanged(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00497620
+// FUNCTION: CARMA2_SW 0x00494250
 void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0) {
 
     if (KeyIsDown(31) && pKey0) {
@@ -759,6 +809,7 @@ void C2_HOOK_FASTCALL InitSmashTargets(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004977f0
+// FUNCTION: CARMA2_SW 0x00494420
 void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown) {
     int index;
 
