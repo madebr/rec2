@@ -148,8 +148,8 @@ tSmash_vertex* C2_HOOK_FASTCALL FindShrapnelFragment(br_model* pModel, tU32 pId,
             i = -1;
             break;
         }
-        if (fragment->field_0x35[0] < lowest_priority) {
-            lowest_priority = fragment->field_0x35[0];
+        if (fragment->priority < lowest_priority) {
+            lowest_priority = fragment->priority;
             lowest_priority_fragment = fragment;
         }
     }
@@ -168,7 +168,7 @@ tSmash_vertex* C2_HOOK_FASTCALL FindShrapnelFragment(br_model* pModel, tU32 pId,
     if (fragment->actor->parent == NULL) {
         BrActorAdd(gNon_track_actor, fragment->actor);
     }
-    fragment->field_0x35[0] = (tU8)pPriority;
+    fragment->priority = (tU8)pPriority;
     fragment->field_0x18 = pId;
     fragment->field_0xc = GetTotalTime();
     fragment->field_0x34 = 1;
