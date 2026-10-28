@@ -27,6 +27,8 @@ extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type
 
 extern void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount);
 
+extern void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount);
+
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
 extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
@@ -57,7 +59,7 @@ extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 // PrepareCars
 
-// CalcGraphicalWheelStuff
+extern void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 // FinishCars
 
@@ -83,7 +85,7 @@ extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 // APTCPreCollision
 
-// SetCollisionFlagsAndStuff
+extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject);
 
 // APTCPostCollision
 

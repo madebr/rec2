@@ -12,19 +12,49 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tNet_game_options gNet_settings[9];
+
+extern tU32 gFrontend_last_scroll;
+
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
 extern int gFrontend_change_car_selected_car;
 
-extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
+// SetGameTarget
 
-extern int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY);
+// SetOptions
+
+// ReadNetGameChoices
+
+extern int C2_HOOK_FASTCALL PickARandomCar(void);
+
+// RequestCarDetails
+
+extern void C2_HOOK_FASTCALL PollCarDetails(tNet_game_details* pNet_game);
+
+extern void C2_HOOK_FASTCALL SetNetAvailability(tNet_game_options* pOptions);
+
+extern void C2_HOOK_FASTCALL DefaultNetSettings(void);
+
+// DisposeJoinableGame
+
+// InitGamesToJoin
+
+// DisposeJoinList
+
+// AddToJoinList
+
+// FillInRaceDescription
+
+extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex);
 
 // ScrollUp
 
 // ScrollDn
+
+extern int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY);
 
 // static void C2_HOOK_FASTCALL SetLevelBar(tFrontend_spec* pFrontend, int pLevel_index, int pSelected_item);
 
@@ -108,7 +138,7 @@ extern int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend);
 
 // NetJoinChooseThisGame
 
-// ChooseNetCar
+extern int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_options* pOptions, int* pCar_index, int pIm_the_host_so_fuck_off);
 
 // InitNetStorageSpace
 
@@ -146,7 +176,7 @@ extern int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend);
 
 // testUp
 
-// testDn
+extern int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend);
 
 // FRONTEND_MainMenuHandler
 
@@ -166,7 +196,7 @@ extern int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend);
 
 // FRONTEND_ChangeCarMenuHandler
 
-// StartGameInfunc
+extern int C2_HOOK_FASTCALL StartGameInfunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFrontend);
 

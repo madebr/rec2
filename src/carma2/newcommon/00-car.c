@@ -8,18 +8,24 @@
 
 #include "00-car.h"
 
+#include "13-crush1.h"
 #include "15-displays.h"
 #include "22-replay.h"
+#include "23-piping.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "58-crush2.h"
+#include "60-phil.h"
 #include "brender/brender.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrpb.h"
 
 #include "c2_stdio.h"
+#include "rec2_macros.h"
+
+#include <math.h>
 
 // GLOBAL: CARMA2_HW 0x00763500
 // GLOBAL: CARMA2_SW 0x00759a60
@@ -83,6 +89,13 @@ void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int p
 // FUNCTION: CARMA2_SW 0x00413d30
 void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
     DamageUnit(&gProgram_state.current_car, eDamage_engine, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413d90
+// FUNCTION: CARMA2_SW 0x00413dc0
+void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lf_wheel, pDamage_amount);
     SortOutSmoke(&gProgram_state.current_car);
 }
 
@@ -168,7 +181,17 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // PrepareCars
 
-// CalcGraphicalWheelStuff
+// FUNCTION: CARMA2_HW 0x004157e0
+// FUNCTION: CARMA2_SW 0x00415810
+void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar) {
+
+    pCar->steering_angle = (br_scalar)BrRadianToDegree(atan((pCar->wpos[0].v[2] - pCar->wpos[2].v[2]) * (pCar->field_0x1260 + pCar->curvature)));
+    pCar->lr_sus_position = (br_scalar)((pCar->wpos[0].v[1] - pCar->oldd[0]) / WORLD_SCALE_D);
+    pCar->rr_sus_position = (br_scalar)((pCar->wpos[1].v[1] - pCar->oldd[1]) / WORLD_SCALE_D);
+    pCar->lf_sus_position = (br_scalar)((pCar->wpos[2].v[1] - pCar->oldd[2]) / WORLD_SCALE_D);
+    pCar->rf_sus_position = (br_scalar)((pCar->wpos[3].v[1] - pCar->oldd[3]) / WORLD_SCALE_D);
+    PipeSingleGraphicalWheelStuff(pCar);
+}
 
 // FinishCars
 
@@ -194,7 +217,33 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // APTCPreCollision
 
-// SetCollisionFlagsAndStuff
+// FUNCTION: CARMA2_HW 0x004161a0
+// FUNCTION: CARMA2_SW 0x004161d0
+void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject) {
+    tPhysics_object* child;
+    tCar_spec* car;
+    int collided;
+
+    for (; pObject != NULL; pObject = pObject->next) {
+        if (gNet_mode == eNet_mode_host) {
+            collided = (pObject->collision_flag & 0x2) != 0 || (pObject->flags & 0x1000) != 0;
+            for (child = pObject->child; child != NULL; child = child->next) {
+                collided |= child->collision_flag & 0x2;
+            }
+            if (collided) {
+                pObject->field_0x49c = gPHIL_last_physics_tick + 40;
+                if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+                    car = pObject->owner;
+                    if (car->driver > 5 && car->car_crush_spec != NULL) {
+                        SetAllShapeStatusFlags(car->car_crush_spec->network_stuff);
+                    }
+                }
+            }
+        }
+        pObject->disable_move_rotate &= ~0x2;
+        SetCollisionFlagsAndStuff(pObject->child);
+    }
+}
 
 // APTCPostCollision
 
