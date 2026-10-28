@@ -43,7 +43,7 @@
 #include "64-movie.h"
 #include "69-sound.h"
 #include "70-packfile.h"
-#include "71-newgame.h"
+#include "72-interface.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "platform.h"
