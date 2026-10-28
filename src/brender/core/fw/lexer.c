@@ -141,10 +141,11 @@ br_lexer_source* C2_HOOK_CDECL BrLexerPop(br_lexer* l) {
     br_lexer_source* s;
 
     s = l->source;
-    if (s != NULL) {
-        l->source = s->prev;
-        BrResFree(s);
+    if (s == NULL) {
+        return NULL;
     }
+    l->source = s->prev;
+    BrResFree(s);
     return s;
 }
 

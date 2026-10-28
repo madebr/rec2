@@ -16,7 +16,6 @@
 // FUNCTION: CARMA2_SW 0x0052b540
 br_error C2_HOOK_CDECL BrLastErrorGet(void** valuep) {
 
-    *valuep = fw.last_error_value;
     return fw.last_error_type;
 }
 
