@@ -25,7 +25,9 @@ extern int gWindowActiveState;  // FIXME: enum (0,1) => background(d3d or glide)
 
 extern int gWindowMovingResizing;
 extern LPDIRECTINPUTDEVICEA gDirectInputDevice;
+#ifdef REC2_HW
 extern char* gRenderer;
+#endif
 extern int gMouseLButtonDown;
 extern int gMouseRButtonDown;
 extern int gMouseCaptured;
@@ -78,5 +80,32 @@ extern void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_on
 extern void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void);
 
 extern int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count);
+
+extern int C2_HOOK_FASTCALL PDstricmp(const char* str1, const char* str2);
+
+#ifdef REC2_SW
+extern void C2_HOOK_FASTCALL SSDXStartDirectDraw(void);
+
+extern void C2_HOOK_FASTCALL SSDXResetSurface(void);
+
+extern void C2_HOOK_FASTCALL PDSwitchToHiresMode(void);
+
+extern void C2_HOOK_FASTCALL PDSwitchToLoresMode(void);
+
+extern void C2_HOOK_FASTCALL FUN_005171c0(void);
+
+extern void C2_HOOK_FASTCALL PDUnlockAttachedSurface(void);
+#endif
+
+extern void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only);
+
+#ifdef REC2_SW
+extern void C2_HOOK_FASTCALL PDPixelmapRectangleCopy(br_pixelmap* pDest, int pDst_x, int pDst_y, br_pixelmap* pSrc, int pSrc_x, int pSrc_y, int width, int height);
+
+extern void C2_HOOK_FASTCALL DPixelmapLine(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour);
+
+extern void C2_HOOK_FASTCALL DPixelmapLine2(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour);
+
+#endif
 
 #endif // C2_WIN32_WIN32_H

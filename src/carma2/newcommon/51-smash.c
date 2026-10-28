@@ -21,18 +21,22 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a55c8
+// GLOBAL: CARMA2_SW 0x0069f628
 tExplosion gExplosions[50];
 
 // GLOBAL: CARMA2_HW 0x006a80f8
 tDecal gDecals[50];
 
 // GLOBAL: CARMA2_HW 0x006a828c
+// GLOBAL: CARMA2_SW 0x006a22ec
 int gCount_queued_smashes;
 
 // GLOBAL: CARMA2_HW 0x006abee8
+// GLOBAL: CARMA2_SW 0x006a5438
 br_vector3 gZero_vector__smash;
 
 // FUNCTION: CARMA2_HW 0x004ea880
+// FUNCTION: CARMA2_SW 0x004e6570
 void C2_HOOK_FASTCALL InitExplosions(void) {
     int i;
     int capacity;
@@ -83,6 +87,7 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
 // MungeExplosions
 
 // FUNCTION: CARMA2_HW 0x004eace0
+// FUNCTION: CARMA2_SW 0x004e69c0
 void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion) {
     C2_HOOK_BUG_ON(sizeof(tExplosion) != 0x78);
 
@@ -179,6 +184,7 @@ void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor) {
 // SmashItIntoVerySmallPiecesIndeed
 
 // FUNCTION: CARMA2_HW 0x004ecfa0
+// FUNCTION: CARMA2_SW 0x004e8c70
 void C2_HOOK_FASTCALL InitSmashQueue(void) {
     gCount_queued_smashes = 0;
 }
@@ -320,6 +326,7 @@ void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smash
 // RepairSmash
 
 // FUNCTION: CARMA2_HW 0x004ef9c0
+// FUNCTION: CARMA2_SW 0x004eb4a0
 void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer_entry* pSmash_data) {
     tCar_crush_smashable_part* smashable = pSmash_data->smashables;
     int i;
@@ -344,6 +351,7 @@ void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF) {
 }
 
 // STUB: CARMA2_HW 0x004efe00
+// STUB: CARMA2_SW 0x004eba60
 void C2_HOOK_FASTCALL InitSmashing(void) {
     NOT_IMPLEMENTED();
 }
@@ -361,11 +369,13 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 // KillAllGlassFragments
 
 // STUB: CARMA2_HW 0x004f02b0
+// STUB: CARMA2_SW 0x004ebf10
 void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004f0310
+// FUNCTION: CARMA2_SW 0x004ebf70
 void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
     int i;
 
@@ -585,11 +595,13 @@ void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_materia
 // LinkSmashies
 
 // FUNCTION: CARMA2_HW 0x004f5a00
+// FUNCTION: CARMA2_SW 0x004f1660
 intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec) {
     return DRActorEnumRecurse(pCar_spec->car_master_actor, RepairModels, pCar_spec);
 }
 
 // FUNCTION: CARMA2_HW 0x004f5a10
+// FUNCTION: CARMA2_SW 0x004f1670
 intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
     tUser_crush_data* user_crush = pActor->user;
     tCar_crush_buffer_entry* crush_data;
@@ -630,22 +642,26 @@ void C2_HOOK_FASTCALL LoadWastedExplosion(FILE* pF, int* pChance_explosion, int*
 }
 
 // FUNCTION: CARMA2_HW 0x004f5f60
+// FUNCTION: CARMA2_SW 0x004f1bc0
 void C2_HOOK_FASTCALL ChangeSmashModel(br_actor* pActor, br_model* pOld_model, br_model* pNew_model) {
     (void)pOld_model;
     pActor->model = pNew_model;
 }
 
 // FUNCTION: CARMA2_HW 0x004f5f70
+// FUNCTION: CARMA2_SW 0x004f1bd0
 void C2_HOOK_FASTCALL TurnOnSmashModel(br_actor* pActor) {
     pActor->render_style = BR_RSTYLE_FACES;
 }
 
 // FUNCTION: CARMA2_HW 0x004f5f80
+// FUNCTION: CARMA2_SW 0x004f1be0
 void C2_HOOK_FASTCALL TurnOffSmashModel(br_actor* pActor) {
     pActor->render_style = BR_RSTYLE_NONE;
 }
 
 // FUNCTION: CARMA2_HW 0x004f5f90
+// FUNCTION: CARMA2_SW 0x004f1bf0
 void C2_HOOK_FASTCALL SmashRemoveSomeFaces(br_model* pModel, tS16 pCount) {
     pModel->nfaces -= pCount;
     DRModelUpdateAndKevificateMaterials(pModel, BR_MODU_ALL);
@@ -654,6 +670,7 @@ void C2_HOOK_FASTCALL SmashRemoveSomeFaces(br_model* pModel, tS16 pCount) {
 // SmashRestoreSomeFaces
 
 // FUNCTION: CARMA2_HW 0x004f6020
+// FUNCTION: CARMA2_SW 0x004f1c80
 void C2_HOOK_FASTCALL TurnOnSmashDecal(int pIndex) {
     BrActorAdd(gOther_selfs[0], gDecals[pIndex].actor);
 }
@@ -664,6 +681,7 @@ void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex) {
 }
 
 // STUB: CARMA2_HW 0x004f6060
+// STUB: CARMA2_SW 0x004f1ca0
 void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture) {
     NOT_IMPLEMENTED();
 }

@@ -18,6 +18,7 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0075b8f8
+// GLOBAL: CARMA2_SW 0x00751e58
 br_pixelmap* gDigits_pix;
 
 // GLOBAL: CARMA2_HW 0x0068d924
@@ -55,6 +56,7 @@ void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, i
 // DistanceBetweenCars
 
 // FUNCTION: CARMA2_HW 0x00498370
+// FUNCTION: CARMA2_SW 0x00494fa0
 int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pShapes, int pPlayer_id) {
     int i;
 
@@ -85,6 +87,7 @@ int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pSh
 // ReceivedMechanics
 
 // FUNCTION: CARMA2_HW 0x00498bb0
+// FUNCTION: CARMA2_SW 0x004957e0
 void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 }
 
@@ -153,6 +156,7 @@ void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
 #endif
 
 // STUB: CARMA2_HW 0x00499a00
+// STUB: CARMA2_SW 0x004962a0
 void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores) {
     NOT_IMPLEMENTED();
 }
@@ -169,6 +173,7 @@ void C2_HOOK_FASTCALL DoNetScores(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049a710
+// FUNCTION: CARMA2_SW 0x00496890
 void C2_HOOK_FASTCALL InitNetHeadups(void) {
 
     gDigits_pix = LoadPixelmap("HDIGITS.PIX");
@@ -178,6 +183,7 @@ void C2_HOOK_FASTCALL InitNetHeadups(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049a730
+// FUNCTION: CARMA2_SW 0x004968b0
 void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
 
     if (gDigits_pix != NULL) {
@@ -300,6 +306,7 @@ void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
 // NetSendEnvironmentChanges
 
 // STUB: CARMA2_HW 0x0049b9a0
+// STUB: CARMA2_SW 0x00497b20
 void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
     NOT_IMPLEMENTED();
 }
@@ -331,11 +338,13 @@ void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pPa
 // SendGameplayToHost
 
 // FUNCTION: CARMA2_HW 0x0049bd00
+// FUNCTION: CARMA2_SW 0x00497e80
 void C2_HOOK_FASTCALL InitNetGameplayStuff(void) {
 
 }
 
 // FUNCTION: CARMA2_HW 0x0049bd10
+// FUNCTION: CARMA2_SW 0x00497e90
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
     NetObtainSystemUserName(gProgram_state.player_name, 32);

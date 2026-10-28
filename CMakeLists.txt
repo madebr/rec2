@@ -58,6 +58,8 @@ if(REC2_MATCHING)
     add_compile_options(-Gr) # __fastcall calling convention
 endif()
 
+set(REC2_EDITIONS _hw _sw)
+
 set(REC2_PLATFORM_CHOICES)
 if(WIN32)
     list(APPEND REC2_PLATFORM_CHOICES "WIN32")
@@ -158,22 +160,33 @@ if(NOT REC2_MATCHING)
     endif()
 endif()
 
+function(register_hw_sw_target TARGET)
+    target_compile_definitions(${TARGET}_hw PUBLIC REC2_HW)
+    target_compile_definitions(${TARGET}_sw PUBLIC REC2_SW)
+    set_property(TARGET ${TARGET}_hw ${TARGET}_sw APPEND PROPERTY COMPATIBLE_INTERFACE_STRING REC2_EDITION)
+    set_property(TARGET ${TARGET}_hw PROPERTY INTERFACE_REC2_EDITION HW)
+    set_property(TARGET ${TARGET}_sw PROPERTY INTERFACE_REC2_EDITION SW)
+endfunction()
+
 add_subdirectory(src/brender)
 add_subdirectory(src/carma2)
 add_subdirectory(src/launcher)
 
 set(CARM2_LOCATION "" CACHE FILEPATH "Path of Carmageddon II")
 if(CARM2_LOCATION)
-    add_custom_target(copy_rec2
-        COMMEND "Copying rec2 to \"${CARM2_LOCATION}\""
-        COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE_NAME:rec2>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2>"
-    )
+    foreach(edition ${REC2_EDITIONS})
+        add_custom_target(copy_rec2${edition}
+            COMMEND "Copying rec2${edition} to \"${CARM2_LOCATION}\""
+            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE_NAME:rec2${edition}>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2${edition}>"
+        )
+    endforeach()
 endif()
 
 if(REC2_MATCHING)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/reccmp.cmake")
 
-    reccmp_add_target(rec2 ID CARMA2_HW)
+    reccmp_add_target(rec2_hw ID CARMA2_HW)
+    reccmp_add_target(rec2_sw ID CARMA2_SW)
     reccmp_add_target(brender_driver_d3d ID D3D)
     reccmp_add_target(carma2 ID LAUNCHER)
 

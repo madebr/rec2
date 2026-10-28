@@ -21,15 +21,20 @@
 #include "globvrpb.h"
 
 // GLOBAL: CARMA2_HW 0x00655e48
+// GLOBAL: CARMA2_SW 0x00650d30
 int gHud_tinted1 = -1;
 
 // GLOBAL: CARMA2_HW 0x00655e4c
+// GLOBAL: CARMA2_SW 0x00650d34
 int gHud_tinted2 = -1;
 
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x00655e50
 int gHud_tinted3 = -1;
+#endif
 
 // GLOBAL: CARMA2_HW 0x00762140
+// GLOBAL: CARMA2_SW 0x007586a0
 int gCredits_checkpoint[3];
 
 // GLOBAL: CARMA2_HW 0x006aaa34
@@ -49,6 +54,7 @@ int gHud_tinted2_visible;
 int gLast_wrong_checkpoint = -1;
 
 // FUNCTION: CARMA2_HW 0x00503050
+// FUNCTION: CARMA2_SW 0x004fe9a0
 int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     int result;
     int count;
@@ -82,6 +88,7 @@ void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00503270
+// FUNCTION: CARMA2_SW 0x004febc0
 void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
     (void)pCheckpoint_index;
 
@@ -254,6 +261,7 @@ void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info) {
 }
 
 // FUNCTION: CARMA2_HW 0x00503ba0
+// FUNCTION: CARMA2_SW 0x004ff4f0
 int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence) {
     int i;
     int new_index;
@@ -296,6 +304,7 @@ int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race
 // InitialiseProgramState
 
 // STUB: CARMA2_HW 0x00503c50
+// STUB: CARMA2_SW 0x004ff5a0
 void C2_HOOK_FASTCALL DoProgram(void) {
     NOT_IMPLEMENTED();
 }

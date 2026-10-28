@@ -35,6 +35,7 @@
     )
 
 // FUNCTION: CARMA2_HW 0x00544830
+// FUNCTION: CARMA2_SW 0x0053fed0
 br_token C2_HOOK_STDCALL OnScreenCheck(br_soft_renderer* self, br_matrix4* model_to_screen, br_bounds3* bounds) {
     int accept = 1;
     br_vector4 eqn;

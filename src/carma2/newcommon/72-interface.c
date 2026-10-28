@@ -39,98 +39,127 @@
 #include <ctype.h>
 
 // GLOBAL: CARMA2_HW 0x00764eec
+// GLOBAL: CARMA2_SW 0x0075b44c
 tFrontendMenuType gFrontend_next_menu;
 
 // GLOBAL: CARMA2_HW 0x00688b20
+// GLOBAL: CARMA2_SW 0x00683080
 int gFrontend_suppress_mouse;
 
 // GLOBAL: CARMA2_HW 0x00688ab0
+// GLOBAL: CARMA2_SW 0x00683010
 tConnected_items* gConnected_items;
 
 // GLOBAL: CARMA2_HW 0x00686508
+// GLOBAL: CARMA2_SW 0x00680c48
 tStruct_00686508* gPTR_00686508;
 
 // GLOBAL: CARMA2_HW 0x00686820
+// GLOBAL: CARMA2_SW 0x00680f60
 tFrontend_slider* gCurrent_frontend_scrollbars;
 
 // GLOBAL: CARMA2_HW 0x00604730
+// GLOBAL: CARMA2_SW 0x005ff660
 tFrontend_item_spec gDefault_last_interface_item = {
     0x401, temp, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 };
 
 // GLOBAL: CARMA2_HW 0x006864f4
+// GLOBAL: CARMA2_SW 0x00680c34
 int gFrontend_scrollbars_updated;
 
 // GLOBAL: CARMA2_HW 0x00686850
+// GLOBAL: CARMA2_SW 0x00680f90
 br_pixelmap* gFrontend_images[100];
 
 // GLOBAL: CARMA2_HW 0x00687248
+// GLOBAL: CARMA2_SW 0x006817a8
 tFrontend_brender_item gFrontend_brender_items[100]; /* FIXME: parametrize size + index of last item */
 
 // GLOBAL: CARMA2_HW 0x00688770
+// GLOBAL: CARMA2_SW 0x00682cd0
 int gFrontend_selected_item_index;
 
 // GLOBAL: CARMA2_HW 0x0068b8a0
+// GLOBAL: CARMA2_SW 0x00685e00
 tRace_group_spec* gRace_groups;
 
 // GLOBAL: CARMA2_HW 0x00688af4
+// GLOBAL: CARMA2_SW 0x00683054
 char* gFrontend_current_input;
 
 // GLOBAL: CARMA2_HW 0x0068723c
+// GLOBAL: CARMA2_SW 0x0068179c
 int gFrontend_text_input_item_index;
 
 // GLOBAL: CARMA2_HW 0x00763900
+// GLOBAL: CARMA2_SW 0x00759e60
 char gFrontend_original_player_name[32];
 
 // GLOBAL: CARMA2_HW 0x0059b0d8
+// GLOBAL: CARMA2_SW 0x00596008
 int gINT_0059b0d8 = -1;
 
 // GLOBAL: CARMA2_HW 0x0059b0d4
+// GLOBAL: CARMA2_SW 0x00596004
 int gFrontend_maximum_input_length = 9;
 
 // GLOBAL: CARMA2_HW 0x00763924
 int gHierarchy_has_actor;
 
 // GLOBAL: CARMA2_HW 0x00686834
+// GLOBAL: CARMA2_SW 0x00680f74
 tU32 gCredits_scroll_start;
 
 // GLOBAL: CARMA2_HW 0x006883c0
+// GLOBAL: CARMA2_SW 0x00682920
 int gCredits_line_count;
 
 // GLOBAL: CARMA2_HW 0x00686f04
+// GLOBAL: CARMA2_SW 0x00681644
 int* gCredits_heights;
 
 // GLOBAL: CARMA2_HW 0x00687238
+// GLOBAL: CARMA2_SW 0x00681798
 int* gCredits_throbs;
 
 // GLOBAL: CARMA2_HW 0x00688448
+// GLOBAL: CARMA2_SW 0x006829a8
 char** gCredits_texts;
 
 // GLOBAL: CARMA2_HW 0x0068682c
+// GLOBAL: CARMA2_SW 0x00680f6c
 int* gCredits_fonts;
 
 // GLOBAL: CARMA2_HW 0x00686f90
+// GLOBAL: CARMA2_SW 0x006816d0
 int gCredits_total_height;
 
 // GLOBAL: CARMA2_HW 0x006886d0
 double gFrontend_throb_factor;
 
 // GLOBAL: CARMA2_HW 0x00763940
+// GLOBAL: CARMA2_SW 0x00759ea0
 br_actor* gFrontend_billboard_actors[8];
 
 // GLOBAL: CARMA2_HW 0x00688b10
+// GLOBAL: CARMA2_SW 0x00683070
 br_actor* gFrontend_menu_camera;
 
 // GLOBAL: CARMA2_HW 0x007638ac
+// GLOBAL: CARMA2_SW 0x00759e0c
 int gFrontend_load_game_index_top;
 
 // GLOBAL: CARMA2_HW 0x00763898
+// GLOBAL: CARMA2_SW 0x00759df8
 int gFrontend_scroll_time_left;
 
 // GLOBAL: CARMA2_HW 0x0076389c
+// GLOBAL: CARMA2_SW 0x00759dfc
 int gFrontend_scroll_time_increment;
 
 // GLOBAL: CARMA2_HW 0x00764e9c
+// GLOBAL: CARMA2_SW 0x0075b3fc
 int gFrontend_count_saved_games;
 
 // GLOBAL: CARMA2_HW 0x00763894
@@ -140,18 +169,22 @@ tU32 gFrontend_scroll_last_update;
 int gFrontend_mouse_down;
 
 // GLOBAL: CARMA2_HW 0x0068875c
+// GLOBAL: CARMA2_SW 0x00682cbc
 tU32 gFrontend_time_last_input;
 
 // GLOBAL: CARMA2_HW 0x00764ee4
+// GLOBAL: CARMA2_SW 0x0075b444
 int gNet_join_host_result;  // FIXME: use union instead?
 
 // GLOBAL: CARMA2_HW 0x00688b08
 int gPrev_frontend_mouse_down;
 
 // GLOBAL: CARMA2_HW 0x006883a8
+// GLOBAL: CARMA2_SW 0x00682908
 int gFrontend_leave_current_menu;
 
 // GLOBAL: CARMA2_HW 0x00688abc
+// GLOBAL: CARMA2_SW 0x0068301c
 tFrontend_spec* gCurrent_frontend_spec;
 
 // GLOBAL: CARMA2_HW 0x007635f0
@@ -167,15 +200,19 @@ br_uint_32 gFrontend_APO_Colour_3;
 br_actor* gFrontend_actor;
 
 // GLOBAL: CARMA2_HW 0x0068683c
+// GLOBAL: CARMA2_SW 0x00680f7c
 int gFrontend_count_brender_items;
 
 // GLOBAL: CARMA2_HW 0x00764ee0
+// GLOBAL: CARMA2_SW 0x0075b440
 int gFrontend_remove_current_backdrop;
 
 // GLOBAL: CARMA2_HW 0x00686f8c
+// GLOBAL: CARMA2_SW 0x006816cc
 br_pixelmap* gFrontend_backdrop;
 
 // GLOBAL: CARMA2_HW 0x00688ae8
+// GLOBAL: CARMA2_SW 0x00683048
 br_colour gFrontend_some_color;
 
 // GLOBAL: CARMA2_HW 0x006870b8
@@ -215,12 +252,14 @@ int gFrontend_backdrop1_opacity_mode;
 int gFrontend_backdrop2_opacity_mode;
 
 // GLOBAL: CARMA2_HW 0x00686ef8
+// GLOBAL: CARMA2_SW 0x00681638
 int gFrontend_interpolate_steps_left;
 
 // GLOBAL: CARMA2_HW 0x00763820
 tFrontend_slider gOptions_sound_slider;
 
 // GLOBAL: CARMA2_HW 0x00688ae4
+// GLOBAL: CARMA2_SW 0x00683044
 int gValid_stashed_save_game; // FIXME: rename variable?
 
 // GLOBAL: CARMA2_HW 0x00688408
@@ -237,6 +276,7 @@ const int gControls_frontend_to_key_mapping_lut[29] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00466450
+// FUNCTION: CARMA2_SW 0x004661e0
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
     return 0;
@@ -245,6 +285,7 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 // int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY); // Moved for inlining purposes
 
 // FUNCTION: CARMA2_HW 0x00466ce0
+// FUNCTION: CARMA2_SW 0x00466a70
 void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_index) {
     br_model* model;
     int item_index;
@@ -282,6 +323,7 @@ static void C2_HOOK_FASTCALL SetLevelBar(tFrontend_spec* pFrontend, int pLevel_i
 }
 
 // FUNCTION: CARMA2_HW 0x00467890
+// FUNCTION: CARMA2_SW 0x00467610
 void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend) {
     int i;
 
@@ -303,6 +345,7 @@ void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x004666f0
+// FUNCTION: CARMA2_SW 0x00466480
 void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
     int i;
     const char* text;
@@ -330,6 +373,7 @@ void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046abf0
+// FUNCTION: CARMA2_SW 0x0046a930
 br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* pFolder, const char* pName) {
     br_pixelmap* pixelmaps[1000];
     br_pixelmap* result;
@@ -340,7 +384,7 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* 
     size_t i;
 
     result = NULL;
-    PathCat(the_path, pFolder, "PIXIES.P16");
+    PathCat(the_path, pFolder, "PIXIES.P08");
     f = PFfopen(the_path, "rb");
     if (f != NULL) {
         PFfclose(f);
@@ -369,6 +413,7 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* 
 }
 
 // FUNCTION: CARMA2_HW 0x00466760
+// FUNCTION: CARMA2_SW 0x004664f0
 void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     tPath_name path;
     char buffer[256];
@@ -522,6 +567,7 @@ int C2_HOOK_FASTCALL GameMenuInfunc(tFrontend_spec* pFrontend) {
 // FindNextActiveItem
 
 // FUNCTION: CARMA2_HW 0x00467a30
+// FUNCTION: CARMA2_SW 0x004677b0
 int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index) {
     int i;
 
@@ -538,6 +584,7 @@ int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_in
 // RaceIndex
 
 // FUNCTION: CARMA2_HW 0x00466bb0
+// FUNCTION: CARMA2_SW 0x00466940
 int C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(tFrontend_spec* pFrontend) {
     int race_index;
 
@@ -552,6 +599,7 @@ int C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntin
 }
 
 // FUNCTION: CARMA2_HW 0x00467b30
+// FUNCTION: CARMA2_SW 0x004678b0
 void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     char group_text[12];
     int group;
@@ -606,6 +654,7 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 // void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend); // Moved for inlining purposes
 
 // FUNCTION: CARMA2_HW 0x00466ec0
+// FUNCTION: CARMA2_SW 0x00466c50
 int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
 
     if (gTyping) {
@@ -633,6 +682,7 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x00467050
+// FUNCTION: CARMA2_SW 0x00466de0
 int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
 
     ToggleTyping(pFrontend);
@@ -647,6 +697,7 @@ int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
 // NetGameToggleTyping
 
 // FUNCTION: CARMA2_HW 0x00467130
+// FUNCTION: CARMA2_SW 0x00466ec0
 int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend) {
 
     (void)pFrontend;
@@ -672,6 +723,7 @@ int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend) {
 // NewGameInfunc
 
 // FUNCTION: CARMA2_HW 0x00467270
+// FUNCTION: CARMA2_SW 0x00467000
 int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
     if (gProgram_state.field_0x2c) {
         return 5;
@@ -725,6 +777,7 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 // FRONTEND_NetworkJoinMenuHandler
 
 // FUNCTION: CARMA2_HW 0x00469a30
+// FUNCTION: CARMA2_SW 0x00469790
 int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
 
     return 0;
@@ -795,6 +848,7 @@ int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend) {
 // FRONTEND_GenericMenuHandler
 
 // FUNCTION: CARMA2_HW 0x0046c5c0
+// FUNCTION: CARMA2_SW 0x0046c2d0
 void C2_HOOK_FASTCALL FRONTEND_CreateMenuButton(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText) {
     float map_x;
     float map_y;
@@ -873,6 +927,7 @@ void C2_HOOK_FASTCALL FRONTEND_CreateMenuButton(tFrontend_brender_item* pFronten
 }
 
 // FUNCTION: CARMA2_HW 0x0046c970
+// FUNCTION: CARMA2_SW 0x0046c610
 int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
     char s[256];
     char s2[256];
@@ -898,6 +953,9 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             s[strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
+#ifdef REC2_SW
+            strcat(s, "l.tif");
+#endif
             gFrontend_backdrop = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
             ClosePackFileAndSetTiffLoading(twt);
 
@@ -917,6 +975,9 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             s[strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
+#ifdef REC2_SW
+            strcat(s, "l.tif");
+#endif
             gFrontend_backdrop = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
             ClosePackFileAndSetTiffLoading(twt);
 
@@ -979,6 +1040,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046ccb0
+// FUNCTION: CARMA2_SW 0x0046c9a0
 int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     char s[256];
     tS8 i;
@@ -1064,11 +1126,13 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
 }
 
 // STUB: CARMA2_HW 0x0046d8e0
+// STUB: CARMA2_SW 0x0046cfc0
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontend_type) {
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x0046e470
+// FUNCTION: CARMA2_SW 0x0046db10
 int C2_HOOK_FASTCALL ProcessInputString(void) {
     int len;
     int key;
@@ -1191,6 +1255,7 @@ void C2_HOOK_FASTCALL DodgyPause(tU32 pTime) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f5b0
+// FUNCTION: CARMA2_SW 0x0046ec60
 void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps) {
     float t;
     int i;
@@ -1205,6 +1270,7 @@ void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_m
 }
 
 // FUNCTION: CARMA2_HW 0x0046f630
+// FUNCTION: CARMA2_SW 0x0046ece0
 void C2_HOOK_FASTCALL ScrollCredits(void) {
     int y;
     int i;
@@ -1214,8 +1280,14 @@ void C2_HOOK_FASTCALL ScrollCredits(void) {
         y += gCredits_heights[i];
         if (y < 430 && y > 30) {
             if (gCredits_throbs[i]) {
+
                 SolidPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i] - 1, eJust_centre, 1);
+#ifdef REC2_HW
                 TransparentPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i], eJust_centre, 1, gFrontend_throb_factor);
+#endif
+#ifdef REC2_SW
+                PolyFontText(gCredits_texts[i], 320, y, gFrontend_throb_factor <= 0.5 ? gCredits_fonts[i] - 1 : gCredits_fonts[i], eJust_centre, 1);
+#endif
             } else {
                 SolidPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i], eJust_centre, 1);
             }
@@ -1229,6 +1301,7 @@ void C2_HOOK_FASTCALL ScrollCredits(void) {
 // LoadGameInFunc
 
 // FUNCTION: CARMA2_HW 0x0046f8a0
+// FUNCTION: CARMA2_SW 0x0046ef50
 br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
     br_pixelmap* map;
     br_actor* actor;
@@ -1266,6 +1339,7 @@ br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f9e0
+// FUNCTION: CARMA2_SW 0x0046f090
 void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
 
     if (pActor != NULL) {
@@ -1290,6 +1364,7 @@ void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046fa60
+// FUNCTION: CARMA2_SW 0x0046f110
 int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend) {
     int i;
 
@@ -1304,6 +1379,7 @@ int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046fb30
+// FUNCTION: CARMA2_SW 0x0046f1e0
 int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend) {
 
     if (gFrontend_load_game_index_top > 0 && gFrontend_scroll_time_left == 0) {
@@ -1315,6 +1391,7 @@ int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046fb80
+// FUNCTION: CARMA2_SW 0x0046f230
 int C2_HOOK_FASTCALL LoadGameScrollDownLoadGameScrollDown(tFrontend_spec* pFrontend) {
 
     if (gFrontend_load_game_index_top + 8 < gFrontend_count_saved_games && gFrontend_scroll_time_left == 0) {
@@ -1338,48 +1415,56 @@ int C2_HOOK_FASTCALL LoadGameScrollDownLoadGameScrollDown(tFrontend_spec* pFront
     return 3;
 
 // FUNCTION: CARMA2_HW 0x0046fbd0
+// FUNCTION: CARMA2_SW 0x0046f280
 int C2_HOOK_FASTCALL LoadSlot1(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 0);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fc50
+// FUNCTION: CARMA2_SW 0x0046f300
 int C2_HOOK_FASTCALL LoadSlot2(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 1);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fcd0
+// FUNCTION: CARMA2_SW 0x0046f380
 int C2_HOOK_FASTCALL LoadSlot3(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 2);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fd50
+// FUNCTION: CARMA2_SW 0x0046f400
 int C2_HOOK_FASTCALL LoadSlot4(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 3);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fdd0
+// FUNCTION: CARMA2_SW 0x0046f480
 int C2_HOOK_FASTCALL LoadSlot5(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 4);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fe50
+// FUNCTION: CARMA2_SW 0x0046f500
 int C2_HOOK_FASTCALL LoadSlot6(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 5);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fed0
+// FUNCTION: CARMA2_SW 0x0046f580
 int C2_HOOK_FASTCALL LoadSlot7(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 6);
 }
 
 // FUNCTION: CARMA2_HW 0x0046ff50
+// FUNCTION: CARMA2_SW 0x0046f600
 int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 7);
@@ -1388,6 +1473,7 @@ int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend) {
 #undef LOAD_SLOT_N
 
 // FUNCTION: CARMA2_HW 0x0046ffd0
+// FUNCTION: CARMA2_SW 0x0046f680
 int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
 
     if (!DoLoadGame(gFrontend_load_game_index_top + pN)) {
@@ -1402,6 +1488,7 @@ int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
 }
 
 // FUNCTION: CARMA2_HW 0x00470020
+// FUNCTION: CARMA2_SW 0x0046f6d0
 int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
     int selected_item_index;
     tU32 prev;
@@ -1566,7 +1653,9 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
             if (gCurrent_frontend_spec != pFrontend->previous) {
                 gCurrent_frontend_spec->previous = pFrontend;
             }
+#ifdef REC2_HW
             Morph_Initialise(pFrontend, gCurrent_frontend_spec);
+#endif
             if (gCurrent_frontend_spec == &gFrontend_QUIT) {
                 gFrontend_selected_item_index = 0;
             } else {
@@ -1586,6 +1675,7 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x00470860
+// FUNCTION: CARMA2_SW 0x0046ff10
 void C2_HOOK_FASTCALL PrepareAPO(int pActor_index) {
     br_material* material;
     br_model* model;
@@ -1598,6 +1688,7 @@ void C2_HOOK_FASTCALL PrepareAPO(int pActor_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x004708a0
+// FUNCTION: CARMA2_SW 0x0046ff50
 void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
     br_model *model;
     float map_left;
@@ -1625,6 +1716,7 @@ void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x004709b0
+// FUNCTION: CARMA2_SW 0x00470060
 void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, int pAPO) {
     br_pixelmap* map;
     int x;
@@ -1656,6 +1748,7 @@ void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, i
 }
 
 // FUNCTION: CARMA2_HW 0x00470a50
+// FUNCTION: CARMA2_SW 0x00470100
 void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
 
     while (PolyFontTextWidth(pFont, pText) > pWidth) {
@@ -1721,6 +1814,7 @@ tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void) {
 
 // PrepareSliders
 
+#ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x00470a90
 void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec* pNext) {
 
@@ -1750,6 +1844,7 @@ void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec*
 
     gFrontend_interpolate_steps_left = 16;
 }
+#endif
 
 // FUNCTION: CARMA2_HW 0x00470bb0
 int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend) {
