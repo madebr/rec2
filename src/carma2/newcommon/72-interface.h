@@ -14,6 +14,7 @@
 
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
+extern int gFrontend_change_car_selected_car;
 
 extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
@@ -155,7 +156,7 @@ extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend);
 
-// ChangeCarOK
+extern int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend);
 
 // CarClickPrev
 
