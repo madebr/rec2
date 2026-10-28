@@ -21,6 +21,7 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00660110
+// GLOBAL: CARMA2_SW 0x0065aa58
 int gSmoke_on = 1;
 
 #ifdef REC2_HW
