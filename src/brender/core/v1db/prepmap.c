@@ -18,6 +18,7 @@ void C2_HOOK_CDECL BrMapUpdate(br_pixelmap* map, br_uint_16 flags) {
 }
 
 // FUNCTION: CARMA2_HW 0x005231f0
+// FUNCTION: CARMA2_SW 0x0051e890
 void C2_HOOK_STDCALL BrBufferUpdate(br_pixelmap* pm, br_token use, br_uint_16 flags) {
 
     br_token_value tv[] = {
@@ -45,6 +46,7 @@ void C2_HOOK_STDCALL BrBufferUpdate(br_pixelmap* pm, br_token use, br_uint_16 fl
 }
 
 // FUNCTION: CARMA2_HW 0x00523280
+// FUNCTION: CARMA2_SW 0x0051e920
 void C2_HOOK_STDCALL BrBufferClear(br_pixelmap* pm) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_buffer_stored_dispatch , _free, 0x10);

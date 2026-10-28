@@ -47,6 +47,7 @@ char gQuick_time_banner_texture_name[256];
 char gDefault_quick_time_quality[] = "normal";
 
 // GLOBAL: CARMA2_HW 0x0065ed30
+// GLOBAL: CARMA2_SW 0x00659690
 char gDefault_quick_time_compressor[] = "animation";
 
 // Create555BELookupTable

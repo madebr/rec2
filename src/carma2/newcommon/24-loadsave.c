@@ -23,6 +23,7 @@ int gINT_0068b8e8;
 int gSave_game_out_of_sync;
 
 // GLOBAL: CARMA2_HW 0x0068c72c
+// GLOBAL: CARMA2_SW 0x0068677c
 tSave_game* gSaved_games;
 
 // GLOBAL: CARMA2_HW 0x0068c728
@@ -41,6 +42,7 @@ void C2_HOOK_FASTCALL DoSaveGame(void) {
 // StartSavedGamesList
 
 // FUNCTION: CARMA2_HW 0x00491c90
+// FUNCTION: CARMA2_SW 0x0048ef00
 void C2_HOOK_FASTCALL EndSavedGamesList(void) {
 
     if (gSaved_games != NULL) {
@@ -92,6 +94,7 @@ int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game) {
 }
 
 // FUNCTION: CARMA2_HW 0x00491e20
+// FUNCTION: CARMA2_SW 0x0048f090
 int C2_HOOK_FASTCALL DoLoadGame(int pIndex) {
 
     if (gSaved_games != NULL && pIndex >= 0 && pIndex < gCount_saved_games) {

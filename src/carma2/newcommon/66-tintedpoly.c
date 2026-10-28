@@ -530,6 +530,7 @@ void C2_HOOK_FASTCALL UpdateTintedPolyByMaterial(int pIndex) {
     }
 }
 
+#ifdef REC2_SW
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma auto_inline(off)
 #endif
@@ -541,6 +542,7 @@ void C2_HOOK_FASTCALL UpdateTintedPalette(int pIndex) {
 
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma auto_inline(on)
+#endif
 #endif
 
 // FUNCTION: CARMA2_HW 0x004d8220

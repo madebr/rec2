@@ -32,6 +32,7 @@ br_pixelmap* gTexture_maps[1024];
 tDR_font gFonts[24];
 
 // GLOBAL: CARMA2_HW 0x0059ad30
+// GLOBAL: CARMA2_SW 0x00595c78
 const char* gFont_names[24] = {
     "TYPEABLE",
     "ORANGHED",
@@ -144,6 +145,7 @@ int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x00463760
+// FUNCTION: CARMA2_SW 0x004631f0
 int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
     int y;
     int x;
@@ -165,6 +167,7 @@ int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
 }
 
 // FUNCTION: CARMA2_HW 0x004637d0
+// FUNCTION: CARMA2_SW 0x00463240
 int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
     tPolyFont* font;
 
@@ -180,6 +183,7 @@ int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
 }
 
 // FUNCTION: CARMA2_HW 0x00463830
+// FUNCTION: CARMA2_SW 0x004632a0
 int C2_HOOK_FASTCALL GetSpacing(int pFont_index) {
     tPolyFont* font;
 
@@ -441,7 +445,9 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
     } else {
         BrFailure("Missing FONTCOL.TXT file");
     }
+#ifdef REC2_HW
     ConvertCarIcons(gIcons_pix);
+#endif
 
     CreatePolyFont(kPolyfont_ingame_tiny_yellow, "TINYFONT", 1.0f, 8);
     CreatePolyFont(kPolyfont_ingame_tiny_blue, "TINYFONT", 1.0f, 8);
@@ -463,6 +469,7 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00464090
+// FUNCTION: CARMA2_SW 0x00463af0
 void C2_HOOK_FASTCALL CreatePolyFont(int pFont, const char* pName, float pFactor, int pSize) {
     int i;
 
@@ -642,6 +649,7 @@ void C2_HOOK_FASTCALL LoadInterfaceFonts(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004643f0
+// FUNCTION: CARMA2_SW 0x00463e50
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
     int tex_x;
     int tex_y;

@@ -767,6 +767,7 @@ void C2_HOOK_FASTCALL SaveGeneratedShadeTable(br_pixelmap* pThe_table, int pR, i
 }
 
 // FUNCTION: CARMA2_HW 0x00514e40
+// FUNCTION: CARMA2_SW 0x005102b0
 br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter) {
 
     PossibleService();
@@ -1750,8 +1751,10 @@ intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
 // GetBlenficatiousnessOfMaterial
 
 // FUNCTION: CARMA2_HW 0x00518f20
+// FUNCTION: CARMA2_SW 0x00512a00
 char* C2_HOOK_FASTCALL MungeCommas(int pValue) {
     // GLOBAL: CARMA2_HW 0x006b5f20
+    // GLOBAL: CARMA2_SW 0x006acc00
     static char result_buffer[32];
     char buffer[32];
     int len;

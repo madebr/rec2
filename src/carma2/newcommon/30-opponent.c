@@ -484,6 +484,7 @@ tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec
 }
 
 // FUNCTION: CARMA2_HW 0x004ae970
+// FUNCTION: CARMA2_SW 0x004aaae0
 tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
     int i;
 
@@ -496,6 +497,7 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x004ae9e0
+// FUNCTION: CARMA2_SW 0x004aab20
 int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no) {
 
     if (pSection_no >= 20000) {
@@ -508,6 +510,7 @@ int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int
 }
 
 // FUNCTION: CARMA2_HW 0x004aea00
+// FUNCTION: CARMA2_SW 0x004aab70
 int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
     if (pOpponent_spec->current_objective == eOOT_pursue_and_twat) {
         if (pOpponent_spec->pursue_car_data.state == ePCS_following_trail) {
@@ -562,6 +565,7 @@ void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 // ClearTwattageOccurrenceVariables
 
 // FUNCTION: CARMA2_HW 0x004aeeb0
+// FUNCTION: CARMA2_SW 0x004ab020
 void C2_HOOK_FASTCALL TwoCarsHitEachOther(tCar_spec* pA_car, tCar_spec* pAnother_car) {
 
     if (pA_car != NULL && pA_car->driver == eDriver_local_human) {

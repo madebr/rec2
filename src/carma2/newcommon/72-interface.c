@@ -39,6 +39,7 @@
 #include <ctype.h>
 
 // GLOBAL: CARMA2_HW 0x00764eec
+// GLOBAL: CARMA2_SW 0x0075b44c
 tFrontendMenuType gFrontend_next_menu;
 
 // GLOBAL: CARMA2_HW 0x00688b20
@@ -136,15 +137,19 @@ br_actor* gFrontend_billboard_actors[8];
 br_actor* gFrontend_menu_camera;
 
 // GLOBAL: CARMA2_HW 0x007638ac
+// GLOBAL: CARMA2_SW 0x00759e0c
 int gFrontend_load_game_index_top;
 
 // GLOBAL: CARMA2_HW 0x00763898
+// GLOBAL: CARMA2_SW 0x00759df8
 int gFrontend_scroll_time_left;
 
 // GLOBAL: CARMA2_HW 0x0076389c
+// GLOBAL: CARMA2_SW 0x00759dfc
 int gFrontend_scroll_time_increment;
 
 // GLOBAL: CARMA2_HW 0x00764e9c
+// GLOBAL: CARMA2_SW 0x0075b3fc
 int gFrontend_count_saved_games;
 
 // GLOBAL: CARMA2_HW 0x00763894
@@ -197,6 +202,7 @@ int gFrontend_remove_current_backdrop;
 br_pixelmap* gFrontend_backdrop;
 
 // GLOBAL: CARMA2_HW 0x00688ae8
+// GLOBAL: CARMA2_SW 0x00683048
 br_colour gFrontend_some_color;
 
 // GLOBAL: CARMA2_HW 0x006870b8
@@ -937,6 +943,9 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             s[strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
+#ifdef REC2_SW
+            strcat(s, "l.tif");
+#endif
             gFrontend_backdrop = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
             ClosePackFileAndSetTiffLoading(twt);
 
@@ -956,6 +965,9 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             s[strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
+#ifdef REC2_SW
+            strcat(s, "l.tif");
+#endif
             gFrontend_backdrop = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
             ClosePackFileAndSetTiffLoading(twt);
 
@@ -1310,6 +1322,7 @@ br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f9e0
+// FUNCTION: CARMA2_SW 0x0046f10c
 void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
 
     if (pActor != NULL) {
@@ -1334,6 +1347,7 @@ void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046fa60
+// FUNCTION: CARMA2_SW 0x0046f110
 int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend) {
     int i;
 
@@ -1348,6 +1362,7 @@ int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046fb30
+// FUNCTION: CARMA2_SW 0x0046f1e0
 int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend) {
 
     if (gFrontend_load_game_index_top > 0 && gFrontend_scroll_time_left == 0) {
@@ -1359,6 +1374,7 @@ int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046fb80
+// FUNCTION: CARMA2_SW 0x0046f230
 int C2_HOOK_FASTCALL LoadGameScrollDownLoadGameScrollDown(tFrontend_spec* pFrontend) {
 
     if (gFrontend_load_game_index_top + 8 < gFrontend_count_saved_games && gFrontend_scroll_time_left == 0) {
@@ -1382,48 +1398,56 @@ int C2_HOOK_FASTCALL LoadGameScrollDownLoadGameScrollDown(tFrontend_spec* pFront
     return 3;
 
 // FUNCTION: CARMA2_HW 0x0046fbd0
+// FUNCTION: CARMA2_SW 0x0046f280
 int C2_HOOK_FASTCALL LoadSlot1(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 0);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fc50
+// FUNCTION: CARMA2_SW 0x0046f300
 int C2_HOOK_FASTCALL LoadSlot2(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 1);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fcd0
+// FUNCTION: CARMA2_SW 0x0046f380
 int C2_HOOK_FASTCALL LoadSlot3(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 2);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fd50
+// FUNCTION: CARMA2_SW 0x0046f400
 int C2_HOOK_FASTCALL LoadSlot4(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 3);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fdd0
+// FUNCTION: CARMA2_SW 0x0046f480
 int C2_HOOK_FASTCALL LoadSlot5(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 4);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fe50
+// FUNCTION: CARMA2_SW 0x0046f500
 int C2_HOOK_FASTCALL LoadSlot6(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 5);
 }
 
 // FUNCTION: CARMA2_HW 0x0046fed0
+// FUNCTION: CARMA2_SW 0x0046f580
 int C2_HOOK_FASTCALL LoadSlot7(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 6);
 }
 
 // FUNCTION: CARMA2_HW 0x0046ff50
+// FUNCTION: CARMA2_SW 0x0046f600
 int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend) {
 
     LOAD_SLOT_N(pFrontend, 7);
@@ -1432,6 +1456,7 @@ int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend) {
 #undef LOAD_SLOT_N
 
 // FUNCTION: CARMA2_HW 0x0046ffd0
+// FUNCTION: CARMA2_SW 0x0046f680
 int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
 
     if (!DoLoadGame(gFrontend_load_game_index_top + pN)) {
@@ -1446,6 +1471,7 @@ int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
 }
 
 // FUNCTION: CARMA2_HW 0x00470020
+// FUNCTION: CARMA2_SW 0x0046f6d0
 int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
     int selected_item_index;
     tU32 prev;
@@ -1610,7 +1636,9 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
             if (gCurrent_frontend_spec != pFrontend->previous) {
                 gCurrent_frontend_spec->previous = pFrontend;
             }
+#ifdef REC2_HW
             Morph_Initialise(pFrontend, gCurrent_frontend_spec);
+#endif
             if (gCurrent_frontend_spec == &gFrontend_QUIT) {
                 gFrontend_selected_item_index = 0;
             } else {
@@ -1630,6 +1658,7 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x00470860
+// FUNCTION: CARMA2_SW 0x0046ff10
 void C2_HOOK_FASTCALL PrepareAPO(int pActor_index) {
     br_material* material;
     br_model* model;
@@ -1670,6 +1699,7 @@ void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x004709b0
+// FUNCTION: CARMA2_SW 0x00470060
 void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, int pAPO) {
     br_pixelmap* map;
     int x;
@@ -1701,6 +1731,7 @@ void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, i
 }
 
 // FUNCTION: CARMA2_HW 0x00470a50
+// FUNCTION: CARMA2_SW 0x00470100
 void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
 
     while (PolyFontTextWidth(pFont, pText) > pWidth) {
@@ -1766,6 +1797,7 @@ tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void) {
 
 // PrepareSliders
 
+#ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x00470a90
 void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec* pNext) {
 
@@ -1795,6 +1827,7 @@ void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec*
 
     gFrontend_interpolate_steps_left = 16;
 }
+#endif
 
 // FUNCTION: CARMA2_HW 0x00470bb0
 int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend) {

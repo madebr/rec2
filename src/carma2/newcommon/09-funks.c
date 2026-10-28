@@ -30,6 +30,7 @@ tGroovidelic_spec* gGroovidelics_array;
 int gGroovidelics_array_size;
 
 // GLOBAL: CARMA2_HW 0x0068b838
+// GLOBAL: CARMA2_SW 0x00685d98
 tU32 gPrevious_groove_times[2];
 
 // GLOBAL: CARMA2_HW 0x00688b30
@@ -188,6 +189,7 @@ void C2_HOOK_FASTCALL KillFunkotronic(int pOwner) {
 #endif
 
 // STUB: CARMA2_HW 0x00478c80
+// STUB: CARMA2_SW 0x004781e0
 void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it) {
     NOT_IMPLEMENTED();
 }

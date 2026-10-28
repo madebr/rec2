@@ -629,6 +629,7 @@ void C2_HOOK_FASTCALL InitMap(void) {
     gInitMap_done = 1;
 }
 
+#ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x004973b0
 void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
     int i;
@@ -701,6 +702,7 @@ void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
     gCar_icons_model_actor->material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE;
     BrMaterialAdd(gCar_icons_model_actor->material);
 }
+#endif
 
 static void C2_HOOK_FASTCALL MapChanged(void) {
 

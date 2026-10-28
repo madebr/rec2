@@ -1100,6 +1100,7 @@ void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00463720
+// FUNCTION: CARMA2_SW 0x004631b0
 void C2_HOOK_FASTCALL ResumePendingFlic(void) {
     gPending_flic = gPending_pending_flic;
 }

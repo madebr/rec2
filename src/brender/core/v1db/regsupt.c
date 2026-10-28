@@ -282,6 +282,7 @@ br_pixelmap* C2_HOOK_CDECL BrTableAdd(br_pixelmap* pixelmap) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f120
+// FUNCTION: CARMA2_SW 0x0051a7c0
 br_pixelmap* C2_HOOK_CDECL BrTableRemove(br_pixelmap* pixelmap) {
 
     BrBufferClear(pixelmap);

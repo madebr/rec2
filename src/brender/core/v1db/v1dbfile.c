@@ -1401,7 +1401,7 @@ int C2_HOOK_STDCALL WriteActor(br_actor* a, br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x005243a0
-// FUNCTION: CARMA2_SW 0x00520300
+// FUNCTION: CARMA2_SW 0x0051fa40
 br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1510,7 +1510,7 @@ br_model* C2_HOOK_CDECL BrModelLoad(char* filename) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524960
-// FUNCTION: CARMA2_SW 0x00520000
+// FUNCTION: CARMA2_SW 0x0051f4f0
 br_uint_32 C2_HOOK_CDECL BrModelSave(char* filename, br_model* ptr) {
 
     return BrModelSaveMany(filename, &ptr, 1);
@@ -1547,6 +1547,7 @@ br_actor* C2_HOOK_CDECL BrActorLoad(char* filename) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524c60
+// FUNCTION: CARMA2_SW 0x00520300
 br_uint_32 C2_HOOK_CDECL BrActorSave(char* filename, br_actor* ptr) {
 
     return BrActorSaveMany(filename, &ptr, 1);
