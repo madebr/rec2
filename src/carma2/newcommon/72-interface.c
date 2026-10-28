@@ -724,7 +724,37 @@ int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend) {
 
 // NewGameOutfunc
 
-// NewGameInfunc
+// FUNCTION: CARMA2_HW 0x004671a0
+// FUNCTION: CARMA2_SW 0x00466f30
+int C2_HOOK_FASTCALL NewGameInfunc(tFrontend_spec* pFrontend) {
+
+    EdgeTriggerModeOff();
+    WaitForNoKeys();
+    EdgeTriggerModeOn();
+    DRS3StartSound(gEffects_outlet, eSoundId_Swingin);
+    switch (gProgram_state.skill_level) {
+    case 0:
+        pFrontend->items[2].enabled = kFrontendItemEnabled_enabled;
+        pFrontend->items[2].radioButton_selected = 1;
+        break;
+    case 1:
+    default:
+        pFrontend->items[3].enabled = kFrontendItemEnabled_enabled;
+        pFrontend->items[3].radioButton_selected = 1;
+        gProgram_state.skill_level = 1;
+        break;
+    case 2:
+        pFrontend->items[4].enabled = kFrontendItemEnabled_enabled;
+        pFrontend->items[4].radioButton_selected = 1;
+        break;
+    }
+    pFrontend->items[5].enabled = kFrontendItemEnabled_enabled;
+    pFrontend->default_item = 5;
+    gFrontend_selected_item_index = 5;
+    DefaultInfunc(pFrontend);
+    gMouse_in_use = 0;
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00467270
 // FUNCTION: CARMA2_SW 0x00467000
