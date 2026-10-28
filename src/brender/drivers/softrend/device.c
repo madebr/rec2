@@ -17,6 +17,7 @@
 #include "core/fw/tokenval.h"
 
 // GLOBAL: CARMA2_HW 0x0058bcb0
+// GLOBAL: CARMA2_SW 0x00586c78
 br_device_dispatch softrendr_deviceDispatch = {
     NULL,
     NULL,
@@ -68,12 +69,14 @@ br_token C2_HOOK_CDECL _M_br_softrend_device_type(br_soft_device* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x005408b0
+// FUNCTION: CARMA2_SW 0x0053bf50
 int C2_HOOK_CDECL _M_br_softrend_device_isType(br_soft_device* self, br_token t) {
 
     return t == BRT_DEVICE || t == BRT_OBJECT_CONTAINER || t == BRT_OBJECT;
 }
 
 // FUNCTION: CARMA2_HW 0x005408d0
+// FUNCTION: CARMA2_SW 0x0053bf70
 br_size_t C2_HOOK_CDECL _M_br_softrend_device_space(br_soft_device* self) {
 
     C2_HOOK_BUG_ON(sizeof(br_soft_device) != 0x58);

@@ -166,7 +166,8 @@ br_token C2_HOOK_CDECL _M_br_soft_renderer_type(br_soft_renderer* self) {
     return BRT_RENDERER;
 }
 
-// FUNCTION: CARMA2_HW 0x0053c1f0
+// FUNCTION: CARMA2_HW 0x00540b50
+// FUNCTION: CARMA2_SW 0x0053c1f0
 int C2_HOOK_CDECL _M_br_soft_renderer_isType(br_soft_renderer* self, br_token t) {
 
     return t == BRT_RENDERER || t == BRT_OBJECT;

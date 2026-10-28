@@ -78,6 +78,7 @@ br_renderer_state_stored_soft* C2_HOOK_STDCALL RendererStateStoredSoftAllocate(b
 }
 
 // FUNCTION: CARMA2_HW 0x00542520
+// FUNCTION: CARMA2_SW 0x0053dbc0
 br_error C2_HOOK_STDCALL StateCopyToStored(br_renderer_state_stored_soft* dest, soft_state_all* src, br_uint_32 copy_mask, void* res) {
 
     C2_HOOK_BUG_ON(MASK_STATE_SURFACE != 0x1);
@@ -127,7 +128,7 @@ br_error C2_HOOK_STDCALL StateCopyToStored(br_renderer_state_stored_soft* dest, 
         memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
     }
 
-    if (copy_mask != MASK_CACHED_STATES) {
+    if ((copy_mask & MASK_CACHED_STATES) != MASK_CACHED_STATES) {
         dest->cache.valid = 0;
     }
     return 0;

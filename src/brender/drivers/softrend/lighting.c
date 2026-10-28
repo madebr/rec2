@@ -16,6 +16,7 @@
 #include "core/fw/tokenval.h"
 
 // GLOBAL: CARMA2_HW 0x0058bf40
+// GLOBAL: CARMA2_SW 0x00586f08
 const br_geometry_lighting_dispatch geometryLightingDispatch = {
     NULL,
     NULL,
@@ -39,6 +40,7 @@ const br_geometry_lighting_dispatch geometryLightingDispatch = {
 };
 
 // GLOBAL: CARMA2_HW 0x0058bef8
+// GLOBAL: CARMA2_SW 0x00586ec0
 br_tv_template_entry geometryLightingTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,      NULL,   offsetof(br_geometry_lighting_soft, identifier),        4,  3,  0,  0, },
     { BRT_RENDERER_FACILITY_O,  NULL,   offsetof(br_geometry_lighting_soft, renderer_facility), 5,  3,  0,  0, },
@@ -66,6 +68,7 @@ br_geometry_lighting* C2_HOOK_STDCALL GeometryLightingAllocate(br_soft_renderer_
 }
 
 // FUNCTION: CARMA2_HW 0x00540e80
+// FUNCTION: CARMA2_SW 0x0053c520
 void C2_HOOK_CDECL _M_br_geometry_lighting_soft_free(br_geometry_lighting_soft* self) {
 
     self->renderer_facility->dispatch->_remove((br_object_container*)self->renderer_facility, (br_object*)self);
@@ -74,18 +77,21 @@ void C2_HOOK_CDECL _M_br_geometry_lighting_soft_free(br_geometry_lighting_soft* 
 }
 
 // FUNCTION: CARMA2_HW 0x00540ea0
+// FUNCTION: CARMA2_SW 0x0053c540
 br_token C2_HOOK_CDECL _M_br_geometry_lighting_soft_type(br_geometry_lighting_soft* self) {
 
     return BRT_GEOMETRY_LIGHTING;
 }
 
 // FUNCTION: CARMA2_HW 0x00540eb0
+// FUNCTION: CARMA2_SW 0x0053c550
 br_boolean C2_HOOK_CDECL _M_br_geometry_lighting_soft_isType(br_geometry_lighting_soft* self, br_token t) {
 
     return t == BRT_GEOMETRY_LIGHTING || t == BRT_GEOMETRY || t == BRT_OBJECT;
 }
 
 // FUNCTION: CARMA2_HW 0x00540ed0
+// FUNCTION: CARMA2_SW 0x0053c570
 br_int_32 C2_HOOK_CDECL _M_br_geometry_lighting_soft_space(br_geometry_lighting_soft* self) {
 
     C2_HOOK_BUG_ON(sizeof(br_geometry_lighting_soft) != 0x10);
@@ -93,6 +99,7 @@ br_int_32 C2_HOOK_CDECL _M_br_geometry_lighting_soft_space(br_geometry_lighting_
 }
 
 // FUNCTION: CARMA2_HW 0x00540ee0
+// FUNCTION: CARMA2_SW 0x0053c580
 br_tv_template* C2_HOOK_CDECL _M_br_geometry_lighting_soft_templateQuery(br_geometry_lighting_soft* self) {
 
 #ifndef REC2_MATCHING
@@ -110,6 +117,7 @@ br_tv_template* C2_HOOK_CDECL _M_br_geometry_lighting_soft_templateQuery(br_geom
 }
 
 // FUNCTION: CARMA2_HW 0x00540f10
+// FUNCTION: CARMA2_SW 0x0053c5b0
 br_error C2_HOOK_CDECL _M_br_geometry_lighting_soft_render(br_geometry_lighting_soft* self, br_soft_renderer* renderer, br_vector3* points, br_vector3* normals, br_colour* colour_in, br_colour* colour_out, br_uint_16* redirect, int pstride, int nstride, int cinstride, int coutstride, int nvertices) {
     int i, j;
     br_vector2 map = { { BR_SCALAR(0.0), BR_SCALAR(0.0) } };

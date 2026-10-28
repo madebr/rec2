@@ -19,6 +19,7 @@
 #include "c2_stdlib.h"
 
 // FUNCTION: CARMA2_HW 0x0052f3f0
+// FUNCTION: CARMA2_SW 0x0x52aa90
 void C2_HOOK_CDECL lexerError(br_lexer* l, const char* string) {
 }
 
@@ -103,6 +104,7 @@ br_error C2_HOOK_CDECL BrLexerPushFile(br_lexer* l, char* file) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052f570
+// FUNCTION: CARMA2_SW 0x0052ac10
 void C2_HOOK_CDECL stringGetchar(br_lexer_source* source) {
     char* cp;
 
