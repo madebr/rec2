@@ -9,6 +9,7 @@
 #include "51-smash.h"
 
 #include "08-loading1.h"
+#include "28-world3.h"
 #include "32-spark.h"
 #include "39-oil.h"
 #include "41-utility.h"
@@ -16,6 +17,8 @@
 #include "globvars.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
+
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a55c8
 tExplosion gExplosions[50];
@@ -231,7 +234,19 @@ void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* p
 
 // ReadSpillData
 
-// ReadExplosion
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004ee780
+// STUB: CARMA2_SW 0x004ea420
+void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004ef440
 // FUNCTION: CARMA2_SW 0x004eb0a0
@@ -596,10 +611,22 @@ intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
 
 // SetSmashableModel
 
-// STUB: CARMA2_HW 0x004f5ec0
-// STUB: CARMA2_SW 0x004f1b20
+// FUNCTION: CARMA2_HW 0x004f5ec0
+// FUNCTION: CARMA2_SW 0x004f1b20
 void C2_HOOK_FASTCALL LoadWastedExplosion(FILE* pF, int* pChance_explosion, int* pExplosion_sound_id, tExplosion_animation* pExplosion_groups) {
-    NOT_IMPLEMENTED();
+    tPath_name the_path;
+    char* name;
+    char s[256];
+
+    *pChance_explosion = GetAnInt(pF);
+    *pExplosion_sound_id = GetAnInt(pF);
+    PathCat(the_path, gApplication_path, "COMMON");
+    GetALineAndDontArgue(pF, s);
+    name = strtok(s, "\t ,/");
+    name[strlen(name) - 4] = '\0';
+    PathCat(the_path, the_path, name);
+    LoadAllImagesInDirectory(&gMisc_storage_space, the_path);
+    ReadExplosion(pF, pExplosion_groups);
 }
 
 // FUNCTION: CARMA2_HW 0x004f5f60
