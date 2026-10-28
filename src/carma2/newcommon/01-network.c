@@ -567,9 +567,21 @@ void C2_HOOK_FASTCALL CheckForDisappearees(void) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004a5240
+// FUNCTION: CARMA2_HW 0x004a5240
+// FUNCTION: CARMA2_SW 0x004a13c0
 void C2_HOOK_FASTCALL CheckForPendingStartRace(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_player_info, awaiting_confirmation, 0x60);
+
+    if (gSynch_race_start) {
+        for (i = 1; i < gNumber_of_net_players; i++) {
+            if (gNet_players[i].awaiting_confirmation) {
+                return;
+            }
+        }
+        SignalToStartRace();
+    }
 }
 
 // STUB: CARMA2_HW 0x004a5280
