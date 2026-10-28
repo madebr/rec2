@@ -136,25 +136,13 @@ void C2_HOOK_FASTCALL F12Key(void) {
 // FUNCTION: CARMA2_HW 0x00441e10
 // FUNCTION: CARMA2_SW 0x00441ef0
 void C2_HOOK_FASTCALL LookLeft(void) {
+
     PratcamEvent(27);
     gProgram_state.old_view = gProgram_state.which_view;
     if (gProgram_state.which_view == eView_left) {
-        PratcamEvent(28);
-        if (gProgram_state.which_view != eView_forward) {
-            gProgram_state.old_view = gProgram_state.which_view;
-            ClearWobbles();
-            gProgram_state.new_view = eView_forward;
-            gProgram_state.view_change_start = PDGetTotalTime();
-            gProgram_state.pending_view = eView_undefined;
-        }
+        LookForward();
     } else if (gProgram_state.which_view == eView_right) {
-        PratcamEvent(27);
-        if (gProgram_state.which_view != eView_forward) {
-            gProgram_state.old_view = gProgram_state.which_view;
-            ClearWobbles();
-            gProgram_state.new_view = eView_forward;
-            gProgram_state.view_change_start = PDGetTotalTime();
-        }
+        LookForward();
         gProgram_state.pending_view = eView_left;
     } else {
         ClearWobbles();
@@ -164,30 +152,34 @@ void C2_HOOK_FASTCALL LookLeft(void) {
     }
 }
 
-// LookForward
+// FUNCTION: CARMA2_HW 0x00441ec0
+// FUNCTION: CARMA2_SW 0x00441fa0
+void C2_HOOK_FASTCALL LookForward(void) {
+
+    if (gProgram_state.which_view == eView_right) {
+        PratcamEvent(27);
+    } else if (gProgram_state.which_view == eView_left) {
+        PratcamEvent(28);
+    }
+    if (gProgram_state.which_view != eView_forward) {
+        gProgram_state.old_view = gProgram_state.which_view;
+        ClearWobbles();
+        gProgram_state.new_view = eView_forward;
+        gProgram_state.view_change_start = PDGetTotalTime();
+        gProgram_state.pending_view = eView_undefined;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00441f20
 // FUNCTION: CARMA2_SW 0x00442000
 void C2_HOOK_FASTCALL LookRight(void) {
+
     PratcamEvent(28);
     gProgram_state.old_view = gProgram_state.which_view;
     if (gProgram_state.which_view == eView_right) {
-        PratcamEvent(27);
-        if (gProgram_state.which_view != eView_forward) {
-            gProgram_state.old_view = gProgram_state.which_view;
-            ClearWobbles();
-            gProgram_state.new_view = eView_forward;
-            gProgram_state.view_change_start = PDGetTotalTime();
-            gProgram_state.pending_view = eView_undefined;
-        }
+        LookForward();
     } else if (gProgram_state.which_view == eView_left) {
-        PratcamEvent(28);
-        if (gProgram_state.which_view != eView_forward) {
-            gProgram_state.old_view = gProgram_state.which_view;
-            ClearWobbles();
-            gProgram_state.new_view = eView_forward;
-            gProgram_state.view_change_start = PDGetTotalTime();
-        }
+        LookForward();
         gProgram_state.pending_view = eView_right;
     } else {
         ClearWobbles();
