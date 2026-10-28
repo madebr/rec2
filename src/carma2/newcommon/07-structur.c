@@ -311,7 +311,20 @@ void C2_HOOK_FASTCALL DoProgram(void) {
 
 // JumpTheStart
 
-// GoingToInterfaceFromRace
+// FUNCTION: CARMA2_HW 0x00504230
+// FUNCTION: CARMA2_SW 0x004ffb80
+void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void) {
+
+    gInterface_within_race_mode = 1;
+    gHud_tinted1_visible = !!TintedPolyIsOn(gHud_tinted1);
+    gHud_tinted2_visible = !!TintedPolyIsOn(gHud_tinted2);
+    TurnTintedPolyOff(gHud_tinted1);
+    TurnTintedPolyOff(gHud_tinted2);
+    PlayFlicsFromDisk();
+    if (gNet_mode == eNet_mode_host) {
+        SendGameplayToAllPlayers(eNet_gameplay_host_paused, 0, 0, 0, 0);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005042a0
 // FUNCTION: CARMA2_SW 0x004ffbf0
