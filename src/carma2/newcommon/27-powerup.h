@@ -395,7 +395,7 @@ extern void C2_HOOK_FASTCALL RemoveTail(void);
 
 extern void C2_HOOK_FASTCALL DoInitialTail(void);
 
-// UndoInitialTail
+extern void C2_HOOK_FASTCALL UndoInitialTail(void);
 
 // MayQueuePowerupRespawn
 

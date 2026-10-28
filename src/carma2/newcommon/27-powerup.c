@@ -824,7 +824,15 @@ void C2_HOOK_FASTCALL DoInitialTail(void) {
     }
 }
 
-// UndoInitialTail
+// FUNCTION: CARMA2_HW 0x004e0730
+// FUNCTION: CARMA2_SW 0x004dcc30
+void C2_HOOK_FASTCALL UndoInitialTail(void) {
+    tPhysics_object* collision_info;
+
+    for (collision_info = gMutant_tail_first_collision_info; collision_info != NULL; collision_info = collision_info->child) {
+        collision_info->actor->render_style = BR_RSTYLE_NONE;
+    }
+}
 
 // MayQueuePowerupRespawn
 
