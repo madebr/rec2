@@ -21,15 +21,19 @@
 int gINT_00595f84 = 7500;
 
 // GLOBAL: CARMA2_HW 0x00595f88
+// GLOBAL: CARMA2_SW 0x00590ee8
 int gJoystick_index = -1;
 
 // GLOBAL: CARMA2_HW 0x00595f90
+// GLOBAL: CARMA2_SW 0x00590ef0
 float gJoystick_x_steering = 1.f;
 
 // GLOBAL: CARMA2_HW 0x00595f94
+// GLOBAL: CARMA2_SW 0x00590ef4
 float gJoystick_y_throttle = 1.f;
 
 // GLOBAL: CARMA2_HW 0x00596310
+// GLOBAL: CARMA2_SW 0x00591270
 int gINT_00596310 = 50;
 
 // GLOBAL: CARMA2_HW 0x00686184
@@ -44,6 +48,7 @@ typedef struct tJoystick_preference_node {
 } tJoystick_preference_node;
 
 // FUNCTION: CARMA2_HW 0x0045a0f0
+// FUNCTION: CARMA2_SW 0x00459e80
 int C2_HOOK_FASTCALL HasCurrentJoystick(void) {
     return gJoystick_index != -1;
 }
@@ -331,6 +336,7 @@ void C2_HOOK_FASTCALL DisableJoysticks(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045c0b0
+// FUNCTION: CARMA2_SW 0x0045bb30
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
     tPath_name path;
     tButtonJoystickInfo* info;
@@ -427,6 +433,7 @@ int C2_HOOK_FASTCALL CycleJoystickFFBGain(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045c7b0
+// FUNCTION: CARMA2_SW 0x0045c1f0
 void C2_HOOK_FASTCALL SetJoystickFFBGain(int pValue) {
     tButtonJoystickInfo* info;
 
@@ -456,6 +463,7 @@ int C2_HOOK_FASTCALL GetJoystickFBBGain(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045c810
+// FUNCTION: CARMA2_SW 0x0045c250
 void C2_HOOK_FASTCALL SetJoystickX(float pValue) {
     tButtonJoystickInfo* info;
 
@@ -473,6 +481,7 @@ void C2_HOOK_FASTCALL SetJoystickX(float pValue) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045c870
+// FUNCTION: CARMA2_SW 0x0045c2b0
 void C2_HOOK_FASTCALL SetJoystickY(float pValue) {
     tButtonJoystickInfo* info;
 
@@ -490,6 +499,7 @@ void C2_HOOK_FASTCALL SetJoystickY(float pValue) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045c8d0
+// FUNCTION: CARMA2_SW 0x0045c310
 float C2_HOOK_FASTCALL GetJoystickX(void) {
     tButtonJoystickInfo* info;
 
@@ -501,6 +511,7 @@ float C2_HOOK_FASTCALL GetJoystickX(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045c8f0
+// FUNCTION: CARMA2_SW 0x0045c330
 float C2_HOOK_FASTCALL GetJoystickY(void) {
     tButtonJoystickInfo* info;
 

@@ -14,6 +14,7 @@
 #include "resource.h"
 
 // FUNCTION: CARMA2_HW 0x00529af0
+// FUNCTION: CARMA2_SW 0x00524660
 void* C2_HOOK_STDCALL BrRegistryNew(br_registry* reg) {
 
     BrNewList(&reg->list);
@@ -22,6 +23,7 @@ void* C2_HOOK_STDCALL BrRegistryNew(br_registry* reg) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529b10
+// FUNCTION: CARMA2_SW 0x00524680
 void* C2_HOOK_STDCALL BrRegistryClear(br_registry* reg) {
     br_registry_entry* e;
 
@@ -36,6 +38,7 @@ void* C2_HOOK_STDCALL BrRegistryClear(br_registry* reg) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529b50
+// FUNCTION: CARMA2_SW 0x005246c0
 void* C2_HOOK_STDCALL BrRegistryAdd(br_registry* reg, void* item) {
     br_registry_entry* e;
 
@@ -47,6 +50,7 @@ void* C2_HOOK_STDCALL BrRegistryAdd(br_registry* reg, void* item) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529b90
+// FUNCTION: CARMA2_SW 0x00524700
 int C2_HOOK_STDCALL BrRegistryAddMany(br_registry* reg, void** items, int n) {
     int i;
 
@@ -57,6 +61,7 @@ int C2_HOOK_STDCALL BrRegistryAddMany(br_registry* reg, void** items, int n) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529be0
+// FUNCTION: CARMA2_SW 0x00524750
 void* C2_HOOK_STDCALL BrRegistryRemove(br_registry* reg, void* item) {
     br_registry_entry* e;
     void* r;
@@ -76,6 +81,7 @@ void* C2_HOOK_STDCALL BrRegistryRemove(br_registry* reg, void* item) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529c40
+// FUNCTION: CARMA2_SW 0x005247b0
 int C2_HOOK_STDCALL BrRegistryRemoveMany(br_registry* reg, void** items, int n) {
     int i;
     int r;
@@ -90,6 +96,7 @@ int C2_HOOK_STDCALL BrRegistryRemoveMany(br_registry* reg, void** items, int n) 
 }
 
 // FUNCTION: CARMA2_HW 0x00529cc0
+// FUNCTION: CARMA2_SW 0x00524830
 void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, const char* pattern) {
     br_registry_entry* e;
 
@@ -108,6 +115,7 @@ void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, const char* pattern) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529d20
+// FUNCTION: CARMA2_SW 0x00524890
 int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, const char* pattern, void** items, int max) {
     br_registry_entry* e;
     int n;
@@ -125,6 +133,7 @@ int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, const char* pattern, vo
 }
 
 // FUNCTION: CARMA2_HW 0x00529d70
+// FUNCTION: CARMA2_SW 0x005248e0
 int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, const char* pattern) {
     br_registry_entry* e;
     int n;
@@ -144,6 +153,7 @@ int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, const char* pattern) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529dc0
+// FUNCTION: CARMA2_SW 0x00524930
 int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, const char* pattern, br_enum_cbfn* callback, void* arg) {
     br_registry_entry* e;
     int r;
@@ -175,18 +185,21 @@ int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, const char* pattern, br_enu
 }
 
 // FUNCTION: CARMA2_HW 0x00529e50
+// FUNCTION: CARMA2_SW 0x005249c0
 void* C2_HOOK_STDCALL BrRegistryNewStatic(br_registry* reg, br_registry_entry* base, int limit) {
 
     return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x00529e60
+// FUNCTION: CARMA2_SW 0x005249d0
 void* C2_HOOK_STDCALL BrRegistryAddStatic(br_registry* reg, br_registry_entry* base, void* item) {
 
     return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x00529e70
+// FUNCTION: CARMA2_SW 0x005249e0
 void* C2_HOOK_STDCALL BrRegistryRemoveStatic(br_registry* reg, void* item) {
 
     return NULL;

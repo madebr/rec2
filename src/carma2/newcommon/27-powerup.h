@@ -25,6 +25,7 @@ extern int gPed_dismemberfest;
 extern int gPanicking_peds;
 extern float gPed_gravity_multiplier;
 extern int gCount_mutant_tail_parts;
+extern tPhysics_object* gMutant_tail_first_collision_info;
 extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
 extern float gMass_mine;
@@ -392,7 +393,7 @@ extern void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPositio
 
 extern void C2_HOOK_FASTCALL RemoveTail(void);
 
-// DoInitialTail
+extern void C2_HOOK_FASTCALL DoInitialTail(void);
 
 // UndoInitialTail
 

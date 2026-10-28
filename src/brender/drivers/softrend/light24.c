@@ -20,6 +20,7 @@ void C2_HOOK_CDECL SurfaceColourZero(br_soft_renderer* self, br_vector3* p, br_v
 }
 
 // FUNCTION: CARMA2_HW 0x00548c40
+// FUNCTION: CARMA2_SW 0x005442e0
 void C2_HOOK_CDECL SurfaceColourUnlit(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
 
     comp[C_R] = self->state.cache.comp_scales[C_R] * (float)BR_RED(colour) / 256.f + self->state.cache.comp_offsets[C_R];
@@ -28,6 +29,7 @@ void C2_HOOK_CDECL SurfaceColourUnlit(br_soft_renderer* self, br_vector3* p, br_
 }
 
 // FUNCTION: CARMA2_HW 0x00548cf0
+// FUNCTION: CARMA2_SW 0x00544390
 void C2_HOOK_CDECL SurfaceColourLit(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
     int i;
     active_light* alp;

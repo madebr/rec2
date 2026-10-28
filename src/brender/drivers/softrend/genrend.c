@@ -335,6 +335,7 @@ void C2_HOOK_CDECL Vertex_ClearFlags(br_geometry* self, br_soft_renderer* render
 }
 
 // FUNCTION: CARMA2_HW 0x005476f0
+// FUNCTION: CARMA2_SW 0x00542d90
 void C2_HOOK_STDCALL VertexGeometryFns(br_soft_renderer* renderer, geometry_fn* prim_outcode) {
 
     C2_HOOK_BUG_ON(ENBL_BOUNDS != 0x10);
