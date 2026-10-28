@@ -53,6 +53,7 @@ int C2_HOOK_FASTCALL PDNetHostGame(tNet_game_details* pDetails, char* pHost_name
 // SetForRecieve
 
 // FUNCTION: CARMA2_HW 0x0051a5f0
+// FUNCTION: CARMA2_SW 0x005140d0
 void C2_HOOK_FASTCALL PDNetSetPlayerSystemInfo(tNet_game_player_info* pPlayer, void* pSender_address) {
     C2_HOOK_BUG_ON(sizeof(SOCKADDR_IPX) != 14);
 

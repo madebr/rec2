@@ -15,10 +15,12 @@
 
 
 // GLOBAL: CARMA2_HW 0x0079f980
+// GLOBAL: CARMA2_SW 0x00795f20
 rend_block_soft rend;
 
 
 // GLOBAL: CARMA2_HW 0x0079fa00
+// GLOBAL: CARMA2_SW 0x00795fa0
 static_cache_soft scache;
 
 static void eyeInModel(br_soft_renderer* self) {
@@ -75,6 +77,7 @@ void C2_HOOK_STDCALL ViewToModelUpdate(br_soft_renderer* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x00543ee0
+// FUNCTION: CARMA2_SW 0x0053f580
 void C2_HOOK_STDCALL ModelToScreenUpdate(br_soft_renderer* self) {
 
     BrMatrix4Mul34(&scache.model_to_screen,
@@ -83,6 +86,7 @@ void C2_HOOK_STDCALL ModelToScreenUpdate(br_soft_renderer* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x00543a40
+// FUNCTION: CARMA2_SW 0x0053f0e0
 void C2_HOOK_STDCALL StaticCacheUpdate_PerScene(br_soft_renderer* self) {
     int i;
 
@@ -97,6 +101,7 @@ void C2_HOOK_STDCALL StaticCacheUpdate_PerScene(br_soft_renderer* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x00543a80
+// FUNCTION: CARMA2_SW 0x0053f120
 void C2_HOOK_STDCALL StaticCacheUpdate_PerModel(br_soft_renderer* self) {
 
 #if COUNTERS
@@ -126,6 +131,7 @@ void C2_HOOK_STDCALL StaticCacheUpdate_PerModel(br_soft_renderer* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x00543d80
+// FUNCTION: CARMA2_SW 0x0053f420
 br_error C2_HOOK_STDCALL CacheUpdate(br_soft_renderer* self) {
 
     if (!rend.block_changed && !rend.range_changed && self->state.cache.valid) {
@@ -216,6 +222,7 @@ void C2_HOOK_STDCALL ActiveLightsFind(br_soft_renderer* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x00544060
+// FUNCTION: CARMA2_SW 0x0053f700
 void C2_HOOK_STDCALL ActiveLightsUpdate(br_soft_renderer* self) {
     active_light* alp;
     int l;
@@ -259,6 +266,7 @@ void C2_HOOK_STDCALL ActiveLightsUpdate(br_soft_renderer* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x005444a0
+// FUNCTION: CARMA2_SW 0x0053fb40
 br_int_32 C2_HOOK_STDCALL GenerateSurfaceFunctions(br_soft_renderer *self, surface_fn **fns, br_uint_32 mask) {
     br_int_32 f = 0;
     br_matrix23* m;
@@ -372,6 +380,7 @@ br_uint_32 C2_HOOK_STDCALL ComponentMaskToSlots(br_uint_32 cm) {
 }
 
 // FUNCTION: CARMA2_HW 0x00544670
+// FUNCTION: CARMA2_SW 0x0053fd10
 void C2_HOOK_STDCALL GeometryFunctionReset(br_soft_renderer* renderer) {
 
 #ifndef REC2_MATCHING
@@ -384,6 +393,7 @@ void C2_HOOK_STDCALL GeometryFunctionReset(br_soft_renderer* renderer) {
 }
 
 // FUNCTION: CARMA2_HW 0x00544690
+// FUNCTION: CARMA2_SW 0x0053fd30
 void C2_HOOK_STDCALL GeometryFunctionAdd(br_soft_renderer* renderer, geometry_fn* fn) {
 
     renderer->state.cache.geometry_fns[renderer->state.cache.ngeometry_fns] = fn;
@@ -391,6 +401,7 @@ void C2_HOOK_STDCALL GeometryFunctionAdd(br_soft_renderer* renderer, geometry_fn
 }
 
 // FUNCTION: CARMA2_HW 0x005446c0
+// FUNCTION: CARMA2_SW 0x0053fd60
 void C2_HOOK_STDCALL GeometryFunctionOnScreenAdd(br_soft_renderer* renderer, geometry_fn* fn) {
 
     renderer->state.cache.geometry_fns_onscreen[renderer->state.cache.ngeometry_fns_onscreen] = fn;
@@ -398,6 +409,7 @@ void C2_HOOK_STDCALL GeometryFunctionOnScreenAdd(br_soft_renderer* renderer, geo
 }
 
 // FUNCTION: CARMA2_HW 0x005446f0
+// FUNCTION: CARMA2_SW 0x0053fd90
 void C2_HOOK_STDCALL GeometryFunctionBothAdd(br_soft_renderer* renderer, geometry_fn* fn) {
 
     GeometryFunctionAdd(renderer, fn);
@@ -405,6 +417,7 @@ void C2_HOOK_STDCALL GeometryFunctionBothAdd(br_soft_renderer* renderer, geometr
 }
 
 // FUNCTION: CARMA2_HW 0x00544730
+// FUNCTION: CARMA2_SW 0x0053fdd0
 void C2_HOOK_STDCALL PrimBlockReset(br_soft_renderer* renderer) {
 
 #ifndef REC2_MATCHING
@@ -417,6 +430,7 @@ void C2_HOOK_STDCALL PrimBlockReset(br_soft_renderer* renderer) {
 }
 
 // FUNCTION: CARMA2_HW 0x00544750
+// FUNCTION: CARMA2_SW 0x0053fdf0
 void C2_HOOK_STDCALL PrimBlockAdd(br_soft_renderer* renderer, brp_render_fn* fn) {
     int f;
 
@@ -427,6 +441,7 @@ void C2_HOOK_STDCALL PrimBlockAdd(br_soft_renderer* renderer, brp_render_fn* fn)
 }
 
 // FUNCTION: CARMA2_HW 0x00544790
+// FUNCTION: CARMA2_SW 0x0053fe30
 void C2_HOOK_STDCALL PrimBlockOnScreenAdd(br_soft_renderer* renderer, brp_render_fn* fn) {
     int f;
 
@@ -437,6 +452,7 @@ void C2_HOOK_STDCALL PrimBlockOnScreenAdd(br_soft_renderer* renderer, brp_render
 }
 
 // FUNCTION: CARMA2_HW 0x005447d0
+// FUNCTION: CARMA2_SW 0x0053fe70
 void C2_HOOK_STDCALL PrimBlockAddBoth(br_soft_renderer* renderer, brp_render_fn* fn) {
 
     PrimBlockAdd(renderer, fn);

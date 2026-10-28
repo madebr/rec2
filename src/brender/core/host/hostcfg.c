@@ -15,6 +15,7 @@
 #endif
 
 // FUNCTION: CARMA2_HW 0x0053fba0
+// FUNCTION: CARMA2_SW 0x0053b240
 const char* C2_HOOK_CDECL HostDefaultDevice(void) {
 
     return "DDRAW";
@@ -22,6 +23,7 @@ const char* C2_HOOK_CDECL HostDefaultDevice(void) {
 
 
 // FUNCTION: CARMA2_HW 0x0053fbb0
+// FUNCTION: CARMA2_SW 0x0053b250
 br_boolean C2_HOOK_CDECL HostIniSectionExists(char* ini_file, char* section_name) {
 #ifdef _WIN32
 	DWORD Size;
@@ -37,6 +39,7 @@ br_boolean C2_HOOK_CDECL HostIniSectionExists(char* ini_file, char* section_name
 
 
 // FUNCTION: CARMA2_HW 0x0053fbe0
+// FUNCTION: CARMA2_SW 0x0053b280
 br_error C2_HOOK_CDECL HostIniQuery(char* ini_file, char* section_name, char* entry, char* Buffer, int max, br_uint_16* size) {
 
 #ifdef _WIN32
@@ -52,6 +55,7 @@ br_error C2_HOOK_CDECL HostIniQuery(char* ini_file, char* section_name, char* en
 
 
 // FUNCTION: CARMA2_HW 0x0053fc10
+// FUNCTION: CARMA2_SW 0x0053b2b0
 br_error C2_HOOK_CDECL HostRegistryQuery(void* hKey, char* Path, char* entry, char* Buffer, br_uint_16 max, br_uint_16* size) {
 #ifdef _WIN32
     HKEY key, key2;

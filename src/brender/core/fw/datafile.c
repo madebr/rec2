@@ -20,6 +20,7 @@
 #include "c2_stdlib.h"
 
 // GLOBAL: CARMA2_HW 0x006673c8
+// GLOBAL: CARMA2_SW 0x006619a8
 br_file_primitives _BrFilePrimsNull = {
     "NULL",
     (int (C2_HOOK_STDCALL*)(br_datafile*, br_uint_32)) & BrNullOther,
@@ -40,6 +41,7 @@ br_file_primitives _BrFilePrimsNull = {
 };
 
 // GLOBAL: CARMA2_HW 0x00667408
+// GLOBAL: CARMA2_SW 0x006619e8
 br_file_primitives _BrFilePrimsReadBinary = {
     "Read Binary",
     &DfSkipBinary,
@@ -60,6 +62,7 @@ br_file_primitives _BrFilePrimsReadBinary = {
 };
 
 // GLOBAL: CARMA2_HW 0x00667448
+// GLOBAL: CARMA2_SW 0x00661a28
 br_file_primitives _BrFilePrimsWriteBinary = {
     "Write Binary",
     &DfSkipBinary,
@@ -80,6 +83,7 @@ br_file_primitives _BrFilePrimsWriteBinary = {
 };
 
 // GLOBAL: CARMA2_HW 0x00667488
+// GLOBAL: CARMA2_SW 0x00661a68
 br_file_primitives _BrFilePrimsReadText = {
     "Read Text",
     &DfSkipText,
@@ -100,6 +104,7 @@ br_file_primitives _BrFilePrimsReadText = {
 };
 
 // GLOBAL: CARMA2_HW 0x006674c8
+// GLOBAL: CARMA2_SW 0x00661aa8
 br_file_primitives _BrFilePrimsWriteText = {
     "Write Text",
     &DfSkipText,
@@ -120,6 +125,7 @@ br_file_primitives _BrFilePrimsWriteText = {
 };
 
 // GLOBAL: CARMA2_HW 0x00667250
+// GLOBAL: CARMA2_SW 0x00661830
 const char* member_type_names[32] = {
     "int_8",
     "uint_8",
@@ -157,6 +163,7 @@ const char* member_type_names[32] = {
 
 
 // GLOBAL: CARMA2_HW 0x006ad9b0
+// GLOBAL: CARMA2_SW 0x006a7138
 datafile_stack_t DatafileStack[1024];
 
 #if defined(BRENDER_FIX_BUGS)
@@ -176,6 +183,7 @@ datafile_stack_t DatafileStack[1024];
 #endif
 
 // GLOBAL: CARMA2_HW 0x006672d0
+// GLOBAL: CARMA2_SW 0x006618b0
 const char* ChunkNames[CHUNKNAMES_NB] = {
     "END",
     "IMAGE_PLANE",
@@ -243,9 +251,11 @@ const char* ChunkNames[CHUNKNAMES_NB] = {
 
 
 // GLOBAL: CARMA2_HW 0x006b09b0
+// GLOBAL: CARMA2_SW 0x006aa138
 int DatafileStackTop;
 
 // FUNCTION: CARMA2_HW 0x00529ff0
+// FUNCTION: CARMA2_SW 0x00524b80
 void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count) {
 
     if (DatafileStackTop >= BR_ASIZE(DatafileStack)) {
@@ -258,6 +268,7 @@ void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a040
+// FUNCTION: CARMA2_SW 0x00524bd0
 void* C2_HOOK_STDCALL DfPop(int type, int* countp) {
 
     if (DatafileStackTop <= 0) {
@@ -274,6 +285,7 @@ void* C2_HOOK_STDCALL DfPop(int type, int* countp) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a0b0
+// FUNCTION: CARMA2_SW 0x00524c40
 void* C2_HOOK_STDCALL DfTop(int type, int* countp) {
     if (DatafileStackTop <= 0)
         BrFailure("DatafileStack Underflow");
@@ -285,6 +297,7 @@ void* C2_HOOK_STDCALL DfTop(int type, int* countp) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a120
+// FUNCTION: CARMA2_SW 0x00524cb0
 int C2_HOOK_STDCALL DfTopType(void) {
     if (DatafileStackTop <= 0) {
         return 0;
@@ -293,6 +306,7 @@ int C2_HOOK_STDCALL DfTopType(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052b630
+// FUNCTION: CARMA2_SW 0x005261c0
 int C2_HOOK_STDCALL TextReadLine(br_datafile* df, char** ident, char** data) {
     char* cp;
 
@@ -370,6 +384,7 @@ br_uint_16 C2_HOOK_STDCALL scalarTypeConvert(br_datafile* df, br_uint_16 t) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a140
+// FUNCTION: CARMA2_SW 0x00524cd0
 br_uint_32 C2_HOOK_STDCALL DfStructWriteBinary(br_datafile* df, br_file_struct* str, void* base) {
     unsigned int m;
     int i;
@@ -504,6 +519,7 @@ br_uint_32 C2_HOOK_STDCALL DfStructWriteBinary(br_datafile* df, br_file_struct* 
 }
 
 // FUNCTION: CARMA2_HW 0x0052a610
+// FUNCTION: CARMA2_SW 0x005251a0
 br_uint_32 C2_HOOK_STDCALL DfStructReadBinary(br_datafile* df, br_file_struct* str, void* base) {
     char tmp_string[256];
     unsigned int m;
@@ -644,6 +660,7 @@ br_uint_32 C2_HOOK_STDCALL DfStructReadBinary(br_datafile* df, br_file_struct* s
 }
 
 // FUNCTION: CARMA2_HW 0x0052ab30
+// FUNCTION: CARMA2_SW 0x005256c0
 int C2_HOOK_STDCALL DfStructSizeBinary(br_datafile* df, br_file_struct* str, void* base) {
     unsigned char* mp;
     unsigned int m;
@@ -743,6 +760,7 @@ fail:
 }
 
 // FUNCTION: CARMA2_HW 0x0052ada0
+// FUNCTION: CARMA2_SW 0x00525930
 br_uint_32 C2_HOOK_STDCALL DfStructWriteText(br_datafile* df, br_file_struct* str, void* base) {
 
     BrFilePrintf(df->h, "  struct    %s\n", str->name);
@@ -751,6 +769,7 @@ br_uint_32 C2_HOOK_STDCALL DfStructWriteText(br_datafile* df, br_file_struct* st
 }
 
 // FUNCTION: CARMA2_HW 0x0052ade0
+// FUNCTION: CARMA2_SW 0x00525970
 br_uint_32 C2_HOOK_STDCALL StructWriteTextSub(br_datafile* df, br_file_struct* str, void* base, int indent) {
     unsigned int m;
     int i;
@@ -1048,6 +1067,7 @@ br_uint_32 C2_HOOK_STDCALL StructReadTextSub(br_datafile* df, br_file_struct* st
 }
 
 // FUNCTION: CARMA2_HW 0x0052be60
+// FUNCTION: CARMA2_SW 0x005269f0
 int C2_HOOK_STDCALL DfStructSizeText(br_datafile* df, br_file_struct* str, void* base) {
     unsigned int m;
     br_file_struct_member* sm;
@@ -1066,6 +1086,7 @@ int C2_HOOK_STDCALL DfStructSizeText(br_datafile* df, br_file_struct* str, void*
 }
 
 // FUNCTION: CARMA2_HW 0x0052beb0
+// FUNCTION: CARMA2_SW 0x00526a40
 br_uint_32 C2_HOOK_STDCALL DfStructWriteArray(br_datafile* df, br_file_struct* str, void* base, int n) {
     char* cp;
     int i;
@@ -1079,6 +1100,7 @@ br_uint_32 C2_HOOK_STDCALL DfStructWriteArray(br_datafile* df, br_file_struct* s
 }
 
 // FUNCTION: CARMA2_HW 0x0052bef0
+// FUNCTION: CARMA2_SW 0x00526a80
 br_uint_32 C2_HOOK_STDCALL DfStructReadArray(br_datafile* df, br_file_struct* str, void* base, int n) {
     char* cp;
     int i;
@@ -1095,6 +1117,7 @@ br_uint_32 C2_HOOK_STDCALL DfStructReadArray(br_datafile* df, br_file_struct* st
 }
 
 // FUNCTION: CARMA2_HW 0x0052bf40
+// FUNCTION: CARMA2_SW 0x00526ad0
 int C2_HOOK_STDCALL DfChunkWriteText(br_datafile* df, br_uint_32 id, br_uint_32 length) {
 
     if (id < BR_ASIZE(ChunkNames)) {
@@ -1106,6 +1129,7 @@ int C2_HOOK_STDCALL DfChunkWriteText(br_datafile* df, br_uint_32 id, br_uint_32 
 }
 
 // FUNCTION: CARMA2_HW 0x0052bf90
+// FUNCTION: CARMA2_SW 0x00526b20
 int C2_HOOK_STDCALL DfChunkReadText(br_datafile* df, br_uint_32* plength) {
     int i;
     char* id;
@@ -1137,6 +1161,7 @@ int C2_HOOK_STDCALL DfChunkReadText(br_datafile* df, br_uint_32* plength) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c050
+// FUNCTION: CARMA2_SW 0x00526be0
 int C2_HOOK_STDCALL DfChunkWriteBinary(br_datafile* df, br_uint_32 id, br_uint_32 length) {
     br_uint_32 l;
 
@@ -1148,6 +1173,7 @@ int C2_HOOK_STDCALL DfChunkWriteBinary(br_datafile* df, br_uint_32 id, br_uint_3
 }
 
 // FUNCTION: CARMA2_HW 0x0052c0b0
+// FUNCTION: CARMA2_SW 0x00526c40
 int C2_HOOK_STDCALL DfChunkReadBinary(br_datafile* df, br_uint_32* plength) {
     br_uint_32 id;
     br_uint_32 l;
@@ -1171,12 +1197,14 @@ int C2_HOOK_STDCALL DfChunkReadBinary(br_datafile* df, br_uint_32* plength) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c160
+// FUNCTION: CARMA2_SW 0x00526cf0
 void C2_HOOK_STDCALL DfCountWriteText(br_datafile* df, br_uint_32 count) {
 
     BrFilePrintf(df->h, " count %d\n", count);
 }
 
 // FUNCTION: CARMA2_HW 0x0052c180
+// FUNCTION: CARMA2_SW 0x00526d10
 br_uint_32 C2_HOOK_STDCALL DfCountReadText(br_datafile* df) {
     char* id;
     char* data;
@@ -1189,6 +1217,7 @@ br_uint_32 C2_HOOK_STDCALL DfCountReadText(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c1d0
+// FUNCTION: CARMA2_SW 0x00526d60
 void C2_HOOK_STDCALL DfCountWriteBinary(br_datafile* df, br_uint_32 count) {
     br_uint_32 l;
 
@@ -1197,6 +1226,7 @@ void C2_HOOK_STDCALL DfCountWriteBinary(br_datafile* df, br_uint_32 count) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c200
+// FUNCTION: CARMA2_SW 0x00526d90
 br_uint_32 C2_HOOK_STDCALL DfCountReadBinary(br_datafile* df) {
     br_uint_32 l;
 
@@ -1205,12 +1235,14 @@ br_uint_32 C2_HOOK_STDCALL DfCountReadBinary(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c230
+// FUNCTION: CARMA2_SW 0x00526dc0
 int C2_HOOK_STDCALL DfCountSizeText(br_datafile* df) {
 
     return 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0052c240
+// FUNCTION: CARMA2_SW 0x00526dd0
 int C2_HOOK_STDCALL DfCountSizeBinary(br_datafile* df) {
 
     return sizeof(br_uint_32);
@@ -1222,6 +1254,7 @@ br_uint_8* C2_HOOK_STDCALL BlockWriteSetup(void* base, int block_size, int block
 }
 
 // FUNCTION: CARMA2_HW 0x0052c250
+// FUNCTION: CARMA2_SW 0x00526de0
 int C2_HOOK_STDCALL DfBlockWriteText(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
     int i;
     br_uint_8* block;
@@ -1261,6 +1294,7 @@ int C2_HOOK_STDCALL DfBlockWriteText(br_datafile* df, void* base, int block_size
 }
 
 // FUNCTION: CARMA2_HW 0x0052c3d0
+// FUNCTION: CARMA2_SW 0x00526f60
 void* C2_HOOK_STDCALL DfBlockReadText(br_datafile* df, void* base, int* count, int size, int mtype) {
     char* id;
     char* data;
@@ -1309,6 +1343,7 @@ void* C2_HOOK_STDCALL DfBlockReadText(br_datafile* df, void* base, int* count, i
 }
 
 // FUNCTION: CARMA2_HW 0x0052c570
+// FUNCTION: CARMA2_SW 0x00527100
 int C2_HOOK_STDCALL DfBlockWriteBinary(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
     int count;
     br_uint_32 l;
@@ -1339,6 +1374,7 @@ int C2_HOOK_STDCALL DfBlockWriteBinary(br_datafile* df, void* base, int block_si
 }
 
 // FUNCTION: CARMA2_HW 0x0052c690
+// FUNCTION: CARMA2_SW 0x00527220
 void* C2_HOOK_STDCALL DfBlockReadBinary(br_datafile* df, void* base, int* count, int size, int mtype) {
     int l;
     int s;
@@ -1364,18 +1400,21 @@ void* C2_HOOK_STDCALL DfBlockReadBinary(br_datafile* df, void* base, int* count,
 }
 
 // FUNCTION: CARMA2_HW 0x0052c780
+// FUNCTION: CARMA2_SW 0x00527310
 int C2_HOOK_STDCALL DfBlockSizeText(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
 
     return ((size * block_count * block_size + (32 - 1)) >> 5) + 2;
 }
 
 // FUNCTION: CARMA2_HW 0x0052c7a0
+// FUNCTION: CARMA2_SW 0x00527330
 int C2_HOOK_STDCALL DfBlockSizeBinary(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
 
     return size * block_count * block_size + 8;
 }
 
 // FUNCTION: CARMA2_HW 0x0052c7c0
+// FUNCTION: CARMA2_SW 0x00527350
 char* C2_HOOK_STDCALL DfNameReadText(br_datafile* df, char* name) {
     char* id;
     char* data;
@@ -1394,6 +1433,7 @@ char* C2_HOOK_STDCALL DfNameReadText(br_datafile* df, char* name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c840
+// FUNCTION: CARMA2_SW 0x005273d0
 int C2_HOOK_STDCALL DfNameWriteText(br_datafile* df, const char* name) {
 
     if (name == NULL) {
@@ -1404,12 +1444,14 @@ int C2_HOOK_STDCALL DfNameWriteText(br_datafile* df, const char* name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c870
+// FUNCTION: CARMA2_SW 0x00527400
 int C2_HOOK_STDCALL DfNameSizeText(br_datafile* df, char* name) {
 
     return 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0052c880
+// FUNCTION: CARMA2_SW 0x00527410
 char* C2_HOOK_STDCALL DfNameReadBinary(br_datafile* df, char* name) {
     int c;
     int i;
@@ -1426,6 +1468,7 @@ char* C2_HOOK_STDCALL DfNameReadBinary(br_datafile* df, char* name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c8c0
+// FUNCTION: CARMA2_SW 0x00527450
 int C2_HOOK_STDCALL DfNameWriteBinary(br_datafile* df, const char* name) {
 
     if (name != NULL) {
@@ -1436,6 +1479,7 @@ int C2_HOOK_STDCALL DfNameWriteBinary(br_datafile* df, const char* name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c900
+// FUNCTION: CARMA2_SW 0x00527490
 int C2_HOOK_STDCALL DfNameSizeBinary(br_datafile* df, char* name) {
 
     if (name != NULL) {
@@ -1445,6 +1489,7 @@ int C2_HOOK_STDCALL DfNameSizeBinary(br_datafile* df, char* name) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c920
+// FUNCTION: CARMA2_SW 0x005274b0
 int C2_HOOK_STDCALL DfSkipText(br_datafile* df, br_uint_32 length) {
     char* id;
     char* data;
@@ -1457,12 +1502,14 @@ int C2_HOOK_STDCALL DfSkipText(br_datafile* df, br_uint_32 length) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052c970
+// FUNCTION: CARMA2_SW 0x00527500
 int C2_HOOK_STDCALL DfSkipBinary(br_datafile* df, br_uint_32 length) {
     BrFileAdvance(length, df->h);
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0052c990
+// FUNCTION: CARMA2_SW 0x00527520
 int C2_HOOK_STDCALL DfChunksInterpret(br_datafile* df, br_chunks_table* table) {
     br_uint_32 length;
     br_uint_32 count;
@@ -1499,6 +1546,7 @@ int C2_HOOK_STDCALL DfChunksInterpret(br_datafile* df, br_chunks_table* table) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052ca30
+// FUNCTION: CARMA2_SW 0x005275c0
 void C2_HOOK_STDCALL BrNullOther(void) {
 
     // Yes, "invalid" is misspelled.
@@ -1506,6 +1554,7 @@ void C2_HOOK_STDCALL BrNullOther(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cb40
+// FUNCTION: CARMA2_SW 0x005276d0
 int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics) {
     static char text_magics[8] = { '*', 'F', 'I', 'L', 'E', '_', 'I', 'N' };
     static char binary_magics[8] = { '\0', '\0', '\0', '\x12', '\0', '\0', '\0', '\b' };
@@ -1521,6 +1570,7 @@ int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052ca50
+// FUNCTION: CARMA2_SW 0x005275e0
 br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar_type) {
     int mode;
     br_datafile* df;
@@ -1557,6 +1607,7 @@ br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar
 }
 
 // FUNCTION: CARMA2_HW 0x0052cb80
+// FUNCTION: CARMA2_SW 0x00527710
 void C2_HOOK_STDCALL DfClose(br_datafile* df) {
     br_datafile* dfp;
 
@@ -1574,6 +1625,7 @@ void C2_HOOK_STDCALL DfClose(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cc50
+// FUNCTION: CARMA2_SW 0x005277e0
 int C2_HOOK_CDECL BrWriteModeSet(int mode) {
     int old;
 

@@ -14,6 +14,7 @@
 
 extern int gPHIL_disabled;
 extern tPhysics_object* gPHIL_list_collision_infos;
+extern tU32 gPHIL_last_physics_tick;
 
 // ScalarToFraction
 

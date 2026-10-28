@@ -22,6 +22,7 @@
                             MASK_STATE_CACHE)
 
 // GLOBAL: CARMA2_HW 0x0058c898
+// GLOBAL: CARMA2_SW 0x00587860
 const br_renderer_state_stored_dispatch rendererStateStoredDispatch = {
     NULL,
     NULL,
@@ -43,6 +44,7 @@ const br_renderer_state_stored_dispatch rendererStateStoredDispatch = {
 };
 
 // GLOBAL: CARMA2_HW 0x00670690
+// GLOBAL: CARMA2_SW 0x0066ae20
 br_tv_template_entry rendererStateStoredTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,  NULL,                   offsetof(br_renderer_state_stored_soft, identifier),   5,  3,  0,  0 },
     { BRT_RENDERER_O,       NULL,                   offsetof(br_renderer_state_stored_soft, renderer),     5,  3,  0,  0 },
@@ -51,6 +53,7 @@ br_tv_template_entry rendererStateStoredTemplateEntries[] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00542740
+// FUNCTION: CARMA2_SW 0x0053dde0
 br_renderer_state_stored_soft* C2_HOOK_STDCALL RendererStateStoredSoftAllocate(br_soft_renderer* renderer, soft_state_all* base_state, br_uint_32 m, br_token_value* tv) {
 
     br_renderer_state_stored_soft* self;
@@ -75,6 +78,7 @@ br_renderer_state_stored_soft* C2_HOOK_STDCALL RendererStateStoredSoftAllocate(b
 }
 
 // FUNCTION: CARMA2_HW 0x00542520
+// FUNCTION: CARMA2_SW 0x0053dbc0
 br_error C2_HOOK_STDCALL StateCopyToStored(br_renderer_state_stored_soft* dest, soft_state_all* src, br_uint_32 copy_mask, void* res) {
 
     C2_HOOK_BUG_ON(MASK_STATE_SURFACE != 0x1);
@@ -124,13 +128,14 @@ br_error C2_HOOK_STDCALL StateCopyToStored(br_renderer_state_stored_soft* dest, 
         memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
     }
 
-    if (copy_mask != MASK_CACHED_STATES) {
+    if ((copy_mask & MASK_CACHED_STATES) != MASK_CACHED_STATES) {
         dest->cache.valid = 0;
     }
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00542630
+// FUNCTION: CARMA2_SW 0x0053dcd0
 br_error C2_HOOK_STDCALL StateCopyFromStored(soft_state_all* dest, br_renderer_state_stored_soft* src, br_uint_32 copy_mask, void* res) {
 
     C2_HOOK_BUG_ON(MASK_STATE_SURFACE != 0x1);
@@ -180,13 +185,14 @@ br_error C2_HOOK_STDCALL StateCopyFromStored(soft_state_all* dest, br_renderer_s
         memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
     }
 
-    if (copy_mask != MASK_CACHED_STATES) {
+    if ((copy_mask & MASK_CACHED_STATES) != MASK_CACHED_STATES) {
         dest->cache.valid = 0;
     }
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x005427a0
+// FUNCTION: CARMA2_SW 0x0053de40
 void C2_HOOK_CDECL _M_br_renderer_state_stored_soft_free(br_renderer_state_stored_soft* self) {
 
     self->renderer->dispatch->_remove((br_object_container*)self->renderer, (br_object*)self);
@@ -194,18 +200,21 @@ void C2_HOOK_CDECL _M_br_renderer_state_stored_soft_free(br_renderer_state_store
 }
 
 // FUNCTION: CARMA2_HW 0x005427c0
+// FUNCTION: CARMA2_SW 0x0053de60
 br_token C2_HOOK_CDECL _M_br_renderer_state_stored_soft_type(br_renderer_state_stored_soft* self) {
 
     return BRT_RENDERER_STATE_STORED;
 }
 
 // FUNCTION: CARMA2_HW 0x005427d0
+// FUNCTION: CARMA2_SW 0x0053de70
 br_boolean C2_HOOK_CDECL _M_br_renderer_state_stored_soft_isType(br_renderer_state_stored_soft* self, br_token t) {
 
     return t == BRT_RENDERER_STATE_STORED || t == BRT_OBJECT;
 }
 
 // FUNCTION: CARMA2_HW 0x005427f0
+// FUNCTION: CARMA2_SW 0x0053de90
 br_size_t C2_HOOK_CDECL _M_br_renderer_state_stored_soft_space(br_renderer_state_stored_soft* self) {
 
     C2_HOOK_BUG_ON(sizeof(br_renderer_state_stored_soft) != 0x260);
@@ -213,6 +222,7 @@ br_size_t C2_HOOK_CDECL _M_br_renderer_state_stored_soft_space(br_renderer_state
 }
 
 // FUNCTION: CARMA2_HW 0x00542800
+// FUNCTION: CARMA2_SW 0x0053dea0
 br_tv_template* C2_HOOK_CDECL _M_br_renderer_state_stored_soft_templateQuery(br_renderer_state_stored_soft* self) {
 
     if (self->device->templates.rendererStateStoredTemplate == NULL) {

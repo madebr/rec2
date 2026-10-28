@@ -27,7 +27,9 @@ extern int gPalette_index;
 extern int gNoTransients;
 extern br_pixelmap* gRender_palette;
 extern int gDim_amount;
+#ifdef REC2_HW
 extern int gPalette_changed;
+#endif
 extern br_pixelmap* gCurrent_palette;
 extern br_pixelmap* gCurrent_splash;
 
@@ -99,6 +101,10 @@ extern int C2_HOOK_FASTCALL SwitchToHiresMode(void);
 
 extern int C2_HOOK_FASTCALL SwitchToLoresMode(void);
 
+#ifdef REC2_SW
+extern void DRPixelmapDoubledCopy(br_pixelmap* pDestn, br_pixelmap* pSource, int pSource_width, int pSource_height, int pX_offset, int pY_offset);
+#endif
+
 // PoshDrawLine
 
 extern void C2_HOOK_FASTCALL DrawRRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, br_uint_32 pColour);
@@ -128,5 +134,7 @@ extern void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, 
 extern void C2_HOOK_FASTCALL DisableLights(void);
 
 extern void C2_HOOK_FASTCALL EnableLights(void);
+
+extern void C2_HOOK_FASTCALL DRPixelmapBlend75Copy(br_pixelmap* pDest, br_int_16 pDest_x, br_int_16 pDest_y, br_pixelmap* pSource);
 
 #endif // GUARD_18_GRAPHICS2_H

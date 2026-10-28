@@ -37,6 +37,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x006ad4e0
+// GLOBAL: CARMA2_SW 0x006a6c68
 br_model* compareModel;
 
 // GLOBAL: CARMA2_HW 0x006ad4e4
@@ -81,6 +82,7 @@ int C2_HOOK_STDCALL addEdge(br_uint_16 first, br_uint_16 last) {
 }
 
 // FUNCTION: CARMA2_HW 0x00520560
+// FUNCTION: CARMA2_SW 0x0051bc00
 void C2_HOOK_STDCALL prepareEdges(v11group* group, br_model* model) {
     br_size_t scratch_size;
     br_face* mfp;
@@ -163,6 +165,7 @@ int C2_HOOK_CDECL FacesCompare(const void* p1, const void* p2) {
 }
 
 // FUNCTION: CARMA2_HW 0x00520860
+// FUNCTION: CARMA2_SW 0x0051bf00
 int C2_HOOK_CDECL TVCompare_XYZ(const void* p1, const void* p2) {
     prep_vertex* tv1;
     prep_vertex* tv2;
@@ -195,6 +198,7 @@ int C2_HOOK_CDECL TVCompare_XYZ(const void* p1, const void* p2) {
 }
 
 // FUNCTION: CARMA2_HW 0x005208e0
+// FUNCTION: CARMA2_SW 0x0051bf80
 int C2_HOOK_CDECL TVCompare_MXYZUVN(const void* p1, const void* p2) {
     prep_vertex* tv1;
     prep_vertex* tv2;
@@ -321,6 +325,7 @@ void C2_HOOK_STDCALL Smoothing(br_model* model, br_scalar crease_limit, prep_ver
 }
 
 // FUNCTION: CARMA2_HW 0x00520b50
+// FUNCTION: CARMA2_SW 0x0051c1f0
 void C2_HOOK_STDCALL SmoothingCreased(br_model* model, br_scalar crease_limit, prep_vertex** start, prep_vertex** end) {
     br_vector3 o_n;
     prep_vertex** outer;
@@ -339,6 +344,7 @@ void C2_HOOK_STDCALL SmoothingCreased(br_model* model, br_scalar crease_limit, p
 }
 
 // FUNCTION: CARMA2_HW 0x00520c60
+// FUNCTION: CARMA2_SW 0x0051c300
 void C2_HOOK_STDCALL CopyVertex(v11group* group, int v, prep_vertex* src, br_model* model) {
     br_vertex* srcv;
 
@@ -358,6 +364,7 @@ void C2_HOOK_STDCALL CopyVertex(v11group* group, int v, prep_vertex* src, br_mod
 }
 
 // FUNCTION: CARMA2_HW 0x00520d80
+// FUNCTION: CARMA2_SW 0x0051c420
 void C2_HOOK_STDCALL CopyFace(v11group* group, int f, br_face* src, br_model* model) {
 
     group->faces[f].vertices[0] = src->vertices[0];
@@ -629,6 +636,7 @@ void C2_HOOK_STDCALL PrepareBoundingBox(br_model* model) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f630
+// FUNCTION: CARMA2_SW 0x0051acd0
 int C2_HOOK_STDCALL IsMaterialTransparent(const br_material* material) {
     br_token_value* tvp;
 
@@ -666,6 +674,7 @@ int C2_HOOK_STDCALL IsMaterialTransparent(const br_material* material) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f6a0
+// FUNCTION: CARMA2_SW 0x0051ad40
 void C2_HOOK_STDCALL RegenerateFaceNormals(v11model* v11m) {
     int g;
     int f;
@@ -683,6 +692,7 @@ void C2_HOOK_STDCALL RegenerateFaceNormals(v11model* v11m) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f730
+// FUNCTION: CARMA2_SW 0x0051add0
 void C2_HOOK_STDCALL RegenerateVertexNormals(v11model* v11m) {
     int g;
     int v;
@@ -717,6 +727,7 @@ void C2_HOOK_STDCALL RegenerateVertexNormals(v11model* v11m) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f950
+// FUNCTION: CARMA2_SW 0x0051aff0
 void C2_HOOK_CDECL BrModelUpdate(br_model* model, br_uint_16 flags) {
     int g, f, v;
     struct v11model *v11m;
@@ -874,6 +885,7 @@ void C2_HOOK_CDECL BrModelUpdate(br_model* model, br_uint_16 flags) {
 }
 
 // FUNCTION: CARMA2_HW 0x00520e30
+// FUNCTION: CARMA2_SW 0x0051c4d0
 void C2_HOOK_STDCALL BrModelClear(br_model* model) {
 
     // remove prepared mesh
