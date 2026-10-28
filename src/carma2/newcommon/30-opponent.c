@@ -59,6 +59,7 @@ int gRoute_search_target_count;
 float gShortest_route_length;
 
 // FUNCTION: CARMA2_HW 0x004a8160
+// FUNCTION: CARMA2_SW 0x004a42d0
 void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 }
@@ -497,7 +498,7 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x004ae9e0
-// FUNCTION: CARMA2_SW 0x004aab20
+// FUNCTION: CARMA2_SW 0x004aab50
 int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no) {
 
     if (pSection_no >= 20000) {

@@ -72,6 +72,7 @@ tCar_spec* gTarget_lock_car_1;
 tCar_spec* gTarget_lock_car_2;
 
 // GLOBAL: CARMA2_HW 0x0068d8c8
+// GLOBAL: CARMA2_SW 0x00687920
 int gTarget_lock_enabled;
 
 // GLOBAL: CARMA2_HW 0x0068d8cc

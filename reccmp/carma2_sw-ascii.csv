@@ -4265,8 +4265,6 @@ address,type,x-text
 0x66de9c,string,"QuickTime.qts"
 0x66ded0,string,"asin"
 0x66df40,string,"acos"
-0x66df50,string,"@ny"
-0x66df58,string,"@ny"
 0x66e410,string,"Assertion failed: %s, file %s, line %d\n"
 0x66e460,string,"sqrt"
 0x66e470,string,"log10"

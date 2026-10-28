@@ -57,9 +57,11 @@
 // ___piob
 
 // GLOBAL: CARMA2_HW 0x006b3374
+// GLOBAL: CARMA2_SW 0x006acac4
 // __fmode
 
 // GLOBAL: CARMA2_HW 0x006b2e08
+// GLOBAL: CARMA2_SW 0x006ac590
 // __umaskval
 
 // GLOBAL: CARMA2_HW 0x006b2e00
@@ -698,9 +700,11 @@
 // __setmode
 
 // LIBRARY: CARMA2_HW 0x00584700
+// LIBRARY: CARMA2_SW 0x0057fa60
 // __alloc_osfhnd
 
 // LIBRARY: CARMA2_HW 0x005847c0
+// LIBRARY: CARMA2_SW 0x0057fb20
 // __set_osfhnd
 
 // LIBRARY: CARMA2_HW 0x005806c0

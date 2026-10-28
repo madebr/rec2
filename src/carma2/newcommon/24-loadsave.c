@@ -27,6 +27,7 @@ int gSave_game_out_of_sync;
 tSave_game* gSaved_games;
 
 // GLOBAL: CARMA2_HW 0x0068c728
+// GLOBAL: CARMA2_SW 0x00686778
 int gCount_saved_games;
 
 // Encryptificate
@@ -52,6 +53,7 @@ void C2_HOOK_FASTCALL EndSavedGamesList(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00491cb0
+// FUNCTION: CARMA2_SW 0x0048ef20
 tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
 
     if (gSaved_games != NULL && pN < gCount_saved_games) {

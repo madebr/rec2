@@ -475,6 +475,7 @@ void C2_HOOK_STDCALL TemplateActions(soft_state_all *state, br_token part, br_in
 }
 
 // FUNCTION: CARMA2_HW 0x005417d0
+// FUNCTION: CARMA2_SW 0x0053ce70
 void C2_HOOK_STDCALL TouchModelToView(br_soft_renderer* self) {
 
     scache.valid_v2m = 0;

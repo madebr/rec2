@@ -1322,7 +1322,7 @@ br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f9e0
-// FUNCTION: CARMA2_SW 0x0046f10c
+// FUNCTION: CARMA2_SW 0x0046f090
 void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
 
     if (pActor != NULL) {

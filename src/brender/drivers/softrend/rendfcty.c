@@ -26,6 +26,7 @@
 static const struct br_renderer_facility_dispatch rendererFacilityDispatch;
 
 // GLOBAL: CARMA2_HW 0x0058bbd8
+// GLOBAL: CARMA2_SW 0x00586ba0
 br_tv_template_entry rendererFacilityTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,  NULL,   offsetof(br_soft_renderer_facility, identifier),    5,  3,  0,  0, },
     { BRT_RENDERER_MAX_I32, NULL,   0,                                                  5,  1,  1,  0, },
@@ -33,6 +34,7 @@ br_tv_template_entry rendererFacilityTemplateEntries[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00670570
+// GLOBAL: CARMA2_SW 0x0066ad00
 br_tv_template_entry rendererNewTemplateEntries[] = {
     { BRT_DESTINATION_O,        NULL,   offsetof(newRendererTokens, dest),  2, 3, 0, 0, },
     { BRT_OUTPUT_FACILITY_O,    NULL,   offsetof(newRendererTokens, dest),  2, 3, 0, 0, },
@@ -79,18 +81,21 @@ void C2_HOOK_CDECL _M_br_renderer_facility_soft_free(br_soft_renderer_facility* 
 }
 
 // FUNCTION: CARMA2_HW 0x005406b0
+// FUNCTION: CARMA2_SW 0x0053bd50
 br_token C2_HOOK_CDECL _M_br_renderer_facility_soft_type(br_soft_renderer_facility* self) {
 
     return BRT_RENDERER_FACILITY;
 }
 
 // FUNCTION: CARMA2_HW 0x005406c0
+// FUNCTION: CARMA2_SW 0x0053bd60
 int C2_HOOK_CDECL _M_br_renderer_facility_soft_isType(br_soft_renderer_facility* self, br_token t) {
 
     return t == BRT_RENDERER_FACILITY || t == BRT_OBJECT_CONTAINER || t == BRT_OBJECT;
 }
 
 // FUNCTION: CARMA2_HW 0x005406e0
+// FUNCTION: CARMA2_SW 0x0053bd80
 br_int_32 C2_HOOK_CDECL _M_br_renderer_facility_soft_space(br_soft_renderer_facility* self) {
 
     C2_HOOK_BUG_ON(sizeof(br_soft_renderer_facility) != 0x79c);
@@ -113,6 +118,7 @@ br_tv_template* C2_HOOK_CDECL _M_br_renderer_facility_soft_templateQuery(br_soft
 }
 
 // FUNCTION: CARMA2_HW 0x00540800
+// FUNCTION: CARMA2_SW 0x0053bea0
 void* C2_HOOK_CDECL _M_br_renderer_facility_soft_listQuery(br_soft_renderer_facility* self) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer_facility, object_list, 0xc);
@@ -121,12 +127,14 @@ void* C2_HOOK_CDECL _M_br_renderer_facility_soft_listQuery(br_soft_renderer_faci
 }
 
 // FUNCTION: CARMA2_HW 0x00540720
+// FUNCTION: CARMA2_SW 0x0053bdc0
 int C2_HOOK_CDECL _M_br_renderer_facility_soft_validDestination(br_soft_renderer_facility* self, br_boolean* bp, br_object* h) {
 
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00540730
+// FUNCTION: CARMA2_SW 0x0053bdd0
 int C2_HOOK_CDECL _M_br_renderer_facility_soft_rendererNew(br_soft_renderer_facility* self, br_renderer** prenderer, br_token_value* tv) {
     newRendererTokens rt = { NULL, NULL };
     br_error r;
@@ -164,6 +172,7 @@ int C2_HOOK_CDECL _M_br_renderer_facility_soft_rendererNew(br_soft_renderer_faci
 }
 
 // GLOBAL: CARMA2_HW 0x0058bc20
+// GLOBAL: CARMA2_SW 0x00586be8
 static const struct br_renderer_facility_dispatch rendererFacilityDispatch = {
     NULL,
     NULL,

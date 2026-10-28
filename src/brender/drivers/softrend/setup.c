@@ -75,6 +75,7 @@ void C2_HOOK_STDCALL ViewToModelUpdate(br_soft_renderer* self) {
 }
 
 // FUNCTION: CARMA2_HW 0x00543ee0
+// FUNCTION: CARMA2_SW 0x0053f580
 void C2_HOOK_STDCALL ModelToScreenUpdate(br_soft_renderer* self) {
 
     BrMatrix4Mul34(&scache.model_to_screen,
