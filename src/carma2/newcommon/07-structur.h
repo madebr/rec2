@@ -13,8 +13,8 @@
 #include "rec2_types.h"
 
 extern int gHud_tinted1;
-#ifdef REC2_HW
 extern int gHud_tinted2;
+#ifdef REC2_HW
 extern int gHud_tinted3;
 #endif
 extern int gCredits_checkpoint[3];

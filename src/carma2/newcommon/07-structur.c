@@ -24,10 +24,11 @@
 // GLOBAL: CARMA2_SW 0x00650d30
 int gHud_tinted1 = -1;
 
-#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x00655e4c
+// GLOBAL: CARMA2_SW 0x00650d34
 int gHud_tinted2 = -1;
 
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x00655e50
 int gHud_tinted3 = -1;
 #endif
