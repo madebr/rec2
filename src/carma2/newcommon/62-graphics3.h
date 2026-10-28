@@ -33,7 +33,7 @@ extern int gMap_render_width_i;
 
 extern void C2_HOOK_FASTCALL ToggleTargetLock(void);
 
-// CycleTargetLock
+extern void C2_HOOK_FASTCALL CycleTargetLock(void);
 
 extern void C2_HOOK_FASTCALL CycleMapOptions(void);
 
@@ -97,7 +97,9 @@ extern void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, 
 
 extern void C2_HOOK_FASTCALL InitMap(void);
 
+#ifdef REC2_HW
 extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
+#endif
 
 // static void C2_HOOK_FASTCALL MapChanged(void);
 

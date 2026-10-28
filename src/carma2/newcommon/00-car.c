@@ -8,23 +8,31 @@
 
 #include "00-car.h"
 
+#include "13-crush1.h"
 #include "15-displays.h"
 #include "22-replay.h"
+#include "23-piping.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "58-crush2.h"
+#include "60-phil.h"
 #include "brender/brender.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrpb.h"
 
 #include "c2_stdio.h"
+#include "rec2_macros.h"
+
+#include <math.h>
 
 // GLOBAL: CARMA2_HW 0x00763500
+// GLOBAL: CARMA2_SW 0x00759a60
 int gCunning_stunt_bonus[3];
 
 // GLOBAL: CARMA2_HW 0x0074d1c0
+// GLOBAL: CARMA2_SW 0x00743720
 float gArmour_starting_value[100];
 
 // GLOBAL: CARMA2_HW 0x00761f5c
@@ -32,21 +40,27 @@ float gArmour_starting_value[100];
 int gExplosion_sound_id;
 
 // GLOBAL: CARMA2_HW 0x00761f60
+// GLOBAL: CARMA2_SW 0x007584c0
 float gPower_starting_value[100];
 
 // GLOBAL: CARMA2_HW 0x00761d40
+// GLOBAL: CARMA2_SW 0x007582a0
 float gOffensive_starting_value[100];
 
 // GLOBAL: CARMA2_HW 0x0075ba20
+// GLOBAL: CARMA2_SW 0x00751f80
 tFloat_bunch_info gCar_softness;
 
 // GLOBAL: CARMA2_HW 0x0074d600
+// GLOBAL: CARMA2_SW 0x00743b60
 tFloat_bunch_info gCar_car_damage_multiplier;
 
 // GLOBAL: CARMA2_HW 0x0068b8d0
+// GLOBAL: CARMA2_SW 0x00685e30
 br_vector3 gZero_v__car;  // FIXME: make const?
 
 // GLOBAL: CARMA2_HW 0x006793dc
+// GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
 
 // GLOBAL: CARMA2_HW 0x00679364
@@ -55,6 +69,10 @@ int gInTheSea;
 
 // GLOBAL: CARMA2_HW 0x0065d010
 int gFace_num__car = 1;
+
+// GLOBAL: CARMA2_HW 0x00744820
+// GLOBAL: CARMA2_SW 0x0073b2e0
+tFace_ref gFace_list__car[300];
 
 // FUNCTION: CARMA2_HW 0x00413cc0
 // FUNCTION: CARMA2_SW 0x00413cf0
@@ -78,7 +96,15 @@ void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
     SortOutSmoke(&gProgram_state.current_car);
 }
 
+// FUNCTION: CARMA2_HW 0x00413d90
+// FUNCTION: CARMA2_SW 0x00413dc0
+void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lf_wheel, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
 // FUNCTION: CARMA2_HW 0x00413f10
+// FUNCTION: CARMA2_SW 0x00413f40
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData) {
 
     if (pActor->user != NULL) {
@@ -109,9 +135,34 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // InitialiseCarsEtc
 
-// SetInitialPosition
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// SetInitialPositions
+// STUB: CARMA2_HW 0x00414510
+// STUB: CARMA2_SW 0x00414540
+void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, tU32 pGrid_index) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004148d0
+// FUNCTION: CARMA2_SW 0x00414900
+void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
+    int i;
+
+    for (i = 0; i < pThe_race->number_of_racers; i++) {
+        int grid_index = pThe_race->opponent_list[i].ranking;
+
+        if (grid_index >= 0) {
+            grid_index = i;
+        }
+        SetInitialPosition(pThe_race, i, grid_index);
+    }
+}
 
 // InitialiseNonCar
 
@@ -134,7 +185,17 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // PrepareCars
 
-// CalcGraphicalWheelStuff
+// FUNCTION: CARMA2_HW 0x004157e0
+// FUNCTION: CARMA2_SW 0x00415810
+void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar) {
+
+    pCar->steering_angle = (br_scalar)BrRadianToDegree(atan((pCar->wpos[0].v[2] - pCar->wpos[2].v[2]) * (pCar->field_0x1260 + pCar->curvature)));
+    pCar->lr_sus_position = (br_scalar)((pCar->wpos[0].v[1] - pCar->oldd[0]) / WORLD_SCALE_D);
+    pCar->rr_sus_position = (br_scalar)((pCar->wpos[1].v[1] - pCar->oldd[1]) / WORLD_SCALE_D);
+    pCar->lf_sus_position = (br_scalar)((pCar->wpos[2].v[1] - pCar->oldd[2]) / WORLD_SCALE_D);
+    pCar->rf_sus_position = (br_scalar)((pCar->wpos[3].v[1] - pCar->oldd[3]) / WORLD_SCALE_D);
+    PipeSingleGraphicalWheelStuff(pCar);
+}
 
 // FinishCars
 
@@ -160,7 +221,33 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // APTCPreCollision
 
-// SetCollisionFlagsAndStuff
+// FUNCTION: CARMA2_HW 0x004161a0
+// FUNCTION: CARMA2_SW 0x004161d0
+void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject) {
+    tPhysics_object* child;
+    tCar_spec* car;
+    int collided;
+
+    for (; pObject != NULL; pObject = pObject->next) {
+        if (gNet_mode == eNet_mode_host) {
+            collided = (pObject->collision_flag & 0x2) != 0 || (pObject->flags & 0x1000) != 0;
+            for (child = pObject->child; child != NULL; child = child->next) {
+                collided |= child->collision_flag & 0x2;
+            }
+            if (collided) {
+                pObject->field_0x49c = gPHIL_last_physics_tick + 40;
+                if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+                    car = pObject->owner;
+                    if (car->driver > 5 && car->car_crush_spec != NULL) {
+                        SetAllShapeStatusFlags(car->car_crush_spec->network_stuff);
+                    }
+                }
+            }
+        }
+        pObject->disable_move_rotate &= ~0x2;
+        SetCollisionFlagsAndStuff(pObject->child);
+    }
+}
 
 // APTCPostCollision
 
@@ -394,6 +481,7 @@ int C2_HOOK_FASTCALL ProcessJointForcesCallBack(void* pArg1, void* pArg2, void* 
 // MultiFindFloorInBoxBU
 
 // FUNCTION: CARMA2_HW 0x0041e340
+// FUNCTION: CARMA2_SW 0x0041e370
 void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vector3* nor, br_scalar* t, br_material** material) {
 
     ActorFindFace(pPosition, pDir, gTrack_actor, nor, t, material, NULL);
@@ -485,6 +573,7 @@ void C2_HOOK_FASTCALL AdjustDownForce(void) {
 // CheckForDeAttachmentOfNonCars
 
 // FUNCTION: CARMA2_HW 0x004207e0
+// FUNCTION: CARMA2_SW 0x00420860
 void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix) {
     tU8 column_x;
     tU8 column_z;
@@ -505,11 +594,13 @@ void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix)
 // GetPrecalculatedFacesUnderCar
 
 // FUNCTION: CARMA2_HW 0x004208f0
+// FUNCTION: CARMA2_SW 0x00420970
 void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_FACES;
 }
 
 // FUNCTION: CARMA2_HW 0x00420900
+// FUNCTION: CARMA2_SW 0x00420980
 void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_NONE;
 }

@@ -206,7 +206,7 @@ extern void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor);
 
 // PipeSingleFrameFinish
 
-// PipeSingleGraphicalWheelStuff
+extern void C2_HOOK_FASTCALL PipeSingleGraphicalWheelStuff(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPosition);
 
@@ -310,7 +310,7 @@ extern void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk);
 
 // ApplySmoke
 
-// ApplySmokeColumn
+extern void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk);
 
 // ApplyFlame
 
@@ -356,7 +356,7 @@ extern void C2_HOOK_FASTCALL ApplyEndMyBend(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyExplosion(tPipe_chunk** pChunk);
 
-// ApplyNonCarCreation
+extern void C2_HOOK_FASTCALL ApplyNonCarCreation(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk);
 
@@ -406,7 +406,7 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // ApplyPedDiagnostics
 
-// ApplyVector3
+extern void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk);
 
 // ApplyDroneRender
 
@@ -458,7 +458,7 @@ extern void C2_HOOK_FASTCALL UndoUnBend(void);
 
 // UndoShrapnelShower
 
-// UndoNonCarCreation
+extern void C2_HOOK_FASTCALL UndoNonCarCreation(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 extern void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 

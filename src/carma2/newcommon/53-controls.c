@@ -10,9 +10,12 @@
 
 #include "00-car.h"
 #include "15-displays.h"
+#include "16-graphics1.h"
 #include "17-world2.h"
+#include "27-powerup.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
+#include "43-pratcam.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
@@ -29,36 +32,47 @@
 int gCheckpoint_finder_enabled = 1;
 
 // GLOBAL: CARMA2_HW 0x00659b2c
+// GLOBAL: CARMA2_SW 0x00654514
 float gMap_render_x = 80.f;
 
 // GLOBAL: CARMA2_HW 0x00659b30
+// GLOBAL: CARMA2_SW 0x00654518
 float gMap_render_y = 6.f;
 
 // GLOBAL: CARMA2_HW 0x00659b34
+// GLOBAL: CARMA2_SW 0x0065451c
 float gMap_render_width = 128.f;
 
 // GLOBAL: CARMA2_HW 0x00659b38
+// GLOBAL: CARMA2_SW 0x00654520
 float gMap_render_height = 80.f;
 
 // GLOBAL: CARMA2_HW 0x0068d8d4
+// GLOBAL: CARMA2_SW 0x0068792c
 int gMap_trans;
 
 // GLOBAL: CARMA2_HW 0x0074abac
+// GLOBAL: CARMA2_SW 0x00741258
 int gHeadup_map_x;
 
 // GLOBAL: CARMA2_HW 0x0074abb0
+// GLOBAL: CARMA2_SW 0x0074125c
 int gHeadup_map_y;
 
 // GLOBAL: CARMA2_HW 0x0074aba8
+// GLOBAL: CARMA2_SW 0x00741254
 int gHeadup_map_w;
 
 // GLOBAL: CARMA2_HW 0x0074abb4
+// GLOBAL: CARMA2_SW 0x00741260
 int gHeadup_map_h;
 
 // GLOBAL: CARMA2_HW 0x0067c400
+// GLOBAL: CARMA2_SW 0x00676b78
 char gString[84];
 
 // GLOBAL: CARMA2_HW 0x0067c3c8
+// GLOBAL: CARMA2_SW 0x00676b40
 char* gAbuse_text[10];
 
 // GLOBAL: CARMA2_HW 0x0067c3f8
@@ -84,11 +98,13 @@ int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend) {
 // FinishRace
 
 // FUNCTION: CARMA2_HW 0x004415e0
+// FUNCTION: CARMA2_SW 0x004416c0
 void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void) {
 
 }
 
 // FUNCTION: CARMA2_HW 0x004415f0
+// FUNCTION: CARMA2_SW 0x004416d0
 void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void) {
 
 }
@@ -108,6 +124,7 @@ void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void) {
 // F11Key
 
 // FUNCTION: CARMA2_HW 0x00441900
+// FUNCTION: CARMA2_SW 0x004419e0
 void C2_HOOK_FASTCALL F12Key(void) {
 }
 
@@ -131,16 +148,72 @@ void C2_HOOK_FASTCALL F12Key(void) {
 
 // NumberKey9
 
-// LookLeft
+// FUNCTION: CARMA2_HW 0x00441e10
+// FUNCTION: CARMA2_SW 0x00441ef0
+void C2_HOOK_FASTCALL LookLeft(void) {
 
-// LookForward
+    PratcamEvent(27);
+    gProgram_state.old_view = gProgram_state.which_view;
+    if (gProgram_state.which_view == eView_left) {
+        LookForward();
+    } else if (gProgram_state.which_view == eView_right) {
+        LookForward();
+        gProgram_state.pending_view = eView_left;
+    } else {
+        ClearWobbles();
+        gProgram_state.new_view = eView_left;
+        gProgram_state.view_change_start = PDGetTotalTime();
+        gProgram_state.pending_view = eView_undefined;
+    }
+}
 
-// LookRight
+// FUNCTION: CARMA2_HW 0x00441ec0
+// FUNCTION: CARMA2_SW 0x00441fa0
+void C2_HOOK_FASTCALL LookForward(void) {
+
+    if (gProgram_state.which_view == eView_right) {
+        PratcamEvent(27);
+    } else if (gProgram_state.which_view == eView_left) {
+        PratcamEvent(28);
+    }
+    if (gProgram_state.which_view != eView_forward) {
+        gProgram_state.old_view = gProgram_state.which_view;
+        ClearWobbles();
+        gProgram_state.new_view = eView_forward;
+        gProgram_state.view_change_start = PDGetTotalTime();
+        gProgram_state.pending_view = eView_undefined;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00441f20
+// FUNCTION: CARMA2_SW 0x00442000
+void C2_HOOK_FASTCALL LookRight(void) {
+
+    PratcamEvent(28);
+    gProgram_state.old_view = gProgram_state.which_view;
+    if (gProgram_state.which_view == eView_right) {
+        LookForward();
+    } else if (gProgram_state.which_view == eView_left) {
+        LookForward();
+        gProgram_state.pending_view = eView_right;
+    } else {
+        ClearWobbles();
+        gProgram_state.new_view = eView_right;
+        gProgram_state.view_change_start = PDGetTotalTime();
+        gProgram_state.pending_view = eView_undefined;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00441fd0
 // FUNCTION: CARMA2_SW 0x004420b0
 void C2_HOOK_FASTCALL DamageTest(void) {
 
+}
+
+// FUNCTION: CARMA2_HW 0x00441fe0
+// FUNCTION: CARMA2_SW 0x004420c0
+void C2_HOOK_FASTCALL TDamageEngine(void) {
+    DamageEngine(21);
 }
 
 // FUNCTION: CARMA2_HW 0x00441ff0
@@ -214,7 +287,12 @@ void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info) {
 
 // FlipUpCar
 
-// GetPowerup
+// FUNCTION: CARMA2_HW 0x00442e80
+// FUNCTION: CARMA2_SW 0x00442f60
+void C2_HOOK_FASTCALL GetPowerup(int pNum) {
+
+    GotPowerup(&gProgram_state.current_car, pNum);
+}
 
 // CheckSystemKeys
 
@@ -274,7 +352,12 @@ int C2_HOOK_FASTCALL GetRecoverVoucherCount(void) {
     return gRecovery_voucher_count;
 }
 
-// AddVouchers
+// FUNCTION: CARMA2_HW 0x00444700
+// FUNCTION: CARMA2_SW 0x004447e0
+void C2_HOOK_FASTCALL AddVouchers(int pCount) {
+
+    gRecovery_voucher_count += pCount;
+}
 
 // FUNCTION: CARMA2_HW 0x00444710
 // FUNCTION: CARMA2_SW 0x004447f0
@@ -365,6 +448,7 @@ void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
 // DisplayUserMessage
 
 // FUNCTION: CARMA2_HW 0x00444d70
+// FUNCTION: CARMA2_SW 0x00444e50
 void C2_HOOK_FASTCALL InitAbuseomatic(void) {
     char path[256];
     char s[256];
@@ -401,6 +485,7 @@ void C2_HOOK_FASTCALL InitAbuseomatic(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00444ea0
+// FUNCTION: CARMA2_SW 0x00444f80
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
     int i;
 

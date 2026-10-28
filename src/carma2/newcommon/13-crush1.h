@@ -133,7 +133,7 @@ extern float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_
 
 // LimitImpactScale
 
-// GetImpactScale
+extern float C2_HOOK_FASTCALL GetImpactScale(const br_vector3* pP, int pCount, const br_vector3* pVertices, float pMax_dist_sq);
 
 extern int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq);
 
@@ -179,7 +179,7 @@ extern void C2_HOOK_FASTCALL AddDroneCrush(tQueued_drone_crush_item* pCrush, con
 
 // DoCrushing
 
-// SetCrush
+extern void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br_vector3* pVectors, br_vector3* pVector1, br_vector3* pVector2, float pScalar, tU32 pValue);
 
 // QueueCarCrush
 
@@ -373,7 +373,7 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // TotallySpamTheCar
 
-// DRActorEnumRecurseUltraPlus
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, br_actor_enum_cbfn* pCallback, void* pArg);
 
 // FireOffBitsCB
 
@@ -473,7 +473,7 @@ extern void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_
 
 extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pSrc);
 
-// ARUndoModelMash
+extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSrc);
 
 // ARApplyFlap
 
@@ -529,7 +529,7 @@ extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vect
 
 // GetNetShapeDataLengthFromData
 
-// EncodeNetShapeData
+extern void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar);
 
 // DecodeNetShapeData
 

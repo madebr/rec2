@@ -13,24 +13,29 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x006aaa1c
+// GLOBAL: CARMA2_SW 0x006a446c
 LPDIRECTSOUND gDirectSound;
 
 // GLOBAL: CARMA2_HW 0x006b2d9c
+// GLOBAL: CARMA2_SW 0x006ac524
 LPDIRECTSOUND gPD_S3_direct_sound;
 
 // GLOBAL: CARMA2_HW 0x007a00e0
 int gPDS3_volume_factors[256];
 
 // GLOBAL: CARMA2_HW 0x007a0080
+// GLOBAL: CARMA2_SW 0x00796620
 tPD_S3_config gPD_S3_config;
 
 // GLOBAL: CARMA2_HW 0x007a0500
+// GLOBAL: CARMA2_SW 0x00796aa0
 MCI_OPEN_PARMS gPDS3_mci_open_parms;
 
 // GLOBAL: CARMA2_HW 0x0079fec0
 MCI_SET_PARMS gPDS3_mci_set_parms;
 
 // GLOBAL: CARMA2_HW 0x006b2d98
+// GLOBAL: CARMA2_SW 0x006ac520
 int gPDS3_cda_initialized;
 
 // GLOBAL: CARMA2_HW 0x006b2da0
@@ -40,31 +45,52 @@ int gS3_working_directory_initialized;
 char gS3_working_directory[260];
 
 // GLOBAL: CARMA2_HW 0x006b2da4
+// GLOBAL: CARMA2_SW 0x006ac52c
 int gPDS3_midi_playing;
 
 // GLOBAL: CARMA2_HW 0x006b2dac
+// GLOBAL: CARMA2_SW 0x006ac534
 int gPDS3_cda_media_present;
 
 // GLOBAL: CARMA2_HW 0x006b2db0
 int gPDS3_cda_is_playing;
 
 // GLOBAL: CARMA2_HW 0x006b2db4
+// GLOBAL: CARMA2_SW 0x006ac53c
 int gPDS3_cda_paused;
 
 // GLOBAL: CARMA2_HW 0x006b2db8
+// GLOBAL: CARMA2_SW 0x006ac540
 int gPDS3_cda_track;
 
 // GLOBAL: CARMA2_HW 0x007a0520
 MCI_STATUS_PARMS gPDS3_cda_status_parms;
 
 // GLOBAL: CARMA2_HW 0x007a00ac
+// GLOBAL: CARMA2_SW 0x0079664c
 int gPDS3_Number_of_tracks;
 
 // GLOBAL: CARMA2_HW 0x007a0070
+// GLOBAL: CARMA2_SW 0x00796610
 MCI_STATUS_PARMS gPDS3_mci_midi_status_parms;
 
 // GLOBAL: CARMA2_HW 0x006b2dc4
+// GLOBAL: CARMA2_SW 0x006ac54c
 tU32 gPDS3_last_cda_status_update;
+
+#ifdef REC2_SW
+
+// FUNCTION: CARMA2_SW 0x00583271
+MCIERROR C2_HOOK_STDCALL mciSendCommandA_impl(MCIDEVICEID mciId, UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2) {
+    return 0;
+}
+
+// GLOBAL: CARMA2_SW 0x0058423c
+MCIERROR (C2_HOOK_STDCALL * mciSendCommandA_ptr)(MCIDEVICEID mciId, UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2) = mciSendCommandA_impl;
+
+#define mciSendCommandA mciSendCommandA_ptr
+
+#endif
 
 // FUNCTION: CARMA2_HW 0x0056992f
 int C2_HOOK_FASTCALL PDS3Init(void) {
@@ -157,6 +183,7 @@ void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor) {
 }
 
 // FUNCTION: CARMA2_HW 0x00569401
+// FUNCTION: CARMA2_SW 0x00564aa1
 int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel) {
     tU8* buffer_data;
     DWORD buffer_data_size;
@@ -210,6 +237,7 @@ const char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00569cb1
+// FUNCTION: CARMA2_SW 0x00565351
 int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel) {
 
     if (gPDS3_midi_playing) {
@@ -223,6 +251,7 @@ int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056a0e1
+// FUNCTION: CARMA2_SW 0x00565781
 void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
     gPDS3_cda_status_parms.dwItem = MCI_STATUS_MEDIA_PRESENT;
     mciSendCommandA(gPDS3_mci_open_parms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&gPDS3_cda_status_parms);
@@ -241,6 +270,7 @@ void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056a093
+// FUNCTION: CARMA2_SW 0x00565733
 int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel) {
 
     PDS3CheckCDAMedia(pChannel);
@@ -254,6 +284,7 @@ int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x005697ef
+// FUNCTION: CARMA2_SW 0x00564e8f
 int C2_HOOK_FASTCALL PDS3StopSampleChannel(tS3_channel* pChannel) {
 
     if (pChannel->descriptor != NULL && pChannel->descriptor->type == pChannel->type && pChannel->descriptor->pd_handle != NULL) {
@@ -270,6 +301,7 @@ int C2_HOOK_FASTCALL PDS3StopSampleChannel(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x00569507
+// FUNCTION: CARMA2_SW 0x00564ba7
 int C2_HOOK_FASTCALL PDS3UpdateChannelVolume(tS3_channel* pChannel) {
 
     if (pChannel->type == 0) {
@@ -307,11 +339,13 @@ int C2_HOOK_FASTCALL PDS3UpdateChannelVolume(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x00568ed0
+// FUNCTION: CARMA2_SW 0x00564570
 void C2_HOOK_FASTCALL PDS3UpdateCDAVolume(tS3_channel* pChannel, int pVolume) {
 
 }
 
 // FUNCTION: CARMA2_HW 0x00569ae2
+// FUNCTION: CARMA2_SW 0x00565182
 void C2_HOOK_FASTCALL PDS3Stop(void) {
 
     if (gPD_S3_config.free_direct_sound) {
@@ -325,11 +359,15 @@ void C2_HOOK_FASTCALL PDS3Stop(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00569f1b
+// FUNCTION: CARMA2_SW 0x005655bb
 int C2_HOOK_FASTCALL PDS3IsMIDIStopped(tS3_channel *pChannel) {
 
     gPDS3_mci_midi_status_parms.dwItem = MCI_STATUS_MODE;
     mciSendCommandA(pChannel->mciDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&gPDS3_mci_midi_status_parms);
-    return gPDS3_mci_midi_status_parms.dwReturn != MCI_MODE_PLAY;
+    if (gPDS3_mci_midi_status_parms.dwReturn == MCI_MODE_PLAY) {
+        return 0;
+    }
+    return 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0056a260
@@ -358,6 +396,7 @@ int C2_HOOK_FASTCALL PDS3IsSamplePlaying(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056967e
+// FUNCTION: CARMA2_SW 0x00564d1e
 int C2_HOOK_FASTCALL PDS3UpdateChannelFrequency(tS3_channel* pChannel) {
 
     if (pChannel->type == 0 && pChannel->descriptor != NULL && pChannel->descriptor->type == pChannel->type) {
@@ -387,6 +426,7 @@ int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x00569b93
+// FUNCTION: CARMA2_SW 0x00565233
 tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
     char path[256];
     MCIERROR err;
@@ -419,6 +459,7 @@ tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x00569f92
+// FUNCTION: CARMA2_SW 0x00565632
 tS3_error_codes C2_HOOK_FASTCALL PDS3PlayCDAChannel(tS3_channel* pChannel) {
     char* endptr;
 
@@ -446,6 +487,7 @@ tS3_error_codes C2_HOOK_FASTCALL PDS3PlayCDAChannel(tS3_channel* pChannel) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056a28d
+// FUNCTION: CARMA2_SW 0x0056592d
 void C2_HOOK_FASTCALL PDS3ServiceCDA(tS32 pDelta_time) {
     tU32 now;
     tS3_outlet* o;

@@ -17,6 +17,9 @@ extern int gMinTimeOpponentRepair;
 extern int gMaxTimeOpponentRepair;
 extern int gActive_car_list_rebuild_required;
 extern int gNumber_of_cops_before_faffage;
+extern int gNum_of_opponents_completing_race;
+extern int gNum_of_opponents_getting_near;
+extern int gNum_of_opponents_pursuing;
 extern tU8* gBit_per_node;
 extern int gRoute_search_calls;
 extern int gRoute_search_last_target_count;
@@ -105,7 +108,7 @@ extern void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOppon
 
 // LastTwatterAPlayer
 
-// ObjectiveComplete
+extern void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec);
 
 // TeleportOpponentToNearestSafeLocation
 

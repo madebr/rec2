@@ -54,7 +54,7 @@ extern int gDancing_peds;
 
 // PedApplyPedPos
 
-// PedApplyVanishDismembered
+extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 pValue);
 
 // SetCharacterPositionAR
 
@@ -92,7 +92,7 @@ extern void C2_HOOK_FASTCALL InitPolyPedSystem(void);
 
 extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
-// BonerOpenCharacterForm
+extern FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName);
 
 // BonerOpenDefaultMoves
 
@@ -148,7 +148,7 @@ extern void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm);
 
 extern void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality);
 
-// CBFillInObject
+extern void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType);
 
 // DoGibShower
 
@@ -232,7 +232,7 @@ extern void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality
 
 // CBMovedByPhysics
 
-// GetPedCount
+extern int C2_HOOK_FASTCALL GetPedCount(void);
 
 // GetPedPosition
 
@@ -314,13 +314,13 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // UpdateIfBackwardsAR
 
-// ChangePedScaling
+extern int C2_HOOK_FASTCALL ChangePedScaling(br_vector3* pScale);
 
 // ChangeHeadScaling
 
 // MakeMaterialBlendy
 
-// UnmakeMaterialBlendy
+extern void C2_HOOK_FASTCALL UnmakeMaterialBlendy(br_material* pMaterial);
 
 // TurnOffCollisions
 
@@ -470,7 +470,7 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // CharacterNoLongerCollideworthy
 
-// SetObjectV
+extern void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vector3* pV);
 
 // SetObjectOmega
 
@@ -514,7 +514,7 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // DisposeAllBonerData
 
-// SetCharacterBoneModel
+extern int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index, int pModel_index, int pModel_set);
 
 // SetCharacterBoneModelP
 
@@ -550,7 +550,7 @@ extern float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_i
 
 // MungeAllCharacterModels
 
-// DisableOverallMovement
+extern void C2_HOOK_FASTCALL DisableOverallMovement(void);
 
 // EnableOverallMovement
 

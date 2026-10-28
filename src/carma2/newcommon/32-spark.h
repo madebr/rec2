@@ -12,12 +12,20 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+#ifdef REC2_HW
 extern int gShade_list[16];
 extern int* gShade_table;
+#endif
+#ifdef REC2_SW
+extern br_pixelmap* gShade_list[16];
+extern br_pixelmap** gShade_table;
+#endif
+extern tSmash_vertex gSmash_glass_fragments[200];
 extern int gNum_dust_tables;
 extern int gSpark_flags;
 extern br_pixelmap* gIt_shade_table;
 extern int gSmoke_flags;
+extern int gSmoke_num;
 extern tSmoke gSmoke[25];
 extern br_material* gBlack_material;
 extern tSmashable_environment_name* gSmashable_noncars;
@@ -29,7 +37,9 @@ extern br_model* gLollipop_model;
 extern tSmoke_column gSmoke_column[10];
 extern br_matrix4 gCameraToScreen;
 extern br_camera* gSpark_cam;
-extern tCar_spec* PTR_006a82a8;
+extern tCar_spec* gCar_of_material;
+extern br_pixelmap* gFog_shade_table;
+extern br_pixelmap* gAcid_shade_table;
 
 // DrawDot
 
@@ -129,7 +139,7 @@ extern void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
 
 // RenderSmoke
 
-// CreatePuffOfSmoke
+extern void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
 
 extern void C2_HOOK_FASTCALL ResetSmoke(void);
 
