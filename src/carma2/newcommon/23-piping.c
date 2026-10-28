@@ -196,7 +196,19 @@ void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCo
     NOT_IMPLEMENTED();
 }
 
-// ARDoSingleSession
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00402ab0
+// STUB: CARMA2_SW 0x00402ab0
+void C2_HOOK_FASTCALL ARDoSingleSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x00402bd0
 // STUB: CARMA2_SW 0x00402930
@@ -507,7 +519,13 @@ void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData) {
     ARDoSingleVariedSession(ePipe_chunk_explosion, (uintptr_t)pIndex, 1, sizeof(tExplosion), 0, pData);
 }
 
-// PipeSingleNonCarCreation
+// FUNCTION: CARMA2_HW 0x004c8940
+// FUNCTION: CARMA2_SW 0x004c5070
+void C2_HOOK_FASTCALL PipeSingleNonCarCreation(int pIndex) {
+    C2_HOOK_BUG_ON(sizeof(gZero_vector__smash.v[0]) != 0x4);
+
+    ARDoSingleSession(0x20, pIndex, &gZero_vector__smash, sizeof(gZero_vector__smash.v[0]));
+}
 
 // FUNCTION: CARMA2_HW 0x004c8960
 // STUB: CARMA2_SW 0x004c5090
