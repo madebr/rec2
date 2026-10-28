@@ -1245,7 +1245,18 @@ void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pS
     SetModelForUpdate(pModel);
 }
 
-// ARUndoModelMash
+// FUNCTION: CARMA2_HW 0x0043c030
+// FUNCTION: CARMA2_SW 0x0043c080
+void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSrc) {
+    tU16 i;
+    br_vector3 delta;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        ExpandVector3(&delta, &pSrc[i], -10.0f, 10.0f);
+        BrVector3Sub(&pModel->vertices[i].p, &pModel->vertices[i].p, &delta);
+    }
+    SetModelForUpdate(pModel);
+}
 
 // ARApplyFlap
 

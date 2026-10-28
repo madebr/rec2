@@ -473,7 +473,7 @@ extern void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_
 
 extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pSrc);
 
-// ARUndoModelMash
+extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSrc);
 
 // ARApplyFlap
 
