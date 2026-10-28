@@ -29,6 +29,7 @@ int gShade_list[16];
 int* gShade_table = &gShade_list[8];
 #endif
 #ifdef REC2_SW
+
 // GLOBAL: CARMA2_SW 0x006ae520
 br_pixelmap* gShade_list[16];
 

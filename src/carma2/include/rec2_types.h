@@ -3510,7 +3510,8 @@ typedef struct {
     br_vector3 v;
     br_vector3 omega;
     undefined field_0x34;
-    undefined field_0x35[0x38-0x35];
+    tU8 priority;
+    undefined field_0x36[0x38-0x36];
 } tSmash_vertex;
 
 typedef struct {
