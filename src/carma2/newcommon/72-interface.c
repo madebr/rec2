@@ -2039,7 +2039,18 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
 
 // Joystick_BackupSettings
 
-// Controls_JoystickToggle
+// FUNCTION: CARMA2_HW 0x004721e0
+// FUNCTION: CARMA2_SW 0x00471770
+int C2_HOOK_FASTCALL Controls_JoystickToggle(tFrontend_spec* pFrontend) {
+
+    if (gFrontend_selected_item_index == 10) {
+        EnableJoysticks();
+    } else {
+        DisableJoysticks();
+    }
+    DisplayJoystickSettings(pFrontend);
+    return 0;
+}
 
 // Controls_JoystickDpadToggle
 
@@ -2064,7 +2075,19 @@ void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider) {
     SetJoystickFFBGain((int)(pSlider->value * 100.0));
 }
 
-// DisplayJoystickSettings
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00472210
+// STUB: CARMA2_SW 0x004717a0
+void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec* pFrontend) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SaveAllJoystickData
 
