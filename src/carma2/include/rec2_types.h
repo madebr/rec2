@@ -3109,7 +3109,7 @@ typedef enum {
 typedef struct {
     tU16 min_count;
     tU16 max_count;
-    tU16 count_frames;
+    tS16 count_frames;
     tU16 min_start_delay_ms;
     tU16 max_start_delay_ms;
     tU16 min_frametime_ms;

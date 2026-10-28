@@ -24,6 +24,13 @@ char* gBoring_material_names[2] = { "OILSMEAR.MAT", "ROBSMEAR.MAT" };
 // GLOBAL: CARMA2_SW 0x0065a750
 char* gMaterial_names[2] = { "OILSMEAR.MAT", "GIBSMEAR.MAT" };
 
+// GLOBAL: CARMA2_HW 0x0065fee8
+// GLOBAL: CARMA2_SW 0x0065a828
+const char* gExplosion_rotate_names[2] = {
+    "norotate",
+    "randomrotate",
+};
+
 // GLOBAL: CARMA2_HW 0x006a27f0
 // GLOBAL: CARMA2_SW 0x0069c848
 tSkid gSkids[100];
