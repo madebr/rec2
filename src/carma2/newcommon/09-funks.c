@@ -84,7 +84,7 @@ void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
 }
 
 // FUNCTION: CARMA2_HW 0x004761e0
-// FUNCTION: CARMA2_SW 0xCalcProximities
+// FUNCTION: CARMA2_SW 0x00475740
 br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData) {
     tFunkotronic_spec* the_funk;
     br_face* the_face;
@@ -358,4 +358,3 @@ tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor) {
     }
     return NULL;
 }
-

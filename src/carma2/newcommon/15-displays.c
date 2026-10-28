@@ -323,6 +323,7 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00449630
+// FUNCTION: CARMA2_SW 0x00449780
 void C2_HOOK_FASTCALL ClearHeadup(int pIndex) {
     gHeadups[pIndex].type = eHeadup_unused;
 }
@@ -345,6 +346,7 @@ void C2_HOOK_FASTCALL ClearHeadupSlot(int pSlot_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x00449690
+// FUNCTION: CARMA2_SW 0x004497e0
 void C2_HOOK_FASTCALL ClearHeadups(void) {
     int i;
 
@@ -394,6 +396,7 @@ void C2_HOOK_FASTCALL DimAFewBits(void) {
 #endif
 
 // STUB: CARMA2_HW 0x00449830
+// STUB: CARMA2_SW 0x00449980
 void C2_HOOK_FASTCALL DoTestPowerHeadup(int pLevel, const char* pAPO_str) {
     NOT_IMPLEMENTED();
 }
@@ -403,6 +406,7 @@ void C2_HOOK_FASTCALL DoTestPowerHeadup(int pLevel, const char* pAPO_str) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00449800
+// FUNCTION: CARMA2_SW 0x00449950
 void C2_HOOK_FASTCALL DoPSPowerupHeadups(void) {
     DoTestPowerHeadup(gProgram_state.current_car.power_up_levels[0], "A");
     DoTestPowerHeadup(gProgram_state.current_car.power_up_levels[1], "P");
@@ -412,6 +416,7 @@ void C2_HOOK_FASTCALL DoPSPowerupHeadups(void) {
 // DoHeadups
 
 // FUNCTION: CARMA2_HW 0x00449fa0
+// FUNCTION: CARMA2_SW 0x0044a130
 int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index) {
     int i;
     int empty_one;

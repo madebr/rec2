@@ -1235,6 +1235,7 @@ int C2_HOOK_CDECL PtrCompare(void* a, void* b) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523ee0
+// FUNCTION: CARMA2_SW 0x0051f580
 br_uint_32 C2_HOOK_CDECL WriteModel(br_model* mp, br_datafile* df) {
     br_material** mindex;
     int nmaterials;
@@ -1293,6 +1294,7 @@ br_uint_32 C2_HOOK_CDECL WriteModel(br_model* mp, br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523e50
+// FUNCTION: CARMA2_SW 0x00520000
 br_uint_32 C2_HOOK_CDECL BrModelSaveMany(char* filename, br_model** models, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1344,6 +1346,7 @@ br_uint_32 C2_HOOK_CDECL BrActorLoadMany(char* filename, br_actor** actors, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00524400
+// FUNCTION: CARMA2_SW 0x0051faa0
 int C2_HOOK_STDCALL WriteActor(br_actor* a, br_datafile* df) {
     br_actor* ap;
     br_actor* last_ap;
@@ -1398,6 +1401,7 @@ int C2_HOOK_STDCALL WriteActor(br_actor* a, br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x005243a0
+// FUNCTION: CARMA2_SW 0x00520300
 br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1442,6 +1446,7 @@ br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materi
 }
 
 // FUNCTION: CARMA2_HW 0x005247f0
+// FUNCTION: CARMA2_SW 0x0051fe90
 br_uint_32 C2_HOOK_CDECL WriteMaterial(br_material* mp, void* df) {
 
     FopWrite_MATERIAL(df, mp);
@@ -1465,6 +1470,7 @@ br_uint_32 C2_HOOK_CDECL WriteMaterial(br_material* mp, void* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524670
+// FUNCTION: CARMA2_SW 0x0051fd10
 br_uint_32 C2_HOOK_CDECL BrMaterialSaveMany(char* filename, br_material** materials, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1547,6 +1553,7 @@ br_uint_32 C2_HOOK_CDECL BrActorSave(char* filename, br_actor* ptr) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524cb0
+// FUNCTION: CARMA2_SW 0x00520350
 br_error C2_HOOK_CDECL BrModelFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
@@ -1574,6 +1581,7 @@ br_error C2_HOOK_CDECL BrModelFileCount(char* filename, br_uint_16* num) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524d30
+// FUNCTION: CARMA2_SW 0x005203d0
 br_error C2_HOOK_CDECL BrActorFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
@@ -1601,6 +1609,7 @@ br_error C2_HOOK_CDECL BrActorFileCount(char* filename, br_uint_16* num) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524db0
+// FUNCTION: CARMA2_SW 0x00520450
 br_error C2_HOOK_CDECL BrMaterialFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 

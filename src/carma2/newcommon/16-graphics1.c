@@ -409,6 +409,7 @@ void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e4cd0
+// FUNCTION: CARMA2_SW 0x004e0fe0
 void C2_HOOK_FASTCALL ScreenSmaller(void) {
 
     if (gMap_view != 2) {
@@ -417,10 +418,15 @@ void C2_HOOK_FASTCALL ScreenSmaller(void) {
             gRender_indent = 8;
         }
         AdjustRenderScreenSize();
+#ifdef REC2_SW
+        gDepth_buffer->row_bytes = 2 * gRender_screen->width;
+        gDepth_buffer->base_x = gRender_screen->base_x;
+#endif
     }
 }
 
 // FUNCTION: CARMA2_HW 0x004e4d00
+// FUNCTION: CARMA2_SW 0x004e1040
 void C2_HOOK_FASTCALL ScreenLarger(void) {
 
     if (gMap_view != 2) {
@@ -429,6 +435,10 @@ void C2_HOOK_FASTCALL ScreenLarger(void) {
             gRender_indent = 0;
         }
         AdjustRenderScreenSize();
+#ifdef REC2_SW
+        gDepth_buffer->row_bytes = 2 * gRender_screen->width;
+        gDepth_buffer->base_x = gRender_screen->base_x;
+#endif
     }
 }
 
@@ -484,6 +494,7 @@ void C2_HOOK_FASTCALL ResetScreenWobble(void) {
 // DoACompleteRenderPass
 
 // STUB: CARMA2_HW 0x004e4e40
+// STUB: CARMA2_SW 0x004e11a0
 void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
     NOT_IMPLEMENTED();
 }

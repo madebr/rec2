@@ -114,12 +114,14 @@ int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2,
 }
 
 // FUNCTION: CARMA2_HW 0x004e5ef0
+// FUNCTION: CARMA2_SW 0x004e1f10
 void C2_HOOK_FASTCALL CancelificateClipulatingPlaneyThings(void) {
 
     // empty
 }
 
 // FUNCTION: CARMA2_HW 0x004e5f00
+// FUNCTION: CARMA2_SW 0x004e1f20
 void C2_HOOK_FASTCALL FixificateClipulatingPlaneyThings(void) {
 
     // empty
@@ -212,6 +214,7 @@ int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
 }
 
 // FUNCTION: CARMA2_HW 0x004479c0
+// FUNCTION: CARMA2_SW 0x00447de0
 int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixelmap* pMap) {
     int i;
 
@@ -224,6 +227,7 @@ int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixe
     return i != pStorage->pixelmaps_count;
 }
 
+// FUNCTION: CARMA2_SW 0x00447e10
 void C2_HOOK_FASTCALL HideStoredOpaqueTextures(tBrender_storage* pStorage) {
     int i;
 
@@ -242,6 +246,7 @@ void C2_HOOK_FASTCALL HideStoredOpaqueTextures(tBrender_storage* pStorage) {
 }
 
 // FUNCTION: CARMA2_HW 0x00447b00
+// FUNCTION: CARMA2_SW 0x00447f20
 void C2_HOOK_FASTCALL RevealStoredTransparentTextures(tBrender_storage* pStorage) {
     int i;
 
@@ -345,6 +350,7 @@ tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00448ce0
+// FUNCTION: CARMA2_SW 0x00449100
 int C2_HOOK_FASTCALL HasThisSuffix(const char* pIdent, const char* pSuffix) {
     size_t len_ident;
     size_t len_suffix;
@@ -361,6 +367,7 @@ int C2_HOOK_FASTCALL HasThisSuffix(const char* pIdent, const char* pSuffix) {
 }
 
 // FUNCTION: CARMA2_HW 0x00448d70
+// FUNCTION: CARMA2_SW 0x00449190
 br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(const char* pOld_ident, const char* pSuffix) {
     br_material* result;
     int unsuffixed_len;
@@ -447,11 +454,13 @@ void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel) {
 }
 
 // FUNCTION: CARMA2_HW 0x00448dd0
+// FUNCTION: CARMA2_SW 0x004491f0
 br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pFace) {
     size_t max_suffix_len;
     br_material* mat;
     br_material* victim;
     // GLOBAL: CARMA2_HW 0x005913a0
+    // GLOBAL: CARMA2_SW 0x0058c380
     static const char* suffixes[3] = {
         ".road",
         ".pwall",

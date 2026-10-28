@@ -90,12 +90,14 @@ br_uint_32 C2_HOOK_CDECL BrModelFindMany(const char* pattern, br_model** items, 
 }
 
 // FUNCTION: CARMA2_HW 0x0051ee20
+// FUNCTION: CARMA2_SW 0x0051a4c0
 br_uint_32 C2_HOOK_CDECL BrModelCount(const char* pattern) {
 
     return BrRegistryCount(&v1db.reg_models, pattern);
 }
 
 // FUNCTION: CARMA2_HW 0x0051ee30
+// FUNCTION: CARMA2_SW 0x0051a4d0
 br_uint_32 C2_HOOK_CDECL BrModelEnum(const char* pattern, br_model_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&v1db.reg_models, pattern, (br_enum_cbfn*)callback, arg);
@@ -173,12 +175,14 @@ br_uint_32 C2_HOOK_CDECL BrMaterialFindMany(const char* pattern, br_material** i
 }
 
 // FUNCTION: CARMA2_HW 0x0051ef70
+// FUNCTION: CARMA2_SW 0x0051a610
 br_uint_32 C2_HOOK_CDECL BrMaterialCount(const char* pattern) {
 
     return BrRegistryCount(&v1db.reg_materials, pattern);
 }
 
 // FUNCTION: CARMA2_HW 0x0051ef80
+// FUNCTION: CARMA2_SW 0x0051a620
 br_uint_32 C2_HOOK_CDECL BrMaterialEnum(const char* pattern, br_material_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&v1db.reg_materials, pattern, (br_enum_cbfn*)callback, arg);
