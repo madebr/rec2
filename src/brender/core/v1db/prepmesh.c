@@ -885,6 +885,7 @@ void C2_HOOK_CDECL BrModelUpdate(br_model* model, br_uint_16 flags) {
 }
 
 // FUNCTION: CARMA2_HW 0x00520e30
+// FUNCTION: CARMA2_SW 0x0051c4d0
 void C2_HOOK_STDCALL BrModelClear(br_model* model) {
 
     // remove prepared mesh

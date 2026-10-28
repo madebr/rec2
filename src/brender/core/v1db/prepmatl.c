@@ -293,6 +293,7 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
 }
 
 // FUNCTION: CARMA2_HW 0x00521460
+// FUNCTION: CARMA2_SW 0x0051cb00
 void C2_HOOK_STDCALL BrMaterialClear(br_material* mat) {
     br_object* stored = (br_object*)mat->stored;
 

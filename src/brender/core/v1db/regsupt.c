@@ -267,6 +267,7 @@ br_uint_32 C2_HOOK_CDECL BrMapCount(const char* pattern) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f0d0
+// FUNCTION: CARMA2_SW 0x0051a770
 br_uint_32 C2_HOOK_CDECL BrMapEnum(const char* pattern, br_map_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&v1db.reg_textures, pattern, (br_enum_cbfn*)callback, arg);

@@ -24,6 +24,7 @@
 #include <stddef.h>
 
 // GLOBAL: CARMA2_HW 0x0066d7c8
+// GLOBAL: CARMA2_SW 0x00667f58
 br_file_enum_member pixelmap_type_FM[] = {
     { BR_PMT_INDEX_1, "BR_PMT_INDEX_1", },
     { BR_PMT_INDEX_2, "BR_PMT_INDEX_2", },
@@ -43,9 +44,11 @@ br_file_enum_member pixelmap_type_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0066d840
+// GLOBAL: CARMA2_SW 0x00667fd0
 br_file_enum pixelmap_type_F ={ BR_ASIZE(pixelmap_type_FM), pixelmap_type_FM };
 
 // GLOBAL: CARMA2_HW 0x0066d848
+// GLOBAL: CARMA2_SW 0x00667fd8
 br_file_struct_member br_old_pixelmap_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_pixelmap, type), "type", &pixelmap_type_F },
     { DF_TYPE_BR_UINT_16, offsetof(br_pixelmap, row_bytes), "row_bytes", NULL },
@@ -57,6 +60,7 @@ br_file_struct_member br_old_pixelmap_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0066d8b8
+// GLOBAL: CARMA2_SW 0x00668048
 br_file_struct_member br_pixelmap_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_pixelmap, type), "type", &pixelmap_type_F },
     { DF_TYPE_BR_UINT_16, offsetof(br_pixelmap, row_bytes), "row_bytes", NULL },
@@ -69,6 +73,7 @@ br_file_struct_member br_pixelmap_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0066d938
+// GLOBAL: CARMA2_SW 0x006680c8
 br_file_struct br_pixelmap_F = { "br_pixelmap", BR_ASIZE(br_pixelmap_FM), br_pixelmap_FM, sizeof(br_pixelmap) };
 
 // GLOBAL: CARMA2_HW 0x0066d948
