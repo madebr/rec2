@@ -396,7 +396,11 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // UpdateIfBackwardsAR
 
-// ChangePedScaling
+// STUB: CARMA2_HW 0x004d69b0
+// STUB: CARMA2_SW 0x004d2fb0
+int C2_HOOK_FASTCALL ChangePedScaling(br_vector3* pScale) {
+    NOT_IMPLEMENTED();
+}
 
 // ChangeHeadScaling
 
