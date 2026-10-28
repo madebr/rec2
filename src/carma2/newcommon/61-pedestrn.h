@@ -92,7 +92,7 @@ extern void C2_HOOK_FASTCALL InitPolyPedSystem(void);
 
 extern void C2_HOOK_FASTCALL DisposePedStuff(void);
 
-// BonerOpenCharacterForm
+extern FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName);
 
 // BonerOpenDefaultMoves
 
