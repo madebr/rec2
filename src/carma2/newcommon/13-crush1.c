@@ -1361,8 +1361,7 @@ void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar) {
                 count++;
             }
         }
-        *pData = (tU8)count;
-        pData++;
+        *pData++ = (tU8)count;
         for (shape = pCar->collision_info->shape; shape != NULL; shape = shape->common.next) {
             if (shape->common.type == kCollisionShapeType_Polyhedron || shape->common.type == kCollisionShapeType_Wireframe_Polyhedron) {
                 *pData = (tU8)shape->polyhedron.polyhedron.count_points;
@@ -1380,8 +1379,7 @@ void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar) {
         for (i = 0; i < pCar->car_crush_spec->count_shapes; i++) {
             count += pCar->car_crush_spec->field_0x4[i].count_points;
         }
-        *pData = (tU8)count;
-        pData++;
+        *pData++ = (tU8)count;
         for (i = 0; i < pCar->car_crush_spec->count_shapes; i++) {
             shape_info = &pCar->car_crush_spec->field_0x4[i];
             for (j = 0; j < shape_info->count_points; j++) {

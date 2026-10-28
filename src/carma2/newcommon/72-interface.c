@@ -423,8 +423,6 @@ void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_i
 
 // ScrollDn
 
-// STUB: CARMA2_HW 0x004677d0
-// STUB: CARMA2_SW 0x00467550
 // int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY); // Moved for inlining purposes
 
 static void C2_HOOK_FASTCALL SetLevelBar(tFrontend_spec* pFrontend, int pLevel_index, int pSelected_item) {
