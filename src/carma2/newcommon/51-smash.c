@@ -15,10 +15,23 @@
 #include "41-utility.h"
 #include "50-fog.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+
+// GLOBAL: CARMA2_HW 0x006a5138
+// GLOBAL: CARMA2_SW 0x0069f198
+tSmashable_item_spec* gTrack_smashable_environment_specs;
+
+// GLOBAL: CARMA2_HW 0x006a55b4
+// GLOBAL: CARMA2_SW 0x0069f614
+int gCount_track_smashable_environment_specs;
+
+// GLOBAL: CARMA2_HW 0x006a55c0
+// GLOBAL: CARMA2_SW 0x0069f620
+tStored_smash* gNet_host_smashes;
 
 // GLOBAL: CARMA2_HW 0x006a55c8
 // GLOBAL: CARMA2_SW 0x0069f628
@@ -517,6 +530,25 @@ void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void) {
     BrMemFree(gSmashable_noncars);
 }
 
+// FUNCTION: CARMA2_HW 0x004f0960
+// FUNCTION: CARMA2_SW 0x004ec5c0
+void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void) {
+    int i;
+    tSmashable_item_spec* smash;
+
+    C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 0x2e0);
+
+    for (i = 0, smash = gTrack_smashable_environment_specs; i < gCount_track_smashable_environment_specs; i++, smash++) {
+        FreeEnvSmash(smash);
+    }
+    if (gCount_track_smashable_environment_specs != 0) {
+        BrMemFree(gTrack_smashable_environment_specs);
+    }
+    if (gNet_mode == eNet_mode_host) {
+        BrMemFree(gNet_host_smashes);
+    }
+}
+
 // CloneMemory
 
 // CloneEnvSmash
@@ -589,8 +621,6 @@ void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_a
         BrMemFree(pConnotations->side_effects.side_effects.side_effects);
     }
 }
-
-// DisposeSmashableEnvironment
 
 // MungeSmashMaterialNames
 
