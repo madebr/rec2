@@ -688,17 +688,7 @@ int C2_HOOK_FASTCALL NewGameInfunc(tFrontend_spec* pFrontend) {
     pFrontend->items[5].enabled = kFrontendItemEnabled_enabled;
     pFrontend->default_item = 5;
     gFrontend_selected_item_index = 5;
-    if (!pFrontend->loaded) {
-        LoadMenuSettings(pFrontend);
-        FuckWithWidths(pFrontend);
-        if (pFrontend->previous != NULL) {
-            pFrontend->previous->isPreviousSomeOtherMenu = 1;
-        }
-    }
-    gFrontend_scrollbars_updated = 0;
-    EdgeTriggerModeOff();
-    WaitForNoKeys();
-    EdgeTriggerModeOn();
+    DefaultInfunc(pFrontend);
     gMouse_in_use = 0;
     return 0;
 }
