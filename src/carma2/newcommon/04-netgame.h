@@ -55,7 +55,7 @@ extern void C2_HOOK_FASTCALL ReceivedCopInfo(void);
 
 // ReceivedNonCar
 
-// SignalToStartRace
+extern void C2_HOOK_FASTCALL SignalToStartRace(void);
 
 // SignalToRepositionCar
 
