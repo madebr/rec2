@@ -8,6 +8,7 @@
 
 #include "32-spark.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
@@ -105,7 +106,7 @@ br_camera* gSpark_cam;
 
 // GLOBAL: CARMA2_HW 0x006a82a8
 // GLOBAL: CARMA2_SW 0x006a2308
-tCar_spec* PTR_006a82a8;
+tCar_spec* gCar_of_material;
 
 // GLOBAL: CARMA2_SW 0x00795198
 br_pixelmap* gFog_shade_table;
@@ -257,8 +258,8 @@ void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar) {
 // FUNCTION: CARMA2_HW 0x004f8ff0
 // FUNCTION: CARMA2_SW 0x004f4670
 int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
-    if (pMaterial->colour_map != PTR_006a82a8->field_0x1960) {
-        pMaterial->colour_map = PTR_006a82a8->field_0x1960;
+    if (pMaterial->colour_map != gCar_of_material->field_0x1960) {
+        pMaterial->colour_map = gCar_of_material->field_0x1960;
         BrMaterialUpdate(pMaterial, BR_MATU_ALL);
         return 1;
     } else {
@@ -266,9 +267,28 @@ int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
     }
 }
 
-// STUB: CARMA2_HW 0x004f8f30
+// FUNCTION: CARMA2_HW 0x004f8f30
+// FUNCTION: CARMA2_SW 0x004f45b0
 void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
-    NOT_IMPLEMENTED();
+    br_vector3 direction;
+    br_vector3 position;
+    br_vector3 collision_position;
+    br_vector3 normal;
+    br_scalar t;
+    tFace_ref* face;
+
+    BrVector3Set(&direction, 0.f, -0.5f, 0.f);
+    t = 10.f;
+    BrMatrix34ApplyP(&position, &pCar->collision_info->cmpos, &pCar->collision_info->transform_matrix);
+    face = RayCastThruFaceList2(&position, &direction, &normal, &t, &collision_position,
+        &gFace_list__car[pCar->collision_info->box_face_start],
+        pCar->collision_info->box_face_end - pCar->collision_info->box_face_start);
+    if (face != NULL && face->material != NULL && face->material->colour_map != NULL
+        && face->material->colour_map != pCar->field_0x1960) {
+        pCar->field_0x1960 = face->material->colour_map;
+        gCar_of_material = pCar;
+        ForEveryCarMaterial(pCar, SetPixelmap, 1);
+    }
 }
 
 // DoSolidGraniteThing

@@ -70,6 +70,10 @@ int gInTheSea;
 // GLOBAL: CARMA2_HW 0x0065d010
 int gFace_num__car = 1;
 
+// GLOBAL: CARMA2_HW 0x00744820
+// GLOBAL: CARMA2_SW 0x0073b2e0
+tFace_ref gFace_list__car[300];
+
 // FUNCTION: CARMA2_HW 0x00413cc0
 // FUNCTION: CARMA2_SW 0x00413cf0
 void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount) {
