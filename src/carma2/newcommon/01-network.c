@@ -441,9 +441,18 @@ tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, 
 
 // NetBroadcastContents
 
-// STUB: CARMA2_HW 0x0049fcf0
+// FUNCTION: CARMA2_HW 0x0049fcf0
+// FUNCTION: CARMA2_SW 0x0049be70
 void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    gLast_flush_message = PDGetTotalTime();
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].field_0xcc != NULL) {
+            NetReallySendMessageToPlayer(gCurrent_net_game, gNet_players[i].field_0xcc, gNet_players[i].ID);
+            gNet_players[i].field_0xcc = NULL;
+        }
+    }
 }
 
 // STUB: CARMA2_HW 0x0049fdb0
