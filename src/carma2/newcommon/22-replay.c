@@ -43,6 +43,13 @@ int gAR_camera_type = 2;
 // GLOBAL: CARMA2_SW 0x0058a6a4
 int gCar_car_collisions = 1;
 
+// GLOBAL: CARMA2_HW 0x0058f6b0
+// GLOBAL: CARMA2_SW 0x0058a6b0
+const float gCar_simplification_factor[2][5] = {
+    { 50.0f, 3.0f, 1.5f, 0.75f, 0.0f },
+    { 50.0f, 5.0f, 2.5f, 1.5f, 0.0f }
+};
+
 // ActualActionReplayHeadups
 
 // DoActionReplayPostSwap
