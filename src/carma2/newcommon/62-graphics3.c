@@ -13,6 +13,7 @@
 #include "10-loading2.h"
 #include "15-displays.h"
 #include "18-graphics2.h"
+#include "18b-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "30-opponent.h"
