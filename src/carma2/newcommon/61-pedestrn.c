@@ -345,9 +345,25 @@ void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType)
 
 // StraightenOutPed
 
-// ActiveHalted
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// CBActiveHalted
+// STUB: CARMA2_HW 0x004d1030
+// STUB: CARMA2_SW 0x004cd730
+int C2_HOOK_FASTCALL ActiveHalted(tPed_character_instance* pCharacter, tPhysics_object* pObject, tFace_ref* pFace) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004d1020
+// FUNCTION: CARMA2_SW 0x004cd720
+int C2_HOOK_FASTCALL CBActiveHalted(tPed_character_instance* pCharacter, tPhysics_object* pObject) {
+    return ActiveHalted(pCharacter, pObject, NULL);
+}
 
 // RecordPedSlide
 
