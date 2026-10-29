@@ -43,6 +43,18 @@
 // GLOBAL: CARMA2_SW 0x00759ec0
 tNet_game_options gNet_settings[9];
 
+// GLOBAL: CARMA2_HW 0x00688aa8
+// GLOBAL: CARMA2_SW 0x00683008
+tU32 gFrontend_net_current_roll;
+
+// GLOBAL: CARMA2_HW 0x00686efc
+// GLOBAL: CARMA2_SW 0x0068163c
+tU32 gFrontend_net_last_roll;
+
+// GLOBAL: CARMA2_HW 0x00763b20
+// GLOBAL: CARMA2_SW 0x0075a080
+tNet_game_options gFrontend_net_options;
+
 // GLOBAL: CARMA2_HW 0x00764eec
 // GLOBAL: CARMA2_SW 0x0075b44c
 tFrontendMenuType gFrontend_next_menu;
@@ -2320,7 +2332,28 @@ int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// NetOptions_CreditsRoller
+// FUNCTION: CARMA2_HW 0x00473220
+// FUNCTION: CARMA2_SW 0x00472790
+int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend) {
+
+    gFrontend_net_current_roll = PDGetTotalTime();
+    if ((int)(gFrontend_net_current_roll - gFrontend_net_last_roll) >= 300) {
+        gFrontend_net_last_roll = gFrontend_net_current_roll;
+        if (gFrontend_selected_item_index == 28) {
+            gFrontend_net_options.starting_credits += 1000;
+        } else if (gFrontend_selected_item_index == 27) {
+            gFrontend_net_options.starting_credits -= 1000;
+        }
+        if (gFrontend_net_options.starting_credits < 0) {
+            gFrontend_net_options.starting_credits = 0;
+        } else if (gFrontend_net_options.starting_credits > 500000) {
+            gFrontend_net_options.starting_credits = 500000;
+        }
+        sprintf(pFrontend->items[24].text, "%i", gFrontend_net_options.starting_credits);
+        FuckWithWidths(pFrontend);
+    }
+    return 0;
+}
 
 // NetOptions_TargetRoller
 
