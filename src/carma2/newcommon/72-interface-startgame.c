@@ -12,6 +12,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x0059c7e8
+// GLOBAL: CARMA2_SW 0x00597718
 int gNet_grid_starts[10] = {
     1, 0, 0, 0, 1, 1, 1, 0, 0, 0,
 };
