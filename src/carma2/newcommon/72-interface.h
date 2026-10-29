@@ -18,6 +18,7 @@ extern tU32 gFrontend_net_last_roll;
 extern tNet_game_options gFrontend_net_options;
 
 extern tU32 gFrontend_last_scroll;
+extern tU32 gNet_synch_start;
 
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
@@ -413,7 +414,7 @@ extern int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend);
 
 // MungePlayers
 
-// NetSynchRaceStart2
+extern int C2_HOOK_FASTCALL NetSynchRaceStart2(tNet_synch_mode pMode);
 
 // NetSync_Draw
 

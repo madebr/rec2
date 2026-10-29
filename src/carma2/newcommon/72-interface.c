@@ -77,6 +77,10 @@ tConnected_items* gConnected_items;
 // GLOBAL: CARMA2_SW 0x00680c48
 tStruct_00686508* gPTR_00686508;
 
+// GLOBAL: CARMA2_HW 0x006864d0
+// GLOBAL: CARMA2_SW 0x00680c10
+tU32 gNet_synch_start;
+
 // GLOBAL: CARMA2_HW 0x00686820
 // GLOBAL: CARMA2_SW 0x00680f60
 tFrontend_slider* gCurrent_frontend_scrollbars;
@@ -2418,7 +2422,18 @@ int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend) {
 
 // MungePlayers
 
-// NetSynchRaceStart2
+// FUNCTION: CARMA2_HW 0x00473570
+// FUNCTION: CARMA2_SW 0x00472ae0
+int C2_HOOK_FASTCALL NetSynchRaceStart2(tNet_synch_mode pMode) {
+    if (pMode != eNet_synch_client) {
+        if (gCurrent_net_game->status.stage == eNet_game_stage0) {
+            gCurrent_net_game->status.stage = 1;
+        }
+        SetUpNetCarPositions();
+        gNet_synch_start = PDGetTotalTime();
+    }
+    return eSO_continue;
+}
 
 // NetSync_Draw
 
