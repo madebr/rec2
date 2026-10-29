@@ -718,9 +718,25 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* p
 
 // SetSeveredLimbObject
 
-// MakeCharacterCollideworthy2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// MakeCharacterCollideworthy
+// STUB: CARMA2_HW 0x00408c30
+// STUB: CARMA2_SW 0x00408c30
+int C2_HOOK_FASTCALL MakeCharacterCollideworthy2(tPed_character_instance* pCharacter, int pArg2, int pArg3, int pArg4) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00409030
+// FUNCTION: CARMA2_SW 0x00409030
+int C2_HOOK_FASTCALL MakeCharacterCollideworthy(tPed_character_instance* pCharacter, int pArg2, int pArg3) {
+    return MakeCharacterCollideworthy2(pCharacter, pArg2, pArg3, -1);
+}
 
 // GetRootObject
 
