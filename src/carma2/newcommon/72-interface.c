@@ -24,11 +24,13 @@
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
+#include "63-loading3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "72-interface-main.h"
 #include "72-interface-network.h"
 #include "72-interface-quit.h"
+#include "72-interface-startgame.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "joystick.h"
@@ -42,6 +44,18 @@
 // GLOBAL: CARMA2_HW 0x00763960
 // GLOBAL: CARMA2_SW 0x00759ec0
 tNet_game_options gNet_settings[9];
+
+// GLOBAL: CARMA2_HW 0x00688aa8
+// GLOBAL: CARMA2_SW 0x00683008
+tU32 gFrontend_net_current_roll;
+
+// GLOBAL: CARMA2_HW 0x00686efc
+// GLOBAL: CARMA2_SW 0x0068163c
+tU32 gFrontend_net_last_roll;
+
+// GLOBAL: CARMA2_HW 0x00763b20
+// GLOBAL: CARMA2_SW 0x0075a080
+tNet_game_options gFrontend_net_options;
 
 // GLOBAL: CARMA2_HW 0x00764eec
 // GLOBAL: CARMA2_SW 0x0075b44c
@@ -290,7 +304,24 @@ const int gControls_frontend_to_key_mapping_lut[29] = {
 
 // SetGameTarget
 
-// SetOptions
+// FUNCTION: CARMA2_HW 0x00468140
+// FUNCTION: CARMA2_SW 0x00467ec0
+void C2_HOOK_FASTCALL SetOptions(tNet_game_type pGame_type, tNet_game_options* pGame_options) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gNet_grid_starts) != 10);
+
+    pGame_options->show_players_on_map = gNet_settings[0].show_players_on_map;
+    pGame_options->enable_text_messages = gNet_settings[0].enable_text_messages;
+    pGame_options->show_powerups_on_map = gNet_settings[0].show_powerups_on_map;
+    pGame_options->powerup_respawn = gNet_settings[0].powerup_respawn;
+    pGame_options->open_game = gNet_settings[pGame_type + 1].open_game;
+    pGame_options->starting_credits = gNet_settings[0].starting_credits;
+    pGame_options->grid_start = gNet_settings[pGame_type + 1].grid_start || gNet_grid_starts[pGame_type + 1];
+    pGame_options->waste_to_transfer = gNet_settings[pGame_type + 1].waste_to_transfer;
+    pGame_options->random_car_choice = gNet_settings[pGame_type + 1].random_car_choice;
+    pGame_options->race_sequence_type = gNet_settings[0].race_sequence_type;
+    pGame_options->car_choice = gNet_settings[0].car_choice;
+    pGame_options->starting_target = gNet_settings[pGame_type + 1].starting_target;
+}
 
 // ReadNetGameChoices
 
@@ -965,7 +996,41 @@ int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// MenuSetCarImage
+// FUNCTION: CARMA2_HW 0x0046aa20
+// FUNCTION: CARMA2_SW 0x0046a760
+void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index) {
+    char* car_file_name;
+    char* pos_dot;
+    char pack_filename[40];
+    char pm_name[20];
+    tPath_name pack_path;
+    tTWTVFS twt;
+    int i;
+
+    car_file_name = gOpponents[pCar_index].car_file_name;
+    pos_dot = strrchr(car_file_name, '.');
+    PathCat(pack_path, gApplication_path, "INTRFACE");
+    PathCat(pack_path, pack_path, "CARIMAGE");
+    strcpy(pack_filename, gOpponents[pCar_index].car_file_name);
+    pack_filename[strlen(pack_filename) - 4] = '\0';
+    strcat(pack_filename, "CI");
+    PathCat(pack_path, pack_path, pack_filename);
+    twt = OpenPackFileAndSetTiffLoading(pack_path);
+    for (i = 0; i < 6; i++) {
+        sprintf(pm_name, "%.*s%c.TIF", (int)(pos_dot - car_file_name), car_file_name, 'A' + i);
+        BrMapRemove(gFrontend_images[i + 1]);
+        BrPixelmapFree(gFrontend_images[i + 1]);
+        gFrontend_images[i + 1] = GetThisFuckingPixelmapPleaseMrTwatter(pack_path, pm_name);
+        if (gFrontend_images[i + 1] == NULL) {
+            gFrontend_images[i + 1] = LoadPixelmap("64by64.tif");
+        }
+        BrPixelmapCopy(gFrontend_brender_items[pBrender_index + i].field_0xc, gFrontend_images[i + 1]);
+        BrPixelmapCopy(gFrontend_brender_items[pBrender_index + i].field_0x10, gFrontend_brender_items[pBrender_index + i].field_0xc);
+        BrMapUpdate(gFrontend_brender_items[pBrender_index + i].field_0xc, BR_MAPU_ALL);
+        BrMaterialUpdate(gFrontend_brender_items[pBrender_index + i].material, BR_MATU_COLOURMAP);
+    }
+    ClosePackFileAndSetTiffLoading(twt);
+}
 
 // MenuSetDriverImage
 
@@ -2320,7 +2385,28 @@ int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// NetOptions_CreditsRoller
+// FUNCTION: CARMA2_HW 0x00473220
+// FUNCTION: CARMA2_SW 0x00472790
+int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend) {
+
+    gFrontend_net_current_roll = PDGetTotalTime();
+    if ((int)(gFrontend_net_current_roll - gFrontend_net_last_roll) >= 300) {
+        gFrontend_net_last_roll = gFrontend_net_current_roll;
+        if (gFrontend_selected_item_index == 28) {
+            gFrontend_net_options.starting_credits += 1000;
+        } else if (gFrontend_selected_item_index == 27) {
+            gFrontend_net_options.starting_credits -= 1000;
+        }
+        if (gFrontend_net_options.starting_credits < 0) {
+            gFrontend_net_options.starting_credits = 0;
+        } else if (gFrontend_net_options.starting_credits > 500000) {
+            gFrontend_net_options.starting_credits = 500000;
+        }
+        sprintf(pFrontend->items[24].text, "%i", gFrontend_net_options.starting_credits);
+        FuckWithWidths(pFrontend);
+    }
+    return 0;
+}
 
 // NetOptions_TargetRoller
 

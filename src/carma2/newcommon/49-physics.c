@@ -15,7 +15,9 @@
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "52-errors.h"
+#include "65-hull.h"
 #include "globvars.h"
+#include "platform.h"
 #include "rec2_macros.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
@@ -856,7 +858,61 @@ void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pC
     }
 }
 
-// FillInShape
+// FUNCTION: CARMA2_HW 0x004c5f20
+// FUNCTION: CARMA2_SW 0x004c2650
+void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape) {
+    int i;
+    tPhysicsError error;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pShape->common.bb.min.v) != 3);
+
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        break;
+    case kCollisionShapeType_Wireframe:
+        if (pShape->wireframe.wireframe.count_points == 0) {
+            PhysicsError(ePhysicsError_WireFrameHasNoPoints, NULL);
+        } else {
+            GetBoundsFromPointList(pShape->wireframe.wireframe.points, pShape->wireframe.wireframe.count_points, &pShape->common.bb);
+        }
+        break;
+    case kCollisionShapeType_Polyhedron:
+        if (pShape->polyhedron.polyhedron.count_points < 4) {
+            PhysicsError(ePhysicsError_PolyhedronHasNoPoints, NULL);
+        } else {
+            error = ConvexHull3D(&pShape->polyhedron.polyhedron);
+            if (error != ePhysicsError_Ok) {
+                if (error == ePhysicsError_WireFrameHasNoPoints) {
+                    pShape->common.type = kCollisionShapeType_Wireframe_Polyhedron;
+                } else {
+                    PDFatalError("This polyhedron is too wierd for me");
+                }
+            }
+            GetBoundsFromPointList(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
+        }
+        break;
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        if (pShape->polyhedron.polyhedron.count_points < 3) {
+            PhysicsError(4, NULL);
+        } else {
+            ConvexHull2D(&pShape->polyhedron.polyhedron);
+            GetBoundsFromPointList(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
+        }
+        break;
+    case kCollisionShapeType_Sphere:
+        BrVector3Copy(&pShape->common.bb.min, &pShape->sphere.sphere.center);
+        BrVector3Copy(&pShape->common.bb.max, &pShape->sphere.sphere.center);
+        for (i = 0; i < REC2_ASIZE(pShape->common.bb.min.v); i++) {
+            pShape->common.bb.min.v[i] -= pShape->sphere.sphere.radius;
+            pShape->common.bb.max.v[i] += pShape->sphere.sphere.radius;
+        }
+        pShape->sphere.sphere.radius_squared = REC2_SQR(pShape->sphere.sphere.radius);
+        break;
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType, NULL);
+        break;
+    }
+}
 
 // UpdateCollisionObject
 

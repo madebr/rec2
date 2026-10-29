@@ -105,7 +105,7 @@ extern FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName);
 
 // BonerReadPersonalityModels
 
-// MakeActorRenderable
+extern void C2_HOOK_FASTCALL MakeActorRenderable(br_actor* pActor, int pBone_index, tPed_character_instance* pCharacter);
 
 extern void C2_HOOK_FASTCALL StopActorBeingRenderable(br_actor* pActor);
 
@@ -519,7 +519,7 @@ extern int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pChar
 
 // SetCharacterBoneModelP
 
-// SetCharacterAllBonesModel
+extern void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pModel_index, int pModel_set);
 
 extern br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
 

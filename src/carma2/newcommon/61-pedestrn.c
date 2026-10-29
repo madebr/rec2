@@ -11,6 +11,7 @@
 #include "08-loading1.h"
 #include "10-loading2.h"
 #include "21-mainloop.h"
+#include "22-replay.h"
 #include "27-powerup.h"
 #include "41-utility.h"
 #include "63-loading3.h"
@@ -181,7 +182,15 @@ FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName) {
 
 // BonerReadPersonalityModels
 
-// MakeActorRenderable
+// FUNCTION: CARMA2_HW 0x004cbc70
+// FUNCTION: CARMA2_SW 0x004c8370
+void C2_HOOK_FASTCALL MakeActorRenderable(br_actor* pActor, int pBone_index, tPed_character_instance* pCharacter) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPow2_array) != 32);
+
+    if (pActor->parent == NULL && (pBone_index == 0 || (pCharacter->field_0xc & gPow2_array[pBone_index]) != 0)) {
+        BrActorAdd(gNon_track_actor, pActor);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004cbca0
 // FUNCTION: CARMA2_SW 0x004c83a0
@@ -823,7 +832,15 @@ int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, 
 
 // SetCharacterBoneModelP
 
-// SetCharacterAllBonesModel
+// FUNCTION: CARMA2_HW 0x0040b530
+// FUNCTION: CARMA2_SW 0x0040b520
+void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pModel_index, int pModel_set) {
+    int i;
+
+    for (i = 0; i < pCharacter->personality->form->count_bones; i++) {
+        SetCharacterBoneModel(pCharacter, i, pModel_index, pModel_set);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0040b570
 // FUNCTION: CARMA2_SW 0x0040b560

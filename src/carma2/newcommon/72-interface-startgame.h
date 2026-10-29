@@ -11,6 +11,8 @@
 
 #include "rec2_types.h"
 
+extern int gNet_grid_starts[10];
+
 extern tFrontend_spec gFrontend_START_GAME;
 
 #endif /* GUARD_72_STARTGAME_H */

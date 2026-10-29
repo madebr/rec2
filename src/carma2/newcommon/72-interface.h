@@ -13,6 +13,9 @@
 #include "rec2_types.h"
 
 extern tNet_game_options gNet_settings[9];
+extern tU32 gFrontend_net_current_roll;
+extern tU32 gFrontend_net_last_roll;
+extern tNet_game_options gFrontend_net_options;
 
 extern tU32 gFrontend_last_scroll;
 
@@ -22,7 +25,7 @@ extern int gFrontend_change_car_selected_car;
 
 // SetGameTarget
 
-// SetOptions
+extern void C2_HOOK_FASTCALL SetOptions(tNet_game_type pGame_type, tNet_game_options* pGame_options);
 
 // ReadNetGameChoices
 
@@ -164,7 +167,7 @@ extern int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game
 
 extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
-// MenuSetCarImage
+extern void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index);
 
 // MenuSetDriverImage
 
@@ -398,7 +401,7 @@ extern int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
-// NetOptions_CreditsRoller
+extern int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend);
 
 // NetOptions_TargetRoller
 
