@@ -223,9 +223,9 @@ extern void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4
 
 // StraightenOutPed
 
-// ActiveHalted
+extern int C2_HOOK_FASTCALL ActiveHalted(tPed_character_instance* pCharacter, tPhysics_object* pObject, tFace_ref* pFace);
 
-// CBActiveHalted
+extern int C2_HOOK_FASTCALL CBActiveHalted(tPed_character_instance* pCharacter, tPhysics_object* pObject);
 
 // RecordPedSlide
 
