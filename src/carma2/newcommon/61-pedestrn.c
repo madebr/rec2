@@ -869,7 +869,11 @@ void C2_HOOK_FASTCALL DisableOverallMovement(void) {
     gPed_overall_movement_disabled = 1;
 }
 
-// EnableOverallMovement
+// FUNCTION: CARMA2_HW 0x0040c610
+// FUNCTION: CARMA2_SW 0x0040c600
+void C2_HOOK_FASTCALL EnableOverallMovement(void) {
+    gPed_overall_movement_disabled = 0;
+}
 
 // EnableRetainRootMode
 
