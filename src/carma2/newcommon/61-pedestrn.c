@@ -87,7 +87,19 @@ int gDancing_peds;
 
 // PedUndoStatus
 
-// SetCharacterPhysicsLevelAR
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004cc860
+// STUB: CARMA2_SW 0x004c8f60
+void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacter, tU32 pLevel) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // PedApplyPedPhysics
 
@@ -369,7 +381,12 @@ void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastT
 
 // SmoothTurnPedestrian
 
-// SetThisPedPhysicing
+// FUNCTION: CARMA2_HW 0x004d35e0
+// FUNCTION: CARMA2_SW 0x004cfcd0
+void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed) {
+    pPed->field_0x0c->field_0x6c = 0;
+    SetCharacterPhysicsLevelAR(pPed->character, 5);
+}
 
 // InitProcessData
 
