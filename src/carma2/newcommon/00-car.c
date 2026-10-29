@@ -65,6 +65,10 @@ br_vector3 gZero_v__car;  // FIXME: make const?
 // GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
 
+// GLOBAL: CARMA2_HW 0x006793d0
+// GLOBAL: CARMA2_SW 0x00673b40
+int gEliminate_faces;
+
 // GLOBAL: CARMA2_HW 0x00679364
 // GLOBAL: CARMA2_SW 0x00673ad4
 int gInTheSea;
@@ -567,7 +571,38 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 
 // findfloor
 
-// FindFloorInBoxBU
+// FUNCTION: CARMA2_HW 0x0041e480
+// FUNCTION: CARMA2_SW 0x0041e4b0
+int C2_HOOK_FASTCALL FindFloorInBoxBU(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pDistance, tPhysics_object* pObject) {
+    br_vector3 nor2;
+    br_vector3 collision_position;
+    int i;
+    int j;
+    br_scalar dist;
+    tFace_ref* face_ref;
+
+    *pDistance = 2.f;
+    i = pObject->box_face_start;
+    face_ref = &gFace_list__car[i];
+    for (; i < pObject->box_face_end; i++, face_ref++) {
+        if (gEliminate_faces && (face_ref->flags & 0x80) != 0) {
+            continue;
+        }
+        CheckSingleFace(face_ref, pPosition, pDirection, &nor2, &dist, &collision_position);
+        if (dist < *pDistance) {
+            *pDistance = dist;
+            j = i;
+            BrVector3Copy(pNormal, &nor2);
+        }
+    }
+    if (*pDistance < 2.f) {
+        i = gFace_list__car[j].material->identifier[0] - ('0' - 1);
+        if (i >= 0 && i < 11) {
+            return i;
+        }
+    }
+    return 0;
+}
 
 // CancelPendingCunningStunt
 
