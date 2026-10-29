@@ -16,12 +16,17 @@
 #include "41-utility.h"
 #include "50-fog.h"
 #include "52-errors.h"
+#include "62-graphics3.h"
+
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+
+#include <stdio.h>
 
 // GLOBAL: CARMA2_HW 0x006a5138
 // GLOBAL: CARMA2_SW 0x0069f198
@@ -828,7 +833,59 @@ intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
 
 // DetermineTilitudinality
 
-// SetSmashableModel
+// FUNCTION: CARMA2_HW 0x004f5cb0
+// FUNCTION: CARMA2_SW 0x004f1910
+void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
+    int i;
+    tSmashable_item_spec* spec;
+
+    C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 0x2e0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tConnotations, variable_changes, 0x290);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tVariable_changes, runtime_changes, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmash_run_time_variable_change, field_0x2, 0x2);
+
+    if (pActor->model == NULL || pActor->model->identifier == NULL) {
+        return;
+    }
+    i = 0;
+    if (i < gCount_track_smashable_environment_specs) {
+        spec = gTrack_smashable_environment_specs;
+        do {
+            if (spec->trigger_type == kSmashableTrigger_Model && spec->trigger_object.model == pActor->model) {
+                char s[64];
+                char s2[64];
+                int len;
+
+                strcpy(s, pActor->identifier);
+                len = (int)strlen(s);
+                if (len < 4) {
+                    sprintf(s, "Smash material %s has a name that is less than 4 characters long", pActor->identifier);
+                    PDFatalError(s);
+                }
+                strcpy(s2, &s[len - 4]);
+                sprintf(&s[len - 4], "        ");
+                sprintf(&s[5], "%cx", '|');
+                s[6] = (char)(i + 1);
+                strcat(s, s2);
+                s[11] = '\0';
+                if (strlen(pActor->identifier) < 12) {
+                    BrResFree(pActor->identifier);
+                    pActor->identifier = BrResStrDup(pActor, s);
+                } else {
+                    strcpy(pActor->identifier, s);
+                }
+                if ((gCurrent_race.race_spec->race_type >= kRaceType_Smash && (tU16)spec->mode_data.shrapnel.connotations.variable_changes.runtime_changes[0].field_0x2 == gCurrent_race.race_spec->options.smash_and_peds.var_smash_number)
+                    || (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_2 && spec->mode_data.shrapnel.connotations.variable_changes.runtime_changes[0].field_0x2 == 1)) {
+                    AddSmashTarget(pActor->model, pActor, -1);
+                }
+            }
+            i++;
+            spec++;
+        } while (i < gCount_track_smashable_environment_specs);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004f5ec0
 // FUNCTION: CARMA2_SW 0x004f1b20

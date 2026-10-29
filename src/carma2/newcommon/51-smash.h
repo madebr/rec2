@@ -285,7 +285,7 @@ extern intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec);
 
 // DetermineTilitudinality
 
-// SetSmashableModel
+extern void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL LoadWastedExplosion(FILE* pF, int* pChance_explosion, int* pExplosion_sound_id, tExplosion_animation* pExplosion_groups);
 
