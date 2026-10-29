@@ -16,6 +16,7 @@ extern float gPedestrian_speed_factor;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
+extern int gPed_nearness;
 extern int gDancing_peds;
 
 // OrientationChanged
@@ -308,7 +309,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // FindNearestPed
 
-// ResetPedNearness
+extern void C2_HOOK_FASTCALL ResetPedNearness(void);
 
 // PedPreCollisionStuff
 
