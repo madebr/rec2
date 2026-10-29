@@ -11,6 +11,7 @@
 #include "04-netgame.h"
 #include "13-crush1.h"
 #include "15-displays.h"
+#include "17-world2.h"
 #include "22-replay.h"
 #include "23-piping.h"
 #include "29-raycast.h"
@@ -569,7 +570,15 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 
 // FindFloorInBoxBU
 
-// CancelPendingCunningStunt
+// FUNCTION: CARMA2_HW 0x0041e580
+// FUNCTION: CARMA2_SW 0x0041e5b0
+void C2_HOOK_FASTCALL CancelPendingCunningStunt(void) {
+    gQuite_wild_end = 0;
+    gQuite_wild_start = 0;
+    gOn_me_wheels_start = 0;
+    gWoz_upside_down_at_all = 0;
+    gWild_start = 0;
+}
 
 // SetAmbientPratCam
 
