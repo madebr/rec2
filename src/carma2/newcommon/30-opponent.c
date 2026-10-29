@@ -83,7 +83,7 @@ float gShortest_route_length;
 tCar_spec* gActive_car_list[139];
 
 // GLOBAL: CARMA2_HW 0x0074c9ec
-// GLOBAL: CARMA2_SW 0x00671084
+// GLOBAL: CARMA2_SW 0x007430ac
 int gNum_active_cars;
 
 // FUNCTION: CARMA2_HW 0x004a8160

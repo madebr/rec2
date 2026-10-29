@@ -8,6 +8,7 @@
 
 #include "00-car.h"
 
+#include "01-network.h"
 #include "04-netgame.h"
 #include "13-crush1.h"
 #include "15-displays.h"
@@ -604,8 +605,13 @@ void C2_HOOK_FASTCALL DoLODCarModels(void) {
             } else {
                 level /= factor;
             }
+#ifdef REC2_SW
+            if (gNet_mode != eNet_mode_none && (gNet_players[gIt_or_fox].car == car || NetPlayerFromCar(car)->field_0x80 != 0)) {
+                level = 0.0f;
+            }
+#endif
             for (j = car->count_detail_levels - 1; j > 0; j--) {
-                if (car->detail_levels[j] < level) {
+                if (level > car->detail_levels[j]) {
                     break;
                 }
             }
