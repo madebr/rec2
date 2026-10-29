@@ -92,7 +92,7 @@ extern int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tN
 
 // NetSendMessageToAllPlayers
 
-// NetGetContentsSize
+extern tU32 C2_HOOK_FASTCALL NetGetContentsSize(tU8 pType, tU32 pSize_decider);
 
 // NetGetMessageSize
 
