@@ -36,6 +36,7 @@
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
+#include "c2_stdlib.h"
 #include "c2_string.h"
 #include <ctype.h>
 
@@ -1059,7 +1060,71 @@ int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFrontend) {
     return 1;
 }
 
-// CreditsScreenInfunc
+// FUNCTION: CARMA2_HW 0x0046bd60
+// FUNCTION: CARMA2_SW 0x0046ba90
+int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend) {
+    tPath_name interface_path;
+    tPath_name credits_path;
+    char s[100];
+    char small_buf[11];
+    FILE* f;
+    int i;
+
+    if (!pFrontend->loaded) {
+        LoadMenuSettings(pFrontend);
+    }
+    FuckWithWidths(pFrontend);
+    PathCat(interface_path, gApplication_path, "INTRFACE");
+    PathCat(credits_path, interface_path, "creditslist.txt");
+    f = DRfopen(credits_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_Mysterious_SS);
+    }
+    gCredits_line_count = GetAnInt(f);
+    gCredits_texts = malloc(sizeof(*gCredits_texts) * gCredits_line_count);
+    gCredits_fonts = malloc(sizeof(*gCredits_fonts) * gCredits_line_count);
+    gCredits_heights = malloc(sizeof(*gCredits_heights) * gCredits_line_count);
+    gCredits_throbs = malloc(sizeof(*gCredits_throbs) * gCredits_line_count);
+    gCredits_throbs[0] = 0;
+    gCredits_fonts[0] = kPolyfont_hand_red_15pt_lit;
+    gCredits_heights[0] = 0;
+    gCredits_total_height = 0;
+    GetALineAndDontArgue(f, s);
+    i = 0;
+    while (i < gCredits_line_count) {
+        if (strncmp(s, "FONT", 4) == 0) {
+            strncpy(small_buf, &s[5], sizeof(small_buf) - 1);
+            gCredits_fonts[i] = atoi(small_buf);
+        } else if (strncmp(s, "SPACE", 5) == 0) {
+            strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
+            gCredits_heights[i] += (int)(PolyFontHeight(gCredits_fonts[i]) * atof(small_buf));
+        } else if (strncmp(s, "THROB", 5) == 0) {
+            strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
+            if (strncmp(small_buf, "ON", 2) == 0) {
+                gCredits_throbs[i] = 1;
+            } else {
+                gCredits_throbs[i] = 0;
+            }
+        } else {
+            gCredits_texts[i] = malloc(strlen(s) + 1);
+            strcpy(gCredits_texts[i], s);
+            gCredits_heights[i] += PolyFontHeight(gCredits_fonts[i]);
+            gCredits_total_height += gCredits_heights[i];
+            i++;
+            if (i < gCredits_line_count) {
+                gCredits_fonts[i] = gCredits_fonts[i - 1];
+                gCredits_throbs[i] = gCredits_throbs[i - 1];
+                gCredits_heights[i] = 0;
+            }
+        }
+        GetALineAndDontArgue(f, s);
+    }
+    gCredits_total_height += 480;
+    gCredits_scroll_start = PDGetTotalTime();
+    StartMusicTrack(9998);
+    gFrontend_selected_item_index = 0;
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x0046c090
 // FUNCTION: CARMA2_SW 0x0046bdc0

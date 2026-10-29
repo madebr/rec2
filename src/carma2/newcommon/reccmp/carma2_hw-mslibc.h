@@ -501,10 +501,10 @@
 // _strtoul
 
 // LIBRARY: CARMA2_HW 0x00577aa0
-// atoi
+// _atoi
 
 // LIBRARY: CARMA2_HW 0x005779a0
-// atof
+// _atof
 
 // LIBRARY: CARMA2_HW 0x00587d00
 // __fstat
