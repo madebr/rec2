@@ -20,6 +20,7 @@ extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
 extern int gNum_active_non_cars;
+extern int gEliminate_faces;
 extern int gInTheSea;
 extern int gFace_num__car;
 extern tFace_ref gFace_list__car[300];
@@ -166,7 +167,7 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 
 // findfloor
 
-// FindFloorInBoxBU
+extern int C2_HOOK_FASTCALL FindFloorInBoxBU(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pDistance, tPhysics_object* pObject);
 
 // CancelPendingCunningStunt
 
