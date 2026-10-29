@@ -128,7 +128,7 @@ extern void C2_HOOK_FASTCALL RebuildActiveCarList(void);
 
 extern void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
 
-// OpponentRepairNecessary
+extern int C2_HOOK_FASTCALL OpponentRepairNecessary(tOpponent_spec* pOpponent_spec);
 
 extern void C2_HOOK_FASTCALL PossiblyRepairOpponent(tOpponent_spec* pOpponent_spec);
 
