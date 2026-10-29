@@ -3199,16 +3199,20 @@ typedef struct {
 } tSmashable_initial_position_spec;
 
 typedef struct {
-    tShrapnel_type type;
-    float min_speed_towards_you;
-    float max_speed_towards_you;
+    float min_speed;
+    float max_speed;
     float impactee_velocity_factor;
     float random_velocity_max;
     float random_up_velocity_max;
     float random_normal_velocity_max;
     float random_spin_rate_max;
-    float min_time_ms;
-    float max_time_ms;
+} tSmashable_initial_speed_spec;
+
+typedef struct {
+    tShrapnel_type type;
+    tSmashable_initial_speed_spec initial_speed;
+    int min_time_ms;
+    int max_time_ms;
     tSmashable_initial_position_spec initial_pos;
     union {
         struct {
@@ -3678,16 +3682,6 @@ typedef struct {
     void (C2_HOOK_FASTCALL * load_personality)(tPed_personality*, FILE*);
     void (C2_HOOK_FASTCALL * dispose_personality)(undefined4*);
 } tPedForms_vtable;
-
-typedef struct {
-    float min_speed;
-    float max_speed;
-    float impactee_velocity_factor;
-    float random_velocity_max;
-    float random_up_velocity_max;
-    float random_normal_velocity_max;
-    float random_spin_rate_max;
-} tSmashable_initial_speed_spec;
 
 typedef enum {
     eNonCarLocation_Relative = 0,

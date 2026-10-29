@@ -13,6 +13,9 @@
 #include "rec2_types.h"
 
 extern tSmashable_item_spec* gTrack_smashable_environment_specs;
+extern br_actor* gSmashable_noncar_shrapnel_actors[100];
+extern int gCount_smashable_noncar_shrapnel_actors;
+extern const char* gSmashable_track_environment_path;
 extern int gCount_track_smashable_environment_specs;
 extern tStored_smash* gNet_host_smashes;
 
@@ -125,8 +128,6 @@ extern void C2_HOOK_FASTCALL InitSmashQueue(void);
 
 // LoadActorFromRace
 
-// ReadShrapnelSpec
-
 extern void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed);
 
 extern void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* pTimes);
@@ -134,6 +135,8 @@ extern void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_
 // ReadSpillData
 
 extern void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation);
+
+extern void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs, int* pShrapnel_count);
 
 extern intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* pData);
 
