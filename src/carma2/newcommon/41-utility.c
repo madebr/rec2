@@ -1274,6 +1274,7 @@ void C2_HOOK_FASTCALL ExpandVector3(br_vector3* pDest, const tCompressed_vector3
 }
 
 // FUNCTION: CARMA2_HW 0x005165e0
+// FUNCTION: CARMA2_SW 0x00511a50
 void C2_HOOK_FASTCALL CompressMatrix34(tCompressed_matrix3* pCompressed_matrix3, int* pInactive, const br_matrix34* pMatrix) {
     br_vector3 pos;
 
@@ -1293,6 +1294,7 @@ void C2_HOOK_FASTCALL CompressMatrix34(tCompressed_matrix3* pCompressed_matrix3,
 }
 
 // FUNCTION: CARMA2_HW 0x00516910
+// FUNCTION: CARMA2_SW 0x00511d80
 void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_matrix3* pCompressed, int pInactive) {
 
     ExpandVector3((br_vector3*)pMatrix->m[0], &pCompressed->m0, -1.1f, 1.1f);
@@ -1310,6 +1312,7 @@ void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_mat
     }
 }
 
+#ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x00516c10
 void C2_HOOK_FASTCALL PossibleLock(int pValue) {
 
@@ -1327,6 +1330,7 @@ int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
     }
     return 0;
 }
+#endif
 
 // FUNCTION: CARMA2_HW 0x00516fd0
 tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
@@ -1814,15 +1818,11 @@ void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) 
     MungeMetaCharacters(pText, pMeta, text);
 }
 
+// FUNCTION: CARMA2_HW 0x005191b0
+// FUNCTION: CARMA2_SW 0x00512c90
 void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {
 
-    if (gLock_often) {
-        PossibleUnlock(0);
-    }
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
-    if (gLock_often) {
-        PossibleUnlock(0);
-    }
 }
 
 // FUNCTION: CARMA2_HW 0x005191f0
