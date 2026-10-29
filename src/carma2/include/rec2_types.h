@@ -4940,7 +4940,7 @@ typedef struct {
     int grid_position_set;
     undefined field_0x58[4];
     int opponent_list_index;
-    undefined field_0x60[4];
+    int awaiting_confirmation;
     int score2;
     int credits;
     int wasted;
