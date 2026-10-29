@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern const int gPow2_array[32];
+
 extern tU8 gCamera_type_allowed_replay[9];
 extern tU8 gCamera_type_allowed_gameplay[9];
 
