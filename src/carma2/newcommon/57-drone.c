@@ -349,7 +349,7 @@ void C2_HOOK_FASTCALL ApplyDroneStraightPos2(int pDrone_id, tDrone_path_node_sec
     drone->field_0xe0 = 0.0f;
     BrVector3Scale(&direction, &pSection->field_0x10, pSection->field_0x1c - DRU16ToScalar(pDistance, 0.0f, 255.0f));
     BrVector3Negate(&direction, &direction);
-    BrVector3Add((br_vector3*)drone->actor->t.t.mat.m[3], &gDrone_path_nodes[pSection->node1].position, &direction);
+    BrVector3Add(&drone->actor->t.t.translate.t, &gDrone_path_nodes[pSection->node1].position, &direction);
     BrVector3Copy(&direction, &pSection->field_0x10);
     if (drone->form->flags & 0x10) {
         direction.v[1] = 0.0f;
