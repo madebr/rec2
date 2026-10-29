@@ -823,7 +823,15 @@ int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, 
 
 // SetCharacterBoneModelP
 
-// SetCharacterAllBonesModel
+// FUNCTION: CARMA2_HW 0x0040b530
+// FUNCTION: CARMA2_SW 0x0040b520
+void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pModel_index, int pModel_set) {
+    int i;
+
+    for (i = 0; i < pCharacter->personality->form->count_bones; i++) {
+        SetCharacterBoneModel(pCharacter, i, pModel_index, pModel_set);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0040b570
 // FUNCTION: CARMA2_SW 0x0040b560
