@@ -9,16 +9,31 @@
 #include "51-smash.h"
 
 #include "08-loading1.h"
+#include "20-skidmark.h"
 #include "28-world3.h"
 #include "32-spark.h"
 #include "39-oil.h"
 #include "41-utility.h"
 #include "50-fog.h"
+#include "52-errors.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+
+// GLOBAL: CARMA2_HW 0x006a5138
+// GLOBAL: CARMA2_SW 0x0069f198
+tSmashable_item_spec* gTrack_smashable_environment_specs;
+
+// GLOBAL: CARMA2_HW 0x006a55b4
+// GLOBAL: CARMA2_SW 0x0069f614
+int gCount_track_smashable_environment_specs;
+
+// GLOBAL: CARMA2_HW 0x006a55c0
+// GLOBAL: CARMA2_SW 0x0069f620
+tStored_smash* gNet_host_smashes;
 
 // GLOBAL: CARMA2_HW 0x006a55c8
 // GLOBAL: CARMA2_SW 0x0069f628
@@ -303,19 +318,55 @@ void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* p
 
 // ReadSpillData
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x004ee780
-// STUB: CARMA2_SW 0x004ea420
+// FUNCTION: CARMA2_HW 0x004ee780
+// FUNCTION: CARMA2_SW 0x004ea420
 void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation) {
-    NOT_IMPLEMENTED();
-}
+    int i;
+    int j;
+    char s[256];
+    tExplosion_animation_group* group;
+    float f1, f2;
+    int d1, d2;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    C2_HOOK_BUG_ON(sizeof(tExplosion_animation_group) != 0x44);
+    C2_HOOK_BUG_ON(sizeof(tExplosion_animation_frame) != 8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tExplosion_animation_group, count_frames, 0x4);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gExplosion_rotate_names) != 2);
+
+    pAnimation->count_groups = GetAnInt(pF);
+    if (pAnimation->count_groups == 0) {
+        return;
+    }
+    pAnimation->groups = BrMemAllocate(pAnimation->count_groups * sizeof(tExplosion_animation_group), kMem_explosion_data);
+    for (i = 0, group = pAnimation->groups; i < pAnimation->count_groups; i++, group++) {
+        GetPairOfInts(pF, &d1, &d2);
+        group->min_count = (tU16)d1;
+        group->max_count = (tU16)d2;
+        GetPairOfFloats(pF, &f1, &f2);
+        group->min_start_delay_ms = (tU16)(1000.f * f1);
+        group->max_start_delay_ms = (tU16)(1000.f * f2);
+        GetThreeFloats(pF, &group->offset.v[0], &group->offset.v[1], &group->offset.v[2]);
+        GetPairOfFloats(pF, &group->min_xyz_factor.v[0], &group->max_xyz_factor.v[0]);
+        GetPairOfFloats(pF, &group->min_xyz_factor.v[1], &group->max_xyz_factor.v[1]);
+        GetPairOfFloats(pF, &group->min_xyz_factor.v[2], &group->max_xyz_factor.v[2]);
+        GetPairOfFloats(pF, &f1, &f2);
+        group->min_frametime_ms = (tU16)(1000.f / f1);
+        group->max_frametime_ms = (tU16)(1000.f / f2);
+        GetPairOfFloats(pF, &group->min_scaling_factor, &group->max_scaling_factor);
+        group->rotate_modus = GetALineAndInterpretCommand(pF, gExplosion_rotate_names, REC2_ASIZE(gExplosion_rotate_names));
+        group->count_frames = (tS16)GetAnInt(pF);
+        group->frames = BrMemAllocate(group->count_frames * sizeof(tExplosion_animation_frame), kMem_explosion_data);
+        for (j = 0; j < group->count_frames; j++) {
+            group->frames[j].opacity = GetAScalar(pF);
+            group->frames[j].opacity = 100.f;
+            GetAString(pF, s);
+            group->frames[j].map = BrMapFind(s);
+            if (group->frames[j].map == NULL) {
+                FatalError(kFatalError_CantLoadSmashPix_S, s);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004ef440
 // FUNCTION: CARMA2_SW 0x004eb0a0
@@ -517,6 +568,25 @@ void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void) {
     BrMemFree(gSmashable_noncars);
 }
 
+// FUNCTION: CARMA2_HW 0x004f0960
+// FUNCTION: CARMA2_SW 0x004ec5c0
+void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void) {
+    int i;
+    tSmashable_item_spec* smash;
+
+    C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 0x2e0);
+
+    for (i = 0, smash = gTrack_smashable_environment_specs; i < gCount_track_smashable_environment_specs; i++, smash++) {
+        FreeEnvSmash(smash);
+    }
+    if (gCount_track_smashable_environment_specs != 0) {
+        BrMemFree(gTrack_smashable_environment_specs);
+    }
+    if (gNet_mode == eNet_mode_host) {
+        BrMemFree(gNet_host_smashes);
+    }
+}
+
 // CloneMemory
 
 // CloneEnvSmash
@@ -589,8 +659,6 @@ void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_a
         BrMemFree(pConnotations->side_effects.side_effects.side_effects);
     }
 }
-
-// DisposeSmashableEnvironment
 
 // MungeSmashMaterialNames
 

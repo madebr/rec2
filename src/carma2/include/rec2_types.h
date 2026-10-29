@@ -249,6 +249,11 @@ typedef struct tPipe_smudge_data {
 } tPipe_smudge_data;
 
 typedef struct {
+    br_matrix34 matrix;
+    br_material* material;
+} tPipe_chunk_skid_adjustment;
+
+typedef struct {
     br_vector3 direction;
 } tPipe_ped_dir_data;
 
@@ -491,10 +496,12 @@ typedef enum {
     ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_prox_ray = 21,
+    ePipe_chunk_skid_adjustment = 22,
     ePipe_chunk_flap = 23,
     ePipe_model_mash = 24,
     ePipe_chunk_identity = 26,
     ePipe_chunk_explosion = 31,
+    ePipe_chunk_non_car_creation = 32,
     ePipe_chunk_smash_model_change = 33,
     ePipe_smash_texture_change = 36,
     ePipe_chunk_repulse_ray = 37,
@@ -533,7 +540,7 @@ typedef struct {
 } tPipe_smash_texture_change;
 
 typedef struct tPipe_chunk {
-    tU32 subject_index;
+    uintptr_t subject_index;
     union {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
@@ -543,6 +550,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
         tPipe_single_transform_type transform_type;
+        tPipe_single_vector vector;
         char raw_data[0];
     } data;
 } tPipe_chunk;
@@ -3109,7 +3117,7 @@ typedef enum {
 typedef struct {
     tU16 min_count;
     tU16 max_count;
-    tU16 count_frames;
+    tS16 count_frames;
     tU16 min_start_delay_ms;
     tU16 max_start_delay_ms;
     tU16 min_frametime_ms;
@@ -4933,7 +4941,7 @@ typedef struct {
     int grid_position_set;
     undefined field_0x58[4];
     int opponent_list_index;
-    undefined field_0x60[4];
+    int awaiting_confirmation;
     int score2;
     int credits;
     int wasted;

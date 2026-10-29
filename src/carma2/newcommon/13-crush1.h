@@ -247,7 +247,7 @@ extern int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3*
 
 // SendReAttachBit
 
-// StopFlapping
+extern void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec);
 
 // DoFlapping
 
@@ -529,7 +529,7 @@ extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vecto
 
 // GetNetShapeDataLengthFromData
 
-// EncodeNetShapeData
+extern void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar);
 
 // DecodeNetShapeData
 

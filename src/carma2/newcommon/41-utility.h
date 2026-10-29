@@ -172,9 +172,11 @@ extern void C2_HOOK_FASTCALL CompressMatrix34(tCompressed_matrix3* pCompressed_m
 
 extern void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_matrix3* pCompressed, int pInactive);
 
+#ifdef REC2_HW
 extern void C2_HOOK_FASTCALL PossibleLock(int pValue);
 
 extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
+#endif
 
 extern tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry);
 

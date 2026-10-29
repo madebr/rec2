@@ -11,10 +11,14 @@
 #include <c2_hooks.h>
 #include "00-car.h"
 #include "08-loading1.h"
+#include "13-crush1.h"
+#include "41-utility.h"
 #include "60-phil.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
+
+#include "c2_stdio.h"
 
 #include <string.h>
 
@@ -33,6 +37,10 @@ int gMinTimeOpponentRepair;
 // GLOBAL: CARMA2_HW 0x0074a688
 // GLOBAL: CARMA2_SW 0x00741148
 int gMaxTimeOpponentRepair;
+
+// GLOBAL: CARMA2_HW 0x0069173c
+// GLOBAL: CARMA2_SW 0x0068b794
+int gActive_car_list_rebuild_required;
 
 // GLOBAL: CARMA2_HW 0x00691744
 // GLOBAL: CARMA2_SW 0x0068b79c
@@ -69,6 +77,14 @@ int gRoute_search_target_count;
 // GLOBAL: CARMA2_HW 0x0069171c
 // GLOBAL: CARMA2_SW 0x0068b774
 float gShortest_route_length;
+
+// GLOBAL: CARMA2_HW 0x0074c7c0
+// GLOBAL: CARMA2_SW 0x00742e80
+tCar_spec* gActive_car_list[139];
+
+// GLOBAL: CARMA2_HW 0x0074c9ec
+// GLOBAL: CARMA2_SW 0x007430ac
+int gNum_active_cars;
 
 // FUNCTION: CARMA2_HW 0x004a8160
 // FUNCTION: CARMA2_SW 0x004a42d0
@@ -343,17 +359,67 @@ void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCo
     }
 }
 
-// RebuildActiveCarList
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// STUB: CARMA2_HW 0x004a7a60
-// STUB: CARMA2_SW 0x004a3bd0
-void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
+// STUB: CARMA2_HW 0x004a7a80
+// STUB: CARMA2_SW 0x004a3bf0
+void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
     NOT_IMPLEMENTED();
 }
 
-// OpponentRepairNecessary
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
-// PossiblyRepairOpponent
+// FUNCTION: CARMA2_HW 0x004a7a60
+// FUNCTION: CARMA2_SW 0x004a3bd0
+void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
+    gActive_car_list_rebuild_required = 1;
+    if (gProgram_state.racing) {
+        RebuildActiveCarList();
+    }
+}
+
+int C2_HOOK_FASTCALL OpponentRepairNecessary(tOpponent_spec* pOpponent_spec) {
+    int i;
+    tDamage_unit* damage = pOpponent_spec->car_spec->damage_units;
+
+    for (i = 0, damage = pOpponent_spec->car_spec->damage_units; i < (int)REC2_ASIZE(pOpponent_spec->car_spec->damage_units); i++, damage++) {
+        if (i != eDamage_driver && damage != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004ad910
+// FUNCTION: CARMA2_SW 0x004a9a80
+void C2_HOOK_FASTCALL PossiblyRepairOpponent(tOpponent_spec* pOpponent_spec) {
+    char message[256];
+    char headup[256];
+
+    if (((tU16)pOpponent_spec->car_spec->car_ID >> 8) != eVehicle_rozzer
+            && gTime_stamp_for_this_munging > pOpponent_spec->next_repair_check
+            && pOpponent_spec->cheating
+            && pOpponent_spec->current_objective != eOOT_levitate
+            && pOpponent_spec->current_objective != eOOT_knackered_and_freewheeling
+            && !pOpponent_spec->car_spec->knackered) {
+        pOpponent_spec->next_repair_check = IRandomBetween(0, 2000) + 3000 + gTime_stamp_for_this_munging;
+        if (gTime_stamp_for_this_munging > pOpponent_spec->car_spec->last_time_we_touched_a_player + pOpponent_spec->repair_interval) {
+            if (OpponentRepairNecessary(pOpponent_spec)) {
+                DoNotDprintf("*** Opponent %d, REPAIRING, timestamp %d", pOpponent_spec->car_spec->driver_name, gTime_stamp_for_this_munging);
+                TotallyRepairACar(pOpponent_spec->car_spec);
+                sprintf(message, "%s %s", pOpponent_spec->car_spec->driver_name, GetMiscString(273));
+                strcpy(headup, message);
+                pOpponent_spec->repair_interval = IRandomBetween(gMinTimeOpponentRepair, gMaxTimeOpponentRepair) * 60000;
+                pOpponent_spec->last_repair_time = gTime_stamp_for_this_munging;
+                DoNotDprintf("*** Opponent %s, repair_interval is %d", pOpponent_spec->car_spec->driver_name, pOpponent_spec->repair_interval);
+            }
+        }
+    }
+}
 
 // DisplayOpponentRecoveringHeadup
 

@@ -86,6 +86,8 @@ extern void C2_HOOK_FASTCALL TDamageEngine(void);
 
 extern void C2_HOOK_FASTCALL TDamageDriver(void);
 
+extern void C2_HOOK_FASTCALL TDamageLFWheel(void);
+
 // ToggleMiniMap
 
 // CheckToggles
@@ -128,7 +130,7 @@ extern void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info);
 
 // FlipUpCar
 
-// GetPowerup
+extern void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 // CheckSystemKeys
 

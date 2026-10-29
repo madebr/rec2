@@ -30,6 +30,8 @@ extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
 extern float gMass_mine;
 extern int gInstant_handbrake;
+extern int gInventory_cycling;
+extern tU32 gInventory_timeout;
 
 // GetNextGoodyTime
 
@@ -105,7 +107,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // DrawKeyPowerups
 
-// ToggleInventory
+extern void C2_HOOK_FASTCALL ToggleInventory(void);
 
 // RightInventory
 
