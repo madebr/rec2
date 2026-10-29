@@ -24,6 +24,7 @@
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
+#include "63-loading3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "72-interface-main.h"
@@ -977,7 +978,41 @@ int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// MenuSetCarImage
+// FUNCTION: CARMA2_HW 0x0046aa20
+// FUNCTION: CARMA2_SW 0x0046a760
+void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index) {
+    char* car_file_name;
+    char* pos_dot;
+    char pack_filename[40];
+    char pm_name[20];
+    tPath_name pack_path;
+    tTWTVFS twt;
+    int i;
+
+    car_file_name = gOpponents[pCar_index].car_file_name;
+    pos_dot = strrchr(car_file_name, '.');
+    PathCat(pack_path, gApplication_path, "INTRFACE");
+    PathCat(pack_path, pack_path, "CARIMAGE");
+    strcpy(pack_filename, gOpponents[pCar_index].car_file_name);
+    pack_filename[strlen(pack_filename) - 4] = '\0';
+    strcat(pack_filename, "CI");
+    PathCat(pack_path, pack_path, pack_filename);
+    twt = OpenPackFileAndSetTiffLoading(pack_path);
+    for (i = 0; i < 6; i++) {
+        sprintf(pm_name, "%.*s%c.TIF", (int)(pos_dot - car_file_name), car_file_name, 'A' + i);
+        BrMapRemove(gFrontend_images[i + 1]);
+        BrPixelmapFree(gFrontend_images[i + 1]);
+        gFrontend_images[i + 1] = GetThisFuckingPixelmapPleaseMrTwatter(pack_path, pm_name);
+        if (gFrontend_images[i + 1] == NULL) {
+            gFrontend_images[i + 1] = LoadPixelmap("64by64.tif");
+        }
+        BrPixelmapCopy(gFrontend_brender_items[pBrender_index + i].field_0xc, gFrontend_images[i + 1]);
+        BrPixelmapCopy(gFrontend_brender_items[pBrender_index + i].field_0x10, gFrontend_brender_items[pBrender_index + i].field_0xc);
+        BrMapUpdate(gFrontend_brender_items[pBrender_index + i].field_0xc, BR_MAPU_ALL);
+        BrMaterialUpdate(gFrontend_brender_items[pBrender_index + i].material, BR_MATU_COLOURMAP);
+    }
+    ClosePackFileAndSetTiffLoading(twt);
+}
 
 // MenuSetDriverImage
 

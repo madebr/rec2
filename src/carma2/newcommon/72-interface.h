@@ -167,7 +167,7 @@ extern int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game
 
 extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
-// MenuSetCarImage
+extern void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index);
 
 // MenuSetDriverImage
 
