@@ -28,21 +28,26 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00703e24
+// GLOBAL: CARMA2_SW 0x006fab04
 int gWidth;
 
 // GLOBAL: CARMA2_HW 0x00703e20
+// GLOBAL: CARMA2_SW 0x006fab00
 int gHeight;
 
 // GLOBAL: CARMA2_HW 0x00705060
+// GLOBAL: CARMA2_SW 0x006fbb28
 int gX_offset;
 
 // GLOBAL: CARMA2_HW 0x006baa2c
+// GLOBAL: CARMA2_SW 0x006b1708
 int gY_offset;
 
 // GLOBAL: CARMA2_HW 0x0068be30
 int gBrZb_initialized;
 
 // GLOBAL: CARMA2_HW 0x006a22bc
+// GLOBAL: CARMA2_SW 0x0069c314
 br_pixelmap* gRear_pixelmap;
 
 // GLOBAL: CARMA2_HW 0x006a22b8
@@ -52,27 +57,34 @@ br_pixelmap* gEvalu;
 tWobble_spec gWobble_array[5];
 
 // GLOBAL: CARMA2_HW 0x00705080
+// GLOBAL: CARMA2_SW 0x006fbb40
 float gCosine_array[64];
 
 // GLOBAL: CARMA2_HW 0x0065fdc8
+// GLOBAL: CARMA2_SW 0x0065a708
 tShadow_level gShadow_level = eShadow_us_only;
 
 // GLOBAL: CARMA2_HW 0x0065fb54
 int gHud_tinted4 = -1;
 
 // GLOBAL: CARMA2_HW 0x0068be38
+// GLOBAL: CARMA2_SW 0x00685e7c
 int gRender_indent;
 
 // GLOBAL: CARMA2_HW 0x006baa40
+// GLOBAL: CARMA2_SW 0x006b1720
 tU8 gTemporary_physics_render_buffer[300000];
 
 // GLOBAL: CARMA2_HW 0x006a2448
+// GLOBAL: CARMA2_SW 0x0069c4a0
 tClip_details gShadow_clip_planes[8];
 
 // GLOBAL: CARMA2_HW 0x006a23d8
+// GLOBAL: CARMA2_SW 0x0069c430
 int gFancy_shadow;
 
 // GLOBAL: CARMA2_HW 0x006a27e0
+// GLOBAL: CARMA2_SW 0x0069c838
 br_material* gShadow_material;
 
 // GLOBAL: CARMA2_HW 0x006a27d0
@@ -85,21 +97,27 @@ br_vector3 gShadow_light_z;
 br_vector3 gShadow_light_x;
 
 // GLOBAL: CARMA2_HW 0x006a27e4
+// GLOBAL: CARMA2_SW 0x0069c83c
 br_model* gShadow_model;
 
 // GLOBAL: CARMA2_HW 0x006a2444
+// GLOBAL: CARMA2_SW 0x0069c49c
 br_actor* gShadow_actor;
 
 // GLOBAL: CARMA2_HW 0x00705188
+// GLOBAL: CARMA2_SW 0x006fbc48
 int gScreen_wobble_x;
 
 // GLOBAL: CARMA2_HW 0x00705184
+// GLOBAL: CARMA2_SW 0x006fbc44
 int gScreen_wobble_y;
 
 // GLOBAL: CARMA2_HW 0x006a2488
+// GLOBAL: CARMA2_SW 0x0069c4e0
 tSaved_table gSaved_shade_tables[100];
 
 // GLOBAL: CARMA2_HW 0x006a27a8
+// GLOBAL: CARMA2_SW 0x0069c800
 int gSaved_table_count;
 
 // GLOBAL: CARMA2_HW 0x00703e28
@@ -109,6 +127,7 @@ int gHud_actor_storage_size;
 br_actor* gHud_actor_storage[128];
 
 // GLOBAL: CARMA2_HW 0x006a22c4
+// GLOBAL: CARMA2_SW 0x0069c31c
 int gNumber_of_lollipops;
 
 // MungeClipPlane
@@ -179,18 +198,21 @@ void C2_HOOK_FASTCALL RenderShadows(br_actor* pWorld, tTrack_spec* pTrack_spec, 
 }
 
 // FUNCTION: CARMA2_HW 0x004e9940
+// FUNCTION: CARMA2_SW 0x004e5700
 void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel) {
 
     gShadow_level = pLevel;
 }
 
 // FUNCTION: CARMA2_HW 0x004e9950
+// FUNCTION: CARMA2_SW 0x004e5710
 tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void) {
 
     return gShadow_level;
 }
 
 // FUNCTION: CARMA2_HW 0x004e9960
+// FUNCTION: CARMA2_SW 0x004e5720
 void C2_HOOK_FASTCALL ToggleShadow(void) {
 
     if (gShadow_level++ == eShadow_everyone) {
@@ -213,6 +235,7 @@ void C2_HOOK_FASTCALL ToggleShadow(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e99d0
+// FUNCTION: CARMA2_SW 0x004e5790
 void C2_HOOK_FASTCALL InitShadow(void) {
     int i;
 
@@ -238,6 +261,7 @@ void C2_HOOK_FASTCALL InitShadow(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e9b10
+// FUNCTION: CARMA2_SW 0x004e58d0
 br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
     br_pixelmap* copy;
 
@@ -258,6 +282,7 @@ br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e9ae0
+// FUNCTION: CARMA2_SW 0x004e58a0
 void C2_HOOK_FASTCALL SaveShadeTables(void) {
     PossibleService();
     gSaved_table_count = 0;
@@ -265,6 +290,7 @@ void C2_HOOK_FASTCALL SaveShadeTables(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e9b60
+// FUNCTION: CARMA2_SW 0x004e5920
 void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
     int i;
 
@@ -278,6 +304,7 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
 // LollipopizeActor
 
 // FUNCTION: CARMA2_HW 0x004e4900
+// FUNCTION: CARMA2_SW 0x004e0c90
 void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
     gNumber_of_lollipops = 0;
 }
@@ -285,6 +312,7 @@ void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
 // RenderLollipops
 
 // FUNCTION: CARMA2_HW 0x004e4940
+// FUNCTION: CARMA2_SW 0x004e0cd0
 void C2_HOOK_FASTCALL SetupDepthBuffer(void) {
 
     if (gDepth_buffer != NULL) {
@@ -298,6 +326,7 @@ void C2_HOOK_FASTCALL SetupDepthBuffer(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e4980
+// FUNCTION: CARMA2_SW 0x004e0d10
 void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight) {
 
     PDAllocateScreenAndBack();
@@ -380,6 +409,7 @@ void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e4cd0
+// FUNCTION: CARMA2_SW 0x004e0fe0
 void C2_HOOK_FASTCALL ScreenSmaller(void) {
 
     if (gMap_view != 2) {
@@ -388,10 +418,15 @@ void C2_HOOK_FASTCALL ScreenSmaller(void) {
             gRender_indent = 8;
         }
         AdjustRenderScreenSize();
+#ifdef REC2_SW
+        gDepth_buffer->row_bytes = 2 * gRender_screen->width;
+        gDepth_buffer->base_x = gRender_screen->base_x;
+#endif
     }
 }
 
 // FUNCTION: CARMA2_HW 0x004e4d00
+// FUNCTION: CARMA2_SW 0x004e1040
 void C2_HOOK_FASTCALL ScreenLarger(void) {
 
     if (gMap_view != 2) {
@@ -400,10 +435,15 @@ void C2_HOOK_FASTCALL ScreenLarger(void) {
             gRender_indent = 0;
         }
         AdjustRenderScreenSize();
+#ifdef REC2_SW
+        gDepth_buffer->row_bytes = 2 * gRender_screen->width;
+        gDepth_buffer->base_x = gRender_screen->base_x;
+#endif
     }
 }
 
 // FUNCTION: CARMA2_HW 0x004e4d30
+// FUNCTION: CARMA2_SW 0x004e1090
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
 
@@ -413,6 +453,7 @@ void C2_HOOK_FASTCALL ClearWobbles(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e4d50
+// FUNCTION: CARMA2_SW 0x004e10b0
 void C2_HOOK_FASTCALL InitWobbleStuff(void) {
     int i;
 
@@ -427,12 +468,14 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
 // NewScreenWobble
 
 // FUNCTION: CARMA2_HW 0x004e4e20
+// FUNCTION: CARMA2_SW 0x004e1180
 void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY) {
     gScreen_wobble_x = pX;
     gScreen_wobble_y = pY;
 }
 
 // FUNCTION: CARMA2_HW 0x004e4e30
+// FUNCTION: CARMA2_SW 0x004e1190
 void C2_HOOK_FASTCALL ResetScreenWobble(void) {
     gScreen_wobble_x = 0;
     gScreen_wobble_y = 0;
@@ -451,11 +494,13 @@ void C2_HOOK_FASTCALL ResetScreenWobble(void) {
 // DoACompleteRenderPass
 
 // STUB: CARMA2_HW 0x004e4e40
+// STUB: CARMA2_SW 0x004e11a0
 void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004e5a70
+// FUNCTION: CARMA2_SW 0x004e1c30
 void C2_HOOK_FASTCALL StartRenderingHeadups(void) {
     CleanPolyFontDanglers();
     gHud_actor_storage_size = 0;
@@ -517,6 +562,7 @@ void C2_HOOK_FASTCALL StopRenderingHeadups(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e5c70
+// FUNCTION: CARMA2_SW 0x004e1c90
 void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {
     int i;
 

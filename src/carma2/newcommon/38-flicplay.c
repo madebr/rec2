@@ -96,40 +96,55 @@ tFlic_bunch gFlic_bunch[9] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0068b8b4
+// GLOBAL: CARMA2_SW 0x00685e14
 float gFlic_sound_delay_pre_smack;
 
 // GLOBAL: CARMA2_HW 0x0068b8b8
+// GLOBAL: CARMA2_SW 0x00685e18
 float gFlic_sound_delay_post_smack;
 
 // GLOBAL: CARMA2_HW 0x0068b8bc
+// GLOBAL: CARMA2_SW 0x00685e1c
 float gFlic_sound_delay_not_in_demo;
 
 // GLOBAL: CARMA2_HW 0x0068b8c0
+// GLOBAL: CARMA2_SW 0x00685e20
 float gFlic_sound_delay_post_demo;
 
 // GLOBAL: CARMA2_HW 0x006861dc
+// GLOBAL: CARMA2_SW 0x0068091c
 int gTranslation_count;
 
 // GLOBAL: CARMA2_HW 0x006861e8
+// GLOBAL: CARMA2_SW 0x00680928
 tFlic_descriptor* gFirst_flic;
 
 // GLOBAL: CARMA2_HW 0x006861d8
+// GLOBAL: CARMA2_SW 0x00680918
 void* gPalette_pixels;
 
 // GLOBAL: CARMA2_HW 0x00686208
+// GLOBAL: CARMA2_SW 0x00680948
 br_pixelmap* gPalette;
 
 // GLOBAL: CARMA2_HW 0x00686210
+// GLOBAL: CARMA2_SW 0x00680950
 tTranslation_record* gTranslations;
 
 // GLOBAL: CARMA2_HW 0x00686218
 // GLOBAL: CARMA2_SW 0x00680958
 tFlic_descriptor gPanel_flic[2];
 
+// GLOBAL: CARMA2_HW 0x00686320
+// GLOBAL: CARMA2_SW 0x00680a60
+br_pixelmap* gPanel_buffer[2];
+
 // GLOBAL: CARMA2_HW 0x006861e0
+// GLOBAL: CARMA2_SW 0x00680920
 tDR_font* gTrans_fonts[2];
 
 // GLOBAL: CARMA2_HW 0x00686308
+// GLOBAL: CARMA2_SW 0x00680a48
 int gPalette_fuck_prevention;
 
 // GLOBAL: CARMA2_HW 0x0068630c
@@ -137,21 +152,27 @@ int gPalette_fuck_prevention;
 int gDark_mode;
 
 // GLOBAL: CARMA2_HW 0x00686310
+// GLOBAL: CARMA2_SW 0x00680a50
 int gTransparency_on;
 
 // GLOBAL: CARMA2_HW 0x00686314
+// GLOBAL: CARMA2_SW 0x00680a54
 int gPanel_flic_disable;
 
 // GLOBAL: CARMA2_HW 0x00686318
+// GLOBAL: CARMA2_SW 0x00680a58
 int gPlay_from_disk;
 
 // GLOBAL: CARMA2_HW 0x005964c8
+// GLOBAL: CARMA2_SW 0x00591410
 int gPending_flic = -1;
 
 // GLOBAL: CARMA2_HW 0x0068620c
+// GLOBAL: CARMA2_SW 0x0068094c
 int gPending_pending_flic;
 
 // GLOBAL: CARMA2_HW 0x005964d0
+// GLOBAL: CARMA2_SW 0x00591418
 tFlic_spec gMain_flic_list[372] = {
     { "MAINSTIL.FLI", 1, 0, 0, 0, 0, 25, },
     { "DEMSTRT2.FLI", 1, 0, 0, 0, 0, 0, },
@@ -496,6 +517,7 @@ tFlic_spec gMain_flic_list[372] = {
 };
 
 // FUNCTION: CARMA2_HW 0x00461990
+// FUNCTION: CARMA2_SW 0x00461430
 int C2_HOOK_FASTCALL TranslationMode(void) {
 
     return gTranslation_count;
@@ -507,6 +529,7 @@ void C2_HOOK_FASTCALL DontLetFlicFuckWithPalettes(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004619b0
+// FUNCTION: CARMA2_SW 0x00461450
 void C2_HOOK_FASTCALL LetFlicFuckWithPalettes(void) {
     gPalette_fuck_prevention = 0;
 }
@@ -518,31 +541,37 @@ void C2_HOOK_STDCALL PlayFlicsInDarkness(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004619e0
+// FUNCTION: CARMA2_SW 0x00461480
 void C2_HOOK_FASTCALL TurnFlicTransparencyOn(void) {
     gTransparency_on = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x004619f0
+// FUNCTION: CARMA2_SW 0x00461490
 void C2_HOOK_FASTCALL TurnFlicTransparencyOff(void) {
     gTransparency_on = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a00
+// FUNCTION: CARMA2_SW 0x004614a0
 void C2_HOOK_FASTCALL PlayFlicsFromDisk(void) {
     gPlay_from_disk = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a10
+// FUNCTION: CARMA2_SW 0x004614b0
 void C2_HOOK_FASTCALL PlayFlicsFromMemory(void) {
     gPlay_from_disk = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a20
+// FUNCTION: CARMA2_SW 0x004614c0
 void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
     gPanel_flic_disable = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x00461a30
+// FUNCTION: CARMA2_SW 0x004614d0
 void C2_HOOK_FASTCALL TurnOnPanelFlics(void) {
     gPanel_flic_disable = 0;
 }
@@ -555,6 +584,7 @@ int C2_HOOK_FASTCALL GetPanelFlicFrameIndex(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x00461a60
+// FUNCTION: CARMA2_SW 0x00461500
 void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
 
     gPalette_pixels = BrMemAllocate(0x400, kMem_misc);
@@ -566,6 +596,7 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
 // StartFlic
 
 // FUNCTION: CARMA2_HW 0x00461d60
+// FUNCTION: CARMA2_SW 0x004617f0
 int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
     if (pFlic_info->f != NULL) {
         BrMemFree(pFlic_info->data_start);
@@ -828,6 +859,7 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00462a40
+// FUNCTION: CARMA2_SW 0x004624d0
 void C2_HOOK_FASTCALL InitFlics(void) {
     int i;
 
@@ -837,12 +869,14 @@ void C2_HOOK_FASTCALL InitFlics(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00462a60
+// FUNCTION: CARMA2_SW 0x004624f0
 int C2_HOOK_FASTCALL LoadFlic(int pIndex) {
 
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00462a70
+// FUNCTION: CARMA2_SW 0x00462500
 void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
     if (pIndex < 0) {
         return;
@@ -921,6 +955,7 @@ void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x00462cc0
+// FUNCTION: CARMA2_SW 0x00462750
 void C2_HOOK_FASTCALL InitFlicQueue(void) {
 
     gFirst_flic = NULL;
@@ -981,11 +1016,23 @@ void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
 }
 
 // STUB: CARMA2_HW 0x00462dc0
+// STUB: CARMA2_SW 0x00462850
 void C2_HOOK_FASTCALL FlushFlicQueue(void) {
     NOT_IMPLEMENTED();
 }
 
+// FUNCTION: CARMA2_HW 0x004630b0
+// FUNCTION: CARMA2_SW 0x00462b40
+void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex) {
+
+    EndFlic(&gPanel_flic[pIndex]);
+    BrMemFree(gPanel_buffer[pIndex]->pixels);
+    BrPixelmapFree(gPanel_buffer[pIndex]);
+    gPanel_buffer[pIndex] = NULL;
+}
+
 // FUNCTION: CARMA2_HW 0x00463340
+// FUNCTION: CARMA2_SW 0x00462dd0
 void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
     FILE* f;
     char s[256];
@@ -1060,12 +1107,14 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00463700
+// FUNCTION: CARMA2_SW 0x00463190
 void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
     gPending_pending_flic = gPending_flic;
     gPending_flic = -1;
 }
 
 // FUNCTION: CARMA2_HW 0x00463720
+// FUNCTION: CARMA2_SW 0x004631b0
 void C2_HOOK_FASTCALL ResumePendingFlic(void) {
     gPending_flic = gPending_pending_flic;
 }

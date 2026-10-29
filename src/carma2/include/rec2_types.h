@@ -249,6 +249,11 @@ typedef struct tPipe_smudge_data {
 } tPipe_smudge_data;
 
 typedef struct {
+    br_matrix34 matrix;
+    br_material* material;
+} tPipe_chunk_skid_adjustment;
+
+typedef struct {
     br_vector3 direction;
 } tPipe_ped_dir_data;
 
@@ -491,6 +496,7 @@ typedef enum {
     ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_prox_ray = 21,
+    ePipe_chunk_skid_adjustment = 22,
     ePipe_chunk_flap = 23,
     ePipe_model_mash = 24,
     ePipe_chunk_identity = 26,
@@ -533,7 +539,7 @@ typedef struct {
 } tPipe_smash_texture_change;
 
 typedef struct tPipe_chunk {
-    tU32 subject_index;
+    uintptr_t subject_index;
     union {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
@@ -543,6 +549,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
         tPipe_single_transform_type transform_type;
+        tPipe_single_vector vector;
         char raw_data[0];
     } data;
 } tPipe_chunk;
@@ -3442,6 +3449,7 @@ typedef struct {
     undefined field_0x2dd[3];
 } tSmashable_item_spec;
 
+#ifdef REC2_HW
 typedef struct {
     tRGB_colour directional;
     float ambient_else;
@@ -3451,6 +3459,20 @@ typedef struct {
     float ambient_0;
     float diffuse_0;
 } tLighting_data;
+#endif
+#ifdef REC2_SW
+typedef struct {
+    tRGB_colour directional;
+    float ambient_else;
+    float ambient_1;
+    float ambient_0;
+} tLighting_data_ambient;
+typedef struct {
+    float diffuse_else;
+    float diffuse_1;
+    float diffuse_0;
+} tLighting_data_diffuse;
+#endif
 
 typedef struct tMaterial_exception {
     struct tMaterial_exception* next;
@@ -3495,7 +3517,8 @@ typedef struct {
     br_vector3 v;
     br_vector3 omega;
     undefined field_0x34;
-    undefined field_0x35[0x38-0x35];
+    tU8 priority;
+    undefined field_0x36[0x38-0x36];
 } tSmash_vertex;
 
 typedef struct {
@@ -3648,7 +3671,7 @@ typedef struct {
     int (C2_HOOK_FASTCALL * active_halted)(undefined4*, undefined4*);
     void (C2_HOOK_FASTCALL * moved_by_physics)(undefined4*, undefined4*, undefined4);
     int (C2_HOOK_FASTCALL * move_completed)(undefined4*);
-    void (C2_HOOK_FASTCALL * fill_in_object)(undefined4*, undefined4);
+    void (C2_HOOK_FASTCALL * fill_in_object)(tPhysics_object*, undefined4);
     void (C2_HOOK_FASTCALL * load_form)(tPed_form* pPed_form, FILE* pF);
     void (C2_HOOK_FASTCALL * dispose_form)(tPed_form*);
     void (C2_HOOK_FASTCALL * load_personality)(tPed_personality*, FILE*);
@@ -4917,7 +4940,7 @@ typedef struct {
     int grid_position_set;
     undefined field_0x58[4];
     int opponent_list_index;
-    undefined field_0x60[4];
+    int awaiting_confirmation;
     int score2;
     int credits;
     int wasted;
@@ -5634,6 +5657,7 @@ enum {
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
     kFatalError_CannotLoadFontImage_S = 0x14,
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
+    kFatalError_CannotLoadCursorImage = 0x16,
     kFatalError_ScreenWidthHeightDoesNotMatchGrafData = 0x18,
     kFatalError_CannotLoadCarResolutionIndependentFile = 0x19,
     kFatalError_CannotLoadDamageImage = 0x1b,

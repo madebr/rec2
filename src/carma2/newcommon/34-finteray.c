@@ -12,24 +12,31 @@
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x005964c0
+// GLOBAL: CARMA2_SW 0x00591404
 int gPling_materials = 1;
 
 // GLOBAL: CARMA2_HW 0x00686190
+// GLOBAL: CARMA2_SW 0x006808d0
 br_scalar gNearest_T;
 
 // GLOBAL: CARMA2_HW 0x006861c8
+// GLOBAL: CARMA2_SW 0x00680908
 int gTemp_group;
 
 // GLOBAL: CARMA2_HW 0x006861cc
+// GLOBAL: CARMA2_SW 0x0068090c
 br_actor* gNearest_actor;
 
 // GLOBAL: CARMA2_HW 0x00686188
+// GLOBAL: CARMA2_SW 0x006808c8
 int gNearest_face;
 
 // GLOBAL: CARMA2_HW 0x00686194
+// GLOBAL: CARMA2_SW 0x006808d4
 int gNearest_face_group;
 
 // GLOBAL: CARMA2_HW 0x0068618c
+// GLOBAL: CARMA2_SW 0x006808cc
 br_model* gNearest_model;
 
 // GLOBAL: CARMA2_HW 0x00686198
@@ -190,6 +197,7 @@ int C2_HOOK_FASTCALL DRModelPick2D_finteray(br_model* pModel, br_material* pMate
 #endif
 
 // FUNCTION: CARMA2_HW 0x0045d570
+// FUNCTION: CARMA2_SW 0x0045cfb0
 int C2_HOOK_CDECL FindHighestPolyCallBack(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData) {
 
     if (pT < gNearest_T) {
@@ -211,6 +219,7 @@ int C2_HOOK_CDECL FindHighestCallBack(br_actor* pActor, br_model* pModel, br_mat
 }
 
 // FUNCTION: CARMA2_HW 0x0045ca60
+// FUNCTION: CARMA2_SW 0x0045c4a0
 void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* pNormal, br_scalar* pT, br_material** pMaterial, br_actor** pActor) {
     int group;
 
@@ -229,12 +238,14 @@ void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_
 }
 
 // FUNCTION: CARMA2_HW 0x0045d5c0
+// FUNCTION: CARMA2_SW 0x0045d000
 void C2_HOOK_FASTCALL EnablePlingMaterials(void) {
 
     gPling_materials = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0045d5d0
+// FUNCTION: CARMA2_SW 0x0045d010
 void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
     gPling_materials = 0;
@@ -256,7 +267,11 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // SphereFaceCollide
 
-// CheckSingleFace
+// STUB: CARMA2_HW 0x0045ecc0
+// STUB: CARMA2_SW 0x0045e730
+void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt, br_vector3* coll_pos) {
+    NOT_IMPLEMENTED();
+}
 
 // MultiRayCheckSingleFace
 

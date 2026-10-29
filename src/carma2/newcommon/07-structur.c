@@ -8,36 +8,53 @@
 
 #include "07-structur.h"
 
+#include "04-netgame.h"
 #include "13-crush1.h"
 #include "15-displays.h"
+#include "18-graphics2.h"
 #include "30-opponent.h"
 #include "41-utility.h"
 #include "43-pratcam.h"
+#include "66-tintedpoly.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "globvrpb.h"
 
 // GLOBAL: CARMA2_HW 0x00655e48
+// GLOBAL: CARMA2_SW 0x00650d30
 int gHud_tinted1 = -1;
 
 // GLOBAL: CARMA2_HW 0x00655e4c
+// GLOBAL: CARMA2_SW 0x00650d34
 int gHud_tinted2 = -1;
 
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x00655e50
 int gHud_tinted3 = -1;
+#endif
 
 // GLOBAL: CARMA2_HW 0x00762140
+// GLOBAL: CARMA2_SW 0x007586a0
 int gCredits_checkpoint[3];
 
 // GLOBAL: CARMA2_HW 0x006aaa34
 // GLOBAL: CARMA2_SW 0x006a4484
 tU32 gLast_checkpoint_time;
 
+// GLOBAL: CARMA2_HW 0x006aaa38
+// GLOBAL: CARMA2_SW 0x006a4488
+int gHud_tinted1_visible;
+
+// GLOBAL: CARMA2_HW 0x006aaa3c
+// GLOBAL: CARMA2_SW 0x006a448c
+int gHud_tinted2_visible;
+
 // GLOBAL: CARMA2_HW 0x00660cdc
 // GLOBAL: CARMA2_SW 0x0065b650
 int gLast_wrong_checkpoint = -1;
 
 // FUNCTION: CARMA2_HW 0x00503050
+// FUNCTION: CARMA2_SW 0x004fe9a0
 int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     int result;
     int count;
@@ -71,6 +88,7 @@ void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00503270
+// FUNCTION: CARMA2_SW 0x004febc0
 void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
     (void)pCheckpoint_index;
 
@@ -243,6 +261,7 @@ void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info) {
 }
 
 // FUNCTION: CARMA2_HW 0x00503ba0
+// FUNCTION: CARMA2_SW 0x004ff4f0
 int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence) {
     int i;
     int new_index;
@@ -285,6 +304,7 @@ int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race
 // InitialiseProgramState
 
 // STUB: CARMA2_HW 0x00503c50
+// STUB: CARMA2_SW 0x004ff5a0
 void C2_HOOK_FASTCALL DoProgram(void) {
     NOT_IMPLEMENTED();
 }
@@ -293,5 +313,20 @@ void C2_HOOK_FASTCALL DoProgram(void) {
 
 // GoingToInterfaceFromRace
 
-// GoingBackToRaceFromInterface
+// FUNCTION: CARMA2_HW 0x005042a0
+// FUNCTION: CARMA2_SW 0x004ffbf0
+void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void) {
+
+    gInterface_within_race_mode = 0;
+    if (gHud_tinted1_visible) {
+        TurnTintedPolyOn(gHud_tinted1);
+    }
+    if (gHud_tinted2_visible) {
+        TurnTintedPolyOn(gHud_tinted2);
+    }
+    SwitchToLoresMode();
+    if (gNet_mode == eNet_mode_host) {
+        SendGameplayToAllPlayers(eNet_gameplay_host_unpaused, 0, 0, 0, 0);
+    }
+}
 

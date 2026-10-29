@@ -8,7 +8,7 @@
 
 #include "globvrbm.h"
 
-
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x0074ca90
 br_actor* gPrat_actor;
 
@@ -347,3 +347,4 @@ int gOffence_dim_x = 0x1c0;
 
 // GLOBAL: CARMA2_HW 0x00655f38
 int gOffence_dim_y = 0x31;
+#endif

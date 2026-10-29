@@ -24,12 +24,15 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x0076c960
+// GLOBAL: CARMA2_SW 0x00762ec0
 br_pixelmap* gTexture_maps[1024];
 
 // GLOBAL: CARMA2_HW 0x007663e0
+// GLOBAL: CARMA2_SW 0x0075c940
 tDR_font gFonts[24];
 
 // GLOBAL: CARMA2_HW 0x0059ad30
+// GLOBAL: CARMA2_SW 0x00595c78
 const char* gFont_names[24] = {
     "TYPEABLE",
     "ORANGHED",
@@ -64,6 +67,7 @@ br_pixelmap* gPixelmap_buffer[1000];
 size_t gPixelmap_buffer_size;
 
 // GLOBAL: CARMA2_HW 0x0076d960
+// GLOBAL: CARMA2_SW 0x00763ec0
 tPolyFont gPoly_fonts[27];
 
 // GLOBAL: CARMA2_HW 0x0068648c
@@ -85,15 +89,19 @@ int gInterface_polyfont_texture_pages;
 br_material* gPoly_font_materials[80];
 
 // GLOBAL: CARMA2_HW 0x0074cf10
+// GLOBAL: CARMA2_SW 0x007434e0
 br_actor* gString_root_actor;
 
 // GLOBAL: CARMA2_HW 0x0074cae0
+// GLOBAL: CARMA2_SW 0x007430e0
 br_actor* gPolyfont_glyph_actors[256];
 
 // GLOBAL: CARMA2_HW 0x00686490
+// GLOBAL: CARMA2_SW 0x00680bd0
 int gCount_polyfont_glyph_actors;
 
 // GLOBAL: CARMA2_HW 0x0059ada0
+// GLOBAL: CARMA2_SW 0x00595ce8
 int gDRFont_to_polyfont_mapping[24] = {
     kPolyfont_ingame_tiny_red,
     kPolyfont_ingame_tiny_yellow,
@@ -130,6 +138,7 @@ int gRender_poly_text = 1;
 #define POLYFONT_MATERIAL_GET_GENERATION(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 16) & 0xffff)
 
 // FUNCTION: CARMA2_HW 0x00463730
+// FUNCTION: CARMA2_SW 0x004631c0
 int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index) {
 
     CheckAvailabilityOfThisFont(pFont_index);
@@ -137,6 +146,7 @@ int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x00463760
+// FUNCTION: CARMA2_SW 0x004631f0
 int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
     int y;
     int x;
@@ -158,6 +168,7 @@ int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
 }
 
 // FUNCTION: CARMA2_HW 0x004637d0
+// FUNCTION: CARMA2_SW 0x00463240
 int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
     tPolyFont* font;
 
@@ -173,6 +184,7 @@ int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
 }
 
 // FUNCTION: CARMA2_HW 0x00463830
+// FUNCTION: CARMA2_SW 0x004632a0
 int C2_HOOK_FASTCALL GetSpacing(int pFont_index) {
     tPolyFont* font;
 
@@ -269,6 +281,7 @@ void C2_HOOK_FASTCALL PolyFontTextInABox(int pFont, const char* pText, int pLeft
 }
 
 // FUNCTION: CARMA2_HW 0x00463ad0
+// FUNCTION: CARMA2_SW 0x004632c0
 void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend) {
     char s[256];
     int s_len;
@@ -348,6 +361,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText
 }
 
 // FUNCTION: CARMA2_HW 0x00463d40
+// FUNCTION: CARMA2_SW 0x004637b0
 void C2_HOOK_FASTCALL InitPolyFonts(void) {
     int i;
     tPath_name the_path;
@@ -432,7 +446,9 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
     } else {
         BrFailure("Missing FONTCOL.TXT file");
     }
+#ifdef REC2_HW
     ConvertCarIcons(gIcons_pix);
+#endif
 
     CreatePolyFont(kPolyfont_ingame_tiny_yellow, "TINYFONT", 1.0f, 8);
     CreatePolyFont(kPolyfont_ingame_tiny_blue, "TINYFONT", 1.0f, 8);
@@ -454,6 +470,7 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00464090
+// FUNCTION: CARMA2_SW 0x00463af0
 void C2_HOOK_FASTCALL CreatePolyFont(int pFont, const char* pName, float pFactor, int pSize) {
     int i;
 
@@ -556,6 +573,7 @@ void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
 }
 
 // FUNCTION: CARMA2_HW 0x004640f0
+// FUNCTION: CARMA2_SW 0x00463b50
 void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
     int i;
     br_pixelmap* map;
@@ -608,6 +626,7 @@ void C2_HOOK_FASTCALL RemovePolyFont(int pFont) {
 }
 
 // FUNCTION: CARMA2_HW 0x004642d0
+// FUNCTION: CARMA2_SW 0x00463d30
 void C2_HOOK_FASTCALL LoadInterfaceFonts(void) {
 
     if (!gInterface_fonts_loaded) {
@@ -631,6 +650,7 @@ void C2_HOOK_FASTCALL LoadInterfaceFonts(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004643f0
+// FUNCTION: CARMA2_SW 0x00463e50
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
     int tex_x;
     int tex_y;
@@ -821,6 +841,7 @@ void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index) {
 }
 
 // FUNCTION: CARMA2_HW 0x00464df0
+// FUNCTION: CARMA2_SW 0x00464950
 void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
 
     CheckAvailabilityOfThisFont(pFont);
@@ -837,6 +858,7 @@ void C2_HOOK_FASTCALL InitPolyFontMaterials(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00465250
+// FUNCTION: CARMA2_SW 0x00464db0
 br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pChar) {
     tU8 uchar;
     br_material* material;
@@ -881,6 +903,7 @@ br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pChar) {
 }
 
 // FUNCTION: CARMA2_HW 0x00464e40
+// FUNCTION: CARMA2_SW 0x004649a0
 void C2_HOOK_FASTCALL PolyFontText(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
     int text_len;
     int i;
@@ -965,6 +988,7 @@ void C2_HOOK_FASTCALL PolyFontText(const char *pText, int pX, int pY, int pFont,
 }
 
 // FUNCTION: CARMA2_HW 0x00465380
+// FUNCTION: CARMA2_SW 0x00464ee0
 void C2_HOOK_FASTCALL TransparentPolyFontText(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor) {
     int text_len;
     int i;
@@ -1056,6 +1080,7 @@ void C2_HOOK_FASTCALL DrawDigitAt(const br_pixelmap* pSource, br_pixelmap* pDest
 }
 
 // FUNCTION: CARMA2_HW 0x004657c0
+// FUNCTION: CARMA2_SW 0x00465320
 void C2_HOOK_FASTCALL DrawNumberAt(const br_pixelmap* pSrc, br_pixelmap* pDest, int pX, int pY, int pX_pitch, int pY_pitch, int pValue, int pDigit_count, int pLeading_zeroes) {
     int i;
     int digit;
@@ -1070,6 +1095,7 @@ void C2_HOOK_FASTCALL DrawNumberAt(const br_pixelmap* pSrc, br_pixelmap* pDest, 
 }
 
 // FUNCTION: CARMA2_HW 0x00465850
+// FUNCTION: CARMA2_SW 0x004653b0
 void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
     int i;
     FILE* file;
@@ -1107,6 +1133,7 @@ void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
 }
 
 // FUNCTION: CARMA2_HW 0x00465a00
+// FUNCTION: CARMA2_SW 0x004655a0
 void C2_HOOK_FASTCALL DisposeFont(int pFont_ID) {
 
     if (gFonts[pFont_ID].images != NULL) {
@@ -1117,6 +1144,7 @@ void C2_HOOK_FASTCALL DisposeFont(int pFont_ID) {
 }
 
 // FUNCTION: CARMA2_HW 0x00465a40
+// FUNCTION: CARMA2_SW 0x004655e0
 void C2_HOOK_FASTCALL InitDRFonts(void) {
     int i;
 
@@ -1128,12 +1156,14 @@ void C2_HOOK_FASTCALL InitDRFonts(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00465a70
+// FUNCTION: CARMA2_SW 0x00465610
 void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
 
     PolyFontText(pText, pX, pY, GetPolyFontIndexToReplaceDRfontWith(pFont), eJust_left, gRender_poly_text);
 }
 
 // FUNCTION: CARMA2_HW 0x00465aa0
+// FUNCTION: CARMA2_SW 0x00465770
 void C2_HOOK_FASTCALL DRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge) {
     int i;
     char s[512];
@@ -1170,6 +1200,7 @@ void C2_HOOK_FASTCALL DRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int p
 }
 
 // FUNCTION: CARMA2_HW 0x00465ca0
+// FUNCTION: CARMA2_SW 0x00465990
 int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
     int len;
     int i;
@@ -1190,6 +1221,7 @@ int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
 }
 
 // FUNCTION: CARMA2_HW 0x00465d50
+// FUNCTION: CARMA2_SW 0x00465a40
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
 
     return PolyFontTextWidth(GetPolyFontIndexToReplaceDRfontWith(pFont), pText);
@@ -1227,6 +1259,7 @@ int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText)
 }
 
 // FUNCTION: CARMA2_HW 0x00465f10
+// FUNCTION: CARMA2_SW 0x00465af0
 void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText) {
     int width_over_2;
 
@@ -1235,6 +1268,7 @@ void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int 
 }
 
 // FUNCTION: CARMA2_HW 0x00466000
+// FUNCTION: CARMA2_SW 0x00465b70
 void C2_HOOK_FASTCALL OoerrIveGotTextInMeBoxMissus(int pFont_index, const char* pText, br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pCentred) {
 
     if (pCentred) {
@@ -1245,6 +1279,7 @@ void C2_HOOK_FASTCALL OoerrIveGotTextInMeBoxMissus(int pFont_index, const char* 
 }
 
 // FUNCTION: CARMA2_HW 0x00466050
+// FUNCTION: CARMA2_SW 0x00465de0
 br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
     FILE* f;
     tPath_name the_path;
@@ -1297,6 +1332,7 @@ br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
 }
 
 // FUNCTION: CARMA2_HW 0x00466210
+// FUNCTION: CARMA2_SW 0x00465fa0
 int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont) {
 
     return gDRFont_to_polyfont_mapping[pFont->id];

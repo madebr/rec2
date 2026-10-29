@@ -17,6 +17,7 @@ extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
 extern int gImmortal_peds;
 extern void* gPhysics_buffer3_ptr;
+extern int gPHIL_mechanics_time_sync;
 extern int gPhysics_other_buffer_capacity;
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
@@ -31,7 +32,7 @@ extern int C2_HOOK_FASTCALL AddObjectObjectForce(tPhysics_joint_force* pForces, 
 
 extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount);
 
-// RayCastThruFaceList2
+extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount);
 
 // RayCastInBox
 
@@ -181,7 +182,7 @@ extern void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, i
 
 // SetGroupDoingNothingFlag
 
-// SetHierarchyDoingNothingFlag
+extern void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, int pFlag);
 
 // CheckDoingNothingFlag
 

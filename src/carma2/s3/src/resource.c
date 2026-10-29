@@ -9,6 +9,7 @@
 #include "../include/s3/internal/resource.h"
 
 // FUNCTION: CARMA2_HW 0x00565af7
+// FUNCTION: CARMA2_SW 0x00561197
 void* C2_HOOK_FASTCALL S3MemAllocate(br_size_t size, br_uint_8 type) {
     void *result;
 
@@ -17,6 +18,7 @@ void* C2_HOOK_FASTCALL S3MemAllocate(br_size_t size, br_uint_8 type) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565b1d
+// FUNCTION: CARMA2_SW 0x005611bd
 void C2_HOOK_FASTCALL S3MemFree(void* p) {
 
     BrMemFree(p);

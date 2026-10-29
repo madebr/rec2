@@ -11,6 +11,7 @@
 #include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x006a20d0
+// GLOBAL: CARMA2_SW 0x0069c128
 br_actor* gY_picking_camera;
 
 // GLOBAL: CARMA2_HW 0x006a20d4
@@ -48,6 +49,7 @@ float gHighest_y_below;
 // DRActorToRoot
 
 // FUNCTION: CARMA2_HW 0x004e3660
+// FUNCTION: CARMA2_SW 0x004df9f0
 void C2_HOOK_FASTCALL InitRayCasting(void) {
     br_camera* camera_ptr;
 
@@ -207,7 +209,11 @@ int C2_HOOK_CDECL FindHighestCallBack__raycast(br_actor* pActor, br_model* pMode
     return 0;
 }
 
-// FindBestY
+// STUB: CARMA2_HW 0x004e3bc0
+// STUB: CARMA2_SW 0x004dff50
+void C2_HOOK_FASTCALL FindBestY(br_vector3* pPosition, br_actor* pWorld, br_scalar pStarting_height, br_scalar* pNearest_y_above, br_scalar* pNearest_y_below, br_model** pNearest_above_model, br_model** pNearest_below_model, int* pNearest_above_face_index, int* pNearest_below_face_index) {
+    NOT_IMPLEMENTED();
+}
 
 // STUB: CARMA2_HW 0x004e45b0
 // STUB: CARMA2_SW 0x004e0940

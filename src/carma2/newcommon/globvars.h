@@ -79,7 +79,13 @@ extern int gDevious_2d;
 extern int gNumber_of_actors;
 extern br_actor* gActor_array[100];
 extern int gNumber_of_lights;
+#ifdef REC2_HW
 extern tLighting_data gLighting_data;
+#endif
+#ifdef REC2_SW
+extern tLighting_data_ambient gLighting_data_ambient;
+extern tLighting_data_diffuse gLighting_data_diffuse;
+#endif
 extern br_actor* gLight_array[50];
 
 extern br_actor* gHUD_root;
@@ -134,6 +140,7 @@ extern int gDisallow_abandon_race;
 //extern int gPipe_reg_snap_before_our_car;
 //extern int gPipe_reg_snap_after_our_car;
 extern int gAction_replay_mode;
+extern int gPed_overall_movement_disabled;
 //extern int gDefault_engine_noise_index;
 //extern int gSausage_override;
 //extern int gAustere_override;
@@ -219,6 +226,9 @@ extern int gHas_double_back_screen;
 extern br_pixelmap* gRearview_depth_buffer;
 //extern br_pixelmap* gWhole_screen;
 extern br_pixelmap* gIcons_pix;
+#ifdef REC2_SW
+extern br_pixelmap* gIcons_low_pix;
+#endif
 extern br_scalar gCamera_yon;
 extern br_actor* gCamera;
 extern br_actor* gOther_selfs[4];

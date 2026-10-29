@@ -8,10 +8,15 @@
 
 #include "59-camera.h"
 
+#include "10-loading2.h"
+#include "21-mainloop.h"
+#include "22-replay.h"
 #include "37-brucetrk.h"
+#include "57-drone.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrpb.h"
+#include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x00679278
 // GLOBAL: CARMA2_SW 0x006739e8
@@ -29,9 +34,11 @@ int gCamera_frozen;
 tSave_camera gSave_camera[2];
 
 // GLOBAL: CARMA2_HW 0x007634ac
+// GLOBAL: CARMA2_SW 0x00759a0c
 float gCamera_cockpit_hither;
 
 // GLOBAL: CARMA2_HW 0x0079efa8
+// GLOBAL: CARMA2_SW 0x00795548
 tActionReplayCameraMode gAction_replay_camera_mode;
 
 // DoCameraControls
@@ -77,10 +84,31 @@ void C2_HOOK_FASTCALL ReallyViewOpponent(void) {
 #pragma auto_inline(off)
 #endif
 
-// STUB: CARMA2_HW 0x0040e700
-// STUB: CARMA2_SW 0x0040e6e0
+// FUNCTION: CARMA2_HW 0x0040e700
+// FUNCTION: CARMA2_SW 0x0040e6e0
 void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_cam) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < pCar->count_window_materials; i++) {
+        int internal_map_missing = pInternal_cam;
+
+        if (pInternal_cam) {
+            int j;
+
+            for (j = 0; j < pCar->window_materials[i].count_maps; j++) {
+                if (pCar->window_materials[i].material->colour_map == pCar->window_materials[i].maps[j]) {
+                    internal_map_missing = 0;
+                }
+            }
+            if (internal_map_missing) {
+                pCar->window_materials[i].material->flags &= ~BR_MATF_TWO_SIDED;
+            }
+        }
+        if (!internal_map_missing) {
+            pCar->window_materials[i].material->flags |= BR_MATF_TWO_SIDED;
+        }
+        BrMaterialUpdate(pCar->window_materials[i].material, BR_MATU_RENDERING);
+    }
 }
 
 #ifdef REC2_MATCHING
@@ -109,7 +137,32 @@ void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
 
 // ChangeCameraType
 
-// ToggleCockpit
+// FUNCTION: CARMA2_HW 0x0040e900
+// FUNCTION: CARMA2_SW 0x0040e8e0
+void C2_HOOK_FASTCALL ToggleCockpit(void) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCamera_type_allowed_replay) != 9);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCamera_type_allowed_gameplay) != 9);
+
+    if ((gCar_to_view != &gProgram_state.current_car && !gProgram_state.cockpit_on) || gMap_view == 2) {
+        return;
+    }
+    if (gAction_replay_camera_mode == kActionReplayCameraMode_Internal) {
+        tActionReplayCameraMode old_camera_mode = gAction_replay_camera_mode_00679324;
+
+        if ((gAction_replay_mode && !gCamera_type_allowed_replay[gAction_replay_camera_mode_00679324])
+                || (!gAction_replay_mode && !gCamera_type_allowed_gameplay[gAction_replay_camera_mode_00679324])
+                || gAction_replay_camera_mode_00679324 >= (int)REC2_ASIZE(gCamera_type_allowed_replay)
+                || (gAction_replay_camera_mode_00679324 == kActionReplayCameraMode_Drone && !OKToViewDrones())
+                || (old_camera_mode == kActionReplayCameraMode_Peds && !gPed_count)) {
+            SetCameraType(kActionReplayCameraMode_Standard);
+        } else {
+            SetCameraType(gAction_replay_camera_mode_00679324);
+        }
+    } else {
+        gAction_replay_camera_mode_00679324 = gAction_replay_camera_mode;
+        SetCameraType(kActionReplayCameraMode_Internal);
+    }
+}
 
 // PositionCarMountedCamera
 

@@ -74,15 +74,19 @@ extern void C2_HOOK_FASTCALL F12Key(void);
 
 // NumberKey9
 
-// LookLeft
+extern void C2_HOOK_FASTCALL LookLeft(void);
 
-// LookForward
+extern void C2_HOOK_FASTCALL LookForward(void);
 
-// LookRight
+extern void C2_HOOK_FASTCALL LookRight(void);
 
 extern void C2_HOOK_FASTCALL DamageTest(void);
 
+extern void C2_HOOK_FASTCALL TDamageEngine(void);
+
 extern void C2_HOOK_FASTCALL TDamageDriver(void);
+
+extern void C2_HOOK_FASTCALL TDamageLFWheel(void);
 
 // ToggleMiniMap
 
@@ -126,7 +130,7 @@ extern void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info);
 
 // FlipUpCar
 
-// GetPowerup
+extern void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 // CheckSystemKeys
 
@@ -160,7 +164,7 @@ extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
 extern int C2_HOOK_FASTCALL GetRecoverVoucherCount(void);
 
-// AddVouchers
+extern void C2_HOOK_FASTCALL AddVouchers(int pCount);
 
 extern void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 
