@@ -18,6 +18,7 @@ extern tNet_mode gNet_mode;
 extern int gNumber_of_net_players;
 extern tNet_game_player_info gNet_players[12];
 extern int gThis_net_player_index;
+extern int gSynch_race_start;
 extern int gPending_race;
 extern tNet_game_options* gNet_options;
 extern tCar_detail_info gCar_details[60];

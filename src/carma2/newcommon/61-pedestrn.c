@@ -15,6 +15,7 @@
 #include "41-utility.h"
 #include "63-loading3.h"
 #include "69-sound.h"
+#include "globvars.h"
 #include "brender/brender.h"
 #include "globvars.h"
 #include "rec2_macros.h"
@@ -53,6 +54,10 @@ int gExploding_pedestrians;
 
 // GLOBAL: CARMA2_HW 0x0069b9f0
 tNapalm_bolt gNapalm_bolts[5];
+
+// GLOBAL: CARMA2_HW 0x00694490
+// GLOBAL: CARMA2_SW 0x0068e4e8
+int gPed_nearness;
 
 // GLOBAL: CARMA2_HW 0x007447a8
 int gDancing_peds;
@@ -93,7 +98,11 @@ int gDancing_peds;
 
 // PedApplyPedPos
 
-// PedApplyVanishDismembered
+// FUNCTION: CARMA2_HW 0x004ca890
+// FUNCTION: CARMA2_SW 0x004c6fc0
+void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 pValue) {
+    pPedestrian->character->field_0x10 = pValue;
+}
 
 // SetCharacterPositionAR
 
@@ -152,7 +161,17 @@ FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName) {
     return DRfopen(path, "rt");
 }
 
-// BonerOpenDefaultMoves
+// FUNCTION: CARMA2_HW 0x004cba10
+// FUNCTION: CARMA2_SW 0x004c8110
+FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, gApplication_path, gPedsFolder);
+    PathCat(path, path, "MOVES");
+    PathCat(path, path, pName);
+    strcat(path, ".TXT");
+    return DRfopen(path, "rt");
+}
 
 // BonerOpenPersonality
 
@@ -423,7 +442,12 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // FindNearestPed
 
-// ResetPedNearness
+// FUNCTION: CARMA2_HW 0x004d6390
+// FUNCTION: CARMA2_SW 0x004d2990
+void C2_HOOK_FASTCALL ResetPedNearness(void) {
+
+    gPed_nearness = 1;
+}
 
 // PedPreCollisionStuff
 
@@ -491,7 +515,14 @@ void C2_HOOK_FASTCALL SavePedStuff(void) {
 void C2_HOOK_FASTCALL ComparePedStuff(void) {
 }
 
-// AdjustPedDiagnostics
+// FUNCTION: CARMA2_HW 0x004d6db0
+// FUNCTION: CARMA2_SW 0x004d33b0
+void C2_HOOK_FASTCALL AdjustPedDiagnostics(tU32 pSubject_index, void* pUnused2, void* pUnused3, void* pUnused4) {
+    (void)pSubject_index;
+    (void)pUnused2;
+    (void)pUnused3;
+    (void)pUnused4;
+}
 
 // CalmDownAllPeds
 
@@ -792,7 +823,15 @@ int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, 
 
 // SetCharacterBoneModelP
 
-// SetCharacterAllBonesModel
+// FUNCTION: CARMA2_HW 0x0040b530
+// FUNCTION: CARMA2_SW 0x0040b520
+void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pModel_index, int pModel_set) {
+    int i;
+
+    for (i = 0; i < pCharacter->personality->form->count_bones; i++) {
+        SetCharacterBoneModel(pCharacter, i, pModel_index, pModel_set);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0040b570
 // FUNCTION: CARMA2_SW 0x0040b560
@@ -849,7 +888,11 @@ void C2_HOOK_FASTCALL DisableOverallMovement(void) {
     gPed_overall_movement_disabled = 1;
 }
 
-// EnableOverallMovement
+// FUNCTION: CARMA2_HW 0x0040c610
+// FUNCTION: CARMA2_SW 0x0040c600
+void C2_HOOK_FASTCALL EnableOverallMovement(void) {
+    gPed_overall_movement_disabled = 0;
+}
 
 // EnableRetainRootMode
 

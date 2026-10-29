@@ -249,6 +249,11 @@ typedef struct tPipe_smudge_data {
 } tPipe_smudge_data;
 
 typedef struct {
+    br_matrix34 matrix;
+    br_material* material;
+} tPipe_chunk_skid_adjustment;
+
+typedef struct {
     br_vector3 direction;
 } tPipe_ped_dir_data;
 
@@ -491,6 +496,7 @@ typedef enum {
     ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_prox_ray = 21,
+    ePipe_chunk_skid_adjustment = 22,
     ePipe_chunk_flap = 23,
     ePipe_model_mash = 24,
     ePipe_chunk_identity = 26,
@@ -4934,7 +4940,7 @@ typedef struct {
     int grid_position_set;
     undefined field_0x58[4];
     int opponent_list_index;
-    undefined field_0x60[4];
+    int awaiting_confirmation;
     int score2;
     int credits;
     int wasted;

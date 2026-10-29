@@ -14,6 +14,7 @@
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "41-utility.h"
+#include "53-controls.h"
 #include "62-graphics3.h"
 #include "63-loading3.h"
 #include "70-packfile.h"
@@ -644,7 +645,64 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
 
 // DoInstruments
 
-// ChangingView
+// FUNCTION: CARMA2_HW 0x0044b170
+// FUNCTION: CARMA2_SW 0x0044b300
+void C2_HOOK_FASTCALL ChangingView(void) {
+    tU32 the_time;
+
+    the_time = PDGetTotalTime() - gProgram_state.view_change_start;
+    if (gProgram_state.new_view == eView_undefined) {
+        return;
+    }
+    gScreen_wobble_x = 0;
+    gScreen_wobble_y = 0;
+    if (the_time > 175 && gProgram_state.which_view == gProgram_state.new_view) {
+        if (gProgram_state.pending_view != eView_undefined) {
+            switch (gProgram_state.pending_view) {
+            case eView_left:
+                LookLeft();
+                break;
+            case eView_forward:
+                LookForward();
+                break;
+            case eView_right:
+                LookRight();
+                break;
+            default:
+                break;
+            }
+        } else {
+            gProgram_state.new_view = eView_undefined;
+        }
+    } else if (the_time > 87) {
+        gProgram_state.which_view = gProgram_state.new_view;
+        switch (gProgram_state.new_view) {
+        case eView_left:
+            gProgram_state.cockpit_image_index = 1;
+            break;
+        case eView_forward:
+            gProgram_state.cockpit_image_index = 0;
+            break;
+        case eView_right:
+            gProgram_state.cockpit_image_index = 2;
+            break;
+        default:
+            break;
+        }
+        AdjustRenderScreenSize();
+        if (gProgram_state.old_view < gProgram_state.new_view) {
+            gScreen_wobble_x = (int)((double)(175 - the_time) * (double)gCurrent_graf_data->cock_margin_x * (2. / 175.));
+        } else {
+            gScreen_wobble_x = (int)((double)(175 - the_time) * (double)gCurrent_graf_data->cock_margin_x * (-2. / 175.));
+        }
+    } else {
+        if (gProgram_state.old_view < gProgram_state.new_view) {
+            gScreen_wobble_x = (int)((double)the_time * (double)gCurrent_graf_data->cock_margin_x * (-2. / 175.));
+        } else {
+            gScreen_wobble_x = (int)((double)the_time * (double)gCurrent_graf_data->cock_margin_x * (2. / 175.));
+        }
+    }
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)

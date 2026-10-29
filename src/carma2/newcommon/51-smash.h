@@ -12,6 +12,10 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tSmashable_item_spec* gTrack_smashable_environment_specs;
+extern int gCount_track_smashable_environment_specs;
+extern tStored_smash* gNet_host_smashes;
+
 extern tExplosion gExplosions[50];
 extern br_vector3 gZero_vector__smash;
 extern tDecal gDecals[50];
@@ -209,6 +213,8 @@ extern void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_da
 
 extern void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void);
 
+extern void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void);
+
 // CloneMemory
 
 // CloneEnvSmash
@@ -216,8 +222,6 @@ extern void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void);
 extern void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash);
 
 extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors);
-
-// DisposeSmashableEnvironment
 
 // MungeSmashMaterialNames
 
