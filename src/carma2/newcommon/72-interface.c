@@ -1332,9 +1332,13 @@ void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void) {
 void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
 
     if (!gFrontend_suppress_mouse) {
+#ifdef REC2_HW
         PossibleLock(1);
+#endif
         DoMouseCursor();
+#ifdef REC2_HW
         PossibleUnlock(1);
+#endif
     }
 }
 
