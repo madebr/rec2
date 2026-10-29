@@ -51,6 +51,14 @@ tFrontendMenuType gFrontend_next_menu;
 // GLOBAL: CARMA2_SW 0x0075b448
 int gFrontend_change_car_selected_car;
 
+// GLOBAL: CARMA2_HW 0x00687040
+// GLOBAL: CARMA2_SW 0x00681780
+int gFrontend_car_image_outdated;
+
+// GLOBAL: CARMA2_HW 0x00686828
+// GLOBAL: CARMA2_SW 0x00680f68
+int gFrontend_opponent_profile_pic_needs_update;
+
 // GLOBAL: CARMA2_HW 0x00688b20
 // GLOBAL: CARMA2_SW 0x00683080
 int gFrontend_suppress_mouse;
@@ -1004,7 +1012,48 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
 
 // UpdateCarInfo
 
-// ChangeCarMenuInfunc
+// FUNCTION: CARMA2_HW 0x0046b4e0
+// FUNCTION: CARMA2_SW 0x0046b200
+int C2_HOOK_FASTCALL ChangeCarMenuInfunc(tFrontend_spec* pFrontend) {
+    int i;
+    int count;
+
+    gFrontend_change_car_selected_car = 0;
+    if (gProgram_state.number_of_cars >= 2 || gProgram_state.game_completed) {
+        pFrontend->items[0].enabled = kFrontendItemEnabled_enabled;
+        pFrontend->items[1].enabled = kFrontendItemEnabled_enabled;
+    } else {
+        pFrontend->items[0].enabled = kFrontendItemEnabled_default;
+        pFrontend->items[1].enabled = kFrontendItemEnabled_default;
+    }
+    DefaultInfunc(pFrontend);
+    gFrontend_time_last_input = PDGetTotalTime();
+    gFrontend_car_image_outdated = 1;
+    gFrontend_opponent_profile_pic_needs_update = 1;
+    FuckWithWidths(pFrontend);
+    for (i = 0; i < gProgram_state.number_of_cars; i++) {
+        if (gProgram_state.cars_available[i] == gProgram_state.current_car_index) {
+            gFrontend_change_car_selected_car = i;
+            break;
+        }
+    }
+    if (gProgram_state.game_completed) {
+        count = 0;
+        for (i = 0; i < gNumber_of_racers; i++) {
+            if (gOpponents[i].network_availability != eNet_avail_never) {
+                gProgram_state.cars_available[count] = i;
+                count += 1;
+            }
+        }
+        gProgram_state.number_of_cars = count;
+    }
+    gFrontend_scroll_time_increment = 50;
+    gFrontend_scroll_last_update = PDGetTotalTime();
+    gFrontend_scroll_time_left = 0;
+    gPrev_frontend_mouse_down = 0;
+    gFrontend_mouse_down = 0;
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x0046b610
 int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend) {

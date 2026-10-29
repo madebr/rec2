@@ -19,6 +19,8 @@ extern tU32 gFrontend_last_scroll;
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
 extern int gFrontend_change_car_selected_car;
+extern int gFrontend_car_image_outdated;
+extern int gFrontend_opponent_profile_pic_needs_update;
 
 // SetGameTarget
 
@@ -182,7 +184,7 @@ extern int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend);
 
 // UpdateCarInfo
 
-// ChangeCarMenuInfunc
+extern int C2_HOOK_FASTCALL ChangeCarMenuInfunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend);
 
