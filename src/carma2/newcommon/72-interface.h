@@ -25,7 +25,7 @@ extern int gFrontend_change_car_selected_car;
 
 // SetGameTarget
 
-// SetOptions
+extern void C2_HOOK_FASTCALL SetOptions(tNet_game_type pGame_type, tNet_game_options* pGame_options);
 
 // ReadNetGameChoices
 
