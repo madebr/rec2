@@ -59,7 +59,7 @@ extern void C2_HOOK_FASTCALL SignalToStartRace(void);
 
 // SignalToRepositionCar
 
-// SetUpNetCarPositions
+extern void C2_HOOK_FASTCALL SetUpNetCarPositions(void);
 
 // ReinitialiseCar
 
