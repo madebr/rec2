@@ -178,9 +178,9 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 
 // MungeCarGraphics
 
-extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
+extern void C2_HOOK_FASTCALL DoLODCarModels(void);
 
-// DoLODCarModels
+extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
 
 // DoComplexCarModels
 

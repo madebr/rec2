@@ -19,6 +19,8 @@ extern int gAR_camera_type;
 
 extern int gCar_car_collisions;
 
+extern const float gCar_simplification_factor[2][5];
+
 // ActualActionReplayHeadups
 
 // DoActionReplayPostSwap
