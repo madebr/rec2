@@ -104,7 +104,7 @@ extern tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message
 
 // NetGetToPlayerContents
 
-// NetGetToHostContents
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToHostContents(tNet_message_type pType, tU32 pSize_decider);
 
 // NetStartBroadcastContents
 
