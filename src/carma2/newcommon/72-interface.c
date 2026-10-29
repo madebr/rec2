@@ -814,7 +814,17 @@ int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// NetGameToggleTyping
+// FUNCTION: CARMA2_HW 0x004670c0
+// FUNCTION: CARMA2_SW 0x00466e50
+int C2_HOOK_FASTCALL NetGameToggleTyping(tFrontend_spec* pFrontend) {
+
+    ToggleTyping(pFrontend);
+    if (!gTyping && strlen(pFrontend->items[gFrontend_selected_item_index].text) != 0) {
+        strcpy(gProgram_state.player_name, pFrontend->items[gFrontend_selected_item_index].text);
+        SaveOptions();
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00467130
 // FUNCTION: CARMA2_SW 0x00466ec0
