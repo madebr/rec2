@@ -72,7 +72,7 @@ extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian,
 
 // ReadPedSpecs
 
-// GetPedPos
+extern br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed);
 
 // SetUpGibSlicks
 
@@ -440,7 +440,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // BuildCharacterInstance
 
-// GetCharacterMatrixPtr
+extern br_matrix34* C2_HOOK_FASTCALL GetCharacterMatrixPtr(tPed_character_instance* pCharacter);
 
 // GetBoneMatrixPtr
 
