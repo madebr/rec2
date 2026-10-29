@@ -19,6 +19,7 @@ extern int gFrame;
 extern int gCurrent_selected_drone;
 
 extern tDrone_spec* gDrone_specs;
+extern tDrone_path_node* gDrone_path_nodes;
 
 // DoNotDprintf
 
@@ -166,6 +167,8 @@ extern void C2_HOOK_FASTCALL DronePreCollisionStuff(void);
 
 // DoDronePerGameFrameStuff
 
+extern void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec* pDrone);
+
 // MyDroneHathCollideth
 
 // MyDroneHathHalteth
@@ -182,7 +185,7 @@ extern br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
 
 // ApplyDroneRender2
 
-// ApplyDroneStraightPos2
+extern void C2_HOOK_FASTCALL ApplyDroneStraightPos2(int pDrone_id, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance);
 
 // ApplyDroneCornerPos2
 
