@@ -386,7 +386,15 @@ void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, int pFla
 
 // SetGroupDoingNothingFlag
 
-// SetHierarchyDoingNothingFlag
+// FUNCTION: CARMA2_HW 0x004b9ef0
+// FUNCTION: CARMA2_SW 0x004b6610
+void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, int pFlag) {
+    pObject->disable_move_rotate = pFlag;
+    pObject->field_0x1df = 0;
+    if (pObject->child != NULL) {
+        SetListDoingNothingFlag(pObject->child, pFlag);
+    }
+}
 
 // CheckDoingNothingFlag
 

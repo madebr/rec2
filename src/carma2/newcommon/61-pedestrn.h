@@ -16,6 +16,7 @@ extern float gPedestrian_speed_factor;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
+extern int gPed_nearness;
 extern int gDancing_peds;
 
 // OrientationChanged
@@ -54,7 +55,7 @@ extern int gDancing_peds;
 
 // PedApplyPedPos
 
-// PedApplyVanishDismembered
+extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 pValue);
 
 // SetCharacterPositionAR
 
@@ -308,7 +309,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // FindNearestPed
 
-// ResetPedNearness
+extern void C2_HOOK_FASTCALL ResetPedNearness(void);
 
 // PedPreCollisionStuff
 
@@ -346,7 +347,7 @@ extern void C2_HOOK_FASTCALL SavePedStuff(void);
 
 extern void C2_HOOK_FASTCALL ComparePedStuff(void);
 
-// AdjustPedDiagnostics
+extern void C2_HOOK_FASTCALL AdjustPedDiagnostics(tU32 pSubject_index, void* pUnused2, void* pUnused3, void* pUnused4);
 
 // CalmDownAllPeds
 
