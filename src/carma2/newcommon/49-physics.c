@@ -15,7 +15,9 @@
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "52-errors.h"
+#include "65-hull.h"
 #include "globvars.h"
+#include "platform.h"
 #include "rec2_macros.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
@@ -44,6 +46,10 @@ int gImmortal_peds;
 // GLOBAL: CARMA2_HW 0x0074a5e0
 // GLOBAL: CARMA2_SW 0x007410a0
 void* gPhysics_buffer3_ptr;
+
+// GLOBAL: CARMA2_HW 0x0074a5e4
+// GLOBAL: CARMA2_SW 0x007410a4
+int gPHIL_mechanics_time_sync;
 
 // GLOBAL: CARMA2_HW 0x006940c8
 // GLOBAL: CARMA2_SW 0x0068e120
@@ -103,13 +109,41 @@ int C2_HOOK_FASTCALL AddObjectObjectForce(tPhysics_joint_force* pForces, const b
     return pCount;
 }
 
-// STUB: CARMA2_HW 0x004225f0
-// STUB: CARMA2_SW 0x00422670
+// FUNCTION: CARMA2_HW 0x004225f0
+// FUNCTION: CARMA2_SW 0x00422670
 tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount) {
-    NOT_IMPLEMENTED();
+    br_vector3 normal;
+    br_vector3 collision_position;
+    br_scalar t;
+    tFace_ref* best;
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFace_ref, flags, 0x40);
+
+    *pT = 2.f;
+    for (i = 0; i < pCount; i++, pFaces++) {
+        if ((pFaces->flags & 0x80) == 0) {
+            CheckSingleFace(pFaces, pPosition, pDirection, &normal, &t, &collision_position);
+            if (t < *pT) {
+                *pT = t;
+                BrVector3Copy(pNormal, &normal);
+                best = pFaces;
+                BrVector3Copy(pCollision_position, &collision_position);
+            }
+        }
+    }
+    if (*pT < 2.f) {
+        return best;
+    } else {
+        return NULL;
+    }
 }
 
-// RayCastThruFaceList2
+// STUB: CARMA2_HW 0x004226d0
+// STUB: CARMA2_SW 0x00422750
+tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount) {
+    NOT_IMPLEMENTED();
+}
 
 // RayCastInBox
 
@@ -354,7 +388,15 @@ void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, int pFla
 
 // SetGroupDoingNothingFlag
 
-// SetHierarchyDoingNothingFlag
+// FUNCTION: CARMA2_HW 0x004b9ef0
+// FUNCTION: CARMA2_SW 0x004b6610
+void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, int pFlag) {
+    pObject->disable_move_rotate = pFlag;
+    pObject->field_0x1df = 0;
+    if (pObject->child != NULL) {
+        SetListDoingNothingFlag(pObject->child, pFlag);
+    }
+}
 
 // CheckDoingNothingFlag
 
@@ -816,7 +858,61 @@ void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pC
     }
 }
 
-// FillInShape
+// FUNCTION: CARMA2_HW 0x004c5f20
+// FUNCTION: CARMA2_SW 0x004c2650
+void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape) {
+    int i;
+    tPhysicsError error;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pShape->common.bb.min.v) != 3);
+
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        break;
+    case kCollisionShapeType_Wireframe:
+        if (pShape->wireframe.wireframe.count_points == 0) {
+            PhysicsError(ePhysicsError_WireFrameHasNoPoints, NULL);
+        } else {
+            GetBoundsFromPointList(pShape->wireframe.wireframe.points, pShape->wireframe.wireframe.count_points, &pShape->common.bb);
+        }
+        break;
+    case kCollisionShapeType_Polyhedron:
+        if (pShape->polyhedron.polyhedron.count_points < 4) {
+            PhysicsError(ePhysicsError_PolyhedronHasNoPoints, NULL);
+        } else {
+            error = ConvexHull3D(&pShape->polyhedron.polyhedron);
+            if (error != ePhysicsError_Ok) {
+                if (error == ePhysicsError_WireFrameHasNoPoints) {
+                    pShape->common.type = kCollisionShapeType_Wireframe_Polyhedron;
+                } else {
+                    PDFatalError("This polyhedron is too wierd for me");
+                }
+            }
+            GetBoundsFromPointList(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
+        }
+        break;
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        if (pShape->polyhedron.polyhedron.count_points < 3) {
+            PhysicsError(4, NULL);
+        } else {
+            ConvexHull2D(&pShape->polyhedron.polyhedron);
+            GetBoundsFromPointList(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
+        }
+        break;
+    case kCollisionShapeType_Sphere:
+        BrVector3Copy(&pShape->common.bb.min, &pShape->sphere.sphere.center);
+        BrVector3Copy(&pShape->common.bb.max, &pShape->sphere.sphere.center);
+        for (i = 0; i < REC2_ASIZE(pShape->common.bb.min.v); i++) {
+            pShape->common.bb.min.v[i] -= pShape->sphere.sphere.radius;
+            pShape->common.bb.max.v[i] += pShape->sphere.sphere.radius;
+        }
+        pShape->sphere.sphere.radius_squared = REC2_SQR(pShape->sphere.sphere.radius);
+        break;
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType, NULL);
+        break;
+    }
+}
 
 // UpdateCollisionObject
 

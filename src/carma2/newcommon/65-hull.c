@@ -16,6 +16,12 @@ tCollision_shape_polyhedron_data* gPolyhedron_to_sort;
 // GLOBAL: CARMA2_SW 0x00673b90
 br_vector3 gPhysics_reference_normal_comparison;
 
+// STUB: CARMA2_HW 0x00420910
+// STUB: CARMA2_SW 0x00420990
+tPhysicsError C2_HOOK_FASTCALL ConvexHull2D(tCollision_shape_polyhedron_data* pPolyhedron) {
+    NOT_IMPLEMENTED();
+}
+
 // FUNCTION: CARMA2_HW 0x00420d60
 br_scalar C2_HOOK_FASTCALL SignedTwiceAreaOf3DTriangle(const br_vector3* pV1, const br_vector3* pV2) {
     br_scalar x;
@@ -77,8 +83,6 @@ int C2_HOOK_FASTCALL Collinear(const br_vector3* pV1, const br_vector3* pV2, con
 
 // Left
 
-// ConvexHull2D
-
 // DRVector4Negate
 
 // ConstructTetrahedron
@@ -97,7 +101,11 @@ int C2_HOOK_FASTCALL Collinear(const br_vector3* pV1, const br_vector3* pV2, con
 
 // PointOnShape
 
-// ConvexHull3D
+// STUB: CARMA2_HW 0x00420fb0
+// STUB: CARMA2_SW 0x00421030
+tPhysicsError C2_HOOK_FASTCALL ConvexHull3D(tCollision_shape_polyhedron_data* pPolyhedron) {
+    NOT_IMPLEMENTED();
+}
 
 // GetPointSample
 

@@ -261,10 +261,27 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // ReadCrushData
 
-// STUB: CARMA2_HW 0x0042a220
-// STUB: CARMA2_SW 0x0042a2b0
+// FUNCTION: CARMA2_HW 0x0042a220
+// FUNCTION: CARMA2_SW 0x0042a2b0
 intptr_t C2_HOOK_CDECL CreateDefaultCrushDataCB(br_actor* pActor, void* pData) {
-    NOT_IMPLEMENTED();
+    tUser_crush_data* user_crush;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_buffer_entry) != 0x40);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tCar_crush_buffer_entry, actor_name, 0x10);
+
+    if (pActor->type != BR_ACTOR_MODEL) {
+        return 0;
+    }
+    user_crush = pActor->user;
+    if (user_crush == NULL || user_crush->crush_data != NULL || user_crush->groove != NULL) {
+        return 0;
+    }
+    user_crush->crush_data = BrMemAllocate(sizeof(tCar_crush_buffer_entry), kMem_crush_data);
+    strncpy(user_crush->crush_data->actor_name, pActor->identifier, sizeof(user_crush->crush_data->actor_name) - 1);
+    user_crush->crush_data->id = 0xe9;
+    user_crush->crush_data->softness_factor = 1.f;
+    user_crush->crush_data->field_0x2c = 0;
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0042a210
@@ -574,7 +591,18 @@ float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_vector3
 
 // LimitImpactScale
 
-// GetImpactScale
+// FUNCTION: CARMA2_HW 0x00436850
+// FUNCTION: CARMA2_SW 0x00436880
+float C2_HOOK_FASTCALL GetImpactScale(const br_vector3* pP, int pCount, const br_vector3* pVertices, float pMax_dist_sq) {
+    float dist_sq;
+
+    dist_sq = DistSq(pP, pCount, pVertices);
+    if (dist_sq > gMax_crush_dist_sq) {
+        return 0.0f;
+    } else {
+        return 1.0f - (float)sqrt(dist_sq / pMax_dist_sq);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042d0e0
 // FUNCTION: CARMA2_SW 0x0042d150
@@ -693,7 +721,20 @@ void C2_HOOK_FASTCALL AddDroneCrush(tQueued_drone_crush_item* pCrush, const br_v
 
 // DoCrushing
 
-// SetCrush
+// FUNCTION: CARMA2_HW 0x0042d770
+// FUNCTION: CARMA2_SW 0x0042d7e0
+void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br_vector3* pVectors, br_vector3* pVector1, br_vector3* pVector2, float pScalar, tU32 pValue) {
+    int i;
+
+    pCrush->count = pCount_vectors;
+    for (i = 0; i < pCount_vectors; i++) {
+        BrVector3Copy(&pCrush->vectors[i], &pVectors[i]);
+    }
+    BrVector3Copy(&pCrush->field_0x34, pVector1);
+    BrVector3Copy(&pCrush->field_0x44, pVector2);
+    pCrush->field_0x40 = pScalar;
+    pCrush->field_0x50 = pValue;
+}
 
 // QueueCarCrush
 
@@ -830,7 +871,19 @@ int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, b
 
 // SendReAttachBit
 
-// StopFlapping
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004387d0
+// STUB: CARMA2_SW 0x00438800
+void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // DoFlapping
 
@@ -1025,7 +1078,23 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // TotallySpamTheCar
 
-// DRActorEnumRecurseUltraPlus
+// FUNCTION: CARMA2_HW 0x00435dd0
+// FUNCTION: CARMA2_SW 0x00435e00
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, br_actor_enum_cbfn* pCallback, void* pArg) {
+    intptr_t result;
+    br_actor* actor;
+    br_actor* next;
+
+    actor = pActor;
+    for (pActor = pActor->children; pActor != NULL; pActor = next) {
+        next = pActor->next;
+        result = DRActorEnumRecurseUltraPlus(pActor, pCallback, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return pCallback(actor, pArg);
+}
 
 // FireOffBitsCB
 
@@ -1041,10 +1110,27 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // SphericizeCar
 
-// STUB: CARMA2_HW 0x004398d0
-// STUB: CARMA2_SW 0x00439910
+// FUNCTION: CARMA2_HW 0x004398d0
+// FUNCTION: CARMA2_SW 0x00439910
 intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
-    NOT_IMPLEMENTED();
+    tUser_crush_data* user_crush_data = pActor->user;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_spec* car_spec = pUser;
+
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    crush_data = user_crush_data->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
+    if (crush_data->flap_data == NULL) {
+        return 0;
+    }
+    if (crush_data->flap_data->field_0x0 && !crush_data->flap_data->kev_o_flap) {
+        StopFlapping(pActor, car_spec);
+    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004398c0
@@ -1218,7 +1304,18 @@ void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pS
     SetModelForUpdate(pModel);
 }
 
-// ARUndoModelMash
+// FUNCTION: CARMA2_HW 0x0043c030
+// FUNCTION: CARMA2_SW 0x0043c080
+void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSrc) {
+    tU16 i;
+    br_vector3 delta;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        ExpandVector3(&delta, &pSrc[i], -10.0f, 10.0f);
+        BrVector3Sub(&pModel->vertices[i].p, &pModel->vertices[i].p, &delta);
+    }
+    SetModelForUpdate(pModel);
+}
 
 // ARApplyFlap
 
@@ -1274,7 +1371,53 @@ void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pS
 
 // GetNetShapeDataLengthFromData
 
-// EncodeNetShapeData
+// FUNCTION: CARMA2_HW 0x0043d9c0
+// FUNCTION: CARMA2_SW 0x0043da10
+void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar) {
+    int i;
+    int j;
+    int count;
+    tCar_crush_shape_info* shape_info;
+    tPhysics_shape* shape;
+    br_vector3* point;
+
+    C2_HOOK_BUG_ON(sizeof(tCompressed_vector3) != 6);
+
+    if (pCar->car_crush_spec->field_0x4b8) {
+        count = 0;
+        for (shape = pCar->collision_info->shape; shape != NULL; shape = shape->common.next) {
+            if (shape->common.type == kCollisionShapeType_Polyhedron || shape->common.type == kCollisionShapeType_Wireframe_Polyhedron) {
+                count++;
+            }
+        }
+        *pData++ = (tU8)count;
+        for (shape = pCar->collision_info->shape; shape != NULL; shape = shape->common.next) {
+            if (shape->common.type == kCollisionShapeType_Polyhedron || shape->common.type == kCollisionShapeType_Wireframe_Polyhedron) {
+                *pData = (tU8)shape->polyhedron.polyhedron.count_points;
+                pData++;
+                for (j = 0; j < shape->polyhedron.polyhedron.count_points; j++) {
+                    point = shape->polyhedron.polyhedron.points;
+                    point += j;
+                    CompressVector3((tCompressed_vector3*)pData, point, -2.5f, 2.5f);
+                    pData += sizeof(tCompressed_vector3);
+                }
+            }
+        }
+    } else {
+        count = 0;
+        for (i = 0; i < pCar->car_crush_spec->count_shapes; i++) {
+            count += pCar->car_crush_spec->field_0x4[i].count_points;
+        }
+        *pData++ = (tU8)count;
+        for (i = 0; i < pCar->car_crush_spec->count_shapes; i++) {
+            shape_info = &pCar->car_crush_spec->field_0x4[i];
+            for (j = 0; j < shape_info->count_points; j++) {
+                CompressVector3((tCompressed_vector3*)pData, &shape_info->field_0x18[j].field_0xc, -2.5f, 2.5f);
+                pData += sizeof(tCompressed_vector3);
+            }
+        }
+    }
+}
 
 // DecodeNetShapeData
 

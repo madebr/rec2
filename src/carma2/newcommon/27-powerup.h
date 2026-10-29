@@ -30,6 +30,8 @@ extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
 extern float gMass_mine;
 extern int gInstant_handbrake;
+extern int gInventory_cycling;
+extern tU32 gInventory_timeout;
 
 // GetNextGoodyTime
 
@@ -105,7 +107,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // DrawKeyPowerups
 
-// ToggleInventory
+extern void C2_HOOK_FASTCALL ToggleInventory(void);
 
 // RightInventory
 
@@ -157,7 +159,7 @@ extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 extern int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPedSize
+extern int C2_HOOK_FASTCALL SetPedSize(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPedHeadSize
 
@@ -305,7 +307,7 @@ extern void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 // GotVouchers
 
-// MungeVouchers
+extern void C2_HOOK_FASTCALL MungeVouchers(tPowerup* pPowerup, tU32 pPeriod);
 
 extern int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -395,7 +397,7 @@ extern void C2_HOOK_FASTCALL RemoveTail(void);
 
 extern void C2_HOOK_FASTCALL DoInitialTail(void);
 
-// UndoInitialTail
+extern void C2_HOOK_FASTCALL UndoInitialTail(void);
 
 // MayQueuePowerupRespawn
 

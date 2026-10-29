@@ -43,7 +43,7 @@
 #include "64-movie.h"
 #include "69-sound.h"
 #include "70-packfile.h"
-#include "71-newgame.h"
+#include "72-interface.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "platform.h"
@@ -114,6 +114,10 @@ int gDemo_opponents[15];
 // GLOBAL: CARMA2_HW 0x00679308
 // GLOBAL: CARMA2_SW 0x00673a78
 int gCamera_type;
+
+// GLOBAL: CARMA2_HW 0x00679324
+// GLOBAL: CARMA2_SW 0x00673a94
+tActionReplayCameraMode gAction_replay_camera_mode_00679324;
 
 // GLOBAL: CARMA2_HW 0x0074b4a8
 // GLOBAL: CARMA2_SW 0x00741b68

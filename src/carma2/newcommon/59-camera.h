@@ -48,7 +48,7 @@ extern void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos);
 
 // ChangeCameraType
 
-// ToggleCockpit
+extern void C2_HOOK_FASTCALL ToggleCockpit(void);
 
 // PositionCarMountedCamera
 

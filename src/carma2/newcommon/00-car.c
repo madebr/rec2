@@ -8,18 +8,30 @@
 
 #include "00-car.h"
 
+#include "01-network.h"
+#include "04-netgame.h"
+#include "13-crush1.h"
 #include "15-displays.h"
+#include "17-world2.h"
 #include "22-replay.h"
+#include "23-piping.h"
+#include "29-raycast.h"
+#include "30-opponent.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "58-crush2.h"
+#include "60-phil.h"
 #include "brender/brender.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrpb.h"
+#include "platform.h"
 
 #include "c2_stdio.h"
+#include "rec2_macros.h"
+
+#include <math.h>
 
 // GLOBAL: CARMA2_HW 0x00763500
 // GLOBAL: CARMA2_SW 0x00759a60
@@ -57,12 +69,20 @@ br_vector3 gZero_v__car;  // FIXME: make const?
 // GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
 
+// GLOBAL: CARMA2_HW 0x006793d0
+// GLOBAL: CARMA2_SW 0x00673b40
+int gEliminate_faces;
+
 // GLOBAL: CARMA2_HW 0x00679364
 // GLOBAL: CARMA2_SW 0x00673ad4
 int gInTheSea;
 
 // GLOBAL: CARMA2_HW 0x0065d010
 int gFace_num__car = 1;
+
+// GLOBAL: CARMA2_HW 0x00744820
+// GLOBAL: CARMA2_SW 0x0073b2e0
+tFace_ref gFace_list__car[300];
 
 // FUNCTION: CARMA2_HW 0x00413cc0
 // FUNCTION: CARMA2_SW 0x00413cf0
@@ -83,6 +103,13 @@ void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int p
 // FUNCTION: CARMA2_SW 0x00413d30
 void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
     DamageUnit(&gProgram_state.current_car, eDamage_engine, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413d90
+// FUNCTION: CARMA2_SW 0x00413dc0
+void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lf_wheel, pDamage_amount);
     SortOutSmoke(&gProgram_state.current_car);
 }
 
@@ -118,9 +145,110 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // InitialiseCarsEtc
 
-// SetInitialPosition
+// FUNCTION: CARMA2_HW 0x00414510
+// FUNCTION: CARMA2_SW 0x00414540
+void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, tU32 pGrid_index) {
+    int place_on_grid;
+    int i;
+    int start_i;
+    int j;
+    br_actor* car_actor;
+    br_angle initial_yaw;
+    br_scalar nearest_y_above;
+    br_scalar nearest_y_below;
+    int below_face_index;
+    int above_face_index;
+    br_model* below_model;
+    br_model* above_model;
+    tCar_spec* car;
+    br_vector3 grid_offset;
+    br_vector3 dist;
+    br_vector3 real_pos;
+    br_matrix34 initial_yaw_matrix;
+    tCompressed_matrix3 compressed;
+    int inactive;
 
-// SetInitialPositions
+    car = pThe_race->opponent_list[pCar_index].car_spec;
+    car_actor = car->car_master_actor;
+    BrMatrix34Identity(&car_actor->t.t.mat);
+    place_on_grid = 1;
+    if (gNet_mode != eNet_mode_none && !gCurrent_net_game->options.grid_start && pThe_race->count_network_start_points != 0) {
+        start_i = i = IRandomBetween(0, pThe_race->count_network_start_points - 1);
+        do {
+            PossibleService();
+            for (j = 0; j < gNumber_of_net_players; j++) {
+                if (j != pCar_index) {
+                    BrVector3Copy(&real_pos, &pThe_race->opponent_list[j].car_spec->car_master_actor->t.t.translate.t);
+                    if (real_pos.v[0] > 500.0f) {
+                        BrVector3Sub(&real_pos, &real_pos, &gInitial_position);
+                    }
+                    BrVector3Sub(&dist, &real_pos, &pThe_race->net_starts[i].pos);
+                    if (BrVector3LengthSquared(&dist) < 16.0f) {
+                        break;
+                    }
+                }
+            }
+            if (j == gNumber_of_net_players) {
+                BrVector3Copy(&car_actor->t.t.translate.t, &pThe_race->net_starts[i].pos);
+                initial_yaw = BrDegreeToAngle(pThe_race->net_starts[i].yaw);
+                place_on_grid = 0;
+                break;
+            }
+            i++;
+            if (i == pThe_race->count_network_start_points) {
+                i = 0;
+            }
+        } while (i != start_i);
+    }
+    if (gNet_mode == eNet_mode_none && (int)pGrid_index < 0) {
+        BrVector3Copy(&car_actor->t.t.translate.t, &pThe_race->net_starts[-((int)pGrid_index + 1)].pos);
+        initial_yaw = BrDegreeToAngle(pThe_race->net_starts[-((int)pGrid_index + 1)].yaw);
+        place_on_grid = 0;
+    }
+    if (place_on_grid) {
+        initial_yaw = BrDegreeToAngle(pThe_race->initial_yaw);
+        BrMatrix34RotateY(&initial_yaw_matrix, initial_yaw);
+        grid_offset.v[0] = -(br_scalar)((int)pGrid_index % 2);
+        grid_offset.v[1] = 0.0f;
+        grid_offset.v[2] = (br_scalar)((int)pGrid_index % 2) * 0.4f - (br_scalar)((int)pGrid_index / 2) * -2.0f;
+        BrMatrix34ApplyV(&car_actor->t.t.translate.t, &grid_offset, &initial_yaw_matrix);
+        BrVector3Accumulate(&car_actor->t.t.translate.t, &pThe_race->initial_position);
+    }
+    if (gTrack_actor != NULL) {
+        FindBestY(&car_actor->t.t.translate.t, gTrack_actor, 10.0f, &nearest_y_above, &nearest_y_below, &above_model, &below_model, &above_face_index, &below_face_index);
+        if (nearest_y_above != 30000.0f) {
+            car_actor->t.t.translate.t.v[1] = nearest_y_above;
+        } else if (nearest_y_below != -30000.0f) {
+            car_actor->t.t.translate.t.v[1] = nearest_y_below;
+        } else {
+            car_actor->t.t.translate.t.v[1] = 0.0f;
+        }
+    }
+    BrMatrix34PreRotateY(&car_actor->t.t.mat, initial_yaw);
+    if (gNet_mode != eNet_mode_none) {
+        CompressMatrix34(&compressed, &inactive, &car_actor->t.t.mat);
+        ExpandMatrix34(&car_actor->t.t.mat, &compressed, inactive);
+        BrMatrix34Copy(&gNet_players[pThe_race->opponent_list[pCar_index].net_player_index].initial_position, &car->car_master_actor->t.t.mat);
+    }
+    if (gNet_mode != eNet_mode_none && car->disabled && car_actor->t.t.translate.t.v[0] < 500.0f) {
+        DisableCar(car);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004148d0
+// FUNCTION: CARMA2_SW 0x00414900
+void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
+    int i;
+
+    for (i = 0; i < pThe_race->number_of_racers; i++) {
+        int grid_index = pThe_race->opponent_list[i].ranking;
+
+        if (grid_index >= 0) {
+            grid_index = i;
+        }
+        SetInitialPosition(pThe_race, i, grid_index);
+    }
+}
 
 // InitialiseNonCar
 
@@ -143,7 +271,17 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // PrepareCars
 
-// CalcGraphicalWheelStuff
+// FUNCTION: CARMA2_HW 0x004157e0
+// FUNCTION: CARMA2_SW 0x00415810
+void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar) {
+
+    pCar->steering_angle = (br_scalar)BrRadianToDegree(atan((pCar->wpos[0].v[2] - pCar->wpos[2].v[2]) * (pCar->field_0x1260 + pCar->curvature)));
+    pCar->lr_sus_position = (br_scalar)((pCar->wpos[0].v[1] - pCar->oldd[0]) / WORLD_SCALE_D);
+    pCar->rr_sus_position = (br_scalar)((pCar->wpos[1].v[1] - pCar->oldd[1]) / WORLD_SCALE_D);
+    pCar->lf_sus_position = (br_scalar)((pCar->wpos[2].v[1] - pCar->oldd[2]) / WORLD_SCALE_D);
+    pCar->rf_sus_position = (br_scalar)((pCar->wpos[3].v[1] - pCar->oldd[3]) / WORLD_SCALE_D);
+    PipeSingleGraphicalWheelStuff(pCar);
+}
 
 // FinishCars
 
@@ -169,7 +307,33 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // APTCPreCollision
 
-// SetCollisionFlagsAndStuff
+// FUNCTION: CARMA2_HW 0x004161a0
+// FUNCTION: CARMA2_SW 0x004161d0
+void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject) {
+    tPhysics_object* child;
+    tCar_spec* car;
+    int collided;
+
+    for (; pObject != NULL; pObject = pObject->next) {
+        if (gNet_mode == eNet_mode_host) {
+            collided = (pObject->collision_flag & 0x2) != 0 || (pObject->flags & 0x1000) != 0;
+            for (child = pObject->child; child != NULL; child = child->next) {
+                collided |= child->collision_flag & 0x2;
+            }
+            if (collided) {
+                pObject->field_0x49c = gPHIL_last_physics_tick + 40;
+                if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+                    car = pObject->owner;
+                    if (car->driver > 5 && car->car_crush_spec != NULL) {
+                        SetAllShapeStatusFlags(car->car_crush_spec->network_stuff);
+                    }
+                }
+            }
+        }
+        pObject->disable_move_rotate &= ~0x2;
+        SetCollisionFlagsAndStuff(pObject->child);
+    }
+}
 
 // APTCPostCollision
 
@@ -411,7 +575,38 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 
 // findfloor
 
-// FindFloorInBoxBU
+// FUNCTION: CARMA2_HW 0x0041e480
+// FUNCTION: CARMA2_SW 0x0041e4b0
+int C2_HOOK_FASTCALL FindFloorInBoxBU(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pDistance, tPhysics_object* pObject) {
+    br_vector3 nor2;
+    br_vector3 collision_position;
+    int i;
+    int j;
+    br_scalar dist;
+    tFace_ref* face_ref;
+
+    *pDistance = 2.f;
+    i = pObject->box_face_start;
+    face_ref = &gFace_list__car[i];
+    for (; i < pObject->box_face_end; i++, face_ref++) {
+        if (gEliminate_faces && (face_ref->flags & 0x80) != 0) {
+            continue;
+        }
+        CheckSingleFace(face_ref, pPosition, pDirection, &nor2, &dist, &collision_position);
+        if (dist < *pDistance) {
+            *pDistance = dist;
+            j = i;
+            BrVector3Copy(pNormal, &nor2);
+        }
+    }
+    if (*pDistance < 2.f) {
+        i = gFace_list__car[j].material->identifier[0] - ('0' - 1);
+        if (i >= 0 && i < 11) {
+            return i;
+        }
+    }
+    return 0;
+}
 
 // CancelPendingCunningStunt
 
@@ -422,6 +617,53 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 // MungeSomeOtherCarGraphics
 
 // MungeCarGraphics
+
+// FUNCTION: CARMA2_HW 0x0041f110
+// FUNCTION: CARMA2_SW 0x0041f140
+void C2_HOOK_FASTCALL DoLODCarModels(void) {
+    int i;
+    int j;
+    tCar_spec* car;
+    float level;
+    float factor;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCar_simplification_factor) != 2);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCar_simplification_factor[0]) != 5);
+
+    for (i = 0; i < gNum_active_cars; i++) {
+        car = gActive_car_list[i];
+        if (car != NULL && car->driver > eDriver_oppo - 1 && car->car_master_actor->render_style != BR_RSTYLE_NONE) {
+            level = Vector3DistanceSquared(&car->car_master_actor->t.t.translate.t, (br_vector3*)gCamera_to_world.m[3]);
+            factor = gCar_simplification_factor[gGraf_spec_index][gCar_simplification_level];
+            if (!(factor >= 0.001f)) {
+                level = BR_SCALAR_MAX;
+            } else {
+                level /= factor;
+            }
+#ifdef REC2_SW
+            if (gNet_mode != eNet_mode_none && (gNet_players[gIt_or_fox].car == car || NetPlayerFromCar(car)->field_0x80 != 0)) {
+                level = 0.0f;
+            }
+#endif
+            for (j = car->count_detail_levels - 1; j > 0; j--) {
+                if (level > car->detail_levels[j]) {
+                    break;
+                }
+            }
+            if (j > 0) {
+                int variant;
+
+                variant = j;
+                DRActorEnumRecurse(car->car_model_actor, SwitchCarModel, &variant);
+                car->field_0xe18 = variant;
+            } else if (!gAction_replay_mode && car->use_shell_model && car->shell_model != NULL) {
+                DRActorEnumRecurse(car->car_model_actor, TurnOffNonGroovers, NULL);
+                car->car_model_actor->type = BR_ACTOR_MODEL;
+                car->car_model_actor->model = car->shell_model;
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0041f280
 // FUNCTION: CARMA2_SW 0x0041f300
@@ -434,8 +676,6 @@ intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData) {
     }
     return 0;
 }
-
-// DoLODCarModels
 
 // DoComplexCarModels
 

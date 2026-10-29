@@ -11,7 +11,9 @@
 #include "01-network.h"
 #include "16-graphics1.h"
 #include "32-spark.h"
+#include "41-utility.h"
 #include "49-physics.h"
+#include "53-controls.h"
 #include "61-pedestrn.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -94,6 +96,14 @@ int gCount_cloaked_cars;
 // GLOBAL: CARMA2_HW 0x006a0910
 // GLOBAL: CARMA2_SW 0x0069a968
 tCar_spec* gCloaked_cars[12];
+
+// GLOBAL: CARMA2_HW 0x006a0940
+// GLOBAL: CARMA2_SW 0x0069a998
+int gInventory_cycling;
+
+// GLOBAL: CARMA2_HW 0x006a0954
+// GLOBAL: CARMA2_SW 0x0069a9ac
+tU32 gInventory_timeout;
 
 // GLOBAL: CARMA2_HW 0x0079ec50
 // GLOBAL: CARMA2_SW 0x007951b0
@@ -206,7 +216,15 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // DrawKeyPowerups
 
-// ToggleInventory
+// FUNCTION: CARMA2_HW 0x004da9d0
+// FUNCTION: CARMA2_SW 0x004d6ea0
+void C2_HOOK_FASTCALL ToggleInventory(void) {
+
+    gInventory_cycling = !gInventory_cycling;
+    if (gInventory_cycling) {
+        gInventory_timeout = GetTotalTime() + 3000;
+    }
+}
 
 // RightInventory
 
@@ -264,7 +282,15 @@ int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetPedSize
+// FUNCTION: CARMA2_HW 0x004dc750
+// FUNCTION: CARMA2_SW 0x004d8c50
+int C2_HOOK_FASTCALL SetPedSize(tPowerup* pPowerup, tCar_spec* pCar) {
+    br_vector3 scale;
+
+    BrVector3Set(&scale, pPowerup->float_params[0], pPowerup->float_params[1], pPowerup->float_params[2]);
+    ChangePedScaling(&scale);
+    return pPowerup - gPowerup_array;
+}
 
 // SetPedHeadSize
 
@@ -650,7 +676,12 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // GotVouchers
 
-// MungeVouchers
+// FUNCTION: CARMA2_HW 0x004de810
+// FUNCTION: CARMA2_SW 0x004dad10
+void C2_HOOK_FASTCALL MungeVouchers(tPowerup* pPowerup, tU32 pPeriod) {
+
+    pPowerup->current_value = GetRecoverVoucherCount();
+}
 
 // FUNCTION: CARMA2_HW 0x004de820
 // FUNCTION: CARMA2_SW 0x004dad20
@@ -816,7 +847,15 @@ void C2_HOOK_FASTCALL DoInitialTail(void) {
     }
 }
 
-// UndoInitialTail
+// FUNCTION: CARMA2_HW 0x004e0730
+// FUNCTION: CARMA2_SW 0x004dcc30
+void C2_HOOK_FASTCALL UndoInitialTail(void) {
+    tPhysics_object* collision_info;
+
+    for (collision_info = gMutant_tail_first_collision_info; collision_info != NULL; collision_info = collision_info->child) {
+        collision_info->actor->render_style = BR_RSTYLE_NONE;
+    }
+}
 
 // MayQueuePowerupRespawn
 

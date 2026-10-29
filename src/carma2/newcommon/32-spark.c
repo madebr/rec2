@@ -8,17 +8,21 @@
 
 #include "32-spark.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "52-errors.h"
 #include "60-phil.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00660110
+// GLOBAL: CARMA2_SW 0x0065aa58
 int gSmoke_on = 1;
 
 #ifdef REC2_HW
@@ -56,6 +60,10 @@ br_pixelmap* gIt_shade_table;
 // GLOBAL: CARMA2_HW 0x006aa590
 // GLOBAL: CARMA2_SW 0x006a3fe0
 int gSmoke_flags;
+
+// GLOBAL: CARMA2_HW 0x006aa594
+// GLOBAL: CARMA2_SW 0x006a3fe4
+int gSmoke_num;
 
 // GLOBAL: CARMA2_HW 0x006a8ce0
 // GLOBAL: CARMA2_SW 0x006a2730
@@ -98,7 +106,7 @@ br_camera* gSpark_cam;
 
 // GLOBAL: CARMA2_HW 0x006a82a8
 // GLOBAL: CARMA2_SW 0x006a2308
-tCar_spec* PTR_006a82a8;
+tCar_spec* gCar_of_material;
 
 // GLOBAL: CARMA2_SW 0x00795198
 br_pixelmap* gFog_shade_table;
@@ -250,8 +258,8 @@ void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar) {
 // FUNCTION: CARMA2_HW 0x004f8ff0
 // FUNCTION: CARMA2_SW 0x004f4670
 int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
-    if (pMaterial->colour_map != PTR_006a82a8->field_0x1960) {
-        pMaterial->colour_map = PTR_006a82a8->field_0x1960;
+    if (pMaterial->colour_map != gCar_of_material->field_0x1960) {
+        pMaterial->colour_map = gCar_of_material->field_0x1960;
         BrMaterialUpdate(pMaterial, BR_MATU_ALL);
         return 1;
     } else {
@@ -259,9 +267,28 @@ int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
     }
 }
 
-// STUB: CARMA2_HW 0x004f8f30
+// FUNCTION: CARMA2_HW 0x004f8f30
+// FUNCTION: CARMA2_SW 0x004f45b0
 void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
-    NOT_IMPLEMENTED();
+    br_vector3 direction;
+    br_vector3 position;
+    br_vector3 collision_position;
+    br_vector3 normal;
+    br_scalar t;
+    tFace_ref* face;
+
+    BrVector3Set(&direction, 0.f, -0.5f, 0.f);
+    t = 10.f;
+    BrMatrix34ApplyP(&position, &pCar->collision_info->cmpos, &pCar->collision_info->transform_matrix);
+    face = RayCastThruFaceList2(&position, &direction, &normal, &t, &collision_position,
+        &gFace_list__car[pCar->collision_info->box_face_start],
+        pCar->collision_info->box_face_end - pCar->collision_info->box_face_start);
+    if (face != NULL && face->material != NULL && face->material->colour_map != NULL
+        && face->material->colour_map != pCar->field_0x1960) {
+        pCar->field_0x1960 = face->material->colour_map;
+        gCar_of_material = pCar;
+        ForEveryCarMaterial(pCar, SetPixelmap, 1);
+    }
 }
 
 // DoSolidGraniteThing
@@ -385,7 +412,50 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
 
 // RenderSmoke
 
-// CreatePuffOfSmoke
+// FUNCTION: CARMA2_HW 0x004fb330
+// FUNCTION: CARMA2_SW 0x004f6870
+void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType) {
+    br_vector3 tv;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmoke) != 25);
+
+    if (!gSmoke_on) {
+        return;
+    }
+    BrVector3Sub(&tv, pPos, &gProgram_state.current_car.pos);
+    if (BrVector3LengthSquared(&tv) > 625.f) {
+        if (gCar_to_view == &gProgram_state.current_car) {
+            return;
+        }
+        BrVector3Sub(&tv, pPos, &gCar_to_view->pos);
+        if (BrVector3LengthSquared(&tv) > 625.f) {
+            return;
+        }
+    }
+    BrVector3InvScale(&gSmoke[gSmoke_num].v, pV, WORLD_SCALE);
+    gSmoke[gSmoke_num].v.v[1] = (br_scalar)(gSmoke[gSmoke_num].v.v[1] + 1.0 / 6.9);
+    BrVector3Copy(&gSmoke[gSmoke_num].pos, pPos);
+    gSmoke[gSmoke_num].radius = 0.05f;
+    if ((pType & 0xf) == 7) {
+        gSmoke[gSmoke_num].radius = 0.1f;
+    } else {
+        gSmoke[gSmoke_num].pos.v[1] += 0.04f;
+    }
+    gSmoke[gSmoke_num].pos.v[1] += 0.04f;
+    if (pStrength > 1.f) {
+        pStrength = 1.f;
+    }
+    gSmoke[gSmoke_num].strength = pStrength;
+    gSmoke_flags |= 1 << gSmoke_num;
+    gSmoke[gSmoke_num].time_sync = gPHIL_mechanics_time_sync;
+    gSmoke[gSmoke_num].type = (tU8)pType;
+    gSmoke[gSmoke_num].decay_factor = pDecay_factor;
+    gSmoke[gSmoke_num].pipe_me = 1;
+    gSmoke_num++;
+    if (gSmoke_num >= (int)REC2_ASIZE(gSmoke)) {
+        gSmoke_num = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004fb510
 // FUNCTION: CARMA2_SW 0x004f6a50

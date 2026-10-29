@@ -25,9 +25,17 @@ tNet_game_player_info gNet_players[12];
 // GLOBAL: CARMA2_SW 0x00741e90
 int gThis_net_player_index;
 
+// GLOBAL: CARMA2_HW 0x0074c6d4
+// GLOBAL: CARMA2_SW 0x00742d94
+int gSynch_race_start;
+
 // GLOBAL: CARMA2_HW 0x0074c6d8
 // GLOBAL: CARMA2_SW 0x00742d98
 int gPending_race;
+
+// GLOBAL: CARMA2_HW 0x0074c6cc
+// GLOBAL: CARMA2_SW 0x00742d8c
+tNet_game_options* gNet_options;
 
 // GLOBAL: CARMA2_HW 0x0074b800
 // GLOBAL: CARMA2_SW 0x00741ec0

@@ -12,6 +12,7 @@
 #include "15-displays.h"
 #include "16-graphics1.h"
 #include "17-world2.h"
+#include "27-powerup.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "43-pratcam.h"
@@ -209,6 +210,12 @@ void C2_HOOK_FASTCALL DamageTest(void) {
 
 }
 
+// FUNCTION: CARMA2_HW 0x00441fe0
+// FUNCTION: CARMA2_SW 0x004420c0
+void C2_HOOK_FASTCALL TDamageEngine(void) {
+    DamageEngine(21);
+}
+
 // FUNCTION: CARMA2_HW 0x00441ff0
 // FUNCTION: CARMA2_SW 0x004420d0
 void C2_HOOK_FASTCALL TDamageDriver(void) {
@@ -217,6 +224,13 @@ void C2_HOOK_FASTCALL TDamageDriver(void) {
     } else {
         DamageUnit(&gProgram_state.current_car, eDamage_driver, 2);
     }
+}
+
+// FUNCTION: CARMA2_HW 0x00442050
+// FUNCTION: CARMA2_SW 0x00442130
+void C2_HOOK_FASTCALL TDamageLFWheel(void) {
+
+    DamageLFWheel(21);
 }
 
 // ToggleMiniMap
@@ -280,7 +294,12 @@ void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info) {
 
 // FlipUpCar
 
-// GetPowerup
+// FUNCTION: CARMA2_HW 0x00442e80
+// FUNCTION: CARMA2_SW 0x00442f60
+void C2_HOOK_FASTCALL GetPowerup(int pNum) {
+
+    GotPowerup(&gProgram_state.current_car, pNum);
+}
 
 // CheckSystemKeys
 
@@ -340,7 +359,12 @@ int C2_HOOK_FASTCALL GetRecoverVoucherCount(void) {
     return gRecovery_voucher_count;
 }
 
-// AddVouchers
+// FUNCTION: CARMA2_HW 0x00444700
+// FUNCTION: CARMA2_SW 0x004447e0
+void C2_HOOK_FASTCALL AddVouchers(int pCount) {
+
+    gRecovery_voucher_count += pCount;
+}
 
 // FUNCTION: CARMA2_HW 0x00444710
 // FUNCTION: CARMA2_SW 0x004447f0
