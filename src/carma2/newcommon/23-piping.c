@@ -534,7 +534,7 @@ void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData) {
 void C2_HOOK_FASTCALL PipeSingleNonCarCreation(int pIndex) {
     C2_HOOK_BUG_ON(sizeof(gZero_vector__smash.v[0]) != 0x4);
 
-    ARDoSingleSession(0x20, pIndex, &gZero_vector__smash, sizeof(gZero_vector__smash.v[0]));
+    ARDoSingleSession(ePipe_chunk_non_car_creation, pIndex, &gZero_vector__smash, sizeof(gZero_vector__smash.v[0]));
 }
 
 // FUNCTION: CARMA2_HW 0x004c8960
