@@ -248,7 +248,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, 
 
 // PipeSinglePedMove
 
-// PipeSinglePedPhysics
+extern void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat);
 
 // PipeSinglePedDismember
 
