@@ -1133,19 +1133,26 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
 
 // FRONTEND_MainMenuHandler
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x0046b6a0
+// FUNCTION: CARMA2_HW 0x0046b6a0
 // STUB: CARMA2_SW 0x0046b3c0
 void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec* pFrontend) {
-    NOT_IMPLEMENTED();
-}
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    strcpy(pFrontend->items[2].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].car_name);
+    strcpy(pFrontend->items[3].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].name);
+    strcpy(pFrontend->items[5].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line4_description);
+    sprintf(pFrontend->items[4].text, "%s @R%s @R%s",
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line1_topspeed,
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line2_weight,
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line3_acceleration);
+    MungeMetaCharactersChar(pFrontend->items[4].text, 'R', '\r');
+    FuckWithWidths(pFrontend);
+    if (gFrontend_car_image_outdated && gFrontend_opponent_profile_pic_needs_update) {
+        MenuSetDriverImage(gProgram_state.cars_available[gFrontend_change_car_selected_car], 12);
+        MenuSetCarImage(gProgram_state.cars_available[gFrontend_change_car_selected_car], 6);
+        gFrontend_opponent_profile_pic_needs_update = 0;
+        gFrontend_car_image_outdated = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0046b4e0
 // FUNCTION: CARMA2_SW 0x0046b200
