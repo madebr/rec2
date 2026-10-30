@@ -15,6 +15,7 @@
 #include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
+#include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -1225,16 +1226,27 @@ int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void*
 
 // SendReAttachAllBits
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // STUB: CARMA2_HW 0x00439510
 // STUB: CARMA2_SW 0x00439550
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x00439bf0
-// STUB: CARMA2_SW 0x00439c30
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00439bf0
+// FUNCTION: CARMA2_SW 0x00439c30
 void C2_HOOK_FASTCALL TotallyRepairCar(void) {
-    NOT_IMPLEMENTED();
+
+    if (!gArrow_mode) {
+        TotallyRepairACar(&gProgram_state.current_car);
+    }
 }
 
 // AddTotalDeflectionOfModel
