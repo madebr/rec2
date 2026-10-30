@@ -771,7 +771,17 @@ br_matrix34* C2_HOOK_FASTCALL GetCharacterMatrixPtr(tPed_character_instance* pCh
 #pragma auto_inline(on)
 #endif
 
-// GetBoneMatrixPtr
+// FUNCTION: CARMA2_HW 0x00407ad0
+// FUNCTION: CARMA2_SW 0x00407ac0
+br_matrix34* C2_HOOK_FASTCALL GetBoneMatrixPtr(tPed_character_instance* pCharacter, int pBone_index) {
+    if (pCharacter->field_0x4 < 0) {
+        return &pCharacter->field_0x2c;
+    }
+    if (pCharacter->field_0xe8 != NULL) {
+        return &pCharacter->field_0xe8[pBone_index];
+    }
+    return &pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index]->t.t.mat;
+}
 
 // FUNCTION: CARMA2_HW 0x00407b10
 // FUNCTION: CARMA2_SW 0x00407b00
