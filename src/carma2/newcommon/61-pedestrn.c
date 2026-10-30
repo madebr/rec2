@@ -576,7 +576,7 @@ void C2_HOOK_FASTCALL PrevPedCam(void) {
             if (gSelected_ped < 0) {
                 gSelected_ped = gPed_count - 1;
             }
-        } while ((gPedestrian_array[gSelected_ped].flags & 0x1) == 0 && selected_ped != gSelected_ped);
+        } while (!(gPedestrian_array[gSelected_ped].flags & 0x1) && selected_ped != gSelected_ped);
     }
 }
 
