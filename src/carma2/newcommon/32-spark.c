@@ -98,6 +98,10 @@ br_material* gBlack_material;
 // GLOBAL: CARMA2_SW 0x006ae568
 tSmashable_environment_name* gSmashable_noncars;
 
+// GLOBAL: CARMA2_HW 0x006b788c
+// GLOBAL: CARMA2_SW 0x006ae56c
+int gCount_smashable_noncars;
+
 // GLOBAL: CARMA2_HW 0x006a8718
 br_matrix4 gCameraToScreen;
 
