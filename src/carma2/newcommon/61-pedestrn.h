@@ -119,9 +119,9 @@ extern int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor);
 
 // MakePedNoise
 
-// SetPedMove
+extern void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pMove_action, int pWalk_speed_factor, int pArg4, int pArg5, tU32 pTime, tPed_action pAction);
 
-// StartPedRunning
+extern void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int pArg3);
 
 // AcceleratePed
 
