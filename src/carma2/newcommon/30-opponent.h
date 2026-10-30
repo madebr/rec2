@@ -160,7 +160,7 @@ extern void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec
 
 // ResetPredominantJobbies
 
-extern void C2_HOOK_FASTCALL LoadCopCars(void);
+extern void C2_HOOK_FASTCALL LoadCopCars(tRace_info* pRace_info);
 
 extern void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF);
 

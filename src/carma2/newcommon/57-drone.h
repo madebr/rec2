@@ -155,7 +155,7 @@ extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 // DisposeDronesRaceStuff
 
-// LoadPerRaceDroneStuff
+extern void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void);
 
 // GetDroneCrushData
 

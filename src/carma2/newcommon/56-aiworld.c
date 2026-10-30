@@ -49,7 +49,17 @@ void C2_HOOK_FASTCALL LoadAIWorldTrackInfo(FILE* pF) {
     PrintMemoryDump(0, "AFTER LoadInDronePaths()");
 }
 
-// LoadAIWorldForRace
+// FUNCTION: CARMA2_HW 0x00401070
+// FUNCTION: CARMA2_SW 0x00401070
+void C2_HOOK_FASTCALL LoadAIWorldForRace(tRace_info* pRace_info) {
+
+    PrintMemoryDump(0, "BEFORE LoadOpponentsCars()");
+    LoadOpponentsCars(pRace_info);
+    LoadCopCars(pRace_info);
+    PrintMemoryDump(0, "AFTER LoadOpponentsCars(), BEFORE LoadPerRaceDroneStuff()");
+    LoadPerRaceDroneStuff();
+    PrintMemoryDump(0, "AFTER LoadPerRaceDroneStuff()");
+}
 
 // InitialiseAIWorldForRace
 

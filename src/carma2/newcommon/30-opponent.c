@@ -456,7 +456,8 @@ void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec) {
 
 // FUNCTION: CARMA2_HW 0x004a9600
 // FUNCTION: CARMA2_SW 0x004a5770
-void C2_HOOK_FASTCALL LoadCopCars(void) {
+void C2_HOOK_FASTCALL LoadCopCars(tRace_info* pRace_info) {
+    (void)pRace_info;
 
     gProgram_state.AI_vehicles.number_of_cops = 0;
 }
