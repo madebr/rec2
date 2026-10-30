@@ -608,7 +608,15 @@ int C2_HOOK_FASTCALL FindFloorInBoxBU(br_vector3* pPosition, br_vector3* pDirect
     return 0;
 }
 
-// CancelPendingCunningStunt
+// FUNCTION: CARMA2_HW 0x0041e580
+// FUNCTION: CARMA2_SW 0x0041e5b0
+void C2_HOOK_FASTCALL CancelPendingCunningStunt(void) {
+    gQuite_wild_end = 0;
+    gQuite_wild_start = 0;
+    gOn_me_wheels_start = 0;
+    gWoz_upside_down_at_all = 0;
+    gWild_start = 0;
+}
 
 // SetAmbientPratCam
 

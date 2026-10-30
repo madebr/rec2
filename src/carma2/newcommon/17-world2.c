@@ -26,6 +26,26 @@ tRoad_texturing_level gRoad_texturing_level = eRTL_full;
 // GLOBAL: CARMA2_SW 0x0058c350
 tWall_texturing_level gWall_texturing_level = eWTL_full;
 
+// GLOBAL: CARMA2_HW 0x006793a8
+// GLOBAL: CARMA2_SW 0x00673b18
+tU32 gWild_start;
+
+// GLOBAL: CARMA2_HW 0x006793ac
+// GLOBAL: CARMA2_SW 0x00673b1c
+tU32 gQuite_wild_start;
+
+// GLOBAL: CARMA2_HW 0x006793b0
+// GLOBAL: CARMA2_SW 0x00673b20
+tU32 gQuite_wild_end;
+
+// GLOBAL: CARMA2_HW 0x006793b4
+// GLOBAL: CARMA2_SW 0x00673b24
+tU32 gOn_me_wheels_start;
+
+// GLOBAL: CARMA2_HW 0x006793b8
+// GLOBAL: CARMA2_SW 0x00673b28
+tU32 gWoz_upside_down_at_all;
+
 // GLOBAL: CARMA2_HW 0x006793d8
 // GLOBAL: CARMA2_SW 0x00673b48
 int gCar_simplification_level;

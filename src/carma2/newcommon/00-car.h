@@ -169,7 +169,7 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 
 extern int C2_HOOK_FASTCALL FindFloorInBoxBU(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pDistance, tPhysics_object* pObject);
 
-// CancelPendingCunningStunt
+extern void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 // SetAmbientPratCam
 

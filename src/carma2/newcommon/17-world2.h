@@ -14,6 +14,16 @@
 
 extern int gCar_simplification_level;
 
+extern tU32 gWild_start;
+
+extern tU32 gQuite_wild_start;
+
+extern tU32 gQuite_wild_end;
+
+extern tU32 gOn_me_wheels_start;
+
+extern tU32 gWoz_upside_down_at_all;
+
 extern void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
 extern void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);
