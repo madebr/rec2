@@ -38,7 +38,7 @@ extern void C2_HOOK_FASTCALL ViewNetPlayer(void);
 
 extern void C2_HOOK_FASTCALL ReallyViewOpponent(void);
 
-// CheckDisablePlingMaterials
+extern void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar);
 
 // SetPanningFieldOfView
 

@@ -12,6 +12,7 @@
 #include "10-loading2.h"
 #include "21-mainloop.h"
 #include "22-replay.h"
+#include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "57-drone.h"
 #include "globvars.h"
@@ -137,7 +138,30 @@ void C2_HOOK_FASTCALL ReallyViewOpponent(void) {
     }
 }
 
-// CheckDisablePlingMaterials
+// FUNCTION: CARMA2_HW 0x0040f510
+// FUNCTION: CARMA2_SW 0x0040f4f0
+void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar) {
+    br_matrix34* mat;
+    br_scalar height;
+    int i;
+
+    height = 0.f;
+    if (pCar->collision_info->water_d != 10000.f) {
+        mat = &pCar->car_master_actor->t.t.mat;
+        for (i = 0; i < 3; i++) {
+            if (mat->m[i][1] > 0.f) {
+                height += pCar->collision_info->bb2.max.v[i] * mat->m[i][1];
+            } else {
+                height += pCar->collision_info->bb2.min.v[i] * mat->m[i][1];
+            }
+        }
+        if ((mat->m[3][1] / WORLD_SCALE) + height < pCar->collision_info->water_d) {
+            DisablePlingMaterials();
+        }
+    } else {
+        DisablePlingMaterials();
+    }
+}
 
 // SetPanningFieldOfView
 
