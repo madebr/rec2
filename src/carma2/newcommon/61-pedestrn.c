@@ -18,6 +18,7 @@
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "69-sound.h"
+#include "70-packfile.h"
 #include "globvars.h"
 #include "brender/brender.h"
 #include "globvars.h"
@@ -69,6 +70,10 @@ tNapalm_bolt gNapalm_bolts[5];
 // GLOBAL: CARMA2_HW 0x00694490
 // GLOBAL: CARMA2_SW 0x0068e4e8
 int gPed_nearness;
+
+// GLOBAL: CARMA2_HW 0x00694498
+// GLOBAL: CARMA2_SW 0x0068e4f0
+tTWTVFS gTwtPeds;
 
 // GLOBAL: CARMA2_HW 0x007447a8
 int gDancing_peds;
@@ -205,7 +210,19 @@ FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName) {
     return DRfopen(path, "rt");
 }
 
-// BonerOpenPersonality
+// FUNCTION: CARMA2_HW 0x004cbaa0
+// FUNCTION: CARMA2_SW 0x004c81a0
+FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, gApplication_path, gPedsFolder);
+    PathCat(path, path, "PEEPS");
+    PathCat(path, path, pName);
+    gTwtPeds = OpenPackFileAndSetTiffLoading(path);
+    PathCat(path, path, pName);
+    strcat(path, ".TXT");
+    return DRfopen(path, "rt");
+}
 
 // FUNCTION: CARMA2_HW 0x004cbb50
 // FUNCTION: CARMA2_SW 0x004c8250
