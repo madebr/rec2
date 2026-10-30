@@ -1130,7 +1130,12 @@ void C2_HOOK_FASTCALL DisposeGameIfNecessary(void) {
     dr_dprintf("DisposeGameIfNecessary() - END");
 }
 
-// DisposeTrack
+// FUNCTION: CARMA2_HW 0x0044c220
+// FUNCTION: CARMA2_SW 0x0044bfd0
+void C2_HOOK_FASTCALL DisposeTrack(void) {
+
+    FreeTrack(&gProgram_state.track_spec);
+}
 
 // FUNCTION: CARMA2_HW 0x004910d0
 // FUNCTION: CARMA2_SW 0x0048e340
