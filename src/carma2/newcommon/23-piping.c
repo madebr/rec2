@@ -740,7 +740,14 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
         SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_to), (tU16)pTransform_type);
 }
 
-// PipeSingleOppoRenderage
+// FUNCTION: CARMA2_HW 0x004c9020
+// FUNCTION: CARMA2_SW 0x004c5750
+void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec* pOpponent_spec, int pEnable) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_oppo_renderage, enable, 0x2);
+
+    ARDoSingleVariedSession(ePipe_chunk_single_oppo_renderage, (uintptr_t)pOpponent_spec, 1,
+        SIZE_OFFSET_PIPING(tPipe_single_oppo_renderage, enable), pEnable);
+}
 
 // ApplyCrush
 
