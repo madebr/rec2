@@ -30,6 +30,10 @@
 // GLOBAL: CARMA2_SW 0x0069a46c
 const char* gPedsFolder;
 
+// GLOBAL: CARMA2_HW 0x006a0420
+// GLOBAL: CARMA2_SW 0x0069a478
+int gPed_count_limbed_actors;
+
 // GLOBAL: CARMA2_HW 0x0065d7d4
 // GLOBAL: CARMA2_SW 0x0065810c
 int gGoreLevel = 1;
@@ -492,7 +496,17 @@ int C2_HOOK_FASTCALL GetPedCount(void) {
 
 // GetPedPosition
 
-// TurnLimbsOnAndOff
+// FUNCTION: CARMA2_HW 0x004d34e0
+// FUNCTION: CARMA2_SW 0x004cfbd0
+void C2_HOOK_CDECL TurnLimbsOnAndOff(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPed_limbed_actors) != 30);
+
+    if (gPed_count_limbed_actors < (int)REC2_ASIZE(gPed_limbed_actors)) {
+        gPed_limbed_actors[gPed_count_limbed_actors] = pActor;
+        gPed_count_limbed_actors++;
+    }
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, pOn_screen, 0);
+}
 
 // SetModelCallBacks
 

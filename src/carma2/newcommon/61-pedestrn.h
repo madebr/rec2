@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gPed_count_limbed_actors;
+
 extern int gPed_retain_root_mode;
 extern float gPedestrian_speed_factor;
 extern int gSelected_ped;
@@ -241,7 +243,7 @@ extern int C2_HOOK_FASTCALL GetPedCount(void);
 
 // GetPedPosition
 
-// TurnLimbsOnAndOff
+extern void C2_HOOK_CDECL TurnLimbsOnAndOff(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
 // SetModelCallBacks
 

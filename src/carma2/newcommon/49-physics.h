@@ -20,6 +20,7 @@ extern tPedestrian* gPedestrian_array;
 extern void* gPhysics_buffer3_ptr;
 extern int gPHIL_mechanics_time_sync;
 extern int gPhysics_other_buffer_capacity;
+extern br_actor* gPed_limbed_actors[30];
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
 
