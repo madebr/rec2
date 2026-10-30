@@ -156,17 +156,13 @@ void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 p
 // FUNCTION: CARMA2_SW 0x004c70b0
 void C2_HOOK_FASTCALL PedUndoDismember(tPedestrian* pPed, int pBone_index, tS8 pValue) {
     tPed_form_actor_set* actor_set;
-    br_actor* actor;
 
     actor_set = &pPed->character->personality->form->actor_sets[pPed->character->field_0x4];
     pPed->character->field_0xc &= ~gPow2_array[pBone_index];
     pPed->character->field_0x10 &= ~gPow2_array[pBone_index];
     pPed->character->field_0x6 = pValue;
     SetCharacterBonePositions(pPed->character, 3, 0);
-    actor = actor_set->actors[pBone_index];
-    if (actor->parent != NULL) {
-        BrActorRemove(actor);
-    }
+    StopActorBeingRenderable(actor_set->actors[pBone_index]);
 }
 
 // ReadPedSpecs
