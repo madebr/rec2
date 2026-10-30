@@ -532,7 +532,9 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                 if (spec->type_info.abstract.materials[j] == NULL) {
                     FatalError(kFatalError_CannotFindSmashMaterial_S, s);
                 }
+#ifdef REC2_HW
                 AddFogificateMaterial(spec->type_info.abstract.materials[j]);
+#endif
             }
             continue;
         }
@@ -552,7 +554,9 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
             if (spec->type_info.shard.material == NULL) {
                 FatalError(kFatalError_CannotFindSmashMaterial_S, s);
             }
+#ifdef REC2_HW
             AddFogificateMaterial(spec->type_info.shard.material);
+#endif
             spec->type_info.shard.material->flags = BR_MATF_TWO_SIDED;
             BrMatrix23Identity(&spec->type_info.shard.material->map_transform);
             BrMaterialUpdate(spec->type_info.shard.material, BR_MATU_ALL);
