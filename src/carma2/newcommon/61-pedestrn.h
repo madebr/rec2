@@ -12,6 +12,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gPed_retain_root_mode;
 extern float gPedestrian_speed_factor;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
@@ -557,6 +558,6 @@ extern void C2_HOOK_FASTCALL EnableOverallMovement(void);
 
 // EnableRetainRootMode
 
-// DisableRetainRootMode
+extern void C2_HOOK_FASTCALL DisableRetainRootMode(void);
 
 #endif // GUARD_61_PEDESTRN_H

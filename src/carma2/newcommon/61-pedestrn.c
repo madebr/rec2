@@ -41,6 +41,10 @@ int gFlameThrowerOn = 1;
 // GLOBAL: CARMA2_HW 0x0065d7d0
 int gExplosives_on = 1;
 
+// GLOBAL: CARMA2_HW 0x00677234
+// GLOBAL: CARMA2_SW 0x006719a4
+int gPed_retain_root_mode = 0;
+
 // GLOBAL: CARMA2_HW 0x007447e0
 // GLOBAL: CARMA2_SW 0x0073b2a0
 float gPedestrian_speed_factor;
@@ -989,5 +993,9 @@ void C2_HOOK_FASTCALL EnableOverallMovement(void) {
 
 // EnableRetainRootMode
 
-// DisableRetainRootMode
+// FUNCTION: CARMA2_HW 0x0040c630
+// FUNCTION: CARMA2_SW 0x0040c620
+void C2_HOOK_FASTCALL DisableRetainRootMode(void) {
+    gPed_retain_root_mode = 0;
+}
 
