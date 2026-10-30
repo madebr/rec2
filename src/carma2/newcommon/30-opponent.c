@@ -16,6 +16,7 @@
 #include "60-phil.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
