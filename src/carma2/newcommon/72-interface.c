@@ -1134,7 +1134,7 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
 // FRONTEND_MainMenuHandler
 
 // FUNCTION: CARMA2_HW 0x0046b6a0
-// STUB: CARMA2_SW 0x0046b3c0
+// FUNCTION: CARMA2_SW 0x0046b3c0
 void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec* pFrontend) {
 
     strcpy(pFrontend->items[2].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].car_name);
