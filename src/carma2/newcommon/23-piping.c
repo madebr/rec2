@@ -371,7 +371,17 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
     }
 }
 
-// AddNonCarToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6ff0
+// FUNCTION: CARMA2_SW 0x004c3720
+void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, matrix, 0x30);
+
+    ARAddVariedDataToSession(ePipe_chunk_non_car, pIndex, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
+}
 
 // AddSmokeToPipingSession
 
