@@ -558,7 +558,32 @@ void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
 
 // InitRepairAnimations
 
-// SplondificatalizeIdentifier
+// FUNCTION: CARMA2_HW 0x004f3560
+// FUNCTION: CARMA2_SW 0x004ef1c0
+void C2_HOOK_FASTCALL SplondificatalizeIdentifier(br_actor* pActor, char **pIdentifier, int pIndex) {
+    char s[64];
+    char s2[64];
+    int len;
+
+    strcpy(s, *pIdentifier);
+    len = (int)strlen(s);
+    if (len < 4) {
+        sprintf(s, "Smash material %s has a name that is less than 4 characters long", *pIdentifier);
+        PDFatalError(s);
+    }
+    strcpy(s2, &s[len - 4]);
+    sprintf(&s[len - 4], "        ");
+    sprintf(&s[5], "%cx", '|');
+    s[6] = (char)(pIndex + 1);
+    strcat(s, s2);
+    s[11] = '\0';
+    if (strlen(*pIdentifier) < 12) {
+        BrResFree(*pIdentifier);
+        *pIdentifier = BrResStrDup(pActor, s);
+    } else {
+        strcpy(*pIdentifier, s);
+    }
+}
 
 // ReadSmashReplace
 
@@ -853,34 +878,16 @@ void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
     if (i < gCount_track_smashable_environment_specs) {
         spec = gTrack_smashable_environment_specs;
         do {
-            if (spec->trigger_type == kSmashableTrigger_Model && spec->trigger_object.model == pActor->model) {
-                char s[64];
-                char s2[64];
-                int len;
+            if (spec->trigger_type == kSmashableTrigger_Model
+                    && spec->trigger_object.model == pActor->model) {
 
-                strcpy(s, pActor->identifier);
-                len = (int)strlen(s);
-                if (len < 4) {
-                    sprintf(s, "Smash material %s has a name that is less than 4 characters long", pActor->identifier);
-                    PDFatalError(s);
-                }
-                strcpy(s2, &s[len - 4]);
-                sprintf(&s[len - 4], "        ");
-                sprintf(&s[5], "%cx", '|');
-                s[6] = (char)(i + 1);
-                strcat(s, s2);
-                s[11] = '\0';
-                if (strlen(pActor->identifier) < 12) {
-                    BrResFree(pActor->identifier);
-                    pActor->identifier = BrResStrDup(pActor, s);
-                } else {
-                    strcpy(pActor->identifier, s);
-                }
+                SplondificatalizeIdentifier(pActor, &pActor->identifier, i);
+
                 if ((gCurrent_race.race_spec->race_type >= kRaceType_Smash && (tU16)spec->mode_data.shrapnel.connotations.variable_changes.runtime_changes[0].field_0x2 == gCurrent_race.race_spec->options.smash_and_peds.var_smash_number)
                     || (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_2 && spec->mode_data.shrapnel.connotations.variable_changes.runtime_changes[0].field_0x2 == 1)) {
                     AddSmashTarget(pActor->model, pActor, -1);
+                    }
                 }
-            }
             i++;
             spec++;
         } while (i < gCount_track_smashable_environment_specs);
