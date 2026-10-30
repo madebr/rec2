@@ -2710,31 +2710,10 @@ int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend) {
 
 // NetSync_MenuHandler
 
-// NetSummary_Draw
-
-// SortScores
-
-// SortGameScores
-
-// NetworkSummarySetup
-
-// NetSummary_Infunc
-
-// FUNCTION: CARMA2_HW 0x00474400
-// FUNCTION: CARMA2_SW 0x00473960
-int C2_HOOK_FASTCALL NetSummary_MenuHandler(tFrontend_spec* pFrontend) {
-    int result;
+static void C2_HOOK_FASTCALL NetSummary_Draw(tFrontend_spec* pFrontend) {
     int i;
     int player_index;
 
-    if (gFrontend_netsummary_first_iteration) {
-        gFrontend_selected_item_index = 79;
-        gFrontend_netsummary_first_iteration = 0;
-    }
-    if (gProgram_state.prog_status == eProg_idling) {
-        return 1;
-    }
-    result = Generic_MenuHandler(pFrontend);
     for (i = 0; i < gNumber_of_net_players; i++) {
         player_index = gPlayer_lookup_netsummary[i];
         pFrontend->items[player_index].visible = 1;
@@ -2753,6 +2732,30 @@ int C2_HOOK_FASTCALL NetSummary_MenuHandler(tFrontend_spec* pFrontend) {
         pFrontend->items[48 + i].visible = 0;
         pFrontend->items[65 + i].visible = 0;
     }
+}
+
+// SortScores
+
+// SortGameScores
+
+// NetworkSummarySetup
+
+// NetSummary_Infunc
+
+// FUNCTION: CARMA2_HW 0x00474400
+// FUNCTION: CARMA2_SW 0x00473960
+int C2_HOOK_FASTCALL NetSummary_MenuHandler(tFrontend_spec* pFrontend) {
+    int result;
+
+    if (gFrontend_netsummary_first_iteration) {
+        gFrontend_selected_item_index = 79;
+        gFrontend_netsummary_first_iteration = 0;
+    }
+    if (gProgram_state.prog_status == eProg_idling) {
+        return 1;
+    }
+    result = Generic_MenuHandler(pFrontend);
+    NetSummary_Draw(pFrontend);
     return result;
 }
 

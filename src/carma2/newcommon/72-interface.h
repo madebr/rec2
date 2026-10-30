@@ -430,7 +430,7 @@ extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
 // NetSync_MenuHandler
 
-// NetSummary_Draw
+// static void C2_HOOK_FASTCALL NetSummary_Draw(tFrontend_spec* pFrontend);
 
 // SortScores
 
