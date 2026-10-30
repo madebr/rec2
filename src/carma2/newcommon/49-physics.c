@@ -43,6 +43,10 @@ void* gPhysics_buffer2_ptr;
 // GLOBAL: CARMA2_SW 0x0073b2d0
 int gImmortal_peds;
 
+// GLOBAL: CARMA2_HW 0x00744808
+// GLOBAL: CARMA2_SW 0x0073b2c8
+tPedestrian* gPedestrian_array;
+
 // GLOBAL: CARMA2_HW 0x0074a5e0
 // GLOBAL: CARMA2_SW 0x007410a0
 void* gPhysics_buffer3_ptr;
