@@ -503,6 +503,7 @@ void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
 #endif
 
 // STUB: CARMA2_HW 0x0049fdb0
+// STUB: CARMA2_SW 0x0049bf30
 tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
     NOT_IMPLEMENTED();
     return NULL;
