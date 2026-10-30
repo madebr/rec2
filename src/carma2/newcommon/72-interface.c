@@ -1242,7 +1242,22 @@ int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// CarClickNext
+// FUNCTION: CARMA2_HW 0x0046ba00
+// FUNCTION: CARMA2_SW 0x0046b740
+int C2_HOOK_FASTCALL CarClickNext(tFrontend_spec* pFrontend) {
+    if (gFrontend_scroll_time_left == 0) {
+        gFrontend_change_car_selected_car += 1;
+        if (gFrontend_change_car_selected_car >= gProgram_state.number_of_cars) {
+            gFrontend_change_car_selected_car = 0;
+        }
+        gFrontend_opponent_profile_pic_needs_update = 1;
+        gFrontend_car_image_outdated = 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
+        UpdateCarInfo(pFrontend);
+        gFrontend_scroll_time_left += gFrontend_scroll_time_increment;
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0046ba70
 int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend) {
