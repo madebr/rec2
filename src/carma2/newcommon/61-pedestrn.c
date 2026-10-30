@@ -665,7 +665,19 @@ void C2_HOOK_FASTCALL MutatePed(tPed_character_instance* pCharacter, void* pUnus
     }
 }
 
-// FlushAllPedCaches
+// FUNCTION: CARMA2_HW 0x004d6c70
+// FUNCTION: CARMA2_SW 0x004d3270
+void C2_HOOK_FASTCALL FlushAllPedCaches(void) {
+    int i;
+    tPedestrian* ped;
+
+    for (i = 0, ped = gPedestrian_array; i < gPed_count; i++, ped++) {
+        if (ped->field_0x0c != NULL && ped->field_0x0c->field_0xb0 != NULL) {
+            ped->field_0x0c->field_0xb0->field_0x14 = NULL;
+            ped->field_0x0c->field_0xb0 = NULL;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004d6d90
 void C2_HOOK_FASTCALL SavePedStuff(void) {
