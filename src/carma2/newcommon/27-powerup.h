@@ -355,7 +355,7 @@ extern void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* 
 
 // ReceivedPowerup
 
-// SendCurrentPowerups
+extern void C2_HOOK_FASTCALL SendCurrentPowerups(void);
 
 // LoseAllLocalPowerups
 

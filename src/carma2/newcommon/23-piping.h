@@ -186,7 +186,7 @@ extern void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSm
 
 // AddProxRayToPipingSession
 
-// AddFlapToPipingSession
+extern void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle);
 
 // AddModelMashToPipingSession
 
@@ -254,7 +254,7 @@ extern void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat);
 
 // PipeSinglePedFPChange
 
-// PipeSinglePedPos
+extern void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3* pPos, const br_vector3* pVelocity);
 
 // PipeSinglePedModelChange
 
@@ -272,7 +272,7 @@ extern void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, in
 
 extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, tU16 pFlags);
 
-// PipeSingleVanishedDismembered
+extern void C2_HOOK_FASTCALL PipeSingleVanishedDismembered(const tPedestrian* pPed, tU32 pOld_value, tU32 pNew_value);
 
 // PipeSingleDSModel
 

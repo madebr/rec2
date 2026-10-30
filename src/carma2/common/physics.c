@@ -963,12 +963,10 @@ void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape) {
 }
 
 // FUNCTION: CARMA2_HW 0x004da400
-tPhysics_object* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight) {
+tPhysics_object* C2_HOOK_FASTCALL MungeSphereObject(br_model* pModel, float pWeight) {
     tPhysics_object* collision_info;
     tPhysics_shape* shape;
     br_vector3 tv;
-
-    REC2_THISCALL_UNUSED(pArg2);
 
     C2_HOOK_BUG_ON(sizeof(tPhysics_object) != 1240);
 
@@ -1224,7 +1222,7 @@ int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_in
 }
 
 // FUNCTION: CARMA2_HW 0x004da290
-tPhysics_object* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefined4 pArg2, float pMass) {
+tPhysics_object* C2_HOOK_FASTCALL MungeBoxObject(br_model* pModel, float pMass) {
     tPhysics_object* box;
     br_vector3 tv1;
 
@@ -1337,7 +1335,7 @@ void C2_HOOK_FASTCALL InternalPrepareObject(tPhysics_object* pObject) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b7510
-void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, undefined4 pArg2, float pDelta_time) {
+void C2_HOOK_FASTCALL MoveJointedObject(tPhysics_object* pObject, float pDelta_time) {
 
     NOT_IMPLEMENTED();
 }
@@ -1481,7 +1479,7 @@ void C2_HOOK_FASTCALL MakeObjectDoSomething(tPhysics_object* pObject, tPhysics_o
         pObject->disable_move_rotate = 0;
         if (pObject->child != NULL || pObject->physics_joint1 != NULL || pObject->physics_joint2 != NULL) {
             if (pObject->field_0x218 == 0) {
-                MoveJointedObject(pObject REC2_THISCALL_EDX, 0.f);
+                MoveJointedObject(pObject, 0.f);
             }
             MakeObjectListDoSomething(pObject->child);
         }
@@ -1688,7 +1686,7 @@ void C2_HOOK_FASTCALL PHILInterpolateObjects(tPhysics_object* pObjects, tU32 pTi
 
         object_info = object->field_0x240;
         if (object_info != NULL && object_info->field_0x8 == 2) {
-            InterpolateSingleObject(object REC2_THISCALL_EDX, -dt);
+            InterpolateSingleObject(object, -dt);
         }
     }
 }
@@ -1820,7 +1818,7 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, br_ma
 }
 
 // FUNCTION: CARMA2_HW 0x004c2830
-void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* pObject, undefined4 arg2, float pDt) {
+void C2_HOOK_FASTCALL InterpolateSingleObject(tPhysics_object* pObject, float pDt) {
 
     NOT_IMPLEMENTED();
 }

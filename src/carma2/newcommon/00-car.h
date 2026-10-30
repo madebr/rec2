@@ -103,13 +103,13 @@ extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject)
 
 // MoveAndCollideNonCar
 
-extern void C2_HOOK_FAKE_THISCALL ControlCar2(tCar_spec* pCar, void* pUnused, br_scalar pDt);
+extern void C2_HOOK_FASTCALL ControlCar2(tCar_spec* pCar, br_scalar pDt);
 
-extern void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br_scalar pDt);
+extern void C2_HOOK_FASTCALL ControlCar3(tCar_spec* pCar, br_scalar pDt);
 
 // ControlCar4
 
-extern void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* pCar, void* pUnused, br_scalar pDt);
+extern void C2_HOOK_FASTCALL ControlCar5(tCar_spec* pCar, br_scalar pDt);
 
 // ControlCar1
 
