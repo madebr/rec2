@@ -5166,9 +5166,15 @@ typedef struct {
 } tRepair_animation;
 
 typedef enum {
+    eNet_message_chunk_type_5 = 0x5,
+    eNet_message_chunk_poll_car_details = 0x6,
     eNet_message_chunk_type_netsynch = 0xe,
+    eNet_message_chunk_type_gameplay = 0x1b,
+    eNet_message_chunk_type_oil_spill = 0x1f,
     eNet_message_chunk_type_car_crush = 0x20,
     eNet_message_chunk_type_toggle_doors = 0x2c,
+    eNet_message_chunk_type_mine_explosion = 0x31,
+    eNet_message_chunk_type_detach_bit = 0x33,
 } tNet_message_chunk_type;
 
 typedef struct {

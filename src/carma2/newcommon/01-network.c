@@ -449,10 +449,29 @@ tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2
     return the_message;
 }
 
-// STUB: CARMA2_HW 0x0049f680
-// STUB: CARMA2_SW 0x0049b800
+// FUNCTION: CARMA2_HW 0x0049f680
+// FUNCTION: CARMA2_SW 0x0049b800
 tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption) {
-    NOT_IMPLEMENTED();
+    tNet_message* the_message;
+    tU32 contents_size;
+    tU32 guarantee_size;
+    tU32 the_size;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents, 0x18);
+
+    contents_size = NetGetContentsSize(pNet_message_type, pOption);
+    guarantee_size = NetGetContentsSize(eNet_message_chunk_type_5, 0);
+    the_size = NetGetContentsSize(pNet_message_type, pOption) + offsetof(tNet_message, contents) + guarantee_size;
+    the_message = NetAllocateMessage(the_size);
+    if (the_message != NULL) {
+        the_message->contents.raw.header.size = (tU8)contents_size;
+        the_message->header.field_0x14 = 0xff;
+        the_message->header.field_0x16 = (tU16)the_size;
+        the_message->contents.raw.header.type = pNet_message_type;
+        ((tNet_message_guaranteed*)((tU8*)&the_message->contents + the_message->contents.raw.header.size))->header.type = 5;
+        ((tNet_message_guaranteed*)((tU8*)&the_message->contents + the_message->contents.raw.header.size))->header.size = (tU8)guarantee_size;
+    }
+    return the_message;
 }
 
 // NetGetToPlayerContentsSize
@@ -484,6 +503,7 @@ void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
 #endif
 
 // STUB: CARMA2_HW 0x0049fdb0
+// STUB: CARMA2_SW 0x0049bf30
 tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
     NOT_IMPLEMENTED();
     return NULL;
