@@ -10,6 +10,7 @@
 
 #include "00-car.h"
 #include "16-graphics1.h"
+#include "22-replay.h"
 #include "28-world3.h"
 #include "32-spark.h"
 #include "34-finteray.h"
@@ -19,6 +20,7 @@
 #include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
+#include "c2_math.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
 
@@ -43,6 +45,10 @@ void* gPhysics_buffer2_ptr;
 // GLOBAL: CARMA2_SW 0x0073b2d0
 int gImmortal_peds;
 
+// GLOBAL: CARMA2_HW 0x00744808
+// GLOBAL: CARMA2_SW 0x0073b2c8
+tPedestrian* gPedestrian_array;
+
 // GLOBAL: CARMA2_HW 0x0074a5e0
 // GLOBAL: CARMA2_SW 0x007410a0
 void* gPhysics_buffer3_ptr;
@@ -54,6 +60,10 @@ int gPHIL_mechanics_time_sync;
 // GLOBAL: CARMA2_HW 0x006940c8
 // GLOBAL: CARMA2_SW 0x0068e120
 int gPhysics_other_buffer_capacity;
+
+// GLOBAL: CARMA2_HW 0x00694280
+// GLOBAL: CARMA2_SW 0x0068e2d8
+br_actor* gPed_limbed_actors[30];
 
 // GLOBAL: CARMA2_HW 0x006940c4
 // GLOBAL: CARMA2_SW 0x0068e11c
@@ -225,7 +235,75 @@ void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, 
 
 // AddOldForces
 
-// TestShapeEdgeIntersection
+// FUNCTION: CARMA2_HW 0x00428dc0
+// FUNCTION: CARMA2_SW 0x00428e50
+int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, tPhysics_shape* pCollision_shape_1, tPhysics_shape* pCollision_shape_2) {
+    br_vector3 points[64];
+    br_vector3 transformed;
+    br_vector3 point;
+    br_bounds bounds;
+    br_scalar t;
+    tPolyhedron_edge_indexes* edges;
+    tPolyhedron_edge_indexes* edge;
+    int count_edges;
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gDefault_box_collision_wireframe_edges) != 12);
+
+    switch (pCollision_shape_1->common.type) {
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        for (i = 0; i < pCollision_shape_1->polyhedron.polyhedron.count_points; i++) {
+            BrMatrix34ApplyP(&transformed, &pCollision_shape_1->polyhedron.polyhedron.points[i], &pCollision_info_1->transform_matrix);
+            DrMatrix34ApplyLPInverse(&points[i], &transformed, &pCollision_info_2->transform_matrix);
+        }
+        edges = pCollision_shape_1->polyhedron.polyhedron.edges;
+        count_edges = pCollision_shape_1->polyhedron.polyhedron.count_edges;
+        break;
+    case kCollisionShapeType_Box:
+    case kCollisionShapeType_Wireframe:
+    case kCollisionShapeType_Sphere:
+        for (i = 0; i < 8; i++) {
+            BrVector3Set(&points[i],
+                (i & 0x2) ? pCollision_shape_1->common.bb.min.v[0] : pCollision_shape_1->common.bb.max.v[0],
+                (i & 0x1) ? pCollision_shape_1->common.bb.min.v[1] : pCollision_shape_1->common.bb.max.v[1],
+                (i & 0x4) ? pCollision_shape_1->common.bb.min.v[2] : pCollision_shape_1->common.bb.max.v[2]);
+            BrMatrix34ApplyP(&transformed, &points[i], &pCollision_info_1->transform_matrix);
+            DrMatrix34ApplyLPInverse(&points[i], &transformed, &pCollision_info_2->transform_matrix);
+        }
+        edges = gDefault_box_collision_wireframe_edges;
+        count_edges = REC2_ASIZE(gDefault_box_collision_wireframe_edges);
+        break;
+    }
+    switch (pCollision_shape_2->common.type) {
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        for (i = 0, edge = edges; i < count_edges; i++, edge++) {
+            if (LinePolyColl(&points[edge->index1], &points[edge->index2], &pCollision_shape_2->polyhedron.polyhedron, &point, 0.005f, &t)) {
+                return 1;
+            }
+        }
+        break;
+    case kCollisionShapeType_Box:
+    case kCollisionShapeType_Wireframe:
+    case kCollisionShapeType_Sphere:
+        BrVector3Set(&bounds.min,
+            pCollision_shape_2->common.bb.min.v[0] - 0.005f,
+            pCollision_shape_2->common.bb.min.v[1] - 0.005f,
+            pCollision_shape_2->common.bb.min.v[2] - 0.005f);
+        BrVector3Set(&bounds.max,
+            pCollision_shape_2->common.bb.max.v[0] + 0.005f,
+            pCollision_shape_2->common.bb.max.v[1] + 0.005f,
+            pCollision_shape_2->common.bb.max.v[2] + 0.005f);
+        for (i = 0, edge = edges; i < count_edges; i++, edge++) {
+            if (LineBoxColl(&points[edge->index1], &points[edge->index2], &bounds, &point, &t)) {
+                return 1;
+            }
+        }
+        break;
+    }
+    return 0;
+}
 
 // TestObjectOverlap
 
@@ -637,19 +715,97 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
 
 // RQSingleExpand
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
+// FUNCTION: CARMA2_HW 0x004c5830
+// FUNCTION: CARMA2_SW 0x004c1f60
+int C2_HOOK_FASTCALL RQDcmpV(br_scalar* pMatrix, int pDim, br_scalar* pQ) {
+    int i;
+    int j;
+    int k;
+    int singular;
+    br_scalar scale;
+    br_scalar sum;
+    br_scalar norm;
+    br_scalar divisor;
+    br_scalar matrix_sum;
+    br_scalar orthogonal_sum;
+    br_scalar tau;
+    br_scalar tau2;
+    br_scalar* row;
 
-// STUB: CARMA2_HW 0x004c5830
-// STUB: CARMA2_SW 0x004c1f60
-int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal) {
-    NOT_IMPLEMENTED();
+    /* Using householder transformations, apply RQ decomposition on pMatrix:
+     * - pMatrix is in-place converted into a lower-triangular matrix
+     * - pQ is a orthonormal matrix */
+
+    singular = 0;
+
+    /* pQ starts as a identity matrix */
+    for (i = 0; i < pDim; i++) {
+        for (j = 0; j < pDim; j++) {
+            pQ[i * pDim + j] = 0.0f;
+        }
+        pQ[i * pDim + i] = 1.0f;
+    }
+
+    for (i = 0; i < pDim; i++) {
+        // Rotate i-th upper-diagonal row onto base vector
+
+        row = &pMatrix[i * pDim];
+        scale = 0.0f;
+        for (j = i; j < pDim; j++) {
+            scale = (br_scalar)MAX(scale, fabs(row[j]));
+        }
+        if (scale == 0.0) {
+            singular = 1;
+            continue;
+        }
+        // Only normalize the upper-vector that must be rotated onto the base vector
+        // This is done for numerical stability reasons.
+        for (j = i; j < pDim; j++) {
+            row[j] /= scale;
+        }
+        // Calculate norm of the upper-diagonal row
+        sum = 0.0f;
+        for (j = i; j < pDim; j++) {
+            sum += row[j] * row[j];
+        }
+        // Apply Householder reflection on pQ and the row+matrix
+        norm = (br_scalar)(row[i] > 0.0 ? fabs(sqrt(sum)) : -fabs(sqrt(sum)));
+        divisor = norm * (norm + row[i]);
+        row[i] += norm;
+        for (j = 0; j <= i; j++) {
+            sum = 0.0f;
+            for (k = i; k < pDim; k++) {
+                sum += row[k] * pQ[k * pDim + j];
+            }
+            tau = sum / divisor;
+            for (k = i; k < pDim; k++) {
+                pQ[k * pDim + j] -= tau * row[k];
+            }
+        }
+        for (j = i + 1; j < pDim; j++) {
+            matrix_sum = 0.0f;
+            for (k = i; k < pDim; k++) {
+                matrix_sum += pMatrix[j * pDim + k] * row[k];
+            }
+            tau2 = matrix_sum / divisor;
+            orthogonal_sum = 0.0f;
+            for (k = i; k < pDim; k++) {
+                orthogonal_sum += pQ[k * pDim + j] * pMatrix[i * pDim + k];
+            }
+            tau = orthogonal_sum / divisor;
+            for (k = i; k < pDim; k++) {
+                pMatrix[j * pDim + k] -= tau2 * row[k];
+                pQ[k * pDim + j] -= tau * row[k];
+            }
+        }
+        row[i] = -(norm * scale);
+        // Zero upper-dialog values so what remains is lower-diagonal
+        for (j = i + 1; j < pDim; j++) {
+            row[j] = 0.0f;
+        }
+    }
+    return singular;
 }
-
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
 
 // MakeIdentity
 
@@ -688,7 +844,7 @@ void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const 
      * - R is a lower-diagonal matrix
      * - Q is an orthonormal matrix
      * with:
-     * - all matrices (A, Q, R) are of size N x N (with N = pDim)
+     * - all matrices (A, Q, R) are square of size N x N (with N = pDim)
      * - vectors x, t are of size N x 1
      * A, Q, R matrices are of size [pDim x pDim]
      */

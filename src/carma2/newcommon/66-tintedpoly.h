@@ -14,6 +14,7 @@
 
 extern tTintedPoly gTintedPolys[10];
 extern br_actor* gTintedPolyCamera;
+extern const char* gForm_non_humanoid_names[1];
 
 extern void C2_HOOK_FASTCALL InitTintedPolyStuff(void);
 

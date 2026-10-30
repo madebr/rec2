@@ -9,9 +9,12 @@
 #include "04-netgame.h"
 
 #include "01-network.h"
+#include "07-structur.h"
+#include "27-powerup.h"
 #include "30-opponent.h"
 #include "41-utility.h"
 #include "63-loading3.h"
+#include "72-interface.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "platform.h"
@@ -97,10 +100,60 @@ void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 
 // ReceivedNonCar
 
-// STUB: CARMA2_HW 0x00498e70
-// STUB: CARMA2_SW 0x00495aa0
+// FUNCTION: CARMA2_HW 0x00498e70
+// FUNCTION: CARMA2_SW 0x00495aa0
 void C2_HOOK_FASTCALL SignalToStartRace(void) {
-    NOT_IMPLEMENTED();
+    tNet_message* the_message;
+    int inactive;
+    int i;
+    int j;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_start_race, car_count, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_start_race, racing, 0x3);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_start_race, next_race, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_start_race, car_list, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tNet_message_chunk_start_race, car_list, 0xf0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_start_race_car, next_car_index, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_start_race_car, matrix, 0x2);
+    C2_HOOK_BUG_ON(sizeof(tNet_start_race_car) != 0x14);
+
+    gCurrent_net_game->no_races_yet = 0;
+    gSynch_race_start = 0;
+    gINT_0074b780 = 1;
+    the_message = NetBuildGuaranteedMessage(eNet_message_chunk_type_start_race, 0);
+    the_message->contents.start_race.racing = (tU8)gProgram_state.racing;
+    the_message->contents.start_race.car_count = (tU8)gCurrent_race.number_of_racers;
+    for (i = 0; i < gCurrent_race.number_of_racers; i++) {
+        CompressMatrix34(&the_message->contents.start_race.car_list[i].matrix, &inactive,
+            &gCurrent_race.opponent_list[i].car_spec->car_master_actor->t.t.mat);
+        for (j = 0; j < gNumber_of_net_players; j++) {
+            if (gCurrent_race.opponent_list[i].car_spec == gNet_players[j].car) {
+                the_message->contents.start_race.car_list[i].index = (tU8)j;
+                if (inactive) {
+                    the_message->contents.start_race.car_list[i].index |= 0x80;
+                }
+                break;
+            }
+        }
+        if (gCurrent_net_game->options.car_choice == eNet_car_all
+                || gCurrent_net_game->options.car_choice == eNet_car_novelty) {
+            if (gNet_players[the_message->contents.start_race.car_list[i].index & 0x7f].next_car_index < 0) {
+                gNet_players[the_message->contents.start_race.car_list[i].index & 0x7f].next_car_index = PickARandomCar();
+                gCar_details[gNet_players[the_message->contents.start_race.car_list[i].index & 0x7f].next_car_index].ownership = eCar_owner_someone;
+            }
+            the_message->contents.start_race.car_list[i].next_car_index = (tU8)gNet_players[the_message->contents.start_race.car_list[i].index & 0x7f].next_car_index;
+        }
+    }
+    if (gPending_race < 0) {
+        gPending_race = PickNetRace(gProgram_state.current_race_index,
+            gCurrent_net_game->options.race_sequence_type);
+    }
+    the_message->contents.start_race.next_race = (tU8)gPending_race;
+    NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, the_message, NULL);
+    if (gProgram_state.racing) {
+        SendCurrentPowerups();
+    }
 }
 
 // SignalToRepositionCar
