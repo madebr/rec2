@@ -101,7 +101,7 @@ extern FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName);
 
 extern FILE* C2_HOOK_FASTCALL BonerOpenMoves(const char* pName);
 
-// BonerOpenRemaps
+extern FILE* C2_HOOK_FASTCALL BonerOpenRemaps(const char* pFile_name);
 
 // BonerReadPersonalityModels
 
