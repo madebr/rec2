@@ -121,7 +121,12 @@ void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 p
 
 // ReadPedSpecs
 
-// GetPedPos
+// FUNCTION: CARMA2_HW 0x004cadb0
+// FUNCTION: CARMA2_SW 0x004c74e0
+br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed) {
+
+    return (br_vector3*)GetCharacterMatrixPtr(pPed->character)->m[3];
+}
 
 // SetUpGibSlicks
 
@@ -713,7 +718,19 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // BuildCharacterInstance
 
-// GetCharacterMatrixPtr
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00407aa0
+// STUB: CARMA2_SW 0x00407a90
+br_matrix34* C2_HOOK_FASTCALL GetCharacterMatrixPtr(tPed_character_instance* pCharacter) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // GetBoneMatrixPtr
 
