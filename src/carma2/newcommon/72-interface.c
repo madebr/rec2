@@ -1151,6 +1151,10 @@ void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec* pFrontend) {
         MenuSetCarImage(gProgram_state.cars_available[gFrontend_change_car_selected_car], 6);
         gFrontend_opponent_profile_pic_needs_update = 0;
         gFrontend_car_image_outdated = 0;
+#ifdef REC2_SW
+        gFrontend_brender_items[12].material->flags = BR_MATF_ALWAYS_VISIBLE;
+        BrMaterialUpdate(gFrontend_brender_items[0xc].material, BR_MATU_ALL);
+#endif
     }
 }
 
