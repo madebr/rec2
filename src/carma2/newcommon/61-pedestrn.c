@@ -11,6 +11,7 @@
 #include "08-loading1.h"
 #include "10-loading2.h"
 #include "21-mainloop.h"
+#include "22-replay.h"
 #include "27-powerup.h"
 #include "41-utility.h"
 #include "63-loading3.h"
@@ -92,7 +93,19 @@ int gDancing_peds;
 
 // PedUndoStatus
 
-// SetCharacterPhysicsLevelAR
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004cc860
+// STUB: CARMA2_SW 0x004c8f60
+void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacter, tU32 pLevel) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // PedApplyPedPhysics
 
@@ -120,7 +133,12 @@ void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 p
 
 // ReadPedSpecs
 
-// GetPedPos
+// FUNCTION: CARMA2_HW 0x004cadb0
+// FUNCTION: CARMA2_SW 0x004c74e0
+br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed) {
+
+    return (br_vector3*)GetCharacterMatrixPtr(pPed->character)->m[3];
+}
 
 // SetUpGibSlicks
 
@@ -181,7 +199,15 @@ FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName) {
 
 // BonerReadPersonalityModels
 
-// MakeActorRenderable
+// FUNCTION: CARMA2_HW 0x004cbc70
+// FUNCTION: CARMA2_SW 0x004c8370
+void C2_HOOK_FASTCALL MakeActorRenderable(br_actor* pActor, int pBone_index, tPed_character_instance* pCharacter) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPow2_array) != 32);
+
+    if (pActor->parent == NULL && (pBone_index == 0 || (pCharacter->field_0xc & gPow2_array[pBone_index]) != 0)) {
+        BrActorAdd(gNon_track_actor, pActor);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004cbca0
 // FUNCTION: CARMA2_SW 0x004c83a0
@@ -336,9 +362,25 @@ void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType)
 
 // StraightenOutPed
 
-// ActiveHalted
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// CBActiveHalted
+// STUB: CARMA2_HW 0x004d1030
+// STUB: CARMA2_SW 0x004cd730
+int C2_HOOK_FASTCALL ActiveHalted(tPed_character_instance* pCharacter, tPhysics_object* pObject, tFace_ref* pFace) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004d1020
+// FUNCTION: CARMA2_SW 0x004cd720
+int C2_HOOK_FASTCALL CBActiveHalted(tPed_character_instance* pCharacter, tPhysics_object* pObject) {
+    return ActiveHalted(pCharacter, pObject, NULL);
+}
 
 // RecordPedSlide
 
@@ -384,7 +426,12 @@ void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastT
 
 // SmoothTurnPedestrian
 
-// SetThisPedPhysicing
+// FUNCTION: CARMA2_HW 0x004d35e0
+// FUNCTION: CARMA2_SW 0x004cfcd0
+void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed) {
+    pPed->field_0x0c->field_0x6c = 0;
+    SetCharacterPhysicsLevelAR(pPed->character, 5);
+}
 
 // InitProcessData
 
@@ -688,7 +735,19 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // BuildCharacterInstance
 
-// GetCharacterMatrixPtr
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00407aa0
+// STUB: CARMA2_SW 0x00407a90
+br_matrix34* C2_HOOK_FASTCALL GetCharacterMatrixPtr(tPed_character_instance* pCharacter) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // GetBoneMatrixPtr
 
@@ -823,7 +882,15 @@ int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, 
 
 // SetCharacterBoneModelP
 
-// SetCharacterAllBonesModel
+// FUNCTION: CARMA2_HW 0x0040b530
+// FUNCTION: CARMA2_SW 0x0040b520
+void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pModel_index, int pModel_set) {
+    int i;
+
+    for (i = 0; i < pCharacter->personality->form->count_bones; i++) {
+        SetCharacterBoneModel(pCharacter, i, pModel_index, pModel_set);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0040b570
 // FUNCTION: CARMA2_SW 0x0040b560

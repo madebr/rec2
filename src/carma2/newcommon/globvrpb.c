@@ -48,6 +48,10 @@ int gINT_0074b780;
 // GLOBAL: CARMA2_SW 0x00741e3c
 int gReceived_car_details;
 
+// GLOBAL: CARMA2_HW 0x0074c6b4
+// GLOBAL: CARMA2_SW 0x00742d74
+int gFrontend_net_initialized;
+
 // GLOBAL: CARMA2_HW 0x0074c6b8
 // GLOBAL: CARMA2_SW 0x00742d78
 int gStart_race_sent;

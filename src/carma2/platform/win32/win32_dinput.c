@@ -140,12 +140,15 @@ int gJoy2_valid;
 JOYINFOEX gJoy2_info;
 
 // GLOBAL: CARMA2_HW 0x00595f98
+// GLOBAL: CARMA2_SW 0x00590ef8
 int gINT_00595f98 = 1;
 
 // GLOBAL: CARMA2_HW 0x00595f9c
+// GLOBAL: CARMA2_SW 0x00590efc
 int gINT_00595f9c = 1;
 
 // GLOBAL: CARMA2_HW 0x00595f8c
+// GLOBAL: CARMA2_SW 0x00590eec
 int gLast_joystick_index = -1;
 
 // GLOBAL: CARMA2_HW 0x006ad094
@@ -409,6 +412,7 @@ void C2_HOOK_FASTCALL AttachJoystickButtonInfos(size_t pSize, tWin32_void_voidpt
 }
 
 // FUNCTION: CARMA2_HW 0x004599d0
+// FUNCTION: CARMA2_SW 0x00459760
 const char* C2_HOOK_FASTCALL GetCurrentJoystickName(void) {
     return gDirectInputJoystickInfos[gJoystick_index].productName;
 }
@@ -428,6 +432,7 @@ tButtonJoystickInfo* C2_HOOK_FASTCALL PDGetCurrentJoystickData(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00459fd0
+// FUNCTION: CARMA2_SW 0x00459d60
 int C2_HOOK_FASTCALL PDIsJoystickAvailable(int pIndex) {
     return gDirectInputJoystickDevices[pIndex] != NULL;
 }
@@ -1471,6 +1476,7 @@ void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045a070
+// FUNCTION: CARMA2_SW 0x00459e00
 int C2_HOOK_FASTCALL PDEnableJoysticks(void) {
     int count;
 
@@ -1486,6 +1492,7 @@ int C2_HOOK_FASTCALL PDEnableJoysticks(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0045a0c0
+// FUNCTION: CARMA2_SW 0x00459e50
 int C2_HOOK_FASTCALL PDDisableJoysticks(void) {
 
     gLast_joystick_index = gJoystick_index;

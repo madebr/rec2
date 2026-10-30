@@ -17,6 +17,7 @@
 #include "52-errors.h"
 #include "globvars.h"
 #include "18-graphics2.h"
+#include "18b-graphics2.h"
 #include "02-init.h"
 #include "42-input.h"
 #include "40-main.h"

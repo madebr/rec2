@@ -98,6 +98,7 @@ br_colour* gTinted_original_palette_colours;
 
 
 // FUNCTION: CARMA2_HW 0x004d7040
+// FUNCTION: CARMA2_SW 0x004d3640
 void C2_HOOK_FASTCALL InitTintedPolyStuff(void) {
     br_camera *camera;
 
@@ -739,6 +740,7 @@ void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x004d8630
+// FUNCTION: CARMA2_SW 0x004d4b60
 void C2_HOOK_FASTCALL UpdatePolyVertexColours(int pIndex) {
     int i;
     int new_color;
@@ -912,6 +914,7 @@ void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int wi
 }
 
 // FUNCTION: CARMA2_HW 0x004d8cf0
+// FUNCTION: CARMA2_SW 0x004d5220
 int C2_HOOK_FASTCALL TintedPolyIsOn(int pIndex) {
 
   return gTintedPolys[pIndex].visible;

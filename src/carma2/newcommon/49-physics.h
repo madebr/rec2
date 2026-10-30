@@ -374,7 +374,7 @@ extern void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint);
 
 extern void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds);
 
-// FillInShape
+extern void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape);
 
 // UpdateCollisionObject
 

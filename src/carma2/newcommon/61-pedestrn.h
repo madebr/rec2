@@ -49,7 +49,7 @@ extern int gDancing_peds;
 
 // PedUndoStatus
 
-// SetCharacterPhysicsLevelAR
+extern void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacter, tU32 pLevel);
 
 // PedApplyPedPhysics
 
@@ -73,7 +73,7 @@ extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian,
 
 // ReadPedSpecs
 
-// GetPedPos
+extern br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed);
 
 // SetUpGibSlicks
 
@@ -105,7 +105,7 @@ extern FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName);
 
 // BonerReadPersonalityModels
 
-// MakeActorRenderable
+extern void C2_HOOK_FASTCALL MakeActorRenderable(br_actor* pActor, int pBone_index, tPed_character_instance* pCharacter);
 
 extern void C2_HOOK_FASTCALL StopActorBeingRenderable(br_actor* pActor);
 
@@ -223,9 +223,9 @@ extern void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4
 
 // StraightenOutPed
 
-// ActiveHalted
+extern int C2_HOOK_FASTCALL ActiveHalted(tPed_character_instance* pCharacter, tPhysics_object* pObject, tFace_ref* pFace);
 
-// CBActiveHalted
+extern int C2_HOOK_FASTCALL CBActiveHalted(tPed_character_instance* pCharacter, tPhysics_object* pObject);
 
 // RecordPedSlide
 
@@ -263,7 +263,7 @@ extern void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyT
 
 // SmoothTurnPedestrian
 
-// SetThisPedPhysicing
+extern void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed);
 
 // InitProcessData
 
@@ -441,7 +441,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // BuildCharacterInstance
 
-// GetCharacterMatrixPtr
+extern br_matrix34* C2_HOOK_FASTCALL GetCharacterMatrixPtr(tPed_character_instance* pCharacter);
 
 // GetBoneMatrixPtr
 
@@ -519,7 +519,7 @@ extern int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pChar
 
 // SetCharacterBoneModelP
 
-// SetCharacterAllBonesModel
+extern void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pModel_index, int pModel_set);
 
 extern br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
 

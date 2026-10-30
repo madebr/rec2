@@ -10,6 +10,9 @@
 #define GUARD_03_RACESTRT_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern tU32 gLast_host_query;
 
 extern int C2_HOOK_CDECL SortGridFunction(const void* pFirst_one, const void* pSecond_one);
 
