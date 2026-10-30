@@ -342,7 +342,7 @@ extern void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pColl
 
 // MutatePed
 
-// FlushAllPedCaches
+extern void C2_HOOK_FASTCALL FlushAllPedCaches(void);
 
 extern void C2_HOOK_FASTCALL SavePedStuff(void);
 
