@@ -176,6 +176,7 @@ int* gCredits_fonts;
 int gCredits_total_height;
 
 // GLOBAL: CARMA2_HW 0x006886d0
+// GLOBAL: CARMA2_SW 0x00682c30
 double gFrontend_throb_factor;
 
 // GLOBAL: CARMA2_HW 0x00763940
@@ -203,9 +204,11 @@ int gFrontend_scroll_time_increment;
 int gFrontend_count_saved_games;
 
 // GLOBAL: CARMA2_HW 0x00763894
+// GLOBAL: CARMA2_SW 0x00759df4
 tU32 gFrontend_scroll_last_update;
 
 // GLOBAL: CARMA2_HW 0x00688b04
+// GLOBAL: CARMA2_SW 0x00683064
 int gFrontend_mouse_down;
 
 // GLOBAL: CARMA2_HW 0x0068875c
@@ -217,6 +220,7 @@ tU32 gFrontend_time_last_input;
 int gNet_join_host_result;  // FIXME: use union instead?
 
 // GLOBAL: CARMA2_HW 0x00688b08
+// GLOBAL: CARMA2_SW 0x00683068
 int gPrev_frontend_mouse_down;
 
 // GLOBAL: CARMA2_HW 0x006883a8
@@ -1513,6 +1517,7 @@ int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046cec0
+// FUNCTION: CARMA2_SW 0x0046cb80
 void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void) {
     int time;
 
@@ -2162,11 +2167,26 @@ void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, i
         y = 0 + 4 * (i / 10);
 
         if (i >= pPotential) {
+#ifdef REC2_HW
             c = gFrontend_APO_Colour_2;
+#endif
+#ifdef REC2_SW
+            c = 160;
+#endif
         } else if (i >= pCurrent) {
+#ifdef REC2_HW
             c = gFrontend_APO_Colour_3;
+#endif
+#ifdef REC2_SW
+            c = 162;
+#endif
         } else {
+#ifdef REC2_HW
             c = gFrontend_APO_Colour_1;
+#endif
+#ifdef REC2_SW
+            c = 21;
+#endif
         }
 
         BrPixelmapRectangleFill(map, x, y + 3 * 4 * pAPO, 3, 3, c);
@@ -2183,6 +2203,7 @@ void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
 }
 
 // FUNCTION: CARMA2_HW 0x00471ba0
+// FUNCTION: CARMA2_SW 0x00471100
 int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, int pY) {
     tFrontend_slider* slider;
     br_vertex* vertices;
