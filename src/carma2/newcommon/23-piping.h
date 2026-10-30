@@ -254,7 +254,7 @@ extern void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat);
 
 // PipeSinglePedFPChange
 
-// PipeSinglePedPos
+extern void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3* pPos, const br_vector3* pVelocity);
 
 // PipeSinglePedModelChange
 
