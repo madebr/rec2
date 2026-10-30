@@ -32,7 +32,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // ViewNetPlayer
 
-// ViewOpponent
+extern void C2_HOOK_FASTCALL ViewOpponent(void);
 
 extern void C2_HOOK_FASTCALL ReallyViewOpponent(void);
 
