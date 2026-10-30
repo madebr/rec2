@@ -311,7 +311,7 @@ extern tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void);
 
 extern void C2_HOOK_FASTCALL NextPedCam(void);
 
-// PrevPedCam
+extern void C2_HOOK_FASTCALL PrevPedCam(void);
 
 // FindNearestPed
 
