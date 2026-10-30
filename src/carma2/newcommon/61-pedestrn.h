@@ -70,7 +70,7 @@ extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian,
 
 // PedApplyDismember
 
-// PedUndoDismember
+extern void C2_HOOK_FASTCALL PedUndoDismember(tPedestrian* pPed, int pBone_index, tS8 pValue);
 
 // ReadPedSpecs
 
@@ -448,7 +448,7 @@ extern br_matrix34* C2_HOOK_FASTCALL GetCharacterMatrixPtr(tPed_character_instan
 
 extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
 
-// SetCharacterBonePositions
+extern void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, int pArg2, int pArg3);
 
 // MakeCharacterRenderable2
 
