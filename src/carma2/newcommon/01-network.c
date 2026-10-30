@@ -522,43 +522,8 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContents(tNet_message_type pT
 // FUNCTION: CARMA2_HW 0x0049f860
 // FUNCTION: CARMA2_SW 0x0049b9e0
 tNet_message_chunk* C2_HOOK_FASTCALL NetGetToHostContents(tNet_message_type pType, tU32 pSize_decider) {
-    tPlayer_ID host_id;
-    tNet_game_player_info* player;
-    tNet_message* message;
-    tNet_message_chunk* contents;
-    tU32 content_size;
-    int i;
 
-    C2_HOOK_BUG_ON(sizeof(tNet_message_header) != 0x18);
-    C2_HOOK_BUG_ON(sizeof(tMax_message) - sizeof(void*) != 0x200);
-
-    host_id = gNet_players[0].ID;
-    content_size = NetGetContentsSize(pType, pSize_decider);
-    for (i = 0; i < gNumber_of_net_players; i++) {
-        if (gNet_players[i].ID == host_id) {
-            player = &gNet_players[i];
-            if (player == &gNet_players[gThis_net_player_index]) {
-                PDFatalError("Trying to send network message to self");
-            }
-            message = player->field_0xcc;
-            if (message != NULL && (tS32)(message->header.field_0x16 + content_size) > (tS32)(sizeof(tMax_message) - sizeof(void*))) {
-                NetReallySendMessageToPlayer(gCurrent_net_game, message, player->ID);
-                player->field_0xcc = message = NULL;
-            }
-            if (message == NULL) {
-                player->field_0xcc = message = NetAllocateMessage(sizeof(tMax_message) - sizeof(void*));
-                message->header.field_0x16 = (tU16)sizeof(tNet_message_header);
-                message->header.field_0x14 = 0;
-            }
-            contents = (tNet_message_chunk*)((tU8*)message + message->header.field_0x16);
-            message->header.field_0x16 += (tU16)content_size;
-            message->header.field_0x14++;
-            contents->raw.header.type = pType;
-            contents->raw.header.size = (tU8)content_size;
-            return contents;
-        }
-    }
-    return NULL;
+    return NetGetToPlayerContents(pType, pSize_decider, gNet_players[0].ID);
 }
 
 // NetStartBroadcastContents
