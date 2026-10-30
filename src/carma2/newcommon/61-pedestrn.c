@@ -34,6 +34,10 @@ const char* gPedsFolder;
 // GLOBAL: CARMA2_SW 0x0069a478
 int gPed_count_limbed_actors;
 
+// GLOBAL: CARMA2_HW 0x006a0424
+// GLOBAL: CARMA2_SW 0x0069a47c
+br_actor* gLimbs_actor;
+
 // GLOBAL: CARMA2_HW 0x0065d7d4
 // GLOBAL: CARMA2_SW 0x0065810c
 int gGoreLevel = 1;
@@ -553,7 +557,35 @@ void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed) {
 
 // SetRandomOmega
 
-// RenderLimbs
+// FUNCTION: CARMA2_HW 0x004d3610
+// FUNCTION: CARMA2_SW 0x004cfd00
+void C2_HOOK_FASTCALL RenderLimbs(void) {
+    int i;
+    int j;
+
+    if (gLimbs_actor == NULL) {
+        gLimbs_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        gLimbs_actor->identifier = "Limbs_actor";
+        BrActorAdd(gUniverse_actor, gLimbs_actor);
+    }
+    for (i = 0; i < gPed_count_limbed_actors; i++) {
+        br_actor* a = gPed_limbed_actors[i];
+        tPed_character_instance* ped = a->type_data;
+        tPed_form* form = ped->personality->form;
+        br_actor** bone_actors = form->actor_sets[ped->field_0x4].actors;
+
+        for (j = 1, bone_actors++; j < form->count_bones; j++, bone_actors++) {
+            if (!(gPow2_array[j] & ped->field_0xc)) {
+                BrActorAdd(gLimbs_actor, *bone_actors);
+            }
+        }
+    }
+    BrZbsSceneRenderAdd(gLimbs_actor);
+    while (gLimbs_actor->children != NULL) {
+        BrActorRemove(gLimbs_actor->children);
+    }
+    gPed_count_limbed_actors = 0;
+}
 
 // MungePedestrians
 
