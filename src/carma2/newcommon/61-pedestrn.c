@@ -290,9 +290,17 @@ void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, axis_when_lying_down_A, 0x4e);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, axis_when_lying_down_B, 0x4f);
 
+    /* Other stuff */
+
     pPed_form->non_humanoid = GetALineAndInterpretCommand(pF, gForm_non_humanoid_names, REC2_ASIZE(gForm_non_humanoid_names)) == 0;
+
+    /* Index of head bone */
     pPed_form->index_head_bone = (tS8)GetAnInt(pF);
+
+    /* Direction axis when lying down (A) */
     pPed_form->axis_when_lying_down_A = (tS8)GetAnInt(pF);
+
+    /* Direction axis when lying down (B) */
     pPed_form->axis_when_lying_down_B = (tS8)GetAnInt(pF);
 }
 
