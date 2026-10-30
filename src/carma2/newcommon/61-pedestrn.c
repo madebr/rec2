@@ -60,6 +60,14 @@ int gExploding_pedestrians;
 // GLOBAL: CARMA2_HW 0x0069b9f0
 tNapalm_bolt gNapalm_bolts[5];
 
+// GLOBAL: CARMA2_HW 0x0069412c
+// GLOBAL: CARMA2_SW 0x0068e184
+int gCount_changed_points;
+
+// GLOBAL: CARMA2_HW 0x0069bc68
+// GLOBAL: CARMA2_SW 0x00695cc0
+br_vector3 gChanged_points[10];
+
 // GLOBAL: CARMA2_HW 0x00694490
 // GLOBAL: CARMA2_SW 0x0068e4e8
 int gPed_nearness;
@@ -635,7 +643,12 @@ void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
     ConfigureAlienPedTexturePath();
 }
 
-// AddChangedPoint
+// FUNCTION: CARMA2_HW 0x004d6f90
+// FUNCTION: CARMA2_SW 0x004d3590
+void C2_HOOK_FASTCALL AddChangedPoint(br_vector3* pPoint) {
+    BrVector3Copy(&gChanged_points[gCount_changed_points], pPoint);
+    gCount_changed_points++;
+}
 
 // FUNCTION: CARMA2_HW 0x004d6fc0
 // FUNCTION: CARMA2_SW 0x004d35c0

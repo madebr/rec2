@@ -17,6 +17,8 @@ extern float gPedestrian_speed_factor;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
+extern int gCount_changed_points;
+extern br_vector3 gChanged_points[10];
 extern int gPed_nearness;
 extern int gDancing_peds;
 
@@ -360,7 +362,7 @@ extern void C2_HOOK_FASTCALL SetBloodPedFolderNames(void);
 
 extern void C2_HOOK_FASTCALL SetAlienPedFolderNames(void);
 
-// AddChangedPoint
+extern void C2_HOOK_FASTCALL AddChangedPoint(br_vector3* pPoint);
 
 extern int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void);
 
