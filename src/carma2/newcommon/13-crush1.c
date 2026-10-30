@@ -11,6 +11,7 @@
 #include "08-loading1.h"
 #include "09-funks.h"
 #include "23-piping.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
@@ -849,11 +850,42 @@ int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, b
     return 0;
 }
 
-// SendSemiDetachBit
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0042dab0
+// STUB: CARMA2_SW 0x0042db20
+void C2_HOOK_FASTCALL SendSemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, tNet_game_player_info* pPlayer) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SendDetachBit
 
-// SendAllSemiDetachedBits
+// FUNCTION: CARMA2_HW 0x0042da20
+// FUNCTION: CARMA2_SW 0x0042da90
+void C2_HOOK_FASTCALL SendAllSemiDetachedBits(tNet_game_player_info* pPlayer) {
+    int i;
+    int j;
+    tCar_spec* car;
+    tCar_crush_spec* crush_spec;
+
+    for (i = 0; i < gNum_active_cars; i++) {
+        car = gActive_car_list[i];
+        if (car != NULL && car->driver > eDriver_oppo - 1) {
+            crush_spec = car->car_crush_spec;
+            if (crush_spec != NULL) {
+                for (j = 0; j < crush_spec->field_0x270; j++) {
+                    SendSemiDetachBit(gActive_car_list[i], crush_spec->field_0x274[j].field_0x0, 0.f, pPlayer);
+                }
+            }
+        }
+    }
+}
 
 // AddNonCar
 
