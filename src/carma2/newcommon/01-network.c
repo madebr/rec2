@@ -782,7 +782,11 @@ int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDe
     return err;
 }
 
-// NetGuaranteedSendMessageToEverybody
+// STUB: CARMA2_HW 0x004a5bc0
+// STUB: CARMA2_SW 0x004a1d40
+int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004a5c80
 // FUNCTION: CARMA2_SW 0x004a1e00
