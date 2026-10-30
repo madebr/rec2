@@ -170,7 +170,7 @@ extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index);
 
-// MenuSetDriverImage
+extern void C2_HOOK_FASTCALL MenuSetDriverImage(int pOpponent_index, int pFrontend_index);
 
 // MainMenuInfunc
 
