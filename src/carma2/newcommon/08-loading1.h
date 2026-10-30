@@ -115,7 +115,7 @@ extern void C2_HOOK_FASTCALL DisposeRace(void);
 
 extern void C2_HOOK_FASTCALL DisposeGameIfNecessary(void);
 
-// DisposeTrack
+extern void C2_HOOK_FASTCALL DisposeTrack(void);
 
 extern int GetRegisterSourceLocation(char* pSource_location);
 
