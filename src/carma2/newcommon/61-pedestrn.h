@@ -556,7 +556,7 @@ extern void C2_HOOK_FASTCALL DisableOverallMovement(void);
 
 extern void C2_HOOK_FASTCALL EnableOverallMovement(void);
 
-// EnableRetainRootMode
+extern void C2_HOOK_FASTCALL EnableRetainRootMode(void);
 
 extern void C2_HOOK_FASTCALL DisableRetainRootMode(void);
 
