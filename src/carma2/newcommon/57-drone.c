@@ -282,7 +282,11 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
 
 // InitDrones
 
-// DisposeDronesRaceStuff
+// STUB: CARMA2_HW 0x0044fc10
+// STUB: CARMA2_SW 0x0044f9b0
+void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void) {
+    NOT_IMPLEMENTED();
+}
 
 // LoadPerRaceDroneStuff
 

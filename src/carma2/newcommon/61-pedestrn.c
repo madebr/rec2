@@ -15,6 +15,7 @@
 #include "27-powerup.h"
 #include "41-utility.h"
 #include "63-loading3.h"
+#include "66-tintedpoly.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "brender/brender.h"
@@ -66,6 +67,10 @@ int gPed_nearness;
 
 // GLOBAL: CARMA2_HW 0x007447a8
 int gDancing_peds;
+
+// GLOBAL: CARMA2_HW 0x0069bce0
+// GLOBAL: CARMA2_SW 0x00695d38
+int gPeds_already_munged;
 
 // OrientationChanged
 
@@ -255,9 +260,34 @@ int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
 
 // MakePedNoise
 
-// SetPedMove
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// StartPedRunning
+// STUB: CARMA2_HW 0x004cbcd0
+// STUB: CARMA2_SW 0x004c83d0
+void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pMove_action, int pWalk_speed_factor, int pArg4, int pArg5, tU32 pTime, tPed_action pAction) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004cc660
+// FUNCTION: CARMA2_SW 0x004c8d60
+void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int pArg3) {
+
+    if (!(pPed->character->field_0xc & gPow2_array[3])
+        && !(pPed->character->field_0xc & gPow2_array[5])
+        && pPed->field_0x0c != NULL) {
+        pPed->field_0x0c->field_0x80 = 100;
+        pPed->field_0x0c->field_0xb8 = 0.09f;
+        SetPedMove(pPed, pArg3 ? 40 : 41, pPed->field_0x0c->field_0x80, 0, 0, pTime, ePed_action_running);
+    } else {
+        SetPedMove(pPed, pArg3 ? 40 : 41, -1, 0, 0, pTime, ePed_action_running);
+    }
+}
 
 // AcceleratePed
 
@@ -279,7 +309,29 @@ int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
 
 // CBMoveCompleted
 
-// CBLoadForm
+// FUNCTION: CARMA2_HW 0x004cc900
+// FUNCTION: CARMA2_SW 0x004c9000
+void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF) {
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gForm_non_humanoid_names) != 1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, non_humanoid, 0x4c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, index_head_bone, 0x4d);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, axis_when_lying_down_A, 0x4e);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, axis_when_lying_down_B, 0x4f);
+
+    /* Other stuff */
+
+    pPed_form->non_humanoid = GetALineAndInterpretCommand(pF, gForm_non_humanoid_names, REC2_ASIZE(gForm_non_humanoid_names)) == 0;
+
+    /* Index of head bone */
+    pPed_form->index_head_bone = (tS8)GetAnInt(pF);
+
+    /* Direction axis when lying down (A) */
+    pPed_form->axis_when_lying_down_A = (tS8)GetAnInt(pF);
+
+    /* Direction axis when lying down (B) */
+    pPed_form->axis_when_lying_down_B = (tS8)GetAnInt(pF);
+}
 
 // FUNCTION: CARMA2_HW 0x004cc940
 void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm) {
@@ -570,7 +622,18 @@ void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_i
     pCollision_info->flags |= 0x4;
 }
 
-// MutatePed
+// FUNCTION: CARMA2_HW 0x004d6c10
+// FUNCTION: CARMA2_SW 0x004d3210
+void C2_HOOK_FASTCALL MutatePed(tPed_character_instance* pCharacter, void* pUnused, tU8* pAngle_x, tU8* pAngle_y, tU8* pAngle_z) {
+
+    if (pCharacter->ped->hit_points <= 0
+        && pCharacter->ped->action == ePed_action_dead
+        && !gPeds_already_munged) {
+        *pAngle_x = (tU8)(*pAngle_x + IRandomPosNeg(30));
+        *pAngle_y = (tU8)(*pAngle_y + IRandomPosNeg(30));
+        *pAngle_z = (tU8)(*pAngle_z + IRandomPosNeg(30));
+    }
+}
 
 // FlushAllPedCaches
 
