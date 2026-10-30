@@ -9,9 +9,12 @@
 #include "57-drone.h"
 
 #include "08-loading1.h"
+#include "28-world3.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "52-errors.h"
 #include "56-aiworld.h"
+#include "60-phil.h"
 #include "globvars.h"
 
 #include "c2_string.h"
@@ -21,6 +24,22 @@
 // GLOBAL: CARMA2_HW 0x006820c0
 // GLOBAL: CARMA2_SW 0x0067c800
 br_vector3 gRender_bounds_centre;
+
+// GLOBAL: CARMA2_HW 0x006820d0
+// GLOBAL: CARMA2_SW 0x0067c810
+int gCount_drones;
+
+// GLOBAL: CARMA2_HW 0x00682178
+// GLOBAL: CARMA2_SW 0x0067c8b8
+tDrone_form gDrone_forms[64];
+
+// GLOBAL: CARMA2_HW 0x0068450c
+// GLOBAL: CARMA2_SW 0x0067ec4c
+int gCount_drone_forms;
+
+// GLOBAL: CARMA2_HW 0x00684510
+// GLOBAL: CARMA2_SW 0x0067ec50
+int gCount_drone_path_nodes;
 
 // GLOBAL: CARMA2_HW 0x006844f8
 // GLOBAL: CARMA2_SW 0x0067ec38
@@ -282,10 +301,59 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
 
 // InitDrones
 
-// STUB: CARMA2_HW 0x0044fc10
-// STUB: CARMA2_SW 0x0044f9b0
+// FUNCTION: CARMA2_HW 0x0044fc10
+// FUNCTION: CARMA2_SW 0x0044f9b0
 void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    if (gCount_drones == 0) {
+        return;
+    }
+
+    for (i = 0; i < gCount_drones; i++) {
+
+        if (gDrone_specs[i].actor->parent != NULL) {
+            BrActorRemove(gDrone_specs[i].actor);
+        }
+        BrActorFree(gDrone_specs[i].actor);
+        PHILRemoveObject(&gDrone_specs[i].collision_info);
+        if (gDrone_specs[i].field_0x46) {
+            FreeShape(gDrone_specs[i].collision_info.shape);
+            gDrone_specs[i].field_0x46 = 0;
+        }
+
+        if (gDrone_specs[i].funk_grooves != NULL) {
+            BrMemFree(gDrone_specs[i].funk_grooves);
+            gDrone_specs[i].funk_grooves = NULL;
+        }
+    }
+
+    for (i = 0; i < gCount_drone_forms; i++) {
+
+        if (gDrone_forms[i].field_0x80 != NULL) {
+            int j;
+
+            BrMemFree(gDrone_forms[i].field_0x80);
+            gDrone_forms[i].field_0x80 = NULL;
+            for (j = 0; j < gDrone_forms[i].count_models; j++) {
+                BrModelRemove(gDrone_forms[i].models[j]);
+                gDrone_forms[i].models[j]->nfaces = 0;
+                gDrone_forms[i].models[j]->faces = NULL;
+                BrModelFree(gDrone_forms[i].models[j]);
+            }
+            if (gDrone_forms[i].models != NULL) {
+                BrMemFree(gDrone_forms[i].models);
+                gDrone_forms[i].models = NULL;
+            }
+        }
+    }
+    ClearOutStorageSpace(&gDroneStorage);
+    BrMemFree(gDrone_specs);
+    gDrone_specs = NULL;
+    gCount_drones = 0;
+    BrMemFree(gDrone_path_nodes);
+    gDrone_path_nodes = NULL;
+    gCount_drone_path_nodes = 0;
 }
 
 // LoadPerRaceDroneStuff
