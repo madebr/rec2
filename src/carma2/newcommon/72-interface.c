@@ -329,7 +329,7 @@ void C2_HOOK_FASTCALL PollCarDetails(tNet_game_details* pNet_game) {
         if (gNet_mode == eNet_mode_none) {
             gNet_mode = eNet_mode_thinking_about_it;
         }
-        message = NetBuildGuaranteedMessage(6, 0);
+        message = NetBuildGuaranteedMessage(eNet_message_chunk_poll_car_details, 0);
         NetGuaranteedSendMessageToHost(pNet_game, message, NULL);
     }
 }

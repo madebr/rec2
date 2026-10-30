@@ -330,7 +330,7 @@ void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pPa
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_3, 0x10);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_4, 0x14);
 
-    the_message = NetBuildGuaranteedMessage(0x1b, 0);
+    the_message = NetBuildGuaranteedMessage(eNet_message_chunk_type_gameplay, 0);
     the_message->contents.gameplay.mess = pMess;
     the_message->contents.gameplay.param_1 = pParam_1;
     the_message->contents.gameplay.param_2 = pParam_2;

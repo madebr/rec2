@@ -89,7 +89,7 @@ void C2_HOOK_FASTCALL SendDetachBit(tCar_spec* pCar, br_actor* pActor) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.bounds_max, 0x2e);
 #endif
 
-    message = NetBuildGuaranteedMessage(51, 0);
+    message = NetBuildGuaranteedMessage(eNet_message_chunk_type_detach_bit, 0);
     message->guaranteed.contents.detach_bit.ID = NetPlayerFromCar(pCar)->ID;
     message->guaranteed.contents.detach_bit.field_0x4 = ((undefined**)pActor->user)[0x8][0x20];
     message->guaranteed.contents.detach_bit.field_0x8 = gPHIL_last_physics_tick + 120;

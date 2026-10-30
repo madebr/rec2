@@ -460,7 +460,7 @@ tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents, 0x18);
 
     contents_size = NetGetContentsSize(pNet_message_type, pOption);
-    guarantee_size = NetGetContentsSize(5, 0);
+    guarantee_size = NetGetContentsSize(eNet_message_chunk_type_5, 0);
     the_size = NetGetContentsSize(pNet_message_type, pOption) + offsetof(tNet_message, contents) + guarantee_size;
     the_message = NetAllocateMessage(the_size);
     if (the_message != NULL) {
