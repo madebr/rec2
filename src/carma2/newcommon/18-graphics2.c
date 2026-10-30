@@ -461,7 +461,39 @@ void C2_HOOK_FASTCALL KillSplashScreen(void) {
     }
 }
 
-// SplashScreenWith
+// FUNCTION: CARMA2_HW 0x0047b990
+void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
+    br_pixelmap* map;
+    tPixelFlags flags;
+
+    map = BrMapFind(pPixmap_name);
+    if (gCurrent_splash != NULL && map == gCurrent_splash) {
+        return;
+    }
+    if (gCurrent_splash != NULL) {
+        BrMapRemove(gCurrent_splash);
+        BrPixelmapFree(gCurrent_splash);
+    }
+    flags = gPixelFlags;
+    gCurrent_splash = map;
+    if (map == NULL) {
+        gCurrent_splash = LoadPixelmap(pPixmap_name);
+        BRPM_convert(gCurrent_splash, gBack_screen->type);
+        if (gCurrent_splash != NULL) {
+            BrMapAdd(gCurrent_splash);
+        }
+    }
+    gPixelFlags = flags;
+    if (gCurrent_splash != NULL) {
+        PixelmapSwapByteOrder(gCurrent_splash);
+        DrPixelmapRectangleCopyPossibleLock(gBack_screen, 0, 0, gCurrent_splash, 0, 0,
+            (br_int_16)gCurrent_splash->width, (br_int_16)gCurrent_splash->height);
+        PDScreenBufferSwap(0);
+        BrMapRemove(gCurrent_splash);
+        BrPixelmapFree(gCurrent_splash);
+        gCurrent_splash = NULL;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047ba80
 // FUNCTION: CARMA2_SW 0x0047ae00
