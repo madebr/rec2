@@ -13,6 +13,7 @@
 #include "33-depth.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "globvars.h"
 #include "platform.h"
