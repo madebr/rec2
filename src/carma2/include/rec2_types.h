@@ -2364,6 +2364,7 @@ typedef enum tDriver {
     eDriver_detached_bit = 2,
     eDriver_split_car = 3,
     eDriver_4 = 4,
+    eDriver_5 = 5,
     eDriver_oppo = 6,
     eDriver_net_human = 7,
     eDriver_local_human = 8
