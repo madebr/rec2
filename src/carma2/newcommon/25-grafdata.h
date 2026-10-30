@@ -12,8 +12,10 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tGraf_data gGraf_data[2];
 extern int gGraf_data_index;
 extern tGraf_data* gCurrent_graf_data;
+extern int gReal_graf_data_index;
 
 extern void C2_HOOK_FASTCALL CalcGrafDataIndex(void);
 

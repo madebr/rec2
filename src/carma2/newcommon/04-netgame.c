@@ -105,7 +105,11 @@ void C2_HOOK_FASTCALL SignalToStartRace(void) {
 
 // SignalToRepositionCar
 
-// SetUpNetCarPositions
+// STUB: CARMA2_HW 0x00499000
+// STUB: CARMA2_SW 0x00495c30
+void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ReinitialiseCar
 
@@ -330,7 +334,7 @@ void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pPa
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_3, 0x10);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_4, 0x14);
 
-    the_message = NetBuildGuaranteedMessage(0x1b, 0);
+    the_message = NetBuildGuaranteedMessage(eNet_message_chunk_type_gameplay, 0);
     the_message->contents.gameplay.mess = pMess;
     the_message->contents.gameplay.param_1 = pParam_1;
     the_message->contents.gameplay.param_2 = pParam_2;
@@ -339,7 +343,21 @@ void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pPa
     NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, the_message, NULL);
 }
 
-// SendGameplayToHost
+// FUNCTION: CARMA2_HW 0x0049bcb0
+// FUNCTION: CARMA2_SW 0x00497e30
+void C2_HOOK_FASTCALL SendGameplayToHost(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
+    tNet_message* the_message;
+
+    if (gNet_mode == eNet_mode_client) {
+        the_message = NetBuildGuaranteedMessage(0x1b, 0);
+        the_message->contents.gameplay.mess = pMess;
+        the_message->contents.gameplay.param_1 = pParam_1;
+        the_message->contents.gameplay.param_2 = pParam_2;
+        the_message->contents.gameplay.param_3 = pParam_3;
+        the_message->contents.gameplay.param_4 = pParam_4;
+        NetGuaranteedSendMessageToHost(gCurrent_net_game, the_message, NULL);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0049bd00
 // FUNCTION: CARMA2_SW 0x00497e80

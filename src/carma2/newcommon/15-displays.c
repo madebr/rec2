@@ -11,6 +11,7 @@
 #include "08-loading1.h"
 #include "16-graphics1.h"
 #include "18-graphics2.h"
+#include "18b-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "41-utility.h"

@@ -501,6 +501,7 @@ typedef enum {
     ePipe_model_mash = 24,
     ePipe_chunk_identity = 26,
     ePipe_chunk_explosion = 31,
+    ePipe_chunk_non_car_creation = 32,
     ePipe_chunk_smash_model_change = 33,
     ePipe_smash_texture_change = 36,
     ePipe_chunk_repulse_ray = 37,
@@ -3116,7 +3117,7 @@ typedef enum {
 typedef struct {
     tU16 min_count;
     tU16 max_count;
-    tU16 count_frames;
+    tS16 count_frames;
     tU16 min_start_delay_ms;
     tU16 max_start_delay_ms;
     tU16 min_frametime_ms;
@@ -5165,9 +5166,15 @@ typedef struct {
 } tRepair_animation;
 
 typedef enum {
+    eNet_message_chunk_type_5 = 0x5,
+    eNet_message_chunk_poll_car_details = 0x6,
     eNet_message_chunk_type_netsynch = 0xe,
+    eNet_message_chunk_type_gameplay = 0x1b,
+    eNet_message_chunk_type_oil_spill = 0x1f,
     eNet_message_chunk_type_car_crush = 0x20,
     eNet_message_chunk_type_toggle_doors = 0x2c,
+    eNet_message_chunk_type_mine_explosion = 0x31,
+    eNet_message_chunk_type_detach_bit = 0x33,
 } tNet_message_chunk_type;
 
 typedef struct {

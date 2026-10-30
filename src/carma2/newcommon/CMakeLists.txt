@@ -26,6 +26,7 @@ foreach(edition ${REC2_EDITIONS})
         16-graphics1.c
         17-world2.c
         18-graphics2.c
+        18b-graphics2.c
         19-font.c
         20-skidmark.c
         21-mainloop.c
