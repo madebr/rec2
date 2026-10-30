@@ -143,7 +143,7 @@ extern void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int 
 
 // CBMoveCompleted
 
-// CBLoadForm
+extern void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF);
 
 extern void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm);
 
