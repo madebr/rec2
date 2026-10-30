@@ -125,6 +125,10 @@ tRace_group_spec* gRace_groups;
 // GLOBAL: CARMA2_SW 0x00683054
 char* gFrontend_current_input;
 
+// GLOBAL: CARMA2_HW 0x00688af8
+// GLOBAL: CARMA2_SW 0x00683058
+float gFrontend_wreck_bought_car_dz;
+
 // GLOBAL: CARMA2_HW 0x0068723c
 // GLOBAL: CARMA2_SW 0x0068179c
 int gFrontend_text_input_item_index;
@@ -136,6 +140,14 @@ char gFrontend_original_player_name[32];
 // GLOBAL: CARMA2_HW 0x0059b0d8
 // GLOBAL: CARMA2_SW 0x00596008
 int gINT_0059b0d8 = -1;
+
+// GLOBAL: CARMA2_HW 0x0059b0dc
+// GLOBAL: CARMA2_SW 0x0059600c
+int gFrontend_wrecks_rotate_prev_x = -1;
+
+// GLOBAL: CARMA2_HW 0x0059b0e0
+// GLOBAL: CARMA2_SW 0x00596010
+int gFrontend_wrecks_rotate_prev_y = -1;
 
 // GLOBAL: CARMA2_HW 0x0059b0d4
 // GLOBAL: CARMA2_SW 0x00596004
@@ -207,6 +219,10 @@ int gFrontend_count_saved_games;
 // GLOBAL: CARMA2_HW 0x00763894
 // GLOBAL: CARMA2_SW 0x00759df4
 tU32 gFrontend_scroll_last_update;
+
+// GLOBAL: CARMA2_HW 0x00688b00
+// GLOBAL: CARMA2_SW 0x00683060
+int gFrontend_wrecks_pending_hscroll;
 
 // GLOBAL: CARMA2_HW 0x00688b04
 // GLOBAL: CARMA2_SW 0x00683064
@@ -1697,7 +1713,19 @@ int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size) {
 
 // DisposeWrecksGallery
 
-// ScrollToNextCar
+// FUNCTION: CARMA2_HW 0x0046e6c0
+// FUNCTION: CARMA2_SW 0x0046dd60
+int C2_HOOK_FASTCALL ScrollToNextCar(tFrontend_spec* pFrontend) {
+
+    if (gFrontend_wreck_bought_car_dz == 0.f
+            && gFrontend_wrecks_pending_hscroll == 0
+            && (gFrontend_wrecks_rotate_prev_x == -1 || gFrontend_wrecks_rotate_prev_y == -1)) {
+        gFrontend_wrecks_pending_hscroll = -30;
+        DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
+        gFrontend_opponent_profile_pic_needs_update = 1;
+    }
+    return 0;
+}
 
 // ScrollToPrevCar
 
