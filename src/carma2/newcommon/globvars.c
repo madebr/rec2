@@ -445,6 +445,7 @@ int gPed_overall_movement_disabled = 0;
 //int gKey_map_index;
 
 // GLOBAL: CARMA2_HW 0x0068b890
+// GLOBAL: CARMA2_SW 0x00685df0
 int gInterface_within_race_mode;
 //int gCut_scene_override;
 //int gGame_to_load = -1;

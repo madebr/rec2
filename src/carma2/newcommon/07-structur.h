@@ -65,7 +65,7 @@ extern void C2_HOOK_FASTCALL DoProgram(void);
 
 // JumpTheStart
 
-// GoingToInterfaceFromRace
+extern void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void);
 
 extern void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void);
 
