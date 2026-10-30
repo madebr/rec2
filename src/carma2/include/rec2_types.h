@@ -173,10 +173,10 @@ typedef enum {
     eDrone_state_STOP = 4,
 } tDroneStateFuncState;
 
-typedef struct tMin_max_time {
+typedef struct tShrapnel_time_info {
   tU32 min_time;
   tU32 max_time;
-} tMin_max_time;
+} tShrapnel_time_info;
 
 typedef struct tSave_camera {
     int saved;
@@ -3206,13 +3206,19 @@ typedef struct {
     float random_up_velocity_max;
     float random_normal_velocity_max;
     float random_spin_rate_max;
-} tSmashable_initial_speed_spec;
+} tMovement_spec;
+
+typedef struct tSmoke_fire_chance {
+    int probability_fire;
+    int count_fire_columns;
+    int min_smokiness;
+    int max_smokiness;
+} tSmoke_fire_chance;
 
 typedef struct {
     tShrapnel_type type;
-    tSmashable_initial_speed_spec initial_speed;
-    int min_time_ms;
-    int max_time_ms;
+    tMovement_spec initial_speed;
+    tShrapnel_time_info time_info;
     tSmashable_initial_position_spec initial_pos;
     union {
         struct {
@@ -3242,10 +3248,7 @@ typedef struct {
             int amount_max;
             int count_actors;
             br_actor** actors;
-            int probability_fire;
-            int count_fire_columns;
-            int min_smokiness;
-            int max_smokiness;
+            tSmoke_fire_chance smoke_fire_change;
         } noncar;
     } type_info;
 } tShrapnel_spec;
@@ -3694,7 +3697,7 @@ typedef struct {
     tNon_car_location_type location_type;
     int field_0x8; /* can be -1 in file */
     br_bounds3 bounds;
-    tSmashable_initial_speed_spec speed_info;
+    tMovement_spec speed_info;
 } tNoncar_activation;
 
 typedef enum {
