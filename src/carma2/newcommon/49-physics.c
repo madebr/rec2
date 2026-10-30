@@ -509,7 +509,7 @@ void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject) {
 // RotateObjectSecondOrder
 
 // FUNCTION: CARMA2_HW 0x004c1f10
-void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {
+void C2_HOOK_FASTCALL RotateObjectFirstOrder(tPhysics_object* pObject, br_scalar pTime) {
     br_matrix34 rotation;
     br_vector3 axis;
     br_vector3 momentum;
