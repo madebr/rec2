@@ -143,6 +143,7 @@ int gINT_0059b0d8 = -1;
 int gFrontend_maximum_input_length = 9;
 
 // GLOBAL: CARMA2_HW 0x00763924
+// GLOBAL: CARMA2_SW 0x00759e84
 int gHierarchy_has_actor;
 
 // GLOBAL: CARMA2_HW 0x00763928
@@ -150,6 +151,7 @@ int gHierarchy_has_actor;
 int gPicked_wreck;
 
 // GLOBAL: CARMA2_HW 0x00763b5c
+// GLOBAL: CARMA2_SW 0x0075a0bc
 tWreck_gallery_car_info gWreck_gallery_car_infos[30];
 
 // GLOBAL: CARMA2_HW 0x00686834
@@ -1756,6 +1758,7 @@ int C2_HOOK_CDECL WreckPick(br_actor* pActor, br_model* pModel, br_material* pMa
 }
 
 // FUNCTION: CARMA2_HW 0x0046f560
+// FUNCTION: CARMA2_SW 0x0046ec10
 intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
 
     if (a == (br_actor*)ref) {
@@ -1766,6 +1769,7 @@ intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f590
+// FUNCTION: CARMA2_SW 0x0046ec40
 void C2_HOOK_FASTCALL DodgyPause(tU32 pTime) {
     tU32 start;
 
