@@ -561,7 +561,13 @@ void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOl
 
 // PipeSingleSmashRemoveFaces
 
-// PipeSingleSmashDecal
+// FUNCTION: CARMA2_HW 0x004c89f0
+// FUNCTION: CARMA2_SW 0x004c5120
+void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex) {
+    C2_HOOK_BUG_ON(sizeof(gZero_vector__smash.v[0]) != 0x4);
+
+    ARDoSingleSession(ePipe_chunk_smash_decal, pIndex, &gZero_vector__smash, sizeof(gZero_vector__smash.v[0]));
+}
 
 // FUNCTION: CARMA2_HW 0x004c8a10
 // STUB: CARMA2_SW 0x004c5140
