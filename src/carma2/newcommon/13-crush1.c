@@ -8,12 +8,15 @@
 
 #include "13-crush1.h"
 
+#include "01-network.h"
 #include "08-loading1.h"
 #include "09-funks.h"
 #include "23-piping.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
+#include "60-phil.h"
+#include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -869,7 +872,22 @@ int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, b
 
 // MungeDetachLists
 
-// SendReAttachBit
+// FUNCTION: CARMA2_HW 0x0043b250
+// FUNCTION: CARMA2_SW 0x0043b2a0
+void C2_HOOK_FASTCALL SendReAttachBit(tCar_spec* pCar, tPhysics_object* pObject) {
+    tNet_message* message;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_reattach_bit, player, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_reattach_bit, uid, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_reattach_bit, time, 0xc);
+    C2_HOOK_BUG_ON(sizeof(tNet_message_chunk_reattach_bit) != 0x10);
+
+    message = NetBuildGuaranteedMessage(eNet_message_chunk_type_reattach_bit, 0);
+    message->contents.reattach_bit.player = NetPlayerFromCar(pCar)->ID;
+    message->contents.reattach_bit.uid = pObject->uid;
+    message->contents.reattach_bit.time = gPHIL_last_physics_tick + 120;
+    NetGuaranteedSendMessageToEverybody(gCurrent_net_game, message, NULL);
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
