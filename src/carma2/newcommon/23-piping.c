@@ -399,7 +399,17 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
 
 // AddProxRayToPipingSession
 
-// AddFlapToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7520
+// FUNCTION: CARMA2_SW 0x004c3c50
+void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flap, angle, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, angle, 0x2);
+
+    ARAddVariedDataToSession(ePipe_chunk_flap, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, angle), pAngle);
+}
 
 // AddModelMashToPipingSession
 

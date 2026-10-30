@@ -186,7 +186,7 @@ extern void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSm
 
 // AddProxRayToPipingSession
 
-// AddFlapToPipingSession
+extern void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle);
 
 // AddModelMashToPipingSession
 
