@@ -15,6 +15,7 @@
 #include "27-powerup.h"
 #include "41-utility.h"
 #include "63-loading3.h"
+#include "66-tintedpoly.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "brender/brender.h"
@@ -279,7 +280,21 @@ int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
 
 // CBMoveCompleted
 
-// CBLoadForm
+// FUNCTION: CARMA2_HW 0x004cc900
+// FUNCTION: CARMA2_SW 0x004c9000
+void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF) {
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gForm_non_humanoid_names) != 1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, non_humanoid, 0x4c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, index_head_bone, 0x4d);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, axis_when_lying_down_A, 0x4e);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, axis_when_lying_down_B, 0x4f);
+
+    pPed_form->non_humanoid = GetALineAndInterpretCommand(pF, gForm_non_humanoid_names, REC2_ASIZE(gForm_non_humanoid_names)) == 0;
+    pPed_form->index_head_bone = (tS8)GetAnInt(pF);
+    pPed_form->axis_when_lying_down_A = (tS8)GetAnInt(pF);
+    pPed_form->axis_when_lying_down_B = (tS8)GetAnInt(pF);
+}
 
 // FUNCTION: CARMA2_HW 0x004cc940
 void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm) {
