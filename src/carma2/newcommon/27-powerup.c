@@ -784,7 +784,11 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // ReceivedPowerup
 
-// SendCurrentPowerups
+// STUB: CARMA2_HW 0x004dedf0
+// STUB: CARMA2_SW 0x004db2f0
+void C2_HOOK_FASTCALL SendCurrentPowerups(void) {
+    NOT_IMPLEMENTED();
+}
 
 // LoseAllLocalPowerups
 

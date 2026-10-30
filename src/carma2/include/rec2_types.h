@@ -5168,6 +5168,7 @@ typedef struct {
 typedef enum {
     eNet_message_chunk_type_5 = 0x5,
     eNet_message_chunk_poll_car_details = 0x6,
+    eNet_message_chunk_type_start_race = 0xc,
     eNet_message_chunk_type_netsynch = 0xe,
     eNet_message_chunk_type_gameplay = 0x1b,
     eNet_message_chunk_type_oil_spill = 0x1f,
@@ -5181,6 +5182,20 @@ typedef struct {
     tU8 size;
     tU8 type;
 } tNet_message_chunk_header;
+
+typedef struct {
+    tU8 index;
+    tU8 next_car_index;
+    tCompressed_matrix3 matrix;
+} tNet_start_race_car;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tU8 car_count;
+    tU8 racing;
+    tU8 next_race;
+    tNet_start_race_car car_list[12];
+} tNet_message_chunk_start_race;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -5322,6 +5337,7 @@ typedef struct {
 
 typedef union {
     tNet_message_chunk_raw raw;
+    tNet_message_chunk_start_race start_race; /* type = 0xc */
     tNet_message_chunk_scores scores; /* type = 0x18 */
     tNet_message_chunk_gameplay gameplay; /* type = 0x1b */
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
