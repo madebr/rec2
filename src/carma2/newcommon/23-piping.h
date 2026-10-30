@@ -194,6 +194,8 @@ extern void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle p
 
 // AddNapalmBoltToPipingSession
 
+extern void C2_HOOK_FASTCALL AddBurningPedToSession(int pIndex, tPedestrian* pPed, br_vector3* pPositions);
+
 // PipeSingleCrush
 
 extern void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y);

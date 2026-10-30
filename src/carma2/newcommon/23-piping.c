@@ -418,6 +418,18 @@ void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle) 
 
 // AddNapalmBoltToPipingSession
 
+// FUNCTION: CARMA2_HW 0x004c7e70
+// FUNCTION: CARMA2_SW 0x004c45a0
+void C2_HOOK_FASTCALL AddBurningPedToSession(int pIndex, tPedestrian* pPed, br_vector3* pPositions) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_burning_ped, ped, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_burning_ped, positions, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_burning_ped, positions, 0x54);
+
+    ARAddVariedDataToSession(ePipe_chunk_burning_ped, pIndex, 2,
+        SIZE_OFFSET_PIPING(tPipe_burning_ped, ped), pPed,
+        SIZE_OFFSET_PIPING(tPipe_burning_ped, positions), pPositions);
+}
+
 // PipeSingleCrush
 
 // FUNCTION: CARMA2_HW 0x004c8090
