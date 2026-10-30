@@ -53,6 +53,7 @@ typedef struct tPedestrian_distances tPedestrian_distances;
 typedef struct tRace_pedestrian tRace_pedestrian;
 typedef struct tDrone_spec tDrone_spec;
 typedef struct tDrone_path_node tDrone_path_node;
+typedef struct tDrone_path_node_section tDrone_path_node_section;
 typedef struct tSave_game tSave_game;
 typedef struct tPipe_smudge_data tPipe_smudge_data;
 typedef struct tPath_node tPath_node;
@@ -322,9 +323,9 @@ typedef struct {
 } tPipe_funk_enable;
 
 typedef struct {
-    undefined4 field_0x0;
-    tU16 field_0x4;
-    tU16 field_0x6;
+    tDrone_path_node_section* section;
+    tU16 speed;
+    tU16 distance;
 } tPipe_single_drone_straight_pos;
 
 typedef struct {
