@@ -14,6 +14,7 @@
 
 extern int gPHIL_disabled;
 extern tPhysics_object* gPHIL_list_collision_infos;
+extern tU32 gPHIL_last_physics_tick;
 
 // ScalarToFraction
 
@@ -81,7 +82,7 @@ extern int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject
 
 // PHILSetObjectProperty
 
-// PHILGetObjectProperty
+extern float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pProperty);
 
 // FlushQueuedAddsAndRemoves
 

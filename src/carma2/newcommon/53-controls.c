@@ -10,8 +10,13 @@
 
 #include "00-car.h"
 #include "15-displays.h"
+#include "16-graphics1.h"
 #include "17-world2.h"
+#include "27-powerup.h"
+#include "37-brucetrk.h"
 #include "41-utility.h"
+#include "43-pratcam.h"
+#include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -27,37 +32,52 @@
 int gCheckpoint_finder_enabled = 1;
 
 // GLOBAL: CARMA2_HW 0x00659b2c
+// GLOBAL: CARMA2_SW 0x00654514
 float gMap_render_x = 80.f;
 
 // GLOBAL: CARMA2_HW 0x00659b30
+// GLOBAL: CARMA2_SW 0x00654518
 float gMap_render_y = 6.f;
 
 // GLOBAL: CARMA2_HW 0x00659b34
+// GLOBAL: CARMA2_SW 0x0065451c
 float gMap_render_width = 128.f;
 
 // GLOBAL: CARMA2_HW 0x00659b38
+// GLOBAL: CARMA2_SW 0x00654520
 float gMap_render_height = 80.f;
 
 // GLOBAL: CARMA2_HW 0x0068d8d4
+// GLOBAL: CARMA2_SW 0x0068792c
 int gMap_trans;
 
 // GLOBAL: CARMA2_HW 0x0074abac
+// GLOBAL: CARMA2_SW 0x00741258
 int gHeadup_map_x;
 
 // GLOBAL: CARMA2_HW 0x0074abb0
+// GLOBAL: CARMA2_SW 0x0074125c
 int gHeadup_map_y;
 
 // GLOBAL: CARMA2_HW 0x0074aba8
+// GLOBAL: CARMA2_SW 0x00741254
 int gHeadup_map_w;
 
 // GLOBAL: CARMA2_HW 0x0074abb4
+// GLOBAL: CARMA2_SW 0x00741260
 int gHeadup_map_h;
 
 // GLOBAL: CARMA2_HW 0x0067c400
+// GLOBAL: CARMA2_SW 0x00676b78
 char gString[84];
 
 // GLOBAL: CARMA2_HW 0x0067c3c8
+// GLOBAL: CARMA2_SW 0x00676b40
 char* gAbuse_text[10];
+
+// GLOBAL: CARMA2_HW 0x0067c3f8
+// GLOBAL: CARMA2_SW 0x00676b70
+int gRecovery_voucher_count;
 
 // CompleteRace
 
@@ -78,11 +98,13 @@ int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend) {
 // FinishRace
 
 // FUNCTION: CARMA2_HW 0x004415e0
+// FUNCTION: CARMA2_SW 0x004416c0
 void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void) {
 
 }
 
 // FUNCTION: CARMA2_HW 0x004415f0
+// FUNCTION: CARMA2_SW 0x004416d0
 void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void) {
 
 }
@@ -102,6 +124,7 @@ void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void) {
 // F11Key
 
 // FUNCTION: CARMA2_HW 0x00441900
+// FUNCTION: CARMA2_SW 0x004419e0
 void C2_HOOK_FASTCALL F12Key(void) {
 }
 
@@ -125,16 +148,72 @@ void C2_HOOK_FASTCALL F12Key(void) {
 
 // NumberKey9
 
-// LookLeft
+// FUNCTION: CARMA2_HW 0x00441e10
+// FUNCTION: CARMA2_SW 0x00441ef0
+void C2_HOOK_FASTCALL LookLeft(void) {
 
-// LookForward
+    PratcamEvent(27);
+    gProgram_state.old_view = gProgram_state.which_view;
+    if (gProgram_state.which_view == eView_left) {
+        LookForward();
+    } else if (gProgram_state.which_view == eView_right) {
+        LookForward();
+        gProgram_state.pending_view = eView_left;
+    } else {
+        ClearWobbles();
+        gProgram_state.new_view = eView_left;
+        gProgram_state.view_change_start = PDGetTotalTime();
+        gProgram_state.pending_view = eView_undefined;
+    }
+}
 
-// LookRight
+// FUNCTION: CARMA2_HW 0x00441ec0
+// FUNCTION: CARMA2_SW 0x00441fa0
+void C2_HOOK_FASTCALL LookForward(void) {
+
+    if (gProgram_state.which_view == eView_right) {
+        PratcamEvent(27);
+    } else if (gProgram_state.which_view == eView_left) {
+        PratcamEvent(28);
+    }
+    if (gProgram_state.which_view != eView_forward) {
+        gProgram_state.old_view = gProgram_state.which_view;
+        ClearWobbles();
+        gProgram_state.new_view = eView_forward;
+        gProgram_state.view_change_start = PDGetTotalTime();
+        gProgram_state.pending_view = eView_undefined;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00441f20
+// FUNCTION: CARMA2_SW 0x00442000
+void C2_HOOK_FASTCALL LookRight(void) {
+
+    PratcamEvent(28);
+    gProgram_state.old_view = gProgram_state.which_view;
+    if (gProgram_state.which_view == eView_right) {
+        LookForward();
+    } else if (gProgram_state.which_view == eView_left) {
+        LookForward();
+        gProgram_state.pending_view = eView_right;
+    } else {
+        ClearWobbles();
+        gProgram_state.new_view = eView_right;
+        gProgram_state.view_change_start = PDGetTotalTime();
+        gProgram_state.pending_view = eView_undefined;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00441fd0
 // FUNCTION: CARMA2_SW 0x004420b0
 void C2_HOOK_FASTCALL DamageTest(void) {
 
+}
+
+// FUNCTION: CARMA2_HW 0x00441fe0
+// FUNCTION: CARMA2_SW 0x004420c0
+void C2_HOOK_FASTCALL TDamageEngine(void) {
+    DamageEngine(21);
 }
 
 // FUNCTION: CARMA2_HW 0x00441ff0
@@ -145,6 +224,13 @@ void C2_HOOK_FASTCALL TDamageDriver(void) {
     } else {
         DamageUnit(&gProgram_state.current_car, eDamage_driver, 2);
     }
+}
+
+// FUNCTION: CARMA2_HW 0x00442050
+// FUNCTION: CARMA2_SW 0x00442130
+void C2_HOOK_FASTCALL TDamageLFWheel(void) {
+
+    DamageLFWheel(21);
 }
 
 // ToggleMiniMap
@@ -185,11 +271,35 @@ void C2_HOOK_FASTCALL TDamageDriver(void) {
 
 // SetFlipUpCar
 
-// AlignChildren
+
+// FUNCTION: CARMA2_HW 0x00442e10
+// FUNCTION: CARMA2_SW 0x00442ef0
+void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info) {
+    tPhysics_object* child;
+
+    for (child = pCollision_info->child; child != NULL; child = child->next) {
+        int i;
+        int j;
+
+        for (i = 0; i < 3; i++) {
+            for (j = 0; j < 3; j++) {
+                child->transform_matrix.m[i][j] = pCollision_info->transform_matrix.m[i][j];
+            }
+        }
+        BrVector3SetFloat(&child->v, 0.f, 0.f, 0.f);
+        BrVector3SetFloat(&child->omega, 0.f, 0.f, 0.f);
+        AlignChildren(child);
+    }
+}
 
 // FlipUpCar
 
-// GetPowerup
+// FUNCTION: CARMA2_HW 0x00442e80
+// FUNCTION: CARMA2_SW 0x00442f60
+void C2_HOOK_FASTCALL GetPowerup(int pNum) {
+
+    GotPowerup(&gProgram_state.current_car, pNum);
+}
 
 // CheckSystemKeys
 
@@ -242,17 +352,83 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 // ToggleMap
 
-// GetRecoverVoucherCount
+// FUNCTION: CARMA2_HW 0x004446f0
+// FUNCTION: CARMA2_SW 0x004447d0
+int C2_HOOK_FASTCALL GetRecoverVoucherCount(void) {
 
-// AddVouchers
+    return gRecovery_voucher_count;
+}
 
-// ResetRecoveryVouchers
+// FUNCTION: CARMA2_HW 0x00444700
+// FUNCTION: CARMA2_SW 0x004447e0
+void C2_HOOK_FASTCALL AddVouchers(int pCount) {
 
-// CycleYonFactor
+    gRecovery_voucher_count += pCount;
+}
 
-// CycleSoundDetailLevel
+// FUNCTION: CARMA2_HW 0x00444710
+// FUNCTION: CARMA2_SW 0x004447f0
+void C2_HOOK_FASTCALL ResetRecoveryVouchers(void) {
 
-// CycleCarSimplificationLevel
+    gRecovery_voucher_count = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00444720
+// FUNCTION: CARMA2_SW 0x00444800
+void C2_HOOK_FASTCALL CycleYonFactor(void) {
+    float factor;
+
+    factor = 0.5f * GetYonFactor();
+    if (factor < 0.1f) {
+        factor = 1.0f;
+    }
+    SetYonFactor(factor);
+    if (factor > 0.75f) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_track_appears_very_quickly));
+    } else if (factor > 0.375f) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_track_appears_quite_quickly));
+    } else if (factor > 0.187f) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_track_appears_quite_late));
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_track_appears_very_late));
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004447c0
+// FUNCTION: CARMA2_SW 0x004448a0
+void C2_HOOK_FASTCALL CycleSoundDetailLevel(void) {
+    int new_level;
+
+    new_level = (gSound_detail_level + 1) % 3;
+    ReallySetSoundDetailLevel(new_level);
+    SetSoundDetailLevel(new_level);
+    switch (gSound_detail_level) {
+    case 0:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_fewest_sounds));
+        break;
+    case 1:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_partial_sound));
+        break;
+    case 2:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_all_sounds));
+        break;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00444820
+// FUNCTION: CARMA2_SW 0x00444900
+void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void) {
+    const char* src;
+    char* dst;
+
+    gCar_simplification_level++;
+    gCar_simplification_level = gCar_simplification_level % 5u;
+    src = GetMiscString(eMiscString_car_simplification_level_D);
+    dst = BrMemAllocate(strlen(src) + 21, kMem_simp_level);
+    sprintf(dst, src, gCar_simplification_level);
+    NewTextHeadupSlot(4, 0, 2000, -4, dst);
+    BrMemFree(dst);
+}
 
 // FUNCTION: CARMA2_HW 0x004448a0
 // FUNCTION: CARMA2_SW 0x00444980
@@ -279,6 +455,7 @@ void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
 // DisplayUserMessage
 
 // FUNCTION: CARMA2_HW 0x00444d70
+// FUNCTION: CARMA2_SW 0x00444e50
 void C2_HOOK_FASTCALL InitAbuseomatic(void) {
     char path[256];
     char s[256];
@@ -315,6 +492,7 @@ void C2_HOOK_FASTCALL InitAbuseomatic(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00444ea0
+// FUNCTION: CARMA2_SW 0x00444f80
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
     int i;
 

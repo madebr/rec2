@@ -12,6 +12,10 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tSmashable_item_spec* gTrack_smashable_environment_specs;
+extern int gCount_track_smashable_environment_specs;
+extern tStored_smash* gNet_host_smashes;
+
 extern tExplosion gExplosions[50];
 extern br_vector3 gZero_vector__smash;
 extern tDecal gDecals[50];
@@ -35,13 +39,13 @@ extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
 // CalcRandomPointBetween
 
-// ApplyInitialMovement
+extern void C2_HOOK_FASTCALL ApplyInitialMovement(tSmashable_initial_speed_spec* pSpeed_info, br_vector3* pImpactee_velocity, br_vector3* pVelocity, br_vector3* pOmega, float pScale, br_vector3* pNormal, br_vector3* pSource_position, br_vector3* pPosition);
 
 // ApplyTimeSpec
 
-// FindShrapnelFragment
+extern tSmash_vertex* C2_HOOK_FASTCALL FindShrapnelFragment(br_model* pModel, tU32 pId, int pPriority);
 
-// SetShrapnelFragment
+extern void C2_HOOK_FASTCALL SetShrapnelFragment(tSmash_vertex* pFragment, tSmashable_initial_speed_spec* pSpeed_info, br_vector3* pImpactee_velocity, float pScale, tMin_max_time* pTime_spec, tU32 pTime, br_vector3* pNormal, br_vector3* pSource_position, br_vector3* pPosition);
 
 // ShatterObject
 
@@ -65,7 +69,7 @@ extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
 // DoAward
 
-// DoSpillage
+extern void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor);
 
 // DoSpecial
 
@@ -129,7 +133,9 @@ extern void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_
 
 // ReadSpillData
 
-// ReadExplosion
+extern void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation);
+
+extern intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* pData);
 
 extern void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);
 
@@ -169,9 +175,9 @@ extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush
 
 // InitGlassFragments
 
-// InitDecals
+//static void C2_HOOK_FASTCALL InitDecals(void);
 
-// RemoveAllDecals
+//static void C2_HOOK_FASTCALL RemoveAllDecals(void);
 
 extern void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF);
 
@@ -205,17 +211,17 @@ extern void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_da
 
 // ReadSmashableEnvironment
 
-// DisposeSmashEnvNonCars
+extern void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void);
+
+extern void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void);
 
 // CloneMemory
 
 // CloneEnvSmash
 
+extern void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash);
+
 extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors);
-
-// FreeEnvSmash
-
-// DisposeSmashableEnvironment
 
 // MungeSmashMaterialNames
 

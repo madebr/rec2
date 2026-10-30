@@ -21,96 +21,127 @@
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00679698
+// GLOBAL: CARMA2_SW 0x00673e08
 br_scalar gDistortion_factor;
 
 // GLOBAL: CARMA2_HW 0x006796b0
+// GLOBAL: CARMA2_SW 0x00673e20
 br_scalar gForce_to_movement_factor;
 
 // GLOBAL: CARMA2_HW 0x00679550
+// GLOBAL: CARMA2_SW 0x00673cc0
 br_scalar gMax_detach_time_ms;
 
 // GLOBAL: CARMA2_HW 0x006796b8
+// GLOBAL: CARMA2_SW 0x00673e28
 br_scalar gMin_crush_force;
 
 // GLOBAL: CARMA2_HW 0x0067944c
+// GLOBAL: CARMA2_SW 0x00673bbc
 br_scalar gNormal_force_to_detach;
 
 // GLOBAL: CARMA2_HW 0x0067a18c
+// GLOBAL: CARMA2_SW 0x006748fc
 br_scalar gMin_bend_angle;
 
 // GLOBAL: CARMA2_HW 0x0067b7b0
+// GLOBAL: CARMA2_SW 0x00675f20
 int gMin_bend_damage;
 
 // GLOBAL: CARMA2_HW 0x0067b7b4
+// GLOBAL: CARMA2_SW 0x00675f24
 br_scalar gFlap_inertia_fudge_biscuit;
 
 // GLOBAL: CARMA2_HW 0x0067b7d0
+// GLOBAL: CARMA2_SW 0x00675f40
 int gMax_split_damage;
 
 // GLOBAL: CARMA2_HW 0x0067bac8
+// GLOBAL: CARMA2_SW 0x00676238
 br_scalar gMin_force_to_split_XZ_per_tonne;
 
 // GLOBAL: CARMA2_HW 0x0067bacc
+// GLOBAL: CARMA2_SW 0x0067623c
 br_scalar gMax_crush_dist_sq;
 
 // GLOBAL: CARMA2_HW 0x0067bd5c
+// GLOBAL: CARMA2_SW 0x006764cc
 br_scalar gMin_force_to_split_Y_per_tonne;
 
 // GLOBAL: CARMA2_HW 0x0067bd64
+// GLOBAL: CARMA2_SW 0x006764d4
 int gMin_split_damage;
 
 // GLOBAL: CARMA2_HW 0x0067bde8
+// GLOBAL: CARMA2_SW 0x00676558
 br_scalar gMin_bend_force;
 
 // GLOBAL: CARMA2_HW 0x0067bdec
+// GLOBAL: CARMA2_SW 0x0067655c
 br_scalar gMax_crush_force;
 
 // GLOBAL: CARMA2_HW 0x0067bdf4
+// GLOBAL: CARMA2_SW 0x00676564
 int gMax_bend_damage;
 
 // GLOBAL: CARMA2_HW 0x0067bdf8
+// GLOBAL: CARMA2_SW 0x00676568
 br_scalar gTorque_to_snap_per_tonne;
 
 // GLOBAL: CARMA2_HW 0x0067be00
+// GLOBAL: CARMA2_SW 0x00676570
 br_scalar gChance_of_bending;
 
 // GLOBAL: CARMA2_HW 0x0067be04
+// GLOBAL: CARMA2_SW 0x00676574
 br_scalar gChance_of_inverse_buckle;
 
 // GLOBAL: CARMA2_HW 0x0067be78
+// GLOBAL: CARMA2_SW 0x006765e8
 br_vector3 gBatty_gravity;
 
 // GLOBAL: CARMA2_HW 0x0067a190
+// GLOBAL: CARMA2_SW 0x00674900
 undefined4 gCrush_array_0067a190[10];
 
 // GLOBAL: CARMA2_HW 0x00679440
+// GLOBAL: CARMA2_SW 0x00673bb0
 undefined4 gDAT_00679440;
 
 // GLOBAL: CARMA2_HW 0x006796a0
+// GLOBAL: CARMA2_SW 0x00673e10
 tCrush_info_buffer gDetached_bit_crush_info_buffer;
 
 // GLOBAL: CARMA2_HW 0x00679448
+// GLOBAL: CARMA2_SW 0x00673bb8
 tPhysics_object* gDetached_bit_collision_infos;
 
 // GLOBAL: CARMA2_HW 0x006796ac
+// GLOBAL: CARMA2_SW 0x00673e1c
 tDriver gDetached_bit_driver;
 
 // GLOBAL: CARMA2_HW 0x0067bd68
+// GLOBAL: CARMA2_SW 0x006764d8
 tPhysics_joint* gTrack_crush_joints[32];
 
 // GLOBAL: CARMA2_HW 0x0067b7b8
+// GLOBAL: CARMA2_SW 0x00675f28
 tCrush_info_buffer gSplit_car_crush_info_buffer;
 
 // GLOBAL: CARMA2_HW 0x0067a188
+// GLOBAL: CARMA2_SW 0x006748f8
 tPhysics_object* gSplit_car_collision_infos;
 
 // GLOBAL: CARMA2_HW 0x0067b7c4
+// GLOBAL: CARMA2_SW 0x00675f34
 tDriver gSplit_car_driver;
 
 // GLOBAL: CARMA2_HW 0x006796b4
+// GLOBAL: CARMA2_SW 0x00673e24
 tPhysics_shape* gGonad_sphere_collision_shape;
 
 // FUNCTION: CARMA2_HW 0x00429bb0
+// FUNCTION: CARMA2_SW 0x00429c40
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
     char s[256];
     char *result;
@@ -180,6 +211,7 @@ void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
 // RemoveCarFromCrushLists
 
 // FUNCTION: CARMA2_HW 0x00429fa0
+// FUNCTION: CARMA2_SW 0x0042a030
 void C2_HOOK_FASTCALL InitCrushSystems(void) {
     int i;
 
@@ -229,10 +261,27 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // ReadCrushData
 
-// STUB: CARMA2_HW 0x0042a220
-// STUB: CARMA2_SW 0x0042a2b0
+// FUNCTION: CARMA2_HW 0x0042a220
+// FUNCTION: CARMA2_SW 0x0042a2b0
 intptr_t C2_HOOK_CDECL CreateDefaultCrushDataCB(br_actor* pActor, void* pData) {
-    NOT_IMPLEMENTED();
+    tUser_crush_data* user_crush;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_buffer_entry) != 0x40);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tCar_crush_buffer_entry, actor_name, 0x10);
+
+    if (pActor->type != BR_ACTOR_MODEL) {
+        return 0;
+    }
+    user_crush = pActor->user;
+    if (user_crush == NULL || user_crush->crush_data != NULL || user_crush->groove != NULL) {
+        return 0;
+    }
+    user_crush->crush_data = BrMemAllocate(sizeof(tCar_crush_buffer_entry), kMem_crush_data);
+    strncpy(user_crush->crush_data->actor_name, pActor->identifier, sizeof(user_crush->crush_data->actor_name) - 1);
+    user_crush->crush_data->id = 0xe9;
+    user_crush->crush_data->softness_factor = 1.f;
+    user_crush->crush_data->field_0x2c = 0;
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0042a210
@@ -278,7 +327,8 @@ intptr_t C2_HOOK_CDECL LinkCarCrushData(br_actor* pActor, void* pData) {
 }
 
 // FUNCTION: CARMA2_HW 0x0042ac70
-intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* pData) {
+// FUNCTION: CARMA2_SW 0x0042ad00
+intptr_t C2_HOOK_CDECL z(br_actor* pActor, void* pData) {
     tAccumulateSquashVertices_UserData* context = pData;
     tUser_crush_data* crush_data = pActor->user;
 
@@ -311,6 +361,7 @@ int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2) {
 }
 
 // FUNCTION: CARMA2_HW 0x0042ace0
+// FUNCTION: CARMA2_SW 0x0042ad70
 int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
     if (*(const float*)pValue1 > *(const float*)pValue2) {
         return -1;
@@ -321,7 +372,34 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
     }
 }
 
-// CrushLimitNumber
+// FUNCTION: CARMA2_HW 0x0042b4c0
+// FUNCTION: CARMA2_SW 0x0042b550
+tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid) {
+    int number;
+    int i;
+    int mi;
+    int ma;
+
+    *pInvalid = 1;
+    number = 0;
+    for (i = REC2_ASIZE(pPoint->v) - 1; i >= 0; i--) {
+        for (mi = 0; mi < pCount_limits->counts[i][1] - 1; mi++) {
+            if (pPoint->v[i] < pLimits->limits[i][1].values[mi]) {
+                *pInvalid = 0;
+                break;
+            }
+        }
+        number = (number << 2) | mi;
+        for (ma = 0; ma < pCount_limits->counts[i][0] - 1; ma++) {
+            if (pLimits->limits[i][0].values[ma] < pPoint->v[i]) {
+                *pInvalid = 0;
+                break;
+            }
+        }
+        number = (number << 2) | ma;
+    }
+    return (tU16)number;
+}
 
 // SoftnessOfNearestPointCB
 
@@ -333,7 +411,7 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br
     br_actor* a;
 
     if (pDelta != NULL) {
-        BrVector3Add(&delta, (br_vector3*)pActor->t.t.mat.m[3], pDelta);
+        BrVector3Add(&delta, &pActor->t.t.translate.t, pDelta);
     } else {
         BrVector3Set(&delta, 0.0f, 0.0f, 0.0f);
     }
@@ -376,7 +454,49 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br
 
 // CalculateReferencePoints
 
-// InitModelCrushDataCB
+// FUNCTION: CARMA2_HW 0x0042be20
+// FUNCTION: CARMA2_SW 0x0042beb0
+intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush_data;
+    tCar_crush_detach_data* detach_data;
+
+    user_crush_data = pActor->user;
+    if (user_crush_data != NULL && user_crush_data->models[0] != NULL
+            && user_crush_data->crush_data != NULL && (detach_data = user_crush_data->crush_data->detach_data) != NULL) {
+        tUser_crush_data* parent_user_crush_data;
+        br_model* model;
+        br_model* parent_model;
+        tU16 i;
+        float d_min, d_max;
+        br_vector3 min_v, max_v;
+
+        model = user_crush_data->models[0];
+        parent_user_crush_data = pActor->parent->user;
+        parent_model = parent_user_crush_data->models[0];
+        d_max = d_min = BR_SCALAR_MAX;
+        BrMatrix34ApplyP(&min_v, &model->bounds.min, &pActor->t.t.mat);
+        BrMatrix34ApplyP(&max_v, &model->bounds.max, &pActor->t.t.mat);
+
+        for (i = 0; i < parent_model->nvertices; i++) {
+            float d;
+            br_vector3 delta;
+
+            BrVector3Sub(&delta, &min_v, &parent_model->vertices[i].p);
+            d = BrVector3LengthSquared(&delta);
+            if (d < d_min) {
+                detach_data->min_vertex = i;
+                d_min = d;
+            }
+            BrVector3Sub(&delta, &max_v, &parent_model->vertices[i].p);
+            d = BrVector3LengthSquared(&delta);
+            if (d < d_max) {
+                detach_data->max_vertex = i;
+                d_max = d;
+            }
+        }
+    }
+    return 0;
+}
 
 // InitModelCrushData
 
@@ -395,6 +515,7 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br
 // InitPhysModCrushData
 
 // FUNCTION: CARMA2_HW 0x0042c420
+// FUNCTION: CARMA2_SW 0x0042c4b0
 void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_spec* pCar) {
     int i;
 
@@ -421,6 +542,7 @@ void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_s
 }
 
 // FUNCTION: CARMA2_HW 0x0042c4f0
+// FUNCTION: CARMA2_SW 0x0042c580
 void C2_HOOK_FASTCALL DisposeCrushData(tCar_crush_buffer_entry* pCrush_data) {
 
     if (pCrush_data != NULL) {
@@ -436,6 +558,7 @@ void C2_HOOK_FASTCALL DisposeCrushData(tCar_crush_buffer_entry* pCrush_data) {
 }
 
 // FUNCTION: CARMA2_HW 0x0042c530
+// FUNCTION: CARMA2_SW 0x0042c5c0
 void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data) {
 
     if (pVertex_data != NULL) {
@@ -468,9 +591,21 @@ float C2_HOOK_FASTCALL DistSq(const br_vector3* pP, int pCount, const br_vector3
 
 // LimitImpactScale
 
-// GetImpactScale
+// FUNCTION: CARMA2_HW 0x00436850
+// FUNCTION: CARMA2_SW 0x00436880
+float C2_HOOK_FASTCALL GetImpactScale(const br_vector3* pP, int pCount, const br_vector3* pVertices, float pMax_dist_sq) {
+    float dist_sq;
+
+    dist_sq = DistSq(pP, pCount, pVertices);
+    if (dist_sq > gMax_crush_dist_sq) {
+        return 0.0f;
+    } else {
+        return 1.0f - (float)sqrt(dist_sq / pMax_dist_sq);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042d0e0
+// FUNCTION: CARMA2_SW 0x0042d150
 int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_vector3* pVertices, float pMax_dist_sq) {
     br_vector3 diagonal;
     float threshold;
@@ -486,6 +621,7 @@ int C2_HOOK_FASTCALL TooFarToCrush(const br_model* pModel, int pCount, const br_
 }
 
 // FUNCTION: CARMA2_HW 0x00436890
+// FUNCTION: CARMA2_SW 0x004368c0
 int C2_HOOK_FASTCALL NearestAxis(const br_vector3* pVector) {
 
     if ((float)fabs(pVector->v[0]) > 0.707107f) {
@@ -535,6 +671,7 @@ void C2_HOOK_FASTCALL ClipPointToLimits(br_vector3* pPoint, tU16 pLimit_bits, co
 // SendCrush
 
 // FUNCTION: CARMA2_HW 0x00436940
+// FUNCTION: CARMA2_SW 0x00436970
 void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc) {
     int i;
 
@@ -559,13 +696,45 @@ void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_cru
 
 // DoDroneCrushing
 
-// AddDroneCrush
+// FUNCTION: CARMA2_HW 0x0042d390
+// FUNCTION: CARMA2_SW 0x0042d400
+void C2_HOOK_FASTCALL AddDroneCrush(tQueued_drone_crush_item* pCrush, const br_vector3* pVector, float pScale, int pCount, const br_vector3* pPoints) {
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, points, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tQueued_drone_crush_item, points, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x34, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x38, 0x38);
+
+    if (pCount > (int)REC2_ASIZE(pCrush->points)) {
+        pCount = REC2_ASIZE(pCrush->points);
+    }
+    BrVector3Copy(&pCrush->field_0x38, pVector);
+    pCrush->field_0x34 = pScale;
+    pCrush->count = pCount;
+    for (i = 0; i < pCrush->count; i++) {
+        BrVector3Copy(&pCrush->points[i], &pPoints[i]);
+    }
+}
 
 // QueueDroneCrush
 
 // DoCrushing
 
-// SetCrush
+// FUNCTION: CARMA2_HW 0x0042d770
+// FUNCTION: CARMA2_SW 0x0042d7e0
+void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br_vector3* pVectors, br_vector3* pVector1, br_vector3* pVector2, float pScalar, tU32 pValue) {
+    int i;
+
+    pCrush->count = pCount_vectors;
+    for (i = 0; i < pCount_vectors; i++) {
+        BrVector3Copy(&pCrush->vectors[i], &pVectors[i]);
+    }
+    BrVector3Copy(&pCrush->field_0x34, pVector1);
+    BrVector3Copy(&pCrush->field_0x44, pVector2);
+    pCrush->field_0x40 = pScalar;
+    pCrush->field_0x50 = pValue;
+}
 
 // QueueCarCrush
 
@@ -598,6 +767,7 @@ void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_cru
 // SetUpFlapJoint
 
 // FUNCTION: CARMA2_HW 0x0042d950
+// FUNCTION: CARMA2_SW 0x0042d9c0
 void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel) {
     int g;
 
@@ -617,6 +787,7 @@ void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel) {
 // CheckFlapAngles
 
 // FUNCTION: CARMA2_HW 0x0042d9b0
+// FUNCTION: CARMA2_SW 0x0042da20
 void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
     int g;
 
@@ -639,7 +810,44 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 
 // SemiDetachBit
 
-// GetSDBJointPosAndBounds
+// FUNCTION: CARMA2_HW 0x0042dbd0
+// FUNCTION: CARMA2_SW 0x0042dc40
+int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, br_vector3* pP3, br_bounds3* pBounds, br_actor* pActor) {
+    tUser_crush_data* user_crush;
+    br_model* model;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_crush_detach_data* detach_data;
+    tCar_crush_flap_data* flap_data;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 1;
+    }
+    model = user_crush->models[0];
+    if (model == NULL) {
+        return 1;
+    }
+    crush_data = user_crush->crush_data;
+    if (crush_data == NULL) {
+        return 1;
+    }
+    detach_data = crush_data->detach_data;
+    if (detach_data == NULL) {
+        return 1;
+    }
+    DRBoundsCopy(pBounds, &model->bounds);
+    flap_data = crush_data->flap_data;
+    if (flap_data != NULL) {
+        BrVector3Copy(pP1, &model->vertices[flap_data->hinge0].p);
+        BrVector3Copy(pP2, &model->vertices[flap_data->hinge1].p);
+        BrVector3Copy(pP3, &model->vertices[flap_data->hinge2].p);
+    } else {
+        BrVector3Copy(pP1, &model->vertices[detach_data->field_0x30].p);
+        BrVector3Set(pP2, 0.f, 0.f, 0.f);
+        BrVector3Set(pP3, 0.f, 0.f, 0.f);
+    }
+    return 0;
+}
 
 // SendSemiDetachBit
 
@@ -663,7 +871,19 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 
 // SendReAttachBit
 
-// StopFlapping
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004387d0
+// STUB: CARMA2_SW 0x00438800
+void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // DoFlapping
 
@@ -676,6 +896,7 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
 // ToggleFlaps
 
 // FUNCTION: CARMA2_HW 0x00434910
+// FUNCTION: CARMA2_SW 0x00434940
 int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_object* pObject) {
     br_vector3 world_direction;
     br_vector3 parent_direction;
@@ -726,6 +947,7 @@ int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_ob
 // SaveVitalBitsOfObject
 
 // FUNCTION: CARMA2_HW 0x00430730
+// FUNCTION: CARMA2_SW 0x00430760
 intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsDoubleSided(br_actor* pActor, void* pArg) {
     tUser_crush_data* user_crush = pActor->user;
     tCar_spec* car_spec = pArg;
@@ -746,6 +968,7 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsDoubleSided(br_actor* pActor, void*
 // IsAWheelOrPivotActor
 
 // FUNCTION: CARMA2_HW 0x0042deb0
+// FUNCTION: CARMA2_SW 0x0042df20
 intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg) {
     tUser_crush_data* user_crush = pActor->user;
     tCar_spec* car_spec = pArg;
@@ -826,6 +1049,7 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 // DoBending
 
 // FUNCTION: CARMA2_HW 0x00431590
+// FUNCTION: CARMA2_SW 0x004315c0
 void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
 
     (void)pOn_screen;
@@ -835,6 +1059,7 @@ void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_materia
 }
 
 // FUNCTION: CARMA2_HW 0x004315e0
+// FUNCTION: CARMA2_SW 0x00431610
 void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
     tUser_detail_level_model* user_detail_model;
 
@@ -853,7 +1078,23 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // TotallySpamTheCar
 
-// DRActorEnumRecurseUltraPlus
+// FUNCTION: CARMA2_HW 0x00435dd0
+// FUNCTION: CARMA2_SW 0x00435e00
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, br_actor_enum_cbfn* pCallback, void* pArg) {
+    intptr_t result;
+    br_actor* actor;
+    br_actor* next;
+
+    actor = pActor;
+    for (pActor = pActor->children; pActor != NULL; pActor = next) {
+        next = pActor->next;
+        result = DRActorEnumRecurseUltraPlus(pActor, pCallback, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return pCallback(actor, pArg);
+}
 
 // FireOffBitsCB
 
@@ -869,10 +1110,27 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // SphericizeCar
 
-// STUB: CARMA2_HW 0x004398d0
-// STUB: CARMA2_SW 0x00439910
+// FUNCTION: CARMA2_HW 0x004398d0
+// FUNCTION: CARMA2_SW 0x00439910
 intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
-    NOT_IMPLEMENTED();
+    tUser_crush_data* user_crush_data = pActor->user;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_spec* car_spec = pUser;
+
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    crush_data = user_crush_data->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
+    if (crush_data->flap_data == NULL) {
+        return 0;
+    }
+    if (crush_data->flap_data->field_0x0 && !crush_data->flap_data->kev_o_flap) {
+        StopFlapping(pActor, car_spec);
+    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004398c0
@@ -900,6 +1158,7 @@ void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info* pSha
 // CompletelyUnBendOtherThings
 
 // FUNCTION: CARMA2_HW 0x00439910
+// FUNCTION: CARMA2_SW 0x00439950
 intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData) {
     tUser_crush_data* user_crush;
 
@@ -920,11 +1179,13 @@ intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData) {
 // TotallyRepairModel
 
 // STUB: CARMA2_HW 0x00439a20
+// STUB: CARMA2_SW 0x00439a60
 intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser) {
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x00439a10
+// FUNCTION: CARMA2_SW 0x00439a50
 int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void* pUser_data) {
     DRActorEnumRecurse(pCollision_info->actor, TotallyRepairModels, pUser_data);
     return 0;
@@ -933,6 +1194,7 @@ int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void*
 // SendReAttachAllBits
 
 // STUB: CARMA2_HW 0x00439510
+// STUB: CARMA2_SW 0x00439550
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
@@ -982,6 +1244,7 @@ br_scalar C2_HOOK_FASTCALL NormalizedAngle(br_angle pAngle) {
 #endif
 
 // STUB: CARMA2_HW 0x00439c30
+// STUB: CARMA2_SW 0x00439c70
 br_scalar C2_HOOK_FASTCALL UnBendCar(tCar_spec* pCar_spec, tU32 pDelta_time, br_scalar* pOriginal_amount) {
     NOT_IMPLEMENTED();
 }
@@ -991,6 +1254,7 @@ br_scalar C2_HOOK_FASTCALL UnBendCar(tCar_spec* pCar_spec, tU32 pDelta_time, br_
 #endif
 
 // FUNCTION: CARMA2_HW 0x00439c10
+// FUNCTION: CARMA2_SW 0x00439c50
 void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec) {
     br_scalar original_amount;
 
@@ -1018,6 +1282,7 @@ void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec) {
 // ARUndoCrush
 
 // FUNCTION: CARMA2_HW 0x0043bf30
+// FUNCTION: CARMA2_SW 0x0043bf80
 void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3* pDest, br_model* pModel, br_vector3* pSrc) {
     tU16 i;
 
@@ -1039,7 +1304,18 @@ void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pS
     SetModelForUpdate(pModel);
 }
 
-// ARUndoModelMash
+// FUNCTION: CARMA2_HW 0x0043c030
+// FUNCTION: CARMA2_SW 0x0043c080
+void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSrc) {
+    tU16 i;
+    br_vector3 delta;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        ExpandVector3(&delta, &pSrc[i], -10.0f, 10.0f);
+        BrVector3Sub(&pModel->vertices[i].p, &pModel->vertices[i].p, &delta);
+    }
+    SetModelForUpdate(pModel);
+}
 
 // ARApplyFlap
 
@@ -1095,7 +1371,53 @@ void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pS
 
 // GetNetShapeDataLengthFromData
 
-// EncodeNetShapeData
+// FUNCTION: CARMA2_HW 0x0043d9c0
+// FUNCTION: CARMA2_SW 0x0043da10
+void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar) {
+    int i;
+    int j;
+    int count;
+    tCar_crush_shape_info* shape_info;
+    tPhysics_shape* shape;
+    br_vector3* point;
+
+    C2_HOOK_BUG_ON(sizeof(tCompressed_vector3) != 6);
+
+    if (pCar->car_crush_spec->field_0x4b8) {
+        count = 0;
+        for (shape = pCar->collision_info->shape; shape != NULL; shape = shape->common.next) {
+            if (shape->common.type == kCollisionShapeType_Polyhedron || shape->common.type == kCollisionShapeType_Wireframe_Polyhedron) {
+                count++;
+            }
+        }
+        *pData++ = (tU8)count;
+        for (shape = pCar->collision_info->shape; shape != NULL; shape = shape->common.next) {
+            if (shape->common.type == kCollisionShapeType_Polyhedron || shape->common.type == kCollisionShapeType_Wireframe_Polyhedron) {
+                *pData = (tU8)shape->polyhedron.polyhedron.count_points;
+                pData++;
+                for (j = 0; j < shape->polyhedron.polyhedron.count_points; j++) {
+                    point = shape->polyhedron.polyhedron.points;
+                    point += j;
+                    CompressVector3((tCompressed_vector3*)pData, point, -2.5f, 2.5f);
+                    pData += sizeof(tCompressed_vector3);
+                }
+            }
+        }
+    } else {
+        count = 0;
+        for (i = 0; i < pCar->car_crush_spec->count_shapes; i++) {
+            count += pCar->car_crush_spec->field_0x4[i].count_points;
+        }
+        *pData++ = (tU8)count;
+        for (i = 0; i < pCar->car_crush_spec->count_shapes; i++) {
+            shape_info = &pCar->car_crush_spec->field_0x4[i];
+            for (j = 0; j < shape_info->count_points; j++) {
+                CompressVector3((tCompressed_vector3*)pData, &shape_info->field_0x18[j].field_0xc, -2.5f, 2.5f);
+                pData += sizeof(tCompressed_vector3);
+            }
+        }
+    }
+}
 
 // DecodeNetShapeData
 
@@ -1110,6 +1432,7 @@ void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pS
 // CopySplitInMessage
 
 // FUNCTION: CARMA2_HW 0x0043dfd0
+// FUNCTION: CARMA2_SW 0x0043e020
 void C2_HOOK_FASTCALL SetAllShapeStatusFlags(tCar_crush_network_shapes* pShapes) {
     int i;
 

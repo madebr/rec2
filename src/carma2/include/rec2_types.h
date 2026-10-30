@@ -249,6 +249,11 @@ typedef struct tPipe_smudge_data {
 } tPipe_smudge_data;
 
 typedef struct {
+    br_matrix34 matrix;
+    br_material* material;
+} tPipe_chunk_skid_adjustment;
+
+typedef struct {
     br_vector3 direction;
 } tPipe_ped_dir_data;
 
@@ -491,10 +496,12 @@ typedef enum {
     ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_prox_ray = 21,
+    ePipe_chunk_skid_adjustment = 22,
     ePipe_chunk_flap = 23,
     ePipe_model_mash = 24,
     ePipe_chunk_identity = 26,
     ePipe_chunk_explosion = 31,
+    ePipe_chunk_non_car_creation = 32,
     ePipe_chunk_smash_model_change = 33,
     ePipe_smash_texture_change = 36,
     ePipe_chunk_repulse_ray = 37,
@@ -533,7 +540,7 @@ typedef struct {
 } tPipe_smash_texture_change;
 
 typedef struct tPipe_chunk {
-    tU32 subject_index;
+    uintptr_t subject_index;
     union {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
@@ -543,6 +550,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
         tPipe_single_transform_type transform_type;
+        tPipe_single_vector vector;
         char raw_data[0];
     } data;
 } tPipe_chunk;
@@ -3109,7 +3117,7 @@ typedef enum {
 typedef struct {
     tU16 min_count;
     tU16 max_count;
-    tU16 count_frames;
+    tS16 count_frames;
     tU16 min_start_delay_ms;
     tU16 max_start_delay_ms;
     tU16 min_frametime_ms;
@@ -3407,9 +3415,9 @@ typedef struct {
     float field_0x64;
     float field_0x68;
     undefined4 field_0x6c;
-    undefined4 field_0x70;
+    void* field_0x70;
     undefined4 field_0x74;
-    undefined4 field_0x78;
+    void* field_0x78;
 } tSmashable_item_spec_texture_change;
 
 typedef struct {
@@ -3442,6 +3450,7 @@ typedef struct {
     undefined field_0x2dd[3];
 } tSmashable_item_spec;
 
+#ifdef REC2_HW
 typedef struct {
     tRGB_colour directional;
     float ambient_else;
@@ -3451,6 +3460,20 @@ typedef struct {
     float ambient_0;
     float diffuse_0;
 } tLighting_data;
+#endif
+#ifdef REC2_SW
+typedef struct {
+    tRGB_colour directional;
+    float ambient_else;
+    float ambient_1;
+    float ambient_0;
+} tLighting_data_ambient;
+typedef struct {
+    float diffuse_else;
+    float diffuse_1;
+    float diffuse_0;
+} tLighting_data_diffuse;
+#endif
 
 typedef struct tMaterial_exception {
     struct tMaterial_exception* next;
@@ -3495,7 +3518,8 @@ typedef struct {
     br_vector3 v;
     br_vector3 omega;
     undefined field_0x34;
-    undefined field_0x35[0x38-0x35];
+    tU8 priority;
+    undefined field_0x36[0x38-0x36];
 } tSmash_vertex;
 
 typedef struct {
@@ -3648,7 +3672,7 @@ typedef struct {
     int (C2_HOOK_FASTCALL * active_halted)(undefined4*, undefined4*);
     void (C2_HOOK_FASTCALL * moved_by_physics)(undefined4*, undefined4*, undefined4);
     int (C2_HOOK_FASTCALL * move_completed)(undefined4*);
-    void (C2_HOOK_FASTCALL * fill_in_object)(undefined4*, undefined4);
+    void (C2_HOOK_FASTCALL * fill_in_object)(tPhysics_object*, undefined4);
     void (C2_HOOK_FASTCALL * load_form)(tPed_form* pPed_form, FILE* pF);
     void (C2_HOOK_FASTCALL * dispose_form)(tPed_form*);
     void (C2_HOOK_FASTCALL * load_personality)(tPed_personality*, FILE*);
@@ -3758,24 +3782,7 @@ typedef struct tSmashable_level {
     br_pixelmap * pixelmaps[3];
     int count_pixelmaps;
     float trigger_threshold;
-    int count_sounds;
-    int sounds[3];
-    int count_shrapnels;
-    tShrapnel_spec shrapnels[6];
-    tExplosion_animation animation;
-    tSlick_spec slick;
-    int count_noncar_activations;
-    tNoncar_activation* noncar_activations;
-    tShrapnel_side_effects side_effects;
-    int field_0x280;
-    int extension_flags;
-    int room_turn_on_code;
-    tAward_info award;
-    undefined field_0x2a0[4];
-    tU8 count_runtime_variable_changes;
-    undefined field_0x2a5;
-    tSmash_run_time_variable_change runtime_variable_changes[1]; /* FIXME: unknown size */
-    undefined field_0x2aa[18];
+    tConnotations connotations;
     int flags;
     tSmashable_texture_level_collision_type collision_type;
 } tSmashable_level;
@@ -4405,7 +4412,7 @@ typedef struct {
 
 typedef struct {
     int count;
-    undefined field_0x4[0x30];
+    br_vector3 points[4];
     float field_0x34;
     br_vector3 field_0x38;
 } tQueued_drone_crush_item;
@@ -4617,7 +4624,7 @@ typedef struct {
     tS8 field_0x7;
     tS8 field_0x8;
     tU8 field_0x9;
-    undefined field_0xa;
+    tS8 field_0xa;
     undefined field_0xb;
     undefined4 field_0xc;
     undefined4 field_0x10;
@@ -4934,7 +4941,7 @@ typedef struct {
     int grid_position_set;
     undefined field_0x58[4];
     int opponent_list_index;
-    undefined field_0x60[4];
+    int awaiting_confirmation;
     int score2;
     int credits;
     int wasted;
@@ -5159,9 +5166,15 @@ typedef struct {
 } tRepair_animation;
 
 typedef enum {
+    eNet_message_chunk_type_5 = 0x5,
+    eNet_message_chunk_poll_car_details = 0x6,
     eNet_message_chunk_type_netsynch = 0xe,
+    eNet_message_chunk_type_gameplay = 0x1b,
+    eNet_message_chunk_type_oil_spill = 0x1f,
     eNet_message_chunk_type_car_crush = 0x20,
     eNet_message_chunk_type_toggle_doors = 0x2c,
+    eNet_message_chunk_type_mine_explosion = 0x31,
+    eNet_message_chunk_type_detach_bit = 0x33,
 } tNet_message_chunk_type;
 
 typedef struct {
@@ -5202,6 +5215,15 @@ typedef struct {
     int general_score;
     int scores[12];
 } tNet_message_chunk_scores;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tNet_gameplay_mess mess;
+    int param_1;
+    int param_2;
+    int param_3;
+    int param_4;
+} tNet_message_chunk_gameplay;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -5301,6 +5323,7 @@ typedef struct {
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_scores scores; /* type = 0x18 */
+    tNet_message_chunk_gameplay gameplay; /* type = 0x1b */
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
@@ -5641,6 +5664,7 @@ enum {
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
     kFatalError_CannotLoadFontImage_S = 0x14,
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
+    kFatalError_CannotLoadCursorImage = 0x16,
     kFatalError_ScreenWidthHeightDoesNotMatchGrafData = 0x18,
     kFatalError_CannotLoadCarResolutionIndependentFile = 0x19,
     kFatalError_CannotLoadDamageImage = 0x1b,

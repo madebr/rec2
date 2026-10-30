@@ -11,10 +11,16 @@
 #include "55-volume.h"
 
 // GLOBAL: CARMA2_HW 0x0065d004
+// GLOBAL: CARMA2_SW 0x0065793c
 int gPHIL_disabled = 1;
 
 // GLOBAL: CARMA2_HW 0x0074a5f0
+// GLOBAL: CARMA2_SW 0x007410b0
 tPhysics_object* gPHIL_list_collision_infos;
+
+// GLOBAL: CARMA2_HW 0x0074a5ec
+// GLOBAL: CARMA2_SW 0x007410ac
+tU32 gPHIL_last_physics_tick;
 
 // ScalarToFraction
 
@@ -84,6 +90,7 @@ void C2_HOOK_FASTCALL GetOrientationFromMatrix(tFixed_quat* pOrientation, const 
 #endif
 
 // STUB: CARMA2_HW 0x0049c0d0
+// STUB: CARMA2_SW 0x00498250
 int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, tU32 pSize) {
 
     NOT_IMPLEMENTED();
@@ -113,6 +120,7 @@ int C2_HOOK_STDCALL FloatToFixedFraction(float pValue, float pMin, float pMax) {
 // WriteObjectNetworkStuff
 
 // FUNCTION: CARMA2_HW 0x0049cd00
+// FUNCTION: CARMA2_SW 0x00498e80
 int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, int pSize) {
     int size;
     int child_size;
@@ -155,6 +163,7 @@ int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pBu
 // PHILInit
 
 // FUNCTION: CARMA2_HW 0x004b5d20
+// FUNCTION: CARMA2_SW 0x004b2440
 void C2_HOOK_FASTCALL PHILDisable(void) {
     gPHIL_disabled = 1;
 }
@@ -162,6 +171,7 @@ void C2_HOOK_FASTCALL PHILDisable(void) {
 // PHILAddObject
 
 // STUB: CARMA2_HW 0x004b5ea0
+// STUB: CARMA2_SW 0x004b25c0
 int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
@@ -169,6 +179,7 @@ int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b5fd0
+// FUNCTION: CARMA2_SW 0x004b26f0
 tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
     if (gPHIL_disabled) {
         return NULL;
@@ -295,7 +306,11 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const
 
 // PHILSetObjectProperty
 
-// PHILGetObjectProperty
+// STUB: CARMA2_HW 0x004b6530
+// STUB: CARMA2_SW 0x004b2c50
+float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pProperty) {
+    NOT_IMPLEMENTED();
+}
 
 // FlushQueuedAddsAndRemoves
 

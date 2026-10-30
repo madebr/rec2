@@ -30,25 +30,30 @@
 #include <stddef.h>
 
 // GLOBAL: CARMA2_HW 0x00663490
+// GLOBAL: CARMA2_SW 0x0065dc28
 br_file_struct_member br_vertex_FM[] = {
-    { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[0]), "p.v[x]", NULL },
-    { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[1]), "p.v[y]", NULL },
-    { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[2]), "p.v[z]", NULL },
+    { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[0]), "p.v[X]", NULL },
+    { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[1]), "p.v[Y]", NULL },
+    { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[2]), "p.v[Z]", NULL },
 };
 
 // GLOBAL: CARMA2_HW 0x006634c0
+// GLOBAL: CARMA2_SW 0x0065dc58
 br_file_struct br_vertex_F = { "br_vertex", BR_ASIZE(br_vertex_FM), br_vertex_FM, sizeof(br_vertex) };
 
 // GLOBAL: CARMA2_HW 0x006634d0
+// GLOBAL: CARMA2_SW 0x0065dc68
 br_file_struct_member br_vertex_uv_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, map.v[0]), "map.v[0]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, map.v[1]), "map.v[1]", NULL },
 };
 
 // GLOBAL: CARMA2_HW 0x006634f0
+// GLOBAL: CARMA2_SW 0x0065dc88
 br_file_struct br_vertex_uv_F = { "br_vertex_uv", BR_ASIZE(br_vertex_uv_FM), br_vertex_uv_FM, sizeof(br_vertex) };
 
 // GLOBAL: CARMA2_HW 0x00663500
+// GLOBAL: CARMA2_SW 0x0065dc98
 br_file_struct_member br_old_vertex_uv_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[0]), "p.v[X]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[1]), "p.v[Y]", NULL },
@@ -58,9 +63,11 @@ br_file_struct_member br_old_vertex_uv_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663550
+// GLOBAL: CARMA2_SW 0x0065dce8
 br_file_struct br_old_vertex_uv_F = { "br_old_vertex_uv", BR_ASIZE(br_old_vertex_uv_FM), br_old_vertex_uv_FM, sizeof(br_vertex) };
 
 // GLOBAL: CARMA2_HW 0x00663560
+// GLOBAL: CARMA2_SW 0x0065dcf8
 br_file_struct_member br_face_FM[] = {
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices), "vertices[0]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[1]), "vertices[1]", NULL },
@@ -70,9 +77,11 @@ br_file_struct_member br_face_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x006635b0
+// GLOBAL: CARMA2_SW 0x0065dd48
 br_file_struct br_face_F = { "br_face", BR_ASIZE(br_face_FM), br_face_FM, sizeof(br_face) };
 
 // GLOBAL: CARMA2_HW 0x006635c0
+// GLOBAL: CARMA2_SW 0x0065dd58
 br_file_struct_member br_old_face_1_FM[] = {
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[0]), "vertices[0]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[1]), "vertices[1]", NULL },
@@ -82,9 +91,11 @@ br_file_struct_member br_old_face_1_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663610
+// GLOBAL: CARMA2_SW 0x0065dda8
 br_file_struct br_old_face_1_F = { "br_old_face_1", BR_ASIZE(br_old_face_1_FM), br_old_face_1_FM, sizeof(br_face) };
 
 // GLOBAL: CARMA2_HW 0x00663620
+// GLOBAL: CARMA2_SW 0x0065ddb8
 br_file_struct_member br_old_face_FM[] = {
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[0]), "vertices[0]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[1]), "vertices[1]", NULL },
@@ -94,27 +105,33 @@ br_file_struct_member br_old_face_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663670
+// GLOBAL: CARMA2_SW 0x0065de08
 br_file_struct br_old_face_F ={ "br_old_face", BR_ASIZE(br_old_face_FM), br_old_face_FM, sizeof(br_face) };
 
 // GLOBAL: CARMA2_HW 0x00663680
+// GLOBAL: CARMA2_SW 0x0065de18
 br_file_struct_member br_model_FM[] = {
     { DF_TYPE_BR_UINT_16, offsetof(br_model, flags), "flags", NULL },
     { DF_TYPE_ASCIZ, offsetof(br_model, identifier), "identifier", NULL },
 };
 
 // GLOBAL: CARMA2_HW 0x006636a0
+// GLOBAL: CARMA2_SW 0x0065de38
 br_file_struct br_model_F ={ "br_model", BR_ASIZE(br_model_FM), br_model_FM, sizeof(br_model) };
 
 
 // GLOBAL: CARMA2_HW 0x006636b0
+// GLOBAL: CARMA2_SW 0x0065de48
 br_file_struct_member br_old_model_1_FM[] = {
     { DF_TYPE_ASCIZ, offsetof(br_model, identifier), "identifier", NULL },
 };
 
 // GLOBAL: CARMA2_HW 0x006636c0
+// GLOBAL: CARMA2_SW 0x0065de58
 br_file_struct br_old_model_1_F = { "br_old_model_1", 1, br_old_model_1_FM, sizeof(br_model) };
 
 // GLOBAL: CARMA2_HW 0x006636d0
+// GLOBAL: CARMA2_SW 0x0065de68
 br_file_struct_member br_pivot_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_model, pivot.v[0]), "pivot.v[X]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_model, pivot.v[1]), "pivot.v[Y]", NULL },
@@ -122,9 +139,11 @@ br_file_struct_member br_pivot_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663700
+// GLOBAL: CARMA2_SW 0x0065de98
 br_file_struct br_pivot_F = { "br_pivot", 3, br_pivot_FM, sizeof(br_model) };
 
 // GLOBAL: CARMA2_HW 0x00663710
+// GLOBAL: CARMA2_SW 0x0065dea8
 br_file_struct_member br_material_old_FM[] = {
     { DF_TYPE_BR_COLOUR, offsetof(br_material, colour), "colour", NULL },
     { DF_TYPE_BR_UINT_8, offsetof(br_material, opacity), "opacity", NULL },
@@ -142,9 +161,11 @@ br_file_struct_member br_material_old_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x006637e0
+// GLOBAL: CARMA2_SW 0x0065df78
 br_file_struct br_material_old_F = { "br_material_old", BR_ASIZE(br_material_old_FM), br_material_old_FM, sizeof(br_material) };
 
 // GLOBAL: CARMA2_HW 0x006637f0
+// GLOBAL: CARMA2_SW 0x0065df88
 br_file_struct_member br_material_FM[] = {
     { DF_TYPE_BR_COLOUR, offsetof(br_material, colour), "colour", NULL },
     { DF_TYPE_BR_UINT_8, offsetof(br_material, opacity), "opacity", NULL },
@@ -166,6 +187,7 @@ br_file_struct_member br_material_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663900
+// GLOBAL: CARMA2_SW 0x0065e098
 br_file_struct br_material_F = { "br_material", BR_ASIZE(br_material_FM), br_material_FM, sizeof(br_material) };
 
 // GLOBAL: CARMA2_HW 0x00663910
@@ -178,6 +200,7 @@ br_df_material_map_item MaterialMaps[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663950
+// GLOBAL: CARMA2_SW 0x0065e0e4
 br_file_enum_member actor_type_FM[] = {
     { 0, "BR_ACTOR_NONE" },
     { 1, "BR_ACTOR_MODEL" },
@@ -190,9 +213,11 @@ br_file_enum_member actor_type_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663990
+// GLOBAL: CARMA2_SW 0x0065e128
 br_file_enum actor_type_F ={ BR_ASIZE(actor_type_FM), actor_type_FM };
 
 // GLOBAL: CARMA2_HW 0x00663998
+// GLOBAL: CARMA2_SW 0x0065e130
 br_file_enum_member render_style_FM[] = {
     { 0, "BR_RSTYLE_DEFAULT"},
     { 1, "BR_RSTYLE_NONE"},
@@ -205,9 +230,11 @@ br_file_enum_member render_style_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x006639d8
+// GLOBAL: CARMA2_SW 0x0065e170
 br_file_enum render_style_F = { 8, render_style_FM };
 
 // GLOBAL: CARMA2_HW 0x006639e0
+// GLOBAL: CARMA2_SW 0x0065e178
 br_file_struct_member br_actor_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_actor, type), "type", &actor_type_F },
     { DF_TYPE_ENUM_8, offsetof(br_actor, render_style), "render_style", &render_style_F },
@@ -215,9 +242,11 @@ br_file_struct_member br_actor_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663a10
+// GLOBAL: CARMA2_SW 0x0065e1a8
 br_file_struct br_actor_F = { "br_actor", BR_ASIZE(br_actor_FM), br_actor_FM, sizeof(br_actor) };
 
 // GLOBAL: CARMA2_HW 0x00663a20
+// GLOBAL: CARMA2_SW 0x0065e1b8
 br_file_struct_member br_transform_matrix34_FM[] ={
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.mat.m[0]), "t.mat.m[0]", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.mat.m[1]), "t.mat.m[1]", NULL },
@@ -226,9 +255,11 @@ br_file_struct_member br_transform_matrix34_FM[] ={
 };
 
 // GLOBAL: CARMA2_HW 0x00663a60
+// GLOBAL: CARMA2_SW 0x0065e1f8
 br_file_struct br_transform_matrix34_F ={ "br_transform_matrix34", BR_ASIZE(br_transform_matrix34_FM), br_transform_matrix34_FM, sizeof(br_transform) };
 
 // GLOBAL: CARMA2_HW 0x00663a70
+// GLOBAL: CARMA2_SW 0x0065e208
 br_file_struct_member br_transform_quat_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_transform, t.quat.q.x), "t.quat.q.x", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_transform, t.quat.q.y), "t.quat.q.y", NULL },
@@ -238,9 +269,11 @@ br_file_struct_member br_transform_quat_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663ac0
+// GLOBAL: CARMA2_SW 0x0065e258
 br_file_struct br_transform_quat_F = { "br_transform_quat", BR_ASIZE(br_transform_quat_FM), br_transform_quat_FM, sizeof(br_transform) };
 
 // GLOBAL: CARMA2_HW 0x00663ad0
+// GLOBAL: CARMA2_SW 0x0065e268
 br_file_enum_member angle_order_FM[] = {
     { 0, "BR_EULER_XYZ_S" },
     { 8, "BR_EULER_XYX_S" },
@@ -269,9 +302,11 @@ br_file_enum_member angle_order_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663b90
+// GLOBAL: CARMA2_SW 0x0065e328
 br_file_enum angle_order_F = { BR_ASIZE(angle_order_FM), angle_order_FM };
 
 // GLOBAL: CARMA2_HW 0x00663b98
+// GLOBAL: CARMA2_SW 0x0065e330
 br_file_struct_member br_transform_euler_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_transform, t.euler.e.order), "t.euler.e.order", &angle_order_F },
     { DF_TYPE_BR_ANGLE, offsetof(br_transform, t.euler.e.a), "t.euler.e.a", NULL },
@@ -281,9 +316,11 @@ br_file_struct_member br_transform_euler_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663be8
+// GLOBAL: CARMA2_SW 0x0065e380
 br_file_struct br_transform_euler_F = { "br_transform_euler", BR_ASIZE(br_transform_euler_FM), br_transform_euler_FM, sizeof(br_transform) };
 
 // GLOBAL: CARMA2_HW 0x00663bf8
+// GLOBAL: CARMA2_SW 0x0065e390
 br_file_struct_member br_transform_look_up_FM[] = {
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.look_up.look), "t.look_up.look", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.look_up.up), "t.look_up.up", NULL },
@@ -291,17 +328,21 @@ br_file_struct_member br_transform_look_up_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663c28
+// GLOBAL: CARMA2_SW 0x0065e3c0
 br_file_struct br_transform_look_up_F = { "br_transform_look_up", BR_ASIZE(br_transform_look_up_FM), br_transform_look_up_FM, sizeof(br_transform) };
 
 // GLOBAL: CARMA2_HW 0x00663c38
+// GLOBAL: CARMA2_SW 0x0065e3d0
 br_file_struct_member br_transform_translation_FM[] ={
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.translate.t), "t.translate.t", NULL },
 };
 
 // GLOBAL: CARMA2_HW 0x00663c48
+// GLOBAL: CARMA2_SW 0x0065e3e0
 br_file_struct br_transform_translation_F = { "br_transform_translation", BR_ASIZE(br_transform_translation_FM), br_transform_translation_FM, sizeof(br_transform) };
 
 // GLOBAL: CARMA2_HW 0x00663c58
+// GLOBAL: CARMA2_SW 0x0065e3f0
 transform_type TransformTypes[] = {
     { CHUNKID_TRANSFORM_MAT34, &br_transform_matrix34_F },
     { CHUNKID_TRANSFORM_MAT34_LP, &br_transform_matrix34_F },
@@ -313,36 +354,47 @@ transform_type TransformTypes[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663c90
+// GLOBAL: CARMA2_SW 0x0065e428
 br_file_struct_member br_bounds3_FM[] = {
     { DF_TYPE_BR_VECTOR3, offsetof(br_bounds3, min), "min", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_bounds3, max), "max", NULL },
 };
 
 // GLOBAL: CARMA2_HW 0x00663cb0
+// GLOBAL: CARMA2_SW 0x0065e448
 br_file_struct br_bounds3_F = { "br_bounds3", BR_ASIZE(br_bounds3_FM), br_bounds3_FM, sizeof(br_bounds3) };
 
 // GLOBAL: CARMA2_HW 0x00663cc0
+// GLOBAL: CARMA2_SW 0x0065e458
 br_file_struct_member br_plane_FM[] ={
     { DF_TYPE_BR_VECTOR4, offsetof(br_vector4, v), "eqn", NULL },
 };
 
 // GLOBAL: CARMA2_HW 0x00663cd0
+// GLOBAL: CARMA2_SW 0x0065e468
 br_file_struct br_plane_F = { "br_plane", BR_ASIZE(br_plane_FM), br_plane_FM, sizeof(br_vector4) };
 
 // GLOBAL: CARMA2_HW 0x00663ce0
+// GLOBAL: CARMA2_SW 0x0065e478
 br_file_enum_member light_type_FM[] = {
-    { 0, "BR_LIGHT_POINT"},
-    { 1, "BR_LIGHT_DIRECT"},
-    { 2, "BR_LIGHT_SPOT"},
-    { 4, "BR_LIGHT_VIEW|BR_LIGHT_POINT"},
-    { 5, "BR_LIGHT_VIEW|BR_LIGHT_DIRECT"},
-    { 6, "BR_LIGHT_VIEW|BR_LIGHT_SPOT"},
+    { BR_LIGHT_POINT, "BR_LIGHT_POINT"},
+    { BR_LIGHT_POINT_LOCAL_1, "BR_LIGHT_POINT_LOCAL_1"},
+    { BR_LIGHT_POINT_LOCAL_2, "BR_LIGHT_POINT_LOCAL_2"},
+    { BR_LIGHT_DIRECT, "BR_LIGHT_DIRECT"},
+    { BR_LIGHT_SPOT, "BR_LIGHT_SPOT"},
+    { BR_LIGHT_VIEW|BR_LIGHT_POINT, "BR_LIGHT_VIEW|BR_LIGHT_POINT"},
+    {BR_LIGHT_VIEW|BR_LIGHT_POINT_LOCAL_1, "BR_LIGHT_VIEW|BR_LIGHT_POINT_LOCAL_1"},
+    {BR_LIGHT_VIEW|BR_LIGHT_POINT_LOCAL_2, "BR_LIGHT_VIEW|BR_LIGHT_POINT_LOCAL_2"},
+    { BR_LIGHT_VIEW|BR_LIGHT_DIRECT, "BR_LIGHT_VIEW|BR_LIGHT_DIRECT"},
+    { BR_LIGHT_VIEW|BR_LIGHT_SPOT, "BR_LIGHT_VIEW|BR_LIGHT_SPOT"},
 };
 
 // GLOBAL: CARMA2_HW 0x00663d30
+// GLOBAL: CARMA2_SW 0x0065e4c8
 br_file_enum light_type_F = { BR_ASIZE(light_type_FM), light_type_FM };
 
 // GLOBAL: CARMA2_HW 0x00663d38
+// GLOBAL: CARMA2_SW 0x0065e4d0
 br_file_struct_member br_light_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_light, type), "type", &light_type_F },
     { DF_TYPE_BR_COLOUR, offsetof(br_light, colour), "colour", NULL },
@@ -355,18 +407,22 @@ br_file_struct_member br_light_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663db8
+// GLOBAL: CARMA2_SW 0x0065e550
 br_file_struct br_light_F = { "br_light", BR_ASIZE(br_light_FM), br_light_FM, sizeof(br_light) };
 
 // GLOBAL: CARMA2_HW 0x00663dc8
+// GLOBAL: CARMA2_SW 0x0065e560
 br_file_enum_member camera_type_FM[] = {
     { 0, "BR_CAMERA_PARALLEL"},
     { 1, "BR_CAMERA_PERSPECTIVE"},
 };
 
 // GLOBAL: CARMA2_HW 0x00663dd8
+// GLOBAL: CARMA2_SW 0x0065e570
 br_file_enum camera_type_F = { BR_ASIZE(camera_type_FM), camera_type_FM };
 
 // GLOBAL: CARMA2_HW 0x00663de0
+// GLOBAL: CARMA2_SW 0x0065e578
 br_file_struct_member br_camera_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_camera, type), "type", &camera_type_F },
     { DF_TYPE_BR_ANGLE, offsetof(br_camera, field_of_view), "field_of_view", NULL },
@@ -377,9 +433,11 @@ br_file_struct_member br_camera_FM[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663e40
+// GLOBAL: CARMA2_SW 0x0065e5d8
 br_file_struct br_camera_F = { "br_camera", BR_ASIZE(br_camera_FM), br_camera_FM, sizeof(br_camera) };
 
 // GLOBAL: CARMA2_HW 0x00663e50
+// GLOBAL: CARMA2_SW 0x0065e5e8
 br_chunks_table_entry ModelLoadEntries[] = {
     { CHUNKID_END, 0u, FopRead_END },
     { CHUNKID_OLD_MATERIAL_INDEX, 0u, FopRead_OLD_MATERIAL_INDEX },
@@ -399,9 +457,11 @@ br_chunks_table_entry ModelLoadEntries[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00663f08
+// GLOBAL: CARMA2_SW 0x0065e6a0
 br_chunks_table ModelLoadTable = { BR_ASIZE(ModelLoadEntries), ModelLoadEntries };
 
 // GLOBAL: CARMA2_HW 0x00663f10
+// GLOBAL: CARMA2_SW 0x0065e6a8
 br_chunks_table_entry ActorLoadEntries[] = {
     { CHUNKID_END, 0u, FopRead_END },
     { CHUNKID_ACTOR, 0u, FopRead_ACTOR },
@@ -427,9 +487,11 @@ br_chunks_table_entry ActorLoadEntries[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00664010
+// GLOBAL: CARMA2_SW 0x0065e7a8
 br_chunks_table ActorLoadTable = { BR_ASIZE(ActorLoadEntries), ActorLoadEntries };
 
 // GLOBAL: CARMA2_HW 0x00664018
+// GLOBAL: CARMA2_SW 0x0065e7b0
 br_chunks_table_entry MaterialLoadEntries[] = {
     { CHUNKID_END, 0u, FopRead_END },
     { CHUNKID_MATERIAL_OLD, 0u, FopRead_MATERIAL_OLD },
@@ -442,6 +504,7 @@ br_chunks_table_entry MaterialLoadEntries[] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00664078
+// GLOBAL: CARMA2_SW 0x0065e810
 br_chunks_table MaterialLoadTable = { BR_ASIZE(MaterialLoadEntries), MaterialLoadEntries };
 
 int C2_HOOK_STDCALL FopWrite_VERTICES(br_datafile* df, br_vertex* vertices, int nvertices) {
@@ -453,6 +516,7 @@ int C2_HOOK_STDCALL FopWrite_VERTICES(br_datafile* df, br_vertex* vertices, int 
 }
 
 // FUNCTION: CARMA2_HW 0x005232a0
+// FUNCTION: CARMA2_SW 0x0051e940
 int C2_HOOK_STDCALL FopRead_VERTICES(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
@@ -464,6 +528,7 @@ int C2_HOOK_STDCALL FopRead_VERTICES(br_datafile* df, br_uint_32 id, br_uint_32 
 }
 
 // FUNCTION: CARMA2_HW 0x005232f0
+// FUNCTION: CARMA2_SW 0x0051e990
 int C2_HOOK_STDCALL FopRead_OLD_VERTICES(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     void *ptr;
 
@@ -483,6 +548,7 @@ int C2_HOOK_STDCALL FopWrite_VERTEX_UV(br_datafile* df, br_vertex* vertices, int
 }
 
 // FUNCTION: CARMA2_HW 0x00523350
+// FUNCTION: CARMA2_SW 0x0051e9f0
 int C2_HOOK_STDCALL FopRead_VERTEX_UV(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
@@ -495,6 +561,7 @@ int C2_HOOK_STDCALL FopRead_VERTEX_UV(br_datafile* df, br_uint_32 id, br_uint_32
 }
 
 // FUNCTION: CARMA2_HW 0x005233a0
+// FUNCTION: CARMA2_SW 0x0051ea40
 int C2_HOOK_STDCALL FopRead_OLD_VERTICES_UV(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     void* ptr;
 
@@ -506,6 +573,7 @@ int C2_HOOK_STDCALL FopRead_OLD_VERTICES_UV(br_datafile* df, br_uint_32 id, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00523400
+// FUNCTION: CARMA2_SW 0x0051eaa0
 int C2_HOOK_STDCALL FopRead_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char name[256];
     br_material** mip;
@@ -538,6 +606,7 @@ int C2_HOOK_STDCALL FopWrite_MATERIAL_INDEX(br_datafile* df, br_material** mater
 }
 
 // FUNCTION: CARMA2_HW 0x00523490
+// FUNCTION: CARMA2_SW 0x0051eb30
 int C2_HOOK_STDCALL FopRead_OLD_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char* mblock;
     char* cp;
@@ -567,6 +636,7 @@ int C2_HOOK_STDCALL FopRead_OLD_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, b
 }
 
 // FUNCTION: CARMA2_HW 0x00523550
+// FUNCTION: CARMA2_SW 0x0051ebf0
 int C2_HOOK_STDCALL FopRead_FACES(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
     int i;
@@ -596,6 +666,7 @@ int C2_HOOK_STDCALL FopWrite_FACES(br_datafile* df, br_face* faces, int nfaces) 
 }
 
 // FUNCTION: CARMA2_HW 0x005235d0
+// FUNCTION: CARMA2_SW 0x0051ec70
 int C2_HOOK_STDCALL FopRead_OLD_FACES_1(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
     int i;
@@ -615,6 +686,7 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES_1(br_datafile* df, br_uint_32 id, br_uint_
 }
 
 // FUNCTION: CARMA2_HW 0x00523670
+// FUNCTION: CARMA2_SW 0x0051ed10
 int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_face* fp;
     br_material** mip;
@@ -668,6 +740,7 @@ int C2_HOOK_STDCALL FopWrite_FACE_MATERIAL(br_datafile* df, br_face* faces, int 
 }
 
 // FUNCTION: CARMA2_HW 0x00523750
+// FUNCTION: CARMA2_SW 0x0051edf0
 int C2_HOOK_STDCALL FopRead_FACE_MATERIAL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_material** mindex;
     int nmaterials;
@@ -701,6 +774,7 @@ int C2_HOOK_STDCALL FopRead_FACE_MATERIAL(br_datafile* df, br_uint_32 id, br_uin
 }
 
 // FUNCTION: CARMA2_HW 0x00523810
+// FUNCTION: CARMA2_SW 0x0051eeb0
 int C2_HOOK_STDCALL FopRead_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
@@ -724,6 +798,7 @@ int C2_HOOK_STDCALL FopWrite_MODEL(br_datafile* df, br_model* mp) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523860
+// FUNCTION: CARMA2_SW 0x0051ef00
 int C2_HOOK_STDCALL FopRead_OLD_MODEL_1(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
@@ -735,6 +810,7 @@ int C2_HOOK_STDCALL FopRead_OLD_MODEL_1(br_datafile* df, br_uint_32 id, br_uint_
 }
 
 // FUNCTION: CARMA2_HW 0x005238a0
+// FUNCTION: CARMA2_SW 0x0051ef40
 int C2_HOOK_STDCALL FopRead_OLD_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
     int i;
@@ -755,6 +831,7 @@ int C2_HOOK_STDCALL FopRead_OLD_MODEL(br_datafile* df, br_uint_32 id, br_uint_32
 }
 
 // FUNCTION: CARMA2_HW 0x00523930
+// FUNCTION: CARMA2_SW 0x0051efd0
 int C2_HOOK_STDCALL FopRead_PIVOT(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
@@ -767,6 +844,7 @@ int C2_HOOK_STDCALL FopRead_PIVOT(br_datafile* df, br_uint_32 id, br_uint_32 len
 }
 
 // FUNCTION: CARMA2_HW 0x00523970
+// FUNCTION: CARMA2_SW 0x0051f010
 int C2_HOOK_STDCALL FopRead_MATERIAL_OLD(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_material* mp;
     mp = BrMaterialAllocate(NULL);
@@ -778,6 +856,7 @@ int C2_HOOK_STDCALL FopRead_MATERIAL_OLD(br_datafile* df, br_uint_32 id, br_uint
 }
 
 // FUNCTION: CARMA2_HW 0x005239b0
+// FUNCTION: CARMA2_SW 0x0051f050
 int C2_HOOK_STDCALL FopRead_MATERIAL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_material* mp;
 
@@ -797,6 +876,7 @@ int C2_HOOK_STDCALL FopWrite_MATERIAL(br_datafile* df, br_material* mp) {
 }
 
 // FUNCTION: CARMA2_HW 0x005239f0
+// FUNCTION: CARMA2_SW 0x0051f090
 int C2_HOOK_STDCALL FopRead_PIXELMAP_REF(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_pixelmap* pm;
     char name[256];
@@ -840,6 +920,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR(br_datafile* df, br_actor* ap) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523a70
+// FUNCTION: CARMA2_SW 0x0051f110
 int C2_HOOK_STDCALL FopRead_ACTOR(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* ap;
 
@@ -860,6 +941,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_MODEL(br_datafile* df, br_model* model) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523ac0
+// FUNCTION: CARMA2_SW 0x0051f160
 int C2_HOOK_STDCALL FopRead_ACTOR_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char name[256];
     br_actor* a;
@@ -877,6 +959,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_MATERIAL(br_datafile* df, br_material* materi
 }
 
 // FUNCTION: CARMA2_HW 0x00523b00
+// FUNCTION: CARMA2_SW 0x0051f1a0
 int C2_HOOK_STDCALL FopRead_ACTOR_MATERIAL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char name[256];
     br_actor* a;
@@ -893,6 +976,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_TRANSFORM(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523b40
+// FUNCTION: CARMA2_SW 0x0051f1e0
 int C2_HOOK_STDCALL FopRead_ACTOR_TRANSFORM(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_transform* tp;
@@ -911,6 +995,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_LIGHT(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523b80
+// FUNCTION: CARMA2_SW 0x0051f220
 int C2_HOOK_STDCALL FopRead_ACTOR_LIGHT(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_light* lp;
@@ -928,6 +1013,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_CAMERA(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523ba0
+// FUNCTION: CARMA2_SW 0x0051f240
 int C2_HOOK_STDCALL FopRead_ACTOR_CAMERA(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_light* cp;
@@ -945,6 +1031,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_BOUNDS(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523bc0
+// FUNCTION: CARMA2_SW 0x0051f260
 int C2_HOOK_STDCALL FopRead_ACTOR_BOUNDS(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_bounds* bp;
@@ -962,6 +1049,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_CLIP_PLANE(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523be0
+// FUNCTION: CARMA2_SW 0x0051f280
 int C2_HOOK_STDCALL FopRead_ACTOR_CLIP_PLANE(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_vector4* vp;
@@ -979,6 +1067,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_ADD_CHILD(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523c00
+// FUNCTION: CARMA2_SW 0x0051f2a0
 int C2_HOOK_STDCALL FopRead_ACTOR_ADD_CHILD(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_actor* p;
@@ -1005,6 +1094,7 @@ int C2_HOOK_STDCALL FopWrite_TRANSFORM(br_datafile* df, br_transform* t) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523c30
+// FUNCTION: CARMA2_SW 0x0051f2d0
 int C2_HOOK_STDCALL FopRead_TRANSFORM(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     int t;
     br_transform* tp;
@@ -1036,6 +1126,7 @@ int C2_HOOK_STDCALL FopWrite_BOUNDS(br_datafile* df, br_bounds* bp) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523ca0
+// FUNCTION: CARMA2_SW 0x0051f340
 int C2_HOOK_STDCALL FopRead_BOUNDS(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_bounds3* bp;
 
@@ -1055,6 +1146,7 @@ int C2_HOOK_STDCALL FopWrite_PLANE(br_datafile* df, br_vector4* pp) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523cf0
+// FUNCTION: CARMA2_SW 0x0051f390
 int C2_HOOK_STDCALL FopRead_PLANE(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_vector4* pp;
 
@@ -1074,6 +1166,7 @@ int C2_HOOK_STDCALL FopWrite_LIGHT(br_datafile* df, br_light* lp) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523d40
+// FUNCTION: CARMA2_SW 0x0051f3e0
 int C2_HOOK_STDCALL FopRead_LIGHT(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_light* lp;
 
@@ -1093,6 +1186,7 @@ int C2_HOOK_STDCALL FopWrite_CAMERA(br_datafile* df, br_camera* cp) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523d90
+// FUNCTION: CARMA2_SW 0x0051f430
 int C2_HOOK_STDCALL FopRead_CAMERA(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_camera* cp;
 
@@ -1105,6 +1199,7 @@ int C2_HOOK_STDCALL FopRead_CAMERA(br_datafile* df, br_uint_32 id, br_uint_32 le
 }
 
 // FUNCTION: CARMA2_HW 0x00523de0
+// FUNCTION: CARMA2_SW 0x0051f480
 br_uint_32 C2_HOOK_CDECL BrModelLoadMany(char* filename, br_model** models, br_uint_16 num) {
     int count;
     int r;
@@ -1130,6 +1225,7 @@ br_uint_32 C2_HOOK_CDECL BrModelLoadMany(char* filename, br_model** models, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00524310
+// FUNCTION: CARMA2_SW 0x0051f9b0
 int C2_HOOK_CDECL PtrCompare(void* a, void* b) {
 
     if (*(uintptr_t*)a > *(uintptr_t*)b) {
@@ -1139,6 +1235,7 @@ int C2_HOOK_CDECL PtrCompare(void* a, void* b) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523ee0
+// FUNCTION: CARMA2_SW 0x0051f580
 br_uint_32 C2_HOOK_CDECL WriteModel(br_model* mp, br_datafile* df) {
     br_material** mindex;
     int nmaterials;
@@ -1197,6 +1294,7 @@ br_uint_32 C2_HOOK_CDECL WriteModel(br_model* mp, br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00523e50
+// FUNCTION: CARMA2_SW 0x00520000
 br_uint_32 C2_HOOK_CDECL BrModelSaveMany(char* filename, br_model** models, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1221,6 +1319,7 @@ br_uint_32 C2_HOOK_CDECL BrModelSaveMany(char* filename, br_model** models, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00524330
+// FUNCTION: CARMA2_SW 0x0051f9d0
 br_uint_32 C2_HOOK_CDECL BrActorLoadMany(char* filename, br_actor** actors, br_uint_16 num) {
     br_datafile* df;
     int count;
@@ -1247,6 +1346,7 @@ br_uint_32 C2_HOOK_CDECL BrActorLoadMany(char* filename, br_actor** actors, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00524400
+// FUNCTION: CARMA2_SW 0x0051faa0
 int C2_HOOK_STDCALL WriteActor(br_actor* a, br_datafile* df) {
     br_actor* ap;
     br_actor* last_ap;
@@ -1301,6 +1401,7 @@ int C2_HOOK_STDCALL WriteActor(br_actor* a, br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x005243a0
+// FUNCTION: CARMA2_SW 0x0051fa40
 br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1319,6 +1420,7 @@ br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_u
 }
 
 // FUNCTION: CARMA2_HW 0x00524600
+// FUNCTION: CARMA2_SW 0x0051fca0
 br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materials, br_uint_16 num) {
     br_datafile* df;
     int count;
@@ -1344,6 +1446,7 @@ br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materi
 }
 
 // FUNCTION: CARMA2_HW 0x005247f0
+// FUNCTION: CARMA2_SW 0x0051fe90
 br_uint_32 C2_HOOK_CDECL WriteMaterial(br_material* mp, void* df) {
 
     FopWrite_MATERIAL(df, mp);
@@ -1367,6 +1470,7 @@ br_uint_32 C2_HOOK_CDECL WriteMaterial(br_material* mp, void* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524670
+// FUNCTION: CARMA2_SW 0x0051fd10
 br_uint_32 C2_HOOK_CDECL BrMaterialSaveMany(char* filename, br_material** materials, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1395,6 +1499,7 @@ br_uint_32 C2_HOOK_CDECL BrMaterialSaveMany(char* filename, br_material** materi
 }
 
 // FUNCTION: CARMA2_HW 0x005248e0
+// FUNCTION: CARMA2_SW 0x0051ff80
 br_model* C2_HOOK_CDECL BrModelLoad(char* filename) {
     br_model* ptr;
 
@@ -1405,12 +1510,14 @@ br_model* C2_HOOK_CDECL BrModelLoad(char* filename) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524960
+// FUNCTION: CARMA2_SW 0x0051f4f0
 br_uint_32 C2_HOOK_CDECL BrModelSave(char* filename, br_model* ptr) {
 
     return BrModelSaveMany(filename, &ptr, 1);
 }
 
 // FUNCTION: CARMA2_HW 0x005249e0
+// FUNCTION: CARMA2_SW 0x00520080
 br_material* C2_HOOK_CDECL BrMaterialLoad(char* filename) {
     br_material* ptr;
 
@@ -1421,12 +1528,14 @@ br_material* C2_HOOK_CDECL BrMaterialLoad(char* filename) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524a60
+// FUNCTION: CARMA2_SW 0x00520100
 br_uint_32 C2_HOOK_CDECL BrMaterialSave(char* filename, br_material* ptr) {
 
     return BrMaterialSaveMany(filename, &ptr, 1);
 }
 
 // FUNCTION: CARMA2_HW 0x00524be0
+// FUNCTION: CARMA2_SW 0x00520280
 br_actor* C2_HOOK_CDECL BrActorLoad(char* filename) {
     br_actor* ptr;
 
@@ -1438,12 +1547,14 @@ br_actor* C2_HOOK_CDECL BrActorLoad(char* filename) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524c60
+// FUNCTION: CARMA2_SW 0x00520300
 br_uint_32 C2_HOOK_CDECL BrActorSave(char* filename, br_actor* ptr) {
 
     return BrActorSaveMany(filename, &ptr, 1);
 }
 
 // FUNCTION: CARMA2_HW 0x00524cb0
+// FUNCTION: CARMA2_SW 0x00520350
 br_error C2_HOOK_CDECL BrModelFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
@@ -1471,6 +1582,7 @@ br_error C2_HOOK_CDECL BrModelFileCount(char* filename, br_uint_16* num) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524d30
+// FUNCTION: CARMA2_SW 0x005203d0
 br_error C2_HOOK_CDECL BrActorFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
@@ -1498,6 +1610,7 @@ br_error C2_HOOK_CDECL BrActorFileCount(char* filename, br_uint_16* num) {
 }
 
 // FUNCTION: CARMA2_HW 0x00524db0
+// FUNCTION: CARMA2_SW 0x00520450
 br_error C2_HOOK_CDECL BrMaterialFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 

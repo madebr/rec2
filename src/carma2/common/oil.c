@@ -269,7 +269,7 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
                         oil->stop_time = 0;
                         SetInitialOilStuff(oil, the_model);
                         if (gNet_mode == eNet_mode_host && oil->car != NULL) {
-                            message = NetBuildGuaranteedMessage(31, 0);
+                            message = NetBuildGuaranteedMessage(eNet_message_chunk_type_oil_spill, 0);
                             message->contents.oil_spill.player = NetPlayerFromCar(oil->car)->ID;
                             message->contents.oil_spill.full_size = oil->full_size;
                             message->contents.oil_spill.grow_rate = oil->grow_rate;

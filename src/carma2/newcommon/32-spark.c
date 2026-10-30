@@ -8,37 +8,65 @@
 
 #include "32-spark.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "52-errors.h"
+#include "60-phil.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00660110
+// GLOBAL: CARMA2_SW 0x0065aa58
 int gSmoke_on = 1;
 
+#ifdef REC2_HW
 // GLOBAL: CARMA2_HW 0x006b7840
 int gShade_list[16];
 
 // GLOBAL: CARMA2_HW 0x00660140
 int* gShade_table = &gShade_list[8];
+#endif
+#ifdef REC2_SW
+
+// GLOBAL: CARMA2_SW 0x006ae520
+br_pixelmap* gShade_list[16];
+
+// GLOBAL: CARMA2_SW 0x0065aa88
+br_pixelmap** gShade_table = &gShade_list[8];
+#endif
+
+// GLOBAL: CARMA2_HW 0x006b78e0
+// GLOBAL: CARMA2_SW 0x006ae5c0
+tSmash_vertex gSmash_glass_fragments[200];
 
 // GLOBAL: CARMA2_HW 0x006a82b4
+// GLOBAL: CARMA2_SW 0x006a2314
 int gNum_dust_tables;
 
 // GLOBAL: CARMA2_HW 0x006aa57c
+// GLOBAL: CARMA2_SW 0x006a3fc8
 int gSpark_flags;
 
 // GLOBAL: CARMA2_HW 0x006aa5ac
+// GLOBAL: CARMA2_SW 0x006a3ffc
 br_pixelmap* gIt_shade_table;
 
 // GLOBAL: CARMA2_HW 0x006aa590
+// GLOBAL: CARMA2_SW 0x006a3fe0
 int gSmoke_flags;
 
+// GLOBAL: CARMA2_HW 0x006aa594
+// GLOBAL: CARMA2_SW 0x006a3fe4
+int gSmoke_num;
+
 // GLOBAL: CARMA2_HW 0x006a8ce0
+// GLOBAL: CARMA2_SW 0x006a2730
 tSmoke gSmoke[25];
 
 // GLOBAL: CARMA2_HW 0x006a8760
@@ -51,16 +79,24 @@ int gN_BR_smoke_structs;
 br_pixelmap* gFlame_map[20];
 
 // GLOBAL: CARMA2_HW 0x006a96a8
+// GLOBAL: CARMA2_SW 0x006a30f8
 tSmoke_column gSmoke_column[10];
 
 // GLOBAL: CARMA2_HW 0x006aa380
+// GLOBAL: CARMA2_SW 0x006a3dd0
 br_model* gLollipop_model;
 
 // GLOBAL: CARMA2_HW 0x006aa59c
+// GLOBAL: CARMA2_SW 0x006a3fec
 int gColumn_flags;
 
 // GLOBAL: CARMA2_HW 0x006b7880
+// GLOBAL: CARMA2_SW 0x006ae560
 br_material* gBlack_material;
+
+// GLOBAL: CARMA2_HW 0x006b7888
+// GLOBAL: CARMA2_SW 0x006ae568
+tSmashable_environment_name* gSmashable_noncars;
 
 // GLOBAL: CARMA2_HW 0x006a8718
 br_matrix4 gCameraToScreen;
@@ -70,7 +106,13 @@ br_camera* gSpark_cam;
 
 // GLOBAL: CARMA2_HW 0x006a82a8
 // GLOBAL: CARMA2_SW 0x006a2308
-tCar_spec* PTR_006a82a8;
+tCar_spec* gCar_of_material;
+
+// GLOBAL: CARMA2_SW 0x00795198
+br_pixelmap* gFog_shade_table;
+
+// GLOBAL: CARMA2_SW 0x00795184
+br_pixelmap* gAcid_shade_table;
 
 // DrawDot
 
@@ -176,6 +218,7 @@ void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {
 // AdjustShrapnel
 
 // FUNCTION: CARMA2_HW 0x004f87a0
+// FUNCTION: CARMA2_SW 0x004f3e20
 void C2_HOOK_FASTCALL ResetSparks(void) {
     gSpark_flags = 0;
 }
@@ -215,8 +258,8 @@ void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar) {
 // FUNCTION: CARMA2_HW 0x004f8ff0
 // FUNCTION: CARMA2_SW 0x004f4670
 int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
-    if (pMaterial->colour_map != PTR_006a82a8->field_0x1960) {
-        pMaterial->colour_map = PTR_006a82a8->field_0x1960;
+    if (pMaterial->colour_map != gCar_of_material->field_0x1960) {
+        pMaterial->colour_map = gCar_of_material->field_0x1960;
         BrMaterialUpdate(pMaterial, BR_MATU_ALL);
         return 1;
     } else {
@@ -224,9 +267,28 @@ int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial) {
     }
 }
 
-// STUB: CARMA2_HW 0x004f8f30
+// FUNCTION: CARMA2_HW 0x004f8f30
+// FUNCTION: CARMA2_SW 0x004f45b0
 void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
-    NOT_IMPLEMENTED();
+    br_vector3 direction;
+    br_vector3 position;
+    br_vector3 collision_position;
+    br_vector3 normal;
+    br_scalar t;
+    tFace_ref* face;
+
+    BrVector3Set(&direction, 0.f, -0.5f, 0.f);
+    t = 10.f;
+    BrMatrix34ApplyP(&position, &pCar->collision_info->cmpos, &pCar->collision_info->transform_matrix);
+    face = RayCastThruFaceList2(&position, &direction, &normal, &t, &collision_position,
+        &gFace_list__car[pCar->collision_info->box_face_start],
+        pCar->collision_info->box_face_end - pCar->collision_info->box_face_start);
+    if (face != NULL && face->material != NULL && face->material->colour_map != NULL
+        && face->material->colour_map != pCar->field_0x1960) {
+        pCar->field_0x1960 = face->material->colour_map;
+        gCar_of_material = pCar;
+        ForEveryCarMaterial(pCar, SetPixelmap, 1);
+    }
 }
 
 // DoSolidGraniteThing
@@ -350,14 +412,59 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
 
 // RenderSmoke
 
-// CreatePuffOfSmoke
+// FUNCTION: CARMA2_HW 0x004fb330
+// FUNCTION: CARMA2_SW 0x004f6870
+void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType) {
+    br_vector3 tv;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmoke) != 25);
+
+    if (!gSmoke_on) {
+        return;
+    }
+    BrVector3Sub(&tv, pPos, &gProgram_state.current_car.pos);
+    if (BrVector3LengthSquared(&tv) > 625.f) {
+        if (gCar_to_view == &gProgram_state.current_car) {
+            return;
+        }
+        BrVector3Sub(&tv, pPos, &gCar_to_view->pos);
+        if (BrVector3LengthSquared(&tv) > 625.f) {
+            return;
+        }
+    }
+    BrVector3InvScale(&gSmoke[gSmoke_num].v, pV, WORLD_SCALE);
+    gSmoke[gSmoke_num].v.v[1] = (br_scalar)(gSmoke[gSmoke_num].v.v[1] + 1.0 / 6.9);
+    BrVector3Copy(&gSmoke[gSmoke_num].pos, pPos);
+    gSmoke[gSmoke_num].radius = 0.05f;
+    if ((pType & 0xf) == 7) {
+        gSmoke[gSmoke_num].radius = 0.1f;
+    } else {
+        gSmoke[gSmoke_num].pos.v[1] += 0.04f;
+    }
+    gSmoke[gSmoke_num].pos.v[1] += 0.04f;
+    if (pStrength > 1.f) {
+        pStrength = 1.f;
+    }
+    gSmoke[gSmoke_num].strength = pStrength;
+    gSmoke_flags |= 1 << gSmoke_num;
+    gSmoke[gSmoke_num].time_sync = gPHIL_mechanics_time_sync;
+    gSmoke[gSmoke_num].type = (tU8)pType;
+    gSmoke[gSmoke_num].decay_factor = pDecay_factor;
+    gSmoke[gSmoke_num].pipe_me = 1;
+    gSmoke_num++;
+    if (gSmoke_num >= (int)REC2_ASIZE(gSmoke)) {
+        gSmoke_num = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004fb510
+// FUNCTION: CARMA2_SW 0x004f6a50
 void C2_HOOK_FASTCALL ResetSmoke(void) {
     gSmoke_flags = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004fb520
+// FUNCTION: CARMA2_SW 0x004f6a60
 void C2_HOOK_FASTCALL AdjustSmoke(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength) {
     gSmoke[pIndex].type = pType;
     gSmoke[pIndex].radius = pRadius;
@@ -395,47 +502,84 @@ void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pC
 // CreateSmokeColumn
 
 // FUNCTION: CARMA2_HW 0x004fb910
+// FUNCTION: CARMA2_SW 0x004f6e50
 void C2_HOOK_FASTCALL GenerateSmokeShades(void) {
     // GLOBAL: CARMA2_HW 0x006aa5b4
+    // GLOBAL: CARMA2_SW 0x006a4004
     static int rb = 0;
     // GLOBAL: CARMA2_HW 0x006aa5b8
+    // GLOBAL: CARMA2_SW 0x006a4008
     static int gb = 0;
     // GLOBAL: CARMA2_HW 0x006aa5bc
+    // GLOBAL: CARMA2_SW 0x006a400c
     static int bb = 0;
     // GLOBAL: CARMA2_HW 0x00660160
+    // GLOBAL: CARMA2_SW 0x0065aa8c
     static int rl = 0x40;
     // GLOBAL: CARMA2_HW 0x00660164
+    // GLOBAL: CARMA2_SW 0x0065aa90
     static int gl = 0x40;
     // GLOBAL: CARMA2_HW 0x00660168
+    // GLOBAL: CARMA2_SW 0x0065aa94
     static int bl = 0x40;
     // GLOBAL: CARMA2_HW 0x00660178
+    // GLOBAL: CARMA2_SW 0x0065aaa4
     static int rs = 0xc8;
     // GLOBAL: CARMA2_HW 0x0066017c
+    // GLOBAL: CARMA2_SW 0x0065aaa8
     static int gs = 0xc8;
     // GLOBAL: CARMA2_HW 0x00660180
+    // GLOBAL: CARMA2_SW 0x0065aaac
     static int bs = 0xc8;
     // GLOBAL: CARMA2_HW 0x0066016c
-    static int rm = 0x80;
+    // GLOBAL: CARMA2_SW 0x0065aa98
+    static int rg = 0x80;
     // GLOBAL: CARMA2_HW 0x00660170
-    static int gm = 0x80;
+    // GLOBAL: CARMA2_SW 0x0065aa9c
+    static int gg = 0x80;
     // GLOBAL: CARMA2_HW 0x00660174
-    static int bm = 0x80;
+    // GLOBAL: CARMA2_SW 0x0065aaa0
+    static int bg = 0x80;
     // GLOBAL: CARMA2_HW 0x00660184
-    static int rd = 0xfe;
+    // GLOBAL: CARMA2_SW 0x0065aab0
+    static int ra = 0xfe;
     // GLOBAL: CARMA2_HW 0x00660188
-    static int gd = 0xdf;
+    // GLOBAL: CARMA2_SW 0x0065aab4
+    static int ga = 0xdf;
     // GLOBAL: CARMA2_HW 0x0066018c
-    static int bd = 0x43;
+    // GLOBAL: CARMA2_SW 0x0065aab8
+    static int ba = 0x43;
 
+#ifdef REC2_HW
     gShade_list[0] = BR_COLOUR_RGB(rb, gb, bb);
     gShade_list[1] = BR_COLOUR_RGB(rl, gl, bl);
-    gShade_list[2] = BR_COLOUR_RGB(rm, gm, bm);
+    gShade_list[2] = BR_COLOUR_RGB(rg, gg, bg);
     gShade_list[3] = BR_COLOUR_RGB(rs, gs, bs);
     gShade_list[4] = gShade_list[3];
-    gShade_list[7] = BR_COLOUR_RGB(rd, gd, bd);
+    gShade_list[7] = BR_COLOUR_RGB(ra, ga, ba);
+#endif
+#ifdef REC2_SW
+    br_pixelmap* black_smoke_shade_table;
+    br_pixelmap* dark_smoke_shade_table;
+    br_pixelmap* yellow_shade_table;
+
+    (void)rg; (void)gg; (void)bg;
+    (void)rs; (void)gs; (void)bs;
+
+    black_smoke_shade_table = GenerateShadeTable(16, gRender_palette, rb, gb, bb, 0.25f, 0.6f, 0.9f);
+    dark_smoke_shade_table = GenerateShadeTable(16, gRender_palette, rl, gl, bl, 0.25f, 0.6f, 0.9f);
+    yellow_shade_table = GenerateShadeTable(16, gRender_palette, ra, ga, ba, 0.25f, 0.6f, 0.9f);
+    gShade_list[2] = yellow_shade_table;
+    gShade_list[3] = gFog_shade_table;
+    gShade_list[4] = gFog_shade_table;
+    gShade_list[1] = dark_smoke_shade_table;
+    gShade_list[0] = black_smoke_shade_table;
+    gShade_list[7] = gAcid_shade_table;
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x004fb9c0
+// FUNCTION: CARMA2_SW 0x004f6f20
 void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
     if (gIt_shade_table == NULL) {
         gIt_shade_table = GenerateDarkenedShadeTable(16, gRender_palette, 0, 255, 254, .25f, .5f, .75f, .6f);
@@ -470,6 +614,7 @@ void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale
 // DisposeFlame
 
 // FUNCTION: CARMA2_HW 0x004fc3a0
+// FUNCTION: CARMA2_SW 0x004f7900
 void C2_HOOK_FASTCALL InitFlame(void) {
     int i;
     int j;
@@ -539,12 +684,14 @@ void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int pFire_point) {
 }
 
 // FUNCTION: CARMA2_HW 0x004fc9d0
+// FUNCTION: CARMA2_SW 0x004f7f30
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
     gSmoke_on = pSmoke_on;
 }
 
 // FUNCTION: CARMA2_HW 0x004fca30
+// FUNCTION: CARMA2_SW 0x004f7f90
 int C2_HOOK_FASTCALL GetSmokeOn(void) {
 
     return gSmoke_on;
@@ -584,6 +731,7 @@ void C2_HOOK_FASTCALL CreateSplash(tPhysics_object* pObject, tU32 pTime) {
 // MungeSplash
 
 // FUNCTION: CARMA2_HW 0x004fdb70
+// FUNCTION: CARMA2_SW 0x004f90d0
 void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* pF) {
     int i;
     int red;
@@ -601,12 +749,27 @@ void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* pF) {
         PossibleService();
         GetThreeInts(pF, &red, &green, &blue);
         GetThreeScalars(pF, &quarter, &half, &three_quarter);
+#ifdef REC2_HW
         gShade_table[i] = BR_COLOUR_RGB(red, green, blue);
+#endif
+#ifdef REC2_SW
+        gShade_table[i] = GenerateShadeTable(16, gRender_palette, red, green, blue, quarter, half, three_quarter);
+#endif
     }
 }
 
 // FUNCTION: CARMA2_HW 0x004fdc00
+// FUNCTION: CARMA2_SW 0x004f9170
 void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
+#ifdef REC2_SW
+    int i;
+
+    for (i = 0; i < gNum_dust_tables; i++) {
+        PossibleService();
+        BrTableRemove(gShade_table[i]);
+        BrPixelmapFree(gShade_table[i]);
+    }
+#endif
 }
 
 // LoadInKevStuff
@@ -673,7 +836,21 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
 
 // ClearSplashReplay
 
-// GetSplashIndex
+// FUNCTION: CARMA2_HW 0x004fee10
+// FUNCTION: CARMA2_SW 0x004fa6f0
+void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
+
+    if (PHILGetObjectProperty(pObject, 6) != 0.f) {
+        return pObject;
+    }
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        return pObject->actor;
+    }
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 >= 2 && pObject->flags_0x238 <= 4) {
+        return pObject->owner;
+    }
+    return NULL;
+}
 
 // ClearSplashes
 

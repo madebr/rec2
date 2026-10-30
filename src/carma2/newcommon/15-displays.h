@@ -94,7 +94,7 @@ extern void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
 
 // DoInstruments
 
-// ChangingView
+extern void C2_HOOK_FASTCALL ChangingView(void);
 
 extern void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text);
 
@@ -107,6 +107,8 @@ extern int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 extern void C2_HOOK_FASTCALL AwardTime(tU32 pTime);
 
 // AwardTime5
+
+extern void C2_HOOK_FASTCALL AwardTime5(tU32 pTime);
 
 // DoTestHeadup
 

@@ -76,7 +76,7 @@ extern void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, voi
 
 extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
 
-// ARDoSingleSession
+extern void C2_HOOK_FASTCALL ARDoSingleSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize);
 
 extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
 
@@ -206,7 +206,7 @@ extern void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor);
 
 // PipeSingleFrameFinish
 
-// PipeSingleGraphicalWheelStuff
+extern void C2_HOOK_FASTCALL PipeSingleGraphicalWheelStuff(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPosition);
 
@@ -216,9 +216,9 @@ extern void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
 
 // PipeSinglePedIncident
 
-// PipeSingleWallIncident
+extern void C2_HOOK_FASTCALL PipeSingleWallIncident(float pSeverity, br_vector3* pImpact_point);
 
-// PipeSingleSkidAdjustment
+extern void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle);
 
@@ -232,7 +232,7 @@ extern void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData);
 
-// PipeSingleNonCarCreation
+extern void C2_HOOK_FASTCALL PipeSingleNonCarCreation(int pIndex);
 
 extern void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOld_model, br_model* pNew_model);
 
@@ -244,11 +244,11 @@ extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, 
 
 // PipeSinglePedStatus
 
-// PipeSinglePedDir
+extern void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir);
 
 // PipeSinglePedMove
 
-// PipeSinglePedPhysics
+extern void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat);
 
 // PipeSinglePedDismember
 
@@ -310,7 +310,7 @@ extern void C2_HOOK_FASTCALL ApplyNonCar(tPipe_chunk** pChunk);
 
 // ApplySmoke
 
-// ApplySmokeColumn
+extern void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk);
 
 // ApplyFlame
 
@@ -356,7 +356,7 @@ extern void C2_HOOK_FASTCALL ApplyEndMyBend(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyExplosion(tPipe_chunk** pChunk);
 
-// ApplyNonCarCreation
+extern void C2_HOOK_FASTCALL ApplyNonCarCreation(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk);
 
@@ -406,7 +406,7 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // ApplyPedDiagnostics
 
-// ApplyVector3
+extern void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk);
 
 // ApplyDroneRender
 
@@ -414,7 +414,7 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // ApplyDroneStraightPos
 
-// ApplyDroneUnused
+extern void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk);
 
 // ApplyNapalmBolt
 
@@ -452,13 +452,13 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // UndoSplitWeld
 
-// UndoBend
+extern void C2_HOOK_FASTCALL UndoBend(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
-// UndoUnBend
+extern void C2_HOOK_FASTCALL UndoUnBend(void);
 
 // UndoShrapnelShower
 
-// UndoNonCarCreation
+extern void C2_HOOK_FASTCALL UndoNonCarCreation(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 extern void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 

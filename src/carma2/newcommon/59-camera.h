@@ -48,7 +48,7 @@ extern void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos);
 
 // ChangeCameraType
 
-// ToggleCockpit
+extern void C2_HOOK_FASTCALL ToggleCockpit(void);
 
 // PositionCarMountedCamera
 
@@ -72,7 +72,7 @@ extern int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime);
 
 extern void C2_HOOK_FASTCALL SaveCameraPosition(int pIndex);
 
-// RestoreCameraPosition
+extern void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex);
 
 // DrVector3RotateY
 

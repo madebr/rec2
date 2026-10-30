@@ -10,13 +10,24 @@
 
 #include "01-network.h"
 #include "30-opponent.h"
+#include "41-utility.h"
 #include "63-loading3.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0075b8f8
+// GLOBAL: CARMA2_SW 0x00751e58
 br_pixelmap* gDigits_pix;
+
+// GLOBAL: CARMA2_HW 0x0068d924
+// GLOBAL: CARMA2_SW 0x0068797c
+tNet_game_player_info* gLast_lepper;
+
+// GLOBAL: CARMA2_HW 0x0068d928
+// GLOBAL: CARMA2_SW 0x00687980
+int gLast_it_change;
 
 // SendShapeNumbers
 
@@ -45,6 +56,7 @@ void C2_HOOK_FASTCALL ClearShapeStatusFlag(tCar_crush_network_shapes* pShapes, i
 // DistanceBetweenCars
 
 // FUNCTION: CARMA2_HW 0x00498370
+// FUNCTION: CARMA2_SW 0x00494fa0
 int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pShapes, int pPlayer_id) {
     int i;
 
@@ -75,6 +87,7 @@ int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pSh
 // ReceivedMechanics
 
 // FUNCTION: CARMA2_HW 0x00498bb0
+// FUNCTION: CARMA2_SW 0x004957e0
 void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 }
 
@@ -84,11 +97,19 @@ void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 
 // ReceivedNonCar
 
-// SignalToStartRace
+// STUB: CARMA2_HW 0x00498e70
+// STUB: CARMA2_SW 0x00495aa0
+void C2_HOOK_FASTCALL SignalToStartRace(void) {
+    NOT_IMPLEMENTED();
+}
 
 // SignalToRepositionCar
 
-// SetUpNetCarPositions
+// STUB: CARMA2_HW 0x00499000
+// STUB: CARMA2_SW 0x00495c30
+void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ReinitialiseCar
 
@@ -143,6 +164,7 @@ void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
 #endif
 
 // STUB: CARMA2_HW 0x00499a00
+// STUB: CARMA2_SW 0x004962a0
 void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores) {
     NOT_IMPLEMENTED();
 }
@@ -159,6 +181,7 @@ void C2_HOOK_FASTCALL DoNetScores(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049a710
+// FUNCTION: CARMA2_SW 0x00496890
 void C2_HOOK_FASTCALL InitNetHeadups(void) {
 
     gDigits_pix = LoadPixelmap("HDIGITS.PIX");
@@ -168,6 +191,7 @@ void C2_HOOK_FASTCALL InitNetHeadups(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049a730
+// FUNCTION: CARMA2_SW 0x004968b0
 void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
 
     if (gDigits_pix != NULL) {
@@ -191,8 +215,6 @@ void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(on)
 #endif
-
-// PlayerIsIt
 
 // FUNCTION: CARMA2_HW 0x0049a940
 // FUNCTION: CARMA2_SW 0x00496ac0
@@ -220,7 +242,34 @@ void C2_HOOK_FASTCALL CheckForVampireWinner(void) {
 
 // FarEnoughAway
 
-// CarInContactWithFox
+// FUNCTION: CARMA2_HW 0x0049a990
+// FUNCTION: CARMA2_SW 0x00496b10
+void C2_HOOK_FASTCALL CarInContactWithFox(tNet_game_player_info* pPlayer) {
+
+    if ((int)(PDGetTotalTime() - gLast_it_change) > 500) {
+        if (gLast_lepper != pPlayer) {
+            gLast_it_change = PDGetTotalTime();
+            if (gIt_or_fox >= 0) {
+                gLast_lepper = &gNet_players[gIt_or_fox];
+            }
+            PlayerIsIt(pPlayer);
+        }
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0049a9e0
+// STUB: CARMA2_SW 0x00496b60
+void C2_HOOK_FASTCALL PlayerIsIt(tNet_game_player_info* pPlayer) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SelectRandomFox
 
@@ -230,7 +279,33 @@ void C2_HOOK_FASTCALL CheckForVampireWinner(void) {
 
 // DoNetGameManagement
 
-// InitialisePlayerScore
+// FUNCTION: CARMA2_HW 0x0049b690
+// FUNCTION: CARMA2_SW 0x00497810
+void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
+
+    PossibleService();
+    switch (gCurrent_net_game->type) {
+    case eNet_game_type_fight_to_death:
+        pPlayer->score2 = 100;
+        break;
+    case eNet_game_type_1:
+    case eNet_game_type_2:
+    case eNet_game_type_4:
+    case eNet_game_type_5:
+    case eNet_game_type_6:
+        pPlayer->score2 = 0;
+        break;
+    case eNet_game_type_checkpoint:
+        pPlayer->score2 = 0xffff;
+        break;
+    case eNet_game_type_foxy:
+        pPlayer->score2 = 0;
+        break;
+    }
+    pPlayer->credits = gCurrent_net_game->options.starting_credits;
+    pPlayer->wasted = 0;
+    pPlayer->reposition_time = 0;
+}
 
 // InitPlayers
 
@@ -239,6 +314,7 @@ void C2_HOOK_FASTCALL CheckForVampireWinner(void) {
 // NetSendEnvironmentChanges
 
 // STUB: CARMA2_HW 0x0049b9a0
+// STUB: CARMA2_SW 0x00497b20
 void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
     NOT_IMPLEMENTED();
 }
@@ -247,16 +323,50 @@ void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
 
 // SendGameplay
 
-// SendGameplayToAllPlayers
+// FUNCTION: CARMA2_HW 0x0049bc70
+// FUNCTION: CARMA2_SW 0x00497df0
+void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
+    tNet_message* the_message;
 
-// SendGameplayToHost
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, mess, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_1, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_2, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_3, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_gameplay, param_4, 0x14);
+
+    the_message = NetBuildGuaranteedMessage(eNet_message_chunk_type_gameplay, 0);
+    the_message->contents.gameplay.mess = pMess;
+    the_message->contents.gameplay.param_1 = pParam_1;
+    the_message->contents.gameplay.param_2 = pParam_2;
+    the_message->contents.gameplay.param_3 = pParam_3;
+    the_message->contents.gameplay.param_4 = pParam_4;
+    NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, the_message, NULL);
+}
+
+// FUNCTION: CARMA2_HW 0x0049bcb0
+// FUNCTION: CARMA2_SW 0x00497e30
+void C2_HOOK_FASTCALL SendGameplayToHost(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
+    tNet_message* the_message;
+
+    if (gNet_mode == eNet_mode_client) {
+        the_message = NetBuildGuaranteedMessage(0x1b, 0);
+        the_message->contents.gameplay.mess = pMess;
+        the_message->contents.gameplay.param_1 = pParam_1;
+        the_message->contents.gameplay.param_2 = pParam_2;
+        the_message->contents.gameplay.param_3 = pParam_3;
+        the_message->contents.gameplay.param_4 = pParam_4;
+        NetGuaranteedSendMessageToHost(gCurrent_net_game, the_message, NULL);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0049bd00
+// FUNCTION: CARMA2_SW 0x00497e80
 void C2_HOOK_FASTCALL InitNetGameplayStuff(void) {
 
 }
 
 // FUNCTION: CARMA2_HW 0x0049bd10
+// FUNCTION: CARMA2_SW 0x00497e90
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
     NetObtainSystemUserName(gProgram_state.player_name, 32);

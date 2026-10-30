@@ -17,6 +17,7 @@ extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
 extern int gImmortal_peds;
 extern void* gPhysics_buffer3_ptr;
+extern int gPHIL_mechanics_time_sync;
 extern int gPhysics_other_buffer_capacity;
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
@@ -27,11 +28,11 @@ void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector
 
 // AddObjectWallForce
 
-// AddObjectObjectForce
+extern int C2_HOOK_FASTCALL AddObjectObjectForce(tPhysics_joint_force* pForces, const br_vector3* pPoint_a, br_scalar pT, const br_vector3* pPoint_b, const br_vector3* pNormal, int pCount, tPhysics_object* pObject_a, tPhysics_object* pObject_b, int pType, void* pUnused, br_scalar pValue);
 
 extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount);
 
-// RayCastThruFaceList2
+extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount);
 
 // RayCastInBox
 
@@ -88,6 +89,8 @@ extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br
 // GetNonSphereShapeForceInfo
 
 // GetObjectObjectForceInfo
+
+extern void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, tU32 pIndex);
 
 // AddOldForces
 
@@ -179,7 +182,7 @@ extern void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, i
 
 // SetGroupDoingNothingFlag
 
-// SetHierarchyDoingNothingFlag
+extern void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, int pFlag);
 
 // CheckDoingNothingFlag
 
@@ -371,7 +374,7 @@ extern void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint);
 
 extern void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds);
 
-// FillInShape
+extern void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape);
 
 // UpdateCollisionObject
 

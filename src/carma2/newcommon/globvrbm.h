@@ -13,6 +13,7 @@
 
 #include <brender/br_types.h>
 
+#ifdef REC2_HW
 extern br_actor* gPrat_actor;
 extern br_actor* g2d_camera;
 extern br_actor* gPowerupHUD_actor;
@@ -136,5 +137,6 @@ extern int gOffence_dim_w;
 extern int gOffence_dim_h;
 extern int gOffence_dim_x;
 extern int gOffence_dim_y;
+#endif
 
 #endif //REC2_GLOBVRBM_H

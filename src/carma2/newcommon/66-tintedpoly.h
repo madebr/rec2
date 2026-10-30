@@ -29,6 +29,8 @@ extern int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int heig
 
 extern void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void);
 
+extern void C2_HOOK_FASTCALL UpdateTintedPalette(int pIndex);
+
 extern void C2_HOOK_FASTCALL UpdateTintedPolyByMaterial(int pIndex);
 
 extern void C2_HOOK_FASTCALL UpdatePolyVertexColours(int pIndex);

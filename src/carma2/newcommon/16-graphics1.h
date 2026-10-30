@@ -38,9 +38,9 @@ extern int gHud_tinted4;
 
 // TryThisEdge
 
-// ProcessShadow
+extern void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform, br_scalar pDistance_factor);
 
-// RenderShadows
+extern void C2_HOOK_FASTCALL RenderShadows(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform);
 
 extern void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel);
 
@@ -74,7 +74,7 @@ extern void C2_HOOK_FASTCALL ScreenSmaller(void);
 
 extern void C2_HOOK_FASTCALL ScreenLarger(void);
 
-// ClearWobbles
+extern void C2_HOOK_FASTCALL ClearWobbles(void);
 
 extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 

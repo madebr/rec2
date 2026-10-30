@@ -15,6 +15,7 @@
 
 extern int gAllow_material_adapt;
 extern br_material* gMaterials_to_adapt[200];
+extern int gShrapnel_ghost_actor_count;
 
 extern void C2_HOOK_FASTCALL InitFogificateMaterials(void);
 

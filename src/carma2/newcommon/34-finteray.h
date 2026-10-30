@@ -28,7 +28,7 @@ extern br_matrix34 gPick_model_to_view__finteray;
 
 extern int C2_HOOK_FASTCALL PickBoundsTestRay_finteray(br_bounds* pBounds, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, br_scalar* pNew_t_near, br_scalar* pNew_t_far);
 
-extern int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vector3* pDir, br_model* model, br_material* material, dr_pick2d_cbfn* callback);
+extern int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* pActor, br_vector3* pPosition, br_vector3* pDir, br_model* pModel, br_material* pMaterial, dr_pick2d_cbfn* pCallback);
 
 // DRSceneRayPick2D
 
@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL DisablePlingMaterials(void);
 
 // SphereFaceCollide
 
-// CheckSingleFace
+extern void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt, br_vector3* coll_pos);
 
 // MultiRayCheckSingleFace
 

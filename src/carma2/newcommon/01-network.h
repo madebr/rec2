@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gIt_or_fox;
+
 extern int C2_HOOK_FASTCALL NetInitialise(void);
 
 extern int C2_HOOK_FASTCALL NetShutdown(void);
@@ -82,7 +84,7 @@ extern void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_lengt
 
 extern int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
 
-// NetReallySendMessageToPlayer
+extern int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id);
 
 // NetSendMessageToPlayer
 
@@ -90,7 +92,7 @@ extern int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tN
 
 // NetSendMessageToAllPlayers
 
-// NetGetContentsSize
+extern tU32 C2_HOOK_FASTCALL NetGetContentsSize(tU8 pType, tU32 pSize_decider);
 
 // NetGetMessageSize
 
@@ -98,11 +100,11 @@ extern tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined
 
 extern tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
 
-// NetGetToPlayerContentsSize
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pPlayer, int pContents_size);
 
-// NetGetToPlayerContents
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContents(tNet_message_type pType, tU32 pSize_decider, tPlayer_ID pPlayer);
 
-// NetGetToHostContents
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToHostContents(tNet_message_type pType, tU32 pSize_decider);
 
 // NetStartBroadcastContents
 
@@ -204,7 +206,7 @@ extern void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
 
 extern tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
-// NetGuaranteedSendMessageToAllPlayers
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
 // NetGuaranteedSendMessageToEverybody
 
@@ -212,7 +214,7 @@ extern void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* p
 
 // AddToGuaranteeList
 
-// NetGuaranteedSendMessageToPlayer
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToPlayer(tNet_game_details* pDetails, tNet_message* pMessage, tPlayer_ID pPlayer, void* pNotifyFail);
 
 // NetGuaranteedSendMessageToAddress
 

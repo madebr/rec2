@@ -100,6 +100,7 @@ void C2_HOOK_CDECL OpHeapAddTriangle(brp_block* block, brp_vertex* v0, brp_verte
 }
 
 // FUNCTION: CARMA2_HW 0x00546be0
+// FUNCTION: CARMA2_SW 0x00542280
 void C2_HOOK_CDECL OpHeapAddLine(brp_block* block, brp_vertex* v0, brp_vertex* v1) {
     br_primitive *p;
     br_scalar zprim;

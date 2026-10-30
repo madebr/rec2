@@ -8,12 +8,15 @@
 
 #include "62-graphics3.h"
 
+#include "01-network.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
 #include "15-displays.h"
 #include "18-graphics2.h"
+#include "18b-graphics2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
@@ -25,9 +28,34 @@
 #include "rec2_macros.h"
 
 #include <limits.h>
+#include <stdio.h>
 #include <string.h>
 
+// GLOBAL: CARMA2_HW 0x006593a0
+// GLOBAL: CARMA2_SW 0x00653d88
+const int gArrows[2][4][60] = {
+    {
+        // inner arrow (=fill)
+        { 10,  0,  0, -1,  0,  1,  0,  0, -1,  0, -2,  0,  1, -1,  1,  1,  1, -2,  2,  2,  2, },
+        { 11,  0,  0, -1,  0,  1,  0,  0, -1,  1, -1,  1, -2, -2,  1, -1,  1,  0,  1,  1,  1,  1,  2, },
+        {  9,  0,  0, -2,  0, -1,  0,  1,  0,  0, -1,  1, -1,  2, -2,  0,  1,  0,  2, },
+        { 11,  0,  0, -1,  0,  1,  0, -2, -1, -1, -1,  0, -1,  1, -1,  2, -1, -1,  1,  0,  1, -1,  2, },
+    },
+    {
+        // outer arrow (=border)
+        { 26,  1, -3,  1, -2,  1, -1,  2, -1,  2,  0,  2,  1,  3,  1,  3,  2,  3,  3,  2,  3,  1,  3,  1,  2,  0,  2, -1,  2,
+          -1,  3, -2,  3, -3,  3, -3,  2, -3,  1, -2,  1, -2,  0, -2, -1, -1, -1, -1, -2, -1, -3,  0, -3, },
+        { 22,  0, -3,  1, -3,  2, -3,  2, -2,  2, -1,  2,  0,  2,  1,  2,  2,  2,  3,  1,  3,  0,  3,  0,  2, -1,  2, -2,  2,
+          -3,  2, -3,  1, -3,  0, -2,  0, -2, -1, -1, -1, -1, -2,  0, -2, },
+        { 24,  1, -3,  2, -3,  3, -3,  3, -2,  3, -1,  2, -1,  2,  0,  2,  1,  1,  1,  1,  2,  1,  3,  0,  3, -1,  3, -1,  2,
+          -1,  1, -2,  1, -3,  1, -3,  0, -3, -1, -2, -1, -1, -1, -1, -2,  0, -2,  1, -2, },
+        { 22, -3, -2, -2, -2, -1, -2,  0, -2,  1, -2,  2, -2,  3, -2,  3, -1,  3,  0,  2,  0,  2,  1,  1,  1,  1,  2,  0,  2,
+           0,  3, -1,  3, -2,  3, -2,  2, -2,  1, -2,  0, -3,  0, -3, -1, },
+    },
+};
+
 // GLOBAL: CARMA2_HW 0x00655dfc
+// GLOBAL: CARMA2_SW 0x00650ce4
 int gMini_map_visible = 2;
 
 // GLOBAL: CARMA2_HW 0x0074a780
@@ -36,58 +64,83 @@ tCar_icon gCar_icons[128];
 // GLOBAL: CARMA2_HW 0x0074ab84
 br_actor* gCar_icons_model_actor;
 
+// GLOBAL: CARMA2_HW 0x0068d8c4
+// GLOBAL: CARMA2_SW 0x0068791c
+tCar_spec* gTarget_lock_car_1;
+
+// GLOBAL: CARMA2_HW 0x0068d6f0
+// GLOBAL: CARMA2_SW 0x00687748
+tCar_spec* gTarget_lock_car_2;
+
 // GLOBAL: CARMA2_HW 0x0068d8c8
+// GLOBAL: CARMA2_SW 0x00687920
 int gTarget_lock_enabled;
 
 // GLOBAL: CARMA2_HW 0x0068d8cc
+// GLOBAL: CARMA2_SW 0x00687924
 int gInitMap_done;
 
 // GLOBAL: CARMA2_HW 0x0074abdc
+// GLOBAL: CARMA2_SW 0x00741288
 float gHeadup_map_x_float;
 
 // GLOBAL: CARMA2_HW 0x0074abd8
+// GLOBAL: CARMA2_SW 0x00741284
 float gHeadup_map_y_float;
 
 // GLOBAL: CARMA2_HW 0x0074abcc
+// GLOBAL: CARMA2_SW 0x00741278
 float gHeadup_map_w_float;
 
 // GLOBAL: CARMA2_HW 0x0074ab80
+// GLOBAL: CARMA2_SW 0x00741230
 float gHeadup_map_h_float;
 
 // GLOBAL: CARMA2_HW 0x0074ab88
+// GLOBAL: CARMA2_SW 0x00741234
 int gINT_0074ab88;
 
 // GLOBAL: CARMA2_HW 0x0074ab8c
+// GLOBAL: CARMA2_SW 0x00741238
 int gINT_0074ab8c;
 
 // GLOBAL: CARMA2_HW 0x0074ab94
+// GLOBAL: CARMA2_SW 0x00741240
 int gINT_0074ab94;
 
 // GLOBAL: CARMA2_HW 0x0074ab98
+// GLOBAL: CARMA2_SW 0x00741244
 int gHeadup_map_half_height;
 
 // GLOBAL: CARMA2_HW 0x0074abe4
+// GLOBAL: CARMA2_SW 0x00741290
 int gHeadup_map_half_width;
 
 // GLOBAL: CARMA2_HW 0x0074abec
+// GLOBAL: CARMA2_SW 0x00741298
 int gINT_0074abec;
 
 // GLOBAL: CARMA2_HW 0x0068d8d8
 br_pixelmap* gMap_overlay;
 
 // GLOBAL: CARMA2_HW 0x0074aba0
+// GLOBAL: CARMA2_SW 0x0074124c
 int gMini_map_x;
 
 // GLOBAL: CARMA2_HW 0x0074aba4
+// GLOBAL: CARMA2_SW 0x00741250
 int gMini_map_y;
 
 // GLOBAL: CARMA2_HW 0x0074abd4
+// GLOBAL: CARMA2_SW 0x00741280
 int gINT_0074abd4;
 
 // GLOBAL: CARMA2_HW 0x0074abd0
+// GLOBAL: CARMA2_SW 0x0074127c
 int gINT_0074abd0;
 
 // GLOBAL: CARMA2_HW 0x0068d8dc
+// GLOBAL: CARMA2_SW 0x00687934
 br_pixelmap* gMini_map;
 
 // GLOBAL: CARMA2_HW 0x00655f04
@@ -97,18 +150,23 @@ int gINT_00655f04;
 int gINT_00655f08;
 
 // GLOBAL: CARMA2_HW 0x0068d8a0
+// GLOBAL: CARMA2_SW 0x006878f8
 float gFLOAT_0068d8a0;
 
 // GLOBAL: CARMA2_HW 0x0068d8a4
+// GLOBAL: CARMA2_SW 0x006878fc
 float gFLOAT_0068d8a4;
 
 // GLOBAL: CARMA2_HW 0x0068d8a8
+// GLOBAL: CARMA2_SW 0x00687900
 float gMini_map_arrow_z;
 
 // GLOBAL: CARMA2_HW 0x0074ab9c
+// GLOBAL: CARMA2_SW 0x00741248
 float gFLOAT_0074ab9c;
 
 // GLOBAL: CARMA2_HW 0x0074abb8
+// GLOBAL: CARMA2_SW 0x00741264
 float gFLOAT_0074abb8;
 
 // GLOBAL: CARMA2_HW 0x0074abbc
@@ -128,12 +186,15 @@ int gMap_render_height_i;
 int gMap_render_width_i;
 
 // GLOBAL: CARMA2_HW 0x0068d6e4
+// GLOBAL: CARMA2_SW 0x0068773c
 br_pixelmap* gCheckpoint_numbers;
 
 // GLOBAL: CARMA2_HW 0x0068d884
+// GLOBAL: CARMA2_SW 0x006878dc
 br_pixelmap* gSmashy_dot;
 
 // GLOBAL: CARMA2_HW 0x0068c87c
+// GLOBAL: CARMA2_SW 0x006868d4
 br_pixelmap* gAlt_meter;
 
 // GLOBAL: CARMA2_HW 0x0068c880
@@ -149,28 +210,121 @@ br_vector3 gOrigin_map;
 br_vector2 gOrigin_headup_map;
 
 // GLOBAL: CARMA2_HW 0x0068c860
+// GLOBAL: CARMA2_SW 0x006868b8
 int gCheckpoint_digit_height;
 
 // GLOBAL: CARMA2_HW 0x0068d8bc
+// GLOBAL: CARMA2_SW 0x00687914
 int gCheckpoint_digit_center_x;
 
 // GLOBAL: CARMA2_HW 0x0068c85c
+// GLOBAL: CARMA2_SW 0x006868b4
 tU32 gCheckpoint_digit_center_y;
 
 // GLOBAL: CARMA2_HW 0x0068d6f8
+// GLOBAL: CARMA2_SW 0x00687750
 tOppo_status_messages gOppo_status_messages[9];
 
 // GLOBAL: CARMA2_HW 0x0074abe0
+// GLOBAL: CARMA2_SW 0x0074128c
 int gCount_smashable_race_targets;
 
 // GLOBAL: CARMA2_HW 0x0068c898
+// GLOBAL: CARMA2_SW 0x006868f0
 tSmashable_race_target gSmashable_race_targets[300];
 
 // CarArrowColour
 
-// ToggleTargetLock
+// FUNCTION: CARMA2_HW 0x004945f0
+// FUNCTION: CARMA2_SW 0x004918f0
+void C2_HOOK_FASTCALL ToggleTargetLock(void) {
+    char name[256];
+    char s[256];
 
-// CycleTargetLock
+    if (gNet_mode != eNet_mode_none) {
+        if (gCurrent_net_game->type == eNet_game_type_foxy) {
+            return;
+        }
+        if (!gCurrent_net_game->options.show_players_on_map) {
+            return;
+        }
+    }
+    if (gTarget_lock_car_1 == NULL) {
+        NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_no_target_to_lock_onto), 0);
+    } else {
+        gTarget_lock_enabled = !gTarget_lock_enabled;
+        if (gTarget_lock_enabled) {
+            if (gNet_mode != eNet_mode_none) {
+                strcpy(name, NetPlayerFromCar(gTarget_lock_car_2)->player_name);
+            } else {
+                strcpy(name, GetDriverName((tU16)gTarget_lock_car_2->car_ID >> 8, (tU16)gTarget_lock_car_2->car_ID & 0xff));
+            }
+            sprintf(s, "%s %s", GetMiscString(eMiscString_locked_onto), name);
+            NewTextHeadupSlot2(4, 0, 1500, -4, s, 0);
+        } else {
+            NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_target_lock_off), 0);
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00494700
+// FUNCTION: CARMA2_SW 0x00491a00
+void C2_HOOK_FASTCALL CycleTargetLock(void) {
+    tVehicle_type category;
+    int i;
+    int car_index;
+    int car_count;
+    tCar_spec* car;
+
+    if (gNet_mode == eNet_mode_none || (gCurrent_net_game->type != eNet_game_type_foxy && gCurrent_net_game->options.show_players_on_map)) {
+        category = gNet_mode != eNet_mode_none ? eVehicle_net_player : eVehicle_opponent;
+        if (gTarget_lock_car_1 == NULL) {
+            if (category == eVehicle_self) {
+                gTarget_lock_car_1 = &gProgram_state.current_car;
+            } else {
+                gTarget_lock_car_1 = GetCarSpec(category, 0);
+            }
+        }
+        if (category == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(category);
+        }
+        for (i = 0; i < car_count; i++) {
+            if (category == eVehicle_self) {
+                car = &gProgram_state.current_car;
+            } else {
+                car = GetCarSpec(category, i);
+            }
+            if (car == gTarget_lock_car_1) {
+                if (i == car_count - 1) {
+                    car_index = 0;
+                } else {
+                    car_index = i + 1;
+                }
+                do {
+                    if (category == eVehicle_self) {
+                        car = &gProgram_state.current_car;
+                    } else {
+                        car = GetCarSpec(category, car_index);
+                    }
+                    if (car_index == car_count - 1) {
+                        car_index = 0;
+                    } else {
+                        car_index++;
+                    }
+                } while ((car != gTarget_lock_car_1 && car->knackered)
+                    || (gNet_mode == eNet_mode_none && gCurrent_race.race_spec->race_type == kRaceType_Cars && !car->is_race_goal)
+                    || (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_6 && NetPlayerFromCar(car)->field_0x80));
+                gTarget_lock_car_1 = car;
+                gTarget_lock_car_2 = car;
+                gTarget_lock_enabled = 0;
+                ToggleTargetLock();
+                break;
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00494840
 // FUNCTION: CARMA2_SW 0x00491b40
@@ -207,7 +361,69 @@ void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
 
 // OppositeColour
 
-// DrawArrow
+// FUNCTION: CARMA2_HW 0x00495a00
+// STUB: CARMA2_SW 0x00492400
+void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3* pPos, br_uint_32 pColour) {
+    int colours[2];
+    int colour;
+    int x;
+    int y;
+    int temp;
+    int point_count;
+    const int* arrow_ptr;
+    int i;
+    int j;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gArrows) != 2);
+    C2_HOOK_BUG_ON(sizeof(gArrows) != 1920);
+
+    if (pColour == 0xffffffff) {
+        colours[0] = 0;
+        colours[1] = 0x84;
+    } else {
+        colours[0] = pColour;
+        if ((int)pColour < 0xe0) {
+            if ((int)(pColour & 0x7) < 4) {
+                colours[1] = 0xff;
+            } else {
+                colours[1] = 0;
+            }
+        } else {
+            if ((int)(pColour & 0xf) < 8) {
+                colours[1] = 0xff;
+            } else {
+                colours[1] = 0;
+            }
+        }
+    }
+    if (gBack_screen->type != BR_PMT_INDEX_8) {
+        colours[0] = PaletteEntry16Bit(gRender_palette, colours[0]);
+        colours[1] = PaletteEntry16Bit(gRender_palette, colours[1]);
+        if (pColour == 0xffffffff) {
+            colours[1] = Colour24BitTo16Bit(0xff00ff);
+        }
+    }
+    for (i = 0; i < REC2_ASIZE(colours); i++) {
+        arrow_ptr = &gArrows[i][pArrow_index & 0x3][0];
+        point_count = *arrow_ptr++;
+        for (j = 0; j < point_count; j++) {
+            colour = colours[i];
+            if (pArrow_index & 0x8) {
+                x = -*arrow_ptr++;
+                y = -*arrow_ptr++;
+            } else {
+                x = *arrow_ptr++;
+                y = *arrow_ptr++;
+            }
+            if (pArrow_index & 0x4) {
+                temp = x;
+                x = -y;
+                y = temp;
+            }
+            BrPixelmapPixelSet(pScreen, (int)(pPos->v[0] + x), (int)(pPos->v[1] + y), colour);
+        }
+    }
+}
 
 // DrawMapBlip
 
@@ -361,6 +577,7 @@ static void C2_HOOK_FASTCALL ReadMoodMessages(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00496e30
+// FUNCTION: CARMA2_SW 0x00493ca0
 void C2_HOOK_FASTCALL InitMap(void) {
 
     if (!gInitMap_done) {
@@ -401,6 +618,11 @@ void C2_HOOK_FASTCALL InitMap(void) {
     gINT_0074abec = gHeadup_map_h + 2 * gINT_0074ab88;
     gHeadup_map_half_width = gHeadup_map_w / 2;
     gHeadup_map_half_height = gHeadup_map_h / 2;
+#ifdef REC2_SW
+    if (gMap_overlay != NULL) {
+        BrPixelmapFree(gMap_overlay);
+    }
+#endif
     if (gMap_overlay == NULL) {
         gMap_overlay = DRPixelmapAllocate(gBack_screen->type, MAX(gINT_0074abec, gINT_0074ab94), MAX(gINT_0074abec, gINT_0074ab94), NULL, 0);
     }
@@ -414,8 +636,10 @@ void C2_HOOK_FASTCALL InitMap(void) {
     if (gMini_map != NULL) {
         BrPixelmapFree(gMini_map);
     }
+#ifdef REC2_HW
     gINT_00655f04 = gHeadup_map_x;
     gINT_00655f08 = gHeadup_map_y;
+#endif
     gMini_map = DRPixelmapAllocateSub(gBack_screen,
         gMini_map_x,
         gMini_map_y,
@@ -427,7 +651,8 @@ void C2_HOOK_FASTCALL InitMap(void) {
     gFLOAT_0068d8a0 = (float)gINT_0074abd4;
     gFLOAT_0068d8a4 = (float)gINT_0074abd0;
     gMini_map_arrow_z = 0.0f;
-    gFLOAT_0074ab9c = (float)REC2_SQR((double)(gHeadup_map_half_height + gHeadup_map_half_width) * 0.45);
+    gFLOAT_0074ab9c = (float)((double)(gHeadup_map_half_height + gHeadup_map_half_width) * 0.45);
+    gFLOAT_0074ab9c = REC2_SQR(gFLOAT_0074ab9c);
     gFLOAT_0074abb8 = (float)REC2_SQR(gCurrent_graf_data->field_0x51c + 1);
     if (!gInitMap_done) {
         gCheckpoint_numbers = LoadPixelmap("CPNUMB.PIX");
@@ -447,6 +672,12 @@ void C2_HOOK_FASTCALL InitMap(void) {
         gCheckpoint_digit_height = gCheckpoint_numbers->height / 10;
         gCheckpoint_digit_center_y = gCheckpoint_digit_height / 2;
         gCheckpoint_digit_center_x = gCheckpoint_numbers->width / 2;
+#ifdef REC2_SW
+        gIcons_low_pix = LoadPixelmap("CARICONSLO.pix");
+        if (gIcons_low_pix != NULL) {
+            BrMapAdd(gIcons_low_pix);
+        }
+#endif
         gIcons_pix = LoadPixelmap("CARICONS.PIX");
         if (gIcons_pix != NULL) {
             BRPM_convert(gIcons_pix, gBack_screen->type);
@@ -457,6 +688,7 @@ void C2_HOOK_FASTCALL InitMap(void) {
     gInitMap_done = 1;
 }
 
+#ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x004973b0
 void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
     int i;
@@ -529,6 +761,7 @@ void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
     gCar_icons_model_actor->material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE;
     BrMaterialAdd(gCar_icons_model_actor->material);
 }
+#endif
 
 static void C2_HOOK_FASTCALL MapChanged(void) {
 
@@ -537,6 +770,7 @@ static void C2_HOOK_FASTCALL MapChanged(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00497620
+// FUNCTION: CARMA2_SW 0x00494250
 void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0) {
 
     if (KeyIsDown(31) && pKey0) {
@@ -573,6 +807,7 @@ void C2_HOOK_FASTCALL InitSmashTargets(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004977f0
+// FUNCTION: CARMA2_SW 0x00494420
 void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown) {
     int index;
 

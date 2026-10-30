@@ -24,6 +24,7 @@ extern int gINT_00595f9c;
 extern void* gHWnd;
 extern void* gPDActionReplayBuffer;
 extern int gPDActionReplayBufferSize;
+extern int gDefault_spec_index;
 
 extern int PDGetRegisterSourceLocation(char* buffer, int* buffer_size);
 
@@ -216,5 +217,11 @@ extern int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void);
 extern void C2_HOOK_FASTCALL PDReallyAllocateActionReplayBuffer(void);
 
 extern int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count);
+
+#ifdef REC2_SW
+extern void C2_HOOK_FASTCALL PDSwitchToHiresMode(void);
+
+extern void C2_HOOK_FASTCALL PDSwitchToLoresMode(void);
+#endif
 
 #endif // C2_PLATFORM_H

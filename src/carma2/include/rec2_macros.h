@@ -32,6 +32,7 @@
 #define V11MODEL(model) (((v11model*)model->prepared))
 
 #define WORLD_SCALE 6.9f
+#define WORLD_SCALE_D 6.9
 
 #define GROOVE_FUNK_MAX_PER_CAR 36
 #define REC2_PI 3.141592653589793

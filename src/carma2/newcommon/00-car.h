@@ -20,9 +20,16 @@ extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
 extern int gNum_active_non_cars;
+extern int gEliminate_faces;
+extern int gInTheSea;
 extern int gFace_num__car;
+extern tFace_ref gFace_list__car[300];
 
 extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount);
 
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
@@ -34,15 +41,15 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // InitialiseCarsEtc
 
-// SetInitialPosition
+extern void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, tU32 pGrid_index);
 
-// SetInitialPositions
+extern void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
 
 // InitialiseNonCar
 
 // NewFaceListCallBack
 
-// IsCarInTheSea
+extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 // RememberSafePosition
 
@@ -54,7 +61,7 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // PrepareCars
 
-// CalcGraphicalWheelStuff
+extern void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 // FinishCars
 
@@ -80,7 +87,7 @@ extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // APTCPreCollision
 
-// SetCollisionFlagsAndStuff
+extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject);
 
 // APTCPostCollision
 
@@ -102,7 +109,7 @@ extern void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br
 
 // ControlCar4
 
-// ControlCar5
+extern void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* pCar, void* pUnused, br_scalar pDt);
 
 // ControlCar1
 
@@ -160,9 +167,9 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 
 // findfloor
 
-// FindFloorInBoxBU
+extern int C2_HOOK_FASTCALL FindFloorInBoxBU(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pDistance, tPhysics_object* pObject);
 
-// CancelPendingCunningStunt
+extern void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 // SetAmbientPratCam
 
@@ -172,13 +179,15 @@ extern void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, b
 
 // MungeCarGraphics
 
-// TurnOffNonGroovers
+extern void C2_HOOK_FASTCALL DoLODCarModels(void);
 
-// DoLODCarModels
+extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
 
 // DoComplexCarModels
 
 // ResetCarScreens
+
+extern void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void);
 
 extern void C2_HOOK_FASTCALL SwapCar(void);
 

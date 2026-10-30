@@ -13,6 +13,13 @@
 #include "rec2_types.h"
 
 extern br_vector3 gRender_bounds_centre;
+extern int gINT_00681fb0;
+extern int gFrame;
+
+extern int gCurrent_selected_drone;
+
+extern tDrone_spec* gDrone_specs;
+extern tDrone_path_node* gDrone_path_nodes;
 
 // DoNotDprintf
 
@@ -22,7 +29,7 @@ extern br_vector3 gRender_bounds_centre;
 
 // DroneStraightestArcForCorner2D
 
-// OpenDroneFile
+extern FILE* C2_HOOK_FASTCALL OpenDroneFile(char* pDrone_name);
 
 // LoadDroneTypeInfo
 
@@ -156,9 +163,11 @@ extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 extern void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
-// DronePreCollisionStuff
+extern void C2_HOOK_FASTCALL DronePreCollisionStuff(void);
 
 // DoDronePerGameFrameStuff
+
+extern void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec* pDrone);
 
 // MyDroneHathCollideth
 
@@ -170,15 +179,15 @@ extern void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
 extern int C2_HOOK_FASTCALL OKToViewDrones(void);
 
-// GetCurrentViewDroneMat
+extern br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
 
 // GetCurrentViewDroneDirection
 
 // ApplyDroneRender2
 
-// ApplyDroneStraightPos2
+extern void C2_HOOK_FASTCALL ApplyDroneStraightPos2(int pDrone_id, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance);
 
-// ApplyDroneCornerPos2
+extern void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU16 pField_0x74, tU16 pRadius, const tCompressed_matrix34* pMatrix);
 
 // ReallocModelFacesAndVertices
 
