@@ -576,7 +576,7 @@ void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pCollision_i
 
 // FUNCTION: CARMA2_HW 0x004d6c10
 // FUNCTION: CARMA2_SW 0x004d3210
-void C2_HOOK_FAKE_THISCALL MutatePed(tPed_character_instance* pCharacter, void* pUnused, tU8* pAngle_x, tU8* pAngle_y, tU8* pAngle_z) {
+void C2_HOOK_FASTCALL MutatePed(tPed_character_instance* pCharacter, void* pUnused, tU8* pAngle_x, tU8* pAngle_y, tU8* pAngle_z) {
 
     if (pCharacter->ped->hit_points <= 0
         && pCharacter->ped->action == ePed_action_dead
