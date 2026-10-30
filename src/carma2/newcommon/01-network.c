@@ -474,9 +474,50 @@ tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, 
     return the_message;
 }
 
-// NetGetToPlayerContentsSize
+tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pPlayer, int pContents_size) {
+    tNet_message* message;
+    tNet_message_chunk* contents;
 
-// NetGetToPlayerContents
+    if (pPlayer == &gNet_players[gThis_net_player_index]) {
+        PDFatalError("Trying to send network message to self");
+    }
+    message = pPlayer->field_0xcc;
+    if (message != NULL && (tS32)(message->header.field_0x16 + pContents_size) > (tS32)(sizeof(tMax_message) - sizeof(void*))) {
+        NetReallySendMessageToPlayer(gCurrent_net_game, message, pPlayer->ID);
+        pPlayer->field_0xcc = message = NULL;
+    }
+    if (message == NULL) {
+        pPlayer->field_0xcc = message = NetAllocateMessage(sizeof(tMax_message) - sizeof(void*));
+        message->header.field_0x16 = (tU16)sizeof(tNet_message_header);
+        message->header.field_0x14 = 0;
+    }
+    contents = (tNet_message_chunk*)((tU8*)message + message->header.field_0x16);
+    message->header.field_0x16 += (tU16)pContents_size;
+    message->header.field_0x14++;
+    return contents;
+}
+
+// FUNCTION: CARMA2_HW 0x0049f6f0
+// FUNCTION: CARMA2_SW 0x0049b870
+tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContents(tNet_message_type pType, tU32 pSize_decider, tPlayer_ID pPlayer) {
+    tNet_message_chunk* contents;
+    tU32 content_size;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tNet_message_header) != 0x18);
+    C2_HOOK_BUG_ON(sizeof(tMax_message) - sizeof(void*) != 0x200);
+
+    content_size = NetGetContentsSize(pType, pSize_decider);
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].ID == pPlayer) {
+            contents = NetGetToPlayerContentsSize(&gNet_players[i], content_size);
+            contents->raw.header.type = pType;
+            contents->raw.header.size = (tU8)content_size;
+            return contents;
+        }
+    }
+    return NULL;
+}
 
 // NetGetToHostContents
 
