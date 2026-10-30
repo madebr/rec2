@@ -49,7 +49,7 @@ extern int gDancing_peds;
 
 // PedUndoStatus
 
-// SetCharacterPhysicsLevelAR
+extern void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacter, tU32 pLevel);
 
 // PedApplyPedPhysics
 
@@ -263,7 +263,7 @@ extern void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyT
 
 // SmoothTurnPedestrian
 
-// SetThisPedPhysicing
+extern void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed);
 
 // InitProcessData
 
