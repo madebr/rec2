@@ -6165,7 +6165,7 @@ tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_vol
 }
 
 // FUNCTION: CARMA2_HW 0x004748a0
-void C2_HOOK_FAKE_THISCALL ControlBoundFunkGroove(int pSlot_number, undefined4 pArg2, float pValue) {
+void C2_HOOK_FASTCALL ControlBoundFunkGroove(int pSlot_number, float pValue) {
 
     if (pSlot_number < 0) {
         return;
@@ -6179,7 +6179,7 @@ void C2_HOOK_FAKE_THISCALL ControlBoundFunkGroove(int pSlot_number, undefined4 p
 }
 
 // FUNCTION: CARMA2_HW 0x004748e0
-float C2_HOOK_FAKE_THISCALL ControlBoundFunkGroovePlus(int pSlot_number, undefined4 pArg2, float pValue) {
+float C2_HOOK_FASTCALL ControlBoundFunkGroovePlus(int pSlot_number, float pValue) {
 
     if (pSlot_number < 0) {
         return 0.f;

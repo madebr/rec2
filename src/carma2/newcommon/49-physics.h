@@ -16,6 +16,7 @@ extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
 extern int gImmortal_peds;
+extern tPedestrian* gPedestrian_array;
 extern void* gPhysics_buffer3_ptr;
 extern int gPHIL_mechanics_time_sync;
 extern int gPhysics_other_buffer_capacity;
@@ -270,7 +271,7 @@ extern void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject);
 
 // RotateObjectSecondOrder
 
-extern void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime);
+extern void C2_HOOK_FASTCALL RotateObjectFirstOrder(tPhysics_object* pObject, br_scalar pTime);
 
 // RotateObject
 
@@ -320,7 +321,7 @@ extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 // RQSingleExpand
 
-extern int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal);
+extern int C2_HOOK_FASTCALL RQDcmpV(br_scalar* pMatrix, int pDim, br_scalar* pQ);
 
 // MakeIdentity
 

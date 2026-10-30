@@ -693,10 +693,8 @@ void C2_HOOK_FASTCALL DRVector3SafeCross(br_vector3* pDest, const br_vector3* pA
 }
 
 // FUNCTION: CARMA2_HW 0x00404290
-void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, float pY, float pZ) {
+void C2_HOOK_FASTCALL ScaleModelXYZ(br_model* pModel, float pX, float pY, float pZ) {
     int i;
-
-    REC2_THISCALL_UNUSED(pArg2);
 
     for (i = 0; i < pModel->nvertices; i++) {
         pModel->vertices[i].p.v[0] *= pX;
@@ -707,10 +705,8 @@ void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, 
 }
 
 // FUNCTION: CARMA2_HW 0x004042f0
-void C2_HOOK_FAKE_THISCALL ScaleModel(br_model* pModel, int pArg2, float pScale) {
+void C2_HOOK_FASTCALL ScaleModel(br_model* pModel, float pScale) {
     int i;
-
-    REC2_THISCALL_UNUSED(pArg2);
 
     for (i = 0; i < pModel->nvertices; i++) {
         pModel->vertices[i].p.v[0] *= pScale;
@@ -740,7 +736,7 @@ br_model* ReadSmashableInitialModel(FILE* pFile, br_scalar pScale_factor) {
     if (model == NULL) {
         FatalError(kFatalError_CannotFindGibletModel_S, s);
     }
-    ScaleModel(model REC2_THISCALL_EDX, scale * pScale_factor);
+    ScaleModel(model, scale * pScale_factor);
     model->faces[0].material->index_base = index;
     model->faces[0].material->index_range = 1;
     model->faces[0].material->colour = BR_COLOUR_RGB(r, g, b);
@@ -2363,7 +2359,7 @@ void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed) {
 }
 
 // FUNCTION: CARMA2_HW 0x004cd260
-void C2_HOOK_FAKE_THISCALL ScoreForKilledPedestrian(tPedestrian* pPed, undefined4 pArg2, float pHeight) {
+void C2_HOOK_FASTCALL ScoreForKilledPedestrian(tPedestrian* pPed, float pHeight) {
 
     NOT_IMPLEMENTED();
 }
@@ -2392,7 +2388,7 @@ int C2_HOOK_FASTCALL PedFallingForever(tPedestrian* pPed) {
     }
     MakePedVanish(pPed);
     if (pPed->hit_points > 0) {
-        ScoreForKilledPedestrian(pPed REC2_THISCALL_EDX, pPed->pos.v[1] - FindYVerticallyBelow(&pPed->pos));
+        ScoreForKilledPedestrian(pPed, pPed->pos.v[1] - FindYVerticallyBelow(&pPed->pos));
     }
     return 1;
 }
@@ -2919,7 +2915,7 @@ void C2_HOOK_FASTCALL MungePedestrians(void) {
                 if (ped->field_0x0c != NULL && ped->field_0x0c->field_0x98 != 0) {
                     if (ped->field_0x0c->field_0x98 >= 0) {
                         if (ped->hit_points > 0) {
-                            ScoreForKilledPedestrian(ped REC2_THISCALL_EDX, 0.f);
+                            ScoreForKilledPedestrian(ped, 0.f);
                         }
                         StopObjectSmokingInstantly(ped->character->personality->form->simple_physicing[ped->character->field_0x5].collision_info);
                         ped->field_0x0c->field_0x98 = 0;

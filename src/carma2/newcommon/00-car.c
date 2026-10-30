@@ -351,10 +351,9 @@ void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject) {
 
 // FUNCTION: CARMA2_HW 0x00417180
 // FUNCTION: CARMA2_SW 0x004171b0
-void C2_HOOK_FAKE_THISCALL ControlCar2(tCar_spec* pCar, void* pUnused, br_scalar pDt) {
+void C2_HOOK_FASTCALL ControlCar2(tCar_spec* pCar, br_scalar pDt) {
     br_scalar time_steps;
 
-    (void)pUnused;
     pCar->acc_force = 0.0f;
     if (pCar->keys.acc) {
         pCar->acc_force = 7.0f * pCar->collision_info->M;
@@ -398,10 +397,9 @@ void C2_HOOK_FAKE_THISCALL ControlCar2(tCar_spec* pCar, void* pUnused, br_scalar
 
 // FUNCTION: CARMA2_HW 0x004173b0
 // FUNCTION: CARMA2_SW 0x004173e0
-void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br_scalar pDt) {
+void C2_HOOK_FASTCALL ControlCar3(tCar_spec* pCar, br_scalar pDt) {
     br_scalar time_steps;
 
-    (void)pUnused;
     if (pCar->keys.left) {
         if (pCar->turn_speed < 0.0f) {
             pCar->turn_speed = 0.0f;
@@ -440,10 +438,9 @@ void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* pCar, void* pUnused, br_scalar
 
 // FUNCTION: CARMA2_HW 0x00417a20
 // FUNCTION: CARMA2_SW 0x00417a50
-void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* pCar, void* pUnused, br_scalar pDt) {
+void C2_HOOK_FASTCALL ControlCar5(tCar_spec* pCar, br_scalar pDt) {
     br_scalar time_steps;
 
-    (void)pUnused;
     pCar->acc_force = 0.0f;
     if (pCar->keys.acc) {
         pCar->acc_force = 7.0f * pCar->collision_info->M;

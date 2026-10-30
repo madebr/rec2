@@ -21,6 +21,12 @@
 #include "rec2_macros.h"
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x0065e560
+// GLOBAL: CARMA2_SW 0x00658e98
+const char* gForm_non_humanoid_names[1] = {
+    "NONHUMANOID",
+};
+
 // GLOBAL: CARMA2_HW 0x00705c80
 // GLOBAL: CARMA2_SW 0x006fc740
 tTintedPoly gTintedPolys[10];
