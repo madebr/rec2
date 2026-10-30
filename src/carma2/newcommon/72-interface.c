@@ -17,6 +17,7 @@
 #include "10-loading2.h"
 #include "12-menuoptions.h"
 #include "15-displays.h"
+#include "16-graphics1.h"
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "24-loadsave.h"
@@ -142,7 +143,16 @@ int gINT_0059b0d8 = -1;
 int gFrontend_maximum_input_length = 9;
 
 // GLOBAL: CARMA2_HW 0x00763924
+// GLOBAL: CARMA2_SW 0x00759e84
 int gHierarchy_has_actor;
+
+// GLOBAL: CARMA2_HW 0x00763928
+// GLOBAL: CARMA2_SW 0x00759e88
+int gPicked_wreck;
+
+// GLOBAL: CARMA2_HW 0x00763b5c
+// GLOBAL: CARMA2_SW 0x0075a0bc
+tWreck_gallery_car_info gWreck_gallery_car_infos[30];
 
 // GLOBAL: CARMA2_HW 0x00686834
 // GLOBAL: CARMA2_SW 0x00680f74
@@ -1133,19 +1143,30 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
 
 // FRONTEND_MainMenuHandler
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x0046b6a0
-// STUB: CARMA2_SW 0x0046b3c0
+// FUNCTION: CARMA2_HW 0x0046b6a0
+// FUNCTION: CARMA2_SW 0x0046b3c0
 void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec* pFrontend) {
-    NOT_IMPLEMENTED();
-}
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
+    strcpy(pFrontend->items[2].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].car_name);
+    strcpy(pFrontend->items[3].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].name);
+    strcpy(pFrontend->items[5].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line4_description);
+    sprintf(pFrontend->items[4].text, "%s @R%s @R%s",
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line1_topspeed,
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line2_weight,
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line3_acceleration);
+    MungeMetaCharactersChar(pFrontend->items[4].text, 'R', '\r');
+    FuckWithWidths(pFrontend);
+    if (gFrontend_car_image_outdated && gFrontend_opponent_profile_pic_needs_update) {
+        MenuSetDriverImage(gProgram_state.cars_available[gFrontend_change_car_selected_car], 12);
+        MenuSetCarImage(gProgram_state.cars_available[gFrontend_change_car_selected_car], 6);
+        gFrontend_opponent_profile_pic_needs_update = 0;
+        gFrontend_car_image_outdated = 0;
+#ifdef REC2_SW
+        gFrontend_brender_items[12].material->flags = BR_MATF_ALWAYS_VISIBLE;
+        BrMaterialUpdate(gFrontend_brender_items[0xc].material, BR_MATU_ALL);
 #endif
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0046b4e0
 // FUNCTION: CARMA2_SW 0x0046b200
@@ -1728,9 +1749,27 @@ int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange) {
 
 // GetCarSelectedByMouse
 
-// WreckPick
+// FUNCTION: CARMA2_HW 0x0046f4f0
+// FUNCTION: CARMA2_SW 0x0046eba0
+int C2_HOOK_CDECL WreckPick(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tWreck_gallery_car_info, actor, 0x10);
+    C2_HOOK_BUG_ON(sizeof(tWreck_gallery_car_info) != 0xa4);
+
+    for (i = 0; i < gFrontend_wrecks_car_count; i++) {
+        gHierarchy_has_actor = 0;
+        BrActorEnum(gWreck_gallery_car_infos[i].actor, HeirarchyPick, pActor);
+        if (gHierarchy_has_actor) {
+            gPicked_wreck = i;
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0046f560
+// FUNCTION: CARMA2_SW 0x0046ec10
 intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
 
     if (a == (br_actor*)ref) {
@@ -1741,6 +1780,7 @@ intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f590
+// FUNCTION: CARMA2_SW 0x0046ec40
 void C2_HOOK_FASTCALL DodgyPause(tU32 pTime) {
     tU32 start;
 

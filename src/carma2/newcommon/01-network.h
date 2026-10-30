@@ -13,6 +13,7 @@
 #include "rec2_types.h"
 
 extern int gIt_or_fox;
+extern int INT_00659d34;
 
 extern int C2_HOOK_FASTCALL NetInitialise(void);
 
@@ -106,7 +107,7 @@ extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContents(tNet_message_
 
 extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToHostContents(tNet_message_type pType, tU32 pSize_decider);
 
-// NetStartBroadcastContents
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tU32 pSize_decider);
 
 // NetBroadcastContents
 

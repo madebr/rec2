@@ -4954,7 +4954,7 @@ typedef struct {
     int field_0x88;
     int next_car_index;
     int score;
-    undefined field_0x94[4];
+    int last_score_index;
     struct br_matrix34 initial_position;
     struct tCar_spec * car;
     tNet_message* field_0xcc;
@@ -5174,6 +5174,7 @@ typedef enum {
     eNet_message_chunk_type_car_crush = 0x20,
     eNet_message_chunk_type_reattach_bit = 0x26,
     eNet_message_chunk_type_toggle_doors = 0x2c,
+    eNet_message_chunk_type_view_car = 0x2f,
     eNet_message_chunk_type_mine_explosion = 0x31,
     eNet_message_chunk_type_detach_bit = 0x33,
 } tNet_message_chunk_type;
@@ -5187,6 +5188,11 @@ typedef struct {
     tNet_message_chunk_header header;
     int id;
 } tNet_message_chunk_toggle_doors;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tPlayer_ID player;
+} tNet_message_chunk_view_car;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -5336,6 +5342,7 @@ typedef union {
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_reattach_bit reattach_bit; /* type = 0x26 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
+    tNet_message_chunk_view_car view_car; /* type = 0x2f */
     tNet_message_chunk_mine_explode mine_explode; /* type = 0x31 */
     tNet_message_chunk_detach_bit detach_bit; /* type = 0x33 */
 } tNet_message_chunk;
