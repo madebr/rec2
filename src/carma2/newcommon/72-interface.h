@@ -15,7 +15,11 @@
 extern tNet_game_options gNet_settings[9];
 extern tU32 gFrontend_net_current_roll;
 extern tU32 gFrontend_net_last_roll;
+extern int gPlayer_lookup_netsummary[14];
+extern int gFrontend_netsummary_first_iteration;
 extern tNet_game_options gFrontend_net_options;
+extern int gPicked_wreck;
+extern tWreck_gallery_car_info gWreck_gallery_car_infos[30];
 
 extern tU32 gFrontend_last_scroll;
 extern tU32 gNet_synch_start;
@@ -260,7 +264,7 @@ extern int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange);
 
 // GetCarSelectedByMouse
 
-// WreckPick
+extern int C2_HOOK_CDECL WreckPick(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg);
 
 extern intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref);
 
@@ -350,7 +354,7 @@ extern int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pCo
 
 // Generic_UnMungeActiveItems
 
-// Generic_MenuHandler
+extern int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL StripControls(char* pStr);
 
@@ -428,7 +432,7 @@ extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
 // NetSync_MenuHandler
 
-// NetSummary_Draw
+// static void C2_HOOK_FASTCALL NetSummary_Draw(tFrontend_spec* pFrontend);
 
 // SortScores
 
@@ -438,7 +442,7 @@ extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
 // NetSummary_Infunc
 
-// NetSummary_MenuHandler
+extern int C2_HOOK_FASTCALL NetSummary_MenuHandler(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL DisplayVolumeSettings(tFrontend_spec* pFrontend);
 
