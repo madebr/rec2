@@ -56,7 +56,27 @@ tActionReplayCameraMode gAction_replay_camera_mode;
 
 // CheckCameraHither
 
-// GetRaceLeader
+// FUNCTION: CARMA2_HW 0x0040f4a0
+// FUNCTION: CARMA2_SW 0x0040f480
+tCar_spec* C2_HOOK_FASTCALL GetRaceLeader(void) {
+    int i;
+    int score;
+    tCar_spec* car;
+
+    car = gNet_players[0].car;
+    score = gNet_players[0].last_score_index;
+    if (gCurrent_net_game->type == eNet_game_type_foxy && gIt_or_fox >= 0 && gIt_or_fox < gNumber_of_net_players) {
+        return gNet_players[gIt_or_fox].car;
+    } else {
+        for (i = 1; i < gNumber_of_net_players; i++) {
+            if (gNet_players[i].last_score_index < score) {
+                score = gNet_players[i].last_score_index;
+                car = gNet_players[i].car;
+            }
+        }
+        return car;
+    }
+}
 
 // AmIGettingBoredWatchingCameraSpin
 
@@ -66,8 +86,6 @@ void C2_HOOK_FASTCALL ViewNetPlayer(void) {
     tCar_spec* car;
     tNet_game_player_info* net_player;
     tNet_message* message;
-    int i;
-    int score;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_player_info, last_score_index, 0x94);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_view_car, player, 0x4);
@@ -82,18 +100,7 @@ void C2_HOOK_FASTCALL ViewNetPlayer(void) {
     if (gNet_player_to_view_index >= 0) {
         car = gNet_players[gNet_player_to_view_index].car;
     } else {
-        score = gNet_players[0].last_score_index;
-        car = gNet_players[0].car;
-        if (gCurrent_net_game->type == eNet_game_type_foxy && gIt_or_fox >= 0 && gIt_or_fox < gNumber_of_net_players) {
-            car = gNet_players[gIt_or_fox].car;
-        } else {
-            for (i = 1; i < gNumber_of_net_players; i++) {
-                if (gNet_players[i].last_score_index < score) {
-                    score = gNet_players[i].last_score_index;
-                    car = gNet_players[i].car;
-                }
-            }
-        }
+        car = GetRaceLeader();
     }
     net_player = NetPlayerFromCar(car);
     if (gNet_mode == eNet_mode_host) {
