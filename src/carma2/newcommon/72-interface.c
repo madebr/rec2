@@ -10,6 +10,7 @@
 
 #include "01-network.h"
 #include "02-init.h"
+#include "03-racestrt.h"
 #include "04-netgame.h"
 #include "05-drmem.h"
 #include "08-loading1.h"
@@ -24,11 +25,13 @@
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
+#include "63-loading3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "72-interface-main.h"
 #include "72-interface-network.h"
 #include "72-interface-quit.h"
+#include "72-interface-startgame.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "joystick.h"
@@ -36,12 +39,25 @@
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
+#include "c2_stdlib.h"
 #include "c2_string.h"
 #include <ctype.h>
 
 // GLOBAL: CARMA2_HW 0x00763960
 // GLOBAL: CARMA2_SW 0x00759ec0
 tNet_game_options gNet_settings[9];
+
+// GLOBAL: CARMA2_HW 0x00688aa8
+// GLOBAL: CARMA2_SW 0x00683008
+tU32 gFrontend_net_current_roll;
+
+// GLOBAL: CARMA2_HW 0x00686efc
+// GLOBAL: CARMA2_SW 0x0068163c
+tU32 gFrontend_net_last_roll;
+
+// GLOBAL: CARMA2_HW 0x00763b20
+// GLOBAL: CARMA2_SW 0x0075a080
+tNet_game_options gFrontend_net_options;
 
 // GLOBAL: CARMA2_HW 0x00764eec
 // GLOBAL: CARMA2_SW 0x0075b44c
@@ -50,6 +66,14 @@ tFrontendMenuType gFrontend_next_menu;
 // GLOBAL: CARMA2_HW 0x00764ee8
 // GLOBAL: CARMA2_SW 0x0075b448
 int gFrontend_change_car_selected_car;
+
+// GLOBAL: CARMA2_HW 0x00687040
+// GLOBAL: CARMA2_SW 0x00681780
+int gFrontend_car_image_outdated;
+
+// GLOBAL: CARMA2_HW 0x00686828
+// GLOBAL: CARMA2_SW 0x00680f68
+int gFrontend_opponent_profile_pic_needs_update;
 
 // GLOBAL: CARMA2_HW 0x00688b20
 // GLOBAL: CARMA2_SW 0x00683080
@@ -62,6 +86,10 @@ tConnected_items* gConnected_items;
 // GLOBAL: CARMA2_HW 0x00686508
 // GLOBAL: CARMA2_SW 0x00680c48
 tStruct_00686508* gPTR_00686508;
+
+// GLOBAL: CARMA2_HW 0x006864d0
+// GLOBAL: CARMA2_SW 0x00680c10
+tU32 gNet_synch_start;
 
 // GLOBAL: CARMA2_HW 0x00686820
 // GLOBAL: CARMA2_SW 0x00680f60
@@ -149,6 +177,7 @@ int* gCredits_fonts;
 int gCredits_total_height;
 
 // GLOBAL: CARMA2_HW 0x006886d0
+// GLOBAL: CARMA2_SW 0x00682c30
 double gFrontend_throb_factor;
 
 // GLOBAL: CARMA2_HW 0x00763940
@@ -176,9 +205,11 @@ int gFrontend_scroll_time_increment;
 int gFrontend_count_saved_games;
 
 // GLOBAL: CARMA2_HW 0x00763894
+// GLOBAL: CARMA2_SW 0x00759df4
 tU32 gFrontend_scroll_last_update;
 
 // GLOBAL: CARMA2_HW 0x00688b04
+// GLOBAL: CARMA2_SW 0x00683064
 int gFrontend_mouse_down;
 
 // GLOBAL: CARMA2_HW 0x0068875c
@@ -190,6 +221,7 @@ tU32 gFrontend_time_last_input;
 int gNet_join_host_result;  // FIXME: use union instead?
 
 // GLOBAL: CARMA2_HW 0x00688b08
+// GLOBAL: CARMA2_SW 0x00683068
 int gPrev_frontend_mouse_down;
 
 // GLOBAL: CARMA2_HW 0x006883a8
@@ -290,7 +322,24 @@ const int gControls_frontend_to_key_mapping_lut[29] = {
 
 // SetGameTarget
 
-// SetOptions
+// FUNCTION: CARMA2_HW 0x00468140
+// FUNCTION: CARMA2_SW 0x00467ec0
+void C2_HOOK_FASTCALL SetOptions(tNet_game_type pGame_type, tNet_game_options* pGame_options) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gNet_grid_starts) != 10);
+
+    pGame_options->show_players_on_map = gNet_settings[0].show_players_on_map;
+    pGame_options->enable_text_messages = gNet_settings[0].enable_text_messages;
+    pGame_options->show_powerups_on_map = gNet_settings[0].show_powerups_on_map;
+    pGame_options->powerup_respawn = gNet_settings[0].powerup_respawn;
+    pGame_options->open_game = gNet_settings[pGame_type + 1].open_game;
+    pGame_options->starting_credits = gNet_settings[0].starting_credits;
+    pGame_options->grid_start = gNet_settings[pGame_type + 1].grid_start || gNet_grid_starts[pGame_type + 1];
+    pGame_options->waste_to_transfer = gNet_settings[pGame_type + 1].waste_to_transfer;
+    pGame_options->random_car_choice = gNet_settings[pGame_type + 1].random_car_choice;
+    pGame_options->race_sequence_type = gNet_settings[0].race_sequence_type;
+    pGame_options->car_choice = gNet_settings[0].car_choice;
+    pGame_options->starting_target = gNet_settings[pGame_type + 1].starting_target;
+}
 
 // ReadNetGameChoices
 
@@ -329,7 +378,7 @@ void C2_HOOK_FASTCALL PollCarDetails(tNet_game_details* pNet_game) {
         if (gNet_mode == eNet_mode_none) {
             gNet_mode = eNet_mode_thinking_about_it;
         }
-        message = NetBuildGuaranteedMessage(6, 0);
+        message = NetBuildGuaranteedMessage(eNet_message_chunk_poll_car_details, 0);
         NetGuaranteedSendMessageToHost(pNet_game, message, NULL);
     }
 }
@@ -908,7 +957,20 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 
 // NetGameTypeDn
 
-// MultiplayerSetup
+// FUNCTION: CARMA2_HW 0x00467eb0
+// FUNCTION: CARMA2_SW 0x00467c30
+int C2_HOOK_FASTCALL MultiplayerSetup(tFrontend_spec* pFrontend) {
+
+    gFrontend_net_initialized = !NetInitialise();
+    if (gFrontend_net_initialized) {
+        gPending_race = -1;
+        gStart_race_sent = 0;
+        gCurrent_race.number_of_racers = 0;
+        gLast_host_query = 0;
+        AboutToLoadFirstCar();
+    }
+    return 0;
+}
 
 // NetworkJoinSetup
 
@@ -965,9 +1027,78 @@ int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// MenuSetCarImage
+// FUNCTION: CARMA2_HW 0x0046aa20
+// FUNCTION: CARMA2_SW 0x0046a760
+void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index) {
+    char* car_file_name;
+    char* pos_dot;
+    char pack_filename[40];
+    char pm_name[20];
+    tPath_name pack_path;
+    tTWTVFS twt;
+    int i;
 
-// MenuSetDriverImage
+    car_file_name = gOpponents[pCar_index].car_file_name;
+    pos_dot = strrchr(car_file_name, '.');
+    PathCat(pack_path, gApplication_path, "INTRFACE");
+    PathCat(pack_path, pack_path, "CARIMAGE");
+    strcpy(pack_filename, gOpponents[pCar_index].car_file_name);
+    pack_filename[strlen(pack_filename) - 4] = '\0';
+    strcat(pack_filename, "CI");
+    PathCat(pack_path, pack_path, pack_filename);
+    twt = OpenPackFileAndSetTiffLoading(pack_path);
+    for (i = 0; i < 6; i++) {
+        sprintf(pm_name, "%.*s%c.TIF", (int)(pos_dot - car_file_name), car_file_name, 'A' + i);
+        BrMapRemove(gFrontend_images[i + 1]);
+        BrPixelmapFree(gFrontend_images[i + 1]);
+        gFrontend_images[i + 1] = GetThisFuckingPixelmapPleaseMrTwatter(pack_path, pm_name);
+        if (gFrontend_images[i + 1] == NULL) {
+            gFrontend_images[i + 1] = LoadPixelmap("64by64.tif");
+        }
+        BrPixelmapCopy(gFrontend_brender_items[pBrender_index + i].field_0xc, gFrontend_images[i + 1]);
+        BrPixelmapCopy(gFrontend_brender_items[pBrender_index + i].field_0x10, gFrontend_brender_items[pBrender_index + i].field_0xc);
+        BrMapUpdate(gFrontend_brender_items[pBrender_index + i].field_0xc, BR_MAPU_ALL);
+        BrMaterialUpdate(gFrontend_brender_items[pBrender_index + i].material, BR_MATU_COLOURMAP);
+    }
+    ClosePackFileAndSetTiffLoading(twt);
+}
+
+// FUNCTION: CARMA2_HW 0x0046b820
+// FUNCTION: CARMA2_SW 0x0046b560
+void C2_HOOK_FASTCALL MenuSetDriverImage(int pOpponent_index, int pFrontend_index) {
+    char* abbrev_name;
+    char* pos_dot;
+    char pack_filename[40];
+    char pm_name[20];
+    tPath_name pack_path;
+    tTWTVFS twt;
+
+    abbrev_name = gOpponents[pOpponent_index].abbrev_name;
+    pos_dot = strrchr(abbrev_name, '.');
+    PathCat(pack_path, gApplication_path, "INTRFACE");
+    PathCat(pack_path, pack_path, "CARIMAGE");
+    strcpy(pack_filename, gOpponents[pOpponent_index].car_file_name);
+    pack_filename[strlen(pack_filename) - 4] = '\0';
+    strcat(pack_filename, "CI");
+    PathCat(pack_path, pack_path, pack_filename);
+    twt = OpenPackFileAndSetTiffLoading(pack_path);
+    sprintf(pm_name, "%.*s%c%c.TIF", (int)(pos_dot - abbrev_name), abbrev_name, '6', '4');
+    BrMapRemove(gFrontend_images[7]);
+    BrPixelmapFree(gFrontend_images[7]);
+    gFrontend_images[7] = GetThisFuckingPixelmapPleaseMrTwatter(pack_path, pm_name);
+    if (gFrontend_images[7] == NULL) {
+        gFrontend_images[7] = LoadPixelmap("64by64.tif");
+    }
+    BrPixelmapCopy(gFrontend_brender_items[pFrontend_index].field_0xc, gFrontend_images[7]);
+    BrPixelmapCopy(gFrontend_brender_items[pFrontend_index].field_0x10, gFrontend_brender_items[pFrontend_index].field_0xc);
+    BrMapUpdate(gFrontend_brender_items[pFrontend_index].field_0xc, BR_MAPU_ALL);
+    ClosePackFileAndSetTiffLoading(twt);
+    gFrontend_brender_items[pFrontend_index].model->vertices[0].p.v[2] = -1.0f;
+    gFrontend_brender_items[pFrontend_index].model->vertices[1].p.v[2] = -1.0f;
+    gFrontend_brender_items[pFrontend_index].model->vertices[2].p.v[2] = -1.0f;
+    gFrontend_brender_items[pFrontend_index].model->vertices[3].p.v[2] = -1.0f;
+    BrModelUpdate(gFrontend_brender_items[pFrontend_index].model, BR_MODU_VERTEX_POSITIONS);
+}
 
 // MainMenuInfunc
 
@@ -1002,9 +1133,62 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
 
 // FRONTEND_MainMenuHandler
 
-// UpdateCarInfo
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// ChangeCarMenuInfunc
+// STUB: CARMA2_HW 0x0046b6a0
+// STUB: CARMA2_SW 0x0046b3c0
+void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec* pFrontend) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x0046b4e0
+// FUNCTION: CARMA2_SW 0x0046b200
+int C2_HOOK_FASTCALL ChangeCarMenuInfunc(tFrontend_spec* pFrontend) {
+    int i;
+    int count;
+
+    gFrontend_change_car_selected_car = 0;
+    if (gProgram_state.number_of_cars >= 2 || gProgram_state.game_completed) {
+        pFrontend->items[0].enabled = kFrontendItemEnabled_enabled;
+        pFrontend->items[1].enabled = kFrontendItemEnabled_enabled;
+    } else {
+        pFrontend->items[0].enabled = kFrontendItemEnabled_default;
+        pFrontend->items[1].enabled = kFrontendItemEnabled_default;
+    }
+    DefaultInfunc(pFrontend);
+    gFrontend_time_last_input = PDGetTotalTime();
+    gFrontend_car_image_outdated = 1;
+    gFrontend_opponent_profile_pic_needs_update = 1;
+    FuckWithWidths(pFrontend);
+    for (i = 0; i < gProgram_state.number_of_cars; i++) {
+        if (gProgram_state.cars_available[i] == gProgram_state.current_car_index) {
+            gFrontend_change_car_selected_car = i;
+            break;
+        }
+    }
+    if (gProgram_state.game_completed) {
+        count = 0;
+        for (i = 0; i < gNumber_of_racers; i++) {
+            if (gOpponents[i].network_availability != eNet_avail_never) {
+                gProgram_state.cars_available[count] = i;
+                count += 1;
+            }
+        }
+        gProgram_state.number_of_cars = count;
+    }
+    gFrontend_scroll_time_increment = 50;
+    gFrontend_scroll_last_update = PDGetTotalTime();
+    gFrontend_scroll_time_left = 0;
+    gPrev_frontend_mouse_down = 0;
+    gFrontend_mouse_down = 0;
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x0046b610
 int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend) {
@@ -1020,7 +1204,22 @@ int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// CarClickPrev
+// FUNCTION: CARMA2_HW 0x0046b640
+// FUNCTION: CARMA2_SW 0x0046b360
+int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend) {
+    if (gFrontend_scroll_time_left == 0) {
+        gFrontend_change_car_selected_car -= 1;
+        if (gFrontend_change_car_selected_car < 0) {
+            gFrontend_change_car_selected_car = gProgram_state.number_of_cars - 1;
+        }
+        gFrontend_opponent_profile_pic_needs_update = 1;
+        gFrontend_car_image_outdated = 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
+        UpdateCarInfo(pFrontend);
+        gFrontend_scroll_time_left += gFrontend_scroll_time_increment;
+    }
+    return 0;
+}
 
 // CarClickNext
 
@@ -1059,7 +1258,71 @@ int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec* pFrontend) {
     return 1;
 }
 
-// CreditsScreenInfunc
+// FUNCTION: CARMA2_HW 0x0046bd60
+// FUNCTION: CARMA2_SW 0x0046ba90
+int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend) {
+    tPath_name interface_path;
+    tPath_name credits_path;
+    char s[100];
+    char small_buf[11];
+    FILE* f;
+    int i;
+
+    if (!pFrontend->loaded) {
+        LoadMenuSettings(pFrontend);
+    }
+    FuckWithWidths(pFrontend);
+    PathCat(interface_path, gApplication_path, "INTRFACE");
+    PathCat(credits_path, interface_path, "creditslist.txt");
+    f = DRfopen(credits_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_Mysterious_SS);
+    }
+    gCredits_line_count = GetAnInt(f);
+    gCredits_texts = malloc(sizeof(*gCredits_texts) * gCredits_line_count);
+    gCredits_fonts = malloc(sizeof(*gCredits_fonts) * gCredits_line_count);
+    gCredits_heights = malloc(sizeof(*gCredits_heights) * gCredits_line_count);
+    gCredits_throbs = malloc(sizeof(*gCredits_throbs) * gCredits_line_count);
+    gCredits_throbs[0] = 0;
+    gCredits_fonts[0] = kPolyfont_hand_red_15pt_lit;
+    gCredits_heights[0] = 0;
+    gCredits_total_height = 0;
+    GetALineAndDontArgue(f, s);
+    i = 0;
+    while (i < gCredits_line_count) {
+        if (strncmp(s, "FONT", 4) == 0) {
+            strncpy(small_buf, &s[5], sizeof(small_buf) - 1);
+            gCredits_fonts[i] = atoi(small_buf);
+        } else if (strncmp(s, "SPACE", 5) == 0) {
+            strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
+            gCredits_heights[i] += (int)(PolyFontHeight(gCredits_fonts[i]) * atof(small_buf));
+        } else if (strncmp(s, "THROB", 5) == 0) {
+            strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
+            if (strncmp(small_buf, "ON", 2) == 0) {
+                gCredits_throbs[i] = 1;
+            } else {
+                gCredits_throbs[i] = 0;
+            }
+        } else {
+            gCredits_texts[i] = malloc(strlen(s) + 1);
+            strcpy(gCredits_texts[i], s);
+            gCredits_heights[i] += PolyFontHeight(gCredits_fonts[i]);
+            gCredits_total_height += gCredits_heights[i];
+            i++;
+            if (i < gCredits_line_count) {
+                gCredits_fonts[i] = gCredits_fonts[i - 1];
+                gCredits_throbs[i] = gCredits_throbs[i - 1];
+                gCredits_heights[i] = 0;
+            }
+        }
+        GetALineAndDontArgue(f, s);
+    }
+    gCredits_total_height += 480;
+    gCredits_scroll_start = PDGetTotalTime();
+    StartMusicTrack(9998);
+    gFrontend_selected_item_index = 0;
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x0046c090
 // FUNCTION: CARMA2_SW 0x0046bdc0
@@ -1319,6 +1582,7 @@ int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046cec0
+// FUNCTION: CARMA2_SW 0x0046cb80
 void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void) {
     int time;
 
@@ -1968,11 +2232,26 @@ void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, i
         y = 0 + 4 * (i / 10);
 
         if (i >= pPotential) {
+#ifdef REC2_HW
             c = gFrontend_APO_Colour_2;
+#endif
+#ifdef REC2_SW
+            c = 160;
+#endif
         } else if (i >= pCurrent) {
+#ifdef REC2_HW
             c = gFrontend_APO_Colour_3;
+#endif
+#ifdef REC2_SW
+            c = 162;
+#endif
         } else {
+#ifdef REC2_HW
             c = gFrontend_APO_Colour_1;
+#endif
+#ifdef REC2_SW
+            c = 21;
+#endif
         }
 
         BrPixelmapRectangleFill(map, x, y + 3 * 4 * pAPO, 3, 3, c);
@@ -1989,6 +2268,7 @@ void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
 }
 
 // FUNCTION: CARMA2_HW 0x00471ba0
+// FUNCTION: CARMA2_SW 0x00471100
 int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, int pY) {
     tFrontend_slider* slider;
     br_vertex* vertices;
@@ -2235,7 +2515,18 @@ int C2_HOOK_FASTCALL Controls_JoystickToggle(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// Controls_JoystickDpadToggle
+// FUNCTION: CARMA2_HW 0x00472400
+// FUNCTION: CARMA2_SW 0x00471990
+int C2_HOOK_FASTCALL Controls_JoystickDpadToggle(tFrontend_spec* pFrontend) {
+
+    if (gFrontend_selected_item_index == 36) {
+        SetJoystickDPadEnabled(1);
+    } else {
+        SetJoystickDPadEnabled(0);
+    }
+    DisplayJoystickSettings(pFrontend);
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004729d0
 // FUNCTION: CARMA2_SW 0x00471f60
@@ -2320,7 +2611,28 @@ int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// NetOptions_CreditsRoller
+// FUNCTION: CARMA2_HW 0x00473220
+// FUNCTION: CARMA2_SW 0x00472790
+int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend) {
+
+    gFrontend_net_current_roll = PDGetTotalTime();
+    if ((int)(gFrontend_net_current_roll - gFrontend_net_last_roll) >= 300) {
+        gFrontend_net_last_roll = gFrontend_net_current_roll;
+        if (gFrontend_selected_item_index == 28) {
+            gFrontend_net_options.starting_credits += 1000;
+        } else if (gFrontend_selected_item_index == 27) {
+            gFrontend_net_options.starting_credits -= 1000;
+        }
+        if (gFrontend_net_options.starting_credits < 0) {
+            gFrontend_net_options.starting_credits = 0;
+        } else if (gFrontend_net_options.starting_credits > 500000) {
+            gFrontend_net_options.starting_credits = 500000;
+        }
+        sprintf(pFrontend->items[24].text, "%i", gFrontend_net_options.starting_credits);
+        FuckWithWidths(pFrontend);
+    }
+    return 0;
+}
 
 // NetOptions_TargetRoller
 
@@ -2332,7 +2644,18 @@ int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
 
 // MungePlayers
 
-// NetSynchRaceStart2
+// FUNCTION: CARMA2_HW 0x00473570
+// FUNCTION: CARMA2_SW 0x00472ae0
+int C2_HOOK_FASTCALL NetSynchRaceStart2(tNet_synch_mode pMode) {
+    if (pMode != eNet_synch_client) {
+        if (gCurrent_net_game->status.stage == eNet_game_stage0) {
+            gCurrent_net_game->status.stage = 1;
+        }
+        SetUpNetCarPositions();
+        gNet_synch_start = PDGetTotalTime();
+    }
+    return eSO_continue;
+}
 
 // NetSync_Draw
 

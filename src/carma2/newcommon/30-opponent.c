@@ -78,6 +78,14 @@ int gRoute_search_target_count;
 // GLOBAL: CARMA2_SW 0x0068b774
 float gShortest_route_length;
 
+// GLOBAL: CARMA2_HW 0x0074c7c0
+// GLOBAL: CARMA2_SW 0x00742e80
+tCar_spec* gActive_car_list[139];
+
+// GLOBAL: CARMA2_HW 0x0074c9ec
+// GLOBAL: CARMA2_SW 0x007430ac
+int gNum_active_cars;
+
 // FUNCTION: CARMA2_HW 0x004a8160
 // FUNCTION: CARMA2_SW 0x004a42d0
 void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {

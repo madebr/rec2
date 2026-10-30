@@ -8,12 +8,15 @@
 
 #include "00-car.h"
 
+#include "01-network.h"
 #include "04-netgame.h"
 #include "13-crush1.h"
 #include "15-displays.h"
+#include "17-world2.h"
 #include "22-replay.h"
 #include "23-piping.h"
 #include "29-raycast.h"
+#include "30-opponent.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
@@ -23,6 +26,7 @@
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrpb.h"
+#include "platform.h"
 
 #include "c2_stdio.h"
 #include "rec2_macros.h"
@@ -64,6 +68,10 @@ br_vector3 gZero_v__car;  // FIXME: make const?
 // GLOBAL: CARMA2_HW 0x006793dc
 // GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
+
+// GLOBAL: CARMA2_HW 0x006793d0
+// GLOBAL: CARMA2_SW 0x00673b40
+int gEliminate_faces;
 
 // GLOBAL: CARMA2_HW 0x00679364
 // GLOBAL: CARMA2_SW 0x00673ad4
@@ -567,7 +575,38 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 
 // findfloor
 
-// FindFloorInBoxBU
+// FUNCTION: CARMA2_HW 0x0041e480
+// FUNCTION: CARMA2_SW 0x0041e4b0
+int C2_HOOK_FASTCALL FindFloorInBoxBU(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pDistance, tPhysics_object* pObject) {
+    br_vector3 nor2;
+    br_vector3 collision_position;
+    int i;
+    int j;
+    br_scalar dist;
+    tFace_ref* face_ref;
+
+    *pDistance = 2.f;
+    i = pObject->box_face_start;
+    face_ref = &gFace_list__car[i];
+    for (; i < pObject->box_face_end; i++, face_ref++) {
+        if (gEliminate_faces && (face_ref->flags & 0x80) != 0) {
+            continue;
+        }
+        CheckSingleFace(face_ref, pPosition, pDirection, &nor2, &dist, &collision_position);
+        if (dist < *pDistance) {
+            *pDistance = dist;
+            j = i;
+            BrVector3Copy(pNormal, &nor2);
+        }
+    }
+    if (*pDistance < 2.f) {
+        i = gFace_list__car[j].material->identifier[0] - ('0' - 1);
+        if (i >= 0 && i < 11) {
+            return i;
+        }
+    }
+    return 0;
+}
 
 // CancelPendingCunningStunt
 
@@ -578,6 +617,53 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
 // MungeSomeOtherCarGraphics
 
 // MungeCarGraphics
+
+// FUNCTION: CARMA2_HW 0x0041f110
+// FUNCTION: CARMA2_SW 0x0041f140
+void C2_HOOK_FASTCALL DoLODCarModels(void) {
+    int i;
+    int j;
+    tCar_spec* car;
+    float level;
+    float factor;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCar_simplification_factor) != 2);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCar_simplification_factor[0]) != 5);
+
+    for (i = 0; i < gNum_active_cars; i++) {
+        car = gActive_car_list[i];
+        if (car != NULL && car->driver > eDriver_oppo - 1 && car->car_master_actor->render_style != BR_RSTYLE_NONE) {
+            level = Vector3DistanceSquared(&car->car_master_actor->t.t.translate.t, (br_vector3*)gCamera_to_world.m[3]);
+            factor = gCar_simplification_factor[gGraf_spec_index][gCar_simplification_level];
+            if (!(factor >= 0.001f)) {
+                level = BR_SCALAR_MAX;
+            } else {
+                level /= factor;
+            }
+#ifdef REC2_SW
+            if (gNet_mode != eNet_mode_none && (gNet_players[gIt_or_fox].car == car || NetPlayerFromCar(car)->field_0x80 != 0)) {
+                level = 0.0f;
+            }
+#endif
+            for (j = car->count_detail_levels - 1; j > 0; j--) {
+                if (level > car->detail_levels[j]) {
+                    break;
+                }
+            }
+            if (j > 0) {
+                int variant;
+
+                variant = j;
+                DRActorEnumRecurse(car->car_model_actor, SwitchCarModel, &variant);
+                car->field_0xe18 = variant;
+            } else if (!gAction_replay_mode && car->use_shell_model && car->shell_model != NULL) {
+                DRActorEnumRecurse(car->car_model_actor, TurnOffNonGroovers, NULL);
+                car->car_model_actor->type = BR_ACTOR_MODEL;
+                car->car_model_actor->model = car->shell_model;
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0041f280
 // FUNCTION: CARMA2_SW 0x0041f300
@@ -590,8 +676,6 @@ intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData) {
     }
     return 0;
 }
-
-// DoLODCarModels
 
 // DoComplexCarModels
 

@@ -914,7 +914,7 @@ int C2_HOOK_FASTCALL MineExplode(tShit_mine *pMine) {
     }
     pMine->flags |= 0x2;
     if (gNet_mode == eNet_mode_host) {
-        message = NetBuildGuaranteedMessage(49, GetHierarchyNetworkSize(pMine->collision_info));
+        message = NetBuildGuaranteedMessage(eNet_message_chunk_type_mine_explosion, GetHierarchyNetworkSize(pMine->collision_info));
         FillInMine(&message->contents, pMine, -1);
         NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, message, 0);
     }

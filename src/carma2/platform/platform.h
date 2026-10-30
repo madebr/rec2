@@ -218,4 +218,10 @@ extern void C2_HOOK_FASTCALL PDReallyAllocateActionReplayBuffer(void);
 
 extern int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count);
 
+#ifdef REC2_SW
+extern void C2_HOOK_FASTCALL PDSwitchToHiresMode(void);
+
+extern void C2_HOOK_FASTCALL PDSwitchToLoresMode(void);
+#endif
+
 #endif // C2_PLATFORM_H

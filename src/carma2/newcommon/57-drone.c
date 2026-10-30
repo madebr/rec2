@@ -363,7 +363,33 @@ void C2_HOOK_FASTCALL ApplyDroneStraightPos2(int pDrone_id, tDrone_path_node_sec
     DoDroneFunkyGroovyThings(drone);
 }
 
-// ApplyDroneCornerPos2
+// FUNCTION: CARMA2_HW 0x004529d0
+// FUNCTION: CARMA2_SW 0x00452760
+void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU16 pField_0x74, tU16 pRadius, const tCompressed_matrix34* pMatrix) {
+    tDrone_spec* drone;
+
+    drone = &gDrone_specs[pDrone_id];
+    drone->field_0xe4 = DRU16ToScalar(pSpeed, -500.0f, 500.0f);
+    drone->field_0xe0 = DRU16ToScalar(pField_0x74, 0.0f, 1.0f);
+    drone->field_0xe8 = DRU16ToScalar(pRadius, 0.0f, 100.0f);
+    BrVector3Set((br_vector3*)drone->actor->t.t.mat.m[0],
+        DRU16ToScalar(pMatrix->m[0].v[0], -1.0f, 1.0f),
+        DRU16ToScalar(pMatrix->m[0].v[1], -1.0f, 1.0f),
+        DRU16ToScalar(pMatrix->m[0].v[2], -1.0f, 1.0f));
+    BrVector3Set((br_vector3*)drone->actor->t.t.mat.m[1],
+        DRU16ToScalar(pMatrix->m[1].v[0], -1.0f, 1.0f),
+        DRU16ToScalar(pMatrix->m[1].v[1], -1.0f, 1.0f),
+        DRU16ToScalar(pMatrix->m[1].v[2], -1.0f, 1.0f));
+    BrVector3Set((br_vector3*)drone->actor->t.t.mat.m[2],
+        DRU16ToScalar(pMatrix->m[2].v[0], -1.0f, 1.0f),
+        DRU16ToScalar(pMatrix->m[2].v[1], -1.0f, 1.0f),
+        DRU16ToScalar(pMatrix->m[2].v[2], -1.0f, 1.0f));
+    BrVector3Set((br_vector3*)drone->actor->t.t.mat.m[3],
+        DRU16ToScalar(pMatrix->m[3].v[0], -1000.0f, 1000.0f),
+        DRU16ToScalar(pMatrix->m[3].v[1], -1000.0f, 1000.0f),
+        DRU16ToScalar(pMatrix->m[3].v[2], -1000.0f, 1000.0f));
+    DoDroneFunkyGroovyThings(drone);
+}
 
 // ReallocModelFacesAndVertices
 

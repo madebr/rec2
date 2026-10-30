@@ -449,15 +449,75 @@ tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2
     return the_message;
 }
 
-// STUB: CARMA2_HW 0x0049f680
-// STUB: CARMA2_SW 0x0049b800
+// FUNCTION: CARMA2_HW 0x0049f680
+// FUNCTION: CARMA2_SW 0x0049b800
 tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption) {
-    NOT_IMPLEMENTED();
+    tNet_message* the_message;
+    tU32 contents_size;
+    tU32 guarantee_size;
+    tU32 the_size;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents, 0x18);
+
+    contents_size = NetGetContentsSize(pNet_message_type, pOption);
+    guarantee_size = NetGetContentsSize(eNet_message_chunk_type_5, 0);
+    the_size = NetGetContentsSize(pNet_message_type, pOption) + offsetof(tNet_message, contents) + guarantee_size;
+    the_message = NetAllocateMessage(the_size);
+    if (the_message != NULL) {
+        the_message->contents.raw.header.size = (tU8)contents_size;
+        the_message->header.field_0x14 = 0xff;
+        the_message->header.field_0x16 = (tU16)the_size;
+        the_message->contents.raw.header.type = pNet_message_type;
+        ((tNet_message_guaranteed*)((tU8*)&the_message->contents + the_message->contents.raw.header.size))->header.type = 5;
+        ((tNet_message_guaranteed*)((tU8*)&the_message->contents + the_message->contents.raw.header.size))->header.size = (tU8)guarantee_size;
+    }
+    return the_message;
 }
 
-// NetGetToPlayerContentsSize
+tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pPlayer, int pContents_size) {
+    tNet_message* message;
+    tNet_message_chunk* contents;
 
-// NetGetToPlayerContents
+    if (pPlayer == &gNet_players[gThis_net_player_index]) {
+        PDFatalError("Trying to send network message to self");
+    }
+    message = pPlayer->field_0xcc;
+    if (message != NULL && (tS32)(message->header.field_0x16 + pContents_size) > (tS32)(sizeof(tMax_message) - sizeof(void*))) {
+        NetReallySendMessageToPlayer(gCurrent_net_game, message, pPlayer->ID);
+        pPlayer->field_0xcc = message = NULL;
+    }
+    if (message == NULL) {
+        pPlayer->field_0xcc = message = NetAllocateMessage(sizeof(tMax_message) - sizeof(void*));
+        message->header.field_0x16 = (tU16)sizeof(tNet_message_header);
+        message->header.field_0x14 = 0;
+    }
+    contents = (tNet_message_chunk*)((tU8*)message + message->header.field_0x16);
+    message->header.field_0x16 += (tU16)pContents_size;
+    message->header.field_0x14++;
+    return contents;
+}
+
+// FUNCTION: CARMA2_HW 0x0049f6f0
+// FUNCTION: CARMA2_SW 0x0049b870
+tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContents(tNet_message_type pType, tU32 pSize_decider, tPlayer_ID pPlayer) {
+    tNet_message_chunk* contents;
+    tU32 content_size;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tNet_message_header) != 0x18);
+    C2_HOOK_BUG_ON(sizeof(tMax_message) - sizeof(void*) != 0x200);
+
+    content_size = NetGetContentsSize(pType, pSize_decider);
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].ID == pPlayer) {
+            contents = NetGetToPlayerContentsSize(&gNet_players[i], content_size);
+            contents->raw.header.type = pType;
+            contents->raw.header.size = (tU8)content_size;
+            return contents;
+        }
+    }
+    return NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x0049f860
 // FUNCTION: CARMA2_SW 0x0049b9e0
@@ -524,6 +584,7 @@ void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
 #endif
 
 // STUB: CARMA2_HW 0x0049fdb0
+// STUB: CARMA2_SW 0x0049bf30
 tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
     NOT_IMPLEMENTED();
     return NULL;
@@ -718,10 +779,23 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
     return gNet_players[gThis_net_player_index].player_status;
 }
 
-// STUB: CARMA2_HW 0x004a5b50
-// STUB: CARMA2_SW 0x004a1cd0
+// FUNCTION: CARMA2_HW 0x004a5b50
+// FUNCTION: CARMA2_SW 0x004a1cd0
 int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
-    NOT_IMPLEMENTED();
+    int i;
+    int err;
+
+    err = 0;
+    if (gNumber_of_net_players == 1) {
+        pMessage->contents.raw.header.type = eNetMsg_none;
+        return err;
+    }
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gThis_net_player_index != i) {
+            err |= NetGuaranteedSendMessageToPlayer(pDetails, pMessage, gNet_players[i].ID, pNotifyFail);
+        }
+    }
+    return err;
 }
 
 // NetGuaranteedSendMessageToEverybody

@@ -76,7 +76,7 @@ extern void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, voi
 
 extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
 
-// ARDoSingleSession
+extern void C2_HOOK_FASTCALL ARDoSingleSession(int pType, uintptr_t pOwner, void* pData, tU32 pSize);
 
 extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
 
@@ -232,7 +232,7 @@ extern void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL PipeSingleExplosion(int pIndex, const tExplosion* pData);
 
-// PipeSingleNonCarCreation
+extern void C2_HOOK_FASTCALL PipeSingleNonCarCreation(int pIndex);
 
 extern void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOld_model, br_model* pNew_model);
 
@@ -248,7 +248,7 @@ extern void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir);
 
 // PipeSinglePedMove
 
-// PipeSinglePedPhysics
+extern void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat);
 
 // PipeSinglePedDismember
 
