@@ -14,6 +14,7 @@
 #include "22-replay.h"
 #include "27-powerup.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "69-sound.h"
@@ -49,6 +50,10 @@ int gPed_retain_root_mode = 0;
 // GLOBAL: CARMA2_HW 0x007447e0
 // GLOBAL: CARMA2_SW 0x0073b2a0
 float gPedestrian_speed_factor;
+
+// GLOBAL: CARMA2_HW 0x007447f0
+// GLOBAL: CARMA2_SW 0x0073b2b0
+int gSelected_ped;
 
 // GLOBAL: CARMA2_HW 0x007447ac
 // GLOBAL: CARMA2_SW 0x0073b26c
@@ -555,7 +560,15 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // ResetProxRay
 
-// GetTestPed
+// FUNCTION: CARMA2_HW 0x004d6210
+// FUNCTION: CARMA2_SW 0x004d2810
+tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void) {
+    if (gPed_count != 0) {
+        return gPedestrian_array[gSelected_ped].character;
+    } else {
+        return NULL;
+    }
+}
 
 // NextPedCam
 
