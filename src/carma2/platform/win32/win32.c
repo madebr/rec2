@@ -699,7 +699,7 @@ void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap *pPalette, int pFirst_colo
         colours[i].peFlags = 0;
         colours[i].peRed = c >> 16;
         colours[i].peGreen = c >> 8;
-        colours[i].peBlue = c >> 0;
+        colours[i].peBlue = pixels[pFirst_colour + i];
     }
     SetPaletteEntries(gPDPalette, pFirst_colour, pCount, colours);
     BrPixelmapDoubleBuffer(gScreen, gBack_screen);
