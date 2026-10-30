@@ -668,6 +668,10 @@ int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, size
     return i;
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // FUNCTION: CARMA2_HW 0x00458060
 int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
     int i;
@@ -680,6 +684,10 @@ int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
     }
     return 0;
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 int C2_HOOK_FASTCALL ResetForceFeedback(void) {
 	int result;
