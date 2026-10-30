@@ -56,6 +56,10 @@ tU32 gFrontend_net_current_roll;
 // GLOBAL: CARMA2_SW 0x0068163c
 tU32 gFrontend_net_last_roll;
 
+// GLOBAL: CARMA2_HW 0x00686ec0
+// GLOBAL: CARMA2_SW 0x00681600
+int gPlayer_lookup_netsummary[14];
+
 // GLOBAL: CARMA2_HW 0x00763b20
 // GLOBAL: CARMA2_SW 0x0075a080
 tNet_game_options gFrontend_net_options;
@@ -105,6 +109,10 @@ tFrontend_item_spec gDefault_last_interface_item = {
 // GLOBAL: CARMA2_HW 0x006864f4
 // GLOBAL: CARMA2_SW 0x00680c34
 int gFrontend_scrollbars_updated;
+
+// GLOBAL: CARMA2_HW 0x006864fc
+// GLOBAL: CARMA2_SW 0x00680c3c
+int gFrontend_netsummary_first_iteration;
 
 // GLOBAL: CARMA2_HW 0x00686850
 // GLOBAL: CARMA2_SW 0x00680f90
@@ -1143,19 +1151,30 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
 
 // FRONTEND_MainMenuHandler
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x0046b6a0
-// STUB: CARMA2_SW 0x0046b3c0
+// FUNCTION: CARMA2_HW 0x0046b6a0
+// FUNCTION: CARMA2_SW 0x0046b3c0
 void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec* pFrontend) {
-    NOT_IMPLEMENTED();
-}
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
+    strcpy(pFrontend->items[2].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].car_name);
+    strcpy(pFrontend->items[3].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].name);
+    strcpy(pFrontend->items[5].text, gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line4_description);
+    sprintf(pFrontend->items[4].text, "%s @R%s @R%s",
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line1_topspeed,
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line2_weight,
+        gOpponents[gProgram_state.cars_available[gFrontend_change_car_selected_car]].line3_acceleration);
+    MungeMetaCharactersChar(pFrontend->items[4].text, 'R', '\r');
+    FuckWithWidths(pFrontend);
+    if (gFrontend_car_image_outdated && gFrontend_opponent_profile_pic_needs_update) {
+        MenuSetDriverImage(gProgram_state.cars_available[gFrontend_change_car_selected_car], 12);
+        MenuSetCarImage(gProgram_state.cars_available[gFrontend_change_car_selected_car], 6);
+        gFrontend_opponent_profile_pic_needs_update = 0;
+        gFrontend_car_image_outdated = 0;
+#ifdef REC2_SW
+        gFrontend_brender_items[12].material->flags = BR_MATF_ALWAYS_VISIBLE;
+        BrMaterialUpdate(gFrontend_brender_items[0xc].material, BR_MATU_ALL);
 #endif
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0046b4e0
 // FUNCTION: CARMA2_SW 0x0046b200
@@ -2474,7 +2493,19 @@ int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected
 
 // Generic_UnMungeActiveItems
 
-// Generic_MenuHandler
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00470c20
+// STUB: CARMA2_SW 0x004701b0
+int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004b4020
 void C2_HOOK_FASTCALL StripControls(char* pStr) {
@@ -2719,7 +2750,29 @@ int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend) {
 
 // NetSync_MenuHandler
 
-// NetSummary_Draw
+static void C2_HOOK_FASTCALL NetSummary_Draw(tFrontend_spec* pFrontend) {
+    int i;
+    int player_index;
+
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        player_index = gPlayer_lookup_netsummary[i];
+        pFrontend->items[player_index].visible = 1;
+        pFrontend->items[12 + player_index].visible = 1;
+        pFrontend->items[24 + player_index].visible = 1;
+        pFrontend->items[36 + player_index].visible = 1;
+        pFrontend->items[48 + player_index].visible = 1;
+        pFrontend->items[65 + player_index].visible = 1;
+        DrawThisCarIconNow(gNet_players[player_index].car_index, 88, 112 + 24 * i);
+    }
+    for (i = gNumber_of_net_players; i < kMax_netplayers; i++) {
+        pFrontend->items[i].visible = 0;
+        pFrontend->items[12 + i].visible = 0;
+        pFrontend->items[24 + i].visible = 0;
+        pFrontend->items[36 + i].visible = 0;
+        pFrontend->items[48 + i].visible = 0;
+        pFrontend->items[65 + i].visible = 0;
+    }
+}
 
 // SortScores
 
@@ -2729,7 +2782,22 @@ int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend) {
 
 // NetSummary_Infunc
 
-// NetSummary_MenuHandler
+// FUNCTION: CARMA2_HW 0x00474400
+// FUNCTION: CARMA2_SW 0x00473960
+int C2_HOOK_FASTCALL NetSummary_MenuHandler(tFrontend_spec* pFrontend) {
+    int result;
+
+    if (gFrontend_netsummary_first_iteration) {
+        gFrontend_selected_item_index = 79;
+        gFrontend_netsummary_first_iteration = 0;
+    }
+    if (gProgram_state.prog_status == eProg_idling) {
+        return 1;
+    }
+    result = Generic_MenuHandler(pFrontend);
+    NetSummary_Draw(pFrontend);
+    return result;
+}
 
 void C2_HOOK_FASTCALL DisplayVolumeSettings(tFrontend_spec* pFrontend) {
 

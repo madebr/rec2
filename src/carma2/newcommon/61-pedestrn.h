@@ -19,6 +19,7 @@ extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
 extern int gPed_nearness;
+extern tTWTVFS gTwtPeds;
 extern int gDancing_peds;
 extern int gPeds_already_munged;
 
@@ -100,7 +101,7 @@ extern FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName);
 
 extern FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName);
 
-// BonerOpenPersonality
+extern FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName);
 
 extern FILE* C2_HOOK_FASTCALL BonerOpenMoves(const char* pName);
 
@@ -304,7 +305,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // ResetProxRay
 
-// GetTestPed
+extern tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void);
 
 // NextPedCam
 
@@ -344,7 +345,7 @@ extern void C2_HOOK_FASTCALL DisableCollisionsForEthereal(tPhysics_object* pColl
 
 extern void C2_HOOK_FASTCALL MutatePed(tPed_character_instance* pCharacter, void* pUnused, tU8* pAngle_x, tU8* pAngle_y, tU8* pAngle_z);
 
-// FlushAllPedCaches
+extern void C2_HOOK_FASTCALL FlushAllPedCaches(void);
 
 extern void C2_HOOK_FASTCALL SavePedStuff(void);
 
@@ -446,7 +447,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 extern br_matrix34* C2_HOOK_FASTCALL GetCharacterMatrixPtr(tPed_character_instance* pCharacter);
 
-// GetBoneMatrixPtr
+extern br_matrix34* C2_HOOK_FASTCALL GetBoneMatrixPtr(tPed_character_instance* pCharacter, int pBone_index);
 
 extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
 
