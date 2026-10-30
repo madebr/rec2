@@ -178,7 +178,7 @@ int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
 
     font = &gPoly_fonts[pFont_index];
     if (gPoly_fonts[pFont_index].glyphs[pCharacter].used) {
-        return font->glyphs[pCharacter].glyph_width;
+        return gPoly_fonts[pFont_index].glyphs[pCharacter].glyph_width;
     }
     return font->widthOfBlank;
 }
