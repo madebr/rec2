@@ -100,7 +100,7 @@ extern tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined
 
 extern tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
 
-// NetGetToPlayerContentsSize
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pPlayer, int pContents_size);
 
 extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContents(tNet_message_type pType, tU32 pSize_decider, tPlayer_ID pPlayer);
 
