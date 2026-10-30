@@ -10,6 +10,10 @@
 
 #include "rec2_types.h"
 
+// GLOBAL: CARMA2_HW 0x006a0d38
+// GLOBAL: CARMA2_SW 0x0069ad90
+tU32 gLast_host_query;
+
 // FUNCTION: CARMA2_HW 0x004e2b50
 // FUNCTION: CARMA2_SW 0x004deed0
 int C2_HOOK_CDECL SortGridFunction(const void* pFirst_one, const void* pSecond_one) {

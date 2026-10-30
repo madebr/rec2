@@ -10,6 +10,7 @@
 
 #include "01-network.h"
 #include "02-init.h"
+#include "03-racestrt.h"
 #include "04-netgame.h"
 #include "05-drmem.h"
 #include "08-loading1.h"
@@ -943,7 +944,20 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 
 // NetGameTypeDn
 
-// MultiplayerSetup
+// FUNCTION: CARMA2_HW 0x00467eb0
+// FUNCTION: CARMA2_SW 0x00467c30
+int C2_HOOK_FASTCALL MultiplayerSetup(tFrontend_spec* pFrontend) {
+
+    gFrontend_net_initialized = !NetInitialise();
+    if (gFrontend_net_initialized) {
+        gPending_race = -1;
+        gStart_race_sent = 0;
+        gCurrent_race.number_of_racers = 0;
+        gLast_host_query = 0;
+        AboutToLoadFirstCar();
+    }
+    return 0;
+}
 
 // NetworkJoinSetup
 
