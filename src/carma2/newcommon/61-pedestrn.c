@@ -255,9 +255,34 @@ int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
 
 // MakePedNoise
 
-// SetPedMove
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// StartPedRunning
+// STUB: CARMA2_HW 0x004cbcd0
+// STUB: CARMA2_SW 0x004c83d0
+void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pMove_action, int pWalk_speed_factor, int pArg4, int pArg5, tU32 pTime, tPed_action pAction) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004cc660
+// FUNCTION: CARMA2_SW 0x004c8d60
+void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int pArg3) {
+
+    if (!(pPed->character->field_0xc & gPow2_array[3])
+        && !(pPed->character->field_0xc & gPow2_array[5])
+        && pPed->field_0x0c != NULL) {
+        pPed->field_0x0c->field_0x80 = 100;
+        pPed->field_0x0c->field_0xb8 = 0.09f;
+        SetPedMove(pPed, pArg3 ? 40 : 41, pPed->field_0x0c->field_0x80, 0, 0, pTime, ePed_action_running);
+    } else {
+        SetPedMove(pPed, pArg3 ? 40 : 41, -1, 0, 0, pTime, ePed_action_running);
+    }
+}
 
 // AcceleratePed
 
