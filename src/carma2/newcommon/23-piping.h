@@ -284,7 +284,7 @@ extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pV
 
 // PipeSingleDroneStraightPos
 
-// PipeSinglePowerupRespawn
+extern void C2_HOOK_FASTCALL PipeSinglePowerupRespawn(br_actor* pActor, int pPowerup_id);
 
 // PipeSingleShitMine
 
@@ -418,7 +418,7 @@ extern void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk);
 
 // ApplyNapalmBolt
 
-// ApplyPowerupRespawn
+extern void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk);
 
 // ApplyShitMine
 
@@ -500,7 +500,7 @@ extern void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_
 
 // UndoNapalmBolt
 
-// UndoPowerupRespawn
+extern void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoShitMine
 

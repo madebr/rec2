@@ -861,13 +861,17 @@ void C2_HOOK_FASTCALL UndoInitialTail(void) {
 
 // FUNCTION: CARMA2_HW 0x004e07d0
 // FUNCTION: CARMA2_SW 0x004dccd0
-void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    (void)pPowerup_id;
+
     pActor->render_style = BR_RSTYLE_FACES;
 }
 
 // FUNCTION: CARMA2_HW 0x004e07e0
 // FUNCTION: CARMA2_SW 0x004dcce0
-void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    (void)pPowerup_id;
+
     pActor->render_style = BR_RSTYLE_NONE;
 }
 
