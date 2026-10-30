@@ -13,8 +13,12 @@
 #include "rec2_types.h"
 
 extern tNet_game_options gNet_settings[9];
+extern tU32 gFrontend_net_current_roll;
+extern tU32 gFrontend_net_last_roll;
+extern tNet_game_options gFrontend_net_options;
 
 extern tU32 gFrontend_last_scroll;
+extern tU32 gNet_synch_start;
 
 extern tFrontend_brender_item gFrontend_brender_items[100];
 extern tFrontend_spec* gCurrent_frontend_spec;
@@ -24,7 +28,7 @@ extern int gFrontend_opponent_profile_pic_needs_update;
 
 // SetGameTarget
 
-// SetOptions
+extern void C2_HOOK_FASTCALL SetOptions(tNet_game_type pGame_type, tNet_game_options* pGame_options);
 
 // ReadNetGameChoices
 
@@ -128,7 +132,7 @@ extern int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend);
 
 // NetGameTypeDn
 
-// MultiplayerSetup
+extern int C2_HOOK_FASTCALL MultiplayerSetup(tFrontend_spec* pFrontend);
 
 // NetworkJoinSetup
 
@@ -166,9 +170,9 @@ extern int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game
 
 extern int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
-// MenuSetCarImage
+extern void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index);
 
-// MenuSetDriverImage
+extern void C2_HOOK_FASTCALL MenuSetDriverImage(int pOpponent_index, int pFrontend_index);
 
 // MainMenuInfunc
 
@@ -182,7 +186,7 @@ extern int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend);
 
 // FRONTEND_MainMenuHandler
 
-// UpdateCarInfo
+extern void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarMenuInfunc(tFrontend_spec* pFrontend);
 
@@ -190,7 +194,7 @@ extern int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend);
 
-// CarClickPrev
+extern int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend);
 
 // CarClickNext
 
@@ -364,7 +368,7 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Controls_JoystickToggle(tFrontend_spec* pFrontend);
 
-// Controls_JoystickDpadToggle
+extern int C2_HOOK_FASTCALL Controls_JoystickDpadToggle(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider);
 
@@ -400,7 +404,7 @@ extern int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
-// NetOptions_CreditsRoller
+extern int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend);
 
 // NetOptions_TargetRoller
 
@@ -412,7 +416,7 @@ extern int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
 // MungePlayers
 
-// NetSynchRaceStart2
+extern int C2_HOOK_FASTCALL NetSynchRaceStart2(tNet_synch_mode pMode);
 
 // NetSync_Draw
 

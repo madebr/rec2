@@ -24,6 +24,7 @@ extern tNet_game_options* gNet_options;
 extern tCar_detail_info gCar_details[60];
 extern int gINT_0074b780;
 extern int gReceived_car_details;
+extern int gFrontend_net_initialized;
 extern int gStart_race_sent;
 extern int gRendering_mirror;
 

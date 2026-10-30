@@ -187,7 +187,7 @@ extern br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
 
 extern void C2_HOOK_FASTCALL ApplyDroneStraightPos2(int pDrone_id, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance);
 
-// ApplyDroneCornerPos2
+extern void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU16 pField_0x74, tU16 pRadius, const tCompressed_matrix34* pMatrix);
 
 // ReallocModelFacesAndVertices
 

@@ -10,6 +10,7 @@
 
 #include "08-loading1.h"
 #include "18-graphics2.h"
+#include "18b-graphics2.h"
 #include "41-utility.h"
 #include "69-sound.h"
 #include "70-packfile.h"
