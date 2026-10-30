@@ -519,7 +519,12 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContents(tNet_message_type pT
     return NULL;
 }
 
-// NetGetToHostContents
+// FUNCTION: CARMA2_HW 0x0049f860
+// FUNCTION: CARMA2_SW 0x0049b9e0
+tNet_message_chunk* C2_HOOK_FASTCALL NetGetToHostContents(tNet_message_type pType, tU32 pSize_decider) {
+
+    return NetGetToPlayerContents(pType, pSize_decider, gNet_players[0].ID);
+}
 
 // NetStartBroadcastContents
 
