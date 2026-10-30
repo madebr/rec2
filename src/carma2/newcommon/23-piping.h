@@ -238,7 +238,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_mod
 
 // PipeSingleSmashRemoveFaces
 
-// PipeSingleSmashDecal
+extern void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex);
 
 extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture);
 
