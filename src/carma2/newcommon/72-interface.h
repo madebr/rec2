@@ -16,6 +16,8 @@ extern tNet_game_options gNet_settings[9];
 extern tU32 gFrontend_net_current_roll;
 extern tU32 gFrontend_net_last_roll;
 extern tNet_game_options gFrontend_net_options;
+extern int gPicked_wreck;
+extern tWreck_gallery_car_info gWreck_gallery_car_infos[30];
 
 extern tU32 gFrontend_last_scroll;
 extern tU32 gNet_synch_start;
@@ -260,7 +262,7 @@ extern int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange);
 
 // GetCarSelectedByMouse
 
-// WreckPick
+extern int C2_HOOK_CDECL WreckPick(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg);
 
 extern intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref);
 

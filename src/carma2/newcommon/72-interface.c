@@ -17,6 +17,7 @@
 #include "10-loading2.h"
 #include "12-menuoptions.h"
 #include "15-displays.h"
+#include "16-graphics1.h"
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "24-loadsave.h"
@@ -143,6 +144,13 @@ int gFrontend_maximum_input_length = 9;
 
 // GLOBAL: CARMA2_HW 0x00763924
 int gHierarchy_has_actor;
+
+// GLOBAL: CARMA2_HW 0x00763928
+// GLOBAL: CARMA2_SW 0x00759e88
+int gPicked_wreck;
+
+// GLOBAL: CARMA2_HW 0x00763b5c
+tWreck_gallery_car_info gWreck_gallery_car_infos[30];
 
 // GLOBAL: CARMA2_HW 0x00686834
 // GLOBAL: CARMA2_SW 0x00680f74
@@ -1728,7 +1736,24 @@ int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange) {
 
 // GetCarSelectedByMouse
 
-// WreckPick
+// FUNCTION: CARMA2_HW 0x0046f4f0
+// FUNCTION: CARMA2_SW 0x0046eba0
+int C2_HOOK_CDECL WreckPick(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tWreck_gallery_car_info, actor, 0x10);
+    C2_HOOK_BUG_ON(sizeof(tWreck_gallery_car_info) != 0xa4);
+
+    for (i = 0; i < gFrontend_wrecks_car_count; i++) {
+        gHierarchy_has_actor = 0;
+        BrActorEnum(gWreck_gallery_car_infos[i].actor, HeirarchyPick, pActor);
+        if (gHierarchy_has_actor) {
+            gPicked_wreck = i;
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0046f560
 intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
