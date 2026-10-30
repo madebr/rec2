@@ -29,6 +29,10 @@ extern tFrontend_spec* gCurrent_frontend_spec;
 extern int gFrontend_change_car_selected_car;
 extern int gFrontend_car_image_outdated;
 extern int gFrontend_opponent_profile_pic_needs_update;
+extern float gFrontend_wreck_bought_car_dz;
+extern int gFrontend_wrecks_pending_hscroll;
+extern int gFrontend_wrecks_rotate_prev_x;
+extern int gFrontend_wrecks_rotate_prev_y;
 
 // SetGameTarget
 
@@ -248,7 +252,7 @@ extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_s
 
 // ScrollToNextCar
 
-// ScrollToPrevCar
+extern int C2_HOOK_FASTCALL ScrollToPrevCar(tFrontend_spec* pFrontend);
 
 // BuyCurrentCar
 
