@@ -14,6 +14,7 @@
 
 extern int gPed_retain_root_mode;
 extern float gPedestrian_speed_factor;
+extern int gSelected_ped;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
@@ -305,7 +306,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // GetTestPed
 
-// NextPedCam
+extern void C2_HOOK_FASTCALL NextPedCam(void);
 
 // PrevPedCam
 
