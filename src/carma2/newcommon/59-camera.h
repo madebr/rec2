@@ -28,7 +28,7 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // CheckCameraHither
 
-// GetRaceLeader
+extern tCar_spec* C2_HOOK_FASTCALL GetRaceLeader(void);
 
 // AmIGettingBoredWatchingCameraSpin
 
