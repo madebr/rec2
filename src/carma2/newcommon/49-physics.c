@@ -19,6 +19,7 @@
 #include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
+#include "c2_math.h"
 #include "c2_string.h"
 #include "c2_stdlib.h"
 
@@ -637,19 +638,97 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
 
 // RQSingleExpand
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
+// FUNCTION: CARMA2_HW 0x004c5830
+// FUNCTION: CARMA2_SW 0x004c1f60
+int C2_HOOK_FASTCALL RQDcmpV(br_scalar* pMatrix, int pDim, br_scalar* pQ) {
+    int i;
+    int j;
+    int k;
+    int singular;
+    br_scalar scale;
+    br_scalar sum;
+    br_scalar norm;
+    br_scalar divisor;
+    br_scalar matrix_sum;
+    br_scalar orthogonal_sum;
+    br_scalar tau;
+    br_scalar tau2;
+    br_scalar* row;
 
-// STUB: CARMA2_HW 0x004c5830
-// STUB: CARMA2_SW 0x004c1f60
-int C2_HOOK_FASTCALL RQDcmpV(br_scalar* matrix, int size, br_scalar* orthogonal) {
-    NOT_IMPLEMENTED();
+    /* Using householder transformations, apply RQ decomposition on pMatrix:
+     * - pMatrix is in-place converted into a lower-triangular matrix
+     * - pQ is a orthonormal matrix */
+
+    singular = 0;
+
+    /* pQ starts as a identity matrix */
+    for (i = 0; i < pDim; i++) {
+        for (j = 0; j < pDim; j++) {
+            pQ[i * pDim + j] = 0.0f;
+        }
+        pQ[i * pDim + i] = 1.0f;
+    }
+
+    for (i = 0; i < pDim; i++) {
+        // Rotate i-th upper-diagonal row onto base vector
+
+        row = &pMatrix[i * pDim];
+        scale = 0.0f;
+        for (j = i; j < pDim; j++) {
+            scale = (br_scalar)MAX(scale, fabs(row[j]));
+        }
+        if (scale == 0.0) {
+            singular = 1;
+            continue;
+        }
+        // Only normalize the upper-vector that must be rotated onto the base vector
+        // This is done for numerical stability reasons.
+        for (j = i; j < pDim; j++) {
+            row[j] /= scale;
+        }
+        // Calculate norm of the upper-diagonal row
+        sum = 0.0f;
+        for (j = i; j < pDim; j++) {
+            sum += row[j] * row[j];
+        }
+        // Apply Householder reflection on pQ and the row+matrix
+        norm = (br_scalar)(row[i] > 0.0 ? fabs(sqrt(sum)) : -fabs(sqrt(sum)));
+        divisor = norm * (norm + row[i]);
+        row[i] += norm;
+        for (j = 0; j <= i; j++) {
+            sum = 0.0f;
+            for (k = i; k < pDim; k++) {
+                sum += row[k] * pQ[k * pDim + j];
+            }
+            tau = sum / divisor;
+            for (k = i; k < pDim; k++) {
+                pQ[k * pDim + j] -= tau * row[k];
+            }
+        }
+        for (j = i + 1; j < pDim; j++) {
+            matrix_sum = 0.0f;
+            for (k = i; k < pDim; k++) {
+                matrix_sum += pMatrix[j * pDim + k] * row[k];
+            }
+            tau2 = matrix_sum / divisor;
+            orthogonal_sum = 0.0f;
+            for (k = i; k < pDim; k++) {
+                orthogonal_sum += pQ[k * pDim + j] * pMatrix[i * pDim + k];
+            }
+            tau = orthogonal_sum / divisor;
+            for (k = i; k < pDim; k++) {
+                pMatrix[j * pDim + k] -= tau2 * row[k];
+                pQ[k * pDim + j] -= tau * row[k];
+            }
+        }
+        row[i] = -(norm * scale);
+        // Zero upper-dialog values so what remains is lower-diagonal
+        for (j = i + 1; j < pDim; j++) {
+            row[j] = 0.0f;
+        }
+    }
+    return singular;
 }
-
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
 
 // MakeIdentity
 
@@ -688,7 +767,7 @@ void C2_HOOK_FASTCALL RqBackSub(const br_scalar* pR, const br_scalar* pQ, const 
      * - R is a lower-diagonal matrix
      * - Q is an orthonormal matrix
      * with:
-     * - all matrices (A, Q, R) are of size N x N (with N = pDim)
+     * - all matrices (A, Q, R) are square of size N x N (with N = pDim)
      * - vectors x, t are of size N x 1
      * A, Q, R matrices are of size [pDim x pDim]
      */
