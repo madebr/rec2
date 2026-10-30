@@ -248,7 +248,7 @@ extern void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir);
 
 // PipeSinglePedMove
 
-// PipeSinglePedPhysics
+extern void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat);
 
 // PipeSinglePedDismember
 
