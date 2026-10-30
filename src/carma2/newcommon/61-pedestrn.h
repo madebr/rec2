@@ -309,7 +309,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 extern tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void);
 
-// NextPedCam
+extern void C2_HOOK_FASTCALL NextPedCam(void);
 
 // PrevPedCam
 

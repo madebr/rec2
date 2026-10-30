@@ -601,7 +601,21 @@ tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void) {
     }
 }
 
-// NextPedCam
+// FUNCTION: CARMA2_HW 0x004d6240
+// FUNCTION: CARMA2_SW 0x004d2840
+void C2_HOOK_FASTCALL NextPedCam(void) {
+    int original_ped;
+
+    if (gPed_count != 0) {
+        original_ped = gSelected_ped;
+        do {
+            gSelected_ped++;
+            if (gSelected_ped >= gPed_count) {
+                gSelected_ped = 0;
+            }
+        } while (!(gPedestrian_array[gSelected_ped].flags & 0x1) && original_ped != gSelected_ped);
+    }
+}
 
 // PrevPedCam
 
