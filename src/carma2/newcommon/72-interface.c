@@ -66,6 +66,14 @@ tFrontendMenuType gFrontend_next_menu;
 // GLOBAL: CARMA2_SW 0x0075b448
 int gFrontend_change_car_selected_car;
 
+// GLOBAL: CARMA2_HW 0x00687040
+// GLOBAL: CARMA2_SW 0x00681780
+int gFrontend_car_image_outdated;
+
+// GLOBAL: CARMA2_HW 0x00686828
+// GLOBAL: CARMA2_SW 0x00680f68
+int gFrontend_opponent_profile_pic_needs_update;
+
 // GLOBAL: CARMA2_HW 0x00688b20
 // GLOBAL: CARMA2_SW 0x00683080
 int gFrontend_suppress_mouse;
@@ -1120,7 +1128,19 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend) {
 
 // FRONTEND_MainMenuHandler
 
-// UpdateCarInfo
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0046b6a0
+// STUB: CARMA2_SW 0x0046b3c0
+void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec* pFrontend) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // ChangeCarMenuInfunc
 
@@ -1138,7 +1158,22 @@ int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// CarClickPrev
+// FUNCTION: CARMA2_HW 0x0046b640
+// FUNCTION: CARMA2_SW 0x0046b360
+int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend) {
+    if (gFrontend_scroll_time_left == 0) {
+        gFrontend_change_car_selected_car -= 1;
+        if (gFrontend_change_car_selected_car < 0) {
+            gFrontend_change_car_selected_car = gProgram_state.number_of_cars - 1;
+        }
+        gFrontend_opponent_profile_pic_needs_update = 1;
+        gFrontend_car_image_outdated = 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
+        UpdateCarInfo(pFrontend);
+        gFrontend_scroll_time_left += gFrontend_scroll_time_increment;
+    }
+    return 0;
+}
 
 // CarClickNext
 
