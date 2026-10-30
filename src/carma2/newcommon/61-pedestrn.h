@@ -18,6 +18,7 @@ extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
 extern int gPed_nearness;
+extern tTWTVFS gTwtPeds;
 extern int gDancing_peds;
 
 // OrientationChanged
@@ -98,7 +99,7 @@ extern FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName);
 
 extern FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName);
 
-// BonerOpenPersonality
+extern FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName);
 
 extern FILE* C2_HOOK_FASTCALL BonerOpenMoves(const char* pName);
 
