@@ -22,7 +22,9 @@ extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
 extern int gPed_nearness;
 extern tTWTVFS gTwtPeds;
+extern float gMutant_speed;
 extern int gDancing_peds;
+extern int gDrunk_pedestrians;
 extern int gPeds_already_munged;
 
 // OrientationChanged

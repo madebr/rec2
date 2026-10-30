@@ -79,8 +79,16 @@ int gPed_nearness;
 // GLOBAL: CARMA2_SW 0x0068e4f0
 tTWTVFS gTwtPeds;
 
+// GLOBAL: CARMA2_HW 0x007447a4
+// GLOBAL: CARMA2_SW 0x0073b264
+float gMutant_speed;
+
 // GLOBAL: CARMA2_HW 0x007447a8
 int gDancing_peds;
+
+// GLOBAL: CARMA2_HW 0x007447b8
+// GLOBAL: CARMA2_SW 0x0073b278
+int gDrunk_pedestrians;
 
 // GLOBAL: CARMA2_HW 0x0069bce0
 // GLOBAL: CARMA2_SW 0x00695d38
