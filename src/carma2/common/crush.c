@@ -1902,7 +1902,7 @@ void C2_HOOK_FASTCALL CompletelyUnBendWheels(tCar_spec* pCar_spec) {
     for (i = 0; i < REC2_ASIZE(pCar_spec->wpos); i++) {
         BrVector3Copy(&pCar_spec->wpos[i], &pCar_spec->car_crush_spec->field_0x234[i]);
     }
-    SetCarSuspGiveAndHeight(pCar_spec REC2_THISCALL_EDX, 1.f, 1.f, 1.f, 0.f, 0.f);
+    SetCarSuspGiveAndHeight(pCar_spec, 1.f, 1.f, 1.f, 0.f, 0.f);
     pCar_spec->field_0x1260 = 0.f;
 }
 
@@ -2206,7 +2206,7 @@ void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar_spec, br_actor* pActor_arg2, b
 }
 
 // FUNCTION: CARMA2_HW 0x00431610
-void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, undefined4 pArg2, float pDamage) {
+void C2_HOOK_FASTCALL TotallySpamTheModel(tCar_spec* pCar_spec, float pDamage) {
 
     NOT_IMPLEMENTED();
 }
@@ -2268,7 +2268,7 @@ void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period) {
                     car->wheel_dam_offset[j] = 0.f;
                     continue;
                 }
-                if (PointOutOfSight(&car->pos REC2_THISCALL_EDX, 32.f)) {
+                if (PointOutOfSight(&car->pos, 32.f)) {
                     break;
                 }
                 y_amount = (damage - 30) * gWobble_spam_y[damage % 8];
@@ -2335,7 +2335,7 @@ void C2_HOOK_FASTCALL DoSpams(void) {
     int i;
 
     for (i = 0; i < gCount_car_damage_crush_list; i++) {
-        TotallySpamTheModel(gCar_damage_crush_list[i].car REC2_THISCALL_EDX, gCar_damage_crush_list[i].damage);
+        TotallySpamTheModel(gCar_damage_crush_list[i].car, gCar_damage_crush_list[i].damage);
     }
     gCount_car_damage_crush_list = 0;
 }

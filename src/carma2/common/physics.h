@@ -77,7 +77,7 @@ void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pC
 
 void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape);
 
-tPhysics_object* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight);
+tPhysics_object* C2_HOOK_FASTCALL MungeSphereObject(br_model* pModel, float pWeight);
 
 void C2_HOOK_FASTCALL PositionChildren(tPhysics_object *pCollision_info);
 
@@ -99,7 +99,7 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pCollision_info, tEnu
 
 int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks);
 
-tPhysics_object* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefined4 pArg2, float pMass);
+tPhysics_object* C2_HOOK_FASTCALL MungeBoxObject(br_model* pModel, float pMass);
 
 tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType);
 
@@ -117,7 +117,7 @@ tPhysics_object* C2_HOOK_FASTCALL PHILGetNextObject(tPhysics_object* pCollision_
 
 void C2_HOOK_FASTCALL InternalPrepareObject(tPhysics_object* pObject);
 
-void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, undefined4 pArg2, float pDelta_time);
+void C2_HOOK_FASTCALL MoveJointedObject(tPhysics_object* pObject, float pDelta_time);
 
 void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject);
 
@@ -171,7 +171,7 @@ void C2_HOOK_FASTCALL DoCollisions(tPhysics_object** pObject_list, tWorld_callba
 
 int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, br_matrix34* pMatrix);
 
-void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* pObject, tU32 pTime, float pDt);
+void C2_HOOK_FASTCALL InterpolateSingleObject(tPhysics_object* pObject, float pDt);
 
 void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tPhysics_object* pObjects, tPhysics_callbacks* pCallbacks, tU32 pPeriod);
 

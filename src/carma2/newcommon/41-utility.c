@@ -1249,9 +1249,6 @@ tU16 C2_HOOK_FASTCALL DRScalarToU16(float pValue, float pMin, float pMax) {
 // FUNCTION: CARMA2_SW 0x005118d0
 br_scalar C2_HOOK_FASTCALL DRU16ToScalar(tU16 pValue, float pMin, float pMax) {
 
-    // FIXME: what call convention does this function use?
-    //        __thiscall is possible, but out of place
-
     return (float)pValue * (pMax - pMin) / 65535.0f + pMin;
 }
 

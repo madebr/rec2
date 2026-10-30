@@ -22,7 +22,7 @@ void C2_HOOK_FASTCALL ResetExplosions(void);
 
 void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* pExplosion_sound_id, tExplosion_animation* pExplosion_groups);
 
-int C2_HOOK_FAKE_THISCALL PointOutOfSightNotAR(const br_vector3* pPoint, undefined4 pArg2, float pMax_distance);
+int C2_HOOK_FASTCALL PointOutOfSightNotAR(const br_vector3* pPoint, float pMax_distance);
 
 void C2_HOOK_FASTCALL MungeExplosions(void);
 

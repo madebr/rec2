@@ -56,15 +56,15 @@ int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime);
 
 void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pCollision_info);
 
-void C2_HOOK_FAKE_THISCALL FlyCar(tCar_spec* c, undefined4 pArg2, br_scalar dt);
+void C2_HOOK_FASTCALL FlyCar(tCar_spec* c, br_scalar dt);
 
 float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar);
 
-void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 pArg2, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height);
+void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height);
 
 int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec *pCar_spec, br_vector3 *pVec3);
 
-void C2_HOOK_FAKE_THISCALL ControlCar4(tCar_spec* c, undefined4 pArg2, br_scalar dt);
+void C2_HOOK_FASTCALL ControlCar4(tCar_spec* c, br_scalar dt);
 
 void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime);
 
@@ -116,13 +116,13 @@ tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor);
 
 float C2_HOOK_FASTCALL GetFrictionFromFace(void *arg1);
 
-void C2_HOOK_FAKE_THISCALL ControlCar1(tCar_spec* c, undefined4 arg2, br_scalar dt);
+void C2_HOOK_FASTCALL ControlCar1(tCar_spec* c, br_scalar dt);
 
-void C2_HOOK_FAKE_THISCALL ControlCar2(tCar_spec* c, undefined4 arg2, br_scalar dt);
+void C2_HOOK_FASTCALL ControlCar2(tCar_spec* c, br_scalar dt);
 
-void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* c, undefined4 arg2, br_scalar dt);
+void C2_HOOK_FASTCALL ControlCar3(tCar_spec* c, br_scalar dt);
 
-void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* c, undefined4 arg2, br_scalar dt);
+void C2_HOOK_FASTCALL ControlCar5(tCar_spec* c, br_scalar dt);
 
 void C2_HOOK_FASTCALL DrVector3RotateY(br_vector3* v, br_angle t);
 
