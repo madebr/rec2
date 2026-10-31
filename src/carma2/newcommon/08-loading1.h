@@ -41,6 +41,8 @@ extern tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr);
 
 extern tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr);
 
+extern tS32 C2_HOOK_FASTCALL MemReadS32(char** pPtr);
+
 extern tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr);
 
 extern tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr);

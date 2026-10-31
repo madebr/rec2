@@ -185,6 +185,17 @@ tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
     return raw_byte;
 }
 
+// FUNCTION: CARMA2_HW 0x0048fa30
+// FUNCTION: CARMA2_SW 0x0048cca0
+tS32 C2_HOOK_FASTCALL MemReadS32(char** pPtr) {
+    tS32 raw_long;
+
+    memcpy(&raw_long, *pPtr, sizeof(raw_long));
+    *pPtr += sizeof(raw_long);
+    // FIXME: byteswap for BE
+    return raw_long;
+}
+
 // FUNCTION: CARMA2_HW 0x0048fa40
 // FUNCTION: CARMA2_SW 0x0048ccb0
 tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr) {
