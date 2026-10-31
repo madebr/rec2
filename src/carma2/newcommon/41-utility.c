@@ -1237,20 +1237,22 @@ void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3* pV2) 
 // FUNCTION: CARMA2_HW 0x00516410
 // FUNCTION: CARMA2_SW 0x00511880
 tU16 C2_HOOK_FASTCALL DRScalarToU16(float pValue, float pMin, float pMax) {
+    float scaled;
 
     if (pValue < pMin) {
         pValue = pMin;
     } else if (pValue > pMax) {
         pValue = pMax;
     }
-    return (tU16)((pValue - pMin) * 65535.0f / (pMax - pMin) + 0.5f);
+    scaled = (pValue - pMin) * 65535.0f / (pMax - pMin);
+    return (tU16)(scaled + 0.5f);
 }
 
 // FUNCTION: CARMA2_HW 0x00516460
 // FUNCTION: CARMA2_SW 0x005118d0
 br_scalar C2_HOOK_FASTCALL DRU16ToScalar(tU16 pValue, float pMin, float pMax) {
 
-    return (float)pValue * (pMax - pMin) / 65535.0f + pMin;
+    return ((float)pValue * (pMax - pMin) / 65535.0f) + pMin;
 }
 
 // FUNCTION: CARMA2_HW 0x00516490
@@ -1301,7 +1303,7 @@ void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_mat
     BrVector3Normalise((br_vector3*)pMatrix->m[1], (br_vector3*)pMatrix->m[1]);
     BrVector3Cross((br_vector3*)pMatrix->m[2], (br_vector3*)pMatrix->m[0], (br_vector3*)pMatrix->m[1]);
     BrVector3Normalise((br_vector3*)pMatrix->m[2], (br_vector3*)pMatrix->m[2]);
-    ExpandVector3((br_vector3*)pMatrix->m[3], &pCompressed->p, 300.0f, 300.0f);
+    ExpandVector3((br_vector3*)pMatrix->m[3], &pCompressed->p, -300.0f, 300.0f);
     if (pInactive) {
         BrVector3Set((br_vector3*)pMatrix->m[3],
             pMatrix->m[3][0] + 1000.0f,
