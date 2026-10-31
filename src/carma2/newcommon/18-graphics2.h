@@ -21,6 +21,7 @@ extern int gCursor_tinted_center;
 extern int gCursor_line_width;
 
 extern tTransient_bm gTransient_bitmaps[50];
+extern int gMouse_started;
 extern tU32 gLast_palette_change;
 extern int gPalette_index;
 
