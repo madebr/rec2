@@ -96,7 +96,7 @@ extern void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn);
 
 extern void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
 
-// ToggleDepthCueing
+extern void C2_HOOK_FASTCALL ToggleDepthCueing(void);
 
 extern void C2_HOOK_FASTCALL ChangeDepthEffect(void);
 
