@@ -151,6 +151,8 @@ extern br_actor* C2_HOOK_FASTCALL LoadActorFromRace(const char *pName);
 
 extern void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation);
 
+extern void C2_HOOK_FASTCALL FreeExplosionAnimation(tExplosion_animation* pAnimation);
+
 extern void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs, int* pShrapnel_count);
 
 extern void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);

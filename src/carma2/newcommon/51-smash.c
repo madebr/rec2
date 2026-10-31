@@ -501,6 +501,26 @@ void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation) 
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004ee950
+// FUNCTION: CARMA2_SW 0x004ea5f0
+void C2_HOOK_FASTCALL FreeExplosionAnimation(tExplosion_animation* pAnimation) {
+    int i;
+    tExplosion_animation_group* group;
+
+    if (pAnimation->count_groups != 0) {
+        i = 0;
+        group = pAnimation->groups;
+        if (pAnimation->count_groups > 0) {
+            do {
+                BrMemFree(group->frames);
+                i++;
+                group++;
+            } while (i < pAnimation->count_groups);
+        }
+        BrMemFree(pAnimation->groups);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x004eed70
 // FUNCTION: CARMA2_SW 0x004eaa10
 void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs, int* pShrapnel_count) {
