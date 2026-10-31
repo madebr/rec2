@@ -809,7 +809,14 @@ void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition) {
 
 // ARPowerupGot
 
-// ARPowerupLose
+// FUNCTION: CARMA2_HW 0x004df210
+// FUNCTION: CARMA2_SW 0x004db710
+void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pPowerup->lose_proc != NULL) {
+        pPowerup->lose_proc(pPowerup, pCar);
+    }
+}
 
 // SetPissed
 
