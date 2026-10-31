@@ -74,6 +74,7 @@ tU32 gPipe_sound_time_window;
 // ARReplayForwards
 
 // FUNCTION: CARMA2_HW 0x00402360
+// FUNCTION: CARMA2_SW 0x00402360
 int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
     return gReplay_rate == 0.f;
 }
