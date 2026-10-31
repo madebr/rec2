@@ -32,6 +32,7 @@ extern float gMass_mine;
 extern int gInstant_handbrake;
 extern int gInventory_cycling;
 extern tU32 gInventory_timeout;
+extern tU32* gReal_render_palette;
 
 // GetNextGoodyTime
 
@@ -205,7 +206,7 @@ extern int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar);
 
 // PaletteFuckedUpByDrugs
 
-// TheEffectsOfDrugs
+extern void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* pPowerup, tU32 pPeriod);
 
 // SetOpponentsSpeed
 
