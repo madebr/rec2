@@ -672,7 +672,15 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->grip_multiplier = 1.f;
 }
 
-// PickAtRandom
+// FUNCTION: CARMA2_HW 0x004de7a0
+// FUNCTION: CARMA2_SW 0x004daca0
+int C2_HOOK_FASTCALL PickAtRandom(tPowerup* pPowerup, tCar_spec* pCar) {
+    int selected_powerup;
+
+    selected_powerup = pPowerup->integer_params[IRandomBetween(0, pPowerup->number_of_integer_params - 1)];
+    GotPowerupEarwig(pCar, selected_powerup, 1, 1);
+    return -1;
+}
 
 // GotVouchers
 
