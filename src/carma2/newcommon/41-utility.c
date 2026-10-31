@@ -1177,6 +1177,7 @@ int C2_HOOK_FASTCALL TestForNan(const float* f) {
 }
 
 // FUNCTION: CARMA2_HW 0x00516160
+// FUNCTION: CARMA2_SW 0x005115d0
 int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV) {
 
     if (pV != NULL) {
