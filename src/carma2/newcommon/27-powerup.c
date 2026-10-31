@@ -678,7 +678,7 @@ int C2_HOOK_FASTCALL PickAtRandom(tPowerup* pPowerup, tCar_spec* pCar) {
     int selected_powerup;
 
     selected_powerup = pPowerup->integer_params[IRandomBetween(0, pPowerup->number_of_integer_params - 1)];
-    GotPowerupEarwig(pCar, selected_powerup, 1, 1);
+    GotPowerup(pCar, selected_powerup);
     return -1;
 }
 
