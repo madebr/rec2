@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gNet_player_to_view_index;
+extern int gOpponent_viewing_mode;
 extern int gAction_replay_manual_camera_target_type;
 extern int gCamera_frozen;
 extern tSave_camera gSave_camera[2];
@@ -26,13 +28,13 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // CheckCameraHither
 
-// GetRaceLeader
+extern tCar_spec* C2_HOOK_FASTCALL GetRaceLeader(void);
 
 // AmIGettingBoredWatchingCameraSpin
 
-// ViewNetPlayer
+extern void C2_HOOK_FASTCALL ViewNetPlayer(void);
 
-// ViewOpponent
+extern void C2_HOOK_FASTCALL ViewOpponent(void);
 
 extern void C2_HOOK_FASTCALL ReallyViewOpponent(void);
 

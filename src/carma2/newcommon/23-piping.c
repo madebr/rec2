@@ -399,7 +399,17 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
 
 // AddProxRayToPipingSession
 
-// AddFlapToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7520
+// FUNCTION: CARMA2_SW 0x004c3c50
+void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flap, angle, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, angle, 0x2);
+
+    ARAddVariedDataToSession(ePipe_chunk_flap, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, angle), pAngle);
+}
 
 // AddModelMashToPipingSession
 
@@ -551,7 +561,13 @@ void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOl
 
 // PipeSingleSmashRemoveFaces
 
-// PipeSingleSmashDecal
+// FUNCTION: CARMA2_HW 0x004c89f0
+// FUNCTION: CARMA2_SW 0x004c5120
+void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex) {
+    C2_HOOK_BUG_ON(sizeof(gZero_vector__smash.v[0]) != 0x4);
+
+    ARDoSingleSession(ePipe_chunk_smash_decal, pIndex, &gZero_vector__smash, sizeof(gZero_vector__smash.v[0]));
+}
 
 // FUNCTION: CARMA2_HW 0x004c8a10
 // STUB: CARMA2_SW 0x004c5140
@@ -594,7 +610,17 @@ void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat) {
 
 // PipeSinglePedFPChange
 
-// PipeSinglePedPos
+// FUNCTION: CARMA2_HW 0x004c8c60
+// FUNCTION: CARMA2_SW 0x004c5390
+void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3* pPos, const br_vector3* pVelocity) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_ped_pos, p, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_ped_pos, v, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_ped_pos, v, 0xc);
+
+    ARDoSingleVariedSession(ePipe_chunk_single_ped_pos, (uintptr_t)pPed, 2,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_pos, p), pPos,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_pos, v), pVelocity);
+}
 
 // PipeSinglePedModelChange
 
@@ -636,7 +662,17 @@ void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, tU16 pFlags) {
         SIZE_OFFSET_PIPING(tPipe_funk_enable, flags), pFlags);
 }
 
-// PipeSingleVanishedDismembered
+// FUNCTION: CARMA2_HW 0x004c8e10
+// FUNCTION: CARMA2_SW 0x004c5540
+void C2_HOOK_FASTCALL PipeSingleVanishedDismembered(const tPedestrian* pPed, tU32 pOld_value, tU32 pNew_value) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_vanished_dismembered, field_0x0, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_vanished_dismembered, field_0x4, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_vanished_dismembered, field_0x4, 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_single_vanished_dismembered, (uintptr_t)pPed, 2,
+        SIZE_OFFSET_PIPING(tPipe_single_vanished_dismembered, field_0x0), pOld_value,
+        SIZE_OFFSET_PIPING(tPipe_single_vanished_dismembered, field_0x4), pNew_value);
+}
 
 // PipeSingleDSModel
 
@@ -653,7 +689,20 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 
 // PipeSingleDroneCornerPos
 
-// PipeSingleDroneStraightPos
+// FUNCTION: CARMA2_HW 0x004c8f30
+// FUNCTION: CARMA2_SW 0x004c5660
+void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, section, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_drone_straight_pos, speed, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, speed, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_drone_straight_pos, distance, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, distance, 0x2);
+
+    ARDoSingleVariedSession(ePipe_chunk_single_drone_straight_pos, pDrone->id, 3,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, section), pSection,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, speed), pDistance,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, distance), pDistance);
+}
 
 // PipeSinglePowerupRespawn
 
