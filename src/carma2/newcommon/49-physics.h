@@ -392,7 +392,7 @@ extern void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics
 
 extern void C2_HOOK_FASTCALL PhysicsAddObjectList(tPhysics_object* pParent, tPhysics_object* pChild);
 
-// PhysicsRemoveObject
+extern void C2_HOOK_FASTCALL PhysicsRemoveObject(tPhysics_object* pObject);
 
 extern int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext);
 
