@@ -11,7 +11,7 @@
 
 // GLOBAL: CARMA2_HW 0x00676918
 // GLOBAL: CARMA2_SW 0x00671088
-int gDisable_piped_sounds;
+int gDisable_piped_sounds = 0;
 
 // GLOBAL: CARMA2_HW 0x0068b868
 // GLOBAL: CARMA2_SW 0x00685dc8
