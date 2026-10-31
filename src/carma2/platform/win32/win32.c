@@ -191,12 +191,15 @@ const char gExtendedAsciiToNormalAscii[128] = {
 };
 
 // GLOBAL: CARMA2_HW 0x006ad4d4
+// GLOBAL: CARMA2_SW 0x006a6c5c
 int gWin32ActionReplayBufferAllocated;
 
 // GLOBAL: CARMA2_HW 0x006ad470
+// GLOBAL: CARMA2_SW 0x006a6c00
 void *gPDActionReplayBuffer;
 
 // GLOBAL: CARMA2_HW 0x006ad474
+// GLOBAL: CARMA2_SW 0x006a6c04
 int gPDActionReplayBufferSize;
 
 // GLOBAL: CARMA2_HW 0x006ad46c
@@ -230,6 +233,7 @@ int gINT_006a6c3c;
 #define Win32AllocateActionReplayBuffer PDReallyAllocateActionReplayBuffer
 
 // FUNCTION: CARMA2_HW 0x0051b810
+// FUNCTION: CARMA2_SW 0x005155e0
 void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
     MEMORYSTATUS memory_status;
     unsigned int bufferSize;
