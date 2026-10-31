@@ -1118,6 +1118,30 @@ void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00518e70
+// FUNCTION: CARMA2_SW 0x00512950
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material* pMaterial) {
+    br_token_value* prims;
+
+    if (gScreen->type == BR_PMT_INDEX_8) {
+        if (pMaterial->index_blend == BrTableFind("BLEND75.TAB")) {
+            return 25;
+        }
+        if (pMaterial->index_blend == BrTableFind("BLEND50.TAB")) {
+            return 50;
+        }
+        if (pMaterial->index_blend == BrTableFind("BLEND25.TAB")) {
+            return 75;
+        }
+        return 100;
+    }
+    prims = pMaterial->extra_prim;
+    if (prims != NULL && prims[0].t == BRT_BLEND_B && prims[0].v.b == 1 && prims[1].t == BRT_OPACITY_X) {
+        return (100 * (prims[1].v.x >> 16)) / 256;
+    }
+    return 100;
+}
+
 // FUNCTION: CARMA2_HW 0x00515fa0
 // FUNCTION: CARMA2_SW 0x00511410
 void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags) {
