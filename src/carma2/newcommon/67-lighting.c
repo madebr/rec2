@@ -100,14 +100,39 @@ void C2_HOOK_FASTCALL LoadCarMaterials(tBrender_storage* pStorage, const char* p
 #endif
 
 // FUNCTION: CARMA2_HW 0x004f67a0
+// FUNCTION: CARMA2_SW 0x004f2330
 void C2_HOOK_FASTCALL SmoothlySetCarMaterialFlags(tBrender_storage* pStorage, tCar_spec* pCar_spec) {
     int i;
     br_material* material;
 
     for (i = pCar_spec->old_material_count; i < pCar_spec->new_material_count; i++) {
         material = pStorage->materials[i];
+#ifdef REC2_HW
         SmoothificateCarMaterial(material);
         material->user = material->colour_map;
+#endif
+#ifdef REC2_SW
+        PossibleService();
+        material->user = material->colour_map;
+        material->flags &= ~(BR_MATF_LIGHT | BR_MATF_PRELIT | BR_MATF_SMOOTH);
+        if (material != NULL && material->identifier != NULL) {
+            if (material->identifier[1] == '\\') {
+                switch (material->identifier[2]) {
+                case '2':
+                    BlendifyMaterial(material, 25);
+                    break;
+                case '7':
+                    BlendifyMaterial(material, 75);
+                    break;
+                default:
+                    BlendifyMaterial(material, 50);
+                    break;
+                }
+                material->flags |= BR_MATF_TWO_SIDED;
+            }
+        }
+        BrMaterialUpdate(material, BR_MATU_ALL);
+#endif
     }
 }
 
