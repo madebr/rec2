@@ -213,11 +213,11 @@ extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_detail
 
 extern void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
-// AddToGuaranteeList
+extern void C2_HOOK_FASTCALL AddToGuaranteeList(tNet_message* pMessage, void* pAddress, tPlayer_ID pPlayer, void* pNotifyFail);
 
 extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToPlayer(tNet_game_details* pDetails, tNet_message* pMessage, tPlayer_ID pPlayer, void* pNotifyFail);
 
-// NetGuaranteedSendMessageToAddress
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress, void* pNotifyFail);
 
 extern void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
