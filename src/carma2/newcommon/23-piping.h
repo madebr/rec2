@@ -168,7 +168,7 @@ extern void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_
 
 extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
-// AddNonCarToPipingSession
+extern void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor);
 
 // AddSmokeToPipingSession
 
