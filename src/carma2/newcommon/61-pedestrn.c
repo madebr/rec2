@@ -942,9 +942,39 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* p
 
 // SetCharacterBonePositions
 
-// MakeCharacterRenderable2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// MakeCharacterRenderable
+// STUB: CARMA2_HW 0x00408200
+// STUB: CARMA2_SW 0x00408200
+int C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pCharacter, int pIndex) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004083b0
+// FUNCTION: CARMA2_SW 0x004083b0
+int C2_HOOK_FASTCALL MakeCharacterRenderable(tPed_character_instance* pCharacter) {
+    int i;
+    tPed_form_actor_set* actor_set;
+
+    if (pCharacter->field_0x4 >= 0) {
+        return 2;
+    }
+    for (i = 0, actor_set = pCharacter->personality->form->actor_sets; i < pCharacter->personality->form->max_rendering_at_once; i++, actor_set++) {
+        if (!actor_set->field_0x0) {
+            break;
+        }
+    }
+    if (i == pCharacter->personality->form->max_rendering_at_once) {
+        return 1;
+    }
+    return MakeCharacterRenderable2(pCharacter, i);
+}
 
 // CharacterNoLongerRenderable
 

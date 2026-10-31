@@ -455,9 +455,9 @@ extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_inst
 
 // SetCharacterBonePositions
 
-// MakeCharacterRenderable2
+extern int C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pCharacter, int pIndex);
 
-// MakeCharacterRenderable
+extern int C2_HOOK_FASTCALL MakeCharacterRenderable(tPed_character_instance* pCharacter);
 
 // CharacterNoLongerRenderable
 
