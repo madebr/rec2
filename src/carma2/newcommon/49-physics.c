@@ -195,7 +195,19 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, br_vecto
 
 // GetObjectCornerToObjectFacePoints
 
-// BoundsOverlapTest
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00425ba0
+// STUB: CARMA2_SW 0x00425c40
+int C2_HOOK_FASTCALL BoundsOverlapTest(br_bounds3* pBounds_1, br_bounds3* pBounds_2) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // GetObjectObjectEdgePoints
 
@@ -234,6 +246,30 @@ void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, 
 }
 
 // AddOldForces
+
+// FUNCTION: CARMA2_HW 0x00428d40
+// FUNCTION: CARMA2_SW 0x00428dd0
+int C2_HOOK_FASTCALL TestObjectOverlap(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2) {
+    tPhysics_shape* shape1;
+    tPhysics_shape* shape2;
+
+    shape1 = pCollision_1->shape;
+    shape2 = pCollision_2->shape;
+    if (FlagsAreGo(pCollision_1, pCollision_2)
+        && BoundsOverlapTest(&pCollision_1->field_0xf4, &pCollision_2->field_0xf4)) {
+        while (shape1 != NULL) {
+            while (shape2 != NULL) {
+                if (TestShapeEdgeIntersection(pCollision_1, pCollision_2, shape1, shape2)
+                    || TestShapeEdgeIntersection(pCollision_2, pCollision_1, shape2, shape1)) {
+                    return 1;
+                }
+                shape2 = shape2->common.next;
+            }
+            shape1 = shape1->common.next;
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00428dc0
 // FUNCTION: CARMA2_SW 0x00428e50
@@ -304,8 +340,6 @@ int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_
     }
     return 0;
 }
-
-// TestObjectOverlap
 
 // TestObjectOverlapIgnoreCloseRelatives
 
@@ -516,7 +550,19 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 
 // FillInTrialWorkspace
 
-// FlagsAreGo
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004ba4f0
+// STUB: CARMA2_SW 0x004b6c10
+int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // CollideObjectWithReducedObjectList
 
