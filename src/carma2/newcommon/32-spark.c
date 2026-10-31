@@ -701,7 +701,17 @@ int C2_HOOK_FASTCALL GetSmokeOn(void) {
     return gSmoke_on;
 }
 
-// StopCarSmoking
+// FUNCTION: CARMA2_HW 0x004fca40
+// FUNCTION: CARMA2_SW 0x004f7fa0
+void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.car == pCar && gSmoke_column[i].lifetime > 2000) {
+            gSmoke_column[i].lifetime = 2000;
+        }
+    }
+}
 
 // StopCarSmokingInstantly
 
@@ -861,4 +871,3 @@ void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
 // AdjustSplashReplay
 
 // InitReplaySplashes
-
