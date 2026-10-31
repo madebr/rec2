@@ -339,7 +339,34 @@ void C2_HOOK_FASTCALL FadePaletteDown(void) {
 
 // FadePaletteUp
 
-// EnsurePaletteUp
+// FUNCTION: CARMA2_HW 0x004b55f0
+// FUNCTION: CARMA2_SW 0x004b1d20
+void C2_HOOK_FASTCALL EnsurePaletteUp(void) {
+    int i;
+    int start_time;
+    int the_time;
+    int j;
+
+    C2_HOOK_BUG_ON(sizeof(br_colour) != 4);
+
+    if (gFaded_palette) {
+        gFaded_palette = 0;
+        start_time = PDGetTotalTime();
+        while ((the_time = PDGetTotalTime() - start_time) < 500) {
+            i = (the_time * 256) / 500;
+            memcpy(gScratch_pixels, gCurrent_palette->pixels, 256 * sizeof(br_colour));
+            for (j = 0; j < 256; j++) {
+                // FIXME: big endian incompatible
+                ((tU8*)&gScratch_pixels[j])[0] = (i * (unsigned int)((tU8*)&gScratch_pixels[j])[0]) / 256;
+                ((tU8*)&gScratch_pixels[j])[1] = (i * (unsigned int)((tU8*)&gScratch_pixels[j])[1]) / 256;
+                ((tU8*)&gScratch_pixels[j])[2] = (i * (unsigned int)((tU8*)&gScratch_pixels[j])[2]) / 256;
+                ((tU8*)&gScratch_pixels[j])[3] = (i * (unsigned int)((tU8*)&gScratch_pixels[j])[3]) / 256;
+            }
+            DRSetPalette2(gScratch_palette, 0);
+        }
+        DRSetPalette(gCurrent_palette);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004b5770
 // FUNCTION: CARMA2_SW 0x004b1e90

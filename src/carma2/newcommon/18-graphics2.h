@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 // FadePaletteUp
 
-// EnsurePaletteUp
+extern void C2_HOOK_FASTCALL EnsurePaletteUp(void);
 
 extern void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
