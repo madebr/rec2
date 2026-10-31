@@ -14,6 +14,7 @@
 #include "41-utility.h"
 #include "49-physics.h"
 #include "53-controls.h"
+#include "60-phil.h"
 #include "61-pedestrn.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -76,6 +77,14 @@ int gCount_mutant_tail_parts;
 // GLOBAL: CARMA2_HW 0x006a0908
 // GLOBAL: CARMA2_SW 0x0069a960
 tPhysics_object* gMutant_tail_first_collision_info;
+
+// GLOBAL: CARMA2_HW 0x006a0acc
+// GLOBAL: CARMA2_SW 0x0069ab24
+tPhysics_joint* gMutant_tail_first_joint;
+
+// GLOBAL: CARMA2_HW 0x00705540
+// GLOBAL: CARMA2_SW 0x006fc000
+int gMutant_tail_state;
 
 // GLOBAL: CARMA2_HW 0x00705b78
 // GLOBAL: CARMA2_SW 0x006fc638
@@ -835,10 +844,27 @@ void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition) {
 
 // CutOffTail
 
-// STUB: CARMA2_HW 0x004e06a0
-// STUB: CARMA2_SW 0x004dcba0
+// FUNCTION: CARMA2_HW 0x004e06a0
+// FUNCTION: CARMA2_SW 0x004dcba0
 void C2_HOOK_FASTCALL RemoveTail(void) {
-    NOT_IMPLEMENTED();
+    tPhysics_object* collision_info;
+
+    if (gMutant_tail_state != 0) {
+        collision_info = gMutant_tail_first_collision_info;
+        if (gMutant_tail_first_collision_info != NULL) {
+            do {
+                BrActorRemove(collision_info->actor);
+                collision_info = collision_info->child;
+            } while (collision_info != NULL);
+        }
+        if (gMutant_tail_state == 2) {
+            PhysicsRemoveObject(gMutant_tail_first_collision_info);
+        } else {
+            PHILRemoveObject(gMutant_tail_first_collision_info);
+        }
+        gMutant_tail_first_collision_info->physics_joint1 = gMutant_tail_first_joint;
+        gMutant_tail_state = 0;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004e0710
