@@ -995,11 +995,7 @@ void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
 // FUNCTION: CARMA2_SW 0x00516170
 int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char **pArgv) {
     gGraf_spec_index = gDefault_spec_index;
-#ifdef REC2_MATCHING
-    gGraf_spec_index = gDefault_spec_index;
-#else
-    gGraf_data_index = gDefault_data_index;
-#endif
+    gGraf_data_index = gDefault_spec_index;
     return 1;
 }
 
