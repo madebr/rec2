@@ -433,11 +433,13 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
     gBack_screen = NULL;
 #endif
     if (been_here) {
+#ifdef REC2_HW
         PDDisposeActionReplayBuffer();
+#endif
         ExitProcess(702);
     } else {
         been_here = 1;
-        dr_dprintf("PDShutdownSystem()");
+        dr_dprintf("PDShutdownSystem()...");
         SSDXStop();
         SSDXRelease();
         CloseDirectInput();
@@ -964,12 +966,14 @@ static void C2_HOOK_CDECL OnErrorCallback(char *text) {
     dr_dprintf("*******************************************************************************");
     str1 = "BRender error detected:";
     str2 = text;
+#ifdef REC2_HW
     if (str1 == NULL) {
         str1 = "NULL str1";
     }
     if (str2 == NULL) {
         str2 = "NULL str2";
     }
+#endif
     gIsFatalError = 1;
     sprintf(gFatalErrorMessage, "%s\n%s", str1, str2);
     gExit_code = 700;
