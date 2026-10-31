@@ -14,6 +14,9 @@
 #include <s3/s3.h>
 
 extern tU8* gLocal_buffer;
+extern tU8* gPipe_buffer_working_end;
+extern int gReentrancy_count;
+extern tU8* gPipe_buffer_phys_end;
 extern tU32 gLocal_buffer_size;
 extern tU8* gMr_chunky;
 extern tU8* gPipe_buffer_start;
@@ -40,7 +43,7 @@ extern int C2_HOOK_FASTCALL ARGetReplayDirection(void);
 
 extern void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection);
 
-// ARResetPiping
+extern void C2_HOOK_FASTCALL ARResetPiping(void);
 
 // ARInitialise
 
