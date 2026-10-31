@@ -956,20 +956,22 @@ static void C2_HOOK_CDECL OnWarnCallback(char *text) {
 // FUNCTION: CARMA2_HW 0x0051c620
 // FUNCTION: CARMA2_SW 0x00517640
 static void C2_HOOK_CDECL OnErrorCallback(char *text) {
-    const char *msg;
+    const char *str1;
+    const char *str2;
 
     dr_dprintf("*******************************************************************************");
     dr_dprintf("BRender FAILURE: '%s'", text);
     dr_dprintf("*******************************************************************************");
-    msg = "BRender error detected:";
-    if (msg == NULL) {
-        msg = "NULL str1";
+    str1 = "BRender error detected:";
+    str2 = text;
+    if (str1 == NULL) {
+        str1 = "NULL str1";
     }
-    if (text == NULL) {
-        msg = "NULL str2";
+    if (str2 == NULL) {
+        str2 = "NULL str2";
     }
     gIsFatalError = 1;
-    sprintf(gFatalErrorMessage, "%s\n%s", msg, text);
+    sprintf(gFatalErrorMessage, "%s\n%s", str1, str2);
     gExit_code = 700;
 #ifdef REC2_HW
     if (gBack_screen != NULL && gBack_screen->pixels != NULL) {
