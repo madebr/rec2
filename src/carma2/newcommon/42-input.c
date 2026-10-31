@@ -74,6 +74,7 @@ int gLetter_y_coords[15];
 int gThe_length;
 
 // GLOBAL: CARMA2_HW 0x0068c150
+// GLOBAL: CARMA2_SW 0x00686198
 char gCurrent_typing[110];
 
 // GLOBAL: CARMA2_HW 0x0068c1c0
