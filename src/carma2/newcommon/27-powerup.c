@@ -10,6 +10,7 @@
 
 #include "01-network.h"
 #include "16-graphics1.h"
+#include "18-graphics2.h"
 #include "32-spark.h"
 #include "41-utility.h"
 #include "49-physics.h"
@@ -24,6 +25,10 @@
 // GLOBAL: CARMA2_HW 0x006a0ad4
 // GLOBAL: CARMA2_SW 0x0069ab2c
 const char* gPowerup_txt_path;
+
+// GLOBAL: CARMA2_HW 0x006a0ad8
+// GLOBAL: CARMA2_SW 0x0069ab30
+tU32* gReal_render_palette;
 
 // GLOBAL: CARMA2_HW 0x007059e0
 // GLOBAL: CARMA2_SW 0x006fc4a0
@@ -608,7 +613,24 @@ void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->underwater_ability = 0;
 }
 
-// PukeDrugsBackUp
+// FUNCTION: CARMA2_HW 0x004de610
+// FUNCTION: CARMA2_SW 0x004dab10
+void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* pPowerup, tCar_spec* pCar) {
+    int i;
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gOn_drugs = 0;
+        memcpy(gRender_palette->pixels, gReal_render_palette, 256 * sizeof(tU32));
+        for (i = 1; i < 224; i++) {
+            ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[i & 0xff];
+        }
+        ((tU32*)gRender_palette->pixels)[0] = gReal_render_palette[0];
+        for (i = 224; i < 256; i++) {
+            ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[i];
+        }
+        ResetPalette();
+    }
+}
 
 // ResetOpponentsSpeed
 
