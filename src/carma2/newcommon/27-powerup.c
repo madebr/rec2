@@ -12,6 +12,8 @@
 #include "16-graphics1.h"
 #include "32-spark.h"
 #include "41-utility.h"
+#include "42-input.h"
+
 #include "49-physics.h"
 #include "53-controls.h"
 #include "61-pedestrn.h"
@@ -242,7 +244,21 @@ void C2_HOOK_FASTCALL ToggleInventory(void) {
 
 // GotPowerupN
 
-// GotPowerup0
+// FUNCTION: CARMA2_HW 0x004dbdb0
+// FUNCTION: CARMA2_SW 0x004d82b0
+void C2_HOOK_FASTCALL GotPowerup0(void) {
+    int modifiers;
+
+    if (PDKeyDown(0)) {
+        modifiers = 10;
+    } else {
+        modifiers = 0;
+    }
+    modifiers += PDKeyDown(1) ? 20 : 0;
+    modifiers += PDKeyDown(2) ? 40 : 0;
+    modifiers += PDKeyDown(4) ? 80 : 0;
+    GotPowerupEarwig(&gProgram_state.current_car, modifiers, 1, 1);
+}
 
 // GotPowerup1
 
