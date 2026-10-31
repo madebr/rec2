@@ -77,10 +77,6 @@ void* gPhysics_scratch_ptr;
 // GLOBAL: CARMA2_SW 0x0068e108
 int gFace_count;
 
-// GLOBAL: CARMA2_HW 0x00744820
-// GLOBAL: CARMA2_SW 0x0073b2e0
-tFace_ref gFace_list__car[300];
-
 // count
 
 // FUNCTION: CARMA2_HW 0x004225b0
