@@ -608,6 +608,16 @@ int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_ch
     return AddRollingLetter(pNew_char, x_coord, y_coord, new_type);
 }
 
+// FUNCTION: CARMA2_HW 0x004840d0
+// FUNCTION: CARMA2_SW 0x00481210
+void C2_HOOK_FASTCALL StopTyping(int pSlot_index) {
+    int i;
+
+    for (i = 0; i < gThe_length; i++) {
+        ChangeCharTo(pSlot_index, i, (char)((size_t)i < strlen(gCurrent_typing) ? gCurrent_typing[i] : ' '));
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00484120
 // FUNCTION: CARMA2_SW 0x00481260
 void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str) {
