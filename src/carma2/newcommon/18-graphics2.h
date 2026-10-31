@@ -32,6 +32,8 @@ extern int gPalette_changed;
 #endif
 extern br_pixelmap* gCurrent_palette;
 extern br_pixelmap* gCurrent_splash;
+
+extern void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour);
 extern br_pixelmap* gBlend75_table;
 
 extern void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount);
