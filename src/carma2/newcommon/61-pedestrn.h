@@ -24,7 +24,9 @@ extern int gCount_changed_points;
 extern br_vector3 gChanged_points[10];
 extern int gPed_nearness;
 extern tTWTVFS gTwtPeds;
+extern float gMutant_speed;
 extern int gDancing_peds;
+extern int gDrunk_pedestrians;
 extern int gPeds_already_munged;
 
 // OrientationChanged
