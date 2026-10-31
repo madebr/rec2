@@ -1439,23 +1439,21 @@ void C2_HOOK_FASTCALL NobbleNonzeroBlacks(br_pixelmap* pPalette) {
     int g;
     int b;
 
-    pixels= pPalette->pixels;
+    pixels = pPalette->pixels;
     modified = 0;
-    if (*pixels != BR_COLOUR_RGBA(0, 0, 0, 0)) {
-        *pixels = BR_COLOUR_RGBA(0, 0, 0, 0);
+    if (pixels[0] != BR_COLOUR_RGBA(0, 0, 0, 0)) {
+        pixels[0] = BR_COLOUR_RGBA(0, 0, 0, 0);
         modified = 1;
     }
-    pixels++;
-    for (i = 0; i < 255; i++ ) {
-        c = *pixels;
+    for (i = 1; i < 256; i++) {
+        c = pixels[i];
         r = BR_COLOUR_RED(c);
         g = BR_COLOUR_GRN(c);
         b = BR_COLOUR_BLU(c);
         if (r == 0 && g == 0 && b == 0) {
-            *pixels = BR_COLOUR_RGB(1, 1, 1);
+            pixels[i] = BR_COLOUR_RGB(1, 1, 1);
             modified = 1;
         }
-        pixels++;
     }
     if (modified) {
         BrMapUpdate(pPalette, BR_MAPU_ALL);
