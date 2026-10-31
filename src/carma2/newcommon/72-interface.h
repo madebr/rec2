@@ -12,6 +12,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gNet_storage_space_initialized;
 extern tNet_game_options gNet_settings[9];
 extern tU32 gFrontend_net_current_roll;
 extern tU32 gFrontend_net_last_roll;
@@ -154,7 +155,7 @@ extern int C2_HOOK_FASTCALL MultiplayerSetup(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_options* pOptions, int* pCar_index, int pIm_the_host_so_fuck_off);
 
-// InitNetStorageSpace
+extern void C2_HOOK_FASTCALL InitNetStorageSpace(void);
 
 // DisposeNetStorageSpace
 
