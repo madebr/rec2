@@ -11,6 +11,9 @@
 
 #include "rec2_types.h"
 
+extern char* gCop_name;
+extern char* gDrone_name;
+
 extern int gBIG_APC_index;
 extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;

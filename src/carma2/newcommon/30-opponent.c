@@ -23,6 +23,14 @@
 
 #include <string.h>
 
+// GLOBAL: CARMA2_HW 0x0065a3bc
+// GLOBAL: CARMA2_SW 0x00654cd4
+char* gCop_name = "Faceless Cop";
+
+// GLOBAL: CARMA2_HW 0x0065a3c0
+// GLOBAL: CARMA2_SW 0x00654cd8
+char* gDrone_name = "Innocent Civilian";
+
 // GLOBAL: CARMA2_HW 0x0065a3c4
 // GLOBAL: CARMA2_SW 0x00654cdc
 int gBIG_APC_index = -1;
@@ -551,10 +559,33 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004ae880
-// STUB: CARMA2_SW 0x004aa9f0
+// FUNCTION: CARMA2_HW 0x004ae880
+// FUNCTION: CARMA2_SW 0x004aa9f0
 char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
-    NOT_IMPLEMENTED();
+    tCar_spec* car;
+    char* name;
+
+    switch (pCategory) {
+    case eVehicle_self:
+        return gProgram_state.player_name;
+    case eVehicle_opponent:
+        car = gProgram_state.AI_vehicles.opponents[pIndex].car_spec;
+        if (car != NULL) {
+            name = car->driver_name;
+            if (name != NULL) {
+                return name;
+            }
+        }
+        return "???";
+    case eVehicle_rozzer:
+        return gCop_name;
+    case eVehicle_drone:
+        return gDrone_name;
+    case eVehicle_not_really:
+        return NULL;
+    default:
+        return NULL;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004ae8e0
