@@ -60,4 +60,6 @@ extern void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void);
 
 extern void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void);
 
+extern void C2_HOOK_FASTCALL PackfileNoOp(void);
+
 #endif // GUARD_70_PACKFILE_H

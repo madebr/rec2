@@ -429,3 +429,8 @@ void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void) {
         gDisableTiffConversion = gDisableTiffConversionStack[gDisableTiffConversionStackPos];
     }
 }
+
+// FUNCTION: CARMA2_HW 0x004b4eb0
+// FUNCTION: CARMA2_SW 0x004b1020
+void C2_HOOK_FASTCALL PackfileNoOp(void) {
+}
