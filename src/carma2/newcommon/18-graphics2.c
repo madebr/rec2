@@ -338,9 +338,25 @@ void C2_HOOK_FASTCALL ResetPalette(void) {
 void C2_HOOK_FASTCALL FadePaletteDown(void) {
 }
 
-// FadePaletteUp
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma auto_inline(off)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004b5470
+// FUNCTION: CARMA2_SW 0x004b1bb0
+void C2_HOOK_FASTCALL FadePaletteUp(void) {
+    NOT_IMPLEMENTED();
+}
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma auto_inline(on)
+#endif
 
 // EnsurePaletteUp
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma auto_inline(off)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004b5770
 // FUNCTION: CARMA2_SW 0x004b1e90
@@ -351,6 +367,10 @@ void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
         gPalette_munged = 0;
     }
 }
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x0043dff0
 // FUNCTION: CARMA2_SW 0x0043e040
@@ -463,6 +483,7 @@ void C2_HOOK_FASTCALL KillSplashScreen(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0047b990
+// FUNCTION: CARMA2_SW 0x0047ac80
 void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
     br_pixelmap* map;
     tPixelFlags flags;
@@ -472,10 +493,12 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
         return;
     }
     if (gCurrent_splash != NULL) {
-        BrMapRemove(gCurrent_splash);
-        BrPixelmapFree(gCurrent_splash);
+        KillSplashScreen();
     }
     flags = gPixelFlags;
+#ifdef REC2_SW
+    gPixelFlags |= 0x8;
+#endif
     gCurrent_splash = map;
     if (map == NULL) {
         gCurrent_splash = LoadPixelmap(pPixmap_name);
@@ -485,6 +508,20 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
         }
     }
     gPixelFlags = flags;
+#ifdef REC2_SW
+    if (gCurrent_splash == NULL || gCurrent_splash->map == NULL) {
+        EnsureRenderPalette();
+    } else {
+        if (gScreen != NULL) {
+            BrPixelmapFill(gScreen, gGraf_specs[gGraf_spec_index].black_value);
+        }
+        BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
+        BrPixelmapFill(gDepth_buffer, 0xffffffff);
+        PDScreenBufferSwap(0);
+        FadePaletteUp();
+        PDSetPalette(gCurrent_splash->map);
+    }
+#endif
     if (gCurrent_splash != NULL) {
         PixelmapSwapByteOrder(gCurrent_splash);
         DrPixelmapRectangleCopyPossibleLock(gBack_screen, 0, 0, gCurrent_splash, 0, 0,
