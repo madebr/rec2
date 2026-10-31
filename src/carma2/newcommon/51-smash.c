@@ -663,6 +663,36 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004ee990
+// FUNCTION: CARMA2_SW 0x004ea630
+void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage) {
+    int i;
+    tCar_crush_smashable_part* smashable;
+
+    pCar_crush_buffer_entry->count_smashables = (tU16)GetAnInt(pF);
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_smashable_part) != 124);
+    pCar_crush_buffer_entry->smashables = BrMemAllocate(pCar_crush_buffer_entry->count_smashables * sizeof(tCar_crush_smashable_part), kMem_smashable_info);
+    for (i = 0, smashable = pCar_crush_buffer_entry->smashables; i < pCar_crush_buffer_entry->count_smashables; i++, smashable++) {
+        GetAString(pF, smashable->material_name);
+        smashable->funk = -1;
+        LoadSmashableLevels(pF, &smashable->levels, &smashable->count_smashable_levels, 0, pBrender_storage);
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004eea20
+// STUB: CARMA2_SW 0x004ea6c0
+void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
 // FUNCTION: CARMA2_HW 0x004ef460
 // FUNCTION: CARMA2_SW 0x004eb0c0
 void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
