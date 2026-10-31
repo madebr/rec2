@@ -34,6 +34,8 @@ extern void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void);
 
 extern void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
 
+extern void C2_HOOK_FASTCALL PointActorAlongVectorWithUp(br_actor* pThe_actor, br_vector3* pLook, br_vector3* pUp);
+
 extern br_material* C2_HOOK_FASTCALL CreateSimpleMaterial(int pIndex);
 
 // MakeAIEditCubeHere
