@@ -8,7 +8,9 @@
 
 #include "27-powerup.h"
 
+#include "00-car.h"
 #include "01-network.h"
+
 #include "16-graphics1.h"
 #include "32-spark.h"
 #include "41-utility.h"
@@ -652,7 +654,12 @@ void C2_HOOK_FASTCALL ResetBouncey(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->bounce_amount = 0.f;
 }
 
-// ResetSuspension
+// FUNCTION: CARMA2_HW 0x004de760
+// FUNCTION: CARMA2_SW 0x004dac60
+void C2_HOOK_FASTCALL ResetSuspension(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    SetCarSuspGiveAndHeight(pCar, 1.f, 1.f, 1.f, 0.f, 0.f);
+}
 
 // FUNCTION: CARMA2_HW 0x004de780
 // FUNCTION: CARMA2_SW 0x004dac80
