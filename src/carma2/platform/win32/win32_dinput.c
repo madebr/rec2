@@ -673,6 +673,7 @@ int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, size
 #endif
 
 // FUNCTION: CARMA2_HW 0x00458060
+// FUNCTION: CARMA2_SW 0x00457df0
 int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
     int i;
 
