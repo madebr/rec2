@@ -664,6 +664,19 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     rename(new_file, pThe_path);
 }
 
+// FUNCTION: CARMA2_HW 0x00490ec0
+// FUNCTION: CARMA2_SW 0x0048e130
+void C2_HOOK_FASTCALL SkipNLines(FILE* pF) {
+    int i;
+    int count;
+    char s[256];
+
+    count = GetAnInt(pF);
+    for (i = 0; i < count; i++) {
+        GetALineAndDontArgue(pF, s);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00490f30
 // FUNCTION: CARMA2_SW 0x0048e1a0
 char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
