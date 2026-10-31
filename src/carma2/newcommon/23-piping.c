@@ -10,6 +10,7 @@
 
 #include "00-car.h"
 #include "16-graphics1.h"
+#include "27-powerup.h"
 #include "32-spark.h"
 #include "51-smash.h"
 #include "69-sound.h"
@@ -399,7 +400,17 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
 
 // AddProxRayToPipingSession
 
-// AddFlapToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7520
+// FUNCTION: CARMA2_SW 0x004c3c50
+void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flap, angle, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, angle, 0x2);
+
+    ARAddVariedDataToSession(ePipe_chunk_flap, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, angle), pAngle);
+}
 
 // AddModelMashToPipingSession
 
@@ -551,7 +562,13 @@ void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOl
 
 // PipeSingleSmashRemoveFaces
 
-// PipeSingleSmashDecal
+// FUNCTION: CARMA2_HW 0x004c89f0
+// FUNCTION: CARMA2_SW 0x004c5120
+void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex) {
+    C2_HOOK_BUG_ON(sizeof(gZero_vector__smash.v[0]) != 0x4);
+
+    ARDoSingleSession(ePipe_chunk_smash_decal, pIndex, &gZero_vector__smash, sizeof(gZero_vector__smash.v[0]));
+}
 
 // FUNCTION: CARMA2_HW 0x004c8a10
 // STUB: CARMA2_SW 0x004c5140
@@ -673,9 +690,30 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 
 // PipeSingleDroneCornerPos
 
-// PipeSingleDroneStraightPos
+// FUNCTION: CARMA2_HW 0x004c8f30
+// FUNCTION: CARMA2_SW 0x004c5660
+void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, section, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_drone_straight_pos, speed, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, speed, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_drone_straight_pos, distance, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, distance, 0x2);
 
-// PipeSinglePowerupRespawn
+    ARDoSingleVariedSession(ePipe_chunk_single_drone_straight_pos, pDrone->id, 3,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, section), pSection,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, speed), pDistance,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, distance), pDistance);
+}
+
+// FUNCTION: CARMA2_HW 0x004c8f90
+// FUNCTION: CARMA2_SW 0x004c56c0
+void C2_HOOK_FASTCALL PipeSinglePowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_powerup_respawn, index, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_powerup_respawn, index, 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_powerup_respawn, (uintptr_t)pActor, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_powerup_respawn, index), pPowerup_id);
+}
 
 // PipeSingleShitMine
 
@@ -921,7 +959,12 @@ void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk) {
 
 // ApplyNapalmBolt
 
-// ApplyPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004c9d40
+// FUNCTION: CARMA2_SW 0x004c6470
+void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
+
+    ARDoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
+}
 
 // ApplyShitMine
 
@@ -1054,7 +1097,13 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoNapalmBolt
 
-// UndoPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004ca3b0
+// FUNCTION: CARMA2_SW 0x004c6ae0
+void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    (void)pPrev_chunk;
+
+    ARUndoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
+}
 
 // UndoShitMine
 

@@ -763,10 +763,14 @@ int C2_HOOK_FASTCALL PDGetMicroseconds(void) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x0051a7b0
+// FUNCTION: CARMA2_SW 0x005144e0
 void C2_HOOK_FASTCALL PDEnterDebugger(const char *pStr) {
     dr_dprintf("PDEnterDebugger(): %s", pStr);
     ShowCursor(1);
+#ifndef REC2_MATCHING
     __debugbreak();
+#endif
     ShowCursor(0);
 }
 
