@@ -682,7 +682,14 @@ void C2_HOOK_FASTCALL PipeSingleVanishedDismembered(const tPedestrian* pPed, tU3
         SIZE_OFFSET_PIPING(tPipe_single_vanished_dismembered, field_0x4), pNew_value);
 }
 
-// PipeSingleDSModel
+// FUNCTION: CARMA2_HW 0x004c8e30
+// FUNCTION: CARMA2_SW 0x004c5560
+void C2_HOOK_FASTCALL PipeSingleDSModel(int pDouble_sided, void* pThing) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_ds_model, field_0x0, 0x2);
+
+    ARDoSingleVariedSession(ePipe_single_ds_model, (uintptr_t)pThing, 1,
+        SIZE_OFFSET_PIPING(tPipe_single_ds_model, field_0x0), pDouble_sided);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8e80
 // STUB: CARMA2_SW 0x004c55b0
