@@ -342,8 +342,8 @@ void C2_HOOK_FASTCALL FadePaletteDown(void) {
 #pragma auto_inline(off)
 #endif
 
-// FUNCTION: CARMA2_HW 0x004b5470
-// FUNCTION: CARMA2_SW 0x004b1bb0
+// STUB: CARMA2_HW 0x004b5470
+// STUB: CARMA2_SW 0x004b1bb0
 void C2_HOOK_FASTCALL FadePaletteUp(void) {
     NOT_IMPLEMENTED();
 }
