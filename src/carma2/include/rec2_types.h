@@ -428,6 +428,10 @@ typedef struct {
 } tPipe_chunk_smoke_column;
 
 typedef struct {
+    tCar_spec* car;
+} tPipe_chunk_powerup_lose;
+
+typedef struct {
     int index;
 } tPipe_chunk_powerup_respawn;
 
@@ -515,6 +519,7 @@ typedef enum {
     ePipe_chunk_single_ped_model_change = 47,
     ePipe_chunk_phil_object = 48,
     ePipe_single_groove_on_off = 51,
+    ePipe_chunk_powerup_lose = 53,
     ePipe_funk_enable = 54,
     ePipe_chunk_single_vanished_dismembered = 55,
     ePipe_single_ds_model = 56,
@@ -553,6 +558,7 @@ typedef struct tPipe_chunk {
         tPipe_smash_texture_change smash_texture_change;
         tPipe_single_transform_type transform_type;
         tPipe_single_vector vector;
+        tPipe_chunk_powerup_lose powerup_lose;
         tPipe_chunk_powerup_respawn powerup_respawn;
         char raw_data[0];
     } data;
