@@ -28,6 +28,7 @@
 
 #include "c2_stdio.h"
 #include "c2_string.h"
+#include "17-world2.h"
 
 // GLOBAL: CARMA2_HW 0x0067c500
 // GLOBAL: CARMA2_SW 0x00676c70
@@ -566,6 +567,16 @@ void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont) {
 
     if (pHeadup_index >= 0) {
         gHeadups[pHeadup_index].data.image_info.font = &gFonts[-pFont];
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0044a9b0
+// FUNCTION: CARMA2_SW 0x0044ab40
+void C2_HOOK_FASTCALL ChangeHeadupColour(int pHeadup_index, int pNew_colour) {
+
+    if (pHeadup_index < 0) {
+    } else {
+        gHeadups[pHeadup_index].data.text_info.colour = gColours[pNew_colour];
     }
 }
 

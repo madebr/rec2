@@ -13,6 +13,7 @@
 #include "rec2_types.h"
 
 extern int gCar_simplification_level;
+extern br_colour gColours[9];
 
 extern tU32 gWild_start;
 
