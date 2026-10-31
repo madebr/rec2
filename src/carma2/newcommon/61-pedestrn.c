@@ -646,6 +646,7 @@ void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
 // FUNCTION: CARMA2_HW 0x004d6f90
 // FUNCTION: CARMA2_SW 0x004d3590
 void C2_HOOK_FASTCALL AddChangedPoint(br_vector3* pPoint) {
+    C2_HOOK_ASSERT(gChanged_points < (int)REC2_ASIZE(gCount_changed_points));
     BrVector3Copy(&gChanged_points[gCount_changed_points], pPoint);
     gCount_changed_points++;
 }
