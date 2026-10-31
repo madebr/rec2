@@ -152,7 +152,18 @@ void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 p
 
 // PedApplyDismember
 
-// PedUndoDismember
+// FUNCTION: CARMA2_HW 0x004ca980
+// FUNCTION: CARMA2_SW 0x004c70b0
+void C2_HOOK_FASTCALL PedUndoDismember(tPedestrian* pPed, int pBone_index, tS8 pValue) {
+    tPed_form_actor_set* actor_set;
+
+    actor_set = &pPed->character->personality->form->actor_sets[pPed->character->field_0x4];
+    pPed->character->field_0xc &= ~gPow2_array[pBone_index];
+    pPed->character->field_0x10 &= ~gPow2_array[pBone_index];
+    pPed->character->field_0x6 = pValue;
+    SetCharacterBonePositions(pPed->character, 3, 0);
+    StopActorBeingRenderable(actor_set->actors[pBone_index]);
+}
 
 // ReadPedSpecs
 
@@ -940,7 +951,19 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* p
     return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0];
 }
 
-// SetCharacterBonePositions
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00407b30
+// STUB: CARMA2_SW 0x00407b20
+void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, int pArg2, int pArg3) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
