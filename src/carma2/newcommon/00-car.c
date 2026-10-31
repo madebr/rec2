@@ -113,6 +113,55 @@ void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount) {
     SortOutSmoke(&gProgram_state.current_car);
 }
 
+// FUNCTION: CARMA2_HW 0x00413dc0
+// FUNCTION: CARMA2_SW 0x00413df0
+void C2_HOOK_FASTCALL DamageLFBrake(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lf_brake, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413df0
+// FUNCTION: CARMA2_SW 0x00413e20
+void C2_HOOK_FASTCALL DamageLRBrake(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lr_brake, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413e20
+// FUNCTION: CARMA2_SW 0x00413e50
+void C2_HOOK_FASTCALL DamageLRWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lr_wheel, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413e50
+// FUNCTION: CARMA2_SW 0x00413e80
+void C2_HOOK_FASTCALL DamageRFWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_rf_wheel, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413e80
+// FUNCTION: CARMA2_SW 0x00413eb0
+void C2_HOOK_FASTCALL DamageRFBrake(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_rf_brake, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413eb0
+// FUNCTION: CARMA2_SW 0x00413ee0
+void C2_HOOK_FASTCALL DamageRRBrake(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_rr_brake, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413ee0
+// FUNCTION: CARMA2_SW 0x00413f10
+void C2_HOOK_FASTCALL DamageRRWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_rr_wheel, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
 // FUNCTION: CARMA2_HW 0x00413f10
 // FUNCTION: CARMA2_SW 0x00413f40
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData) {
