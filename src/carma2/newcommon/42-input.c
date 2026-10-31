@@ -635,6 +635,18 @@ void C2_HOOK_FASTCALL SetSlotXY(int pSlot_index, int pX_coord, int pY_coord) {
     gLetter_y_coords[pSlot_index] = pY_coord;
 }
 
+// FUNCTION: CARMA2_HW 0x00484530
+// FUNCTION: CARMA2_SW 0x00481670
+void C2_HOOK_FASTCALL GetTypedName(char* pDestn, int pMax_length) {
+
+    if (strlen(gCurrent_typing) > (size_t)pMax_length) {
+        memcpy(pDestn, gCurrent_typing, pMax_length);
+        pDestn[pMax_length] = '\0';
+    } else {
+        strcpy(pDestn, gCurrent_typing);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00484590
 // FUNCTION: CARMA2_SW 0x004816d0
 void C2_HOOK_FASTCALL KillCursor(int pSlot_index) {
