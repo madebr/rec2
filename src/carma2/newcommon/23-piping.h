@@ -282,7 +282,7 @@ extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pV
 
 // PipeSingleDroneCornerPos
 
-// PipeSingleDroneStraightPos
+extern void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance);
 
 // PipeSinglePowerupRespawn
 
