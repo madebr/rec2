@@ -108,6 +108,8 @@ extern int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_l
 
 extern void C2_HOOK_FASTCALL FreeFlic(int pIndex);
 
+extern void C2_HOOK_FASTCALL RunFlic(int pIndex);
+
 extern void C2_HOOK_FASTCALL PreloadBunchOfFlics(int pBunch_index);
 
 extern void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index);
