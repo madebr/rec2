@@ -416,6 +416,8 @@ tS3_error_codes C2_HOOK_FASTCALL DRS3LoadSound(tS3_sound_id pThe_sound) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004558a0
+// FUNCTION: CARMA2_SW 0x00455630
 void C2_HOOK_FASTCALL DRS3Service(void) {
 
     if (gSound_enabled) {

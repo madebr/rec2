@@ -53,6 +53,7 @@ typedef struct tPedestrian_distances tPedestrian_distances;
 typedef struct tRace_pedestrian tRace_pedestrian;
 typedef struct tDrone_spec tDrone_spec;
 typedef struct tDrone_path_node tDrone_path_node;
+typedef struct tDrone_path_node_section tDrone_path_node_section;
 typedef struct tSave_game tSave_game;
 typedef struct tPipe_smudge_data tPipe_smudge_data;
 typedef struct tPath_node tPath_node;
@@ -173,10 +174,10 @@ typedef enum {
     eDrone_state_STOP = 4,
 } tDroneStateFuncState;
 
-typedef struct tMin_max_time {
+typedef struct tShrapnel_time_info {
   tU32 min_time;
   tU32 max_time;
-} tMin_max_time;
+} tShrapnel_time_info;
 
 typedef struct tSave_camera {
     int saved;
@@ -322,9 +323,9 @@ typedef struct {
 } tPipe_funk_enable;
 
 typedef struct {
-    undefined4 field_0x0;
-    tU16 field_0x4;
-    tU16 field_0x6;
+    tDrone_path_node_section* section;
+    tU16 speed;
+    tU16 distance;
 } tPipe_single_drone_straight_pos;
 
 typedef struct {
@@ -503,6 +504,7 @@ typedef enum {
     ePipe_chunk_explosion = 31,
     ePipe_chunk_non_car_creation = 32,
     ePipe_chunk_smash_model_change = 33,
+    ePipe_chunk_smash_decal = 35,
     ePipe_smash_texture_change = 36,
     ePipe_chunk_repulse_ray = 37,
     ePipe_chunk_single_ped_status = 40,
@@ -552,6 +554,7 @@ typedef struct tPipe_chunk {
         tPipe_smash_texture_change smash_texture_change;
         tPipe_single_transform_type transform_type;
         tPipe_single_vector vector;
+        tPipe_chunk_powerup_respawn powerup_respawn;
         char raw_data[0];
     } data;
 } tPipe_chunk;
@@ -3200,16 +3203,26 @@ typedef struct {
 } tSmashable_initial_position_spec;
 
 typedef struct {
-    tShrapnel_type type;
-    float min_speed_towards_you;
-    float max_speed_towards_you;
+    float min_speed;
+    float max_speed;
     float impactee_velocity_factor;
     float random_velocity_max;
     float random_up_velocity_max;
     float random_normal_velocity_max;
     float random_spin_rate_max;
-    float min_time_ms;
-    float max_time_ms;
+} tMovement_spec;
+
+typedef struct tSmoke_fire_chance {
+    int probability_fire;
+    int count_fire_columns;
+    int min_smokiness;
+    int max_smokiness;
+} tSmoke_fire_chance;
+
+typedef struct {
+    tShrapnel_type type;
+    tMovement_spec initial_speed;
+    tShrapnel_time_info time_info;
     tSmashable_initial_position_spec initial_pos;
     union {
         struct {
@@ -3239,10 +3252,7 @@ typedef struct {
             int amount_max;
             int count_actors;
             br_actor** actors;
-            int probability_fire;
-            int count_fire_columns;
-            int min_smokiness;
-            int max_smokiness;
+            tSmoke_fire_chance smoke_fire_change;
         } noncar;
     } type_info;
 } tShrapnel_spec;
@@ -3680,16 +3690,6 @@ typedef struct {
     void (C2_HOOK_FASTCALL * dispose_personality)(undefined4*);
 } tPedForms_vtable;
 
-typedef struct {
-    float min_speed;
-    float max_speed;
-    float impactee_velocity_factor;
-    float random_velocity_max;
-    float random_up_velocity_max;
-    float random_normal_velocity_max;
-    float random_spin_rate_max;
-} tSmashable_initial_speed_spec;
-
 typedef enum {
     eNonCarLocation_Relative = 0,
     eNonCarLocation_Absolute = 1
@@ -3701,7 +3701,7 @@ typedef struct {
     tNon_car_location_type location_type;
     int field_0x8; /* can be -1 in file */
     br_bounds3 bounds;
-    tSmashable_initial_speed_spec speed_info;
+    tMovement_spec speed_info;
 } tNoncar_activation;
 
 typedef enum {
@@ -4955,7 +4955,7 @@ typedef struct {
     int field_0x88;
     int next_car_index;
     int score;
-    undefined field_0x94[4];
+    int last_score_index;
     struct br_matrix34 initial_position;
     struct tCar_spec * car;
     tNet_message* field_0xcc;
@@ -5169,11 +5169,14 @@ typedef struct {
 typedef enum {
     eNet_message_chunk_type_5 = 0x5,
     eNet_message_chunk_poll_car_details = 0x6,
+    eNet_message_chunk_type_start_race = 0xc,
     eNet_message_chunk_type_netsynch = 0xe,
     eNet_message_chunk_type_gameplay = 0x1b,
     eNet_message_chunk_type_oil_spill = 0x1f,
     eNet_message_chunk_type_car_crush = 0x20,
+    eNet_message_chunk_type_reattach_bit = 0x26,
     eNet_message_chunk_type_toggle_doors = 0x2c,
+    eNet_message_chunk_type_view_car = 0x2f,
     eNet_message_chunk_type_mine_explosion = 0x31,
     eNet_message_chunk_type_detach_bit = 0x33,
 } tNet_message_chunk_type;
@@ -5184,9 +5187,28 @@ typedef struct {
 } tNet_message_chunk_header;
 
 typedef struct {
+    tU8 index;
+    tU8 next_car_index;
+    tCompressed_matrix3 matrix;
+} tNet_start_race_car;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tU8 car_count;
+    tU8 racing;
+    tU8 next_race;
+    tNet_start_race_car car_list[12];
+} tNet_message_chunk_start_race;
+
+typedef struct {
     tNet_message_chunk_header header;
     int id;
 } tNet_message_chunk_toggle_doors;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tPlayer_ID player;
+} tNet_message_chunk_view_car;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -5210,6 +5232,13 @@ typedef struct {
     tCompressed_vector3 bounds_min;
     tCompressed_vector3 bounds_max;
 } tNet_message_chunk_detach_bit;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tPlayer_ID player;
+    tU8 uid;
+    tU32 time;
+} tNet_message_chunk_reattach_bit;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -5323,11 +5352,14 @@ typedef struct {
 
 typedef union {
     tNet_message_chunk_raw raw;
+    tNet_message_chunk_start_race start_race; /* type = 0xc */
     tNet_message_chunk_scores scores; /* type = 0x18 */
     tNet_message_chunk_gameplay gameplay; /* type = 0x1b */
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
+    tNet_message_chunk_reattach_bit reattach_bit; /* type = 0x26 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
+    tNet_message_chunk_view_car view_car; /* type = 0x2f */
     tNet_message_chunk_mine_explode mine_explode; /* type = 0x31 */
     tNet_message_chunk_detach_bit detach_bit; /* type = 0x33 */
 } tNet_message_chunk;

@@ -42,6 +42,7 @@ tNet_game_options* gNet_options;
 tCar_detail_info gCar_details[60];
 
 // GLOBAL: CARMA2_HW 0x0074b780
+// GLOBAL: CARMA2_SW 0x00741e40
 int gINT_0074b780;
 
 // GLOBAL: CARMA2_HW 0x0074b77c

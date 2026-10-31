@@ -10,7 +10,7 @@
 
 #include "08-loading1.h"
 #include "41-utility.h"
-#include "50-fog.h"
+#include "51-smash.h"
 #include "52-errors.h"
 #include "63-loading3.h"
 #include "69-sound.h"

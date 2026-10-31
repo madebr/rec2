@@ -17,6 +17,10 @@ extern int gINT_00681fb0;
 extern int gFrame;
 
 extern int gCurrent_selected_drone;
+extern int gCount_drones;
+extern tDrone_form gDrone_forms[64];
+extern int gCount_drone_forms;
+extern int gCount_drone_path_nodes;
 
 extern tDrone_spec* gDrone_specs;
 extern tDrone_path_node* gDrone_path_nodes;
@@ -33,9 +37,9 @@ extern FILE* C2_HOOK_FASTCALL OpenDroneFile(char* pDrone_name);
 
 // LoadDroneTypeInfo
 
-// ReallyRemoveDroneFromPHIL
+extern void C2_HOOK_FASTCALL ReallyRemoveDroneFromPHIL(tDrone_spec* pDrone);
 
-// RemoveDroneFromPHIL
+extern void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone);
 
 // InitDroneCollisionObject
 
@@ -153,9 +157,9 @@ extern void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 // InitDrones
 
-// DisposeDronesRaceStuff
+extern void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void);
 
-// LoadPerRaceDroneStuff
+extern void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void);
 
 // GetDroneCrushData
 

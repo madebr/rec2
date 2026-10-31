@@ -2110,6 +2110,7 @@ address,type,x-text
 0x65a9e4,string,".DAT"
 0x65a9ec,string,".act"
 0x65a9f4,string,".dat"
+0x65a9fc,string,"%cx"
 0x65aa00,string,"        "
 0x65aa0c,string,"Smash material %s has a name that is less than 4 characters long"
 0x65aa50,string,"COMMON"

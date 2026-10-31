@@ -36,7 +36,7 @@ void C2_HOOK_FASTCALL InitDecals(void);
 
 void C2_HOOK_FASTCALL ReadSmashableInitialPosition(FILE* pFile, tSmashable_initial_position_spec*  pInitial_pos);
 
-void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed);
+void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tMovement_spec* pInitial_speed);
 
 void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes);
 

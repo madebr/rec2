@@ -112,6 +112,10 @@ int gScreen_wobble_x;
 // GLOBAL: CARMA2_SW 0x006fbc44
 int gScreen_wobble_y;
 
+// GLOBAL: CARMA2_HW 0x00705190
+// GLOBAL: CARMA2_SW 0x006fbc50
+int gFrontend_wrecks_car_count;
+
 // GLOBAL: CARMA2_HW 0x006a2488
 // GLOBAL: CARMA2_SW 0x0069c4e0
 tSaved_table gSaved_shade_tables[100];
