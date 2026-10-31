@@ -10,6 +10,7 @@
 
 #include "00-car.h"
 #include "16-graphics1.h"
+#include "27-powerup.h"
 #include "32-spark.h"
 #include "51-smash.h"
 #include "69-sound.h"
@@ -704,7 +705,15 @@ void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, tDrone_pat
         SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, distance), pDistance);
 }
 
-// PipeSinglePowerupRespawn
+// FUNCTION: CARMA2_HW 0x004c8f90
+// FUNCTION: CARMA2_SW 0x004c56c0
+void C2_HOOK_FASTCALL PipeSinglePowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_powerup_respawn, index, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_powerup_respawn, index, 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_powerup_respawn, (uintptr_t)pActor, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_powerup_respawn, index), pPowerup_id);
+}
 
 // PipeSingleShitMine
 
@@ -950,7 +959,12 @@ void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk) {
 
 // ApplyNapalmBolt
 
-// ApplyPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004c9d40
+// FUNCTION: CARMA2_SW 0x004c6470
+void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
+
+    ARDoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
+}
 
 // ApplyShitMine
 
@@ -1083,7 +1097,13 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoNapalmBolt
 
-// UndoPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004ca3b0
+// FUNCTION: CARMA2_SW 0x004c6ae0
+void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    (void)pPrev_chunk;
+
+    ARUndoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
+}
 
 // UndoShitMine
 
