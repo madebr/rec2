@@ -33,6 +33,10 @@
 
 #include <math.h>
 
+// GLOBAL: CARMA2_HW 0x0079eda0
+// GLOBAL: CARMA2_SW 0x00795340
+tNon_car_spec* gActive_non_car_list[99];
+
 // GLOBAL: CARMA2_HW 0x00763500
 // GLOBAL: CARMA2_SW 0x00759a60
 int gCunning_stunt_bonus[3];
@@ -771,4 +775,3 @@ void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex) {
 void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_NONE;
 }
-
