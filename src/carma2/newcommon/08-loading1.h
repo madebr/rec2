@@ -85,6 +85,8 @@ extern void C2_HOOK_CDECL SubsStringJob(char *pFormat, ...);
 
 extern void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
 
+extern void C2_HOOK_FASTCALL SkipNLines(FILE* pF);
+
 extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
 extern char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS);
