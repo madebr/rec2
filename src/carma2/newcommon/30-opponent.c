@@ -63,6 +63,10 @@ int gNum_of_opponents_pursuing;
 // GLOBAL: CARMA2_SW 0x0068b7b4
 tU8* gBit_per_node;
 
+// GLOBAL: CARMA2_HW 0x00691764
+// GLOBAL: CARMA2_SW 0x0068b7bc
+float gIn_view_distance;
+
 // GLOBAL: CARMA2_HW 0x0069176c
 // GLOBAL: CARMA2_SW 0x0068b7c4
 int gRoute_search_calls;
@@ -139,6 +143,17 @@ int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo) {
 // CalcRaceRoute
 
 // TopUpRandomRoute
+
+// FUNCTION: CARMA2_HW 0x004a9550
+// FUNCTION: CARMA2_SW 0x004a56c0
+void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOpponent_spec* pOpponent_spec) {
+
+    BrVector3Sub(&pOpponent_spec->player_to_oppo_v, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &gProgram_state.current_car.car_master_actor->t.t.translate.t);
+    pOpponent_spec->player_to_oppo_d = BrVector3Length(&pOpponent_spec->player_to_oppo_v);
+    if (pOpponent_spec->player_to_oppo_d < gIn_view_distance) {
+        pOpponent_spec->last_in_view = gTime_stamp_for_this_munging;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004ac180
 // FUNCTION: CARMA2_SW 0x004a82f0
