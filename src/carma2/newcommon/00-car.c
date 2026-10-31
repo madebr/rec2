@@ -13,6 +13,8 @@
 #include "13-crush1.h"
 #include "15-displays.h"
 #include "17-world2.h"
+#include "18-graphics2.h"
+
 #include "22-replay.h"
 #include "23-piping.h"
 #include "29-raycast.h"
@@ -32,6 +34,10 @@
 #include "rec2_macros.h"
 
 #include <math.h>
+
+// GLOBAL: CARMA2_HW 0x0067939c
+// GLOBAL: CARMA2_SW 0x00673b0c
+int gTesting_car_for_sensible_place;
 
 // GLOBAL: CARMA2_HW 0x00763500
 // GLOBAL: CARMA2_SW 0x00759a60
@@ -729,9 +735,30 @@ void C2_HOOK_FASTCALL AdjustDownForce(void) {
 
 // TestForCarInSensiblePlace
 
-// PullActorFromWorld
+// FUNCTION: CARMA2_HW 0x0041ff00
+// FUNCTION: CARMA2_SW 0x0041ff80
+tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* pActor) {
+    if (!gPHIL_doing_physics && !gTesting_car_for_sensible_place) {
+        return NULL;
+    } else {
+        return DoPullActorFromWorld(pActor);
+    }
+}
 
-// DoPullActorFromWorld
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0041ff20
+// STUB: CARMA2_SW 0x0041ffa0
+tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* pActor) {
+    NOT_IMPLEMENTED();
+    return NULL;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // PipeNonCarObject
 

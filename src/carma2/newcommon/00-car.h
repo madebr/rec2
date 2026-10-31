@@ -11,6 +11,8 @@
 
 #include "rec2_types.h"
 
+extern int gTesting_car_for_sensible_place;
+
 extern int gCunning_stunt_bonus[3];
 extern float gArmour_starting_value[100];
 extern int gExplosion_sound_id;
@@ -201,9 +203,9 @@ extern void C2_HOOK_FASTCALL AdjustDownForce(void);
 
 // TestForCarInSensiblePlace
 
-// PullActorFromWorld
+extern tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* pActor);
 
-// DoPullActorFromWorld
+extern tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* pActor);
 
 // PipeNonCarObject
 
