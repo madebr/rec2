@@ -289,6 +289,12 @@ typedef struct {
 } tPipe_ped_physics_data;
 
 typedef struct {
+    tS16 bone_index;
+    tS8 old_value;
+    tS8 new_value;
+} tPipe_single_ped_dismember;
+
+typedef struct {
     tS16 field_0x48;
     tS16 field_0x74;
     tS16 field_0x70;
@@ -511,6 +517,7 @@ typedef enum {
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_chunk_ped_physics = 43,
+    ePipe_chunk_single_ped_dismember = 44,
     ePipe_chunk_single_ped_pos = 46,
     ePipe_chunk_single_ped_model_change = 47,
     ePipe_chunk_phil_object = 48,
@@ -546,6 +553,7 @@ typedef struct tPipe_chunk {
     union {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
+        tPipe_single_ped_dismember ped_dismember;
         tPipe_phil_object phil_object;
         tPipe_chunk_shrapnel shrapnel;
         tPipe_chunk_identity identity;

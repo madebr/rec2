@@ -13,6 +13,7 @@
 #include "27-powerup.h"
 #include "32-spark.h"
 #include "51-smash.h"
+#include "61-pedestrn.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "platform.h"
@@ -607,7 +608,20 @@ void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat) {
         SIZE_OFFSET_PIPING(tPipe_ped_physics_data, matrix), pMat);
 }
 
-// PipeSinglePedDismember
+// FUNCTION: CARMA2_HW 0x004c8bf0
+// FUNCTION: CARMA2_SW 0x004c5320
+void C2_HOOK_FASTCALL PipeSinglePedDismember(tPedestrian* pPed, tU8 pBone_index, tS8 pOld_value, tS8 pNew_value) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_ped_dismember, bone_index, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_ped_dismember, old_value, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_ped_dismember, old_value, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_ped_dismember, new_value, 0x3);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_ped_dismember, new_value, 0x1);
+
+    ARDoSingleVariedSession(ePipe_chunk_single_ped_dismember, (uintptr_t)pPed, 3,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_dismember, bone_index), pBone_index,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_dismember, old_value), pOld_value,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_dismember, new_value), pNew_value);
+}
 
 // PipeSinglePedFPChange
 
@@ -1071,7 +1085,20 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoPedMove
 
-// UndoPedDismember
+// FUNCTION: CARMA2_HW 0x004ca210
+// FUNCTION: CARMA2_SW 0x004c6940
+void C2_HOOK_FASTCALL UndoPedDismember(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    int old_value;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_ped_dismember, old_value, 0x2);
+
+    (void)pPrev_chunk;
+    old_value = (*pChunk)->data.ped_dismember.old_value;
+    PedUndoDismember((tPedestrian*)(*pChunk)->subject_index,
+        (*pChunk)->data.ped_dismember.bone_index,
+        old_value);
+}
 
 // UndoPedFPChange
 
