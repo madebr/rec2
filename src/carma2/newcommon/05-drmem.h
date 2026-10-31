@@ -40,4 +40,6 @@ extern void C2_HOOK_FASTCALL CreateStainlessClasses(void);
 
 extern void C2_HOOK_FASTCALL CheckMemory(void);
 
+extern void C2_HOOK_FASTCALL FUN_DisposeReplayBuffer(void* pBuffer);
+
 #endif // GUARD_05_DRMEM_H

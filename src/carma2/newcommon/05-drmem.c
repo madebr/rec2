@@ -438,3 +438,7 @@ void C2_HOOK_FASTCALL CheckMemory(void) {
 
 }
 
+// FUNCTION: CARMA2_HW 0x0051b9d0
+void C2_HOOK_FASTCALL FUN_DisposeReplayBuffer(void* pBuffer) {
+
+}
