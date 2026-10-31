@@ -213,7 +213,7 @@ extern void C2_HOOK_FASTCALL AdjustDownForce(void);
 
 extern void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix);
 
-// GetPrecalculatedFacesUnderCar
+extern int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** pFace_refs);
 
 extern void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex);
 
