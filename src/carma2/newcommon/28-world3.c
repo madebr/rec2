@@ -10,7 +10,7 @@
 
 #include "08-loading1.h"
 #include "41-utility.h"
-#include "50-fog.h"
+#include "51-smash.h"
 #include "52-errors.h"
 #include "63-loading3.h"
 #include "69-sound.h"
@@ -100,7 +100,11 @@ void C2_HOOK_FASTCALL InitTreeSurgery(void) {
 
 // RemoveBoundsStructures
 
-// FreeTrack
+// STUB: CARMA2_HW 0x00506c20
+// STUB: CARMA2_SW 0x00502070
+void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
+    NOT_IMPLEMENTED();
+}
 
 // ProcessTrack
 

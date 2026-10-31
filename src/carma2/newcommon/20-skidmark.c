@@ -24,6 +24,18 @@ char* gBoring_material_names[2] = { "OILSMEAR.MAT", "ROBSMEAR.MAT" };
 // GLOBAL: CARMA2_SW 0x0065a750
 char* gMaterial_names[2] = { "OILSMEAR.MAT", "GIBSMEAR.MAT" };
 
+// GLOBAL: CARMA2_HW 0x0065fec0
+// GLOBAL: CARMA2_SW 0x0065a800
+const char* gShrapnel_type_names[4] = { "abstract", "shards", "ghostparts", "noncars" };
+
+// GLOBAL: CARMA2_HW 0x0065fed0
+// GLOBAL: CARMA2_SW 0x0065a810
+const char* gInitial_position_type_names[3] = { "sphereclumped", "boxclumped", "actorbased" };
+
+// GLOBAL: CARMA2_HW 0x0065fee0
+// GLOBAL: CARMA2_SW 0x0065a820
+const char* gInitial_position_sphere_where[2] = { "impact", "model" };
+
 // GLOBAL: CARMA2_HW 0x0065fee8
 // GLOBAL: CARMA2_SW 0x0065a828
 const char* gExplosion_rotate_names[2] = {

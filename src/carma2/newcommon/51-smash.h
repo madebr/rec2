@@ -12,7 +12,15 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gAllow_material_adapt;
+extern br_material* gMaterials_to_adapt[200];
+extern int gMaterials_to_adapt_count;
+extern int gShrapnel_child_count;
+
 extern tSmashable_item_spec* gTrack_smashable_environment_specs;
+extern br_actor* gSmashable_noncar_shrapnel_actors[100];
+extern int gCount_smashable_noncar_shrapnel_actors;
+extern const char* gSmashable_track_environment_path;
 extern int gCount_track_smashable_environment_specs;
 extern tStored_smash* gNet_host_smashes;
 
@@ -20,6 +28,20 @@ extern tExplosion gExplosions[50];
 extern br_vector3 gZero_vector__smash;
 extern tDecal gDecals[50];
 extern int gCount_queued_smashes;
+
+extern void C2_HOOK_FASTCALL InitFogificateMaterials(void);
+
+extern void C2_HOOK_FASTCALL FogificateMaterials(tRendererShadingType pShading_type);
+
+extern void C2_HOOK_FASTCALL AutoFogificateMaterials(tRendererShadingType pShading_type);
+
+extern void C2_HOOK_FASTCALL AddFogificateMaterial(br_material* pMaterial);
+
+extern void C2_HOOK_FASTCALL EnableAutoFogification(void);
+
+extern void C2_HOOK_FASTCALL DisableAutoFogification(void);
+
+extern void C2_HOOK_FASTCALL RemoveMaterialFromFogification(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
@@ -39,13 +61,13 @@ extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
 // CalcRandomPointBetween
 
-extern void C2_HOOK_FASTCALL ApplyInitialMovement(tSmashable_initial_speed_spec* pSpeed_info, br_vector3* pImpactee_velocity, br_vector3* pVelocity, br_vector3* pOmega, float pScale, br_vector3* pNormal, br_vector3* pSource_position, br_vector3* pPosition);
+extern void C2_HOOK_FASTCALL ApplyInitialMovement(tMovement_spec* pSpeed_info, br_vector3* pImpactee_velocity, br_vector3* pVelocity, br_vector3* pOmega, float pScale, br_vector3* pNormal, br_vector3* pSource_position, br_vector3* pPosition);
 
 // ApplyTimeSpec
 
 extern tSmash_vertex* C2_HOOK_FASTCALL FindShrapnelFragment(br_model* pModel, tU32 pId, int pPriority);
 
-extern void C2_HOOK_FASTCALL SetShrapnelFragment(tSmash_vertex* pFragment, tSmashable_initial_speed_spec* pSpeed_info, br_vector3* pImpactee_velocity, float pScale, tMin_max_time* pTime_spec, tU32 pTime, br_vector3* pNormal, br_vector3* pSource_position, br_vector3* pPosition);
+extern void C2_HOOK_FASTCALL SetShrapnelFragment(tSmash_vertex* pFragment, tMovement_spec* pSpeed_info, br_vector3* pImpactee_velocity, float pScale, tShrapnel_time_info* pTime_spec, tU32 pTime, br_vector3* pNormal, br_vector3* pSource_position, br_vector3* pPosition);
 
 // ShatterObject
 
@@ -113,29 +135,23 @@ extern void C2_HOOK_FASTCALL InitSmashQueue(void);
 
 // ReadSmashSounds
 
-// ReadShrapnelMovementSpec
+extern void C2_HOOK_FASTCALL ReadShrapnelMovementSpec(FILE* pFile, tMovement_spec* pInitial_speed);
 
-// ReadShrapnelInitialPosition
+extern void C2_HOOK_FASTCALL ReadShrapnelInitialPosition(FILE* pF, tSmashable_initial_position_spec* pInitial_pos);
 
-// ReadShrapnelTimeInfo
+extern void C2_HOOK_FASTCALL ReadShrapnelTimeInfo(FILE* pF, tShrapnel_time_info* pMin_max_time);
 
-// NoteChildren
+extern intptr_t C2_HOOK_CDECL NoteChildren(br_actor* pActor, void* pData);
 
-// ReadSmokeFireChance
+extern void C2_HOOK_FASTCALL ReadSmokeFireChance(FILE* pF, tSmoke_fire_chance* pSmoke_fire_chance);
 
-// LoadActorFromRace
-
-// ReadShrapnelSpec
-
-extern void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed);
-
-extern void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, tMin_max_time* pTimes);
+extern br_actor* C2_HOOK_FASTCALL LoadActorFromRace(const char *pName);
 
 // ReadSpillData
 
 extern void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation);
 
-extern intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* pData);
+extern void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs, int* pShrapnel_count);
 
 extern void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);
 

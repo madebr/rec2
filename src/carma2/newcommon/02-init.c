@@ -37,7 +37,6 @@
 #include "64-movie.h"
 #include "69-sound.h"
 #include "70-packfile.h"
-#include "50-fog.h"
 #include "51-smash.h"
 #include "52-errors.h"
 #include "56-aiworld.h"
