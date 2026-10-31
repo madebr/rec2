@@ -192,7 +192,7 @@ extern int C2_HOOK_FASTCALL GetSmokeOn(void);
 
 // StopCarSmokingInstantly
 
-// StopObjectSmokingInstantly
+extern void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject);
 
 // ConditionalSmokeColumn
 
