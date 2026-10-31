@@ -15,9 +15,9 @@
 #include "52-errors.h"
 #include "56-aiworld.h"
 #include "60-phil.h"
-#include "globvars.h"
-
 #include "c2_string.h"
+#include "globvars.h"
+#include "platform.h"
 
 #include <math.h>
 
@@ -109,7 +109,26 @@ void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone) {
 
 // PreprocessDronePaths
 
-// LinkyCallback
+// FUNCTION: CARMA2_HW 0x00450600
+// FUNCTION: CARMA2_SW 0x00450390
+int C2_HOOK_CDECL LinkyCallback(br_actor* pActor, void* pData) {
+    tLinkyCallback_context* context;
+    int i;
+
+    context = pData;
+    if (pActor->type != BR_ACTOR_MODEL) {
+        return 0;
+    }
+    pActor->render_style = BR_RSTYLE_DEFAULT;
+    for (i = context->model_start; i < context->model_start + context->model_end; i++) {
+        if (DRStricmp(gDroneStorage.models[i]->identifier, pActor->model->identifier) == 0) {
+            pActor->model = gDroneStorage.models[i];
+            return 0;
+        }
+    }
+    PDFatalError("No drone model");
+    return 0;
+}
 
 // LinkDroneActorsToModelsAndSetRenderStyle
 
