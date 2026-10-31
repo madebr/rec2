@@ -15,6 +15,7 @@
 #include "22-replay.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
+#include "42-input.h"
 #include "57-drone.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -260,7 +261,51 @@ void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
     MungeCarMaterials(&gProgram_state.current_car, gAction_replay_camera_mode == kActionReplayCameraMode_Internal);
 }
 
-// ChangeCameraType
+// FUNCTION: CARMA2_HW 0x0040e7f0
+// FUNCTION: CARMA2_SW 0x0040e7d0
+void C2_HOOK_FASTCALL ChangeCameraType(void) {
+    tActionReplayCameraMode mode;
+
+    if (KeyIsDown(8)) {
+        mode = gAction_replay_camera_mode;
+        gAction_replay_camera_mode = mode - 1;
+        if (gAction_replay_camera_mode >= 9 || gAction_replay_camera_mode < 0) {
+            gAction_replay_camera_mode = 8;
+        }
+    } else {
+        mode = gAction_replay_camera_mode;
+        gAction_replay_camera_mode = mode + 1;
+        if (gAction_replay_camera_mode >= 9) {
+            gAction_replay_camera_mode = 0;
+        }
+    }
+    mode = gAction_replay_camera_mode;
+    if ((gAction_replay_mode != 0 && gCamera_type_allowed_replay[mode] == 0)
+            || (gAction_replay_mode == 0 && gCamera_type_allowed_gameplay[mode] == 0)
+            || mode >= 9
+            || (mode == 6 && !OKToViewDrones())
+            || (mode == 5 && gPed_count == 0)) {
+        ChangeCameraType();
+    }
+    if (gAction_replay_mode != 0) {
+        gAR_camera_type = gAction_replay_camera_mode;
+    } else {
+        gCamera_type = gAction_replay_camera_mode;
+    }
+    switch (gAction_replay_camera_mode) {
+    case kActionReplayCameraMode_Standard:
+    case kActionReplayCameraMode_Rigid:
+    case kActionReplayCameraMode_Reversing:
+        InitialiseExternalCamera();
+        break;
+    case kActionReplayCameraMode_Manual:
+        gAction_replay_manual_camera_target_type = 0;
+        break;
+    default:
+        break;
+    }
+    MungeCarMaterials(&gProgram_state.current_car, gAction_replay_camera_mode == kActionReplayCameraMode_Internal);
+}
 
 // FUNCTION: CARMA2_HW 0x0040e900
 // FUNCTION: CARMA2_SW 0x0040e8e0

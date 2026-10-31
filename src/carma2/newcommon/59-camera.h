@@ -48,7 +48,7 @@ extern void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_ca
 
 extern void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos);
 
-// ChangeCameraType
+extern void C2_HOOK_FASTCALL ChangeCameraType(void);
 
 extern void C2_HOOK_FASTCALL ToggleCockpit(void);
 
