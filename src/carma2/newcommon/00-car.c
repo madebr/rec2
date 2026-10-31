@@ -69,10 +69,6 @@ br_vector3 gZero_v__car;  // FIXME: make const?
 // GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
 
-// GLOBAL: CARMA2_HW 0x006793dc
-// GLOBAL: CARMA2_SW 0x00673b4c
-int gNum_active_non_cars;
-
 // GLOBAL: CARMA2_HW 0x006793d0
 // GLOBAL: CARMA2_SW 0x00673b40
 int gEliminate_faces;
