@@ -124,6 +124,17 @@ br_pixelmap* gBlend_palettes[4];
 // GLOBAL: CARMA2_SW 0x00685e64
 br_pixelmap* gCurrent_splash;
 
+// FUNCTION: CARMA2_HW 0x0047d470
+void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour) {
+
+    if (gBack_screen->type != BR_PMT_INDEX_8) {
+        pColour = PaletteEntry16Bit(gRender_palette, pColour);
+    }
+    BrPixelmapRectangleFill(pMap, pX, pY + 1, pWidth, pHeight - 2, pColour);
+    BrPixelmapLine(pMap, pX, pY, pX + pWidth - 1, pY, pColour + 2);
+    BrPixelmapLine(pMap, pX, pY + pHeight - 1, pX + pWidth - 1, pY + pHeight - 1, pColour - 2);
+}
+
 // FUNCTION: CARMA2_HW 0x004b4fd0
 // FUNCTION: CARMA2_SW 0x004b1140
 void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount) {
