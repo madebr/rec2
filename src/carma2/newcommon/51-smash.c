@@ -798,7 +798,19 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 
 // DoFragMovement
 
-// MungeGlassFragments2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004f0150
+// STUB: CARMA2_SW 0x004ebdb0
+void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // MungeAnimationRepairs
 
@@ -806,10 +818,25 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 
 // KillAllGlassFragments
 
-// STUB: CARMA2_HW 0x004f02b0
-// STUB: CARMA2_SW 0x004ebf10
+// FUNCTION: CARMA2_HW 0x004f02b0
+// FUNCTION: CARMA2_SW 0x004ebf10
 void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
-    NOT_IMPLEMENTED();
+    int i;
+    tDecal* decal;
+    tExplosion* explosion;
+
+    MungeGlassFragments2(1);
+    for (i = REC2_ASIZE(gDecals), decal = gDecals; i != 0; i--, decal++) {
+        if (decal->time != 0) {
+            BrActorRemove(decal->actor);
+        }
+        decal->time = 0;
+    }
+    for (i = REC2_ASIZE(gExplosions), explosion = gExplosions; i != 0; i--, explosion++) {
+        if (explosion->actor->parent != NULL) {
+            BrActorRemove(explosion->actor);
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004f0310
