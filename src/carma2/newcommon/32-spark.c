@@ -836,7 +836,18 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
     ForEveryCarMaterial(pCar_spec, UnBlendifyMaterialCB, 1);
 }
 
-// IsCarSmoking
+// FUNCTION: CARMA2_HW 0x004fed90
+// FUNCTION: CARMA2_SW 0x004fa670
+int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if ((gColumn_flags & (1 << i)) && gSmoke_column[i].core.car == pCar) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // ClearSplashReplay
 
