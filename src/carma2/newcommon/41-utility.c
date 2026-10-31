@@ -1177,6 +1177,7 @@ int C2_HOOK_FASTCALL TestForNan(const float* f) {
 }
 
 // FUNCTION: CARMA2_HW 0x00516160
+// FUNCTION: CARMA2_SW 0x005115d0
 int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV) {
 
     if (pV != NULL) {
@@ -1817,7 +1818,7 @@ void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) 
 
 // FUNCTION: CARMA2_HW 0x005191b0
 // FUNCTION: CARMA2_SW 0x00512c90
-void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {
+void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h) {
 
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
 }

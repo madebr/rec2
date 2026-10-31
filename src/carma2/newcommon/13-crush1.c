@@ -8,6 +8,7 @@
 
 #include "13-crush1.h"
 
+#include "01-network.h"
 #include "08-loading1.h"
 #include "09-funks.h"
 #include "23-piping.h"
@@ -15,6 +16,8 @@
 #include "41-utility.h"
 #include "49-physics.h"
 #include "51-smash.h"
+#include "60-phil.h"
+#include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -901,7 +904,22 @@ void C2_HOOK_FASTCALL SendAllSemiDetachedBits(tNet_game_player_info* pPlayer) {
 
 // MungeDetachLists
 
-// SendReAttachBit
+// FUNCTION: CARMA2_HW 0x0043b250
+// FUNCTION: CARMA2_SW 0x0043b2a0
+void C2_HOOK_FASTCALL SendReAttachBit(tCar_spec* pCar, tPhysics_object* pObject) {
+    tNet_message* message;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_reattach_bit, player, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_reattach_bit, uid, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_reattach_bit, time, 0xc);
+    C2_HOOK_BUG_ON(sizeof(tNet_message_chunk_reattach_bit) != 0x10);
+
+    message = NetBuildGuaranteedMessage(eNet_message_chunk_type_reattach_bit, 0);
+    message->contents.reattach_bit.player = NetPlayerFromCar(pCar)->ID;
+    message->contents.reattach_bit.uid = pObject->uid;
+    message->contents.reattach_bit.time = gPHIL_last_physics_tick + 120;
+    NetGuaranteedSendMessageToEverybody(gCurrent_net_game, message, NULL);
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -1206,7 +1224,24 @@ intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData) {
 
 // DoCompletelyUnBentThings
 
-// TotallyRepairCarCollisionShapes
+// FUNCTION: CARMA2_HW 0x00439960
+// FUNCTION: CARMA2_SW 0x004399a0
+void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec* pCar_spec) {
+    int i;
+
+    for (i = 0; i < pCar_spec->car_crush_spec->count_shapes; i++) {
+        tCar_crush_shape_info* shape_info = &pCar_spec->car_crush_spec->field_0x4[i];
+        int j;
+
+        for (j = 0; j < shape_info->count_points; j++) {
+            BrVector3Copy(&shape_info->field_0x18[j].field_0x18, &shape_info->field_0x18[j].field_0x0);
+            if (DRVector3TestForNan(&shape_info->field_0x18[j].field_0x18)) {
+                PDEnterDebugger("NaN");
+            }
+        }
+    }
+    pCar_spec->car_crush_spec->expand_bounding_box = 3;
+}
 
 // TotallyRepairModel
 
@@ -1225,16 +1260,27 @@ int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void*
 
 // SendReAttachAllBits
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // STUB: CARMA2_HW 0x00439510
 // STUB: CARMA2_SW 0x00439550
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x00439bf0
-// STUB: CARMA2_SW 0x00439c30
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00439bf0
+// FUNCTION: CARMA2_SW 0x00439c30
 void C2_HOOK_FASTCALL TotallyRepairCar(void) {
-    NOT_IMPLEMENTED();
+
+    if (!gArrow_mode) {
+        TotallyRepairACar(&gProgram_state.current_car);
+    }
 }
 
 // AddTotalDeflectionOfModel
