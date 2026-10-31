@@ -658,7 +658,7 @@ void C2_HOOK_FASTCALL PipeSinglePowerupLose(tPowerup* pPowerup, tCar_spec* pCar_
     C2_HOOK_BUG_ON(sizeof(pCar_spec) != 0x4);
 
     ARDoSingleVariedSession(ePipe_chunk_powerup_lose, (uintptr_t)pPowerup, 1,
-        sizeof(pCar_spec), 0, pCar_spec);
+        SIZE_OFFSET_PIPING(tPipe_chunk_powerup_lose, car), pCar_spec);
 }
 
 // FUNCTION: CARMA2_HW 0x004c8de0
