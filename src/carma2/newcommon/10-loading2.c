@@ -132,6 +132,60 @@ const char* gNet_avail_names[4] = {
     "all",
 };
 
+// GLOBAL: CARMA2_HW 0x00657320
+// GLOBAL: CARMA2_SW 0x00651cd0
+tHeadup_info gHeadup_image_info[45] = {
+    { "", eNot_ever_ever_ever },
+    { "", eNot_ever_ever_ever },
+    { "", eNot_ever_ever_ever },
+    { "", eNot_ever_ever_ever },
+    { "GO.PIX", eNet_or_otherwise },
+    { "NUMBER1.PIX", eNet_or_otherwise },
+    { "NUMBER2.PIX", eNet_or_otherwise },
+    { "NUMBER3.PIX", eNet_or_otherwise },
+    { "NUMBER4.PIX", eNet_or_otherwise },
+    { "NUMBER5.PIX", eNet_or_otherwise },
+    { "SPLATTER.PIX", eNet_or_otherwise },
+    { "PILEDRIV.PIX", eNet_or_otherwise },
+    { "EXTRASTY.PIX", eNet_or_otherwise },
+    { "ARTISTIC.PIX", eNet_or_otherwise },
+    { "PLAYWITH.PIX", eNet_or_otherwise },
+    { "PUNT.PIX", eNet_or_otherwise },
+    { "DROP.PIX", eNet_or_otherwise },
+    { "POLITE.PIX", eNet_or_otherwise },
+    { "2XCOMBO.PIX", eNet_or_otherwise },
+    { "3XCOMBO.PIX", eNet_or_otherwise },
+    { "4XCOMBO.PIX", eNet_or_otherwise },
+    { "5XCOMBO.PIX", eNet_or_otherwise },
+    { "6XCOMBO.PIX", eNet_or_otherwise },
+    { "7XCOMBO.PIX", eNet_or_otherwise },
+    { "8XCOMBO.PIX", eNet_or_otherwise },
+    { "9XCOMBO.PIX", eNet_or_otherwise },
+    { "10XCOMBO.PIX", eNet_or_otherwise },
+    { "BILLIARD.PIX", eNet_or_otherwise },
+    { "POLITE.PIX", eNet_or_otherwise },
+    { "HEADON.PIX", eNet_or_otherwise },
+    { "DESTROY.PIX", eNet_or_otherwise },
+    { "CHECKPNT.PIX", eNet_or_otherwise },
+    { "TIMEUP.PIX", eNot_net },
+    { "RACEOVER.PIX", eNet_or_otherwise },
+    { "UWASTED.PIX", eNet_or_otherwise },
+    { "MAD.PIX", eNet_only },
+    { "GAMEOVER.PIX", eNet_only },
+    { "UBROKE.PIX", eNet_only },
+    { "ULOST.PIX", eNet_only },
+    { "UWON.PIX", eNet_only },
+    { "BBQBON.PIX", eNet_or_otherwise },
+    { "TAILBON.PIX", eNet_or_otherwise },
+    { "DETTAILBON.PIX", eNet_or_otherwise },
+    { "MISSIONFAIL.PIX", eNet_or_otherwise },
+    { "MISSIONDONE.PIX", eNet_or_otherwise },
+};
+
+// GLOBAL: CARMA2_HW 0x0079eb60
+// GLOBAL: CARMA2_SW 0x007950c0
+br_pixelmap* gHeadup_images[45];
+
 void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes) {
     tPath_name the_path;
     tPath_name the_path2;
@@ -807,10 +861,22 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 #pragma auto_inline(on)
 #endif
 
-// STUB: CARMA2_HW 0x0048c150
-// STUB: CARMA2_SW 0x00489390
+// FUNCTION: CARMA2_HW 0x0048c150
+// FUNCTION: CARMA2_SW 0x00489390
 void C2_HOOK_FASTCALL LoadHeadupImages(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gHeadup_image_info); i++) {
+        PossibleService();
+        if (gHeadup_image_info[i].avail == eNet_or_otherwise
+                || (gHeadup_image_info[i].avail == eNot_net && gNet_mode == eNet_mode_none)
+                || (gHeadup_image_info[i].avail == eNet_only && gNet_mode != eNet_mode_none)) {
+            gHeadup_images[i] = LoadPixelmap(gHeadup_image_info[i].name);
+            BRPM_convert(gHeadup_images[i], gBack_screen->type);
+        } else {
+            gHeadup_images[i] = NULL;
+        }
+    }
 }
 
 // OpenRaceFile
@@ -1289,4 +1355,3 @@ void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void) {
 void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void) {
     gPedTextTxtPath = "ALTEXT.TXT";
 }
-
