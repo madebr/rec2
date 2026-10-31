@@ -97,7 +97,7 @@ int gPed_dismember_spurting_member_count;
 tSmashable_initial_position_spec gPed_spurt_initial_position;
 
 // GLOBAL: CARMA2_HW 0x006944a0
-tSmashable_initial_speed_spec gPed_spurt_initial_speed;
+tMovement_spec gPed_spurt_initial_speed;
 
 // GLOBAL: CARMA2_HW 0x006942f8
 int gPed_spurt_min_max_time[2];
@@ -112,7 +112,7 @@ int gGiblet_scrape_start;
 tSmashable_initial_position_spec gGiblet_initial_position;
 
 // GLOBAL: CARMA2_HW 0x0069bc38
-tSmashable_initial_speed_spec gGiblet_initial_speed;
+tMovement_spec gGiblet_initial_speed;
 
 // GLOBAL: CARMA2_HW 0x006a0408
 int gGiblet_min_max_time[2];

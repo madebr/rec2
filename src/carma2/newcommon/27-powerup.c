@@ -674,7 +674,15 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // PickAtRandom
 
-// GotVouchers
+// FUNCTION: CARMA2_HW 0x004de7d0
+// FUNCTION: CARMA2_SW 0x004dacd0
+int C2_HOOK_FASTCALL GotVouchers(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        AddVouchers(pPowerup->integer_params[0]);
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004de810
 // FUNCTION: CARMA2_SW 0x004dad10
@@ -865,13 +873,17 @@ void C2_HOOK_FASTCALL UndoInitialTail(void) {
 
 // FUNCTION: CARMA2_HW 0x004e07d0
 // FUNCTION: CARMA2_SW 0x004dccd0
-void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    (void)pPowerup_id;
+
     pActor->render_style = BR_RSTYLE_FACES;
 }
 
 // FUNCTION: CARMA2_HW 0x004e07e0
 // FUNCTION: CARMA2_SW 0x004dcce0
-void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    (void)pPowerup_id;
+
     pActor->render_style = BR_RSTYLE_NONE;
 }
 

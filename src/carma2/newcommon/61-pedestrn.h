@@ -20,6 +20,8 @@ extern int gSelected_ped;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
+extern int gCount_changed_points;
+extern br_vector3 gChanged_points[10];
 extern int gPed_nearness;
 extern tTWTVFS gTwtPeds;
 extern int gDancing_peds;
@@ -75,7 +77,7 @@ extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian,
 
 // PedApplyDismember
 
-// PedUndoDismember
+extern void C2_HOOK_FASTCALL PedUndoDismember(tPedestrian* pPed, int pBone_index, tS8 pValue);
 
 // ReadPedSpecs
 
@@ -365,7 +367,7 @@ extern void C2_HOOK_FASTCALL SetBloodPedFolderNames(void);
 
 extern void C2_HOOK_FASTCALL SetAlienPedFolderNames(void);
 
-// AddChangedPoint
+extern void C2_HOOK_FASTCALL AddChangedPoint(br_vector3* pPoint);
 
 extern int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void);
 
@@ -453,11 +455,11 @@ extern br_matrix34* C2_HOOK_FASTCALL GetBoneMatrixPtr(tPed_character_instance* p
 
 extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
 
-// SetCharacterBonePositions
+extern void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, int pArg2, int pArg3);
 
-// MakeCharacterRenderable2
+extern int C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pCharacter, int pIndex);
 
-// MakeCharacterRenderable
+extern int C2_HOOK_FASTCALL MakeCharacterRenderable(tPed_character_instance* pCharacter);
 
 // CharacterNoLongerRenderable
 

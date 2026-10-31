@@ -191,12 +191,15 @@ const char gExtendedAsciiToNormalAscii[128] = {
 };
 
 // GLOBAL: CARMA2_HW 0x006ad4d4
+// GLOBAL: CARMA2_SW 0x006a6c5c
 int gWin32ActionReplayBufferAllocated;
 
 // GLOBAL: CARMA2_HW 0x006ad470
+// GLOBAL: CARMA2_SW 0x006a6c00
 void *gPDActionReplayBuffer;
 
 // GLOBAL: CARMA2_HW 0x006ad474
+// GLOBAL: CARMA2_SW 0x006a6c04
 int gPDActionReplayBufferSize;
 
 // GLOBAL: CARMA2_HW 0x006ad46c
@@ -230,6 +233,7 @@ int gINT_006a6c3c;
 #define Win32AllocateActionReplayBuffer PDReallyAllocateActionReplayBuffer
 
 // FUNCTION: CARMA2_HW 0x0051b810
+// FUNCTION: CARMA2_SW 0x005155e0
 void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
     MEMORYSTATUS memory_status;
     unsigned int bufferSize;
@@ -688,10 +692,32 @@ int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void) {
 // FUNCTION: CARMA2_HW 0x0051c850
 // FUNCTION: CARMA2_SW 0x00517c40
 void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap *pPalette, int pFirst_colour, int pCount) {
-    int i;
-    PALETTEENTRY colours[256];
     tU32 *pixels = pPalette->pixels;
+#ifdef REC2_SW
+    int i;
+    int last_colour;
 
+    last_colour = pFirst_colour + pCount - 1;
+    if (last_colour > 255) {
+        last_colour = 255;
+    }
+
+    for (i = pFirst_colour; i <= last_colour; i++) {
+        tU32 c;
+
+        c = pixels[i];
+
+        gPD_palette_entries[i].peFlags = 0;
+        gPD_palette_entries[i].peRed = BR_RED(c);
+        gPD_palette_entries[i].peGreen = BR_GRN(c);
+        gPD_palette_entries[i].peBlue = BR_BLU(c);
+    }
+    SSDXSetPaletteEntries(gPD_palette_entries, 0, REC2_ASIZE(gPD_palette_entries));
+#endif
+
+#ifdef REC2_HW
+    PALETTEENTRY colours[256];
+    int i;
     for (i = 0; i < pCount; i++) {
         tU32 c;
 
@@ -699,10 +725,11 @@ void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap *pPalette, int pFirst_colo
         colours[i].peFlags = 0;
         colours[i].peRed = c >> 16;
         colours[i].peGreen = c >> 8;
-        colours[i].peBlue = c >> 0;
+        colours[i].peBlue = pixels[pFirst_colour + i];
     }
     SetPaletteEntries(gPDPalette, pFirst_colour, pCount, colours);
     BrPixelmapDoubleBuffer(gScreen, gBack_screen);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0051c840
@@ -763,11 +790,15 @@ int C2_HOOK_FASTCALL PDGetMicroseconds(void) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x0051a7b0
+// FUNCTION: CARMA2_SW 0x005144e0
 void C2_HOOK_FASTCALL PDEnterDebugger(const char *pStr) {
     dr_dprintf("PDEnterDebugger(): %s", pStr);
-    ShowCursor(1);
+    ShowCursor(TRUE);
+#ifndef REC2_MATCHING
     __debugbreak();
-    ShowCursor(0);
+#endif
+    ShowCursor(FALSE);
 }
 
 // FUNCTION: CARMA2_HW 0x0051d4b0
@@ -995,11 +1026,7 @@ void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
 // FUNCTION: CARMA2_SW 0x00516170
 int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char **pArgv) {
     gGraf_spec_index = gDefault_spec_index;
-#ifdef REC2_MATCHING
-    gGraf_spec_index = gDefault_spec_index;
-#else
-    gGraf_data_index = gDefault_data_index;
-#endif
+    gGraf_data_index = gDefault_spec_index;
     return 1;
 }
 

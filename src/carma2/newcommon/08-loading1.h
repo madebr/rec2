@@ -23,6 +23,8 @@ extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 extern tU16 C2_HOOK_FASTCALL ReadU16(FILE* pF);
 
+extern tU8 C2_HOOK_FASTCALL ReadU8(FILE* pF);
+
 extern float C2_HOOK_FASTCALL ReadF32(FILE* pF);
 
 extern tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF);
@@ -115,7 +117,7 @@ extern void C2_HOOK_FASTCALL DisposeRace(void);
 
 extern void C2_HOOK_FASTCALL DisposeGameIfNecessary(void);
 
-// DisposeTrack
+extern void C2_HOOK_FASTCALL DisposeTrack(void);
 
 extern int GetRegisterSourceLocation(char* pSource_location);
 

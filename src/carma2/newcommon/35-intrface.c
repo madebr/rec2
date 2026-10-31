@@ -79,6 +79,8 @@ int C2_HOOK_FASTCALL ChoiceDisabled(int pChoice) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00484640
+// FUNCTION: CARMA2_SW 0x00481780
 void C2_HOOK_FASTCALL ResetInterfaceTimeout__intrface(void) {
 
     gStart_time = PDGetTotalTime();
