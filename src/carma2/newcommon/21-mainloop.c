@@ -13,6 +13,7 @@
 #include "globvars.h"
 #include "globvrpb.h"
 #include "platform.h"
+#include "rec2_macros.h"
 #include <stdlib.h>
 
 // GLOBAL: CARMA2_HW 0x0068c814
@@ -43,14 +44,39 @@ tU32 gNet_auto_increase_credits_dt[8];
 // GLOBAL: CARMA2_SW 0x0073b294
 int gPed_count;
 
+// GLOBAL: CARMA2_HW 0x0068c748
+// GLOBAL: CARMA2_SW 0x00686798
+int gQueued_wasted_messages[5];
+
+// GLOBAL: CARMA2_HW 0x0068c760
+// GLOBAL: CARMA2_SW 0x006867b0
+int gQueued_wasted_messages_count;
+
+// GLOBAL: CARMA2_HW 0x0068c77c
+// GLOBAL: CARMA2_SW 0x006867d0
+tU32 gLast_wasted_message_start;
+
 // CalculateFrameRate
 
 // LoseOldestWastedMassage
 
-// STUB: CARMA2_HW 0x00492620
-// STUB: CARMA2_SW 0x0048f840
+// FUNCTION: CARMA2_HW 0x00492620
+// FUNCTION: CARMA2_SW 0x0048f840
 void C2_HOOK_FASTCALL QueueWastedMassage(int pIndex) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    if (gQueued_wasted_messages_count == (int)REC2_ASIZE(gQueued_wasted_messages)) {
+        for (i = 1; i < gQueued_wasted_messages_count; i++) {
+            gQueued_wasted_messages[i - 1] = gQueued_wasted_messages[i];
+        }
+        gQueued_wasted_messages_count--;
+        gLast_wasted_message_start = GetTotalTime();
+    }
+    if (gQueued_wasted_messages_count == 0) {
+        gLast_wasted_message_start = GetTotalTime();
+    }
+    gQueued_wasted_messages[gQueued_wasted_messages_count] = pIndex;
+    gQueued_wasted_messages_count++;
 }
 
 // MungeHeadups
@@ -167,4 +193,3 @@ tRace_result C2_HOOK_FASTCALL DoRace(void) {
     result = MainGameLoop();
     return result;
 }
-
