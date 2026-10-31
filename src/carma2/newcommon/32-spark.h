@@ -242,7 +242,7 @@ extern int C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
-// IsCarSmoking
+extern int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar);
 
 // ClearSplashReplay
 
