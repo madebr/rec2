@@ -198,9 +198,9 @@ extern int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOppon
 
 // GetOpponentsSectionWidth
 
-// GetOpponentsSectionMinSpeed
+extern int C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
 
-// GetOpponentsSectionMaxSpeed
+extern int C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
 
 extern void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index);
 
