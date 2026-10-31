@@ -29,6 +29,8 @@ extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type
 
 extern void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount);
 
+extern void C2_HOOK_FASTCALL DamageTrans(int pAmount);
+
 extern void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount);
 
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
