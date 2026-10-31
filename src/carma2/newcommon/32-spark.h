@@ -190,7 +190,7 @@ extern int C2_HOOK_FASTCALL GetSmokeOn(void);
 
 // StopCarSmoking
 
-// StopCarSmokingInstantly
+extern void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec);
 
 // StopObjectSmokingInstantly
 
