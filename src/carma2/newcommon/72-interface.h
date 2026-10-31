@@ -15,6 +15,8 @@
 extern tNet_game_options gNet_settings[9];
 extern tU32 gFrontend_net_current_roll;
 extern tU32 gFrontend_net_last_roll;
+extern int gPlayer_lookup_netsummary[14];
+extern int gFrontend_netsummary_first_iteration;
 extern tNet_game_options gFrontend_net_options;
 extern int gPicked_wreck;
 extern tWreck_gallery_car_info gWreck_gallery_car_infos[30];
@@ -27,6 +29,10 @@ extern tFrontend_spec* gCurrent_frontend_spec;
 extern int gFrontend_change_car_selected_car;
 extern int gFrontend_car_image_outdated;
 extern int gFrontend_opponent_profile_pic_needs_update;
+extern float gFrontend_wreck_bought_car_dz;
+extern int gFrontend_wrecks_pending_hscroll;
+extern int gFrontend_wrecks_rotate_prev_x;
+extern int gFrontend_wrecks_rotate_prev_y;
 
 // SetGameTarget
 
@@ -198,7 +204,7 @@ extern int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend);
 
-// CarClickNext
+extern int C2_HOOK_FASTCALL CarClickNext(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend);
 
@@ -244,9 +250,9 @@ extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_s
 
 // DisposeWrecksGallery
 
-// ScrollToNextCar
+extern int C2_HOOK_FASTCALL ScrollToNextCar(tFrontend_spec* pFrontend);
 
-// ScrollToPrevCar
+extern int C2_HOOK_FASTCALL ScrollToPrevCar(tFrontend_spec* pFrontend);
 
 // BuyCurrentCar
 
@@ -352,7 +358,7 @@ extern int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pCo
 
 // Generic_UnMungeActiveItems
 
-// Generic_MenuHandler
+extern int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL StripControls(char* pStr);
 
@@ -430,7 +436,7 @@ extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
 // NetSync_MenuHandler
 
-// NetSummary_Draw
+// static void C2_HOOK_FASTCALL NetSummary_Draw(tFrontend_spec* pFrontend);
 
 // SortScores
 
@@ -440,7 +446,7 @@ extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
 // NetSummary_Infunc
 
-// NetSummary_MenuHandler
+extern int C2_HOOK_FASTCALL NetSummary_MenuHandler(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL DisplayVolumeSettings(tFrontend_spec* pFrontend);
 

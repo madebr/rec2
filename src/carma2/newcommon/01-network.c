@@ -113,6 +113,10 @@ int gIt_or_fox;
 // GLOBAL: CARMA2_SW 0x00654648
 tU16 gGuarantee_number = 1;
 
+// GLOBAL: CARMA2_HW 0x00659d34
+// GLOBAL: CARMA2_SW 0x0065464c
+int INT_00659d34 = -1;
+
 // GLOBAL: CARMA2_HW 0x0068d958
 // GLOBAL: CARMA2_SW 0x006879b0
 int gNext_guarantee;
@@ -526,7 +530,22 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetGetToHostContents(tNet_message_type pTyp
     return NetGetToPlayerContents(pType, pSize_decider, gNet_players[0].ID);
 }
 
-// NetStartBroadcastContents
+// FUNCTION: CARMA2_HW 0x0049f9c0
+// FUNCTION: CARMA2_SW 0x0049bb40
+tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tU32 pSize_decider) {
+    int i;
+
+    if (INT_00659d34 >= 0) {
+        PDFatalError("Broadcast stacks messed up");
+    }
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (i != gThis_net_player_index) {
+            INT_00659d34 = i;
+            return NetGetToPlayerContents(pType, pSize_decider, gNet_players[i].ID);
+        }
+    }
+    return NULL;
+}
 
 // NetBroadcastContents
 
@@ -763,7 +782,11 @@ int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDe
     return err;
 }
 
-// NetGuaranteedSendMessageToEverybody
+// STUB: CARMA2_HW 0x004a5bc0
+// STUB: CARMA2_SW 0x004a1d40
+int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004a5c80
 // FUNCTION: CARMA2_SW 0x004a1e00

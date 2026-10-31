@@ -355,7 +355,7 @@ extern void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* 
 
 // ReceivedPowerup
 
-// SendCurrentPowerups
+extern void C2_HOOK_FASTCALL SendCurrentPowerups(void);
 
 // LoseAllLocalPowerups
 
@@ -401,9 +401,9 @@ extern void C2_HOOK_FASTCALL UndoInitialTail(void);
 
 // MayQueuePowerupRespawn
 
-extern void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor);
+extern void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor, int pPowerup_id);
 
-extern void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor);
+extern void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor, int pPowerup_id);
 
 extern void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime);
 

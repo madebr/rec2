@@ -300,7 +300,11 @@ int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, 
 
 // BoundsTransformTest
 
-// LineBoxColl
+// STUB: CARMA2_HW 0x00460bd0
+// STUB: CARMA2_SW 0x00460640
+int C2_HOOK_FASTCALL LineBoxColl(br_vector3* pStart, br_vector3* pEnd, br_bounds* pBounds, br_vector3* pPoint, br_scalar* pT) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x00460da0
 int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_vector3* pCenter, br_scalar pRadius_squared, br_vector3* pClosest) {
@@ -329,7 +333,11 @@ int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_ve
 
 // LineSphereCollWithSphere
 
-// LinePolyColl
+// STUB: CARMA2_HW 0x00461310
+// STUB: CARMA2_SW 0x00460db0
+int C2_HOOK_FASTCALL LinePolyColl(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_polyhedron_data* pPoly, br_vector3* pPoint, br_scalar pRadius, br_scalar* pT) {
+    NOT_IMPLEMENTED();
+}
 
 // SpherePolyIntersection
 
