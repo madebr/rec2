@@ -93,9 +93,13 @@ FILE* C2_HOOK_FASTCALL OpenDroneFile(char* pDrone_name) {
 
 // LoadDroneTypeInfo
 
-// ReallyRemoveDroneFromPHIL
+void C2_HOOK_FASTCALL ReallyRemoveDroneFromPHIL(tDrone_spec* pDrone) {
+    PHILRemoveObject(&pDrone->collision_info);
+}
 
-// RemoveDroneFromPHIL
+void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone) {
+    ReallyRemoveDroneFromPHIL(pDrone);
+}
 
 // InitDroneCollisionObject
 
@@ -316,7 +320,7 @@ void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void) {
             BrActorRemove(gDrone_specs[i].actor);
         }
         BrActorFree(gDrone_specs[i].actor);
-        PHILRemoveObject(&gDrone_specs[i].collision_info);
+        RemoveDroneFromPHIL(&gDrone_specs[i]);
         if (gDrone_specs[i].field_0x46) {
             FreeShape(gDrone_specs[i].collision_info.shape);
             gDrone_specs[i].field_0x46 = 0;
