@@ -140,6 +140,8 @@ extern void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial,
 
 extern void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent);
 
+extern int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material* pMaterial);
+
 extern void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags);
 
 extern int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel, br_uint_16 pFlags);
