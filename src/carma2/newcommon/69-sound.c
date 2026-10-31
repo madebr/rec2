@@ -416,6 +416,8 @@ tS3_error_codes C2_HOOK_FASTCALL DRS3LoadSound(tS3_sound_id pThe_sound) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004558a0
+// FUNCTION: CARMA2_SW 0x00455630
 void C2_HOOK_FASTCALL DRS3Service(void) {
 
     if (gSound_enabled) {
@@ -451,6 +453,17 @@ int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
         return S3SetOutletVolume(pOutlet, pVolume);
     }
     return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00455950
+// FUNCTION: CARMA2_SW 0x004556e0
+int C2_HOOK_FASTCALL DRS3SetVolume(int pVolume) {
+
+    if (gSound_enabled) {
+        return S3SetVolume(pVolume);
+    } else {
+        return 0;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00455970

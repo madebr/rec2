@@ -101,6 +101,15 @@ tU16 C2_HOOK_FASTCALL ReadU16(FILE* pF) {
     return raw_short;
 }
 
+// FUNCTION: CARMA2_HW 0x0048f870
+// FUNCTION: CARMA2_SW 0x0048cae0
+tU8 C2_HOOK_FASTCALL ReadU8(FILE* pF) {
+    tU8 raw_byte;
+
+    PFfread(&raw_byte, sizeof(raw_byte), 1, pF);
+    return raw_byte;
+}
+
 // FUNCTION: CARMA2_HW 0x0048f890
 float C2_HOOK_FASTCALL ReadF32(FILE* pF) {
     float f;
@@ -681,7 +690,7 @@ char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
         if (ch != -1) {
             PFungetc(ch, pF);
         }
-    } while (!isalnum(*result)
+    } while (!isalnum((unsigned char)*result)
              && *result != '*'
              && *result != '-'
              && *result != '+'
@@ -698,22 +707,23 @@ char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
 
     if (result != NULL) {
         len = strlen(result);
-        if (len > 0 && (result[len - 1] == '\n' || result[len - 1] == '\r')) {
+        /* the original's && binds first, so it also tests result[len - 1] when len is 0 */
+        if ((len != 0 && result[len - 1] == '\n') || result[len - 1] == '\r') {
             result[len - 1] = '\0';
             len--;
         }
-        if (len > 0 && (result[len - 1] == '\n' || result[len - 1] == '\r')) {
+        /* the original's && binds first, so it also tests result[len - 1] when len is 0 */
+        if ((len != 0 && result[len - 1] == '\n') || result[len - 1] == '\r') {
             result[len - 1] = '\0';
             len--;
         }
         memcpy(pS, result, len + 1);
 #ifdef REC2_FIX_BUGS
-        return pS;
-#else
-        return result;
+        result = pS;
 #endif
+    } else {
+        pS[0] = '\0';
     }
-    pS[0] = '\0';
     return result;
 
 }
@@ -1130,7 +1140,12 @@ void C2_HOOK_FASTCALL DisposeGameIfNecessary(void) {
     dr_dprintf("DisposeGameIfNecessary() - END");
 }
 
-// DisposeTrack
+// FUNCTION: CARMA2_HW 0x0044c220
+// FUNCTION: CARMA2_SW 0x0044bfd0
+void C2_HOOK_FASTCALL DisposeTrack(void) {
+
+    FreeTrack(&gProgram_state.track_spec);
+}
 
 // FUNCTION: CARMA2_HW 0x004910d0
 // FUNCTION: CARMA2_SW 0x0048e340

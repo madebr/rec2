@@ -115,6 +115,7 @@ int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_
 }
 
 // FUNCTION: CARMA2_HW 0x004023e0
+// FUNCTION: CARMA2_SW 0x004023e0
 void C2_HOOK_FASTCALL ARResetPiping(void) {
 
     gPipe_record_ptr = gPipe_buffer_start;
@@ -124,6 +125,7 @@ void C2_HOOK_FASTCALL ARResetPiping(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051b9a0
+// FUNCTION: CARMA2_SW 0x00515770
 void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** buffer, tU32* size) {
 
     PDReallyAllocateActionReplayBuffer();
@@ -136,6 +138,7 @@ void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** buffer, tU32* size) {
 }
 
 // FUNCTION: CARMA2_HW 0x00402410
+// FUNCTION: CARMA2_SW 0x00402410
 void C2_HOOK_FASTCALL ARInitialise(int pEnable, int pCount_callbacks, const tReplay_callback* pCallbacks) {
 
     if (pEnable) {

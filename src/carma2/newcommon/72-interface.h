@@ -204,7 +204,7 @@ extern int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend);
 
-// CarClickNext
+extern int C2_HOOK_FASTCALL CarClickNext(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend);
 

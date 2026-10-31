@@ -682,7 +682,15 @@ int C2_HOOK_FASTCALL PickAtRandom(tPowerup* pPowerup, tCar_spec* pCar) {
     return -1;
 }
 
-// GotVouchers
+// FUNCTION: CARMA2_HW 0x004de7d0
+// FUNCTION: CARMA2_SW 0x004dacd0
+int C2_HOOK_FASTCALL GotVouchers(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        AddVouchers(pPowerup->integer_params[0]);
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004de810
 // FUNCTION: CARMA2_SW 0x004dad10
@@ -716,7 +724,13 @@ void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar)
 
 // SetLowGravityPeds
 
-// SetPissedPeds
+// FUNCTION: CARMA2_HW 0x004de900
+// FUNCTION: CARMA2_SW 0x004dae00
+int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gDrunk_pedestrians = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // SetGhostPeds
 
@@ -738,7 +752,12 @@ void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     gPed_gravity_multiplier = 1.f;
 }
 
-// ResetPissedPeds
+// FUNCTION: CARMA2_HW 0x004de990
+// FUNCTION: CARMA2_SW 0x004dae90
+void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gDrunk_pedestrians = 0;
+}
 
 // ResetGhostPeds
 
@@ -786,9 +805,20 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->proxy_ray_distance = 0.f;
 }
 
-// SetMutantCorpses
+// FUNCTION: CARMA2_HW 0x004deca0
+// FUNCTION: CARMA2_SW 0x004db1a0
+int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// ResetMutantCorpses
+    gMutant_speed = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
+
+// FUNCTION: CARMA2_HW 0x004decd0
+// FUNCTION: CARMA2_SW 0x004db1d0
+void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gMutant_speed = 0.f;
+}
 
 // ReceivedPowerup
 
@@ -873,13 +903,17 @@ void C2_HOOK_FASTCALL UndoInitialTail(void) {
 
 // FUNCTION: CARMA2_HW 0x004e07d0
 // FUNCTION: CARMA2_SW 0x004dccd0
-void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARDoPowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    (void)pPowerup_id;
+
     pActor->render_style = BR_RSTYLE_FACES;
 }
 
 // FUNCTION: CARMA2_HW 0x004e07e0
 // FUNCTION: CARMA2_SW 0x004dcce0
-void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARUndoPowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    (void)pPowerup_id;
+
     pActor->render_style = BR_RSTYLE_NONE;
 }
 

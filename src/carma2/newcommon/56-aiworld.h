@@ -10,6 +10,7 @@
 #define GUARD_56_AIWORLD_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 #include "brender/brender.h"
 
@@ -23,7 +24,7 @@ extern void C2_HOOK_FASTCALL InitPanGameAIWorld(void);
 
 extern void C2_HOOK_FASTCALL LoadAIWorldTrackInfo(FILE* pF);
 
-// LoadAIWorldForRace
+extern void C2_HOOK_FASTCALL LoadAIWorldForRace(tRace_info* pRace_info);
 
 // InitialiseAIWorldForRace
 

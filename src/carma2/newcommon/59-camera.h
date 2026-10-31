@@ -34,11 +34,11 @@ extern tCar_spec* C2_HOOK_FASTCALL GetRaceLeader(void);
 
 extern void C2_HOOK_FASTCALL ViewNetPlayer(void);
 
-// ViewOpponent
+extern void C2_HOOK_FASTCALL ViewOpponent(void);
 
 extern void C2_HOOK_FASTCALL ReallyViewOpponent(void);
 
-// CheckDisablePlingMaterials
+extern void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar);
 
 // SetPanningFieldOfView
 

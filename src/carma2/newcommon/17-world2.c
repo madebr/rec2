@@ -96,7 +96,7 @@ void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial) {
 
 // FUNCTION: CARMA2_HW 0x004e5ce0
 // FUNCTION: CARMA2_SW 0x004e1d00
-int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance) {
+int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, br_scalar pMax_distance) {
     br_vector3 distance_vector;
     int i;
 
