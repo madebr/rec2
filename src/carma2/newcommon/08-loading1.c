@@ -681,7 +681,7 @@ char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
         if (ch != -1) {
             PFungetc(ch, pF);
         }
-    } while (!isalnum(*result)
+    } while (!isalnum((unsigned char)*result)
              && *result != '*'
              && *result != '-'
              && *result != '+'
@@ -698,22 +698,23 @@ char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
 
     if (result != NULL) {
         len = strlen(result);
-        if (len > 0 && (result[len - 1] == '\n' || result[len - 1] == '\r')) {
+        /* the original's && binds first, so it also tests result[len - 1] when len is 0 */
+        if ((len != 0 && result[len - 1] == '\n') || result[len - 1] == '\r') {
             result[len - 1] = '\0';
             len--;
         }
-        if (len > 0 && (result[len - 1] == '\n' || result[len - 1] == '\r')) {
+        /* the original's && binds first, so it also tests result[len - 1] when len is 0 */
+        if ((len != 0 && result[len - 1] == '\n') || result[len - 1] == '\r') {
             result[len - 1] = '\0';
             len--;
         }
         memcpy(pS, result, len + 1);
 #ifdef REC2_FIX_BUGS
-        return pS;
-#else
-        return result;
+        result = pS;
 #endif
+    } else {
+        pS[0] = '\0';
     }
-    pS[0] = '\0';
     return result;
 
 }
