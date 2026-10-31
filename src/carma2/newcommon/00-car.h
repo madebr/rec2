@@ -177,7 +177,7 @@ extern void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 // MungeSomeOtherCarGraphics
 
-// MungeCarGraphics
+extern void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period);
 
 extern void C2_HOOK_FASTCALL DoLODCarModels(void);
 
@@ -185,7 +185,7 @@ extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
 
 // DoComplexCarModels
 
-// ResetCarScreens
+extern void C2_HOOK_FASTCALL ResetCarScreens(void);
 
 extern void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void);
 
