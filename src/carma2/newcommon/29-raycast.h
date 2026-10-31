@@ -12,6 +12,7 @@
 #include "rec2_types.h"
 
 extern br_actor* gY_picking_camera;
+extern float gHighest_y_below;
 
 extern br_model* gBelow_model;
 extern int gBelow_face_index;
