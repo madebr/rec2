@@ -507,7 +507,11 @@ void C2_HOOK_FASTCALL DisposeOpponents(void) {
     }
 }
 
-// WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
+// STUB: CARMA2_HW 0x004ae620
+// STUB: CARMA2_SW 0x004aa790
+void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004ae750
 // FUNCTION: CARMA2_SW 0x004aa8c0
