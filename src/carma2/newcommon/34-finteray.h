@@ -80,7 +80,7 @@ extern int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* 
 
 // BoundsTransformTest
 
-// LineBoxColl
+extern int C2_HOOK_FASTCALL LineBoxColl(br_vector3* pStart, br_vector3* pEnd, br_bounds* pBounds, br_vector3* pPoint, br_scalar* pT);
 
 extern int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_vector3* pCenter, br_scalar pRadius_squared, br_vector3* pClosest);
 
@@ -90,7 +90,7 @@ extern int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, cons
 
 // LineSphereCollWithSphere
 
-// LinePolyColl
+extern int C2_HOOK_FASTCALL LinePolyColl(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_polyhedron_data* pPoly, br_vector3* pPoint, br_scalar pRadius, br_scalar* pT);
 
 // SpherePolyIntersection
 
