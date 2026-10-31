@@ -18,6 +18,9 @@ extern tU32 gLocal_buffer_size;
 extern tU8* gMr_chunky;
 extern tU8* gPipe_buffer_start;
 extern int gPlay_direction;
+extern int gDisable_piped_sounds;
+
+typedef void C2_HOOK_FASTCALL tReplay_session_callback(int pFrames);
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
 extern tU8* gPipe_play_ptr;
@@ -112,11 +115,11 @@ extern int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime);
 
 // FindNextChunk
 
-// MoveReplayBuffer
+extern void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToEndOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToStartOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
 // ARDoActionReplay
 
