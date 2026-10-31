@@ -26,6 +26,9 @@ extern int gPed_nearness;
 extern tTWTVFS gTwtPeds;
 extern int gDancing_peds;
 extern int gPeds_already_munged;
+extern int gPed_cache_sizes_1[4];
+extern tPed_face_cache_0x34* gPed_face_cache_heads[4];
+extern int gPed_cache_notify_flags;
 
 // OrientationChanged
 
@@ -318,6 +321,8 @@ extern void C2_HOOK_FASTCALL PrevPedCam(void);
 // FindNearestPed
 
 extern void C2_HOOK_FASTCALL ResetPedNearness(void);
+
+extern void C2_HOOK_FASTCALL GetPedestrianDebugInfo(char* pBuffer, int pPed_index);
 
 // PedPreCollisionStuff
 

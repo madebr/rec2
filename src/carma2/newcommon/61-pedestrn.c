@@ -14,6 +14,7 @@
 #include "22-replay.h"
 #include "27-powerup.h"
 #include "41-utility.h"
+#include "42-input.h"
 #include "49-physics.h"
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
@@ -22,8 +23,10 @@
 #include "globvars.h"
 #include "brender/brender.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "rec2_macros.h"
 
+#include "c2_stdio.h"
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a0414
@@ -93,6 +96,18 @@ int gDancing_peds;
 // GLOBAL: CARMA2_HW 0x0069bce0
 // GLOBAL: CARMA2_SW 0x00695d38
 int gPeds_already_munged;
+
+// GLOBAL: CARMA2_HW 0x0065d7b8
+// GLOBAL: CARMA2_SW 0x006580f0
+int gPed_cache_sizes_1[4] = { 40, 25, 15, 5 };
+
+// GLOBAL: CARMA2_HW 0x0069bc58
+// GLOBAL: CARMA2_SW 0x00695cb0
+tPed_face_cache_0x34* gPed_face_cache_heads[4];
+
+// GLOBAL: CARMA2_HW 0x00694124
+// GLOBAL: CARMA2_SW 0x0068e17c
+int gPed_cache_notify_flags;
 
 // OrientationChanged
 
@@ -659,6 +674,111 @@ void C2_HOOK_FASTCALL PrevPedCam(void) {
 void C2_HOOK_FASTCALL ResetPedNearness(void) {
 
     gPed_nearness = 1;
+}
+
+// FUNCTION: CARMA2_HW 0x004d63e0
+// FUNCTION: CARMA2_SW 0x004d29e0
+void C2_HOOK_FASTCALL GetPedestrianDebugInfo(char* pBuffer, int pPed_index) {
+    tPedestrian* ped;
+    tPedestrian* candidate;
+    br_scalar nearest_distance;
+    br_scalar distance;
+    char physics_mode[32];
+    char action[32];
+    int usage[4];
+    int counts[4];
+    char warnings[32];
+    int i;
+    int j;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPed_cache_sizes_1) != 4);
+    C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x34) != 0x34);
+    C2_HOOK_BUG_ON(sizeof(tPedestrian) != 0x54);
+
+    ped = NULL;
+    if (PDKeyDown(4)) {
+        for (i = 0; i < (int)REC2_ASIZE(gPed_cache_sizes_1); i++) {
+            counts[i] = 0;
+            for (j = 0; j < gPed_cache_sizes_1[i]; j++) {
+                if (gPed_face_cache_heads[i][j].field_0x14 != NULL) {
+                    counts[i]++;
+                }
+            }
+            usage[i] = counts[i] * 100 / gPed_cache_sizes_1[i];
+        }
+        if (gPed_cache_notify_flags & 0x1) {
+            strcpy(warnings, "SATURATION!!  ");
+        } else {
+            strcpy(warnings, "");
+        }
+        if (gPed_cache_notify_flags & 0x2) {
+            strcat(warnings, "OVERFLOW!!  ");
+        }
+        sprintf(pBuffer, "Cache states: %d%%, %d%%, %d%%, %d%%   %s", usage[0], usage[1], usage[2], usage[3], warnings);
+        gPed_cache_notify_flags = 0;
+    } else {
+        if (pPed_index < 0) {
+            nearest_distance = 10000000.f;
+            for (i = 0, candidate = gPedestrian_array; i < gPed_count; i++, candidate++) {
+                if (candidate->flags & 0x1) {
+                    distance = Vector3DistanceSquared((br_vector3*)gCar_to_view->collision_info->actor->t.t.mat.m[3], &candidate->pos);
+                    if (distance < nearest_distance) {
+                        ped = candidate;
+                        nearest_distance = distance;
+                    }
+                }
+            }
+        } else {
+            ped = &gPedestrian_array[pPed_index];
+        }
+        if (ped != NULL) {
+            switch (ped->action) {
+            case ePed_action_walking:
+                strcpy(action, "walking");
+                break;
+            case ePed_action_running:
+                strcpy(action, "running");
+                break;
+            case ePed_action_panicking:
+                strcpy(action, "panicking");
+                break;
+            case ePed_action_falling:
+                strcpy(action, "falling");
+                break;
+            case ePed_action_getting_up:
+                strcpy(action, "getting up");
+                break;
+            case ePed_action_impacting:
+                strcpy(action, "impacting");
+                break;
+            case ePed_action_dead:
+                strcpy(action, "dead");
+                break;
+            }
+            if (ped->character->field_0x4 < 0) {
+                strcpy(physics_mode, "INACTIVE");
+            } else {
+                switch (ped->character->field_0x14) {
+                case 0:
+                    strcpy(physics_mode, "PHYSICS OFF");
+                    break;
+                case 1:
+                    strcpy(physics_mode, "PASSIVE SIMPLE");
+                    break;
+                case 2:
+                    strcpy(physics_mode, "PASSIVE BONED");
+                    break;
+                case 5:
+                    strcpy(physics_mode, "ACTIVE SIMPLE");
+                    break;
+                case 6:
+                    strcpy(physics_mode, "ACTIVE BONED");
+                    break;
+                }
+            }
+            sprintf(pBuffer, "Ped #%d: %s, %s, %s", (int)(ped - gPedestrian_array), ped->character->personality->name, action, physics_mode);
+        }
+    }
 }
 
 // PedPreCollisionStuff
