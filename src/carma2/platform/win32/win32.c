@@ -205,12 +205,13 @@ int gPDActionReplayBufferSize;
 // GLOBAL: CARMA2_HW 0x006ad46c
 HPALETTE gPDPalette;
 
-// GLOBAL: CARMA2_HW 0x0079ea84
+// GLOBAL: CARMA2_HW 0x0079ea80
+// GLOBAL: CARMA2_SW 0x00794fe0
 SYSTEM_INFO gSystem_info;
 
 // GLOBAL: CARMA2_HW 0x0068c830
-// GLOBAL: CARMA2_SW 0x0067c6e8
-DWORD gPage_size;
+// GLOBAL: CARMA2_SW 0x00686884
+DWORD gPD_page_size;
 
 // GLOBAL: CARMA2_HW 0x00681fa0
 // GLOBAL: CARMA2_SW 0x0067c6e0
@@ -1368,12 +1369,12 @@ void C2_HOOK_FASTCALL PDPageInMemory(void *pMemory) {
                     break;
                 }
                 if (!(block->flags & 0x1)) {
-                    if (gPage_size == 0) {
+                    if (gPD_page_size == 0) {
                         GetSystemInfo(&gSystem_info);
-                        gPage_size = gSystem_info.dwPageSize;
+                        gPD_page_size = gSystem_info.dwPageSize;
                     }
-                    for (current = 16 * gPage_size; current < size - 4; current += gPage_size) {
-                        block->data[current + 16 - 16 * gPage_size] = block->data[current + 16 - 16 * gPage_size];
+                    for (current = 16 * gPD_page_size; current < size - 4; current += gPD_page_size) {
+                        block->data[current + 16 - 16 * gPD_page_size] = block->data[current + 16 - 16 * gPD_page_size];
                         block->data[current + 16] = block->data[current + 16];
                     }
                 }

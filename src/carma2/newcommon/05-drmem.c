@@ -16,6 +16,8 @@
 
 #ifdef REC2_MATCHING
 #include <windows.h>
+
+extern SYSTEM_INFO gSystem_info;
 #endif
 
 // GLOBAL: CARMA2_HW 0x006815c8
@@ -299,12 +301,8 @@ const char* gMem_names[256] = {
 
 #ifdef REC2_MATCHING
 // GLOBAL: CARMA2_HW 0x00681fa8
-// GLOBAL: CARMA2_SW 0x00686884
+// GLOBAL: CARMA2_SW 0x0067c6e8
 br_size_t gPage_size;
-
-// GLOBAL: CARMA2_HW 0x0079ea80
-// GLOBAL: CARMA2_SW 0x00794fe0
-SYSTEM_INFO gSystem_info;
 #endif
 
 // FUNCTION: CARMA2_HW 0x0044c7f0
@@ -338,6 +336,26 @@ void C2_HOOK_FASTCALL MAMSInitMem(void) {
 // FUNCTION: CARMA2_SW 0x0044c600
 void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
 
+}
+
+// FUNCTION: CARMA2_HW 0x0044c860
+// FUNCTION: CARMA2_SW 0x0044c610
+void C2_HOOK_FASTCALL TouchMemoryPages(void* pMemory, br_size_t pSize) {
+#ifdef REC2_MATCHING
+    br_size_t offset;
+
+    if (gPage_size == 0) {
+        GetSystemInfo(&gSystem_info);
+        gPage_size = gSystem_info.dwPageSize;
+    }
+    for (offset = gPage_size * 16; offset < pSize; offset += gPage_size) {
+        *((volatile br_uint_8*)pMemory + (offset - 16 * gPage_size)) = *((volatile br_uint_8*)pMemory + (offset - 16 * gPage_size));
+        *((volatile br_uint_8*)pMemory + offset) = *((volatile br_uint_8*)pMemory + offset);
+    }
+#else
+    (void)pMemory;
+    (void)pSize;
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0044c8c0
