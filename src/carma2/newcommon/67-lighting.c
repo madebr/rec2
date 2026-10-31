@@ -261,6 +261,13 @@ void C2_HOOK_FASTCALL InitLightingEffects(void) {
     // empty
 }
 
+// FUNCTION: CARMA2_HW 0x00486d90
+// FUNCTION: CARMA2_SW 0x00483ec0
+void C2_HOOK_STDCALL FUN_00486d90(int pArg1, int pArg2) {
+
+    // empty
+}
+
 // FUNCTION: CARMA2_HW 0x00486db0
 // FUNCTION: CARMA2_SW 0x00483ee0
 void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* pRace_lighting_path) {
