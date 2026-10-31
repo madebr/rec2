@@ -212,7 +212,7 @@ void C2_HOOK_FASTCALL ARDoSingleSession(int pType, uintptr_t pOwner, void* pData
 #endif
 
 // STUB: CARMA2_HW 0x00402bd0
-// STUB: CARMA2_SW 0x00402930
+// STUB: CARMA2_SW 0x00402bd0
 void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...) {
     NOT_IMPLEMENTED();
 }
@@ -449,10 +449,16 @@ void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
 
 // PipeSingleFrameFinish
 
-// STUB: CARMA2_HW 0x004c83f0
-// STUB: CARMA2_SW 0x004c4b20
+// FUNCTION: CARMA2_HW 0x004c83f0
+// FUNCTION: CARMA2_SW 0x004c4b20
 void C2_HOOK_FASTCALL PipeSingleGraphicalWheelStuff(tCar_spec* pCar) {
-    NOT_IMPLEMENTED();
+
+    ARDoSingleVariedSession(ePipe_chunk_single_graphpical_wheel_stuff, (tU16)pCar->car_ID, 5,
+        SIZE_OFFSET_PIPING(tPipe_single_graphical_wheel_stuff, steering_angle), (int)(pCar->steering_angle * (32767.0 / 60.0)),
+        SIZE_OFFSET_PIPING(tPipe_single_graphical_wheel_stuff, lf_sus_position), (int)(pCar->lf_sus_position * 127.f * (20.0 / 3.0)),
+        SIZE_OFFSET_PIPING(tPipe_single_graphical_wheel_stuff, rf_sus_position), (int)(pCar->rf_sus_position * 127.f * (20.0 / 3.0)),
+        SIZE_OFFSET_PIPING(tPipe_single_graphical_wheel_stuff, lr_sus_position), (int)(pCar->lr_sus_position * 127.f * (20.0 / 3.0)),
+        SIZE_OFFSET_PIPING(tPipe_single_graphical_wheel_stuff, rr_sus_position), (int)(pCar->rr_sus_position * 127.f * (20.0 / 3.0)));
 }
 
 // FUNCTION: CARMA2_HW 0x004c84a0
