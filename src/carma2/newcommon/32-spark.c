@@ -808,6 +808,20 @@ void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUp
 
 // ForEveryCarModelCB
 
+// FUNCTION: CARMA2_HW 0x004fec30
+// FUNCTION: CARMA2_SW 0x004fa510
+int C2_HOOK_CDECL RunCallbackOnAllModels(br_actor* pActor, int (C2_HOOK_FASTCALL* pCallback)(br_model*)) {
+    tUser_crush_data* user_crush;
+
+    if (pActor->type == BR_ACTOR_MODEL && pActor->model != NULL) {
+        user_crush = pActor->user;
+        if (user_crush != NULL && user_crush->groove == NULL) {
+            pCallback(pActor->model);
+        }
+    }
+    return 0;
+}
+
 // ForEveryCarModel
 
 // MightBlendifyMaterial
