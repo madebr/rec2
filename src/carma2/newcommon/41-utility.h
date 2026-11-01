@@ -60,7 +60,7 @@ extern int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_
 
 extern void C2_HOOK_FASTCALL WaitFor(tU32);
 
-extern intptr_t DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
 
 extern intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg);
 
@@ -91,6 +91,8 @@ extern void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void);
 extern void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat);
 
 extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
+
+extern void C2_HOOK_FASTCALL CopyMiscString(int pIndex, char* pDestination);
 
 extern int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state);
 
@@ -135,6 +137,8 @@ extern float C2_HOOK_STDCALL frac(float pN);
 extern intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data);
 
 extern br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive);
+
+extern void C2_HOOK_FASTCALL GetBlendTableName(int pPercent, char* pDest);
 
 extern void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent);
 
@@ -212,7 +216,7 @@ extern intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData)
 
 // GetBlenficatiousnessOfMaterialPrimitively
 
-// GetBlenficatiousnessOfMaterial
+extern int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterial(br_material* pMaterial);
 
 extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 

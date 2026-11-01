@@ -36,6 +36,8 @@ extern int gInventory_cycling;
 extern tU32 gInventory_timeout;
 extern tU32* gReal_render_palette;
 
+extern char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index);
+
 // GetNextGoodyTime
 
 // DoPowerupTextHeadup
@@ -316,7 +318,7 @@ extern int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* pPowerup, tCar_spec* p
 
 extern void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetDancingPeds
+extern int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPanickingPeds
 
@@ -378,11 +380,11 @@ extern void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar);
 
 // PissedEffect
 
-// RenderSpinningPowerup
+extern void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
 // RenderChangingPowerup
 
-// SetSpinningPowerup
+extern void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
 
 // DuplicateModel
 
