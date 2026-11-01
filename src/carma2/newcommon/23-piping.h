@@ -518,11 +518,11 @@ extern void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk
 
 extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 
-// CalcSmudgeLength
+extern int C2_HOOK_FASTCALL CalcSmudgeLength(tPipe_chunk* pChunk);
 
-// CalcModelMashLength
+extern int C2_HOOK_FASTCALL CalcModelMashLength(tPipe_chunk* pChunk);
 
-// CalcEndMyBendLength
+extern int C2_HOOK_FASTCALL CalcEndMyBendLength(tPipe_chunk* pChunk);
 
 // CalcRemoveFacesLength
 
