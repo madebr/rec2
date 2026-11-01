@@ -515,12 +515,17 @@ void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, t
     if ((pCheckpoint >= 0 && pCheckpoint < gCurrent_race.check_point_count
             && gTrack_version > 0 && pTarget == 0) || Flash(300, &last_flash, &flash_state)) {
         checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
-        if (checkpoint->map_position.v[0] >= 0.f
+        if (checkpoint->map_position.v[0] >= 0.0f
                 && checkpoint->map_position.v[0] < (float)pMap->width
-                && checkpoint->map_position.v[1] >= 0.f
+                && checkpoint->map_position.v[1] >= 0.0f
                 && checkpoint->map_position.v[1] < (float)pMap->height) {
             DRPixelmapRectangleMaskedCopy(pMap,
-                (br_int_16)(int)(checkpoint->map_position.v[0] + 8.f - (float)gCheckpoint_digit_center_x),
+#ifdef REC2_HW
+                (br_int_16)(int)(checkpoint->map_position.v[0] + 8.0f - (float)gCheckpoint_digit_center_x),
+#endif
+#ifdef REC2_SW
+                (br_int_16)(int)(checkpoint->map_position.v[0] - (float)gCheckpoint_digit_center_x),
+#endif
                 (br_int_16)(int)(checkpoint->map_position.v[1] - (float)(int)gCheckpoint_digit_center_y),
                 gCheckpoint_numbers,
                 0,
