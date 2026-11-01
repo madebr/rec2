@@ -17,6 +17,8 @@
 
 #include "rec2_macros.h"
 
+#include "c2_string.h"
+
 #include <stdlib.h>
 
 // GLOBAL: CARMA2_HW 0x0068d95c
@@ -417,7 +419,29 @@ int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tNet_mess
     }
 }
 
-// NetSendMessageToAllPlayers
+// FUNCTION: CARMA2_HW 0x0049f2c0
+// FUNCTION: CARMA2_SW 0x0049b440
+int C2_HOOK_FASTCALL NetSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage) {
+    int i;
+    int size;
+    void* contents;
+
+    C2_HOOK_BUG_ON(sizeof(tNet_message_header) != 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents, 0x18);
+
+    size = pMessage->header.field_0x16 - sizeof(tNet_message_header);
+    pMessage->contents.raw.header.size = size;
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (i != gThis_net_player_index) {
+            contents = NetGetToPlayerContentsSize(&gNet_players[i], size);
+            if (contents != NULL) {
+                memcpy(contents, &pMessage->contents, size);
+            }
+        }
+    }
+    NetDisposeMessage(pDetails, pMessage);
+    return 0;
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
