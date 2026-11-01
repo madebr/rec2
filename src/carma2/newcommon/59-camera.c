@@ -204,7 +204,24 @@ void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar) {
 
 // SetPanningFieldOfView
 
-// IsCameraTypeAllowed
+int C2_HOOK_FASTCALL IsCameraTypeAllowed(int pCamera_mode) {
+    if (gAction_replay_mode && !gCamera_type_allowed_replay[pCamera_mode]) {
+        return 0;
+    }
+    if (!gAction_replay_mode && !gCamera_type_allowed_gameplay[pCamera_mode]) {
+        return 0;
+    }
+    if (pCamera_mode >= 9) {
+        return 0;
+    }
+    if (pCamera_mode == 6 && !OKToViewDrones()) {
+        return 0;
+    }
+    if (pCamera_mode == 5 && gPed_count == 0) {
+        return 0;
+    }
+    return 1;
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -279,32 +296,15 @@ void C2_HOOK_FASTCALL ChangeCameraType(void) {
             gAction_replay_camera_mode = 0;
         }
     }
-    mode = gAction_replay_camera_mode;
-    if ((gAction_replay_mode != 0 && gCamera_type_allowed_replay[mode] == 0)
-            || (gAction_replay_mode == 0 && gCamera_type_allowed_gameplay[mode] == 0)
-            || mode >= 9
-            || (mode == 6 && !OKToViewDrones())
-            || (mode == 5 && gPed_count == 0)) {
+    if (!IsCameraTypeAllowed(gAction_replay_camera_mode)) {
         ChangeCameraType();
     }
-    if (gAction_replay_mode != 0) {
+    if (gAction_replay_mode) {
         gAR_camera_type = gAction_replay_camera_mode;
     } else {
         gCamera_type = gAction_replay_camera_mode;
     }
-    switch (gAction_replay_camera_mode) {
-    case kActionReplayCameraMode_Standard:
-    case kActionReplayCameraMode_Rigid:
-    case kActionReplayCameraMode_Reversing:
-        InitialiseExternalCamera();
-        break;
-    case kActionReplayCameraMode_Manual:
-        gAction_replay_manual_camera_target_type = 0;
-        break;
-    default:
-        break;
-    }
-    MungeCarMaterials(&gProgram_state.current_car, gAction_replay_camera_mode == kActionReplayCameraMode_Internal);
+    SetCameraType(gAction_replay_camera_mode);
 }
 
 // FUNCTION: CARMA2_HW 0x0040e900

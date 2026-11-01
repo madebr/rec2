@@ -42,7 +42,7 @@ extern void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar);
 
 // SetPanningFieldOfView
 
-// IsCameraTypeAllowed
+extern int C2_HOOK_FASTCALL IsCameraTypeAllowed(int pCamera_mode);
 
 extern void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_cam);
 
