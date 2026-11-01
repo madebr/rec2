@@ -435,25 +435,7 @@ int C2_HOOK_FASTCALL NetSendMessageToAllPlayers(tNet_game_details* pDetails, tNe
     pMessage->contents.raw.header.size = size;
     for (i = 0; i < gNumber_of_net_players; i++) {
         if (i != gThis_net_player_index) {
-            player = &gNet_players[i];
-            if (player == &gNet_players[gThis_net_player_index]) {
-                PDFatalError("Trying to send network message to self");
-            }
-            message = player->field_0xcc;
-            if (message != NULL && message->header.field_0x16 + size > 512) {
-                NetReallySendMessageToPlayer(gCurrent_net_game, message, player->ID);
-                message = NULL;
-                player->field_0xcc = NULL;
-            }
-            if (message == NULL) {
-                message = NetAllocateMessage(512);
-                player->field_0xcc = message;
-                message->header.field_0x16 = sizeof(tNet_message_header);
-                message->header.field_0x14 = 0;
-            }
-            contents = (char*)message + message->header.field_0x16;
-            message->header.field_0x14++;
-            message->header.field_0x16 += size;
+            contents = NetGetToPlayerContentsSize(&gNet_players[i], size);
             if (contents != NULL) {
                 memcpy(contents, &pMessage->contents, size);
             }
