@@ -369,8 +369,6 @@ void C2_HOOK_FASTCALL FadePaletteDown(void) {
 // FUNCTION: CARMA2_HW 0x004b5470
 // FUNCTION: CARMA2_SW 0x004b1bb0
 void C2_HOOK_FASTCALL FadePaletteUp(void) {
-    int i;
-    int j;
     int start_time;
     int the_time;
 
