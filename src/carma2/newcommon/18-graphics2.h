@@ -44,6 +44,8 @@ extern void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
 
 extern void C2_HOOK_FASTCALL InitializePalettes(void);
 
+extern void C2_HOOK_FASTCALL SwitchToPalette(char* pPal_name);
+
 extern void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
 // RevertPalette
