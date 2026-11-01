@@ -10,11 +10,14 @@
 
 #include "00-car.h"
 #include "08-loading1.h"
+#include "10-loading2.h"
 #include "18-graphics2.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
 #include "60-phil.h"
+#include "63-loading3.h"
+
 #include "globvars.h"
 #include "globvrkm.h"
 #include "rec2_macros.h"
@@ -89,6 +92,10 @@ br_model* gLollipop_model;
 // GLOBAL: CARMA2_HW 0x006aa59c
 // GLOBAL: CARMA2_SW 0x006a3fec
 int gColumn_flags;
+
+// GLOBAL: CARMA2_HW 0x006aa588
+// GLOBAL: CARMA2_SW 0x006a3fd8
+br_model* gShrapnel_model[2];
 
 // GLOBAL: CARMA2_HW 0x006b7880
 // GLOBAL: CARMA2_SW 0x006ae560
@@ -239,7 +246,18 @@ void C2_HOOK_FASTCALL ResetSparks(void) {
 
 // InitShrapnel
 
-// LoadInShrapnel
+// FUNCTION: CARMA2_HW 0x004f8b90
+// FUNCTION: CARMA2_SW 0x004f4210
+void C2_HOOK_FASTCALL LoadInShrapnel(void) {
+    gShrapnel_model[0] = LoadModel("FRAG4.DAT");
+    DRScaleModel(gShrapnel_model[0], 0.5f);
+    gShrapnel_model[1] = LoadModel("FRAG5.DAT");
+    DRScaleModel(gShrapnel_model[1], 0.5f);
+    BrModelAdd(gShrapnel_model[0]);
+    BrModelAdd(gShrapnel_model[1]);
+    gBlack_material = GetSimpleMaterial("M14.MAT", kRendererShadingType_AmbientOnly);
+    gNon_track_actor->material = gBlack_material;
+}
 
 // KillShrapnel
 
@@ -806,7 +824,20 @@ void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUp
 #pragma auto_inline(on)
 #endif
 
-// ForEveryCarModelCB
+// FUNCTION: CARMA2_HW 0x004fec30
+// FUNCTION: CARMA2_SW 0x004fa510
+intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void* pContext) {
+    tUser_crush_data* user_crush;
+    int (C2_HOOK_FASTCALL* model_callback)(br_model*) = pContext;
+
+    if (pActor->type == BR_ACTOR_MODEL && pActor->model != NULL) {
+        user_crush = pActor->user;
+        if (user_crush != NULL && user_crush->groove == NULL) {
+            model_callback(pActor->model);
+        }
+    }
+    return 0;
+}
 
 // ForEveryCarModel
 

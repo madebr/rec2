@@ -21,6 +21,7 @@ extern int gNum_of_opponents_completing_race;
 extern int gNum_of_opponents_getting_near;
 extern int gNum_of_opponents_pursuing;
 extern tU8* gBit_per_node;
+extern float gIn_view_distance;
 extern int gRoute_search_calls;
 extern int gRoute_search_last_target_count;
 extern int gRoute_search_target_count;
@@ -58,6 +59,8 @@ extern int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* 
 
 // TopUpRandomRoute
 
+extern void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOpponent_spec* pOpponent_spec);
+
 extern int C2_HOOK_FASTCALL SearchForSection(tRoute_section* pRoute, tRoute_section* pBest_route, int* pBest_count, tS16 pTarget, int pDepth, br_scalar pLength, tOpponent_spec* pOpponent_spec);
 
 // UpdatePlayersSection
@@ -72,7 +75,7 @@ extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOppone
 
 // ClearOpponentsProjectedRoute
 
-// AddToOpponentsProjectedRoute
+extern int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection);
 
 // StunTheBugger
 
@@ -172,7 +175,7 @@ extern void C2_HOOK_FASTCALL DisposeOpponentPaths(void);
 
 extern void C2_HOOK_FASTCALL DisposeOpponents(void);
 
-// WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
+extern void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was);
 
 extern void C2_HOOK_FASTCALL ReportMurderToPoliceDepartment(tCar_spec* pCar_spec);
 

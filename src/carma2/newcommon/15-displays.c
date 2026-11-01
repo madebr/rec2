@@ -472,19 +472,83 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLi
     return NewTextHeadupSlot2(pSlot_index, pFlash_rate, pLifetime, pFont_index, pText, 1);
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x0044a3a0
-// STUB: CARMA2_SW 0x0044a530
+// FUNCTION: CARMA2_HW 0x0044a3a0
+// FUNCTION: CARMA2_SW 0x0044a530
 int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index) {
-    NOT_IMPLEMENTED();
-}
+    int index;
+    int width;
+    tHeadup* the_headup;
+    tHeadup_slot* headup_slot;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    index = FindAHeadupHoleWoofBarkSoundsABitRude(pSlot_index);
+    if (index >= 0) {
+        headup_slot = &gProgram_state.current_car.headup_slots[gProgram_state.cockpit_on][pSlot_index];
+        the_headup = &gHeadups[index];
+        the_headup->type = eHeadup_image;
+        the_headup->slot_index = pSlot_index;
+        the_headup->justification = headup_slot->justification;
+        if (pSlot_index >= 0) {
+            the_headup->cockpit_anchored = headup_slot->cockpit_anchored;
+        } else {
+            the_headup->cockpit_anchored = 0;
+        }
+        the_headup->dimmed_background = headup_slot->dimmed_background;
+        the_headup->dim_left = headup_slot->dim_left;
+        the_headup->dim_top = headup_slot->dim_top;
+        the_headup->dim_right = headup_slot->dim_right;
+        the_headup->dim_bottom = headup_slot->dim_bottom;
+        the_headup->original_x = headup_slot->x;
+
+        switch (headup_slot->justification) {
+        case eJust_left:
+            the_headup->x = the_headup->original_x;
+            break;
+        case eJust_right:
+            width = DRTextWidth(&gFonts[gHud_messages[pImage_index].font1], gHud_messages[pImage_index].message);
+            the_headup->x = the_headup->original_x + width;
+            break;
+        case eJust_centre:
+            width = DRTextWidth(&gFonts[gHud_messages[pImage_index].font1], gHud_messages[pImage_index].message);
+            the_headup->x = the_headup->original_x + width / 2;
+            break;
+        }
+        the_headup->y = headup_slot->y;
+        if (pFlash_rate != 0) {
+            the_headup->flash_period = 1000 / pFlash_rate;
+        } else {
+            the_headup->flash_period = 0;
+        }
+        the_headup->last_flash = 0;
+        the_headup->flash_state = 0;
+        if (pLifetime != 0) {
+            the_headup->end_time = GetTotalTime() + pLifetime;
+        } else {
+            the_headup->end_time = 0;
+        }
+        strcpy(the_headup->data.image_info.text, gHud_messages[pImage_index].message);
+        the_headup->data.image_info.font_index = gHud_messages[pImage_index].font2;
+        the_headup->data.image_info.font = &gFonts[gHud_messages[pImage_index].font1];
+        switch (the_headup->justification) {
+        case eJust_left:
+            the_headup->data.image_info.field_0x104 = 0;
+            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x10c = -width;
+            break;
+        case eJust_right:
+            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x104 = width;
+            the_headup->data.image_info.field_0x10c = 0;
+            break;
+        case eJust_centre:
+            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x104 = width / 2;
+            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x10c = -(width / 2);
+            break;
+        }
+    }
+    return index;
+}
 
 // FUNCTION: CARMA2_HW 0x0044a600
 // FUNCTION: CARMA2_SW 0x0044a790
