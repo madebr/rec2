@@ -29,6 +29,8 @@ extern float C2_HOOK_FASTCALL ReadF32(FILE* pF);
 
 extern tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF);
 
+extern tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF);
+
 extern void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber);
 
 extern void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber);
@@ -40,6 +42,8 @@ extern tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr);
 extern tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr);
 
 extern tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr);
+
+extern tS32 C2_HOOK_FASTCALL MemReadS32(char** pPtr);
 
 extern tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr);
 
@@ -85,7 +89,11 @@ extern void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 extern void C2_HOOK_CDECL SubsStringJob(char *pFormat, ...);
 
+extern void C2_HOOK_FASTCALL EncodeLine_DEMO(char* pS);
+
 extern void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
+
+extern void C2_HOOK_FASTCALL SkipNLines(FILE* pF);
 
 extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
@@ -117,7 +125,7 @@ extern void C2_HOOK_FASTCALL DisposeRace(void);
 
 extern void C2_HOOK_FASTCALL DisposeGameIfNecessary(void);
 
-// DisposeTrack
+extern void C2_HOOK_FASTCALL DisposeTrack(void);
 
 extern int GetRegisterSourceLocation(char* pSource_location);
 

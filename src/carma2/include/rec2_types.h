@@ -289,6 +289,12 @@ typedef struct {
 } tPipe_ped_physics_data;
 
 typedef struct {
+    tS16 bone_index;
+    tS8 old_value;
+    tS8 new_value;
+} tPipe_single_ped_dismember;
+
+typedef struct {
     tS16 field_0x48;
     tS16 field_0x74;
     tS16 field_0x70;
@@ -490,7 +496,7 @@ typedef enum {
     ePipe_chunk_ped_incident = 1,
     ePipe_chunk_single_sound = 2,
     ePipe_chunk_car = 5,
-    ePipe_chunk_single_graphpical_wheel_stuff = 6,
+    ePipe_chunk_single_graphical_wheel_stuff = 6,
     ePipe_chunk_damage = 7,
     ePipe_chunk_special = 8,
     ePipe_chunk_spark = 10,
@@ -515,6 +521,7 @@ typedef enum {
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_chunk_ped_physics = 43,
+    ePipe_chunk_single_ped_dismember = 44,
     ePipe_chunk_single_ped_pos = 46,
     ePipe_chunk_single_ped_model_change = 47,
     ePipe_chunk_phil_object = 48,
@@ -529,7 +536,7 @@ typedef enum {
     ePipe_chunk_single_drone_straight_pos = 62,
     ePipe_chunk_burning_ped = 64,
     ePipe_chunk_powerup_respawn = 65,
-    ePipe_chunk_end_shit_mine = 65,
+    ePipe_chunk_end_shit_mine = 67,
     ePipe_single_transform_type = 68,
     ePipe_chunk_single_oppo_renderage = 69,
 } tPipe_chunk_type;
@@ -551,6 +558,7 @@ typedef struct tPipe_chunk {
     union {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
+        tPipe_single_ped_dismember ped_dismember;
         tPipe_phil_object phil_object;
         tPipe_chunk_shrapnel shrapnel;
         tPipe_chunk_identity identity;
@@ -2642,7 +2650,7 @@ typedef struct tCar_spec {
     undefined field_0x1348[12];
     float max_force_front;
     float max_force_rear;
-    float gear; /* FIXME: should be an int? */
+    int gear;
     int just_changed_gear;
     int max_gear;
     float speed_revs_ratio;
@@ -5181,6 +5189,7 @@ typedef enum {
     eNet_message_chunk_type_oil_spill = 0x1f,
     eNet_message_chunk_type_car_crush = 0x20,
     eNet_message_chunk_type_reattach_bit = 0x26,
+    eNet_message_chunk_type_reattach_all_bits = 0x2b,
     eNet_message_chunk_type_toggle_doors = 0x2c,
     eNet_message_chunk_type_view_car = 0x2f,
     eNet_message_chunk_type_mine_explosion = 0x31,
@@ -5245,6 +5254,12 @@ typedef struct {
     tU8 uid;
     tU32 time;
 } tNet_message_chunk_reattach_bit;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tPlayer_ID player;
+    tU32 time;
+} tNet_message_chunk_reattach_all_bits;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -5364,6 +5379,7 @@ typedef union {
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_reattach_bit reattach_bit; /* type = 0x26 */
+    tNet_message_chunk_reattach_all_bits reattach_all_bits; /* type = 0x2b */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
     tNet_message_chunk_view_car view_car; /* type = 0x2f */
     tNet_message_chunk_mine_explode mine_explode; /* type = 0x31 */

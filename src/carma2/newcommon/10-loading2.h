@@ -17,6 +17,8 @@ extern int gCamera_type;
 extern const char* gPedTextTxtPath;
 extern int gGroove_funk_offset;
 extern const char* gNet_avail_names[4];
+extern tHeadup_info gHeadup_image_info[45];
+extern br_pixelmap* gHeadup_images[45];
 extern tActionReplayCameraMode gAction_replay_camera_mode_00679324;
 
 extern void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
@@ -75,7 +77,7 @@ extern intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData
 
 // LinkCarModelsToActor
 
-// GetSimpleMaterial
+extern br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type);
 
 // ReadShrapnelMaterials
 

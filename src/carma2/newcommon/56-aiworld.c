@@ -85,6 +85,18 @@ void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_v
     BrTransformToTransform(&pThe_actor->t, &trans);
 }
 
+// FUNCTION: CARMA2_HW 0x00401430
+// FUNCTION: CARMA2_SW 0x00401430
+void C2_HOOK_FASTCALL PointActorAlongVectorWithUp(br_actor* pThe_actor, br_vector3* pLook, br_vector3* pUp) {
+    br_transform trans;
+
+    trans.type = BR_TRANSFORM_LOOK_UP;
+    BrVector3Copy(&trans.t.look_up.t, &pThe_actor->t.t.translate.t);
+    BrVector3Copy(&trans.t.look_up.look, pLook);
+    BrVector3Copy(&trans.t.look_up.up, pUp);
+    BrTransformToTransform(&pThe_actor->t, &trans);
+}
+
 // FUNCTION: CARMA2_HW 0x00401760
 // FUNCTION: CARMA2_SW 0x00401760
 br_material* C2_HOOK_FASTCALL CreateSimpleMaterial(int pIndex) {
