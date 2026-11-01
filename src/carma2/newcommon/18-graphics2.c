@@ -45,6 +45,10 @@ int gCursor_line_width = 5;
 // GLOBAL: CARMA2_SW 0x00676608
 tTransient_bm gTransient_bitmaps[50];
 
+// GLOBAL: CARMA2_HW 0x0067c390
+// GLOBAL: CARMA2_SW 0x00676b04
+int gMouse_started;
+
 // GLOBAL: CARMA2_HW 0x006923a4
 // GLOBAL: CARMA2_SW 0x0068c3fc
 tU32 gLast_palette_change;
@@ -397,15 +401,35 @@ void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
     }
 }
 
-// DeallocateTransientBitmap
+void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex) {
 
-// DeallocateAllTransientBitmaps
+    if (gTransient_bitmaps[pIndex].pixmap != NULL) {
+        BrPixelmapFree(gTransient_bitmaps[pIndex].pixmap);
+        gTransient_bitmaps[pIndex].pixmap = NULL;
+        gTransient_bitmaps[pIndex].in_use = 0;
+    }
+}
+
+void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void) {
+    int i;
+    for (i = 0; i < (int)REC2_ASIZE(gTransient_bitmaps); i++) {
+        DeallocateTransientBitmap(i);
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // STUB: CARMA2_HW 0x0043e010
 // STUB: CARMA2_SW 0x0043e060
 void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them) {
     NOT_IMPLEMENTED();
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SaveTransient
 
@@ -453,10 +477,13 @@ void C2_HOOK_FASTCALL StartMouseCursor(void) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x0043e710
-// STUB: CARMA2_SW 0x0043e820
+// FUNCTION: CARMA2_HW 0x0043e710
+// FUNCTION: CARMA2_SW 0x0043e820
 void C2_HOOK_FASTCALL EndMouseCursor(void) {
-    NOT_IMPLEMENTED();
+
+    RemoveTransientBitmaps(1);
+    DeallocateAllTransientBitmaps();
+    gMouse_started = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0047b450
