@@ -1187,17 +1187,17 @@ void C2_HOOK_FASTCALL PhysicsAddObjectList(tPhysics_object* pParent, tPhysics_ob
 // FUNCTION: CARMA2_SW 0x004c2b40
 void C2_HOOK_FASTCALL PhysicsRemoveObject(tPhysics_object* pObject) {
     tPhysics_object* parent;
-    tPhysics_object* previous;
+    tPhysics_object* sibling;
 
     parent = pObject->parent;
-    previous = parent->child;
-    if (previous == pObject) {
+    sibling = parent->child;
+    if (sibling == pObject) {
         parent->child = pObject->next;
     } else {
-        while (previous->next != pObject) {
-            previous = previous->next;
+        while (sibling->next != pObject) {
+            sibling = sibling->next;
         }
-        previous->next = pObject->next;
+        sibling->next = pObject->next;
     }
     pObject->parent = NULL;
     pObject->next = NULL;
