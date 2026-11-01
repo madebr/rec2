@@ -135,7 +135,7 @@ extern void C2_HOOK_FASTCALL GotPowerup0(void);
 
 extern void C2_HOOK_FASTCALL GotPowerup4(void);
 
-// GotPowerup5
+extern void C2_HOOK_FASTCALL GotPowerup5(void);
 
 // GotPowerup6
 
