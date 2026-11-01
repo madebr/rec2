@@ -23,6 +23,7 @@
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
+#include "49-physics.h"
 #include "58-crush2.h"
 #include "60-phil.h"
 #include "brender/brender.h"
@@ -93,6 +94,7 @@ int gEliminate_faces;
 int gInTheSea;
 
 // GLOBAL: CARMA2_HW 0x0065d010
+// GLOBAL: CARMA2_SW 0x00657948
 int gFace_num__car = 1;
 
 // GLOBAL: CARMA2_HW 0x00744820
@@ -901,7 +903,18 @@ void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix)
     }
 }
 
-// GetPrecalculatedFacesUnderCar
+// FUNCTION: CARMA2_HW 0x00420880
+// FUNCTION: CARMA2_SW 0x00420900
+int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** pFace_refs) {
+
+    if (pCar->collision_info->box_face_ref != gFace_num__car) {
+        if (pCar->collision_info->box_face_ref != gFace_num__car - 1 || pCar->collision_info->box_face_start <= gFace_count) {
+            return 0;
+        }
+    }
+    *pFace_refs = &gFace_list__car[pCar->collision_info->box_face_start];
+    return pCar->collision_info->box_face_end - pCar->collision_info->box_face_start;
+}
 
 // FUNCTION: CARMA2_HW 0x004208f0
 // FUNCTION: CARMA2_SW 0x00420970
