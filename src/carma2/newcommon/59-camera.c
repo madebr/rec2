@@ -10,12 +10,15 @@
 
 #include "01-network.h"
 #include "10-loading2.h"
+#include "15-displays.h"
 #include "21-mainloop.h"
 #include "22-replay.h"
+#include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "57-drone.h"
 #include "globvars.h"
 #include "globvrkm.h"
+#include "globvrme.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
 
@@ -116,7 +119,43 @@ void C2_HOOK_FASTCALL ViewNetPlayer(void) {
     }
 }
 
-// ViewOpponent
+// FUNCTION: CARMA2_HW 0x0040e590
+// FUNCTION: CARMA2_SW 0x0040e570
+void C2_HOOK_FASTCALL ViewOpponent(void) {
+    tNet_message* message;
+
+    // GLOBAL: CARMA2_HW 0x0058f628
+    // GLOBAL: CARMA2_SW 0x0058a628
+    static int n = -1;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_view_car, player, 0x4);
+
+    n++;
+    if (gNet_mode != eNet_mode_none) {
+        if (n >= gNumber_of_net_players) {
+            n = 0;
+        }
+        if (gNet_mode == eNet_mode_host) {
+            gCar_to_view = gNet_players[n].car;
+        } else if (gCar_to_view_id == 0) {
+            gCar_to_view_id = gNet_players[n].ID;
+            message = NetBuildGuaranteedMessage(eNet_message_chunk_type_view_car, 0);
+            message->contents.view_car.player = gCar_to_view_id;
+            NetGuaranteedSendMessageToHost(gCurrent_net_game, message, NULL);
+            return;
+        }
+        NewTextHeadupSlot(4, 0, 2000, -3, gNet_players[n].player_name);
+    } else {
+        if (n >= gNum_viewable_cars) {
+            n = 0;
+        }
+        gCar_to_view = gViewable_car_list[n];
+        NewTextHeadupSlot(4, 0, 2000, -3, gViewable_car_list[n]->driver_name);
+    }
+    gCamera_yaw = 0;
+    InitialiseExternalCamera();
+    PositionExternalCamera(gCar_to_view, 200);
+}
 
 // FUNCTION: CARMA2_HW 0x0040e680
 // FUNCTION: CARMA2_SW 0x0040e660
@@ -137,7 +176,30 @@ void C2_HOOK_FASTCALL ReallyViewOpponent(void) {
     }
 }
 
-// CheckDisablePlingMaterials
+// FUNCTION: CARMA2_HW 0x0040f510
+// FUNCTION: CARMA2_SW 0x0040f4f0
+void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar) {
+    br_matrix34* mat;
+    br_scalar height;
+    int i;
+
+    height = 0.f;
+    if (pCar->collision_info->water_d != 10000.f) {
+        mat = &pCar->car_master_actor->t.t.mat;
+        for (i = 0; i < 3; i++) {
+            if (mat->m[i][1] > 0.f) {
+                height += pCar->collision_info->bb2.max.v[i] * mat->m[i][1];
+            } else {
+                height += pCar->collision_info->bb2.min.v[i] * mat->m[i][1];
+            }
+        }
+        if ((mat->m[3][1] / WORLD_SCALE) + height < pCar->collision_info->water_d) {
+            DisablePlingMaterials();
+        }
+    } else {
+        DisablePlingMaterials();
+    }
+}
 
 // SetPanningFieldOfView
 

@@ -20,6 +20,8 @@ extern tPedestrian* gPedestrian_array;
 extern void* gPhysics_buffer3_ptr;
 extern int gPHIL_mechanics_time_sync;
 extern int gPhysics_other_buffer_capacity;
+extern tProximity_ray gProximity_rays[20];
+extern br_actor* gPed_limbed_actors[30];
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
 
@@ -95,7 +97,7 @@ extern void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* p
 
 // AddOldForces
 
-// TestShapeEdgeIntersection
+extern int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, tPhysics_shape* pCollision_shape_1, tPhysics_shape* pCollision_shape_2);
 
 // TestObjectOverlap
 

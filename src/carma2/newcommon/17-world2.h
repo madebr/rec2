@@ -28,7 +28,7 @@ extern void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
 extern void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);
 
-extern int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
+extern int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, br_scalar pMax_distance);
 
 extern void C2_HOOK_FASTCALL CancelificateClipulatingPlaneyThings(void);
 

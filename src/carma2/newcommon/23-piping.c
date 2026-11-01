@@ -9,8 +9,11 @@
 #include "23-piping.h"
 
 #include "00-car.h"
+#include "09-funks.h"
 #include "16-graphics1.h"
+#include "27-powerup.h"
 #include "32-spark.h"
+
 #include "51-smash.h"
 #include "69-sound.h"
 #include "globvars.h"
@@ -18,6 +21,7 @@
 
 #include <s3/internal/audio.h>
 
+#include <limits.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -74,6 +78,7 @@ tU32 gPipe_sound_time_window;
 // ARReplayForwards
 
 // FUNCTION: CARMA2_HW 0x00402360
+// FUNCTION: CARMA2_SW 0x00402360
 int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
     return gReplay_rate == 0.f;
 }
@@ -261,11 +266,45 @@ int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime) {
 
 // FindNextChunk
 
-// MoveReplayBuffer
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// ARMoveToEndOfReplay
+// STUB: CARMA2_HW 0x00403260
+// STUB: CARMA2_SW 0x00403260
+void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    NOT_IMPLEMENTED();
+}
 
-// ARMoveToStartOfReplay
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00403210
+// FUNCTION: CARMA2_SW 0x00403210
+void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    float old_rate;
+
+    gDisable_piped_sounds = 1;
+    old_rate = gReplay_rate;
+    gReplay_rate = 100.f;
+    MoveReplayBuffer(INT_MAX, pBetween_sessions, pBefore_frame, pAfter_frame);
+    gDisable_piped_sounds = 0;
+    gReplay_rate = old_rate;
+}
+
+// FUNCTION: CARMA2_HW 0x00403c70
+// FUNCTION: CARMA2_SW 0x00403c70
+void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    float old_rate;
+
+    gDisable_piped_sounds = 1;
+    old_rate = gReplay_rate;
+    gReplay_rate = -100.f;
+    MoveReplayBuffer(-INT_MAX, pBetween_sessions, pBefore_frame, pAfter_frame);
+    gDisable_piped_sounds = 0;
+    gReplay_rate = old_rate;
+}
 
 // ARDoActionReplay
 
@@ -370,7 +409,17 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
     }
 }
 
-// AddNonCarToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6ff0
+// FUNCTION: CARMA2_SW 0x004c3720
+void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, matrix, 0x30);
+
+    ARAddVariedDataToSession(ePipe_chunk_non_car, pIndex, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
+}
 
 // AddSmokeToPipingSession
 
@@ -399,7 +448,17 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
 
 // AddProxRayToPipingSession
 
-// AddFlapToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7520
+// FUNCTION: CARMA2_SW 0x004c3c50
+void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flap, angle, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flap, angle, 0x2);
+
+    ARAddVariedDataToSession(ePipe_chunk_flap, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flap, angle), pAngle);
+}
 
 // AddModelMashToPipingSession
 
@@ -551,7 +610,13 @@ void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_model* pOl
 
 // PipeSingleSmashRemoveFaces
 
-// PipeSingleSmashDecal
+// FUNCTION: CARMA2_HW 0x004c89f0
+// FUNCTION: CARMA2_SW 0x004c5120
+void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex) {
+    C2_HOOK_BUG_ON(sizeof(gZero_vector__smash.v[0]) != 0x4);
+
+    ARDoSingleSession(ePipe_chunk_smash_decal, pIndex, &gZero_vector__smash, sizeof(gZero_vector__smash.v[0]));
+}
 
 // FUNCTION: CARMA2_HW 0x004c8a10
 // STUB: CARMA2_SW 0x004c5140
@@ -635,7 +700,14 @@ void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, int pBloc
 
 // PipeSinglePowerupGot
 
-// PipeSinglePowerupLose
+// FUNCTION: CARMA2_HW 0x004c8dc0
+// FUNCTION: CARMA2_SW 0x004c54f0
+void C2_HOOK_FASTCALL PipeSinglePowerupLose(tPowerup* pPowerup, tCar_spec* pCar_spec) {
+    C2_HOOK_BUG_ON(sizeof(pCar_spec) != 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_powerup_lose, (uintptr_t)pPowerup, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_powerup_lose, car), pCar_spec);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8de0
 // STUB: CARMA2_SW 0x004c5510
@@ -673,9 +745,30 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 
 // PipeSingleDroneCornerPos
 
-// PipeSingleDroneStraightPos
+// FUNCTION: CARMA2_HW 0x004c8f30
+// FUNCTION: CARMA2_SW 0x004c5660
+void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, section, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_drone_straight_pos, speed, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, speed, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_drone_straight_pos, distance, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_single_drone_straight_pos, distance, 0x2);
 
-// PipeSinglePowerupRespawn
+    ARDoSingleVariedSession(ePipe_chunk_single_drone_straight_pos, pDrone->id, 3,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, section), pSection,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, speed), pDistance,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, distance), pDistance);
+}
+
+// FUNCTION: CARMA2_HW 0x004c8f90
+// FUNCTION: CARMA2_SW 0x004c56c0
+void C2_HOOK_FASTCALL PipeSinglePowerupRespawn(br_actor* pActor, int pPowerup_id) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_powerup_respawn, index, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_powerup_respawn, index, 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_powerup_respawn, (uintptr_t)pActor, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_powerup_respawn, index), pPowerup_id);
+}
 
 // PipeSingleShitMine
 
@@ -884,7 +977,22 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // ApplyBloodSpurt
 
-// ApplyGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004c9be0
+// FUNCTION: CARMA2_SW 0x004c6310
+void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+    tPipe_single_groove_on_of* data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_groove_on_of, block_flags, 0x4);
+
+    chunk = *pChunk;
+    data = (tPipe_single_groove_on_of*)chunk->data.raw_data;
+    if (data->enable) {
+        EnableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    } else {
+        DisableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    }
+}
 
 // ApplyPowerupGot
 
@@ -921,7 +1029,12 @@ void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk) {
 
 // ApplyNapalmBolt
 
-// ApplyPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004c9d40
+// FUNCTION: CARMA2_SW 0x004c6470
+void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
+
+    ARDoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
+}
 
 // ApplyShitMine
 
@@ -1040,7 +1153,22 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoBloodSpurt
 
-// UndoGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004ca2d0
+// FUNCTION: CARMA2_SW 0x004c6a00
+void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+    tPipe_single_groove_on_of* data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_groove_on_of, block_flags, 0x4);
+
+    chunk = *pChunk;
+    data = (tPipe_single_groove_on_of*)chunk->data.raw_data;
+    if (data->enable) {
+        DisableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    } else {
+        EnableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    }
+}
 
 // UndoPowerupGot
 
@@ -1054,7 +1182,13 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoNapalmBolt
 
-// UndoPowerupRespawn
+// FUNCTION: CARMA2_HW 0x004ca3b0
+// FUNCTION: CARMA2_SW 0x004c6ae0
+void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    (void)pPrev_chunk;
+
+    ARUndoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
+}
 
 // UndoShitMine
 

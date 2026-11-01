@@ -10,7 +10,9 @@
 
 
 // GLOBAL: CARMA2_HW 0x0074c6e0
+// GLOBAL: CARMA2_SW 0x00742da0
 tCar_spec* gViewable_car_list[50];
 
 // GLOBAL: CARMA2_HW 0x0074c7a8
+// GLOBAL: CARMA2_SW 0x00742e68
 int gNum_viewable_cars;

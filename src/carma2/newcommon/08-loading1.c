@@ -101,6 +101,15 @@ tU16 C2_HOOK_FASTCALL ReadU16(FILE* pF) {
     return raw_short;
 }
 
+// FUNCTION: CARMA2_HW 0x0048f870
+// FUNCTION: CARMA2_SW 0x0048cae0
+tU8 C2_HOOK_FASTCALL ReadU8(FILE* pF) {
+    tU8 raw_byte;
+
+    PFfread(&raw_byte, sizeof(raw_byte), 1, pF);
+    return raw_byte;
+}
+
 // FUNCTION: CARMA2_HW 0x0048f890
 float C2_HOOK_FASTCALL ReadF32(FILE* pF) {
     float f;
@@ -117,6 +126,16 @@ tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF) {
     PFfread(&raw_long, sizeof(raw_long), 1, pF);
     // FIXME: byteswap for BE
     return raw_long;
+}
+
+// FUNCTION: CARMA2_HW 0x0048f8d0
+// FUNCTION: CARMA2_SW 0x0048cb40
+tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF) {
+    tS16 raw_short;
+
+    PFfread(&raw_short, sizeof(raw_short), 1, pF);
+    // FIXME: byteswap for BE
+    return raw_short;
 }
 
 // FUNCTION: CARMA2_HW 0x0048f910
@@ -174,6 +193,17 @@ tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
     memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
     *pPtr += sizeof(raw_byte);
     return raw_byte;
+}
+
+// FUNCTION: CARMA2_HW 0x0048fa30
+// FUNCTION: CARMA2_SW 0x0048cca0
+tS32 C2_HOOK_FASTCALL MemReadS32(char** pPtr) {
+    tS32 raw_long;
+
+    memcpy(&raw_long, *pPtr, sizeof(raw_long));
+    *pPtr += sizeof(raw_long);
+    // FIXME: byteswap for BE
+    return raw_long;
 }
 
 // FUNCTION: CARMA2_HW 0x0048fa40
@@ -570,6 +600,34 @@ static void C2_HOOK_FASTCALL EncodeLine2(char* pS) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004907b0
+// FUNCTION: CARMA2_SW 0x0048da20
+void C2_HOOK_FASTCALL EncodeLine_DEMO(char* pS) {
+    int len;
+    int seed;
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gLong_key) != 16);
+
+    len = strlen(pS);
+    while (len != 0 && (pS[len - 1] == '\r' || pS[len - 1] == '\n')) {
+        pS[len - 1] = '\0';
+        len--;
+    }
+    seed = len % (int)REC2_ASIZE(gLong_key);
+    for (i = 0; i < len; i++) {
+        if (pS[i] == '\t') {
+            pS[i] = (char)0x9f;
+        }
+        pS[i] = ((gLong_key[seed] ^ (pS[i] - 0x20)) & 0x7f) + 0x20;
+
+        seed = (seed + 7) % (int)REC2_ASIZE(gLong_key);
+        if (pS[i] == (char)0x9f) {
+            pS[i] = '\t';
+        }
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00490840
 // FUNCTION: CARMA2_SW 0x0048dab0
 void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
@@ -655,6 +713,19 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     rename(new_file, pThe_path);
 }
 
+// FUNCTION: CARMA2_HW 0x00490ec0
+// FUNCTION: CARMA2_SW 0x0048e130
+void C2_HOOK_FASTCALL SkipNLines(FILE* pF) {
+    int i;
+    int count;
+    char s[256];
+
+    count = GetAnInt(pF);
+    for (i = 0; i < count; i++) {
+        GetALineAndDontArgue(pF, s);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00490f30
 // FUNCTION: CARMA2_SW 0x0048e1a0
 char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
@@ -681,7 +752,7 @@ char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
         if (ch != -1) {
             PFungetc(ch, pF);
         }
-    } while (!isalnum(*result)
+    } while (!isalnum((unsigned char)*result)
              && *result != '*'
              && *result != '-'
              && *result != '+'
@@ -698,22 +769,23 @@ char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
 
     if (result != NULL) {
         len = strlen(result);
-        if (len > 0 && (result[len - 1] == '\n' || result[len - 1] == '\r')) {
+        /* the original's && binds first, so it also tests result[len - 1] when len is 0 */
+        if ((len != 0 && result[len - 1] == '\n') || result[len - 1] == '\r') {
             result[len - 1] = '\0';
             len--;
         }
-        if (len > 0 && (result[len - 1] == '\n' || result[len - 1] == '\r')) {
+        /* the original's && binds first, so it also tests result[len - 1] when len is 0 */
+        if ((len != 0 && result[len - 1] == '\n') || result[len - 1] == '\r') {
             result[len - 1] = '\0';
             len--;
         }
         memcpy(pS, result, len + 1);
 #ifdef REC2_FIX_BUGS
-        return pS;
-#else
-        return result;
+        result = pS;
 #endif
+    } else {
+        pS[0] = '\0';
     }
-    pS[0] = '\0';
     return result;
 
 }
@@ -1130,7 +1202,12 @@ void C2_HOOK_FASTCALL DisposeGameIfNecessary(void) {
     dr_dprintf("DisposeGameIfNecessary() - END");
 }
 
-// DisposeTrack
+// FUNCTION: CARMA2_HW 0x0044c220
+// FUNCTION: CARMA2_SW 0x0044bfd0
+void C2_HOOK_FASTCALL DisposeTrack(void) {
+
+    FreeTrack(&gProgram_state.track_spec);
+}
 
 // FUNCTION: CARMA2_HW 0x004910d0
 // FUNCTION: CARMA2_SW 0x0048e340

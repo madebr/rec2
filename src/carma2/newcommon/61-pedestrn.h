@@ -12,15 +12,21 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gPed_count_limbed_actors;
+
 extern int gPed_retain_root_mode;
 extern float gPedestrian_speed_factor;
 extern int gSelected_ped;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
+extern int gCount_changed_points;
+extern br_vector3 gChanged_points[10];
 extern int gPed_nearness;
 extern tTWTVFS gTwtPeds;
+extern float gMutant_speed;
 extern int gDancing_peds;
+extern int gDrunk_pedestrians;
 extern int gPeds_already_munged;
 
 // OrientationChanged
@@ -73,7 +79,7 @@ extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian,
 
 // PedApplyDismember
 
-// PedUndoDismember
+extern void C2_HOOK_FASTCALL PedUndoDismember(tPedestrian* pPed, int pBone_index, tS8 pValue);
 
 // ReadPedSpecs
 
@@ -241,7 +247,7 @@ extern int C2_HOOK_FASTCALL GetPedCount(void);
 
 // GetPedPosition
 
-// TurnLimbsOnAndOff
+extern void C2_HOOK_CDECL TurnLimbsOnAndOff(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
 // SetModelCallBacks
 
@@ -301,15 +307,15 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // RenderElectroBastardRays
 
-// AdjustProxRay
+extern void C2_HOOK_FASTCALL AdjustProxRay(int pRay_index, tU16 pCar_ID, tU16 pPed_index, tU32 pTime);
 
 // ResetProxRay
 
 extern tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void);
 
-// NextPedCam
+extern void C2_HOOK_FASTCALL NextPedCam(void);
 
-// PrevPedCam
+extern void C2_HOOK_FASTCALL PrevPedCam(void);
 
 // FindNearestPed
 
@@ -363,7 +369,7 @@ extern void C2_HOOK_FASTCALL SetBloodPedFolderNames(void);
 
 extern void C2_HOOK_FASTCALL SetAlienPedFolderNames(void);
 
-// AddChangedPoint
+extern void C2_HOOK_FASTCALL AddChangedPoint(br_vector3* pPoint);
 
 extern int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void);
 
@@ -451,11 +457,11 @@ extern br_matrix34* C2_HOOK_FASTCALL GetBoneMatrixPtr(tPed_character_instance* p
 
 extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
 
-// SetCharacterBonePositions
+extern void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, int pArg2, int pArg3);
 
-// MakeCharacterRenderable2
+extern int C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pCharacter, int pIndex);
 
-// MakeCharacterRenderable
+extern int C2_HOOK_FASTCALL MakeCharacterRenderable(tPed_character_instance* pCharacter);
 
 // CharacterNoLongerRenderable
 

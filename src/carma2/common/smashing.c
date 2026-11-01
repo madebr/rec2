@@ -140,7 +140,6 @@ void C2_HOOK_FASTCALL ReadSmashableInitialPosition(FILE* pFile, tSmashable_initi
         case kInitialSmashablePosition_SphereClumped:
             /* Sphere radius */
             pInitial_pos->position.sphere.radius = GetAScalar(pFile);
-            /* Sphere centre */
             pInitial_pos->position.sphere.where = GetALineAndInterpretCommand(pFile, gInitial_position_sphere_where, REC2_ASIZE(gInitial_position_sphere_where));
             break;
         case kInitialSmashablePosition_BoxClumped:
@@ -152,9 +151,9 @@ void C2_HOOK_FASTCALL ReadSmashableInitialPosition(FILE* pFile, tSmashable_initi
 }
 
 // FUNCTION: CARMA2_HW 0x004ee500
-void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed) {
+void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tMovement_spec* pInitial_speed) {
 
-    C2_HOOK_BUG_ON(sizeof(tSmashable_initial_speed_spec) != 28);
+    C2_HOOK_BUG_ON(sizeof(tMovement_spec) != 28);
 
     /* Min,max speed towards car */
     GetPairOfFloats(pFile, &pInitial_speed->min_speed, &pInitial_speed->max_speed);
