@@ -253,7 +253,19 @@ void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, 
     }
 }
 
-// AddOldForces
+// FUNCTION: CARMA2_HW 0x00428cf0
+// FUNCTION: CARMA2_SW 0x00428d80
+int C2_HOOK_FASTCALL AddOldForces(tPhysics_joint_force* pForces, int pCount, const tPhysics_joint_force* pOld_forces, int pOld_count) {
+    int i;
+
+    for (i = 0; i < pOld_count && pCount < 40; i++) {
+        if (pOld_forces[i].type != 9) {
+            pForces[pCount] = pOld_forces[i];
+            pCount++;
+        }
+    }
+    return pCount;
+}
 
 // FUNCTION: CARMA2_HW 0x00428d40
 // FUNCTION: CARMA2_SW 0x00428dd0
