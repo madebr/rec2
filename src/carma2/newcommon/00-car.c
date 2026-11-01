@@ -65,6 +65,10 @@ tFloat_bunch_info gCar_car_damage_multiplier;
 // GLOBAL: CARMA2_SW 0x00685e30
 br_vector3 gZero_v__car;  // FIXME: make const?
 
+// GLOBAL: CARMA2_HW 0x006793a0
+// GLOBAL: CARMA2_SW 0x00673b10
+int gFreeze_mechanics;
+
 // GLOBAL: CARMA2_HW 0x006793dc
 // GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
@@ -774,6 +778,18 @@ void C2_HOOK_FASTCALL AdjustDownForce(void) {
     }
     sprintf(s, "DownForceSpeed %f", c->downforce_to_weight);
     NewTextHeadupSlot(4, 0, 1500, -4, s);
+}
+
+// FUNCTION: CARMA2_HW 0x0041f450
+// FUNCTION: CARMA2_SW 0x0041f4d0
+void C2_HOOK_FASTCALL FreezeMechanics(void) {
+
+    gFreeze_mechanics = !gFreeze_mechanics;
+    if (gFreeze_mechanics) {
+        NewTextHeadupSlot(4, 0, 3000, -4, "Mechanics Frozen");
+    } else {
+        NewTextHeadupSlot(4, 0, 3000, -4, "Thawed Mechanics");
+    }
 }
 
 // FlyCar
