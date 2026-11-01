@@ -101,6 +101,7 @@ void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
     DWORD size;
     char *p;
 
+    size = sizeof(buffer);
     dr_dprintf("PDNetObtainSystemUserName()");
 
     if (GetComputerNameA(buffer, &size) && size != 0) {
