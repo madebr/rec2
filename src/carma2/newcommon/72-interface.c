@@ -21,6 +21,7 @@
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "24-loadsave.h"
+#include "28-world3.h"
 #include "35-intrface.h"
 #include "40-main.h"
 #include "41-utility.h"
@@ -43,6 +44,10 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 #include <ctype.h>
+
+// GLOBAL: CARMA2_HW 0x00688b1c
+// GLOBAL: CARMA2_SW 0x0068307c
+int gNet_storage_space_initialized;
 
 // GLOBAL: CARMA2_HW 0x00763960
 // GLOBAL: CARMA2_SW 0x00759ec0
@@ -485,6 +490,7 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
     return 0;
 }
+
 // FUNCTION: CARMA2_HW 0x00466ce0
 // FUNCTION: CARMA2_SW 0x00466a70
 void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_index) {
@@ -1032,7 +1038,17 @@ int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_option
     return 1;
 }
 
-// InitNetStorageSpace
+// FUNCTION: CARMA2_HW 0x00468750
+// FUNCTION: CARMA2_SW 0x004684d0
+void C2_HOOK_FASTCALL InitNetStorageSpace(void) {
+    int i;
+
+    for (i = 0; i < kMax_netplayers; i++) {
+        gCurrent_race.opponent_list[i].car_spec = NULL;
+    }
+    gNet_storage_space_initialized = 1;
+    InitialiseStorageSpace(0, &gNet_cars_storage_space, 2000, 50, 2000, 2000, 50);
+}
 
 // DisposeNetStorageSpace
 
