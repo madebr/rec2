@@ -670,6 +670,13 @@ void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
 
 // AnnihilatePeds
 
+// FUNCTION: CARMA2_HW 0x004ddc10
+// FUNCTION: CARMA2_SW 0x004da110
+void C2_HOOK_FASTCALL FUN_004ddc10(unsigned int* pFlags) {
+
+    *pFlags |= 0x20;
+}
+
 // NapalmPeds
 
 #ifdef REC2_MATCHING

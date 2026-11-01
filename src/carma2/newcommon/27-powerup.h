@@ -272,6 +272,8 @@ extern void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor);
 
 // AnnihilatePeds
 
+extern void C2_HOOK_FASTCALL FUN_004ddc10(unsigned int* pFlags);
+
 // NapalmPeds
 
 extern int C2_HOOK_FASTCALL RepulseOpponents2(tPowerup* pPowerup, tCar_spec* pCar, int pSend_message);
