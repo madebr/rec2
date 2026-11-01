@@ -270,7 +270,7 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
         PDSetPalette(render_palette);
     }
     gPalette_munged |= render_palette != gRender_palette;
-    gScratch_pixels = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
+    gScratch_pixels = BrMemAllocate(256 * sizeof(br_colour), kMem_misc);
     gScratch_palette = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, gScratch_pixels, 0);
 #ifdef REC2_SW
     gBlend25_table = BrTableFind("BLEND25.TAB");
@@ -347,28 +347,50 @@ void C2_HOOK_FASTCALL ResetPalette(void) {
     DRSetPalette(gRender_palette);
 }
 
-// Darken
+void C2_HOOK_FASTCALL Darken(tU8 *pPtr, tU32 pDarken_amount) {
+    unsigned int value;
 
-// SetFadedPalette
+    value = *pPtr;
+    *pPtr = (value * pDarken_amount) / 256;
+}
+
+// FUNCTION: CARMA2_HW 0x004b5390
+// FUNCTION: CARMA2_SW 0x004b1ae0
+void C2_HOOK_FASTCALL SetFadedPalette(tU32 pDegree) {
+    int i;
+
+    memcpy(gScratch_pixels, gCurrent_palette->pixels, 256 * sizeof(br_colour));
+    for (i = 0; i < 256; i++) {
+        Darken(&((tU8*)gScratch_pixels)[4 * i + 0], pDegree);
+        Darken(&((tU8*)gScratch_pixels)[4 * i + 1], pDegree);
+        Darken(&((tU8*)gScratch_pixels)[4 * i + 2], pDegree);
+        Darken(&((tU8*)gScratch_pixels)[4 * i + 3], pDegree);
+    }
+    DRSetPalette2(gScratch_palette, 0);
+}
 
 // FUNCTION: CARMA2_HW 0x004b5460
 // FUNCTION: CARMA2_SW 0x004b1ba0
 void C2_HOOK_FASTCALL FadePaletteDown(void) {
 }
 
-#if defined(REC2_MATCHING) && defined(_MSC_VER)
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x004b5470
-// STUB: CARMA2_SW 0x004b1bb0
+// FUNCTION: CARMA2_HW 0x004b5470
+// FUNCTION: CARMA2_SW 0x004b1bb0
 void C2_HOOK_FASTCALL FadePaletteUp(void) {
-    NOT_IMPLEMENTED();
-}
+    int start_time;
+    int the_time;
 
-#if defined(REC2_MATCHING) && defined(_MSC_VER)
-#pragma auto_inline(on)
-#endif
+    if (!gFaded_palette) {
+        return;
+    }
+
+    gFaded_palette = 0;
+    start_time = PDGetTotalTime();
+    while ((the_time = PDGetTotalTime() - start_time) < 500) {
+        SetFadedPalette((the_time * 256) / 500);
+    }
+    DRSetPalette(gCurrent_palette);
+}
 
 // EnsurePaletteUp
 
