@@ -610,7 +610,7 @@ typedef struct {
     float max_dist_axis;
     float max_dist_squared;
     br_vector3* pos;
-    int (C2_HOOK_FASTCALL * callback)(br_actor*, void*);
+    tNearbyActors_cbfn* callback;
     void* callback_context;
 } tFoundAnActor_context;
 
