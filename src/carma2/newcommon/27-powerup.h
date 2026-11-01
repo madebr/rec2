@@ -366,7 +366,7 @@ extern int C2_HOOK_FASTCALL GetPowerupCount(void);
 
 extern void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition);
 
-// ARPowerupGot
+extern void C2_HOOK_FASTCALL ARPowerupGot(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ARPowerupLose
 
