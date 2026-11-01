@@ -210,7 +210,7 @@ extern intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData)
 
 // GetBlenficatiousnessOfMaterialPrimitively
 
-// GetBlenficatiousnessOfMaterial
+extern int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterial(br_material* pMaterial);
 
 extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
