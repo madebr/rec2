@@ -125,11 +125,14 @@ br_pixelmap* gBlend_palettes[4];
 br_pixelmap* gCurrent_splash;
 
 // FUNCTION: CARMA2_HW 0x0047d470
+// FUNCTION: CARMA2_SW 0x0047d7a0
 void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour) {
 
+#ifdef REC2_HW
     if (gBack_screen->type != BR_PMT_INDEX_8) {
         pColour = PaletteEntry16Bit(gRender_palette, pColour);
     }
+#endif
     BrPixelmapRectangleFill(pMap, pX, pY + 1, pWidth, pHeight - 2, pColour);
     BrPixelmapLine(pMap, pX, pY, pX + pWidth - 1, pY, pColour + 2);
     BrPixelmapLine(pMap, pX, pY + pHeight - 1, pX + pWidth - 1, pY + pHeight - 1, pColour - 2);
