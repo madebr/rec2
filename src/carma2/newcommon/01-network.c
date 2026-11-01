@@ -854,6 +854,7 @@ int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAddress(tNet_game_details* pDetai
         pMessage->header.field_0x8 = gLocal_net_ID;
         pMessage->header.field_0x10 = PDGetTotalTime();
         AddToGuaranteeList(pMessage, pAddress, 0, pNotifyFail);
+        GetCheckSum(pMessage);
         return PDNetSendMessageToAddress(pDetails, pMessage, pAddress);
     } else {
         return -3;
@@ -906,7 +907,11 @@ tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar) {
     return NULL;
 }
 
-// GetCheckSum
+// FUNCTION: CARMA2_HW 0x004a69f0
+// FUNCTION: CARMA2_SW 0x004a2b70
+void C2_HOOK_FASTCALL GetCheckSum(tNet_message* pMessage) {
+    (void)pMessage;
+}
 
 // CheckCheckSum
 
