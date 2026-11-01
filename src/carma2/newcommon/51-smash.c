@@ -508,14 +508,8 @@ void C2_HOOK_FASTCALL FreeExplosionAnimation(tExplosion_animation* pAnimation) {
     tExplosion_animation_group* group;
 
     if (pAnimation->count_groups != 0) {
-        i = 0;
-        group = pAnimation->groups;
-        if (pAnimation->count_groups > 0) {
-            do {
-                BrMemFree(group->frames);
-                i++;
-                group++;
-            } while (i < pAnimation->count_groups);
+        for (i = 0, group = pAnimation->groups; i < pAnimation->count_groups; i++, group++) {
+            BrMemFree(group->frames);
         }
         BrMemFree(pAnimation->groups);
     }
