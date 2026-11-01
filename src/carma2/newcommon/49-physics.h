@@ -191,7 +191,7 @@ extern void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObje
 
 // CheckDoingNothingFlag
 
-// SetGroup
+extern void C2_HOOK_FASTCALL SetGroup(tPhysics_object* pObject, int pGroup);
 
 // GroupTogether
 
