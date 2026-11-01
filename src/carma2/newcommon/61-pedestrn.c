@@ -13,6 +13,7 @@
 #include "21-mainloop.h"
 #include "22-replay.h"
 #include "27-powerup.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "63-loading3.h"
@@ -614,7 +615,20 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // RenderElectroBastardRays
 
-// AdjustProxRay
+// FUNCTION: CARMA2_HW 0x004d6180
+// FUNCTION: CARMA2_SW 0x004d2780
+void C2_HOOK_FASTCALL AdjustProxRay(int pRay_index, tU16 pCar_ID, tU16 pPed_index, tU32 pTime) {
+    tCar_spec* car;
+
+    if ((pCar_ID >> 8) == 0) {
+        car = &gProgram_state.current_car;
+    } else {
+        car = GetCarSpec(pCar_ID >> 8, pCar_ID & 0xff);
+    }
+    gProximity_rays[pRay_index].car = car;
+    gProximity_rays[pRay_index].ped = &gPedestrian_array[pPed_index];
+    gProximity_rays[pRay_index].start_time = pTime;
+}
 
 // ResetProxRay
 
