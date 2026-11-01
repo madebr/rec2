@@ -562,10 +562,16 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 #pragma auto_inline(off)
 #endif
 
-// STUB: CARMA2_HW 0x004ba4f0
-// STUB: CARMA2_SW 0x004b6c10
+// FUNCTION: CARMA2_HW 0x004ba4f0
+// FUNCTION: CARMA2_SW 0x004b6c10
 int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2) {
-    NOT_IMPLEMENTED();
+    int blocked;
+
+    blocked = (pCollision_1->field_0x1a0 & pCollision_2->field_0x1a4)
+        || (pCollision_2->field_0x1a0 & pCollision_1->field_0x1a4)
+        || (pCollision_1->flags & 4)
+        || (pCollision_2->flags & 4);
+    return !blocked;
 }
 
 #ifdef REC2_MATCHING
