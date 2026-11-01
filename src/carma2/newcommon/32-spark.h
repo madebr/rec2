@@ -235,7 +235,7 @@ extern intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void *pContex
 
 // ForEveryCarModel
 
-// MightBlendifyMaterial
+extern int C2_HOOK_FASTCALL MightBlendifyMaterial(br_material* pMaterial, int pBlend_factor);
 
 extern int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial);
 
