@@ -13,6 +13,7 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+extern int gRender_alternative_track_actors;
 extern br_material* gDefault_track_material;
 extern int gCount_track_non_cars;
 extern br_vector3 gAverage_grid_position;
@@ -39,7 +40,7 @@ extern void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_sca
 
 // ExtractColumns
 
-// RenderTrack
+extern void C2_HOOK_FASTCALL RenderTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world);
 
 extern br_scalar C2_HOOK_STDCALL GetYonFactor(void);
 
