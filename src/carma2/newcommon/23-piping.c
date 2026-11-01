@@ -19,6 +19,7 @@
 
 #include <s3/internal/audio.h>
 
+#include <limits.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -263,11 +264,45 @@ int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime) {
 
 // FindNextChunk
 
-// MoveReplayBuffer
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// ARMoveToEndOfReplay
+// STUB: CARMA2_HW 0x00403260
+// STUB: CARMA2_SW 0x00403260
+void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    NOT_IMPLEMENTED();
+}
 
-// ARMoveToStartOfReplay
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00403210
+// FUNCTION: CARMA2_SW 0x00403210
+void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    float old_rate;
+
+    gDisable_piped_sounds = 1;
+    old_rate = gReplay_rate;
+    gReplay_rate = 100.f;
+    MoveReplayBuffer(INT_MAX, pBetween_sessions, pBefore_frame, pAfter_frame);
+    gDisable_piped_sounds = 0;
+    gReplay_rate = old_rate;
+}
+
+// FUNCTION: CARMA2_HW 0x00403c70
+// FUNCTION: CARMA2_SW 0x00403c70
+void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    float old_rate;
+
+    gDisable_piped_sounds = 1;
+    old_rate = gReplay_rate;
+    gReplay_rate = -100.f;
+    MoveReplayBuffer(-INT_MAX, pBetween_sessions, pBefore_frame, pAfter_frame);
+    gDisable_piped_sounds = 0;
+    gReplay_rate = old_rate;
+}
 
 // ARDoActionReplay
 
