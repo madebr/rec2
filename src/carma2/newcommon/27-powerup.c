@@ -700,7 +700,6 @@ void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
 // FUNCTION: CARMA2_HW 0x004de610
 // FUNCTION: CARMA2_SW 0x004dab10
 void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* pPowerup, tCar_spec* pCar) {
-    int i;
 
     if (pCar != NULL && pCar->driver == eDriver_local_human) {
         gOn_drugs = 0;
