@@ -19,6 +19,7 @@
 
 #include <s3/internal/audio.h>
 
+#include <limits.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -284,7 +285,7 @@ void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_ses
     gDisable_piped_sounds = 1;
     old_rate = gReplay_rate;
     gReplay_rate = 100.f;
-    MoveReplayBuffer(0x7fffffff, pBetween_sessions, pBefore_frame, pAfter_frame);
+    MoveReplayBuffer(INT_MAX, pBetween_sessions, pBefore_frame, pAfter_frame);
     gDisable_piped_sounds = 0;
     gReplay_rate = old_rate;
 }
@@ -297,7 +298,7 @@ void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_s
     gDisable_piped_sounds = 1;
     old_rate = gReplay_rate;
     gReplay_rate = -100.f;
-    MoveReplayBuffer(-0x7fffffff, pBetween_sessions, pBefore_frame, pAfter_frame);
+    MoveReplayBuffer(-INT_MAX, pBetween_sessions, pBefore_frame, pAfter_frame);
     gDisable_piped_sounds = 0;
     gReplay_rate = old_rate;
 }
