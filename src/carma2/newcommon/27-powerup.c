@@ -881,7 +881,17 @@ void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SetMassMultiplier
 
-// ResetMassMultiplier
+// FUNCTION: CARMA2_HW 0x004debf0
+// FUNCTION: CARMA2_SW 0x004db0f0
+void C2_HOOK_FASTCALL ResetMassMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, field_0x4c8, 0x4c8);
+
+    (void)pPowerup;
+    pCar->field_0x4c8 = 1.f;
+    if (gNet_mode != eNet_mode_none) {
+        RestoreCarPixelmaps(pCar);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004dec10
 int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {

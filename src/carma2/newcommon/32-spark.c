@@ -358,6 +358,7 @@ int C2_HOOK_FASTCALL RestorePixelmap(br_material* pMaterial) {
 }
 
 // STUB: CARMA2_HW 0x004f9620
+// STUB: CARMA2_SW 0x004f4ca0
 void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
