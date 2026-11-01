@@ -31,6 +31,18 @@
 // GLOBAL: CARMA2_SW 0x00671024
 tU8* gLocal_buffer;
 
+// GLOBAL: CARMA2_HW 0x006768c4
+// GLOBAL: CARMA2_SW 0x00671034
+tU8* gPipe_buffer_working_end;
+
+// GLOBAL: CARMA2_HW 0x006768e4
+// GLOBAL: CARMA2_SW 0x00671054
+int gReentrancy_count;
+
+// GLOBAL: CARMA2_HW 0x006768f0
+// GLOBAL: CARMA2_SW 0x00671060
+tU8* gPipe_buffer_phys_end;
+
 // GLOBAL: CARMA2_HW 0x006768f4
 // GLOBAL: CARMA2_SW 0x00671064
 tU32 gLocal_buffer_size;
@@ -109,7 +121,14 @@ void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection) {
     gPlay_direction = (int)pDirection;
 }
 
-// ARResetPiping
+// FUNCTION: CARMA2_HW 0x004023e0
+// FUNCTION: CARMA2_SW 0x004023e0
+void C2_HOOK_FASTCALL ARResetPiping(void) {
+    gPipe_record_ptr = gPipe_buffer_start;
+    gPipe_buffer_working_end = gPipe_buffer_phys_end;
+    gPipe_buffer_oldest = NULL;
+    gReentrancy_count = 0;
+}
 
 // ARInitialise
 
