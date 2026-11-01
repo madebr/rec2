@@ -13,6 +13,7 @@
 #include "rec2_types.h"
 
 extern int gCar_simplification_level;
+extern br_colour gColours[9];
 
 extern tU32 gWild_start;
 
@@ -28,7 +29,7 @@ extern void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
 extern void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);
 
-extern int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
+extern int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, br_scalar pMax_distance);
 
 extern void C2_HOOK_FASTCALL CancelificateClipulatingPlaneyThings(void);
 

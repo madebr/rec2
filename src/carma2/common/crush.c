@@ -451,7 +451,7 @@ void C2_HOOK_FASTCALL ReadAward(FILE* pF, tAward_info* pAward_info) {
 }
 
 // FUNCTION: CARMA2_HW 0x004eea20
-void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage) {
+void C2_HOOK_FASTCALL ReadSmashLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage) {
     char s[256];
     int i;
     int j;
@@ -522,7 +522,7 @@ void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashabl
 }
 
 // FUNCTION: CARMA2_HW 0x004ee990
-void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage) {
+void C2_HOOK_FASTCALL ReadSmashableData(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage) {
     int i;
 
     /* Number of 'Smash data' entries */
@@ -534,7 +534,7 @@ void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_e
         /* name of material */
         GetAString(pF, pCar_crush_buffer_entry->smashables[i].material_name);
         pCar_crush_buffer_entry->smashables[i].funk = -1;
-        LoadSmashableLevels(pF, &pCar_crush_buffer_entry->smashables[i].levels, &pCar_crush_buffer_entry->smashables[i].count_smashable_levels, 0, pBrender_storage);
+        ReadSmashLevels(pF, &pCar_crush_buffer_entry->smashables[i].levels, &pCar_crush_buffer_entry->smashables[i].count_smashable_levels, 0, pBrender_storage);
     }
 }
 
@@ -686,7 +686,7 @@ void C2_HOOK_FASTCALL LoadCarCrushDataEntry(FILE* pF, tCar_crush_buffer_entry* p
         pCar_crush_buffer_entry->detach_data->count_shape_points = 0;
     }
     pCar_crush_buffer_entry->field_0x2c = 0;
-    LoadCarCrushSmashDataEntries(pF, pCar_crush_buffer_entry, pBrender_storage);
+    ReadSmashableData(pF, pCar_crush_buffer_entry, pBrender_storage);
 }
 
 // FUNCTION: CARMA2_HW 0x0042a280

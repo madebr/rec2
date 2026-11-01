@@ -245,11 +245,8 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* pDirectory, const 
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex(const char* pDirectory, const char* pFile_stem, br_pixelmap* pPalette, int pFlags, int* pError_code) {
     br_pixelmap* texture;
 
-    texture = NULL;
-    if ((pFlags & kLoadTextureFlags_16bbp) != kLoadTextureFlags_16bbp) {
-        texture = LoadTiffTexture_Ex2(pDirectory, pFile_stem, pPalette, pFlags, pError_code, 1);
-    }
-    if (texture == NULL) {
+    if ((pFlags & kLoadTextureFlags_16bbp) == kLoadTextureFlags_16bbp
+            || (texture = LoadTiffTexture_Ex2(pDirectory, pFile_stem, pPalette, pFlags, pError_code, 1)) == NULL) {
         texture = LoadTiffTexture_Ex2(pDirectory, pFile_stem, pPalette, pFlags, pError_code, 0);
     }
     if (texture != NULL) {
