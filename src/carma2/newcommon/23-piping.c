@@ -11,8 +11,11 @@
 #include "00-car.h"
 #include "09-funks.h"
 #include "16-graphics1.h"
+#include "22-replay.h"
 #include "27-powerup.h"
+#include "30-opponent.h"
 #include "32-spark.h"
+#include "41-utility.h"
 
 #include "51-smash.h"
 #include "61-pedestrn.h"
@@ -371,8 +374,6 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
 
 // PipeCarPositions
 
-// DoSmudge
-
 // DoOilSpillAR
 
 // CheckCar
@@ -516,7 +517,15 @@ void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
 
 // PipeSingleOilSpill
 
-// PipeSingleFrameFinish
+// FUNCTION: CARMA2_HW 0x004c8340
+// FUNCTION: CARMA2_SW 0x004c4a70
+void C2_HOOK_FASTCALL PipeSingleFrameFinish(void) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_frame_finish, time, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_frame_finish, time, 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_frame_finish, 0, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_frame_finish, time), GetTotalTime());
+}
 
 // FUNCTION: CARMA2_HW 0x004c83f0
 // FUNCTION: CARMA2_SW 0x004c4b20
@@ -860,7 +869,41 @@ void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec* pOpponent_spec, in
 
 // ApplyCrush
 
-// ApplySmudge
+// FUNCTION: CARMA2_HW 0x004c9060
+// FUNCTION: CARMA2_SW 0x004c5790
+void C2_HOOK_FASTCALL ApplySmudge(tPipe_chunk** pChunk) {
+    DoSmudge(pChunk, 1);
+}
+
+// FUNCTION: CARMA2_HW 0x004c9070
+// FUNCTION: CARMA2_SW 0x004c57a0
+void C2_HOOK_FASTCALL DoSmudge(tPipe_chunk** pChunk, int pDir) {
+    int i;
+    int v;
+    tU8 inc;
+    br_model* model_ptr;
+    tCar_spec* car;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smudge_data, vertex_changes, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmudged_vertex, light_index, 0x2);
+    C2_HOOK_BUG_ON(sizeof(tSmudged_vertex) != 0x4);
+
+    if (((*pChunk)->subject_index >> 8) == eVehicle_self) {
+        car = &gProgram_state.current_car;
+    } else {
+        car = GetCarSpec((*pChunk)->subject_index >> 8, (*pChunk)->subject_index & 0xff);
+    }
+    model_ptr = car->car_actor->model;
+    for (i = 0; i < ((tPipe_smudge_data*)(*pChunk)->data.raw_data)->vertex_count; i++) {
+        v = ((tPipe_smudge_data*)(*pChunk)->data.raw_data)->vertex_changes[i].vertex_index;
+        inc = ((tPipe_smudge_data*)(*pChunk)->data.raw_data)->vertex_changes[i].light_index * pDir;
+        model_ptr->prepared->groups->vertex_colours[v] = ((model_ptr->prepared->groups->vertex_colours[v] & 0xff000000u) + ((br_colour)inc << 24)) & 0xff000000u;
+        if (model_ptr->flags & BR_MODF_UPDATEABLE) {
+            model_ptr->vertices[model_ptr->prepared->groups->vertex_user[v]].index = BR_ALPHA(model_ptr->prepared->groups->vertex_colours[v]) + inc;
+        }
+    }
+}
 
 // ApplySpark
 
@@ -907,7 +950,14 @@ void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk) {
 
 // ApplyOilSpill
 
-// ApplyFrameBoundary
+// FUNCTION: CARMA2_HW 0x004c9360
+// FUNCTION: CARMA2_SW 0x004c5a90
+void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_frame_finish, time, 0x0);
+
+    ApplyTime(((tPipe_chunk_frame_finish*)(*pChunk)->data.raw_data)->time);
+}
 
 // ApplySound
 
@@ -1114,7 +1164,12 @@ void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
 
 // UndoCrush
 
-// UndoSmudge
+// FUNCTION: CARMA2_HW 0x004c9db0
+// FUNCTION: CARMA2_SW 0x004c64e0
+void C2_HOOK_FASTCALL UndoSmudge(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    (void)pPrev_chunk;
+    DoSmudge(pChunk, -1);
+}
 
 // UndoDamage
 
@@ -1311,11 +1366,34 @@ int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
     }
 }
 
-// CalcSmudgeLength
+// FUNCTION: CARMA2_HW 0x004ca420
+// FUNCTION: CARMA2_SW 0x004c6b50
+int C2_HOOK_FASTCALL CalcSmudgeLength(tPipe_chunk* pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smudge_data, vertex_count, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_smudge_data, vertex_count, 0x2);
 
-// CalcModelMashLength
+    return offsetof(tPipe_smudge_data, vertex_changes) + ((tPipe_smudge_data*)pChunk->data.raw_data)->vertex_count * sizeof(tSmudged_vertex);
+}
 
-// CalcEndMyBendLength
+// FUNCTION: CARMA2_HW 0x004ca430
+// FUNCTION: CARMA2_SW 0x004c6b60
+int C2_HOOK_FASTCALL CalcModelMashLength(tPipe_chunk* pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_model_mash, model, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_model, nvertices, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(br_model, nvertices, 0x2);
+
+    return offsetof(tPipe_model_mash, vectors) + ((tPipe_model_mash*)pChunk->data.raw_data)->model->nvertices * sizeof(tCompressed_vector3);
+}
+
+// FUNCTION: CARMA2_HW 0x004ca450
+// FUNCTION: CARMA2_SW 0x004c6b80
+int C2_HOOK_FASTCALL CalcEndMyBendLength(tPipe_chunk* pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+
+    return *(int*)pChunk->data.raw_data;
+}
 
 // CalcRemoveFacesLength
 

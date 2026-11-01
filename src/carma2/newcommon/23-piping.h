@@ -148,7 +148,7 @@ extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 // PipeCarPositions
 
-// DoSmudge
+extern void C2_HOOK_FASTCALL DoSmudge(tPipe_chunk** pChunk, int pDir);
 
 // DoOilSpillAR
 
@@ -210,7 +210,7 @@ extern void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor);
 
 // PipeSingleOilSpill
 
-// PipeSingleFrameFinish
+extern void C2_HOOK_FASTCALL PipeSingleFrameFinish(void);
 
 extern void C2_HOOK_FASTCALL PipeSingleGraphicalWheelStuff(tCar_spec* pCar);
 
@@ -302,7 +302,7 @@ extern void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec* pOpponent_s
 
 // ApplyCrush
 
-// ApplySmudge
+extern void C2_HOOK_FASTCALL ApplySmudge(tPipe_chunk** pChunk);
 
 // ApplySpark
 
@@ -326,7 +326,7 @@ extern void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk);
 
 // ApplyOilSpill
 
-// ApplyFrameBoundary
+extern void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk);
 
 // ApplySound
 
@@ -436,7 +436,7 @@ extern void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk);
 
 // UndoCrush
 
-// UndoSmudge
+extern void C2_HOOK_FASTCALL UndoSmudge(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoDamage
 
@@ -518,11 +518,11 @@ extern void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk
 
 extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 
-// CalcSmudgeLength
+extern int C2_HOOK_FASTCALL CalcSmudgeLength(tPipe_chunk* pChunk);
 
-// CalcModelMashLength
+extern int C2_HOOK_FASTCALL CalcModelMashLength(tPipe_chunk* pChunk);
 
-// CalcEndMyBendLength
+extern int C2_HOOK_FASTCALL CalcEndMyBendLength(tPipe_chunk* pChunk);
 
 // CalcRemoveFacesLength
 
