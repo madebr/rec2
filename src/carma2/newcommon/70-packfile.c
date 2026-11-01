@@ -275,7 +275,7 @@ int C2_HOOK_FASTCALL PFftell(FILE* pF) {
 
 // FUNCTION: CARMA2_HW 0x004b4b30
 // FUNCTION: CARMA2_SW 0x004b0ca0
-int C2_HOOK_FASTCALL DRfsetpos(FILE* pFile, fpos_t* pPos) {
+int C2_HOOK_FASTCALL PFfsetpos(FILE* pFile, fpos_t* pPos) {
     tTwatVfsFile* twtFile;
     tU8* newpos;
     tU8* start;

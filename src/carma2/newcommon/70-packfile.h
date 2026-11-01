@@ -40,7 +40,7 @@ extern int C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned i
 
 extern int C2_HOOK_FASTCALL PFftell(FILE* pF);
 
-extern int C2_HOOK_FASTCALL DRfsetpos(FILE*, fpos_t*);
+extern int C2_HOOK_FASTCALL PFfsetpos(FILE*, fpos_t*);
 
 extern int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence);
 
