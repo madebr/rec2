@@ -757,7 +757,7 @@ void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pT
     br_vector3 torque;
     br_vector3 inertia;
 
-    BrVector3Scale(&torque, pTorque, 0.0210039914f);
+    BrVector3Scale(&torque, pTorque, 1.0f / (WORLD_SCALE * WORLD_SCALE));
     BrVector3Copy(&inertia, &pObject->I);
     pObject->omega.v[0] += torque.v[0] / inertia.v[0];
     pObject->omega.v[1] += torque.v[1] / inertia.v[1];
