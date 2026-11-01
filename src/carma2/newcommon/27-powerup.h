@@ -126,7 +126,7 @@ extern void C2_HOOK_FASTCALL ToggleInventory(void);
 
 // GotPowerupN
 
-// GotPowerup0
+extern void C2_HOOK_FASTCALL GotPowerup0(void);
 
 extern void C2_HOOK_FASTCALL GotPowerup1(void);
 
@@ -134,17 +134,17 @@ extern void C2_HOOK_FASTCALL GotPowerup2(void);
 
 extern void C2_HOOK_FASTCALL GotPowerup3(void);
 
-// GotPowerup4
+extern void C2_HOOK_FASTCALL GotPowerup4(void);
 
-// GotPowerup5
+extern void C2_HOOK_FASTCALL GotPowerup5(void);
 
-// GotPowerup6
+extern void C2_HOOK_FASTCALL GotPowerup6(void);
 
-// GotPowerup7
+extern void C2_HOOK_FASTCALL GotPowerup7(void);
 
-// GotPowerup8
+extern void C2_HOOK_FASTCALL GotPowerup8(void);
 
-// GotPowerup9
+extern void C2_HOOK_FASTCALL GotPowerup9(void);
 
 // GotCredits
 
