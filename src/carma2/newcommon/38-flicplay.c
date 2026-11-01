@@ -927,6 +927,13 @@ void C2_HOOK_FASTCALL FreeFlic(int pIndex) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00462c10
+// FUNCTION: CARMA2_SW 0x004626a0
+void C2_HOOK_FASTCALL SwapScreen(void) {
+
+    PDScreenBufferSwap(0);
+}
+
 // FUNCTION: CARMA2_HW 0x00462c20
 // FUNCTION: CARMA2_SW 0x004626b0
 void C2_HOOK_FASTCALL RunFlic(int pIndex) {
