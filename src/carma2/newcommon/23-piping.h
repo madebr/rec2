@@ -54,7 +54,7 @@ extern void C2_HOOK_FASTCALL ARResetPiping(void);
 
 extern int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType);
 
-// LengthOfSession
+extern tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_session* pSession);
 
 // ARAdvanceChunkPtr
 
@@ -94,9 +94,9 @@ extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // ApplyPipedSession
 
-// MoveSessionPointerBackOne
+extern int C2_HOOK_FASTCALL MoveSessionPointerBackOne(tU8** pPtr);
 
-// MoveSessionPointerForwardOne
+extern int C2_HOOK_FASTCALL MoveSessionPointerForwardOne(tU8** pPtr);
 
 // FindPreviousChunk
 
@@ -110,7 +110,7 @@ extern int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime);
 
 // ScanAndPlaySoundsToBe
 
-// ARGetStartTime
+extern tU32 C2_HOOK_FASTCALL ARGetStartTime(void);
 
 // ARDisableAdvance
 

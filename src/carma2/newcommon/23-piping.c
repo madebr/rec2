@@ -18,6 +18,7 @@
 #include "41-utility.h"
 
 #include "51-smash.h"
+#include "52-errors.h"
 #include "61-pedestrn.h"
 #include "69-sound.h"
 #include "globvars.h"
@@ -149,7 +150,28 @@ int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType) {
     }
 }
 
-// LengthOfSession
+// FUNCTION: CARMA2_HW 0x00403750
+// FUNCTION: CARMA2_SW 0x00403750
+tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_session* pSession) {
+    tU32 i;
+    tU32 running_total;
+    tPipe_chunk* the_chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_session, type, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_session, count, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_session, data, 0x8);
+
+    running_total = 0;
+    for (i = 0; i < pSession->count; i++) {
+        the_chunk = (tPipe_chunk*)((tU8*)pSession + running_total + offsetof(tPipe_session, data));
+        running_total += LengthOfChunk(the_chunk, pSession->type);
+    }
+    running_total += offsetof(tPipe_session, data) + sizeof(tU16);
+    if (running_total & 1) {
+        FatalError(0x62);
+    }
+    return running_total;
+}
 
 // ARAdvanceChunkPtr
 
@@ -261,9 +283,30 @@ void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
 
 // ApplyPipedSession
 
-// MoveSessionPointerBackOne
+// FUNCTION: CARMA2_HW 0x004037c0
+// FUNCTION: CARMA2_SW 0x004037c0
+int C2_HOOK_FASTCALL MoveSessionPointerBackOne(tU8** pPtr) {
+    if (*pPtr == gPipe_buffer_oldest && *pPtr != gPipe_record_ptr) {
+        return 1;
+    }
+    if (*pPtr == gPipe_buffer_start) {
+        *pPtr = gPipe_buffer_working_end;
+    }
+    *pPtr -= sizeof(tU16);
+    *pPtr -= *(tU16*)*pPtr;
+    return 0;
+}
 
-// MoveSessionPointerForwardOne
+int C2_HOOK_FASTCALL MoveSessionPointerForwardOne(tU8** pPtr) {
+    tU32 length;
+
+    length = LengthOfSession((tPipe_session*)*pPtr);
+    *pPtr += length;
+    if (*pPtr >= gPipe_buffer_working_end && *pPtr != gPipe_record_ptr) {
+        *pPtr = gPipe_buffer_start;
+    }
+    return *pPtr == gPipe_record_ptr;
+}
 
 // FindPreviousChunk
 
@@ -282,7 +325,24 @@ int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime) {
 
 // ScanAndPlaySoundsToBe
 
-// ARGetStartTime
+// FUNCTION: CARMA2_HW 0x00403020
+// FUNCTION: CARMA2_SW 0x00403020
+tU32 C2_HOOK_FASTCALL ARGetStartTime(void) {
+    tU8* session;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_session, type, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_session, data, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_frame_finish, time, 0x0);
+
+    session = gPipe_buffer_oldest;
+    do {
+        if (MoveSessionPointerForwardOne(&session)) {
+            return 0;
+        }
+    } while (((tPipe_session*)session)->type != ePipe_chunk_frame_finish);
+    return ((tPipe_chunk_frame_finish*)((tPipe_chunk*)((tPipe_session*)session)->data)->data.raw_data)->time;
+}
 
 // ARDisableAdvance
 
