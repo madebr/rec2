@@ -10,6 +10,7 @@
 
 #include "01-network.h"
 #include "16-graphics1.h"
+#include "18-graphics2.h"
 #include "32-spark.h"
 #include "41-utility.h"
 #include "42-input.h"
@@ -26,6 +27,10 @@
 // GLOBAL: CARMA2_HW 0x006a0ad4
 // GLOBAL: CARMA2_SW 0x0069ab2c
 const char* gPowerup_txt_path;
+
+// GLOBAL: CARMA2_HW 0x006a0ad8
+// GLOBAL: CARMA2_SW 0x0069ab30
+tU32* gReal_render_palette;
 
 // GLOBAL: CARMA2_HW 0x007059e0
 // GLOBAL: CARMA2_SW 0x006fc4a0
@@ -462,7 +467,21 @@ int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // TrashBodywork
 
-// TakeDrugs
+// FUNCTION: CARMA2_HW 0x004dcb90
+// FUNCTION: CARMA2_SW 0x004d9090
+int C2_HOOK_FASTCALL TakeDrugs(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_BUG_ON(sizeof(tU32) != 4);
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        if (gReal_render_palette == NULL) {
+            gReal_render_palette = BrMemAllocate(256 * sizeof(tU32), kMem_misc);
+            memcpy(gReal_render_palette, gRender_palette->pixels, 256 * sizeof(tU32));
+        }
+        gOn_drugs = 1;
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // PaletteFuckedUpByDrugs
 
