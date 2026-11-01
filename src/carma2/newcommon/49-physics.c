@@ -554,7 +554,17 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 
 // ReduceReducedList
 
-// SetObjectTrialPositionType
+// FUNCTION: CARMA2_HW 0x004bd9b0
+// FUNCTION: CARMA2_SW 0x004ba0d0
+void C2_HOOK_FASTCALL SetObjectTrialPositionType(tPhysics_object* pObject, int pType) {
+    tPhysics_object* child;
+
+    child = pObject->child;
+    pObject->field_0xf0 = pType;
+    for (; child != NULL; child = child->next) {
+        SetObjectTrialPositionType(child, pType);
+    }
+}
 
 // FillInTrialWorkspace
 

@@ -212,7 +212,7 @@ extern void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject)
 
 // ReduceReducedList
 
-// SetObjectTrialPositionType
+extern void C2_HOOK_FASTCALL SetObjectTrialPositionType(tPhysics_object* pObject, int pType);
 
 // FillInTrialWorkspace
 
