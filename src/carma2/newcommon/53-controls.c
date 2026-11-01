@@ -19,6 +19,7 @@
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
@@ -78,6 +79,10 @@ char* gAbuse_text[10];
 // GLOBAL: CARMA2_HW 0x0067c3f8
 // GLOBAL: CARMA2_SW 0x00676b70
 int gRecovery_voucher_count;
+
+// GLOBAL: CARMA2_HW 0x0067c46c
+// GLOBAL: CARMA2_SW 0x00676be4
+int gAllow_car_flying;
 
 // GLOBAL: CARMA2_HW 0x0067c474
 // GLOBAL: CARMA2_SW 0x00676bec
@@ -337,7 +342,20 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum) {
 
 // SetFlag2
 
-// ToggleFlying
+// FUNCTION: CARMA2_HW 0x004443c0
+// FUNCTION: CARMA2_SW 0x004444a0
+void C2_HOOK_FASTCALL ToggleFlying(void) {
+    if (gAllow_car_flying && gNet_mode == eNet_mode_none) {
+        gCar_flying = !gCar_flying;
+        if (gCar_flying) {
+            NewTextHeadupSlot(4, 0, 500, -4, "We have lift off!!");
+        } else {
+            NewTextHeadupSlot(4, 0, 500, -4, "Back down to Earth");
+        }
+    } else {
+        gCar_flying = 0;
+    }
+}
 
 // CycleInvulnerability
 

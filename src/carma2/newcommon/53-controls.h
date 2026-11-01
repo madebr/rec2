@@ -12,6 +12,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gAllow_car_flying;
 extern int gEntering_message;
 extern int gCheckpoint_finder_enabled;
 extern float gMap_render_x;
@@ -151,7 +152,7 @@ extern void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 // SetFlag2
 
-// ToggleFlying
+extern void C2_HOOK_FASTCALL ToggleFlying(void);
 
 // CycleInvulnerability
 
