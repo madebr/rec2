@@ -958,7 +958,8 @@ int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
 }
 
 // FUNCTION: CARMA2_HW 0x005158d0
-void C2_HOOK_FASTCALL DRstrlwr(char* s) {
+// FUNCTION: CARMA2_SW 0x00510d40
+void C2_HOOK_FASTCALL DRstrupr(char* s) {
     int l = (int)strlen(s);
     int i;
 
@@ -969,13 +970,13 @@ void C2_HOOK_FASTCALL DRstrlwr(char* s) {
 
 // FUNCTION: CARMA2_HW 0x00515910
 // FUNCTION: CARMA2_SW 0x00510d80
-void C2_HOOK_FASTCALL StringTransformToLower(char* pString) {
+void C2_HOOK_FASTCALL DRstrlwr(char* s) {
     int i;
     int length;
 
-    length = (int)strlen(pString);
+    length = (int)strlen(s);
     for (i = 0; i < length; i++) {
-        pString[i] = (char)tolower(pString[i]);
+        s[i] = (char)tolower(s[i]);
     }
 }
 

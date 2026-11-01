@@ -122,9 +122,9 @@ extern br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int
 
 extern int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
-extern void C2_HOOK_FASTCALL DRstrlwr(char* s);
+extern void C2_HOOK_FASTCALL DRstrupr(char* s);
 
-extern void C2_HOOK_FASTCALL StringTransformToLower(char* pString);
+extern void C2_HOOK_FASTCALL DRstrlwr(char* s);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
 
