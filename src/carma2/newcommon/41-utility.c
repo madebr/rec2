@@ -1047,6 +1047,13 @@ br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, 
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00515e10
+// FUNCTION: CARMA2_SW 0x00511280
+void C2_HOOK_FASTCALL GetBlendTableName(int pPercent, char* pDest) {
+
+    sprintf(pDest, "BLEND%d.TAB", 100 - pPercent);
+}
+
 void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent) {
     char* s;
 

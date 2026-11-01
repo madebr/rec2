@@ -136,6 +136,8 @@ extern intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data);
 
 extern br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive);
 
+extern void C2_HOOK_FASTCALL GetBlendTableName(int pPercent, char* pDest);
+
 extern void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent);
 
 extern void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent);
