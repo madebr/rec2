@@ -983,7 +983,25 @@ void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // PissedEffect
 
-// RenderSpinningPowerup
+// FUNCTION: CARMA2_HW 0x004df650
+// FUNCTION: CARMA2_SW 0x004dbb50
+void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
+
+    if (pActor->user == NULL) {
+        pActor->user = (void*)(uintptr_t)GetTotalTime();
+    } else {
+        tU32 prev;
+        tU32 now;
+        tU32 elapsed;
+
+        now = GetTotalTime();
+        prev = (tU32)(uintptr_t)pActor->user;
+        elapsed = (now - prev) / 16;
+        pActor->user = (void*)(uintptr_t)now;
+        BrMatrix34PreRotateY(&pActor->t.t.mat, BR_ANGLE_DEG(elapsed));
+    }
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, pOn_screen, 0);
+}
 
 // RenderChangingPowerup
 
