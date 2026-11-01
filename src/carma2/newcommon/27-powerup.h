@@ -368,7 +368,7 @@ extern void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPositio
 
 extern void C2_HOOK_FASTCALL ARPowerupGot(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ARPowerupLose
+extern void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPissed
 
