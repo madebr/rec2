@@ -27,7 +27,7 @@ extern tU32 gLast_wasted_message_start;
 
 // CalculateFrameRate
 
-// LoseOldestWastedMassage
+extern void C2_HOOK_FASTCALL LoseOldestWastedMassage(void);
 
 extern void C2_HOOK_FASTCALL QueueWastedMassage(int pIndex);
 

@@ -58,19 +58,22 @@ tU32 gLast_wasted_message_start;
 
 // CalculateFrameRate
 
-// LoseOldestWastedMassage
+void C2_HOOK_FASTCALL LoseOldestWastedMassage(void) {
+    int i;
+
+    for (i = 1; i < gQueued_wasted_messages_count; i++) {
+        gQueued_wasted_messages[i - 1] = gQueued_wasted_messages[i];
+    }
+    gQueued_wasted_messages_count--;
+    gLast_wasted_message_start = GetTotalTime();
+}
 
 // FUNCTION: CARMA2_HW 0x00492620
 // FUNCTION: CARMA2_SW 0x0048f840
 void C2_HOOK_FASTCALL QueueWastedMassage(int pIndex) {
-    int i;
 
     if (gQueued_wasted_messages_count == (int)REC2_ASIZE(gQueued_wasted_messages)) {
-        for (i = 1; i < gQueued_wasted_messages_count; i++) {
-            gQueued_wasted_messages[i - 1] = gQueued_wasted_messages[i];
-        }
-        gQueued_wasted_messages_count--;
-        gLast_wasted_message_start = GetTotalTime();
+        LoseOldestWastedMassage();
     }
     if (gQueued_wasted_messages_count == 0) {
         gLast_wasted_message_start = GetTotalTime();
