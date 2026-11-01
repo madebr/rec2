@@ -24,7 +24,7 @@ extern br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_degrees);
 
 // FastScalarSinAngle
 
-// FastScalarCosAngle
+extern br_scalar C2_HOOK_FASTCALL FastScalarCosAngle(br_angle pAngle);
 
 extern float C2_HOOK_STDCALL FastFloatArcSin(float pValue);
 
