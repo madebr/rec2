@@ -14,7 +14,7 @@
 
 extern float gFloat_sine_table[91];
 
-// FastFloatSin
+extern float C2_HOOK_FASTCALL FastFloatSin(int pAngle_degrees);
 
 // FastFloatCos
 
