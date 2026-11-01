@@ -113,7 +113,27 @@ float gFloat_sine_table[91] = {
 
 // FastScalarSin
 
-// FastScalarCos
+// FUNCTION: CARMA2_HW 0x00511620
+// FUNCTION: CARMA2_SW 0x0050ca70
+br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_degrees) {
+
+    if (pAngle_degrees < 0) {
+        pAngle_degrees = 360 - -pAngle_degrees % 360;
+    } else {
+        pAngle_degrees = pAngle_degrees % 360;
+    }
+
+    if (pAngle_degrees > 270) {
+        return gFloat_sine_table[pAngle_degrees - 270];
+    }
+    if (pAngle_degrees > 180) {
+        return -gFloat_sine_table[270 - pAngle_degrees];
+    }
+    if (pAngle_degrees > 90) {
+        return -gFloat_sine_table[pAngle_degrees - 90];
+    }
+    return *(gFloat_sine_table + 90 - pAngle_degrees);
+}
 
 // FastScalarSinAngle
 

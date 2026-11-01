@@ -20,7 +20,7 @@ extern float gFloat_sine_table[91];
 
 // FastScalarSin
 
-// FastScalarCos
+extern br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_degrees);
 
 // FastScalarSinAngle
 
