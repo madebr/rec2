@@ -294,7 +294,7 @@ tRepulse_link gRepulse_links[6];
 tPhysics_joint* gMutant_tail_first_joint;
 
 // GLOBAL: CARMA2_HW 0x006a0908
-tPhysics_object* gMutant_tail_first_collision_info;
+tPhysics_object* gMutant_tail_object;
 
 // GLOBAL: CARMA2_HW 0x00705540
 int gMutant_tail_state;
@@ -440,7 +440,7 @@ void C2_HOOK_FASTCALL InitTail(void) {
                           0.f, 0.f, model->bounds.min.v[2] * (is_link ? 0.99f : 0.45f));
         if (i == 0) {
             gMutant_tail_first_joint = collision_info->physics_joint1;
-            gMutant_tail_first_collision_info = collision_info;
+            gMutant_tail_object = collision_info;
 
             C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, type, 0x00);
             C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, friction, 0x04);

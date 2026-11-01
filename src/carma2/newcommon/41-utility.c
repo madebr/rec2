@@ -885,7 +885,8 @@ void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, co
 }
 
 // FUNCTION: CARMA2_HW 0x00515690
-void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h) {
+// FUNCTION: CARMA2_SW 0x00510b00
+void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h) {
 
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
 }
@@ -1177,6 +1178,7 @@ int C2_HOOK_FASTCALL TestForNan(const float* f) {
 }
 
 // FUNCTION: CARMA2_HW 0x00516160
+// FUNCTION: CARMA2_SW 0x005115d0
 int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV) {
 
     if (pV != NULL) {
@@ -1236,20 +1238,22 @@ void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3* pV2) 
 // FUNCTION: CARMA2_HW 0x00516410
 // FUNCTION: CARMA2_SW 0x00511880
 tU16 C2_HOOK_FASTCALL DRScalarToU16(float pValue, float pMin, float pMax) {
+    float scaled;
 
     if (pValue < pMin) {
         pValue = pMin;
     } else if (pValue > pMax) {
         pValue = pMax;
     }
-    return (tU16)((pValue - pMin) * 65535.0f / (pMax - pMin) + 0.5f);
+    scaled = (pValue - pMin) * 65535.0f / (pMax - pMin);
+    return (tU16)(scaled + 0.5f);
 }
 
 // FUNCTION: CARMA2_HW 0x00516460
 // FUNCTION: CARMA2_SW 0x005118d0
 br_scalar C2_HOOK_FASTCALL DRU16ToScalar(tU16 pValue, float pMin, float pMax) {
 
-    return (float)pValue * (pMax - pMin) / 65535.0f + pMin;
+    return ((float)pValue * (pMax - pMin) / 65535.0f) + pMin;
 }
 
 // FUNCTION: CARMA2_HW 0x00516490
@@ -1300,7 +1304,7 @@ void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_mat
     BrVector3Normalise((br_vector3*)pMatrix->m[1], (br_vector3*)pMatrix->m[1]);
     BrVector3Cross((br_vector3*)pMatrix->m[2], (br_vector3*)pMatrix->m[0], (br_vector3*)pMatrix->m[1]);
     BrVector3Normalise((br_vector3*)pMatrix->m[2], (br_vector3*)pMatrix->m[2]);
-    ExpandVector3((br_vector3*)pMatrix->m[3], &pCompressed->p, 300.0f, 300.0f);
+    ExpandVector3((br_vector3*)pMatrix->m[3], &pCompressed->p, -300.0f, 300.0f);
     if (pInactive) {
         BrVector3Set((br_vector3*)pMatrix->m[3],
             pMatrix->m[3][0] + 1000.0f,
@@ -1435,23 +1439,21 @@ void C2_HOOK_FASTCALL NobbleNonzeroBlacks(br_pixelmap* pPalette) {
     int g;
     int b;
 
-    pixels= pPalette->pixels;
+    pixels = pPalette->pixels;
     modified = 0;
-    if (*pixels != BR_COLOUR_RGBA(0, 0, 0, 0)) {
-        *pixels = BR_COLOUR_RGBA(0, 0, 0, 0);
+    if (pixels[0] != BR_COLOUR_RGBA(0, 0, 0, 0)) {
+        pixels[0] = BR_COLOUR_RGBA(0, 0, 0, 0);
         modified = 1;
     }
-    pixels++;
-    for (i = 0; i < 255; i++ ) {
-        c = *pixels;
+    for (i = 1; i < 256; i++) {
+        c = pixels[i];
         r = BR_COLOUR_RED(c);
         g = BR_COLOUR_GRN(c);
         b = BR_COLOUR_BLU(c);
         if (r == 0 && g == 0 && b == 0) {
-            *pixels = BR_COLOUR_RGB(1, 1, 1);
+            pixels[i] = BR_COLOUR_RGB(1, 1, 1);
             modified = 1;
         }
-        pixels++;
     }
     if (modified) {
         BrMapUpdate(pPalette, BR_MAPU_ALL);

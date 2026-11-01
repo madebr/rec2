@@ -74,6 +74,7 @@ int gLetter_y_coords[15];
 int gThe_length;
 
 // GLOBAL: CARMA2_HW 0x0068c150
+// GLOBAL: CARMA2_SW 0x00686198
 char gCurrent_typing[110];
 
 // GLOBAL: CARMA2_HW 0x0068c1c0
@@ -608,6 +609,16 @@ int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_ch
     return AddRollingLetter(pNew_char, x_coord, y_coord, new_type);
 }
 
+// FUNCTION: CARMA2_HW 0x004840d0
+// FUNCTION: CARMA2_SW 0x00481210
+void C2_HOOK_FASTCALL StopTyping(int pSlot_index) {
+    int i;
+
+    for (i = 0; i < gThe_length; i++) {
+        ChangeCharTo(pSlot_index, i, (char)((size_t)i < strlen(gCurrent_typing) ? gCurrent_typing[i] : ' '));
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00484120
 // FUNCTION: CARMA2_SW 0x00481260
 void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str) {
@@ -633,6 +644,18 @@ void C2_HOOK_FASTCALL StartTyping(int pSlot_index, char* pText, int pVisible_len
 void C2_HOOK_FASTCALL SetSlotXY(int pSlot_index, int pX_coord, int pY_coord) {
     gLetter_x_coords[pSlot_index] = pX_coord;
     gLetter_y_coords[pSlot_index] = pY_coord;
+}
+
+// FUNCTION: CARMA2_HW 0x00484530
+// FUNCTION: CARMA2_SW 0x00481670
+void C2_HOOK_FASTCALL GetTypedName(char* pDestn, int pMax_length) {
+
+    if (strlen(gCurrent_typing) > (size_t)pMax_length) {
+        memcpy(pDestn, gCurrent_typing, pMax_length);
+        pDestn[pMax_length] = '\0';
+    } else {
+        strcpy(pDestn, gCurrent_typing);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00484590
