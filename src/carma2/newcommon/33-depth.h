@@ -66,6 +66,8 @@ extern void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pix
 
 extern void C2_HOOK_FASTCALL ReduceDepthStart(void);
 
+extern void C2_HOOK_FASTCALL IncreaseDepthStart(void);
+
 extern void C2_HOOK_FASTCALL IncreaseDepthEnd(void);
 
 extern void C2_HOOK_FASTCALL AssertYons(void);
@@ -88,7 +90,7 @@ extern void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn);
 
 extern void C2_HOOK_FASTCALL ToggleSkyQuietly(void);
 
-// ToggleSky
+extern void C2_HOOK_FASTCALL ToggleSky(void);
 
 extern int C2_HOOK_FASTCALL GetDepthCueingOn(void);
 

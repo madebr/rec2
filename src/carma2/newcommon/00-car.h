@@ -11,6 +11,7 @@
 
 #include "rec2_types.h"
 
+extern int gTesting_car_for_sensible_place;
 extern int gCunning_stunt_bonus[3];
 extern float gArmour_starting_value[100];
 extern int gExplosion_sound_id;
@@ -19,6 +20,7 @@ extern float gOffensive_starting_value[100];
 extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
+extern int gFreeze_mechanics;
 extern int gNum_active_non_cars;
 extern tNon_car_spec* gActive_non_car_list[99];
 extern int gEliminate_faces;
@@ -30,7 +32,23 @@ extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type
 
 extern void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount);
 
+extern void C2_HOOK_FASTCALL DamageTrans(int pAmount);
+
 extern void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageLFBrake(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageLRBrake(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageLRWheel(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageRFWheel(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageRFBrake(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageRRBrake(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageRRWheel(int pDamage_amount);
 
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
@@ -178,7 +196,7 @@ extern void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 // MungeSomeOtherCarGraphics
 
-// MungeCarGraphics
+extern void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period);
 
 extern void C2_HOOK_FASTCALL DoLODCarModels(void);
 
@@ -186,7 +204,7 @@ extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
 
 // DoComplexCarModels
 
-// ResetCarScreens
+extern void C2_HOOK_FASTCALL ResetCarScreens(void);
 
 extern void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void);
 
@@ -194,17 +212,19 @@ extern void C2_HOOK_FASTCALL SwapCar(void);
 
 extern void C2_HOOK_FASTCALL AdjustDownForce(void);
 
+extern void C2_HOOK_FASTCALL FreezeMechanics(void);
+
 // FlyCar
 
 // GetCarOverallBoundsMinY
 
-// SetCarSuspGiveAndHeight
+extern void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height);
 
 // TestForCarInSensiblePlace
 
-// PullActorFromWorld
+extern tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* pActor);
 
-// DoPullActorFromWorld
+extern tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* pActor);
 
 // PipeNonCarObject
 

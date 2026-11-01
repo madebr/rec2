@@ -16,11 +16,9 @@
 #include "60-phil.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "c2_stdio.h"
 #include "platform.h"
 #include "rec2_macros.h"
-
-#include "c2_stdio.h"
-
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x0065a3c4
@@ -244,7 +242,21 @@ int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
 
 // ClearOpponentsProjectedRoute
 
-// AddToOpponentsProjectedRoute
+// FUNCTION: CARMA2_HW 0x004ab150
+// FUNCTION: CARMA2_SW 0x004a72c0
+int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection) {
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pOpponent_spec->next_sections) != 12);
+
+    if (pOpponent_spec->nnext_sections < (int)REC2_ASIZE(pOpponent_spec->next_sections)) {
+        pOpponent_spec->next_sections[pOpponent_spec->nnext_sections].section_no = pSection_no;
+        pOpponent_spec->next_sections[pOpponent_spec->nnext_sections].direction = pDirection;
+        pOpponent_spec->nnext_sections++;
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // StunTheBugger
 
@@ -507,7 +519,11 @@ void C2_HOOK_FASTCALL DisposeOpponents(void) {
     }
 }
 
-// WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
+// STUB: CARMA2_HW 0x004ae620
+// STUB: CARMA2_SW 0x004aa790
+void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004ae750
 // FUNCTION: CARMA2_SW 0x004aa8c0

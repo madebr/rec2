@@ -113,6 +113,10 @@ br_pixelmap* gBlend50_table;
 // GLOBAL: CARMA2_SW 0x007410bc
 br_pixelmap* gBlend75_table;
 
+// GLOBAL: CARMA2_HW 0x0074a5f8
+// GLOBAL: CARMA2_SW 0x007410b8
+int gPHIL_doing_physics;
+
 // GLOBAL: CARMA2_HW 0x0074a670
 // GLOBAL: CARMA2_SW 0x00741130
 br_pixelmap* gPalette_0074a670;
@@ -304,6 +308,16 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     gBlend_palettes[2] = gBlend50_table;
     gBlend_palettes[3] = gBlend75_table;
     gPalette_0074a670 = NULL;
+}
+
+// FUNCTION: CARMA2_HW 0x004b5230
+void C2_HOOK_FASTCALL SwitchToPalette(char* pPal_name) {
+    br_pixelmap* the_palette;
+
+    the_palette = BrTableFind(pPal_name);
+    if (the_palette != NULL) {
+        DRSetPalette(the_palette);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004b52a0

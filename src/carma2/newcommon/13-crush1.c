@@ -1224,7 +1224,24 @@ intptr_t C2_HOOK_CDECL EnableGroovers(br_actor* pActor, void* pData) {
 
 // DoCompletelyUnBentThings
 
-// TotallyRepairCarCollisionShapes
+// FUNCTION: CARMA2_HW 0x00439960
+// FUNCTION: CARMA2_SW 0x004399a0
+void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec* pCar_spec) {
+    int i;
+
+    for (i = 0; i < pCar_spec->car_crush_spec->count_shapes; i++) {
+        tCar_crush_shape_info* shape_info = &pCar_spec->car_crush_spec->field_0x4[i];
+        int j;
+
+        for (j = 0; j < shape_info->count_points; j++) {
+            BrVector3Copy(&shape_info->field_0x18[j].field_0x18, &shape_info->field_0x18[j].field_0x0);
+            if (DRVector3TestForNan(&shape_info->field_0x18[j].field_0x18)) {
+                PDEnterDebugger("NaN");
+            }
+        }
+    }
+    pCar_spec->car_crush_spec->expand_bounding_box = 3;
+}
 
 // TotallyRepairModel
 
@@ -1241,7 +1258,20 @@ int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void*
     return 0;
 }
 
-// SendReAttachAllBits
+// FUNCTION: CARMA2_HW 0x0043b2a0
+// FUNCTION: CARMA2_SW 0x0043b2f0
+void C2_HOOK_FASTCALL SendReAttachAllBits(tCar_spec* pCar) {
+    tNet_message* message;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_reattach_all_bits, player, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_reattach_all_bits, time, 0x8);
+    C2_HOOK_BUG_ON(sizeof(tNet_message_chunk_reattach_all_bits) != 0xc);
+
+    message = NetBuildGuaranteedMessage(eNet_message_chunk_type_reattach_all_bits, 0);
+    message->contents.reattach_all_bits.player = NetPlayerFromCar(pCar)->ID;
+    message->contents.reattach_all_bits.time = gPHIL_last_physics_tick + 120;
+    NetGuaranteedSendMessageToEverybody(gCurrent_net_game, message, NULL);
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
