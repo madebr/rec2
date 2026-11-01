@@ -112,6 +112,6 @@ extern void C2_HOOK_FASTCALL InitSmashTargets(void);
 
 extern void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 
-extern int NearestPowerOfTwo(int pValue) ;
+extern int C2_HOOK_FASTCALL NearestPowerOfTwo(int pValue);
 
 #endif // GUARD_62_GRAPHICS3_H

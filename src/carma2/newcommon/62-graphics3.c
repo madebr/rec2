@@ -859,7 +859,9 @@ void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUn
     }
 }
 
-int NearestPowerOfTwo(int pValue) {
+// FUNCTION: CARMA2_HW 0x00497830
+// FUNCTION: CARMA2_SW 0x00494460
+int C2_HOOK_FASTCALL NearestPowerOfTwo(int pValue) {
     int power;
 
     for (power = 1; power < 32; power++) {
