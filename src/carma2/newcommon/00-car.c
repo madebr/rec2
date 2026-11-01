@@ -65,6 +65,10 @@ tFloat_bunch_info gCar_car_damage_multiplier;
 // GLOBAL: CARMA2_SW 0x00685e30
 br_vector3 gZero_v__car;  // FIXME: make const?
 
+// GLOBAL: CARMA2_HW 0x006793a0
+// GLOBAL: CARMA2_SW 0x00673b10
+int gFreeze_mechanics;
+
 // GLOBAL: CARMA2_HW 0x006793dc
 // GLOBAL: CARMA2_SW 0x00673b4c
 int gNum_active_non_cars;
@@ -106,10 +110,65 @@ void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
     SortOutSmoke(&gProgram_state.current_car);
 }
 
+// STUB: CARMA2_HW 0x00413d30
+// STUB: CARMA2_SW 0x00413d60
+void C2_HOOK_FASTCALL DamageTrans(int pAmount) {
+    NOT_IMPLEMENTED();
+}
+
 // FUNCTION: CARMA2_HW 0x00413d90
 // FUNCTION: CARMA2_SW 0x00413dc0
 void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount) {
     DamageUnit(&gProgram_state.current_car, eDamage_lf_wheel, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413dc0
+// FUNCTION: CARMA2_SW 0x00413df0
+void C2_HOOK_FASTCALL DamageLFBrake(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lf_brake, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413df0
+// FUNCTION: CARMA2_SW 0x00413e20
+void C2_HOOK_FASTCALL DamageLRBrake(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lr_brake, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413e20
+// FUNCTION: CARMA2_SW 0x00413e50
+void C2_HOOK_FASTCALL DamageLRWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_lr_wheel, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413e50
+// FUNCTION: CARMA2_SW 0x00413e80
+void C2_HOOK_FASTCALL DamageRFWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_rf_wheel, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413e80
+// FUNCTION: CARMA2_SW 0x00413eb0
+void C2_HOOK_FASTCALL DamageRFBrake(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_rf_brake, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413eb0
+// FUNCTION: CARMA2_SW 0x00413ee0
+void C2_HOOK_FASTCALL DamageRRBrake(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_rr_brake, pDamage_amount);
+    SortOutSmoke(&gProgram_state.current_car);
+}
+
+// FUNCTION: CARMA2_HW 0x00413ee0
+// FUNCTION: CARMA2_SW 0x00413f10
+void C2_HOOK_FASTCALL DamageRRWheel(int pDamage_amount) {
+    DamageUnit(&gProgram_state.current_car, eDamage_rr_wheel, pDamage_amount);
     SortOutSmoke(&gProgram_state.current_car);
 }
 
@@ -719,6 +778,18 @@ void C2_HOOK_FASTCALL AdjustDownForce(void) {
     }
     sprintf(s, "DownForceSpeed %f", c->downforce_to_weight);
     NewTextHeadupSlot(4, 0, 1500, -4, s);
+}
+
+// FUNCTION: CARMA2_HW 0x0041f450
+// FUNCTION: CARMA2_SW 0x0041f4d0
+void C2_HOOK_FASTCALL FreezeMechanics(void) {
+
+    gFreeze_mechanics = !gFreeze_mechanics;
+    if (gFreeze_mechanics) {
+        NewTextHeadupSlot(4, 0, 3000, -4, "Mechanics Frozen");
+    } else {
+        NewTextHeadupSlot(4, 0, 3000, -4, "Thawed Mechanics");
+    }
 }
 
 // FlyCar

@@ -20,6 +20,7 @@ extern tPedestrian* gPedestrian_array;
 extern void* gPhysics_buffer3_ptr;
 extern int gPHIL_mechanics_time_sync;
 extern int gPhysics_other_buffer_capacity;
+extern tProximity_ray gProximity_rays[20];
 extern br_actor* gPed_limbed_actors[30];
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
@@ -76,7 +77,7 @@ extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, b
 
 // GetObjectCornerToObjectFacePoints
 
-// BoundsOverlapTest
+extern int C2_HOOK_FASTCALL BoundsOverlapTest(br_bounds3* pBounds_1, br_bounds3* pBounds_2);
 
 // GetObjectObjectEdgePoints
 
@@ -96,9 +97,9 @@ extern void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* p
 
 // AddOldForces
 
-extern int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, tPhysics_shape* pCollision_shape_1, tPhysics_shape* pCollision_shape_2);
+extern int C2_HOOK_FASTCALL TestObjectOverlap(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2);
 
-// TestObjectOverlap
+extern int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, tPhysics_shape* pCollision_shape_1, tPhysics_shape* pCollision_shape_2);
 
 // TestObjectOverlapIgnoreCloseRelatives
 
@@ -214,7 +215,7 @@ extern void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject)
 
 // FillInTrialWorkspace
 
-// FlagsAreGo
+extern int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2);
 
 // CollideObjectWithReducedObjectList
 
