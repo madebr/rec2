@@ -13,6 +13,8 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+extern int gPHIL_doing_physics;
+
 extern int gCursor_tinted_top;
 extern int gCursor_tinted_left;
 extern int gCursor_tinted_bottom;

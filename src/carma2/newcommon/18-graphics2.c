@@ -113,6 +113,10 @@ br_pixelmap* gBlend50_table;
 // GLOBAL: CARMA2_SW 0x007410bc
 br_pixelmap* gBlend75_table;
 
+// GLOBAL: CARMA2_HW 0x0074a5f8
+// GLOBAL: CARMA2_SW 0x007410b8
+int gPHIL_doing_physics;
+
 // GLOBAL: CARMA2_HW 0x0074a670
 // GLOBAL: CARMA2_SW 0x00741130
 br_pixelmap* gPalette_0074a670;
