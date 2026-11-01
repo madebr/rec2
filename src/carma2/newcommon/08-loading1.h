@@ -89,6 +89,8 @@ extern void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 extern void C2_HOOK_CDECL SubsStringJob(char *pFormat, ...);
 
+extern void C2_HOOK_FASTCALL EncodeLine_DEMO(char* pS);
+
 extern void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
 
 extern void C2_HOOK_FASTCALL SkipNLines(FILE* pF);
