@@ -107,6 +107,7 @@ void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
 }
 
 // STUB: CARMA2_HW 0x00413d30
+// STUB: CARMA2_SW 0x00413d60
 void C2_HOOK_FASTCALL DamageTrans(int pAmount) {
     NOT_IMPLEMENTED();
 }
