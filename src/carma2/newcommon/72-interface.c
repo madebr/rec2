@@ -1615,7 +1615,6 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     char s[256];
     tU8 i;
-    br_actor *a;
 
     sprintf(s, "START OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
     PrintMemoryDump(0, s);
