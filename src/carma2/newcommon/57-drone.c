@@ -9,7 +9,9 @@
 #include "57-drone.h"
 
 #include "08-loading1.h"
+#include "15-displays.h"
 #include "28-world3.h"
+
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
@@ -18,6 +20,8 @@
 #include "c2_string.h"
 #include "globvars.h"
 #include "platform.h"
+
+#include "c2_stdio.h"
 
 #include <math.h>
 
@@ -425,6 +429,19 @@ void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec* pDrone) {
 // MoveMyDroneBaby
 
 // DroneLookWhereYoureGoingYouBlindCunt
+
+// FUNCTION: CARMA2_HW 0x004525d0
+// FUNCTION: CARMA2_SW 0x00452360
+void C2_HOOK_FASTCALL SelectNextDrone(void) {
+    char s[64];
+
+    gCurrent_selected_drone++;
+    if (gCurrent_selected_drone >= gCount_drones) {
+        gCurrent_selected_drone = 0;
+    }
+    sprintf(s, "Drone %d", gCurrent_selected_drone);
+    NewTextHeadupSlot(4, 0, 3000, -1, s);
+}
 
 // FUNCTION: CARMA2_HW 0x00452680
 // FUNCTION: CARMA2_SW 0x00452410
