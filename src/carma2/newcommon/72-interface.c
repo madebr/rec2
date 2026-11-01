@@ -251,15 +251,19 @@ int gFrontend_leave_current_menu;
 tFrontend_spec* gCurrent_frontend_spec;
 
 // GLOBAL: CARMA2_HW 0x007635f0
+// GLOBAL: CARMA2_SW 0x00759b50
 br_uint_32 gFrontend_APO_Colour_1;
 
 // GLOBAL: CARMA2_HW 0x007635e0
+// GLOBAL: CARMA2_SW 0x00759b40
 br_uint_32 gFrontend_APO_Colour_2;
 
 // GLOBAL: CARMA2_HW 0x00763700
+// GLOBAL: CARMA2_SW 0x00759c60
 br_uint_32 gFrontend_APO_Colour_3;
 
 // GLOBAL: CARMA2_HW 0x0068650c
+// GLOBAL: CARMA2_SW 0x00680c4c
 br_actor* gFrontend_actor;
 
 // GLOBAL: CARMA2_HW 0x0068683c
@@ -1564,15 +1568,23 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     char s[256];
     tU8 i;
+    br_actor *a;
 
     sprintf(s, "START OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
     PrintMemoryDump(0, s);
     if (pFrontend->destroy != NULL) {
         pFrontend->destroy(pFrontend);
     }
+#ifdef REC2_HW
     while (gFrontend_actor->children != NULL && strcmp("Backdrop", gFrontend_actor->children->identifier) != 0) {
         BrActorRemove(gFrontend_actor->children);
     }
+#endif
+#ifdef REC2_SW
+    while (gFrontend_actor->children != NULL && gFrontend_actor->children->type == BR_PMT_INDEX_2) {
+        BrActorRemove(gFrontend_actor->children);
+    }
+#endif
     for (i = 0; i < gFrontend_count_brender_items; i++) {
 
         BrMaterialRemove(gFrontend_brender_items[i].material);
