@@ -18,6 +18,8 @@
 #include "globvars.h"
 #include "platform.h"
 
+#include "c2_string.h"
+
 // GLOBAL: CARMA2_HW 0x0068c1f0
 // GLOBAL: CARMA2_SW 0x00686238
 int gAlways_typing;
@@ -98,6 +100,20 @@ void C2_HOOK_FASTCALL DisableChoice(int pChoice) {
     }
     gDisabled_choices[gDisabled_count] = pChoice;
     gDisabled_count++;
+}
+
+// FUNCTION: CARMA2_HW 0x00484680
+// FUNCTION: CARMA2_SW 0x004817c0
+void C2_HOOK_FASTCALL EnableChoice(int pChoice) {
+    int i;
+
+    for (i = 0; i < gDisabled_count; i++) {
+        if (gDisabled_choices[i] == pChoice) {
+            memcpy(&gDisabled_choices[i], &gDisabled_choices[i + 1], (gDisabled_count - i - 1) * sizeof(gDisabled_choices[0]));
+            gDisabled_count--;
+            break;
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00484dd0
