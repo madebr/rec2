@@ -242,154 +242,74 @@ void C2_HOOK_FASTCALL ToggleInventory(void) {
 
 // MungePowerupStuff
 
-// GotPowerupN
+void C2_HOOK_FASTCALL GotPowerupN(int pN) {
+    int modifiers;
+
+    modifiers = PDKeyDown(0) ? 10 : 0;
+    modifiers += PDKeyDown(1) ? 20 : 0;
+    modifiers += PDKeyDown(2) ? 40 : 0;
+    modifiers += PDKeyDown(4) ? 80 : 0;
+    GotPowerupEarwig(&gProgram_state.current_car, modifiers + pN, 1, 1);
+}
 
 // FUNCTION: CARMA2_HW 0x004dbdb0
 // FUNCTION: CARMA2_SW 0x004d82b0
 void C2_HOOK_FASTCALL GotPowerup0(void) {
-    int modifiers;
-
-    if (PDKeyDown(0)) {
-        modifiers = 10;
-    } else {
-        modifiers = 0;
-    }
-    modifiers += PDKeyDown(1) ? 20 : 0;
-    modifiers += PDKeyDown(2) ? 40 : 0;
-    modifiers += PDKeyDown(4) ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers, 1, 1);
+    GotPowerupN(0);
 }
 
 // FUNCTION: CARMA2_HW 0x004dbe10
 // FUNCTION: CARMA2_SW 0x004d8310
 void C2_HOOK_FASTCALL GotPowerup1(void) {
-    int modifiers;
-
-    modifiers = PDKeyDown(0) ? 10 : 0;
-    modifiers += PDKeyDown(1) ? 20 : 0;
-    modifiers += PDKeyDown(2) ? 40 : 0;
-    modifiers += PDKeyDown(4) ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 1, 1, 1);
+    GotPowerupN(1);
 }
 
 // FUNCTION: CARMA2_HW 0x004dbe70
 // FUNCTION: CARMA2_SW 0x004d8370
 void C2_HOOK_FASTCALL GotPowerup2(void) {
-    int modifiers;
-
-    if (PDKeyDown(0) != 0) {
-        modifiers = 10;
-    } else {
-        modifiers = 0;
-    }
-    modifiers += PDKeyDown(1) != 0 ? 20 : 0;
-    modifiers += PDKeyDown(2) != 0 ? 40 : 0;
-    modifiers += PDKeyDown(4) != 0 ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 2, 1, 1);
+    GotPowerupN(2);
 }
 
 // FUNCTION: CARMA2_HW 0x004dbed0
 // FUNCTION: CARMA2_SW 0x004d83d0
 void C2_HOOK_FASTCALL GotPowerup3(void) {
-    int modifiers;
-
-    if (PDKeyDown(0) != 0) {
-        modifiers = 10;
-    } else {
-        modifiers = 0;
-    }
-    modifiers += PDKeyDown(1) != 0 ? 20 : 0;
-    modifiers += PDKeyDown(2) != 0 ? 40 : 0;
-    modifiers += PDKeyDown(4) != 0 ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 3, 1, 1);
+    GotPowerupN(3);
 }
 
 // FUNCTION: CARMA2_HW 0x004dbf30
 // FUNCTION: CARMA2_SW 0x004d8430
 void C2_HOOK_FASTCALL GotPowerup4(void) {
-    int modifiers;
-
-    if (PDKeyDown(0) != 0) {
-        modifiers = 10;
-    } else {
-        modifiers = 0;
-    }
-    modifiers += PDKeyDown(1) != 0 ? 20 : 0;
-    modifiers += PDKeyDown(2) != 0 ? 40 : 0;
-    modifiers += PDKeyDown(4) != 0 ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 4, 1, 1);
+    GotPowerupN(4);
 }
 
 // FUNCTION: CARMA2_HW 0x004dbf90
 // FUNCTION: CARMA2_SW 0x004d8490
 void C2_HOOK_FASTCALL GotPowerup5(void) {
-    int modifiers;
-
-    if (PDKeyDown(0) != 0) {
-        modifiers = 10;
-    } else {
-        modifiers = 0;
-    }
-    modifiers += PDKeyDown(1) != 0 ? 20 : 0;
-    modifiers += PDKeyDown(2) != 0 ? 40 : 0;
-    modifiers += PDKeyDown(4) != 0 ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 5, 1, 1);
+    GotPowerupN(5);
 }
 
 // FUNCTION: CARMA2_HW 0x004dbff0
 // FUNCTION: CARMA2_SW 0x004d84f0
 void C2_HOOK_FASTCALL GotPowerup6(void) {
-    int modifiers;
-
-    modifiers = PDKeyDown(0) ? 10 : 0;
-    modifiers += PDKeyDown(1) ? 20 : 0;
-    modifiers += PDKeyDown(2) ? 40 : 0;
-    modifiers += PDKeyDown(4) ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 6, 1, 1);
+    GotPowerupN(6);
 }
 
 // FUNCTION: CARMA2_HW 0x004dc050
 // FUNCTION: CARMA2_SW 0x004d8550
 void C2_HOOK_FASTCALL GotPowerup7(void) {
-    int modifiers;
-
-    modifiers = PDKeyDown(0) ? 10 : 0;
-    modifiers += PDKeyDown(1) ? 20 : 0;
-    modifiers += PDKeyDown(2) ? 40 : 0;
-    modifiers += PDKeyDown(4) ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 7, 1, 1);
+    GotPowerupN(7);
 }
 
 // FUNCTION: CARMA2_HW 0x004dc0b0
 // FUNCTION: CARMA2_SW 0x004d85b0
 void C2_HOOK_FASTCALL GotPowerup8(void) {
-    int modifiers;
-
-    if (PDKeyDown(0) != 0) {
-        modifiers = 10;
-    } else {
-        modifiers = 0;
-    }
-    modifiers += PDKeyDown(1) != 0 ? 20 : 0;
-    modifiers += PDKeyDown(2) != 0 ? 40 : 0;
-    modifiers += PDKeyDown(4) != 0 ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 8, 1, 1);
+    GotPowerupN(8);
 }
 
 // FUNCTION: CARMA2_HW 0x004dc110
 // FUNCTION: CARMA2_SW 0x004d8610
 void C2_HOOK_FASTCALL GotPowerup9(void) {
-    int modifiers;
-
-    if (PDKeyDown(0) != 0) {
-        modifiers = 10;
-    } else {
-        modifiers = 0;
-    }
-    modifiers += PDKeyDown(1) != 0 ? 20 : 0;
-    modifiers += PDKeyDown(2) != 0 ? 40 : 0;
-    modifiers += PDKeyDown(4) != 0 ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 9, 1, 1);
+    GotPowerupN(9);
 }
 
 // GotCredits
