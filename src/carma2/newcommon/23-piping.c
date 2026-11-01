@@ -13,6 +13,7 @@
 #include "16-graphics1.h"
 #include "22-replay.h"
 #include "27-powerup.h"
+#include "30-opponent.h"
 #include "32-spark.h"
 #include "41-utility.h"
 
@@ -372,8 +373,6 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
 // PipeObjectPosition
 
 // PipeCarPositions
-
-// DoSmudge
 
 // DoOilSpillAR
 
@@ -870,7 +869,41 @@ void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec* pOpponent_spec, in
 
 // ApplyCrush
 
-// ApplySmudge
+// FUNCTION: CARMA2_HW 0x004c9060
+// FUNCTION: CARMA2_SW 0x004c5790
+void C2_HOOK_FASTCALL ApplySmudge(tPipe_chunk** pChunk) {
+    DoSmudge(pChunk, 1);
+}
+
+// FUNCTION: CARMA2_HW 0x004c9070
+// FUNCTION: CARMA2_SW 0x004c57a0
+void C2_HOOK_FASTCALL DoSmudge(tPipe_chunk** pChunk, int pDir) {
+    int i;
+    int v;
+    tU8 inc;
+    br_model* model_ptr;
+    tCar_spec* car;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_smudge_data, vertex_changes, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmudged_vertex, light_index, 0x2);
+    C2_HOOK_BUG_ON(sizeof(tSmudged_vertex) != 0x4);
+
+    if (((*pChunk)->subject_index >> 8) == eVehicle_self) {
+        car = &gProgram_state.current_car;
+    } else {
+        car = GetCarSpec((*pChunk)->subject_index >> 8, (*pChunk)->subject_index & 0xff);
+    }
+    model_ptr = car->car_actor->model;
+    for (i = 0; i < ((tPipe_smudge_data*)(*pChunk)->data.raw_data)->vertex_count; i++) {
+        v = ((tPipe_smudge_data*)(*pChunk)->data.raw_data)->vertex_changes[i].vertex_index;
+        inc = ((tPipe_smudge_data*)(*pChunk)->data.raw_data)->vertex_changes[i].light_index * pDir;
+        model_ptr->prepared->groups->vertex_colours[v] = ((model_ptr->prepared->groups->vertex_colours[v] & 0xff000000u) + ((br_colour)inc << 24)) & 0xff000000u;
+        if (model_ptr->flags & BR_MODF_UPDATEABLE) {
+            model_ptr->vertices[model_ptr->prepared->groups->vertex_user[v]].index = BR_ALPHA(model_ptr->prepared->groups->vertex_colours[v]) + inc;
+        }
+    }
+}
 
 // ApplySpark
 
@@ -1131,7 +1164,12 @@ void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
 
 // UndoCrush
 
-// UndoSmudge
+// FUNCTION: CARMA2_HW 0x004c9db0
+// FUNCTION: CARMA2_SW 0x004c64e0
+void C2_HOOK_FASTCALL UndoSmudge(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    (void)pPrev_chunk;
+    DoSmudge(pChunk, -1);
+}
 
 // UndoDamage
 
