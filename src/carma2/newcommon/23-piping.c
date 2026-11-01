@@ -482,7 +482,7 @@ void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y) {
 // PipeSingleGrooveStop
 
 // FUNCTION: CARMA2_HW 0x004c80f0
-// STUB: CARMA2_SW 0x004c3720
+// STUB: CARMA2_SW 0x004c4820
 void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
     C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, actor, 0x4);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
