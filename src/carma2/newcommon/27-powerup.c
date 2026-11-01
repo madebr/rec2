@@ -131,6 +131,13 @@ int gInstant_handbrake;
 // GLOBAL: CARMA2_SW 0x0069aaac
 tPowerup* gPowerup_array;
 
+// FUNCTION: CARMA2_HW 0x004d8d10
+// FUNCTION: CARMA2_SW 0x004d5240
+char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index) {
+
+    return gPowerup_array[pPowerup_index].message;
+}
+
 // GetNextGoodyTime
 
 // DoPowerupTextHeadup

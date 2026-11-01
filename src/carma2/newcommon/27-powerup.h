@@ -36,6 +36,8 @@ extern int gInventory_cycling;
 extern tU32 gInventory_timeout;
 extern tU32* gReal_render_palette;
 
+extern char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index);
+
 // GetNextGoodyTime
 
 // DoPowerupTextHeadup
