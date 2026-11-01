@@ -230,7 +230,7 @@ extern void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterial
 
 // ForEveryCarModelCB
 
-extern int C2_HOOK_CDECL RunCallbackOnAllModels(br_actor* pActor, int (C2_HOOK_FASTCALL* pCallback)(br_model*));
+extern intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void *pContext);
 
 // ForEveryCarModel
 
