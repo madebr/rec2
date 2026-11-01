@@ -483,25 +483,27 @@ int C2_HOOK_FASTCALL TakeDrugs(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// PaletteFuckedUpByDrugs
-
-// FUNCTION: CARMA2_HW 0x004dcc00
-// FUNCTION: CARMA2_SW 0x004d9100
-void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* pPowerup, tU32 pPeriod) {
+void C2_HOOK_FASTCALL PaletteFuckedUpByDrugs(br_pixelmap* pPalette, int pOffset) {
     int i;
-    tU32 offset;
 
-    offset = GetTotalTime() / 100;
-    if (offset == 0) {
+    (void)pPalette;
+    if (pOffset == 0) {
         memcpy(gRender_palette->pixels, gReal_render_palette, 256 * sizeof(tU32));
     }
     for (i = 1; i < 224; i++) {
-        ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[(i + offset) & 0xff];
+        ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[(i + pOffset) & 0xff];
     }
     ((tU32*)gRender_palette->pixels)[0] = gReal_render_palette[0];
     for (i = 224; i < 256; i++) {
         ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[i];
     }
+}
+
+// FUNCTION: CARMA2_HW 0x004dcc00
+// FUNCTION: CARMA2_SW 0x004d9100
+void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* pPowerup, tU32 pPeriod) {
+
+    PaletteFuckedUpByDrugs(gRender_palette, GetTotalTime() / 100);
     ResetPalette();
 }
 
@@ -692,14 +694,7 @@ void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (pCar != NULL && pCar->driver == eDriver_local_human) {
         gOn_drugs = 0;
-        memcpy(gRender_palette->pixels, gReal_render_palette, 256 * sizeof(tU32));
-        for (i = 1; i < 224; i++) {
-            ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[i & 0xff];
-        }
-        ((tU32*)gRender_palette->pixels)[0] = gReal_render_palette[0];
-        for (i = 224; i < 256; i++) {
-            ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[i];
-        }
+        PaletteFuckedUpByDrugs(gRender_palette, 0);
         ResetPalette();
     }
 }
