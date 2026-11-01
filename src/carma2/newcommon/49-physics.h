@@ -388,7 +388,7 @@ extern void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, cons
 
 extern void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn);
 
-// RepositionAndOrientateChildren
+extern void C2_HOOK_FASTCALL RepositionAndOrientateChildren(tPhysics_object* pObject, br_matrix34* pParent_matrix);
 
 extern void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics_object* pChild);
 
