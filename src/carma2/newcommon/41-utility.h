@@ -122,6 +122,8 @@ extern int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
 extern void C2_HOOK_FASTCALL DRstrlwr(char* s);
 
+extern void C2_HOOK_FASTCALL StringTransformToLower(char* pString);
+
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
 
 extern br_actor* C2_HOOK_FASTCALL CloneActor(br_actor* pActor);

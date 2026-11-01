@@ -960,6 +960,18 @@ void C2_HOOK_FASTCALL DRstrlwr(char* s) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00515910
+// FUNCTION: CARMA2_SW 0x00510d80
+void C2_HOOK_FASTCALL StringTransformToLower(char* pString) {
+    int i;
+    int length;
+
+    length = (int)strlen(pString);
+    for (i = 0; i < length; i++) {
+        pString[i] = (char)tolower(pString[i]);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00515950
 // FUNCTION: CARMA2_SW 0x00510dc0
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
