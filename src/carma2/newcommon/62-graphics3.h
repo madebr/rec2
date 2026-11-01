@@ -13,6 +13,7 @@
 #include "rec2_types.h"
 
 extern const int gArrows[2][4][60];
+extern br_vector3 y_unit_vector;
 extern int gMini_map_visible;
 extern int gCount_smashable_race_targets;
 extern tSmashable_race_target gSmashable_race_targets[300];
@@ -28,6 +29,8 @@ extern int gMap_render_y_i;
 extern int gMap_render_x_i;
 extern int gMap_render_height_i;
 extern int gMap_render_width_i;
+extern tU32 last_flash;
+extern int flash_state;
 
 // CarArrowColour
 
@@ -65,7 +68,7 @@ extern void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoi
 
 // DrawCheckpoint
 
-// DrawOffsetCheckpoint
+extern void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
 
 // DoMapOverlays
 
@@ -109,6 +112,6 @@ extern void C2_HOOK_FASTCALL InitSmashTargets(void);
 
 extern void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 
-extern int NearestPowerOfTwo(int pValue) ;
+extern int C2_HOOK_FASTCALL NearestPowerOfTwo(int pValue);
 
 #endif // GUARD_62_GRAPHICS3_H

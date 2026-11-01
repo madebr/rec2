@@ -284,6 +284,19 @@ void C2_HOOK_FASTCALL ReduceDepthStart(void) {
     gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
 }
 
+// FUNCTION: CARMA2_HW 0x004468f0
+// FUNCTION: CARMA2_SW 0x00446970
+void C2_HOOK_FASTCALL IncreaseDepthStart(void) {
+    char s[256];
+
+    if (gProgram_state.current_depth_effect.start < 13) {
+        gProgram_state.current_depth_effect.start++;
+    }
+    sprintf(s, "Depth start increased to %d", gProgram_state.current_depth_effect.start);
+    NewTextHeadupSlot(4, 0, 500, -1, s);
+    gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
+}
+
 // FUNCTION: CARMA2_HW 0x004469b0
 // FUNCTION: CARMA2_SW 0x00446a30
 void C2_HOOK_FASTCALL IncreaseDepthEnd(void) {
@@ -422,9 +435,9 @@ void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
     br_pixelmap* temp;
 
     temp = gProgram_state.current_depth_effect.sky_texture;
-    gProgram_state.default_depth_effect.sky_texture = gSwap_sky_texture;
+    gProgram_state.current_depth_effect.sky_texture = gSwap_sky_texture;
     gSwap_sky_texture = temp;
-    gProgram_state.current_depth_effect.sky_texture = gProgram_state.default_depth_effect.sky_texture;
+    gProgram_state.default_depth_effect.sky_texture = gProgram_state.current_depth_effect.sky_texture;
     if (gHorizon_material != NULL && gProgram_state.default_depth_effect.sky_texture != NULL) {
         gHorizon_material->colour_map = gProgram_state.current_depth_effect.sky_texture;
         BrMaterialUpdate(gHorizon_material, BR_MATU_ALL);
@@ -432,7 +445,19 @@ void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
     }
 }
 
-// ToggleSky
+// FUNCTION: CARMA2_HW 0x00446ee0
+// FUNCTION: CARMA2_SW 0x00447120
+void C2_HOOK_FASTCALL ToggleSky(void) {
+
+    SetSkyTextureOn(!GetSkyTextureOn());
+    if (gProgram_state.current_depth_effect.sky_texture != NULL) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_on));
+    } else if (gSwap_sky_texture != NULL) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_off));
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_no_sky_texture_for_this_race));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00446f90
 // FUNCTION: CARMA2_SW 0x004471d0

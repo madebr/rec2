@@ -13,6 +13,8 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+extern int gPHIL_doing_physics;
+
 extern int gCursor_tinted_top;
 extern int gCursor_tinted_left;
 extern int gCursor_tinted_bottom;
@@ -21,6 +23,7 @@ extern int gCursor_tinted_center;
 extern int gCursor_line_width;
 
 extern tTransient_bm gTransient_bitmaps[50];
+extern int gMouse_started;
 extern tU32 gLast_palette_change;
 extern int gPalette_index;
 
@@ -32,6 +35,8 @@ extern int gPalette_changed;
 #endif
 extern br_pixelmap* gCurrent_palette;
 extern br_pixelmap* gCurrent_splash;
+
+extern void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour);
 extern br_pixelmap* gBlend75_table;
 
 extern void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount);
@@ -43,6 +48,8 @@ extern void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_c
 extern void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
 
 extern void C2_HOOK_FASTCALL InitializePalettes(void);
+
+extern void C2_HOOK_FASTCALL SwitchToPalette(char* pPal_name);
 
 extern void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
@@ -66,9 +73,9 @@ extern void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
 extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 
-// DeallocateTransientBitmap
+extern void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex);
 
-// DeallocateAllTransientBitmaps
+extern void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void);
 
 extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them);
 

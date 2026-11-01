@@ -1222,6 +1222,7 @@ int C2_HOOK_FASTCALL S3SoundStillPlaying(int pTag) {
 }
 
 // FUNCTION: CARMA2_HW 0x005649c8
+// FUNCTION: CARMA2_SW 0x00560068
 int C2_HOOK_FASTCALL S3SetVolume(int pVolume) {
     tS3_outlet* outlet;
 

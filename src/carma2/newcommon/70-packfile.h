@@ -40,6 +40,8 @@ extern int C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned i
 
 extern int C2_HOOK_FASTCALL PFftell(FILE* pF);
 
+extern int C2_HOOK_FASTCALL PFfsetpos(FILE*, fpos_t*);
+
 extern int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence);
 
 extern void C2_HOOK_FASTCALL PFrewind(FILE* pF);
@@ -59,5 +61,7 @@ extern void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt);
 extern void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void);
 
 extern void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void);
+
+extern void C2_HOOK_FASTCALL TurnOnPaletteConversion(void);
 
 #endif // GUARD_70_PACKFILE_H
