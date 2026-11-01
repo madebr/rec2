@@ -561,10 +561,33 @@ int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x004ae7e0
-// STUB: CARMA2_SW 0x004aa950
+// FUNCTION: CARMA2_HW 0x004ae7e0
+// FUNCTION: CARMA2_SW 0x004aa950
 tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
-    NOT_IMPLEMENTED();
+    int net_player_index;
+
+    switch (pCategory) {
+    case eVehicle_self:
+        return &gProgram_state.current_car;
+    case eVehicle_net_player:
+        net_player_index = gThis_net_player_index;
+        if (pIndex < net_player_index) {
+            return gNet_players[pIndex].car;
+        } else {
+            return (gNet_players + 1)[pIndex].car;
+        }
+    case eVehicle_opponent:
+        return gProgram_state.AI_vehicles.opponents[pIndex].car_spec;
+    case eVehicle_rozzer:
+        return gProgram_state.AI_vehicles.cops[pIndex].car_spec;
+    case eVehicle_drone:
+        PDEnterDebugger("OPPONENT.C: GetCarSpec() can't return drone car_specs");
+        return NULL;
+    case eVehicle_not_really:
+        return (tCar_spec*)gActive_non_car_list[pIndex];
+    default:
+        return NULL;
+    }
 }
 
 // STUB: CARMA2_HW 0x004ae880
@@ -722,4 +745,3 @@ void C2_HOOK_FASTCALL TwoCarsHitEachOther(tCar_spec* pA_car, tCar_spec* pAnother
 // RecordOpponentTwattageOccurrence
 
 // GetOpponentMood
-

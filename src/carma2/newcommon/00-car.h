@@ -12,7 +12,6 @@
 #include "rec2_types.h"
 
 extern int gTesting_car_for_sensible_place;
-
 extern int gCunning_stunt_bonus[3];
 extern float gArmour_starting_value[100];
 extern int gExplosion_sound_id;
@@ -23,6 +22,7 @@ extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
 extern int gFreeze_mechanics;
 extern int gNum_active_non_cars;
+extern tNon_car_spec* gActive_non_car_list[99];
 extern int gEliminate_faces;
 extern int gInTheSea;
 extern int gFace_num__car;
