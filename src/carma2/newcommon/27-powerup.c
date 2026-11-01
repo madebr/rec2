@@ -1009,10 +1009,10 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
     if (gMutant_tail_state != 0) {
         object = gMutant_tail_object;
         if (gMutant_tail_object != NULL) {
-            do {
+            while (object != NULL) {
                 BrActorRemove(object->actor);
                 object = object->child;
-            } while (object != NULL);
+            }
         }
         if (gMutant_tail_state == 2) {
             PhysicsRemoveObject(gMutant_tail_object);
