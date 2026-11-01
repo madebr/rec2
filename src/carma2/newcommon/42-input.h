@@ -96,6 +96,8 @@ extern void C2_HOOK_FASTCALL StartTyping(int pSlot_index, char* pText, int pVisi
 
 extern void C2_HOOK_FASTCALL SetSlotXY(int pSlot_index, int pX_coord, int pY_coord);
 
+extern void C2_HOOK_FASTCALL GetTypedName(char* pDestn, int pMax_length);
+
 extern void C2_HOOK_FASTCALL KillCursor(int pSlot_index);
 
 extern void C2_HOOK_FASTCALL EdgeTriggerModeOn(void);
