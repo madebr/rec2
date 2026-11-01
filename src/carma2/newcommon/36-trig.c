@@ -109,13 +109,9 @@ float gFloat_sine_table[91] = {
 
 // FastFloatSin
 
-// FastFloatCos
-
-// FastScalarSin
-
-// FUNCTION: CARMA2_HW 0x00511620
-// FUNCTION: CARMA2_SW 0x0050ca70
-br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_degrees) {
+// FUNCTION: CARMA2_HW 0x00511440
+// FUNCTION: CARMA2_SW 0x0050c890
+float C2_HOOK_FASTCALL FastFloatCos(int pAngle_degrees) {
 
     if (pAngle_degrees < 0) {
         pAngle_degrees = 360 - -pAngle_degrees % 360;
@@ -133,6 +129,15 @@ br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_degrees) {
         return -gFloat_sine_table[pAngle_degrees - 90];
     }
     return *(gFloat_sine_table + 90 - pAngle_degrees);
+}
+
+// FastScalarSin
+
+// FUNCTION: CARMA2_HW 0x00511620
+// FUNCTION: CARMA2_SW 0x0050ca70
+br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_degrees) {
+
+    return FastFloatCos(pAngle_degrees);
 }
 
 // FastScalarSinAngle
