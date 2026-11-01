@@ -244,7 +244,7 @@ extern int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_o
 
 // CalcQuickHingeData
 
-// SetUpForce
+extern void C2_HOOK_FASTCALL SetUpForce(br_vector3* pAngular, br_vector3* pLinear, const br_vector3* pPoint, const br_vector3* pDirection, tPhysics_object* pObject);
 
 // SetUpTorqueHingePartners
 

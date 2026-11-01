@@ -598,7 +598,29 @@ int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_object* 
 
 // CalcQuickHingeData
 
-// SetUpForce
+// FUNCTION: CARMA2_HW 0x004be4b0
+// FUNCTION: CARMA2_SW 0x004babd0
+void C2_HOOK_FASTCALL SetUpForce(br_vector3* pAngular, br_vector3* pLinear, const br_vector3* pPoint, const br_vector3* pDirection, tPhysics_object* pObject) {
+    br_scalar inverse_mass;
+    int i;
+
+    if (!(pObject->flags & 0x800)) {
+        pAngular->v[0] = pPoint->v[1] * pDirection->v[2] - pPoint->v[2] * pDirection->v[1];
+        pAngular->v[1] = pPoint->v[2] * pDirection->v[0] - pDirection->v[2] * pPoint->v[0];
+        pAngular->v[2] = pDirection->v[1] * pPoint->v[0] - pPoint->v[1] * pDirection->v[0];
+        for (i = 0; i < 3; i++) {
+            pAngular->v[i] /= pObject->I.v[i];
+        }
+    } else {
+        pAngular->v[0] = 0.f;
+        pAngular->v[1] = 0.f;
+        pAngular->v[2] = 0.f;
+    }
+    inverse_mass = (br_scalar)(1.0 / pObject->M);
+    pLinear->v[0] = pDirection->v[0] * inverse_mass;
+    pLinear->v[1] = pDirection->v[1] * inverse_mass;
+    pLinear->v[2] = pDirection->v[2] * inverse_mass;
+}
 
 // SetUpTorqueHingePartners
 
