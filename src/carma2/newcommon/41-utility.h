@@ -92,6 +92,8 @@ extern void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg
 
 extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
+extern void C2_HOOK_FASTCALL CopyMiscString(int pIndex, char* pDestination);
+
 extern int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state);
 
 extern double C2_HOOK_FASTCALL RGBDifferenceSqr(tRGB_colour* pColour_1, tRGB_colour* pColour_2);
