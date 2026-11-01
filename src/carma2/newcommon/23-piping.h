@@ -210,7 +210,7 @@ extern void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor);
 
 // PipeSingleOilSpill
 
-// PipeSingleFrameFinish
+extern void C2_HOOK_FASTCALL PipeSingleFrameFinish(void);
 
 extern void C2_HOOK_FASTCALL PipeSingleGraphicalWheelStuff(tCar_spec* pCar);
 
@@ -326,7 +326,7 @@ extern void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk);
 
 // ApplyOilSpill
 
-// ApplyFrameBoundary
+extern void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk);
 
 // ApplySound
 

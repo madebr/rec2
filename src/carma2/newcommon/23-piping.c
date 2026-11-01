@@ -11,8 +11,10 @@
 #include "00-car.h"
 #include "09-funks.h"
 #include "16-graphics1.h"
+#include "22-replay.h"
 #include "27-powerup.h"
 #include "32-spark.h"
+#include "41-utility.h"
 
 #include "51-smash.h"
 #include "61-pedestrn.h"
@@ -516,7 +518,15 @@ void C2_HOOK_FASTCALL PipeSingleNonCar(uintptr_t pId, br_actor* pActor) {
 
 // PipeSingleOilSpill
 
-// PipeSingleFrameFinish
+// FUNCTION: CARMA2_HW 0x004c8340
+// FUNCTION: CARMA2_SW 0x004c4a70
+void C2_HOOK_FASTCALL PipeSingleFrameFinish(void) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_frame_finish, time, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_frame_finish, time, 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_frame_finish, 0, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_frame_finish, time), GetTotalTime());
+}
 
 // FUNCTION: CARMA2_HW 0x004c83f0
 // FUNCTION: CARMA2_SW 0x004c4b20
@@ -907,7 +917,14 @@ void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk) {
 
 // ApplyOilSpill
 
-// ApplyFrameBoundary
+// FUNCTION: CARMA2_HW 0x004c9360
+// FUNCTION: CARMA2_SW 0x004c5a90
+void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_frame_finish, time, 0x0);
+
+    ApplyTime(((tPipe_chunk_frame_finish*)(*pChunk)->data.raw_data)->time);
+}
 
 // ApplySound
 
