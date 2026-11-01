@@ -1151,6 +1151,61 @@ intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
 
 // DetermineTilitudinality
 
+// FUNCTION: CARMA2_HW 0x004f5ae0
+// FUNCTION: CARMA2_SW 0x004f1740
+void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* pArea_2) {
+    int i;
+
+    *pArea_1 = 0;
+    *pArea_2 = 0;
+
+    for (i = 0; i < V11MODEL(pModel)->ngroups; i++) {
+        int j;
+        fmt_vertex* vertices = V11MODEL(pModel)->groups[i].vertices;
+        v11face* v11f = V11MODEL(pModel)->groups[i].faces;
+
+        for (j = V11MODEL(pModel)->groups[i].nfaces; j > 0; j--, v11f++) {
+            int k;
+            br_vector2 min = {{ 10000.f, 10000.f }};
+            br_vector2 max = {{ -10000.f, -10000.f }};
+            int dx;
+            int dy;
+            int area;
+
+            for (k = 0; k < 3; k++) {
+                fmt_vertex* vertex = vertices + v11f->vertices[k];
+
+                if (vertex->map.v[0] < min.v[0]) {
+                    min.v[0] = vertex->map.v[0];
+                }
+                if (vertex->map.v[0] > max.v[0]) {
+                    max.v[0] = vertex->map.v[0];
+                }
+                if (vertex->map.v[1] < min.v[1]) {
+                    min.v[1] = vertex->map.v[1];
+                }
+                if (vertex->map.v[1] > max.v[1]) {
+                    max.v[1] = vertex->map.v[1];
+                }
+            }
+            /* The originals subtract a negative double-precision constant. */
+            dy = (int)(max.v[1] - min.v[1] - -0.9);
+            dx = (int)(max.v[0] - min.v[0] - -0.9);
+            area = dx * dy;
+            *pArea_1 += area;
+            *pArea_2 += area;
+        }
+    }
+    *pArea_1 += 50;
+    *pArea_2 += 50;
+    if (*pArea_1 > 250) {
+        *pArea_1 = 250;
+    }
+    if (*pArea_2 > 250) {
+        *pArea_2 = 250;
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x004f5cb0
 // FUNCTION: CARMA2_SW 0x004f1910
 void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
