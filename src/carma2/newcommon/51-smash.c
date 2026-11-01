@@ -205,7 +205,6 @@ void C2_HOOK_FASTCALL RemoveAllExplosionettes(void) {
             BrActorRemove(explosion->actor);
         }
     }
-
 }
 
 // MungeExplosions
