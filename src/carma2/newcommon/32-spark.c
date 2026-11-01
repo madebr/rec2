@@ -861,12 +861,20 @@ intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void* pContext) {
 
 // ForEveryCarModel
 
-// MightBlendifyMaterial
+int C2_HOOK_FASTCALL MightBlendifyMaterial(br_material* pMaterial, int pBlend_factor) {
 
-// STUB: CARMA2_HW 0x004fed00
-// STUB: CARMA2_SW 0x004fa5e0
+    if (GetBlenficatiousnessOfMaterial(pMaterial) != pBlend_factor) {
+        BlendifyMaterial(pMaterial, pBlend_factor);
+        BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+        return 1;
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004fed00
+// FUNCTION: CARMA2_SW 0x004fa5e0
 int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial) {
-    NOT_IMPLEMENTED();
+    return MightBlendifyMaterial(pMaterial, 25);
 }
 
 // FUNCTION: CARMA2_HW 0x004fecf0
