@@ -47,6 +47,6 @@ extern void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew);
 
 extern intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext);
 
-// ProcessNearbyActors
+extern int C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos, float pMax_dist, int pMatch_type, char pIdentifier_value, tS8 pIdentifier_index, tU16 pMatch_flags, tNearbyActors_cbfn* pCallback, void* pContext);
 
 #endif // GUARD_37_BRUCETRK_H
