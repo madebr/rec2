@@ -428,7 +428,10 @@ void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec* pDrone) {
 
 // MoveMyDroneBaby
 
-// DroneLookWhereYoureGoingYouBlindCunt
+// FUNCTION: CARMA2_HW 0x004525c0
+// FUNCTION: CARMA2_SW 0x00452350
+void C2_HOOK_FASTCALL DroneLookWhereYoureGoingYouBlindCunt(void) {
+}
 
 // FUNCTION: CARMA2_HW 0x004525d0
 // FUNCTION: CARMA2_SW 0x00452360
