@@ -85,7 +85,7 @@ int gCount_mutant_tail_parts;
 
 // GLOBAL: CARMA2_HW 0x006a0908
 // GLOBAL: CARMA2_SW 0x0069a960
-tPhysics_object* gMutant_tail_first_collision_info;
+tPhysics_object* gMutant_tail_object;
 
 // GLOBAL: CARMA2_HW 0x006a0acc
 // GLOBAL: CARMA2_SW 0x0069ab24
@@ -1007,19 +1007,19 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
     tPhysics_object* collision_info;
 
     if (gMutant_tail_state != 0) {
-        collision_info = gMutant_tail_first_collision_info;
-        if (gMutant_tail_first_collision_info != NULL) {
+        collision_info = gMutant_tail_object;
+        if (gMutant_tail_object != NULL) {
             do {
                 BrActorRemove(collision_info->actor);
                 collision_info = collision_info->child;
             } while (collision_info != NULL);
         }
         if (gMutant_tail_state == 2) {
-            PhysicsRemoveObject(gMutant_tail_first_collision_info);
+            PhysicsRemoveObject(gMutant_tail_object);
         } else {
-            PHILRemoveObject(gMutant_tail_first_collision_info);
+            PHILRemoveObject(gMutant_tail_object);
         }
-        gMutant_tail_first_collision_info->physics_joint1 = gMutant_tail_first_joint;
+        gMutant_tail_object->physics_joint1 = gMutant_tail_first_joint;
         gMutant_tail_state = 0;
     }
 }
@@ -1029,7 +1029,7 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
 void C2_HOOK_FASTCALL DoInitialTail(void) {
     tPhysics_object* collision_info;
 
-    for (collision_info = gMutant_tail_first_collision_info; collision_info != NULL; collision_info = collision_info->child) {
+    for (collision_info = gMutant_tail_object; collision_info != NULL; collision_info = collision_info->child) {
         collision_info->actor->render_style = BR_RSTYLE_FACES;
     }
 }
@@ -1039,7 +1039,7 @@ void C2_HOOK_FASTCALL DoInitialTail(void) {
 void C2_HOOK_FASTCALL UndoInitialTail(void) {
     tPhysics_object* collision_info;
 
-    for (collision_info = gMutant_tail_first_collision_info; collision_info != NULL; collision_info = collision_info->child) {
+    for (collision_info = gMutant_tail_object; collision_info != NULL; collision_info = collision_info->child) {
         collision_info->actor->render_style = BR_RSTYLE_NONE;
     }
 }
