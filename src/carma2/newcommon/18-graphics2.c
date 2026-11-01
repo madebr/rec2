@@ -387,9 +387,21 @@ void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
     }
 }
 
-// DeallocateTransientBitmap
+void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex) {
 
-// DeallocateAllTransientBitmaps
+    if (gTransient_bitmaps[pIndex].pixmap != NULL) {
+        BrPixelmapFree(gTransient_bitmaps[pIndex].pixmap);
+        gTransient_bitmaps[pIndex].pixmap = NULL;
+        gTransient_bitmaps[pIndex].in_use = 0;
+    }
+}
+
+void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void) {
+    int i;
+    for (i = 0; i < (int)REC2_ASIZE(gTransient_bitmaps); i++) {
+        DeallocateTransientBitmap(i);
+    }
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -457,13 +469,7 @@ void C2_HOOK_FASTCALL EndMouseCursor(void) {
     int i;
 
     RemoveTransientBitmaps(1);
-    for (i = 0; i < (int)REC2_ASIZE(gTransient_bitmaps); i++) {
-        if (gTransient_bitmaps[i].pixmap != NULL) {
-            BrPixelmapFree(gTransient_bitmaps[i].pixmap);
-            gTransient_bitmaps[i].pixmap = NULL;
-            gTransient_bitmaps[i].in_use = 0;
-        }
-    }
+    DeallocateAllTransientBitmaps();
     gMouse_started = 0;
 }
 

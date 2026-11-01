@@ -67,9 +67,9 @@ extern void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
 extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 
-// DeallocateTransientBitmap
+extern void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex);
 
-// DeallocateAllTransientBitmaps
+extern void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void);
 
 extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them);
 
