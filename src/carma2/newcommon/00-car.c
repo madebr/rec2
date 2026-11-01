@@ -79,6 +79,7 @@ int gEliminate_faces;
 int gInTheSea;
 
 // GLOBAL: CARMA2_HW 0x0065d010
+// GLOBAL: CARMA2_SW 0x00657948
 int gFace_num__car = 1;
 
 // GLOBAL: CARMA2_HW 0x00744820
