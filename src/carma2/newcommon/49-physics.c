@@ -61,6 +61,10 @@ int gPHIL_mechanics_time_sync;
 // GLOBAL: CARMA2_SW 0x0068e120
 int gPhysics_other_buffer_capacity;
 
+// GLOBAL: CARMA2_HW 0x00694140
+// GLOBAL: CARMA2_SW 0x0068e198
+tProximity_ray gProximity_rays[20];
+
 // GLOBAL: CARMA2_HW 0x00694280
 // GLOBAL: CARMA2_SW 0x0068e2d8
 br_actor* gPed_limbed_actors[30];

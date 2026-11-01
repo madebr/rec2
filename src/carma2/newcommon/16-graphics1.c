@@ -112,6 +112,10 @@ int gScreen_wobble_x;
 // GLOBAL: CARMA2_SW 0x006fbc44
 int gScreen_wobble_y;
 
+// GLOBAL: CARMA2_HW 0x0070518c
+// GLOBAL: CARMA2_SW 0x006fbc4c
+br_material* gMaterial_below;
+
 // GLOBAL: CARMA2_HW 0x00705190
 // GLOBAL: CARMA2_SW 0x006fbc50
 int gFrontend_wrecks_car_count;

@@ -127,11 +127,11 @@ extern void C2_HOOK_FASTCALL ToggleInventory(void);
 
 extern void C2_HOOK_FASTCALL GotPowerup0(void);
 
-// GotPowerup1
+extern void C2_HOOK_FASTCALL GotPowerup1(void);
 
-// GotPowerup2
+extern void C2_HOOK_FASTCALL GotPowerup2(void);
 
-// GotPowerup3
+extern void C2_HOOK_FASTCALL GotPowerup3(void);
 
 extern void C2_HOOK_FASTCALL GotPowerup4(void);
 
@@ -303,9 +303,9 @@ extern void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* pPowerup, tCar_spec
 
 extern void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
-// PickAtRandom
+extern int C2_HOOK_FASTCALL PickAtRandom(tPowerup* pPowerup, tCar_spec* pCar);
 
-// GotVouchers
+extern int C2_HOOK_FASTCALL GotVouchers(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL MungeVouchers(tPowerup* pPowerup, tU32 pPeriod);
 
@@ -319,7 +319,7 @@ extern void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec
 
 // SetLowGravityPeds
 
-// SetPissedPeds
+extern int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetGhostPeds
 
@@ -329,7 +329,7 @@ extern void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* pPowerup, tCar_spec* p
 
 extern void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetPissedPeds
+extern void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetGhostPeds
 
@@ -349,9 +349,9 @@ extern int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* pPowerup, tCar_spec* pCa
 
 extern void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetMutantCorpses
+extern int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetMutantCorpses
+extern void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ReceivedPowerup
 
