@@ -22,7 +22,7 @@ extern br_scalar C2_HOOK_FASTCALL FastScalarSin(int pAngle_degrees);
 
 // FastScalarCos
 
-// FastScalarSinAngle
+extern br_scalar C2_HOOK_FASTCALL FastScalarSinAngle(br_angle pAngle);
 
 // FastScalarCosAngle
 

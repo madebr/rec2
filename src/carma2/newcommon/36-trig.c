@@ -139,7 +139,12 @@ br_scalar C2_HOOK_FASTCALL FastScalarSin(int pAngle_degrees) {
 
 // FastScalarCos
 
-// FastScalarSinAngle
+// FUNCTION: CARMA2_HW 0x00511780
+// FUNCTION: CARMA2_SW 0x0050cbd0
+br_scalar C2_HOOK_FASTCALL FastScalarSinAngle(br_angle pAngle) {
+
+    return FastScalarSin((int)((double)pAngle * (360.0 / 65536.0)));
+}
 
 // FastScalarCosAngle
 
