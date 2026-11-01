@@ -20,6 +20,7 @@
 #include "69-sound.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "c2_stdio.h"
 
 // GLOBAL: CARMA2_HW 0x00655e48
 // GLOBAL: CARMA2_SW 0x00650d30
@@ -310,7 +311,22 @@ void C2_HOOK_FASTCALL DoProgram(void) {
     NOT_IMPLEMENTED();
 }
 
-// JumpTheStart
+// FUNCTION: CARMA2_HW 0x00504170
+// FUNCTION: CARMA2_SW 0x004ffac0
+void C2_HOOK_FASTCALL JumpTheStart(void) {
+    char s[256];
+
+    if (gNet_mode != eNet_mode_none && gProgram_state.credits < gJump_start_fine[gProgram_state.skill_level]) {
+        return;
+    }
+    WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(gCountdown);
+    gCountdown = 0;
+    DRS3StopOutletSound(gPedestrians_outlet);
+    DRS3StartSound(gPedestrians_outlet, eSoundId_HeyYou);
+    SpendCredits(gJump_start_fine[gProgram_state.skill_level]);
+    sprintf(s, "%s %d %s", GetMiscString(eMiscString_bad_boy), gJump_start_fine[gProgram_state.skill_level], GetMiscString(eMiscString_credit_fine));
+    NewTextHeadupSlot(4, 0, 1000, -4, s);
+}
 
 // FUNCTION: CARMA2_HW 0x00504230
 // FUNCTION: CARMA2_SW 0x004ffb80

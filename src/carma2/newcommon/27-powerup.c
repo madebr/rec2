@@ -672,9 +672,25 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->grip_multiplier = 1.f;
 }
 
-// PickAtRandom
+// FUNCTION: CARMA2_HW 0x004de7a0
+// FUNCTION: CARMA2_SW 0x004daca0
+int C2_HOOK_FASTCALL PickAtRandom(tPowerup* pPowerup, tCar_spec* pCar) {
+    int selected_powerup;
 
-// GotVouchers
+    selected_powerup = pPowerup->integer_params[IRandomBetween(0, pPowerup->number_of_integer_params - 1)];
+    GotPowerup(pCar, selected_powerup);
+    return -1;
+}
+
+// FUNCTION: CARMA2_HW 0x004de7d0
+// FUNCTION: CARMA2_SW 0x004dacd0
+int C2_HOOK_FASTCALL GotVouchers(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        AddVouchers(pPowerup->integer_params[0]);
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004de810
 // FUNCTION: CARMA2_SW 0x004dad10
@@ -708,7 +724,13 @@ void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar)
 
 // SetLowGravityPeds
 
-// SetPissedPeds
+// FUNCTION: CARMA2_HW 0x004de900
+// FUNCTION: CARMA2_SW 0x004dae00
+int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gDrunk_pedestrians = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // SetGhostPeds
 
@@ -730,7 +752,12 @@ void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     gPed_gravity_multiplier = 1.f;
 }
 
-// ResetPissedPeds
+// FUNCTION: CARMA2_HW 0x004de990
+// FUNCTION: CARMA2_SW 0x004dae90
+void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gDrunk_pedestrians = 0;
+}
 
 // ResetGhostPeds
 
@@ -778,9 +805,20 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->proxy_ray_distance = 0.f;
 }
 
-// SetMutantCorpses
+// FUNCTION: CARMA2_HW 0x004deca0
+// FUNCTION: CARMA2_SW 0x004db1a0
+int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// ResetMutantCorpses
+    gMutant_speed = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
+
+// FUNCTION: CARMA2_HW 0x004decd0
+// FUNCTION: CARMA2_SW 0x004db1d0
+void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gMutant_speed = 0.f;
+}
 
 // ReceivedPowerup
 

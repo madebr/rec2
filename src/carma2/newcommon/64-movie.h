@@ -14,6 +14,10 @@
 extern int gNext_replay_record_state;
 extern int gShow_status_message;
 
+extern int gShow_status_message;
+extern int gStatus_message_1;
+extern int gStatus_message_2;
+
 extern char gQuick_time_temp_path[256];
 extern char gQuick_time_movie_path_stub[256];
 extern char gQuick_time_banner_texture_name[256];
@@ -58,7 +62,7 @@ extern int C2_HOOK_FASTCALL MovieRecording(void);
 
 extern void C2_HOOK_FASTCALL KillStatusMessage(void);
 
-// ShowStatusMessage
+extern void C2_HOOK_FASTCALL ShowStatusMessage(int pMessage1, int pMessage2);
 
 extern int C2_HOOK_FASTCALL GetMovieWidth(void);
 

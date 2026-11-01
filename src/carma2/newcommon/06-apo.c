@@ -42,6 +42,15 @@ void C2_HOOK_FASTCALL ImprovePSPowerup(tCar_spec* pCar, int pIndex) {
     NewTextHeadupSlot(4, 0, 3000, -4, GetMiscString(eMiscString_increase_apo_start + pIndex));
 }
 
+// FUNCTION: CARMA2_HW 0x00502e50
+// FUNCTION: CARMA2_SW 0x004fe7a0
+void C2_HOOK_FASTCALL BuyArmour(void) {
+
+    if (gINT_0068b8e4 == 0 && gINT_0068b8e8 == 0) {
+        BuyPSPowerup(0);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00502e70
 // FUNCTION: CARMA2_SW 0x004fe7c0
 void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
@@ -66,8 +75,6 @@ void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
         NewTextHeadupSlot(4, 0, 3000, -4, GetMiscString(eMiscString_you_re_already_at_max_you_need_more_slots));
     }
 }
-
-// BuyArmour
 
 // FUNCTION: CARMA2_HW 0x00502fd0
 // FUNCTION: CARMA2_SW 0x004fe920

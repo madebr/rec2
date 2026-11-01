@@ -16,10 +16,9 @@
 #include "60-phil.h"
 #include "globvars.h"
 #include "globvrpb.h"
-#include "rec2_macros.h"
-
 #include "c2_stdio.h"
-
+#include "platform.h"
+#include "rec2_macros.h"
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x0065a3c4
@@ -243,7 +242,21 @@ int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
 
 // ClearOpponentsProjectedRoute
 
-// AddToOpponentsProjectedRoute
+// FUNCTION: CARMA2_HW 0x004ab150
+// FUNCTION: CARMA2_SW 0x004a72c0
+int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection) {
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pOpponent_spec->next_sections) != 12);
+
+    if (pOpponent_spec->nnext_sections < (int)REC2_ASIZE(pOpponent_spec->next_sections)) {
+        pOpponent_spec->next_sections[pOpponent_spec->nnext_sections].section_no = pSection_no;
+        pOpponent_spec->next_sections[pOpponent_spec->nnext_sections].direction = pDirection;
+        pOpponent_spec->nnext_sections++;
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // StunTheBugger
 
@@ -506,7 +519,11 @@ void C2_HOOK_FASTCALL DisposeOpponents(void) {
     }
 }
 
-// WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
+// STUB: CARMA2_HW 0x004ae620
+// STUB: CARMA2_SW 0x004aa790
+void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004ae750
 // FUNCTION: CARMA2_SW 0x004aa8c0
@@ -649,9 +666,37 @@ int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spe
 
 // GetOpponentsSectionWidth
 
-// GetOpponentsSectionMinSpeed
+// FUNCTION: CARMA2_HW 0x004aed50
+// FUNCTION: CARMA2_SW 0x004aaec0
+int C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
+    if (pSection >= 20000 && pOpponent_spec->nnext_sections > pSection - 20000) {
+        const tRoute_section* route = &pOpponent_spec->next_sections[pSection - 20000];
+        return gProgram_state.AI_vehicles.path_sections[route->section_no].min_speed[(route->direction ^ pTowards_finish) == 0];
+    } else if (pSection >= 15000) {
+        return 0;
+    } else if (pSection == 10000) {
+        return pOpponent_spec->pursue_car_data.direct_line_section.min_speed[pTowards_finish];
+    }
+    DoNotDprintf("WARNING - GetOpponentsSectionMinSpeed() - section not found in next_section array for opponent %s", pOpponent_spec->car_spec->driver_name);
+    PDEnterDebugger("WARNING - GetOpponentsSectionMinSpeed()");
+    return 0;
+}
 
-// GetOpponentsSectionMaxSpeed
+// FUNCTION: CARMA2_HW 0x004aedf0
+// FUNCTION: CARMA2_SW 0x004aaf60
+int C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
+    if (pSection >= 20000 && pOpponent_spec->nnext_sections > pSection - 20000) {
+        const tRoute_section* route = &pOpponent_spec->next_sections[pSection - 20000];
+        return gProgram_state.AI_vehicles.path_sections[route->section_no].max_speed[(route->direction ^ pTowards_finish) == 0];
+    } else if (pSection >= 15000) {
+        return 255;
+    } else if (pSection == 10000) {
+        return pOpponent_spec->pursue_car_data.direct_line_section.max_speed[pTowards_finish];
+    }
+    DoNotDprintf("WARNING - GetOpponentsSectionMaxSpeed() - section not found in next_section array for opponent %s", pOpponent_spec->car_spec->driver_name);
+    PDEnterDebugger("WARNING - GetOpponentsSectionMaxSpeed()");
+    return 255;
+}
 
 // FUNCTION: CARMA2_HW 0x004aee90
 // FUNCTION: CARMA2_SW 0x004ab000

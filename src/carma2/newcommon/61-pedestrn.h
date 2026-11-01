@@ -13,6 +13,7 @@
 #include "rec2_types.h"
 
 extern int gPed_count_limbed_actors;
+extern br_actor* gLimbs_actor;
 
 extern int gPed_retain_root_mode;
 extern float gPedestrian_speed_factor;
@@ -24,7 +25,9 @@ extern int gCount_changed_points;
 extern br_vector3 gChanged_points[10];
 extern int gPed_nearness;
 extern tTWTVFS gTwtPeds;
+extern float gMutant_speed;
 extern int gDancing_peds;
+extern int gDrunk_pedestrians;
 extern int gPeds_already_munged;
 
 // OrientationChanged
@@ -283,7 +286,7 @@ extern void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed);
 
 // SetRandomOmega
 
-// RenderLimbs
+extern void C2_HOOK_FASTCALL RenderLimbs(void);
 
 // MungePedestrians
 
@@ -305,7 +308,7 @@ extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_
 
 // RenderElectroBastardRays
 
-// AdjustProxRay
+extern void C2_HOOK_FASTCALL AdjustProxRay(int pRay_index, tU16 pCar_ID, tU16 pPed_index, tU32 pTime);
 
 // ResetProxRay
 
