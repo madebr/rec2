@@ -3267,7 +3267,7 @@ void C2_HOOK_FASTCALL ReadSmashTexture(tSmashable_item_spec* pSmash_item, tSmash
     pTexture_change->field_0x60 = 1.f;
     pTexture_change->field_0x64 = 0.f;
     pTexture_change->field_0x68 = 0.f;
-    LoadSmashableLevels(pF,
+    ReadSmashLevels(pF,
         &pTexture_change->levels,
         &pTexture_change->count_levels,
         pSmash_item->mode == kSmashableMode_TextureChange,
