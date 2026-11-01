@@ -106,6 +106,12 @@ void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount) {
     SortOutSmoke(&gProgram_state.current_car);
 }
 
+// STUB: CARMA2_HW 0x00413d30
+// STUB: CARMA2_SW 0x00413d60
+void C2_HOOK_FASTCALL DamageTrans(int pAmount) {
+    NOT_IMPLEMENTED();
+}
+
 // FUNCTION: CARMA2_HW 0x00413d90
 // FUNCTION: CARMA2_SW 0x00413dc0
 void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount) {
