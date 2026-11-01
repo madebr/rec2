@@ -19,6 +19,7 @@ extern float gOffensive_starting_value[100];
 extern tFloat_bunch_info gCar_softness;
 extern tFloat_bunch_info gCar_car_damage_multiplier;
 extern br_vector3 gZero_v__car;
+extern int gFreeze_mechanics;
 extern int gNum_active_non_cars;
 extern int gEliminate_faces;
 extern int gInTheSea;
@@ -29,7 +30,23 @@ extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type
 
 extern void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount);
 
+extern void C2_HOOK_FASTCALL DamageTrans(int pAmount);
+
 extern void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageLFBrake(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageLRBrake(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageLRWheel(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageRFWheel(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageRFBrake(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageRRBrake(int pDamage_amount);
+
+extern void C2_HOOK_FASTCALL DamageRRWheel(int pDamage_amount);
 
 extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
@@ -192,6 +209,8 @@ extern void C2_HOOK_FASTCALL ToggleCarToCarCollisions(void);
 extern void C2_HOOK_FASTCALL SwapCar(void);
 
 extern void C2_HOOK_FASTCALL AdjustDownForce(void);
+
+extern void C2_HOOK_FASTCALL FreezeMechanics(void);
 
 // FlyCar
 

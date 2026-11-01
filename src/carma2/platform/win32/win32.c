@@ -191,12 +191,15 @@ const char gExtendedAsciiToNormalAscii[128] = {
 };
 
 // GLOBAL: CARMA2_HW 0x006ad4d4
+// GLOBAL: CARMA2_SW 0x006a6c5c
 int gWin32ActionReplayBufferAllocated;
 
 // GLOBAL: CARMA2_HW 0x006ad470
+// GLOBAL: CARMA2_SW 0x006a6c00
 void *gPDActionReplayBuffer;
 
 // GLOBAL: CARMA2_HW 0x006ad474
+// GLOBAL: CARMA2_SW 0x006a6c04
 int gPDActionReplayBufferSize;
 
 // GLOBAL: CARMA2_HW 0x006ad46c
@@ -230,6 +233,7 @@ int gINT_006a6c3c;
 #define Win32AllocateActionReplayBuffer PDReallyAllocateActionReplayBuffer
 
 // FUNCTION: CARMA2_HW 0x0051b810
+// FUNCTION: CARMA2_SW 0x005155e0
 void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
     MEMORYSTATUS memory_status;
     unsigned int bufferSize;
@@ -433,11 +437,13 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
     gBack_screen = NULL;
 #endif
     if (been_here) {
+#ifdef REC2_HW
         PDDisposeActionReplayBuffer();
+#endif
         ExitProcess(702);
     } else {
         been_here = 1;
-        dr_dprintf("PDShutdownSystem()");
+        dr_dprintf("PDShutdownSystem()...");
         SSDXStop();
         SSDXRelease();
         CloseDirectInput();
@@ -688,10 +694,32 @@ int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void) {
 // FUNCTION: CARMA2_HW 0x0051c850
 // FUNCTION: CARMA2_SW 0x00517c40
 void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap *pPalette, int pFirst_colour, int pCount) {
-    int i;
-    PALETTEENTRY colours[256];
     tU32 *pixels = pPalette->pixels;
+#ifdef REC2_SW
+    int i;
+    int last_colour;
 
+    last_colour = pFirst_colour + pCount - 1;
+    if (last_colour > 255) {
+        last_colour = 255;
+    }
+
+    for (i = pFirst_colour; i <= last_colour; i++) {
+        tU32 c;
+
+        c = pixels[i];
+
+        gPD_palette_entries[i].peFlags = 0;
+        gPD_palette_entries[i].peRed = BR_RED(c);
+        gPD_palette_entries[i].peGreen = BR_GRN(c);
+        gPD_palette_entries[i].peBlue = BR_BLU(c);
+    }
+    SSDXSetPaletteEntries(gPD_palette_entries, 0, REC2_ASIZE(gPD_palette_entries));
+#endif
+
+#ifdef REC2_HW
+    PALETTEENTRY colours[256];
+    int i;
     for (i = 0; i < pCount; i++) {
         tU32 c;
 
@@ -699,10 +727,11 @@ void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap *pPalette, int pFirst_colo
         colours[i].peFlags = 0;
         colours[i].peRed = c >> 16;
         colours[i].peGreen = c >> 8;
-        colours[i].peBlue = c >> 0;
+        colours[i].peBlue = pixels[pFirst_colour + i];
     }
     SetPaletteEntries(gPDPalette, pFirst_colour, pCount, colours);
     BrPixelmapDoubleBuffer(gScreen, gBack_screen);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0051c840
@@ -767,11 +796,11 @@ int C2_HOOK_FASTCALL PDGetMicroseconds(void) {
 // FUNCTION: CARMA2_SW 0x005144e0
 void C2_HOOK_FASTCALL PDEnterDebugger(const char *pStr) {
     dr_dprintf("PDEnterDebugger(): %s", pStr);
-    ShowCursor(1);
+    ShowCursor(TRUE);
 #ifndef REC2_MATCHING
     __debugbreak();
 #endif
-    ShowCursor(0);
+    ShowCursor(FALSE);
 }
 
 // FUNCTION: CARMA2_HW 0x0051d4b0
@@ -960,20 +989,24 @@ static void C2_HOOK_CDECL OnWarnCallback(char *text) {
 // FUNCTION: CARMA2_HW 0x0051c620
 // FUNCTION: CARMA2_SW 0x00517640
 static void C2_HOOK_CDECL OnErrorCallback(char *text) {
-    const char *msg;
+    const char *str1;
+    const char *str2;
 
     dr_dprintf("*******************************************************************************");
     dr_dprintf("BRender FAILURE: '%s'", text);
     dr_dprintf("*******************************************************************************");
-    msg = "BRender error detected:";
-    if (msg == NULL) {
-        msg = "NULL str1";
+    str1 = "BRender error detected:";
+    str2 = text;
+#ifdef REC2_HW
+    if (str1 == NULL) {
+        str1 = "NULL str1";
     }
-    if (text == NULL) {
-        msg = "NULL str2";
+    if (str2 == NULL) {
+        str2 = "NULL str2";
     }
+#endif
     gIsFatalError = 1;
-    sprintf(gFatalErrorMessage, "%s\n%s", msg, text);
+    sprintf(gFatalErrorMessage, "%s\n%s", str1, str2);
     gExit_code = 700;
 #ifdef REC2_HW
     if (gBack_screen != NULL && gBack_screen->pixels != NULL) {
@@ -999,11 +1032,7 @@ void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
 // FUNCTION: CARMA2_SW 0x00516170
 int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char **pArgv) {
     gGraf_spec_index = gDefault_spec_index;
-#ifdef REC2_MATCHING
-    gGraf_spec_index = gDefault_spec_index;
-#else
-    gGraf_data_index = gDefault_data_index;
-#endif
+    gGraf_data_index = gDefault_spec_index;
     return 1;
 }
 

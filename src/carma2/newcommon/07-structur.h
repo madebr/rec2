@@ -63,7 +63,7 @@ extern int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pN
 
 extern void C2_HOOK_FASTCALL DoProgram(void);
 
-// JumpTheStart
+extern void C2_HOOK_FASTCALL JumpTheStart(void);
 
 extern void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void);
 

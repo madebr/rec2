@@ -88,6 +88,8 @@ extern void C2_HOOK_FASTCALL BlankSlot(int pIndex, int pName_length, int pVisibl
 
 extern int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_char);
 
+extern void C2_HOOK_FASTCALL StopTyping(int pSlot_index);
+
 extern void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str);
 
 extern void C2_HOOK_FASTCALL StartTyping(int pSlot_index, char* pText, int pVisible_length);

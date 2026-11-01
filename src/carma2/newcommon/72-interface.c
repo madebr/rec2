@@ -21,6 +21,7 @@
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "24-loadsave.h"
+#include "28-world3.h"
 #include "35-intrface.h"
 #include "40-main.h"
 #include "41-utility.h"
@@ -43,6 +44,10 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 #include <ctype.h>
+
+// GLOBAL: CARMA2_HW 0x00688b1c
+// GLOBAL: CARMA2_SW 0x0068307c
+int gNet_storage_space_initialized;
 
 // GLOBAL: CARMA2_HW 0x00763960
 // GLOBAL: CARMA2_SW 0x00759ec0
@@ -267,15 +272,19 @@ int gFrontend_leave_current_menu;
 tFrontend_spec* gCurrent_frontend_spec;
 
 // GLOBAL: CARMA2_HW 0x007635f0
+// GLOBAL: CARMA2_SW 0x00759b50
 br_uint_32 gFrontend_APO_Colour_1;
 
 // GLOBAL: CARMA2_HW 0x007635e0
+// GLOBAL: CARMA2_SW 0x00759b40
 br_uint_32 gFrontend_APO_Colour_2;
 
 // GLOBAL: CARMA2_HW 0x00763700
+// GLOBAL: CARMA2_SW 0x00759c60
 br_uint_32 gFrontend_APO_Colour_3;
 
 // GLOBAL: CARMA2_HW 0x0068650c
+// GLOBAL: CARMA2_SW 0x00680c4c
 br_actor* gFrontend_actor;
 
 // GLOBAL: CARMA2_HW 0x0068683c
@@ -485,6 +494,7 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
     return 0;
 }
+
 // FUNCTION: CARMA2_HW 0x00466ce0
 // FUNCTION: CARMA2_SW 0x00466a70
 void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_index) {
@@ -1032,7 +1042,17 @@ int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_option
     return 1;
 }
 
-// InitNetStorageSpace
+// FUNCTION: CARMA2_HW 0x00468750
+// FUNCTION: CARMA2_SW 0x004684d0
+void C2_HOOK_FASTCALL InitNetStorageSpace(void) {
+    int i;
+
+    for (i = 0; i < kMax_netplayers; i++) {
+        gCurrent_race.opponent_list[i].car_spec = NULL;
+    }
+    gNet_storage_space_initialized = 1;
+    InitialiseStorageSpace(0, &gNet_cars_storage_space, 2000, 50, 2000, 2000, 50);
+}
 
 // DisposeNetStorageSpace
 
@@ -1266,7 +1286,22 @@ int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// CarClickNext
+// FUNCTION: CARMA2_HW 0x0046ba00
+// FUNCTION: CARMA2_SW 0x0046b740
+int C2_HOOK_FASTCALL CarClickNext(tFrontend_spec* pFrontend) {
+    if (gFrontend_scroll_time_left == 0) {
+        gFrontend_change_car_selected_car += 1;
+        if (gFrontend_change_car_selected_car >= gProgram_state.number_of_cars) {
+            gFrontend_change_car_selected_car = 0;
+        }
+        gFrontend_opponent_profile_pic_needs_update = 1;
+        gFrontend_car_image_outdated = 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
+        UpdateCarInfo(pFrontend);
+        gFrontend_scroll_time_left += gFrontend_scroll_time_increment;
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0046ba70
 int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend) {
@@ -1579,16 +1614,23 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 // FUNCTION: CARMA2_SW 0x0046c9a0
 int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     char s[256];
-    tS8 i;
+    tU8 i;
 
     sprintf(s, "START OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
     PrintMemoryDump(0, s);
     if (pFrontend->destroy != NULL) {
         pFrontend->destroy(pFrontend);
     }
+#ifdef REC2_HW
     while (gFrontend_actor->children != NULL && strcmp("Backdrop", gFrontend_actor->children->identifier) != 0) {
         BrActorRemove(gFrontend_actor->children);
     }
+#endif
+#ifdef REC2_SW
+    while (gFrontend_actor->children != NULL && gFrontend_actor->children->type == BR_ACTOR_MODEL) {
+        BrActorRemove(gFrontend_actor->children);
+    }
+#endif
     for (i = 0; i < gFrontend_count_brender_items; i++) {
 
         BrMaterialRemove(gFrontend_brender_items[i].material);
