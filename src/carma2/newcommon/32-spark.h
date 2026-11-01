@@ -231,6 +231,8 @@ extern void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterial
 
 // ForEveryCarModelCB
 
+extern intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void *pContext);
+
 // ForEveryCarModel
 
 // MightBlendifyMaterial

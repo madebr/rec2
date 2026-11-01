@@ -824,7 +824,20 @@ void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUp
 #pragma auto_inline(on)
 #endif
 
-// ForEveryCarModelCB
+// FUNCTION: CARMA2_HW 0x004fec30
+// FUNCTION: CARMA2_SW 0x004fa510
+intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void* pContext) {
+    tUser_crush_data* user_crush;
+    int (C2_HOOK_FASTCALL* model_callback)(br_model*) = pContext;
+
+    if (pActor->type == BR_ACTOR_MODEL && pActor->model != NULL) {
+        user_crush = pActor->user;
+        if (user_crush != NULL && user_crush->groove == NULL) {
+            model_callback(pActor->model);
+        }
+    }
+    return 0;
+}
 
 // ForEveryCarModel
 
