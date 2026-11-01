@@ -33,6 +33,7 @@ extern int gCount_smashable_noncars;
 extern tBRender_smoke* gBR_smoke_pointers[35];
 extern int gN_BR_smoke_structs;
 extern int gColumn_flags;
+extern br_model* gShrapnel_model[2];
 extern br_pixelmap* gFlame_map[20];
 extern br_model* gLollipop_model;
 extern tSmoke_column gSmoke_column[10];
@@ -82,7 +83,7 @@ extern void C2_HOOK_FASTCALL ResetSparks(void);
 
 // InitShrapnel
 
-// LoadInShrapnel
+extern void C2_HOOK_FASTCALL LoadInShrapnel(void);
 
 // KillShrapnel
 
