@@ -16,6 +16,7 @@
 #include "22-replay.h"
 #include "23-piping.h"
 #include "29-raycast.h"
+
 #include "30-opponent.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
@@ -680,7 +681,19 @@ void C2_HOOK_FASTCALL CancelPendingCunningStunt(void) {
 
 // MungeSomeOtherCarGraphics
 
-// MungeCarGraphics
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0041e660
+// STUB: CARMA2_SW 0x0041e690
+void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x0041f110
 // FUNCTION: CARMA2_SW 0x0041f140
@@ -743,7 +756,31 @@ intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData) {
 
 // DoComplexCarModels
 
-// ResetCarScreens
+// FUNCTION: CARMA2_HW 0x0041f300
+// FUNCTION: CARMA2_SW 0x0041f380
+void C2_HOOK_FASTCALL ResetCarScreens(void) {
+    int cat;
+    int car_count;
+    int i;
+    tCar_spec* the_car;
+
+    for (cat = eVehicle_self; cat <= eVehicle_rozzer; cat++) {
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (i = 0; i < car_count; i++) {
+            if (cat == eVehicle_self) {
+                the_car = &gProgram_state.current_car;
+            } else {
+                the_car = GetCarSpec(cat, i);
+            }
+            the_car->collision_info->last_special_volume = NULL;
+        }
+    }
+    MungeCarGraphics(gFrame_period);
+}
 
 // FUNCTION: CARMA2_HW 0x0041f360
 // FUNCTION: CARMA2_SW 0x0041f3e0
