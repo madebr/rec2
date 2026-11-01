@@ -14,7 +14,6 @@
 
 extern int gINT_0068b8e8;
 extern int gSave_game_out_of_sync;
-extern int gINT_0068b8e8;
 extern int gCount_saved_games;
 
 // Encryptificate
