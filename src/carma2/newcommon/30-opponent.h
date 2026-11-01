@@ -11,8 +11,8 @@
 
 #include "rec2_types.h"
 
-extern char* gCop_name;
-extern char* gDrone_name;
+extern const char* gCop_name;
+extern const char* gDrone_name;
 
 extern int gBIG_APC_index;
 extern float gOpponent_nastyness_frigger;
@@ -183,7 +183,7 @@ extern int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory);
 
 extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
 
-extern char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex);
+extern const char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex);
 
 extern tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec);
 

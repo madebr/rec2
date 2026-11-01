@@ -25,11 +25,11 @@
 
 // GLOBAL: CARMA2_HW 0x0065a3bc
 // GLOBAL: CARMA2_SW 0x00654cd4
-char* gCop_name = "Faceless Cop";
+const char* gCop_name = "Faceless Cop";
 
 // GLOBAL: CARMA2_HW 0x0065a3c0
 // GLOBAL: CARMA2_SW 0x00654cd8
-char* gDrone_name = "Innocent Civilian";
+const char* gDrone_name = "Innocent Civilian";
 
 // GLOBAL: CARMA2_HW 0x0065a3c4
 // GLOBAL: CARMA2_SW 0x00654cdc
@@ -561,7 +561,7 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
 
 // FUNCTION: CARMA2_HW 0x004ae880
 // FUNCTION: CARMA2_SW 0x004aa9f0
-char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
+const char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
     tCar_spec* car;
     char* name;
 
