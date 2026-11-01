@@ -424,8 +424,6 @@ int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tNet_mess
 int C2_HOOK_FASTCALL NetSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage) {
     int i;
     int size;
-    tNet_game_player_info* player;
-    tNet_message* message;
     void* contents;
 
     C2_HOOK_BUG_ON(sizeof(tNet_message_header) != 0x18);
