@@ -298,7 +298,17 @@ void C2_HOOK_FASTCALL GotPowerup5(void) {
     GotPowerupEarwig(&gProgram_state.current_car, modifiers + 5, 1, 1);
 }
 
-// GotPowerup6
+// FUNCTION: CARMA2_HW 0x004dbff0
+// FUNCTION: CARMA2_SW 0x004d84f0
+void C2_HOOK_FASTCALL GotPowerup6(void) {
+    int modifiers;
+
+    modifiers = PDKeyDown(0) ? 10 : 0;
+    modifiers += PDKeyDown(1) ? 20 : 0;
+    modifiers += PDKeyDown(2) ? 40 : 0;
+    modifiers += PDKeyDown(4) ? 80 : 0;
+    GotPowerupEarwig(&gProgram_state.current_car, modifiers + 6, 1, 1);
+}
 
 // GotPowerup7
 
