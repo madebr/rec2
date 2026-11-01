@@ -13,8 +13,10 @@
 #include "21-mainloop.h"
 #include "22-replay.h"
 #include "27-powerup.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "49-physics.h"
+#include "62-graphics3.h"
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "69-sound.h"
@@ -33,6 +35,10 @@ const char* gPedsFolder;
 // GLOBAL: CARMA2_HW 0x006a0420
 // GLOBAL: CARMA2_SW 0x0069a478
 int gPed_count_limbed_actors;
+
+// GLOBAL: CARMA2_HW 0x006a0424
+// GLOBAL: CARMA2_SW 0x0069a47c
+br_actor* gLimbs_actor;
 
 // GLOBAL: CARMA2_HW 0x0065d7d4
 // GLOBAL: CARMA2_SW 0x0065810c
@@ -87,8 +93,16 @@ int gPed_nearness;
 // GLOBAL: CARMA2_SW 0x0068e4f0
 tTWTVFS gTwtPeds;
 
+// GLOBAL: CARMA2_HW 0x007447a4
+// GLOBAL: CARMA2_SW 0x0073b264
+float gMutant_speed;
+
 // GLOBAL: CARMA2_HW 0x007447a8
 int gDancing_peds;
+
+// GLOBAL: CARMA2_HW 0x007447b8
+// GLOBAL: CARMA2_SW 0x0073b278
+int gDrunk_pedestrians;
 
 // GLOBAL: CARMA2_HW 0x0069bce0
 // GLOBAL: CARMA2_SW 0x00695d38
@@ -108,7 +122,13 @@ int gPeds_already_munged;
 
 // SetCharacterDirectionAR
 
-// PedApplyPedDir
+// FUNCTION: CARMA2_HW 0x004ca4d0
+// FUNCTION: CARMA2_SW 0x004c6c00
+void C2_HOOK_FASTCALL PedApplyPedDir(tU32 pId, const br_vector3* pDir) {
+    if (!gBOOL_00744804) {
+        SetCharacterDirection(gPedestrian_array[pId & 0xffff].character, pDir, &y_unit_vector);
+    }
+}
 
 // SetCharacterMoveAR
 
@@ -572,7 +592,35 @@ void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed) {
 
 // SetRandomOmega
 
-// RenderLimbs
+// FUNCTION: CARMA2_HW 0x004d3610
+// FUNCTION: CARMA2_SW 0x004cfd00
+void C2_HOOK_FASTCALL RenderLimbs(void) {
+    int i;
+    int j;
+
+    if (gLimbs_actor == NULL) {
+        gLimbs_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        gLimbs_actor->identifier = "Limbs_actor";
+        BrActorAdd(gUniverse_actor, gLimbs_actor);
+    }
+    for (i = 0; i < gPed_count_limbed_actors; i++) {
+        br_actor* a = gPed_limbed_actors[i];
+        tPed_character_instance* ped = a->type_data;
+        tPed_form* form = ped->personality->form;
+        br_actor** bone_actors = form->actor_sets[ped->field_0x4].actors;
+
+        for (j = 1, bone_actors++; j < form->count_bones; j++, bone_actors++) {
+            if (!(gPow2_array[j] & ped->field_0xc)) {
+                BrActorAdd(gLimbs_actor, *bone_actors);
+            }
+        }
+    }
+    BrZbsSceneRenderAdd(gLimbs_actor);
+    while (gLimbs_actor->children != NULL) {
+        BrActorRemove(gLimbs_actor->children);
+    }
+    gPed_count_limbed_actors = 0;
+}
 
 // MungePedestrians
 
@@ -606,7 +654,20 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // RenderElectroBastardRays
 
-// AdjustProxRay
+// FUNCTION: CARMA2_HW 0x004d6180
+// FUNCTION: CARMA2_SW 0x004d2780
+void C2_HOOK_FASTCALL AdjustProxRay(int pRay_index, tU16 pCar_ID, tU16 pPed_index, tU32 pTime) {
+    tCar_spec* car;
+
+    if ((pCar_ID >> 8) == 0) {
+        car = &gProgram_state.current_car;
+    } else {
+        car = GetCarSpec(pCar_ID >> 8, pCar_ID & 0xff);
+    }
+    gProximity_rays[pRay_index].car = car;
+    gProximity_rays[pRay_index].ped = &gPedestrian_array[pPed_index];
+    gProximity_rays[pRay_index].start_time = pTime;
+}
 
 // ResetProxRay
 
@@ -1091,7 +1152,19 @@ void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vector3* pV)
 
 // DropPointOntoPlane
 
-// SetCharacterDirection
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0040a730
+// STUB: CARMA2_SW 0x0040a730
+void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SetCharacterPosition
 

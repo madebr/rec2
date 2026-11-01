@@ -56,6 +56,15 @@ int C2_HOOK_FASTCALL HasCurrentJoystick(void) {
     return gJoystick_index != -1;
 }
 
+// FUNCTION: CARMA2_HW 0x0045a2e0
+// FUNCTION: CARMA2_SW 0x0045a070
+void C2_HOOK_FASTCALL PeekCharacter(FILE* pF) {
+    char c;
+
+    c = (char)fgetc(pF);
+    ungetc(c, pF);
+}
+
 // FUNCTION: CARMA2_HW 0x0045a300
 // FUNCTION: CARMA2_SW 0x0045a090
 int C2_HOOK_FASTCALL ReadUntilCharacter(FILE* pF, char* pBuffer, int pBuffer_size, char pLimit_char) {
