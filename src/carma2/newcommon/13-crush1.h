@@ -413,7 +413,7 @@ extern intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser)
 
 extern int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void* pUser_data);
 
-// SendReAttachAllBits
+extern void C2_HOOK_FASTCALL SendReAttachAllBits(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 

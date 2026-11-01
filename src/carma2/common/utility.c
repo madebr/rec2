@@ -1388,7 +1388,7 @@ int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialPrimitively(br_material *pM
 }
 
 // FUNCTION: CARMA2_HW 0x00518e70
-int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material *pMaterial) {
+int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterial(br_material *pMaterial) {
 
     if (gScreen->type == BR_PMT_INDEX_8) {
         return GetBlendificatiousnessOfMaterialTablishly(pMaterial);
