@@ -839,7 +839,13 @@ void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar)
     }
 }
 
-// SetDancingPeds
+// FUNCTION: CARMA2_HW 0x004de870
+// FUNCTION: CARMA2_SW 0x004dad70
+int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gDancing_peds = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // SetPanickingPeds
 
