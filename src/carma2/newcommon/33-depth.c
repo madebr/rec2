@@ -322,7 +322,21 @@ void C2_HOOK_FASTCALL IncreaseYon(void) {
     NewTextHeadupSlot(4, 0, 2000, -4, s);
 }
 
-// DecreaseYon
+// FUNCTION: CARMA2_HW 0x00446ad0
+// FUNCTION: CARMA2_SW 0x00446b50
+void C2_HOOK_FASTCALL DecreaseYon(void) {
+    char s[256];
+    br_camera *camera;
+
+    gCamera_yon -= 5.0f;
+    if (gCamera_yon < 5.0f) {
+        gCamera_yon = 5.0f;
+    }
+    AssertYons();
+    camera = gCamera_list[1]->type_data;
+    sprintf(s, GetMiscString(eMiscString_yon_decreased_to_D), (int)camera->yon_z);
+    NewTextHeadupSlot(4, 0, 2000, -4, s);
+}
 
 // FUNCTION: CARMA2_HW 0x00446b70
 // FUNCTION: CARMA2_SW 0x00446bf0
@@ -408,9 +422,9 @@ void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
     br_pixelmap* temp;
 
     temp = gProgram_state.current_depth_effect.sky_texture;
-    gProgram_state.default_depth_effect.sky_texture = gSwap_sky_texture;
+    gProgram_state.current_depth_effect.sky_texture = gSwap_sky_texture;
     gSwap_sky_texture = temp;
-    gProgram_state.current_depth_effect.sky_texture = gProgram_state.default_depth_effect.sky_texture;
+    gProgram_state.default_depth_effect.sky_texture = gProgram_state.current_depth_effect.sky_texture;
     if (gHorizon_material != NULL && gProgram_state.default_depth_effect.sky_texture != NULL) {
         gHorizon_material->colour_map = gProgram_state.current_depth_effect.sky_texture;
         BrMaterialUpdate(gHorizon_material, BR_MATU_ALL);
@@ -418,7 +432,19 @@ void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
     }
 }
 
-// ToggleSky
+// FUNCTION: CARMA2_HW 0x00446ee0
+// FUNCTION: CARMA2_SW 0x00447120
+void C2_HOOK_FASTCALL ToggleSky(void) {
+
+    SetSkyTextureOn(!GetSkyTextureOn());
+    if (gProgram_state.current_depth_effect.sky_texture != NULL) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_on));
+    } else if (gSwap_sky_texture != NULL) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_off));
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_no_sky_texture_for_this_race));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00446f90
 // FUNCTION: CARMA2_SW 0x004471d0

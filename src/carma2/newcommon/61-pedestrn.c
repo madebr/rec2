@@ -13,6 +13,7 @@
 #include "21-mainloop.h"
 #include "22-replay.h"
 #include "27-powerup.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "63-loading3.h"
@@ -33,6 +34,10 @@ const char* gPedsFolder;
 // GLOBAL: CARMA2_HW 0x006a0420
 // GLOBAL: CARMA2_SW 0x0069a478
 int gPed_count_limbed_actors;
+
+// GLOBAL: CARMA2_HW 0x006a0424
+// GLOBAL: CARMA2_SW 0x0069a47c
+br_actor* gLimbs_actor;
 
 // GLOBAL: CARMA2_HW 0x0065d7d4
 // GLOBAL: CARMA2_SW 0x0065810c
@@ -71,6 +76,14 @@ int gExploding_pedestrians;
 // GLOBAL: CARMA2_HW 0x0069b9f0
 tNapalm_bolt gNapalm_bolts[5];
 
+// GLOBAL: CARMA2_HW 0x0069412c
+// GLOBAL: CARMA2_SW 0x0068e184
+int gCount_changed_points;
+
+// GLOBAL: CARMA2_HW 0x0069bc68
+// GLOBAL: CARMA2_SW 0x00695cc0
+br_vector3 gChanged_points[10];
+
 // GLOBAL: CARMA2_HW 0x00694490
 // GLOBAL: CARMA2_SW 0x0068e4e8
 int gPed_nearness;
@@ -79,8 +92,16 @@ int gPed_nearness;
 // GLOBAL: CARMA2_SW 0x0068e4f0
 tTWTVFS gTwtPeds;
 
+// GLOBAL: CARMA2_HW 0x007447a4
+// GLOBAL: CARMA2_SW 0x0073b264
+float gMutant_speed;
+
 // GLOBAL: CARMA2_HW 0x007447a8
 int gDancing_peds;
+
+// GLOBAL: CARMA2_HW 0x007447b8
+// GLOBAL: CARMA2_SW 0x0073b278
+int gDrunk_pedestrians;
 
 // GLOBAL: CARMA2_HW 0x0069bce0
 // GLOBAL: CARMA2_SW 0x00695d38
@@ -564,7 +585,35 @@ void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed) {
 
 // SetRandomOmega
 
-// RenderLimbs
+// FUNCTION: CARMA2_HW 0x004d3610
+// FUNCTION: CARMA2_SW 0x004cfd00
+void C2_HOOK_FASTCALL RenderLimbs(void) {
+    int i;
+    int j;
+
+    if (gLimbs_actor == NULL) {
+        gLimbs_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        gLimbs_actor->identifier = "Limbs_actor";
+        BrActorAdd(gUniverse_actor, gLimbs_actor);
+    }
+    for (i = 0; i < gPed_count_limbed_actors; i++) {
+        br_actor* a = gPed_limbed_actors[i];
+        tPed_character_instance* ped = a->type_data;
+        tPed_form* form = ped->personality->form;
+        br_actor** bone_actors = form->actor_sets[ped->field_0x4].actors;
+
+        for (j = 1, bone_actors++; j < form->count_bones; j++, bone_actors++) {
+            if (!(gPow2_array[j] & ped->field_0xc)) {
+                BrActorAdd(gLimbs_actor, *bone_actors);
+            }
+        }
+    }
+    BrZbsSceneRenderAdd(gLimbs_actor);
+    while (gLimbs_actor->children != NULL) {
+        BrActorRemove(gLimbs_actor->children);
+    }
+    gPed_count_limbed_actors = 0;
+}
 
 // MungePedestrians
 
@@ -598,7 +647,20 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
 
 // RenderElectroBastardRays
 
-// AdjustProxRay
+// FUNCTION: CARMA2_HW 0x004d6180
+// FUNCTION: CARMA2_SW 0x004d2780
+void C2_HOOK_FASTCALL AdjustProxRay(int pRay_index, tU16 pCar_ID, tU16 pPed_index, tU32 pTime) {
+    tCar_spec* car;
+
+    if ((pCar_ID >> 8) == 0) {
+        car = &gProgram_state.current_car;
+    } else {
+        car = GetCarSpec(pCar_ID >> 8, pCar_ID & 0xff);
+    }
+    gProximity_rays[pRay_index].car = car;
+    gProximity_rays[pRay_index].ped = &gPedestrian_array[pPed_index];
+    gProximity_rays[pRay_index].start_time = pTime;
+}
 
 // ResetProxRay
 
@@ -793,7 +855,13 @@ void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
     ConfigureAlienPedTexturePath();
 }
 
-// AddChangedPoint
+// FUNCTION: CARMA2_HW 0x004d6f90
+// FUNCTION: CARMA2_SW 0x004d3590
+void C2_HOOK_FASTCALL AddChangedPoint(br_vector3* pPoint) {
+    C2_HOOK_ASSERT(gChanged_points < (int)REC2_ASIZE(gCount_changed_points));
+    BrVector3Copy(&gChanged_points[gCount_changed_points], pPoint);
+    gCount_changed_points++;
+}
 
 // FUNCTION: CARMA2_HW 0x004d6fc0
 // FUNCTION: CARMA2_SW 0x004d35c0
@@ -915,19 +983,18 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // BuildCharacterInstance
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x00407aa0
-// STUB: CARMA2_SW 0x00407a90
+// FUNCTION: CARMA2_HW 0x00407aa0
+// FUNCTION: CARMA2_SW 0x00407a90
 br_matrix34* C2_HOOK_FASTCALL GetCharacterMatrixPtr(tPed_character_instance* pCharacter) {
-    NOT_IMPLEMENTED();
-}
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    if (pCharacter->field_0x4 < 0) {
+        return &pCharacter->field_0x2c;
+    }
+    if (pCharacter->field_0xe8 != NULL) {
+        return pCharacter->field_0xe8;
+    }
+    return &pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+}
 
 // FUNCTION: CARMA2_HW 0x00407ad0
 // FUNCTION: CARMA2_SW 0x00407ac0

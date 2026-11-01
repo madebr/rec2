@@ -428,6 +428,10 @@ typedef struct {
 } tPipe_chunk_smoke_column;
 
 typedef struct {
+    tCar_spec* car;
+} tPipe_chunk_powerup_lose;
+
+typedef struct {
     int index;
 } tPipe_chunk_powerup_respawn;
 
@@ -515,6 +519,7 @@ typedef enum {
     ePipe_chunk_single_ped_model_change = 47,
     ePipe_chunk_phil_object = 48,
     ePipe_single_groove_on_off = 51,
+    ePipe_chunk_powerup_lose = 53,
     ePipe_funk_enable = 54,
     ePipe_chunk_single_vanished_dismembered = 55,
     ePipe_single_ds_model = 56,
@@ -553,6 +558,8 @@ typedef struct tPipe_chunk {
         tPipe_smash_texture_change smash_texture_change;
         tPipe_single_transform_type transform_type;
         tPipe_single_vector vector;
+        tPipe_chunk_powerup_lose powerup_lose;
+        tPipe_chunk_powerup_respawn powerup_respawn;
         char raw_data[0];
     } data;
 } tPipe_chunk;
@@ -2366,6 +2373,7 @@ typedef enum tDriver {
     eDriver_detached_bit = 2,
     eDriver_split_car = 3,
     eDriver_4 = 4,
+    eDriver_5 = 5,
     eDriver_oppo = 6,
     eDriver_net_human = 7,
     eDriver_local_human = 8
@@ -5173,6 +5181,7 @@ typedef enum {
     eNet_message_chunk_type_oil_spill = 0x1f,
     eNet_message_chunk_type_car_crush = 0x20,
     eNet_message_chunk_type_reattach_bit = 0x26,
+    eNet_message_chunk_type_reattach_all_bits = 0x2b,
     eNet_message_chunk_type_toggle_doors = 0x2c,
     eNet_message_chunk_type_view_car = 0x2f,
     eNet_message_chunk_type_mine_explosion = 0x31,
@@ -5237,6 +5246,12 @@ typedef struct {
     tU8 uid;
     tU32 time;
 } tNet_message_chunk_reattach_bit;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tPlayer_ID player;
+    tU32 time;
+} tNet_message_chunk_reattach_all_bits;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -5356,6 +5371,7 @@ typedef union {
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_reattach_bit reattach_bit; /* type = 0x26 */
+    tNet_message_chunk_reattach_all_bits reattach_all_bits; /* type = 0x2b */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
     tNet_message_chunk_view_car view_car; /* type = 0x2f */
     tNet_message_chunk_mine_explode mine_explode; /* type = 0x31 */
