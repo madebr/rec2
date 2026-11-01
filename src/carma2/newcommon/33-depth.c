@@ -284,6 +284,19 @@ void C2_HOOK_FASTCALL ReduceDepthStart(void) {
     gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
 }
 
+// FUNCTION: CARMA2_HW 0x004468f0
+// FUNCTION: CARMA2_SW 0x00446970
+void C2_HOOK_FASTCALL IncreaseDepthStart(void) {
+    char s[256];
+
+    if (gProgram_state.current_depth_effect.start < 13) {
+        gProgram_state.current_depth_effect.start++;
+    }
+    sprintf(s, "Depth start increased to %d", gProgram_state.current_depth_effect.start);
+    NewTextHeadupSlot(4, 0, 500, -1, s);
+    gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
+}
+
 // FUNCTION: CARMA2_HW 0x004469b0
 // FUNCTION: CARMA2_SW 0x00446a30
 void C2_HOOK_FASTCALL IncreaseDepthEnd(void) {

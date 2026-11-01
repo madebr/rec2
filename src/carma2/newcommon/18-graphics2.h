@@ -13,6 +13,8 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+extern int gPHIL_doing_physics;
+
 extern int gCursor_tinted_top;
 extern int gCursor_tinted_left;
 extern int gCursor_tinted_bottom;
@@ -43,6 +45,8 @@ extern void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_c
 extern void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
 
 extern void C2_HOOK_FASTCALL InitializePalettes(void);
+
+extern void C2_HOOK_FASTCALL SwitchToPalette(char* pPal_name);
 
 extern void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 

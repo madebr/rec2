@@ -74,6 +74,7 @@ tPolyFont gPoly_fonts[27];
 int gSize_font_texture_pages;
 
 // GLOBAL: CARMA2_HW 0x00765ec0
+// GLOBAL: CARMA2_SW 0x0075c420
 tPolyFontBorderColours gPoly_font_border_colours[27];
 
 // GLOBAL: CARMA2_HW 0x00686488
@@ -178,7 +179,7 @@ int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
 
     font = &gPoly_fonts[pFont_index];
     if (gPoly_fonts[pFont_index].glyphs[pCharacter].used) {
-        return font->glyphs[pCharacter].glyph_width;
+        return gPoly_fonts[pFont_index].glyphs[pCharacter].glyph_width;
     }
     return font->widthOfBlank;
 }
@@ -821,6 +822,7 @@ br_material* C2_HOOK_FASTCALL CreatePolyMaterial(int pTexture_id) {
 }
 
 // FUNCTION: CARMA2_HW 0x00464d40
+// FUNCTION: CARMA2_SW 0x004648a0
 void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index) {
 
     if (pModel == NULL) {
