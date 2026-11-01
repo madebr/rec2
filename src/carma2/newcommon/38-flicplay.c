@@ -960,6 +960,18 @@ void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00462c90
+// FUNCTION: CARMA2_SW 0x00462720
+void C2_HOOK_FASTCALL FlushAllFlics(int pBunch_index) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gMain_flic_list) != 372);
+
+    for (i = 0; i < (int)REC2_ASIZE(gMain_flic_list); i++) {
+        FreeFlic(i);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00462cc0
 // FUNCTION: CARMA2_SW 0x00462750
 void C2_HOOK_FASTCALL InitFlicQueue(void) {
