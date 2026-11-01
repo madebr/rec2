@@ -340,7 +340,14 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum) {
 
 // PollCameraControls
 
-// SetFlag2
+// FUNCTION: CARMA2_HW 0x00444350
+// FUNCTION: CARMA2_SW 0x00444430
+void C2_HOOK_FASTCALL SetFlag2(int pArg) {
+    (void)pArg;
+    gAllow_car_flying = 1;
+    ToggleFlying();
+    gAllow_car_flying = gCar_flying;
+}
 
 // FUNCTION: CARMA2_HW 0x004443c0
 // FUNCTION: CARMA2_SW 0x004444a0

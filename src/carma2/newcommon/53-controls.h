@@ -150,7 +150,7 @@ extern void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 // PollCameraControls
 
-// SetFlag2
+extern void C2_HOOK_FASTCALL SetFlag2(int pArg);
 
 extern void C2_HOOK_FASTCALL ToggleFlying(void);
 
