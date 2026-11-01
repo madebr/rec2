@@ -150,6 +150,8 @@ extern void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* p
 
 extern int C2_HOOK_FASTCALL TestForNan(const float* f);
 
+extern int C2_HOOK_FASTCALL DRVector2TestForNan(const br_vector2* pVector);
+
 extern int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
 extern void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale);
