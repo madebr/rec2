@@ -1628,7 +1628,7 @@ int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     }
 #endif
 #ifdef REC2_SW
-    while (gFrontend_actor->children != NULL && gFrontend_actor->children->type == BR_PMT_INDEX_2) {
+    while (gFrontend_actor->children != NULL && gFrontend_actor->children->type == BR_ACTOR_MODEL) {
         BrActorRemove(gFrontend_actor->children);
     }
 #endif
