@@ -9,9 +9,11 @@
 #include "23-piping.h"
 
 #include "00-car.h"
+#include "09-funks.h"
 #include "16-graphics1.h"
 #include "27-powerup.h"
 #include "32-spark.h"
+
 #include "51-smash.h"
 #include "69-sound.h"
 #include "globvars.h"
@@ -19,6 +21,7 @@
 
 #include <s3/internal/audio.h>
 
+#include <limits.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -27,6 +30,18 @@
 // GLOBAL: CARMA2_HW 0x006768b4
 // GLOBAL: CARMA2_SW 0x00671024
 tU8* gLocal_buffer;
+
+// GLOBAL: CARMA2_HW 0x006768c4
+// GLOBAL: CARMA2_SW 0x00671034
+tU8* gPipe_buffer_working_end;
+
+// GLOBAL: CARMA2_HW 0x006768e4
+// GLOBAL: CARMA2_SW 0x00671054
+int gReentrancy_count;
+
+// GLOBAL: CARMA2_HW 0x006768f0
+// GLOBAL: CARMA2_SW 0x00671060
+tU8* gPipe_buffer_phys_end;
 
 // GLOBAL: CARMA2_HW 0x006768f4
 // GLOBAL: CARMA2_SW 0x00671064
@@ -75,6 +90,7 @@ tU32 gPipe_sound_time_window;
 // ARReplayForwards
 
 // FUNCTION: CARMA2_HW 0x00402360
+// FUNCTION: CARMA2_SW 0x00402360
 int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
     return gReplay_rate == 0.f;
 }
@@ -105,7 +121,14 @@ void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection) {
     gPlay_direction = (int)pDirection;
 }
 
-// ARResetPiping
+// FUNCTION: CARMA2_HW 0x004023e0
+// FUNCTION: CARMA2_SW 0x004023e0
+void C2_HOOK_FASTCALL ARResetPiping(void) {
+    gPipe_record_ptr = gPipe_buffer_start;
+    gPipe_buffer_working_end = gPipe_buffer_phys_end;
+    gPipe_buffer_oldest = NULL;
+    gReentrancy_count = 0;
+}
 
 // ARInitialise
 
@@ -262,11 +285,45 @@ int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime) {
 
 // FindNextChunk
 
-// MoveReplayBuffer
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// ARMoveToEndOfReplay
+// STUB: CARMA2_HW 0x00403260
+// STUB: CARMA2_SW 0x00403260
+void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    NOT_IMPLEMENTED();
+}
 
-// ARMoveToStartOfReplay
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00403210
+// FUNCTION: CARMA2_SW 0x00403210
+void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    float old_rate;
+
+    gDisable_piped_sounds = 1;
+    old_rate = gReplay_rate;
+    gReplay_rate = 100.f;
+    MoveReplayBuffer(INT_MAX, pBetween_sessions, pBefore_frame, pAfter_frame);
+    gDisable_piped_sounds = 0;
+    gReplay_rate = old_rate;
+}
+
+// FUNCTION: CARMA2_HW 0x00403c70
+// FUNCTION: CARMA2_SW 0x00403c70
+void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    float old_rate;
+
+    gDisable_piped_sounds = 1;
+    old_rate = gReplay_rate;
+    gReplay_rate = -100.f;
+    MoveReplayBuffer(-INT_MAX, pBetween_sessions, pBefore_frame, pAfter_frame);
+    gDisable_piped_sounds = 0;
+    gReplay_rate = old_rate;
+}
 
 // ARDoActionReplay
 
@@ -371,7 +428,17 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_v
     }
 }
 
-// AddNonCarToPipingSession
+// FUNCTION: CARMA2_HW 0x004c6ff0
+// FUNCTION: CARMA2_SW 0x004c3720
+void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, matrix, 0x30);
+
+    ARAddVariedDataToSession(ePipe_chunk_non_car, pIndex, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
+}
 
 // AddSmokeToPipingSession
 
@@ -929,7 +996,22 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // ApplyBloodSpurt
 
-// ApplyGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004c9be0
+// FUNCTION: CARMA2_SW 0x004c6310
+void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+    tPipe_single_groove_on_of* data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_groove_on_of, block_flags, 0x4);
+
+    chunk = *pChunk;
+    data = (tPipe_single_groove_on_of*)chunk->data.raw_data;
+    if (data->enable) {
+        EnableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    } else {
+        DisableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    }
+}
 
 // ApplyPowerupGot
 
@@ -1090,7 +1172,22 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
 
 // UndoBloodSpurt
 
-// UndoGrooveOnOff
+// FUNCTION: CARMA2_HW 0x004ca2d0
+// FUNCTION: CARMA2_SW 0x004c6a00
+void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+    tPipe_single_groove_on_of* data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_groove_on_of, block_flags, 0x4);
+
+    chunk = *pChunk;
+    data = (tPipe_single_groove_on_of*)chunk->data.raw_data;
+    if (data->enable) {
+        DisableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    } else {
+        EnableGroovidelic((br_actor*)chunk->subject_index, data->block_flags);
+    }
+}
 
 // UndoPowerupGot
 

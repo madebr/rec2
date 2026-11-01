@@ -16,11 +16,9 @@
 #include "60-phil.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "c2_stdio.h"
 #include "platform.h"
 #include "rec2_macros.h"
-
-#include "c2_stdio.h"
-
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x0065a3c4
@@ -244,7 +242,21 @@ int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
 
 // ClearOpponentsProjectedRoute
 
-// AddToOpponentsProjectedRoute
+// FUNCTION: CARMA2_HW 0x004ab150
+// FUNCTION: CARMA2_SW 0x004a72c0
+int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection) {
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pOpponent_spec->next_sections) != 12);
+
+    if (pOpponent_spec->nnext_sections < (int)REC2_ASIZE(pOpponent_spec->next_sections)) {
+        pOpponent_spec->next_sections[pOpponent_spec->nnext_sections].section_no = pSection_no;
+        pOpponent_spec->next_sections[pOpponent_spec->nnext_sections].direction = pDirection;
+        pOpponent_spec->nnext_sections++;
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // StunTheBugger
 
@@ -507,7 +519,11 @@ void C2_HOOK_FASTCALL DisposeOpponents(void) {
     }
 }
 
-// WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
+// STUB: CARMA2_HW 0x004ae620
+// STUB: CARMA2_SW 0x004aa790
+void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004ae750
 // FUNCTION: CARMA2_SW 0x004aa8c0
@@ -545,10 +561,33 @@ int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x004ae7e0
-// STUB: CARMA2_SW 0x004aa950
+// FUNCTION: CARMA2_HW 0x004ae7e0
+// FUNCTION: CARMA2_SW 0x004aa950
 tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
-    NOT_IMPLEMENTED();
+    int net_player_index;
+
+    switch (pCategory) {
+    case eVehicle_self:
+        return &gProgram_state.current_car;
+    case eVehicle_net_player:
+        net_player_index = gThis_net_player_index;
+        if (pIndex < net_player_index) {
+            return gNet_players[pIndex].car;
+        } else {
+            return (gNet_players + 1)[pIndex].car;
+        }
+    case eVehicle_opponent:
+        return gProgram_state.AI_vehicles.opponents[pIndex].car_spec;
+    case eVehicle_rozzer:
+        return gProgram_state.AI_vehicles.cops[pIndex].car_spec;
+    case eVehicle_drone:
+        PDEnterDebugger("OPPONENT.C: GetCarSpec() can't return drone car_specs");
+        return NULL;
+    case eVehicle_not_really:
+        return (tCar_spec*)gActive_non_car_list[pIndex];
+    default:
+        return NULL;
+    }
 }
 
 // STUB: CARMA2_HW 0x004ae880
@@ -706,4 +745,3 @@ void C2_HOOK_FASTCALL TwoCarsHitEachOther(tCar_spec* pA_car, tCar_spec* pAnother
 // RecordOpponentTwattageOccurrence
 
 // GetOpponentMood
-

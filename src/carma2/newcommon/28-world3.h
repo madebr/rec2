@@ -44,7 +44,7 @@ extern void C2_HOOK_FASTCALL InitTreeSurgery(void);
 
 // RemoveBoundsStructures
 
-// FreeTrack
+extern void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec);
 
 // ProcessTrack
 

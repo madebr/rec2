@@ -14,10 +14,16 @@
 #include <s3/s3.h>
 
 extern tU8* gLocal_buffer;
+extern tU8* gPipe_buffer_working_end;
+extern int gReentrancy_count;
+extern tU8* gPipe_buffer_phys_end;
 extern tU32 gLocal_buffer_size;
 extern tU8* gMr_chunky;
 extern tU8* gPipe_buffer_start;
 extern int gPlay_direction;
+extern int gDisable_piped_sounds;
+
+typedef void C2_HOOK_FASTCALL tReplay_session_callback(int pFrames);
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
 extern tU8* gPipe_play_ptr;
@@ -40,7 +46,7 @@ extern int C2_HOOK_FASTCALL ARGetReplayDirection(void);
 
 extern void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection);
 
-// ARResetPiping
+extern void C2_HOOK_FASTCALL ARResetPiping(void);
 
 // ARInitialise
 
@@ -112,11 +118,11 @@ extern int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime);
 
 // FindNextChunk
 
-// MoveReplayBuffer
+extern void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToEndOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToStartOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
 // ARDoActionReplay
 
@@ -168,7 +174,7 @@ extern void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_
 
 extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
-// AddNonCarToPipingSession
+extern void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor);
 
 // AddSmokeToPipingSession
 
@@ -392,7 +398,7 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // ApplyBloodSpurt
 
-// ApplyGrooveOnOff
+extern void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk);
 
 // ApplyPowerupGot
 
@@ -486,7 +492,7 @@ extern void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_
 
 // UndoBloodSpurt
 
-// UndoGrooveOnOff
+extern void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoPowerupGot
 

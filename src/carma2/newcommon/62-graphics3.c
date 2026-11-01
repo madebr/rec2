@@ -54,6 +54,10 @@ const int gArrows[2][4][60] = {
     },
 };
 
+// GLOBAL: CARMA2_HW 0x00655df0
+// GLOBAL: CARMA2_SW 0x00650cd8
+br_vector3 y_unit_vector = { { 0.f, 1.f, 0.f } };
+
 // GLOBAL: CARMA2_HW 0x00655dfc
 // GLOBAL: CARMA2_SW 0x00650ce4
 int gMini_map_visible = 2;
@@ -220,6 +224,14 @@ int gCheckpoint_digit_center_x;
 // GLOBAL: CARMA2_HW 0x0068c85c
 // GLOBAL: CARMA2_SW 0x006868b4
 tU32 gCheckpoint_digit_center_y;
+
+// GLOBAL: CARMA2_HW 0x0068d8f0
+// GLOBAL: CARMA2_SW 0x00687940
+tU32 last_flash;
+
+// GLOBAL: CARMA2_HW 0x0068d8f4
+// GLOBAL: CARMA2_SW 0x00687944
+int flash_state;
 
 // GLOBAL: CARMA2_HW 0x0068d6f8
 // GLOBAL: CARMA2_SW 0x00687750
@@ -499,7 +511,34 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU3
 
 // DrawCheckpoint
 
-// DrawOffsetCheckpoint
+// FUNCTION: CARMA2_HW 0x00495d00
+// FUNCTION: CARMA2_SW 0x00493350
+void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    tRace_checkpoint_spec* checkpoint;
+
+    if ((pCheckpoint >= 0 && pCheckpoint < gCurrent_race.check_point_count
+            && gTrack_version > 0 && pTarget == 0) || Flash(300, &last_flash, &flash_state)) {
+        checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
+        if (checkpoint->map_position.v[0] >= 0.0f
+                && checkpoint->map_position.v[0] < (float)pMap->width
+                && checkpoint->map_position.v[1] >= 0.0f
+                && checkpoint->map_position.v[1] < (float)pMap->height) {
+            DRPixelmapRectangleMaskedCopy(pMap,
+#ifdef REC2_HW
+                (br_int_16)(int)(checkpoint->map_position.v[0] + 8.0f - (float)gCheckpoint_digit_center_x),
+#endif
+#ifdef REC2_SW
+                (br_int_16)(int)(checkpoint->map_position.v[0] - (float)gCheckpoint_digit_center_x),
+#endif
+                (br_int_16)(int)(checkpoint->map_position.v[1] - (float)(int)gCheckpoint_digit_center_y),
+                gCheckpoint_numbers,
+                0,
+                (br_int_16)(pCheckpoint * gCheckpoint_digit_height),
+                gCheckpoint_numbers->width,
+                (br_int_16)gCheckpoint_digit_height);
+        }
+    }
+}
 
 // DoMapOverlays
 
@@ -614,7 +653,7 @@ void C2_HOOK_FASTCALL InitMap(void) {
     } else {
         gINT_0074ab8c = gINT_0074ab88;
     }
-    gINT_0074ab94 = gHeadup_map_w + 2 * gINT_0074ab88;
+    gINT_0074ab94 = gHeadup_map_w + 2 * gINT_0074ab8c;
     gINT_0074abec = gHeadup_map_h + 2 * gINT_0074ab88;
     gHeadup_map_half_width = gHeadup_map_w / 2;
     gHeadup_map_half_height = gHeadup_map_h / 2;
@@ -624,7 +663,7 @@ void C2_HOOK_FASTCALL InitMap(void) {
     }
 #endif
     if (gMap_overlay == NULL) {
-        gMap_overlay = DRPixelmapAllocate(gBack_screen->type, MAX(gINT_0074abec, gINT_0074ab94), MAX(gINT_0074abec, gINT_0074ab94), NULL, 0);
+        gMap_overlay = DRPixelmapAllocate(gBack_screen->type, MAX(gINT_0074ab94, gINT_0074abec), MAX(gINT_0074ab94, gINT_0074abec), NULL, 0);
     }
     gMini_map_x = gHeadup_map_x + gHeadup_map_w / 16;
     gMini_map_y = gHeadup_map_y + gHeadup_map_h / 16;
@@ -820,7 +859,9 @@ void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUn
     }
 }
 
-int NearestPowerOfTwo(int pValue) {
+// FUNCTION: CARMA2_HW 0x00497830
+// FUNCTION: CARMA2_SW 0x00494460
+int C2_HOOK_FASTCALL NearestPowerOfTwo(int pValue) {
     int power;
 
     for (power = 1; power < 32; power++) {

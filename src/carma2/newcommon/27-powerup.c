@@ -8,10 +8,15 @@
 
 #include "27-powerup.h"
 
+#include "00-car.h"
 #include "01-network.h"
+
 #include "16-graphics1.h"
+#include "18-graphics2.h"
 #include "32-spark.h"
 #include "41-utility.h"
+#include "42-input.h"
+
 #include "49-physics.h"
 #include "53-controls.h"
 #include "60-phil.h"
@@ -25,6 +30,10 @@
 // GLOBAL: CARMA2_HW 0x006a0ad4
 // GLOBAL: CARMA2_SW 0x0069ab2c
 const char* gPowerup_txt_path;
+
+// GLOBAL: CARMA2_HW 0x006a0ad8
+// GLOBAL: CARMA2_SW 0x0069ab30
+tU32* gReal_render_palette;
 
 // GLOBAL: CARMA2_HW 0x007059e0
 // GLOBAL: CARMA2_SW 0x006fc4a0
@@ -249,27 +258,75 @@ void C2_HOOK_FASTCALL ToggleInventory(void) {
 
 // MungePowerupStuff
 
-// GotPowerupN
+void C2_HOOK_FASTCALL GotPowerupN(int pN) {
+    int modifiers;
 
-// GotPowerup0
+    modifiers = PDKeyDown(0) ? 10 : 0;
+    modifiers += PDKeyDown(1) ? 20 : 0;
+    modifiers += PDKeyDown(2) ? 40 : 0;
+    modifiers += PDKeyDown(4) ? 80 : 0;
+    GotPowerupEarwig(&gProgram_state.current_car, modifiers + pN, 1, 1);
+}
 
-// GotPowerup1
+// FUNCTION: CARMA2_HW 0x004dbdb0
+// FUNCTION: CARMA2_SW 0x004d82b0
+void C2_HOOK_FASTCALL GotPowerup0(void) {
+    GotPowerupN(0);
+}
 
-// GotPowerup2
+// FUNCTION: CARMA2_HW 0x004dbe10
+// FUNCTION: CARMA2_SW 0x004d8310
+void C2_HOOK_FASTCALL GotPowerup1(void) {
+    GotPowerupN(1);
+}
 
-// GotPowerup3
+// FUNCTION: CARMA2_HW 0x004dbe70
+// FUNCTION: CARMA2_SW 0x004d8370
+void C2_HOOK_FASTCALL GotPowerup2(void) {
+    GotPowerupN(2);
+}
 
-// GotPowerup4
+// FUNCTION: CARMA2_HW 0x004dbed0
+// FUNCTION: CARMA2_SW 0x004d83d0
+void C2_HOOK_FASTCALL GotPowerup3(void) {
+    GotPowerupN(3);
+}
 
-// GotPowerup5
+// FUNCTION: CARMA2_HW 0x004dbf30
+// FUNCTION: CARMA2_SW 0x004d8430
+void C2_HOOK_FASTCALL GotPowerup4(void) {
+    GotPowerupN(4);
+}
 
-// GotPowerup6
+// FUNCTION: CARMA2_HW 0x004dbf90
+// FUNCTION: CARMA2_SW 0x004d8490
+void C2_HOOK_FASTCALL GotPowerup5(void) {
+    GotPowerupN(5);
+}
 
-// GotPowerup7
+// FUNCTION: CARMA2_HW 0x004dbff0
+// FUNCTION: CARMA2_SW 0x004d84f0
+void C2_HOOK_FASTCALL GotPowerup6(void) {
+    GotPowerupN(6);
+}
 
-// GotPowerup8
+// FUNCTION: CARMA2_HW 0x004dc050
+// FUNCTION: CARMA2_SW 0x004d8550
+void C2_HOOK_FASTCALL GotPowerup7(void) {
+    GotPowerupN(7);
+}
 
-// GotPowerup9
+// FUNCTION: CARMA2_HW 0x004dc0b0
+// FUNCTION: CARMA2_SW 0x004d85b0
+void C2_HOOK_FASTCALL GotPowerup8(void) {
+    GotPowerupN(8);
+}
+
+// FUNCTION: CARMA2_HW 0x004dc110
+// FUNCTION: CARMA2_SW 0x004d8610
+void C2_HOOK_FASTCALL GotPowerup9(void) {
+    GotPowerupN(9);
+}
 
 // GotCredits
 
@@ -431,11 +488,45 @@ int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // TrashBodywork
 
-// TakeDrugs
+// FUNCTION: CARMA2_HW 0x004dcb90
+// FUNCTION: CARMA2_SW 0x004d9090
+int C2_HOOK_FASTCALL TakeDrugs(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// PaletteFuckedUpByDrugs
+    C2_HOOK_BUG_ON(sizeof(tU32) != 4);
 
-// TheEffectsOfDrugs
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        if (gReal_render_palette == NULL) {
+            gReal_render_palette = BrMemAllocate(256 * sizeof(tU32), kMem_misc);
+            memcpy(gReal_render_palette, gRender_palette->pixels, 256 * sizeof(tU32));
+        }
+        gOn_drugs = 1;
+    }
+    return pPowerup - gPowerup_array;
+}
+
+void C2_HOOK_FASTCALL PaletteFuckedUpByDrugs(br_pixelmap* pPalette, int pOffset) {
+    int i;
+
+    (void)pPalette;
+    if (pOffset == 0) {
+        memcpy(gRender_palette->pixels, gReal_render_palette, 256 * sizeof(tU32));
+    }
+    for (i = 1; i < 224; i++) {
+        ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[(i + pOffset) & 0xff];
+    }
+    ((tU32*)gRender_palette->pixels)[0] = gReal_render_palette[0];
+    for (i = 224; i < 256; i++) {
+        ((tU32*)gRender_palette->pixels)[i] = gReal_render_palette[i];
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004dcc00
+// FUNCTION: CARMA2_SW 0x004d9100
+void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* pPowerup, tU32 pPeriod) {
+
+    PaletteFuckedUpByDrugs(gRender_palette, GetTotalTime() / 100);
+    ResetPalette();
+}
 
 // SetOpponentsSpeed
 
@@ -617,7 +708,16 @@ void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->underwater_ability = 0;
 }
 
-// PukeDrugsBackUp
+// FUNCTION: CARMA2_HW 0x004de610
+// FUNCTION: CARMA2_SW 0x004dab10
+void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gOn_drugs = 0;
+        PaletteFuckedUpByDrugs(gRender_palette, 0);
+        ResetPalette();
+    }
+}
 
 // ResetOpponentsSpeed
 
@@ -661,7 +761,12 @@ void C2_HOOK_FASTCALL ResetBouncey(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->bounce_amount = 0.f;
 }
 
-// ResetSuspension
+// FUNCTION: CARMA2_HW 0x004de760
+// FUNCTION: CARMA2_SW 0x004dac60
+void C2_HOOK_FASTCALL ResetSuspension(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    SetCarSuspGiveAndHeight(pCar, 1.f, 1.f, 1.f, 0.f, 0.f);
+}
 
 // FUNCTION: CARMA2_HW 0x004de780
 // FUNCTION: CARMA2_SW 0x004dac80
@@ -681,9 +786,25 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->grip_multiplier = 1.f;
 }
 
-// PickAtRandom
+// FUNCTION: CARMA2_HW 0x004de7a0
+// FUNCTION: CARMA2_SW 0x004daca0
+int C2_HOOK_FASTCALL PickAtRandom(tPowerup* pPowerup, tCar_spec* pCar) {
+    int selected_powerup;
 
-// GotVouchers
+    selected_powerup = pPowerup->integer_params[IRandomBetween(0, pPowerup->number_of_integer_params - 1)];
+    GotPowerup(pCar, selected_powerup);
+    return -1;
+}
+
+// FUNCTION: CARMA2_HW 0x004de7d0
+// FUNCTION: CARMA2_SW 0x004dacd0
+int C2_HOOK_FASTCALL GotVouchers(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        AddVouchers(pPowerup->integer_params[0]);
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004de810
 // FUNCTION: CARMA2_SW 0x004dad10
@@ -717,7 +838,13 @@ void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar)
 
 // SetLowGravityPeds
 
-// SetPissedPeds
+// FUNCTION: CARMA2_HW 0x004de900
+// FUNCTION: CARMA2_SW 0x004dae00
+int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gDrunk_pedestrians = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // SetGhostPeds
 
@@ -739,7 +866,12 @@ void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     gPed_gravity_multiplier = 1.f;
 }
 
-// ResetPissedPeds
+// FUNCTION: CARMA2_HW 0x004de990
+// FUNCTION: CARMA2_SW 0x004dae90
+void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gDrunk_pedestrians = 0;
+}
 
 // ResetGhostPeds
 
@@ -787,9 +919,20 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar) {
     pCar->proxy_ray_distance = 0.f;
 }
 
-// SetMutantCorpses
+// FUNCTION: CARMA2_HW 0x004deca0
+// FUNCTION: CARMA2_SW 0x004db1a0
+int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// ResetMutantCorpses
+    gMutant_speed = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
+
+// FUNCTION: CARMA2_HW 0x004decd0
+// FUNCTION: CARMA2_SW 0x004db1d0
+void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gMutant_speed = 0.f;
+}
 
 // ReceivedPowerup
 
@@ -816,9 +959,23 @@ void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition) {
 
 }
 
-// ARPowerupGot
+// FUNCTION: CARMA2_HW 0x004df200
+// FUNCTION: CARMA2_SW 0x004db700
+void C2_HOOK_FASTCALL ARPowerupGot(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// ARPowerupLose
+    if (pPowerup->got_proc != NULL) {
+        pPowerup->got_proc(pPowerup, pCar);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004df210
+// FUNCTION: CARMA2_SW 0x004db710
+void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pPowerup->lose_proc != NULL) {
+        pPowerup->lose_proc(pPowerup, pCar);
+    }
+}
 
 // SetPissed
 

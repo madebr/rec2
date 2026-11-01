@@ -8,6 +8,7 @@
 
 #include "29-raycast.h"
 
+#include "16-graphics1.h"
 #include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x006a20d0
@@ -215,11 +216,21 @@ void C2_HOOK_FASTCALL FindBestY(br_vector3* pPosition, br_actor* pWorld, br_scal
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004e45b0
-// STUB: CARMA2_SW 0x004e0940
+// FUNCTION: CARMA2_HW 0x004e45b0
+// FUNCTION: CARMA2_SW 0x004e0940
 int C2_HOOK_CDECL FindYVerticallyBelowPolyCallBack(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pContext) {
+    br_scalar the_y;
 
-    NOT_IMPLEMENTED();
+    if (pMaterial != NULL && pMaterial->identifier != NULL
+            && (pMaterial->identifier[0] == '!' || pMaterial->identifier[0] == '>')) {
+        return 0;
+    }
+    the_y = pPoint->v[1];
+    if (the_y > gHighest_y_below) {
+        gHighest_y_below = the_y;
+        gMaterial_below = pMaterial;
+    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004e4570

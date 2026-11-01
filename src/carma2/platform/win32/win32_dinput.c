@@ -515,6 +515,10 @@ void C2_HOOK_FASTCALL DownloadDinputFFBEffectAtIndex(int index) {
     }
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // FUNCTION: CARMA2_HW 0x00458040
 // FUNCTION: CARMA2_SW 0x00457dd0
 void C2_HOOK_FASTCALL UnloadDinputFFBEffectAtIndex(int index) {
@@ -523,6 +527,10 @@ void C2_HOOK_FASTCALL UnloadDinputFFBEffectAtIndex(int index) {
         IDirectInputEffect_Unload(effect);
     }
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x00457c20
 // FUNCTION: CARMA2_SW 0x004579b0
@@ -660,18 +668,27 @@ int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, size
     return i;
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // FUNCTION: CARMA2_HW 0x00458060
+// FUNCTION: CARMA2_SW 0x00457df0
 int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
     int i;
 
     for (i = 0; i < gCount_joystick_effects; i++) {
         if (strcmp(gJoystick_effects[i].name, name) == 0) {
             UnloadDinputFFBEffectAtIndex(i);
-            return i;
+            return 1;
         }
     }
     return 0;
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 int C2_HOOK_FASTCALL ResetForceFeedback(void) {
 	int result;
