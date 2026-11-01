@@ -13,6 +13,7 @@
 #include "rec2_types.h"
 
 extern int gPed_count_limbed_actors;
+extern br_actor* gLimbs_actor;
 
 extern int gPed_retain_root_mode;
 extern float gPedestrian_speed_factor;
@@ -285,7 +286,7 @@ extern void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed);
 
 // SetRandomOmega
 
-// RenderLimbs
+extern void C2_HOOK_FASTCALL RenderLimbs(void);
 
 // MungePedestrians
 
