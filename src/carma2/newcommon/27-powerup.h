@@ -378,11 +378,11 @@ extern void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar);
 
 // PissedEffect
 
-// RenderSpinningPowerup
+extern void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
 // RenderChangingPowerup
 
-// SetSpinningPowerup
+extern void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
 
 // DuplicateModel
 
