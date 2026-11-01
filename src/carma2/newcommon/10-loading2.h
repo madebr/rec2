@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gCamera_type;
+
 extern const char* gPedTextTxtPath;
 extern int gGroove_funk_offset;
 extern const char* gNet_avail_names[4];
