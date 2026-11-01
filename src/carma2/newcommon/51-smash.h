@@ -47,7 +47,7 @@ extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // ResetExplosions
 
-// RemoveAllExplosionettes
+extern void C2_HOOK_FASTCALL RemoveAllExplosionettes(void);
 
 // MungeExplosions
 
@@ -193,7 +193,7 @@ extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush
 
 //static void C2_HOOK_FASTCALL InitDecals(void);
 
-//static void C2_HOOK_FASTCALL RemoveAllDecals(void);
+extern void C2_HOOK_FASTCALL RemoveAllDecals(void);
 
 extern void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF);
 
