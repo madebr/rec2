@@ -480,7 +480,6 @@ void C2_HOOK_FASTCALL StartMouseCursor(void) {
 // FUNCTION: CARMA2_HW 0x0043e710
 // FUNCTION: CARMA2_SW 0x0043e820
 void C2_HOOK_FASTCALL EndMouseCursor(void) {
-    int i;
 
     RemoveTransientBitmaps(1);
     DeallocateAllTransientBitmaps();
