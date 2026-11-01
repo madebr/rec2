@@ -29,6 +29,10 @@
 #define PHYSICS_BUFFER_PART_SIZE 40000
 #define PHYSICS_BUFFER_OTHER_SIZE 50000
 
+// GLOBAL: CARMA2_HW 0x00692dc8
+// GLOBAL: CARMA2_SW 0x0068ce20
+int gINT_00692dc8;
+
 // GLOBAL: CARMA2_HW 0x006940c0
 // GLOBAL: CARMA2_SW 0x0068e118
 tPhysicsError_cbfn* gPhysics_error_cb;
@@ -584,7 +588,45 @@ int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_object* 
 
 // DoInterGroupCollisions
 
-// ReduceEffectOfForces
+// FUNCTION: CARMA2_HW 0x004ba550
+// FUNCTION: CARMA2_SW 0x004b6c70
+int C2_HOOK_FASTCALL ReduceEffectOfForces(tPhysics_joint_force* pForces, br_scalar* pImpulses, int pCount, const int* pIndices, int pIndex_count, br_scalar pThreshold) {
+    int i;
+    br_scalar total;
+
+    total = 0.f;
+    for (i = 0; i < pIndex_count; i++) {
+        total += pImpulses[pIndices[i]];
+    }
+    if (total > pThreshold) {
+        pThreshold /= total;
+        gINT_00692dc8 = 1;
+        for (i = 0; i < pCount; i++) {
+            pImpulses[i] = -pImpulses[i];
+        }
+        for (i = 0; i < pIndex_count; i++) {
+            pImpulses[pIndices[i]] *= -pThreshold;
+            if (pForces[pIndices[i]].type & 0x100) {
+                pForces[pIndices[i]].field_0x44.v[0] *= pThreshold;
+                pForces[pIndices[i]].field_0x44.v[1] *= pThreshold;
+                pForces[pIndices[i]].field_0x44.v[2] *= pThreshold;
+                if (pForces[pIndices[i]].object_b != NULL) {
+                    pForces[pIndices[i]].field_0x44.v[0] *= pThreshold;
+                    pForces[pIndices[i]].field_0x44.v[1] *= pThreshold;
+                    pForces[pIndices[i]].field_0x44.v[2] *= pThreshold;
+                }
+            }
+        }
+        for (i = 0; i < pCount; i++) {
+            if (!(pImpulses[i] >= 0.f)) {
+                pImpulses[i] = 0.f;
+            }
+            pForces[i].type = 9;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 // DoCollisions
 
