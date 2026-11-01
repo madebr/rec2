@@ -690,7 +690,15 @@ void C2_HOOK_FASTCALL CancelPendingCunningStunt(void) {
 
 // SetAmbientPratCam
 
-// SetTextureBits
+void C2_HOOK_FASTCALL SetTextureBits(tCar_spec* pCar) {
+    pCar->field_0x18cc = 0;
+    if (pCar->keys.brake || (pCar->brake_force != 0.f && (float)fabs(pCar->collision_info->velocity_car_space.v[2]) > 1.0 / (1200.0 * WORLD_SCALE_D))) {
+        pCar->field_0x18cc |= 0x4;
+    }
+    if (pCar->gear < 0 || (!(pCar != NULL && pCar->driver == eDriver_local_human) && pCar->collision_info->velocity_car_space.v[2] > 0.f)) {
+        pCar->field_0x18cc |= 0x8;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0041e5a0
 // FUNCTION: CARMA2_SW 0x0041e5d0
@@ -703,13 +711,7 @@ void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void) {
     for (i = 0; i < gNum_active_cars; i++) {
         car = gActive_car_list[i];
         if (car->car_master_actor->render_style != BR_RSTYLE_NONE && !gAction_replay_mode) {
-            car->field_0x18cc = 0;
-            if (car->keys.brake || (car->brake_force != 0.f && (float)fabs(car->collision_info->velocity_car_space.v[2]) > 7.246376811594203e-05)) {
-                car->field_0x18cc |= 0x4;
-            }
-            if (car->gear < 0 || (!(car != NULL && car->driver == eDriver_local_human) && car->collision_info->velocity_car_space.v[2] > 0.f)) {
-                car->field_0x18cc |= 0x8;
-            }
+            SetTextureBits(car);
         }
     }
 }

@@ -192,7 +192,7 @@ extern void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 // SetAmbientPratCam
 
-// SetTextureBits
+extern void C2_HOOK_FASTCALL SetTextureBits(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void);
 
