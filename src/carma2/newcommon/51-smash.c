@@ -1212,6 +1212,30 @@ intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
 
 // DetermineTilitudinality
 
+// FUNCTION: CARMA2_HW 0x004f5c70
+// FUNCTION: CARMA2_SW 0x004f18d0
+void C2_HOOK_FASTCALL GetGlassFragmentCounts(int* pVisible_count, int* pActive_count) {
+    tU32 now;
+    tSmash_vertex* fragment;
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmash_glass_fragments) != 200);
+
+    *pVisible_count = 0;
+    *pActive_count = 0;
+    now = GetTotalTime();
+    fragment = gSmash_glass_fragments;
+    for (i = 0; i < (int)REC2_ASIZE(gSmash_glass_fragments); i++) {
+        if (fragment->end_time != 0) {
+            *pActive_count = *pActive_count + 1;
+            if (now < fragment->field_0x10) {
+                *pVisible_count = *pVisible_count + 1;
+            }
+        }
+        fragment++;
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x004f5cb0
 // FUNCTION: CARMA2_SW 0x004f1910
 void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
