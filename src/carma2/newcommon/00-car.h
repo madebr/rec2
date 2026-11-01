@@ -216,7 +216,7 @@ extern void C2_HOOK_FASTCALL FreezeMechanics(void);
 
 // GetCarOverallBoundsMinY
 
-// SetCarSuspGiveAndHeight
+extern void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height);
 
 // TestForCarInSensiblePlace
 
