@@ -514,6 +514,7 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00447110
+// STUB: CARMA2_SW 0x00447490
 void C2_HOOK_FASTCALL ToggleDepthCueing(void) {
     int enabled;
 
