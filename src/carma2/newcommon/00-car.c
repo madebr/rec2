@@ -32,6 +32,7 @@
 #include "globvrpb.h"
 #include "platform.h"
 
+#include "c2_math.h"
 #include "c2_stdio.h"
 #include "rec2_macros.h"
 
@@ -689,9 +690,31 @@ void C2_HOOK_FASTCALL CancelPendingCunningStunt(void) {
 
 // SetAmbientPratCam
 
-// SetTextureBits
+void C2_HOOK_FASTCALL SetTextureBits(tCar_spec* pCar) {
+    pCar->field_0x18cc = 0;
+    if (pCar->keys.brake || (pCar->brake_force != 0.f && (float)fabs(pCar->collision_info->velocity_car_space.v[2]) > 1.0 / (1200.0 * WORLD_SCALE_D))) {
+        pCar->field_0x18cc |= 0x4;
+    }
+    if (pCar->gear < 0 || (!(pCar != NULL && pCar->driver == eDriver_local_human) && pCar->collision_info->velocity_car_space.v[2] > 0.f)) {
+        pCar->field_0x18cc |= 0x8;
+    }
+}
 
-// MungeSomeOtherCarGraphics
+// FUNCTION: CARMA2_HW 0x0041e5a0
+// FUNCTION: CARMA2_SW 0x0041e5d0
+void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void) {
+    int i;
+    tCar_spec* car;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, gear, 0x135c);
+
+    for (i = 0; i < gNum_active_cars; i++) {
+        car = gActive_car_list[i];
+        if (car->car_master_actor->render_style != BR_RSTYLE_NONE && !gAction_replay_mode) {
+            SetTextureBits(car);
+        }
+    }
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)

@@ -192,9 +192,9 @@ extern void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 // SetAmbientPratCam
 
-// SetTextureBits
+extern void C2_HOOK_FASTCALL SetTextureBits(tCar_spec* pCar);
 
-// MungeSomeOtherCarGraphics
+extern void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void);
 
 extern void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period);
 
