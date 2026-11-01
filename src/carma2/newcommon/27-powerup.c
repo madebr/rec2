@@ -1005,7 +1005,43 @@ void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_
 
 // RenderChangingPowerup
 
-// SetSpinningPowerup
+// FUNCTION: CARMA2_HW 0x004df570
+// FUNCTION: CARMA2_SW 0x004dba70
+void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity) {
+    // GLOBAL: CARMA2_HW 0x0065ebc0
+    // GLOBAL: CARMA2_SW 0x00659520
+    static br_token_value spinning_powerup_extra_prim[2] = {
+        { BRT_BLEND_B, { 1 } },
+        { BRT_OPACITY_X, { BrScalarToFixed(75) } },
+    };
+    unsigned int i;
+
+    if (pActor == NULL) {
+        return;
+    }
+    BrMatrix34PreTranslate(&pActor->t.t.mat, 0.f, .1f, 0.f);
+    pActor->model->flags |= BR_MODF_CUSTOM;
+    pActor->model->custom = RenderSpinningPowerup;
+    if (pOpacity == 0 || pOpacity == 255) {
+        return;
+    }
+    if (pActor->material != NULL) {
+        pActor->material->extra_prim = spinning_powerup_extra_prim;
+        pActor->material->extra_prim[1].v.x = BR_FIXED_INT(pOpacity);
+        BrMaterialUpdate(pActor->material, BR_MATU_EXTRA_PRIM);
+        return;
+    }
+    for (i = 0; i < pActor->model->nfaces; i++) {
+        br_material* material;
+
+        material = pActor->model->faces[i].material;
+        if (material != NULL) {
+            material->extra_prim = spinning_powerup_extra_prim;
+            pActor->model->faces[i].material->extra_prim[1].v.x = BR_FIXED_INT(pOpacity);
+            BrMaterialUpdate(pActor->model->faces[i].material, BR_MATU_EXTRA_PRIM);
+        }
+    }
+}
 
 // DuplicateModel
 

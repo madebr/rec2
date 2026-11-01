@@ -382,7 +382,7 @@ extern void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pMod
 
 // RenderChangingPowerup
 
-// SetSpinningPowerup
+extern void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
 
 // DuplicateModel
 
