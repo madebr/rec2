@@ -79,6 +79,10 @@ char* gAbuse_text[10];
 // GLOBAL: CARMA2_SW 0x00676b70
 int gRecovery_voucher_count;
 
+// GLOBAL: CARMA2_HW 0x0067c474
+// GLOBAL: CARMA2_SW 0x00676bec
+int gEntering_message;
+
 // GLOBAL: CARMA2_HW 0x006b781c
 // GLOBAL: CARMA2_SW 0x006ae4fc
 tRace_over_reason gRace_over_reason;
@@ -466,7 +470,16 @@ void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
     }
 }
 
-// UserSendMessage
+// FUNCTION: CARMA2_HW 0x004448f0
+// FUNCTION: CARMA2_SW 0x004449d0
+void C2_HOOK_FASTCALL UserSendMessage(void) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_details, options, 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_options, enable_text_messages, 0x4);
+
+    if (gNet_mode != eNet_mode_none && gCurrent_net_game->options.enable_text_messages) {
+        gEntering_message = 1;
+    }
+}
 
 // EnterUserMessage
 

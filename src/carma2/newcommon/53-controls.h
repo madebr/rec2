@@ -12,6 +12,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gEntering_message;
 extern int gCheckpoint_finder_enabled;
 extern float gMap_render_x;
 extern float gMap_render_y;
@@ -180,7 +181,7 @@ extern void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void);
 
 extern void C2_HOOK_FASTCALL ToggleAccessoryRendering(void);
 
-// UserSendMessage
+extern void C2_HOOK_FASTCALL UserSendMessage(void);
 
 // EnterUserMessage
 
