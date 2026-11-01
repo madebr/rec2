@@ -79,7 +79,18 @@ char* gAbuse_text[10];
 // GLOBAL: CARMA2_SW 0x00676b70
 int gRecovery_voucher_count;
 
-// CompleteRace
+// GLOBAL: CARMA2_HW 0x0067c474
+// GLOBAL: CARMA2_SW 0x00676bec
+int gEntering_message;
+
+// GLOBAL: CARMA2_HW 0x006b781c
+// GLOBAL: CARMA2_SW 0x006ae4fc
+tRace_over_reason gRace_over_reason;
+
+void C2_HOOK_FASTCALL CompleteRace(void) {
+    gRace_over_reason = eRace_over_0;
+    gAbandon_game = 2;
+}
 
 // FUNCTION: CARMA2_HW 0x00441490
 // FUNCTION: CARMA2_SW 0x00441570
@@ -95,7 +106,12 @@ int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend) {
 
 // SetFlag
 
-// FinishRace
+// FUNCTION: CARMA2_HW 0x004415c0
+// FUNCTION: CARMA2_SW 0x004416a0
+void C2_HOOK_FASTCALL FinishRace(int pArg) {
+    (void)pArg;
+    CompleteRace();
+}
 
 // FUNCTION: CARMA2_HW 0x004415e0
 // FUNCTION: CARMA2_SW 0x004416c0
@@ -454,7 +470,16 @@ void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
     }
 }
 
-// UserSendMessage
+// FUNCTION: CARMA2_HW 0x004448f0
+// FUNCTION: CARMA2_SW 0x004449d0
+void C2_HOOK_FASTCALL UserSendMessage(void) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_details, options, 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_options, enable_text_messages, 0x4);
+
+    if (gNet_mode != eNet_mode_none && gCurrent_net_game->options.enable_text_messages) {
+        gEntering_message = 1;
+    }
+}
 
 // EnterUserMessage
 

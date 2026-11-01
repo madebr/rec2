@@ -12,6 +12,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gEntering_message;
 extern int gCheckpoint_finder_enabled;
 extern float gMap_render_x;
 extern float gMap_render_y;
@@ -24,7 +25,9 @@ extern int gHeadup_map_w;
 extern int gHeadup_map_h;
 extern int gRecovery_voucher_count;
 
-// CompleteRace
+extern tRace_over_reason gRace_over_reason;
+
+extern void C2_HOOK_FASTCALL CompleteRace(void);
 
 extern int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend);
 
@@ -32,7 +35,7 @@ extern int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend);
 
 // SetFlag
 
-// FinishRace
+extern void C2_HOOK_FASTCALL FinishRace(int pArg);
 
 extern void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void);
 
@@ -178,7 +181,7 @@ extern void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void);
 
 extern void C2_HOOK_FASTCALL ToggleAccessoryRendering(void);
 
-// UserSendMessage
+extern void C2_HOOK_FASTCALL UserSendMessage(void);
 
 // EnterUserMessage
 
