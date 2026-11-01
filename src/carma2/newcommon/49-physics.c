@@ -520,7 +520,19 @@ void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, int
 
 // CheckDoingNothingFlag
 
-// SetGroup
+// FUNCTION: CARMA2_HW 0x004bae80
+// FUNCTION: CARMA2_SW 0x004b75a0
+void C2_HOOK_FASTCALL SetGroup(tPhysics_object* pObject, int pGroup) {
+    tPhysics_object* child;
+
+    child = pObject->child;
+    pObject->field_0x1dc = (tU8)pGroup;
+    for (; child != NULL; child = child->next) {
+        if (child->physics_joint1 != NULL && child->physics_joint1->type != eJoint_none) {
+            SetGroup(child, pGroup);
+        }
+    }
+}
 
 // GroupTogether
 
