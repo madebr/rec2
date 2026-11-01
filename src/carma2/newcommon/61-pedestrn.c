@@ -98,6 +98,7 @@ tTWTVFS gTwtPeds;
 float gMutant_speed;
 
 // GLOBAL: CARMA2_HW 0x007447a8
+// GLOBAL: CARMA2_SW 0x0073b268
 int gDancing_peds;
 
 // GLOBAL: CARMA2_HW 0x007447b8
