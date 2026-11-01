@@ -19,6 +19,7 @@
 #include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
+#include "s3/internal/audio.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -416,10 +417,23 @@ tS3_error_codes C2_HOOK_FASTCALL DRS3LoadSound(tS3_sound_id pThe_sound) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004558a0
+// FUNCTION: CARMA2_SW 0x00455630
 void C2_HOOK_FASTCALL DRS3Service(void) {
 
     if (gSound_enabled) {
         S3Service(gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0, 1);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00455880
+// FUNCTION: CARMA2_SW 0x00455610
+int C2_HOOK_FASTCALL DRS3ReleaseSound(tS3_sound_id pThe_sound) {
+
+    if (gSound_enabled) {
+        return S3ReleaseSound(pThe_sound);
+    } else {
+        return 0;
     }
 }
 
@@ -451,6 +465,17 @@ int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
         return S3SetOutletVolume(pOutlet, pVolume);
     }
     return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00455950
+// FUNCTION: CARMA2_SW 0x004556e0
+int C2_HOOK_FASTCALL DRS3SetVolume(int pVolume) {
+
+    if (gSound_enabled) {
+        return S3SetVolume(pVolume);
+    } else {
+        return 0;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00455970

@@ -18,6 +18,9 @@ extern tU32 gLocal_buffer_size;
 extern tU8* gMr_chunky;
 extern tU8* gPipe_buffer_start;
 extern int gPlay_direction;
+extern int gDisable_piped_sounds;
+
+typedef void C2_HOOK_FASTCALL tReplay_session_callback(int pFrames);
 extern float gReplay_rate;
 extern const tReplay_callback* gPipe_callbacks;
 extern tU8* gPipe_play_ptr;
@@ -112,11 +115,11 @@ extern int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime);
 
 // FindNextChunk
 
-// MoveReplayBuffer
+extern void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToEndOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToEndOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
-// ARMoveToStartOfReplay
+extern void C2_HOOK_FASTCALL ARMoveToStartOfReplay(tReplay_session_callback* pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
 
 // ARDoActionReplay
 
@@ -168,7 +171,7 @@ extern void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_
 
 extern void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, const br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
-// AddNonCarToPipingSession
+extern void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor);
 
 // AddSmokeToPipingSession
 
@@ -268,7 +271,7 @@ extern void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor* pActor, in
 
 // PipeSinglePowerupGot
 
-// PipeSinglePowerupLose
+extern void C2_HOOK_FASTCALL PipeSinglePowerupLose(tPowerup* pPowerup, tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, tU16 pFlags);
 
@@ -282,9 +285,9 @@ extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pV
 
 // PipeSingleDroneCornerPos
 
-// PipeSingleDroneStraightPos
+extern void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance);
 
-// PipeSinglePowerupRespawn
+extern void C2_HOOK_FASTCALL PipeSinglePowerupRespawn(br_actor* pActor, int pPowerup_id);
 
 // PipeSingleShitMine
 
@@ -392,7 +395,7 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // ApplyBloodSpurt
 
-// ApplyGrooveOnOff
+extern void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk);
 
 // ApplyPowerupGot
 
@@ -418,7 +421,7 @@ extern void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk);
 
 // ApplyNapalmBolt
 
-// ApplyPowerupRespawn
+extern void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk);
 
 // ApplyShitMine
 
@@ -486,7 +489,7 @@ extern void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_
 
 // UndoBloodSpurt
 
-// UndoGrooveOnOff
+extern void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoPowerupGot
 
@@ -500,7 +503,7 @@ extern void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_
 
 // UndoNapalmBolt
 
-// UndoPowerupRespawn
+extern void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoShitMine
 

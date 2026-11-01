@@ -72,7 +72,7 @@ extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOppone
 
 // ClearOpponentsProjectedRoute
 
-// AddToOpponentsProjectedRoute
+extern int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection);
 
 // StunTheBugger
 
@@ -160,7 +160,7 @@ extern void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec
 
 // ResetPredominantJobbies
 
-extern void C2_HOOK_FASTCALL LoadCopCars(void);
+extern void C2_HOOK_FASTCALL LoadCopCars(tRace_info* pRace_info);
 
 extern void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF);
 
@@ -198,9 +198,9 @@ extern int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOppon
 
 // GetOpponentsSectionWidth
 
-// GetOpponentsSectionMinSpeed
+extern int C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
 
-// GetOpponentsSectionMaxSpeed
+extern int C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
 
 extern void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index);
 
