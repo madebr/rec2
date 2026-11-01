@@ -54,6 +54,10 @@ const int gArrows[2][4][60] = {
     },
 };
 
+// GLOBAL: CARMA2_HW 0x00655df0
+// GLOBAL: CARMA2_SW 0x00650cd8
+br_vector3 y_unit_vector = { { 0.f, 1.f, 0.f } };
+
 // GLOBAL: CARMA2_HW 0x00655dfc
 // GLOBAL: CARMA2_SW 0x00650ce4
 int gMini_map_visible = 2;

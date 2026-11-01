@@ -16,6 +16,7 @@
 #include "30-opponent.h"
 #include "41-utility.h"
 #include "49-physics.h"
+#include "62-graphics3.h"
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "69-sound.h"
@@ -121,7 +122,13 @@ int gPeds_already_munged;
 
 // SetCharacterDirectionAR
 
-// PedApplyPedDir
+// FUNCTION: CARMA2_HW 0x004ca4d0
+// FUNCTION: CARMA2_SW 0x004c6c00
+void C2_HOOK_FASTCALL PedApplyPedDir(tU32 pId, const br_vector3* pDir) {
+    if (!gBOOL_00744804) {
+        SetCharacterDirection(gPedestrian_array[pId & 0xffff].character, pDir, &y_unit_vector);
+    }
+}
 
 // SetCharacterMoveAR
 
@@ -1145,7 +1152,19 @@ void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vector3* pV)
 
 // DropPointOntoPlane
 
-// SetCharacterDirection
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0040a730
+// STUB: CARMA2_SW 0x0040a730
+void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SetCharacterPosition
 

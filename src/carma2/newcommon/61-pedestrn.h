@@ -44,7 +44,7 @@ extern int gPeds_already_munged;
 
 // SetCharacterDirectionAR
 
-// PedApplyPedDir
+extern void C2_HOOK_FASTCALL PedApplyPedDir(tU32 pId, const br_vector3* pDir);
 
 // SetCharacterMoveAR
 
@@ -518,7 +518,7 @@ extern void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vecto
 
 // DropPointOntoPlane
 
-// SetCharacterDirection
+extern void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp);
 
 // SetCharacterPosition
 
