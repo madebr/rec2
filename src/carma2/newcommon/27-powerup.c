@@ -1004,15 +1004,15 @@ void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar) {
 // FUNCTION: CARMA2_HW 0x004e06a0
 // FUNCTION: CARMA2_SW 0x004dcba0
 void C2_HOOK_FASTCALL RemoveTail(void) {
-    tPhysics_object* collision_info;
+    tPhysics_object* object;
 
     if (gMutant_tail_state != 0) {
-        collision_info = gMutant_tail_object;
+        object = gMutant_tail_object;
         if (gMutant_tail_object != NULL) {
             do {
-                BrActorRemove(collision_info->actor);
-                collision_info = collision_info->child;
-            } while (collision_info != NULL);
+                BrActorRemove(object->actor);
+                object = object->child;
+            } while (object != NULL);
         }
         if (gMutant_tail_state == 2) {
             PhysicsRemoveObject(gMutant_tail_object);
@@ -1027,20 +1027,20 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
 // FUNCTION: CARMA2_HW 0x004e0710
 // FUNCTION: CARMA2_SW 0x004dcc10
 void C2_HOOK_FASTCALL DoInitialTail(void) {
-    tPhysics_object* collision_info;
+    tPhysics_object* object;
 
-    for (collision_info = gMutant_tail_object; collision_info != NULL; collision_info = collision_info->child) {
-        collision_info->actor->render_style = BR_RSTYLE_FACES;
+    for (object = gMutant_tail_object; object != NULL; object = object->child) {
+        object->actor->render_style = BR_RSTYLE_FACES;
     }
 }
 
 // FUNCTION: CARMA2_HW 0x004e0730
 // FUNCTION: CARMA2_SW 0x004dcc30
 void C2_HOOK_FASTCALL UndoInitialTail(void) {
-    tPhysics_object* collision_info;
+    tPhysics_object* object;
 
-    for (collision_info = gMutant_tail_object; collision_info != NULL; collision_info = collision_info->child) {
-        collision_info->actor->render_style = BR_RSTYLE_NONE;
+    for (object = gMutant_tail_object; object != NULL; object = object->child) {
+        object->actor->render_style = BR_RSTYLE_NONE;
     }
 }
 
