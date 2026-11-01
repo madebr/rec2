@@ -28,6 +28,7 @@ extern br_actor* gShadow_actor;
 extern int gScreen_wobble_x;
 extern int gScreen_wobble_y;
 extern int gFrontend_wrecks_car_count;
+extern br_material* gMaterial_below;
 extern int gHud_actor_storage_size;
 extern br_actor* gHud_actor_storage[128];
 extern int gSaved_table_count;

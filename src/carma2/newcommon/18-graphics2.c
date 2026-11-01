@@ -13,6 +13,7 @@
 #include "33-depth.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "globvars.h"
 #include "platform.h"
@@ -43,6 +44,10 @@ int gCursor_line_width = 5;
 // GLOBAL: CARMA2_HW 0x0067be98
 // GLOBAL: CARMA2_SW 0x00676608
 tTransient_bm gTransient_bitmaps[50];
+
+// GLOBAL: CARMA2_HW 0x0067c390
+// GLOBAL: CARMA2_SW 0x00676b04
+int gMouse_started;
 
 // GLOBAL: CARMA2_HW 0x006923a4
 // GLOBAL: CARMA2_SW 0x0068c3fc
@@ -112,6 +117,10 @@ br_pixelmap* gBlend50_table;
 // GLOBAL: CARMA2_SW 0x007410bc
 br_pixelmap* gBlend75_table;
 
+// GLOBAL: CARMA2_HW 0x0074a5f8
+// GLOBAL: CARMA2_SW 0x007410b8
+int gPHIL_doing_physics;
+
 // GLOBAL: CARMA2_HW 0x0074a670
 // GLOBAL: CARMA2_SW 0x00741130
 br_pixelmap* gPalette_0074a670;
@@ -123,6 +132,20 @@ br_pixelmap* gBlend_palettes[4];
 // GLOBAL: CARMA2_HW 0x0068be20
 // GLOBAL: CARMA2_SW 0x00685e64
 br_pixelmap* gCurrent_splash;
+
+// FUNCTION: CARMA2_HW 0x0047d470
+// FUNCTION: CARMA2_SW 0x0047d7a0
+void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour) {
+
+#ifdef REC2_HW
+    if (gBack_screen->type != BR_PMT_INDEX_8) {
+        pColour = PaletteEntry16Bit(gRender_palette, pColour);
+    }
+#endif
+    BrPixelmapRectangleFill(pMap, pX, pY + 1, pWidth, pHeight - 2, pColour);
+    BrPixelmapLine(pMap, pX, pY, pX + pWidth - 1, pY, pColour + 2);
+    BrPixelmapLine(pMap, pX, pY + pHeight - 1, pX + pWidth - 1, pY + pHeight - 1, pColour - 2);
+}
 
 // FUNCTION: CARMA2_HW 0x004b4fd0
 // FUNCTION: CARMA2_SW 0x004b1140
@@ -305,6 +328,16 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     gPalette_0074a670 = NULL;
 }
 
+// FUNCTION: CARMA2_HW 0x004b5230
+void C2_HOOK_FASTCALL SwitchToPalette(char* pPal_name) {
+    br_pixelmap* the_palette;
+
+    the_palette = BrTableFind(pPal_name);
+    if (the_palette != NULL) {
+        DRSetPalette(the_palette);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x004b52a0
 // FUNCTION: CARMA2_SW 0x004b1a00
 void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
@@ -337,9 +370,25 @@ void C2_HOOK_FASTCALL ResetPalette(void) {
 void C2_HOOK_FASTCALL FadePaletteDown(void) {
 }
 
-// FadePaletteUp
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004b5470
+// STUB: CARMA2_SW 0x004b1bb0
+void C2_HOOK_FASTCALL FadePaletteUp(void) {
+    NOT_IMPLEMENTED();
+}
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma auto_inline(on)
+#endif
 
 // EnsurePaletteUp
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma auto_inline(off)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004b5770
 // FUNCTION: CARMA2_SW 0x004b1e90
@@ -350,6 +399,10 @@ void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
         gPalette_munged = 0;
     }
 }
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x0043dff0
 // FUNCTION: CARMA2_SW 0x0043e040
@@ -362,15 +415,35 @@ void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
     }
 }
 
-// DeallocateTransientBitmap
+void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex) {
 
-// DeallocateAllTransientBitmaps
+    if (gTransient_bitmaps[pIndex].pixmap != NULL) {
+        BrPixelmapFree(gTransient_bitmaps[pIndex].pixmap);
+        gTransient_bitmaps[pIndex].pixmap = NULL;
+        gTransient_bitmaps[pIndex].in_use = 0;
+    }
+}
+
+void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void) {
+    int i;
+    for (i = 0; i < (int)REC2_ASIZE(gTransient_bitmaps); i++) {
+        DeallocateTransientBitmap(i);
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // STUB: CARMA2_HW 0x0043e010
 // STUB: CARMA2_SW 0x0043e060
 void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them) {
     NOT_IMPLEMENTED();
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SaveTransient
 
@@ -418,10 +491,13 @@ void C2_HOOK_FASTCALL StartMouseCursor(void) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x0043e710
-// STUB: CARMA2_SW 0x0043e820
+// FUNCTION: CARMA2_HW 0x0043e710
+// FUNCTION: CARMA2_SW 0x0043e820
 void C2_HOOK_FASTCALL EndMouseCursor(void) {
-    NOT_IMPLEMENTED();
+
+    RemoveTransientBitmaps(1);
+    DeallocateAllTransientBitmaps();
+    gMouse_started = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0047b450
@@ -461,7 +537,56 @@ void C2_HOOK_FASTCALL KillSplashScreen(void) {
     }
 }
 
-// SplashScreenWith
+// FUNCTION: CARMA2_HW 0x0047b990
+// FUNCTION: CARMA2_SW 0x0047ac80
+void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
+    br_pixelmap* map;
+    tPixelFlags flags;
+
+    map = BrMapFind(pPixmap_name);
+    if (gCurrent_splash != NULL && map == gCurrent_splash) {
+        return;
+    }
+    if (gCurrent_splash != NULL) {
+        KillSplashScreen();
+    }
+    flags = gPixelFlags;
+#ifdef REC2_SW
+    gPixelFlags |= 0x8;
+#endif
+    gCurrent_splash = map;
+    if (map == NULL) {
+        gCurrent_splash = LoadPixelmap(pPixmap_name);
+        BRPM_convert(gCurrent_splash, gBack_screen->type);
+        if (gCurrent_splash != NULL) {
+            BrMapAdd(gCurrent_splash);
+        }
+    }
+    gPixelFlags = flags;
+#ifdef REC2_SW
+    if (gCurrent_splash == NULL || gCurrent_splash->map == NULL) {
+        EnsureRenderPalette();
+    } else {
+        if (gScreen != NULL) {
+            BrPixelmapFill(gScreen, gGraf_specs[gGraf_spec_index].black_value);
+        }
+        BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
+        BrPixelmapFill(gDepth_buffer, 0xffffffff);
+        PDScreenBufferSwap(0);
+        FadePaletteUp();
+        PDSetPalette(gCurrent_splash->map);
+    }
+#endif
+    if (gCurrent_splash != NULL) {
+        PixelmapSwapByteOrder(gCurrent_splash);
+        DrPixelmapRectangleCopyPossibleLock(gBack_screen, 0, 0, gCurrent_splash, 0, 0,
+            (br_int_16)gCurrent_splash->width, (br_int_16)gCurrent_splash->height);
+        PDScreenBufferSwap(0);
+        BrMapRemove(gCurrent_splash);
+        BrPixelmapFree(gCurrent_splash);
+        gCurrent_splash = NULL;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0047ba80
 // FUNCTION: CARMA2_SW 0x0047ae00

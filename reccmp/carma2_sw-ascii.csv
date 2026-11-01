@@ -1987,6 +1987,7 @@ address,type,x-text
 0x6590c0,string,"INACTIVE"
 0x6590cc,string,"dead"
 0x6590d4,string,"impacting"
+0x6590ec,string,"falling"
 0x6590e0,string,"getting up"
 0x6590f4,string,"panicking"
 0x659100,string,"running"
