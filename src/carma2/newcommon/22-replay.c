@@ -10,6 +10,10 @@
 
 #include "globvars.h"
 
+// GLOBAL: CARMA2_HW 0x006768fc
+// GLOBAL: CARMA2_SW 0x0067106c
+int gPaused;
+
 // GLOBAL: CARMA2_HW 0x0058f2d8
 // GLOBAL: CARMA2_SW 0x0058a2d8
 const int gPow2_array[32] = {
@@ -102,5 +106,9 @@ void C2_HOOK_FASTCALL ApplyTime(tU32 pTime) {
     gLast_replay_frame_time = pTime;
 }
 
-// ARSetPause
+// FUNCTION: CARMA2_HW 0x004022f0
+// FUNCTION: CARMA2_SW 0x004022f0
+void C2_HOOK_FASTCALL ARSetPause(int pPause) {
+    gPaused = pPause;
+}
 
