@@ -19,6 +19,7 @@
 
 #include "49-physics.h"
 #include "53-controls.h"
+#include "60-phil.h"
 #include "61-pedestrn.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -84,7 +85,15 @@ int gCount_mutant_tail_parts;
 
 // GLOBAL: CARMA2_HW 0x006a0908
 // GLOBAL: CARMA2_SW 0x0069a960
-tPhysics_object* gMutant_tail_first_collision_info;
+tPhysics_object* gMutant_tail_object;
+
+// GLOBAL: CARMA2_HW 0x006a0acc
+// GLOBAL: CARMA2_SW 0x0069ab24
+tPhysics_joint* gMutant_tail_first_joint;
+
+// GLOBAL: CARMA2_HW 0x00705540
+// GLOBAL: CARMA2_SW 0x006fc000
+int gMutant_tail_state;
 
 // GLOBAL: CARMA2_HW 0x00705b78
 // GLOBAL: CARMA2_SW 0x006fc638
@@ -992,29 +1001,46 @@ void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // CutOffTail
 
-// STUB: CARMA2_HW 0x004e06a0
-// STUB: CARMA2_SW 0x004dcba0
+// FUNCTION: CARMA2_HW 0x004e06a0
+// FUNCTION: CARMA2_SW 0x004dcba0
 void C2_HOOK_FASTCALL RemoveTail(void) {
-    NOT_IMPLEMENTED();
+    tPhysics_object* object;
+
+    if (gMutant_tail_state != 0) {
+        object = gMutant_tail_object;
+        if (gMutant_tail_object != NULL) {
+            while (object != NULL) {
+                BrActorRemove(object->actor);
+                object = object->child;
+            }
+        }
+        if (gMutant_tail_state == 2) {
+            PhysicsRemoveObject(gMutant_tail_object);
+        } else {
+            PHILRemoveObject(gMutant_tail_object);
+        }
+        gMutant_tail_object->physics_joint1 = gMutant_tail_first_joint;
+        gMutant_tail_state = 0;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004e0710
 // FUNCTION: CARMA2_SW 0x004dcc10
 void C2_HOOK_FASTCALL DoInitialTail(void) {
-    tPhysics_object* collision_info;
+    tPhysics_object* object;
 
-    for (collision_info = gMutant_tail_first_collision_info; collision_info != NULL; collision_info = collision_info->child) {
-        collision_info->actor->render_style = BR_RSTYLE_FACES;
+    for (object = gMutant_tail_object; object != NULL; object = object->child) {
+        object->actor->render_style = BR_RSTYLE_FACES;
     }
 }
 
 // FUNCTION: CARMA2_HW 0x004e0730
 // FUNCTION: CARMA2_SW 0x004dcc30
 void C2_HOOK_FASTCALL UndoInitialTail(void) {
-    tPhysics_object* collision_info;
+    tPhysics_object* object;
 
-    for (collision_info = gMutant_tail_first_collision_info; collision_info != NULL; collision_info = collision_info->child) {
-        collision_info->actor->render_style = BR_RSTYLE_NONE;
+    for (object = gMutant_tail_object; object != NULL; object = object->child) {
+        object->actor->render_style = BR_RSTYLE_NONE;
     }
 }
 
