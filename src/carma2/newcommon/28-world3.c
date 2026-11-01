@@ -100,7 +100,11 @@ void C2_HOOK_FASTCALL InitTreeSurgery(void) {
 
 // RemoveBoundsStructures
 
-// FreeTrack
+// STUB: CARMA2_HW 0x00506c20
+// STUB: CARMA2_SW 0x00502070
+void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
+    NOT_IMPLEMENTED();
+}
 
 // ProcessTrack
 

@@ -761,7 +761,11 @@ intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData) {
 
 // LinkCarModelsToActor
 
-// GetSimpleMaterial
+// STUB: CARMA2_HW 0x00488dd0
+// STUB: CARMA2_SW 0x00486010
+br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type) {
+    NOT_IMPLEMENTED();
+}
 
 // ReadShrapnelMaterials
 
