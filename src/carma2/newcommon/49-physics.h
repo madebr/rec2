@@ -307,7 +307,7 @@ extern void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, 
 
 extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
-// ApplyTorque
+extern void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pTorque);
 
 // ApplyDiminishingTorque
 
