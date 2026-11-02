@@ -394,7 +394,7 @@ extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
 // ApplyPedModelChange
 
-// ApplyPHILObject
+extern void C2_HOOK_FASTCALL ApplyPHILObject(tPipe_chunk** pChunk);
 
 // ApplyGibShower
 
