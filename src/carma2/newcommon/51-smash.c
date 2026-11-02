@@ -1103,7 +1103,23 @@ void C2_HOOK_FASTCALL NonCarSnapSmashCallback(tPhysics_object* pObject, br_vecto
     BashObject(pObject, pObject->actor, BrVector3Length(pForce), pPosition, pNormal, pForce, 1, 0);
 }
 
-// SmashFaceMustBeUpdateable
+// FUNCTION: CARMA2_HW 0x004f5470
+// FUNCTION: CARMA2_SW 0x004f10d0
+int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material* pMaterial) {
+    int i;
+
+    for (i = 0; i < gCount_track_smashable_environment_specs; i++) {
+        tSmashable_item_spec* smash = &gTrack_smashable_environment_specs[i];
+
+        if (smash->trigger_type == kSmashableTrigger_Material && smash->trigger_object.material == pMaterial
+                && ((smash->mode_data.texture_change.count_levels > 0 && smash->mode == kSmashableMode_TextureChange)
+                || smash->mode == kSmashableMode_Remove
+                || smash->mode == kSmashableMode_ReplaceModel)) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004f55d0
 // FUNCTION: CARMA2_SW 0x004f1230
