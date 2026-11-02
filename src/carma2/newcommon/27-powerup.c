@@ -43,6 +43,10 @@ int gINT_006a0a5c;
 // GLOBAL: CARMA2_SW 0x0069aab0
 int gInventory_selected = 0;
 
+// GLOBAL: CARMA2_HW 0x006a0960
+// GLOBAL: CARMA2_SW 0x0069a9b8
+tRepulse_link gRepulse_links[6];
+
 // GLOBAL: CARMA2_HW 0x006a0ad4
 // GLOBAL: CARMA2_SW 0x0069ab2c
 const char* gPowerup_txt_path;
@@ -274,9 +278,31 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // MungeRepulseRays
 
-// AdjustRepulseRay
+// FUNCTION: CARMA2_HW 0x004da960
+// FUNCTION: CARMA2_SW 0x004d6e30
+void C2_HOOK_FASTCALL AdjustRepulseRay(int pIndex, br_vector3* pOrigin, br_vector3* pVictim, tU32 pTime) {
+    C2_HOOK_BUG_ON(sizeof(tRepulse_link) != 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepulse_link, pos_origin, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepulse_link, pos_victim, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepulse_link, actor, 0xc);
 
-// ResetRepulseRay
+    gRepulse_links[pIndex].pos_origin = pOrigin;
+    gRepulse_links[pIndex].pos_victim = pVictim;
+    gRepulse_links[pIndex].time = pTime;
+}
+
+// FUNCTION: CARMA2_HW 0x004da990
+// FUNCTION: CARMA2_SW 0x004d6e60
+void C2_HOOK_FASTCALL ResetRepulseRay(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gRepulse_links); i++) {
+        if (gRepulse_links[i].actor->parent == gNon_track_actor) {
+            BrActorRemove(gRepulse_links[i].actor);
+        }
+        gRepulse_links[i].time = 0;
+    }
+}
 
 // DrawSinglePowerupIcon
 
