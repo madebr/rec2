@@ -644,7 +644,12 @@ int C2_HOOK_FASTCALL SetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// ResetSuicidalPeds
+// FUNCTION: CARMA2_HW 0x004dcf70
+// FUNCTION: CARMA2_SW 0x004d9470
+void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPeds_suicidal = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dcf80
 // FUNCTION: CARMA2_SW 0x004d9480
