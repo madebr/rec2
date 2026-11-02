@@ -346,7 +346,7 @@ extern void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk);
 
 // ApplyFlap
 
-// ApplyModelMash
+extern void C2_HOOK_FASTCALL ApplyModelMash(tPipe_chunk** pChunk);
 
 // ApplyRelink
 
@@ -454,7 +454,7 @@ extern void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk);
 
 // UndoFlap
 
-// UndoModelMash
+extern void C2_HOOK_FASTCALL UndoModelMash(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoRelink
 

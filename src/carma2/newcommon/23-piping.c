@@ -10,6 +10,7 @@
 
 #include "00-car.h"
 #include "09-funks.h"
+#include "13-crush1.h"
 #include "16-graphics1.h"
 #include "27-powerup.h"
 #include "32-spark.h"
@@ -937,7 +938,17 @@ void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk) {
 
 // ApplyFlap
 
-// ApplyModelMash
+// FUNCTION: CARMA2_HW 0x004c9840
+// FUNCTION: CARMA2_SW 0x004c5f70
+void C2_HOOK_FASTCALL ApplyModelMash(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk = *pChunk;
+    tPipe_model_mash* data = (tPipe_model_mash*)chunk->data.raw_data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_model_mash, vectors, 0x4);
+
+    ARApplyModelMash(data->model, (tCompressed_vector3*)(chunk->data.raw_data + offsetof(tPipe_model_mash, vectors)));
+}
 
 // ApplyRelink
 
@@ -1153,7 +1164,18 @@ void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
 
 // UndoFlap
 
-// UndoModelMash
+// FUNCTION: CARMA2_HW 0x004c9f80
+// FUNCTION: CARMA2_SW 0x004c66b0
+void C2_HOOK_FASTCALL UndoModelMash(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk = *pChunk;
+    tPipe_model_mash* data = (tPipe_model_mash*)chunk->data.raw_data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_model_mash, vectors, 0x4);
+
+    (void)pPrev_chunk;
+    ARUndoModelMash(data->model, (tCompressed_vector3*)(chunk->data.raw_data + offsetof(tPipe_model_mash, vectors)));
+}
 
 // UndoRelink
 
