@@ -264,7 +264,7 @@ extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* p
 
 // MineExplode
 
-// TiggerMineToExplode
+extern void C2_HOOK_FASTCALL TiggerMineToExplode(tCar_spec* pCar);
 
 // HitAShatOutMine
 
