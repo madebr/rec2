@@ -301,7 +301,7 @@ extern intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec);
 
 // SmashEverything
 
-// DetermineTilitudinality
+extern void C2_HOOK_FASTCALL DetermineTilitudinality(br_model* pModel, int* pArea_1, int* pArea_2);
 
 extern void C2_HOOK_FASTCALL GetGlassFragmentCounts(int* pVisible_count, int* pActive_count);
 
