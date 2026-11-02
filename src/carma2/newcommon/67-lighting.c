@@ -263,7 +263,7 @@ void C2_HOOK_FASTCALL InitLightingEffects(void) {
 
 // FUNCTION: CARMA2_HW 0x00486d90
 // FUNCTION: CARMA2_SW 0x00483ec0
-void C2_HOOK_STDCALL FUN_00486d90(int pArg1, int pArg2) {
+void C2_HOOK_FASTCALL FUN_00486d90(br_scalar pArg1, br_scalar pArg2) {
 
     // empty
 }

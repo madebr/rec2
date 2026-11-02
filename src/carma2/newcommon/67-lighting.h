@@ -42,7 +42,7 @@ extern void C2_HOOK_FASTCALL KillLightingEffects(void);
 
 extern void C2_HOOK_FASTCALL InitLightingEffects(void);
 
-extern void C2_HOOK_STDCALL FUN_00486d90(int pArg1, int pArg2);
+extern void C2_HOOK_FASTCALL FUN_00486d90(br_scalar pArg1, br_scalar pArg2);
 
 extern void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* pRace_lighting_path);
 
