@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gINT_00692dc8;
+
 extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
@@ -25,6 +27,7 @@ extern tProximity_ray gProximity_rays[20];
 extern br_actor* gPed_limbed_actors[30];
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
+extern int gFace_count;
 
 // count
 
@@ -96,7 +99,7 @@ extern int C2_HOOK_FASTCALL BoundsOverlapTest(br_bounds3* pBounds_1, br_bounds3*
 
 extern void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, tU32 pIndex);
 
-// AddOldForces
+extern int C2_HOOK_FASTCALL AddOldForces(tPhysics_joint_force* pForces, int pCount, const tPhysics_joint_force* pOld_forces, int pOld_count);
 
 extern int C2_HOOK_FASTCALL TestObjectOverlap(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2);
 
@@ -190,7 +193,7 @@ extern void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObje
 
 // CheckDoingNothingFlag
 
-// SetGroup
+extern void C2_HOOK_FASTCALL SetGroup(tPhysics_object* pObject, int pGroup);
 
 // GroupTogether
 
@@ -212,7 +215,7 @@ extern void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject)
 
 // ReduceReducedList
 
-// SetObjectTrialPositionType
+extern void C2_HOOK_FASTCALL SetObjectTrialPositionType(tPhysics_object* pObject, int pType);
 
 // FillInTrialWorkspace
 
@@ -230,7 +233,7 @@ extern int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_o
 
 // DoInterGroupCollisions
 
-// ReduceEffectOfForces
+extern int C2_HOOK_FASTCALL ReduceEffectOfForces(tPhysics_joint_force* pForces, br_scalar* pImpulses, int pCount, const int* pIndices, int pIndex_count, br_scalar pThreshold);
 
 // DoCollisions
 
@@ -244,7 +247,7 @@ extern int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_o
 
 // CalcQuickHingeData
 
-// SetUpForce
+extern void C2_HOOK_FASTCALL SetUpForce(br_vector3* pAngular, br_vector3* pLinear, const br_vector3* pPoint, const br_vector3* pDirection, tPhysics_object* pObject);
 
 // SetUpTorqueHingePartners
 
@@ -306,7 +309,7 @@ extern void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, 
 
 extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
-// ApplyTorque
+extern void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pTorque);
 
 // ApplyDiminishingTorque
 
@@ -388,7 +391,7 @@ extern void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, cons
 
 extern void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn);
 
-// RepositionAndOrientateChildren
+extern void C2_HOOK_FASTCALL RepositionAndOrientateChildren(tPhysics_object* pObject, br_matrix34* pParent_matrix);
 
 extern void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics_object* pChild);
 

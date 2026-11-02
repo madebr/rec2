@@ -15,6 +15,10 @@
 extern br_model* gModel_powerup_armor;
 extern br_model* gModel_powerup_power;
 extern br_model* gModel_powerup_offence;
+extern int gInventory[20];
+extern int gINT_006a0a6c;
+extern int gINT_006a0a5c;
+extern int gInventory_selected;
 
 extern tHeadup_icon gPickedup_powerups[20];
 extern tSlot_info gCost_APO;
@@ -39,6 +43,8 @@ extern int gInstant_handbrake;
 extern int gInventory_cycling;
 extern tU32 gInventory_timeout;
 extern tU32* gReal_render_palette;
+
+extern char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index);
 
 // GetNextGoodyTime
 
@@ -92,7 +98,7 @@ extern void C2_HOOK_FASTCALL InitPowerups(void);
 
 // ResetRepulseEffects
 
-// EmptyInventory
+extern void C2_HOOK_FASTCALL EmptyInventory(void);
 
 // ResetPowerups
 
@@ -232,11 +238,11 @@ extern int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetImmortalPeds
+extern void C2_HOOK_FASTCALL ResetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetSuicidalPeds
+extern void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -320,11 +326,11 @@ extern int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* pPowerup, tCar_spec* p
 
 extern void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetDancingPeds
+extern int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPanickingPeds
+extern int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetLowGravityPeds
+extern int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -382,11 +388,11 @@ extern void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar);
 
 // PissedEffect
 
-// RenderSpinningPowerup
+extern void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
 extern void C2_HOOK_CDECL RenderChangingPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
-// SetSpinningPowerup
+extern void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
 
 // DuplicateModel
 

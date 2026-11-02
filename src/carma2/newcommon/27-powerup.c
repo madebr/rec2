@@ -27,6 +27,22 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x006a0a70
+// GLOBAL: CARMA2_SW 0x0069aac8
+int gInventory[20];
+
+// GLOBAL: CARMA2_HW 0x006a0a6c
+// GLOBAL: CARMA2_SW 0x0069aac4
+int gINT_006a0a6c;
+
+// GLOBAL: CARMA2_HW 0x006a0a5c
+// GLOBAL: CARMA2_SW 0x0069aab4
+int gINT_006a0a5c;
+
+// GLOBAL: CARMA2_HW 0x006a0a58
+// GLOBAL: CARMA2_SW 0x0069aab0
+int gInventory_selected = 0;
+
 // GLOBAL: CARMA2_HW 0x006a0ad4
 // GLOBAL: CARMA2_SW 0x0069ab2c
 const char* gPowerup_txt_path;
@@ -83,12 +99,14 @@ int gPickup_respawn_max_extra_time_ms;
 int gBlind_pedestrians;
 
 // GLOBAL: CARMA2_HW 0x007447dc
+// GLOBAL: CARMA2_SW 0x0073b29c
 float gPed_gravity_multiplier;
 
 // GLOBAL: CARMA2_HW 0x007447e4
 int gPed_dismemberfest;
 
 // GLOBAL: CARMA2_HW 0x007447f8
+// GLOBAL: CARMA2_SW 0x0073b2b8
 int gPanicking_peds;
 
 // GLOBAL: CARMA2_HW 0x007059c0
@@ -142,6 +160,13 @@ int gInstant_handbrake;
 // GLOBAL: CARMA2_HW 0x006a0a54
 // GLOBAL: CARMA2_SW 0x0069aaac
 tPowerup* gPowerup_array;
+
+// FUNCTION: CARMA2_HW 0x004d8d10
+// FUNCTION: CARMA2_SW 0x004d5240
+char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index) {
+
+    return gPowerup_array[pPowerup_index].message;
+}
 
 // GetNextGoodyTime
 
@@ -220,7 +245,20 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 
 // ResetRepulseEffects
 
-// EmptyInventory
+// FUNCTION: CARMA2_HW 0x004da600
+// FUNCTION: CARMA2_SW 0x004d6ad0
+void C2_HOOK_FASTCALL EmptyInventory(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gInventory) != 20);
+
+    for (i = 0; i < (int)REC2_ASIZE(gInventory); i++) {
+        gInventory[i] = -1;
+    }
+    gInventory_selected = -1;
+    gINT_006a0a6c = 0;
+    gINT_006a0a5c = 0;
+}
 
 // ResetPowerups
 
@@ -610,7 +648,12 @@ int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// ResetImmortalPeds
+// FUNCTION: CARMA2_HW 0x004dcf30
+// FUNCTION: CARMA2_SW 0x004d9430
+void C2_HOOK_FASTCALL ResetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gImmortal_peds = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dcf40
 // FUNCTION: CARMA2_SW 0x004d9440
@@ -620,7 +663,12 @@ int C2_HOOK_FASTCALL SetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// ResetSuicidalPeds
+// FUNCTION: CARMA2_HW 0x004dcf70
+// FUNCTION: CARMA2_SW 0x004d9470
+void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPeds_suicidal = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dcf80
 // FUNCTION: CARMA2_SW 0x004d9480
@@ -844,11 +892,29 @@ void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar)
     }
 }
 
-// SetDancingPeds
+// FUNCTION: CARMA2_HW 0x004de870
+// FUNCTION: CARMA2_SW 0x004dad70
+int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// SetPanickingPeds
+    gDancing_peds = 1;
+    return pPowerup - gPowerup_array;
+}
 
-// SetLowGravityPeds
+// FUNCTION: CARMA2_HW 0x004de8a0
+// FUNCTION: CARMA2_SW 0x004dada0
+int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPanicking_peds = 1;
+    return pPowerup - gPowerup_array;
+}
+
+// FUNCTION: CARMA2_HW 0x004de8d0
+// FUNCTION: CARMA2_SW 0x004dadd0
+int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_gravity_multiplier = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004de900
 // FUNCTION: CARMA2_SW 0x004dae00
@@ -995,7 +1061,25 @@ void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // PissedEffect
 
-// RenderSpinningPowerup
+// FUNCTION: CARMA2_HW 0x004df650
+// FUNCTION: CARMA2_SW 0x004dbb50
+void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
+
+    if (pActor->user == NULL) {
+        pActor->user = (void*)(uintptr_t)GetTotalTime();
+    } else {
+        tU32 prev;
+        tU32 now;
+        tU32 elapsed;
+
+        now = GetTotalTime();
+        prev = (tU32)(uintptr_t)pActor->user;
+        elapsed = (now - prev) / 16;
+        pActor->user = (void*)(uintptr_t)now;
+        BrMatrix34PreRotateY(&pActor->t.t.mat, BR_ANGLE_DEG(elapsed));
+    }
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, pOn_screen, 0);
+}
 
 // FUNCTION: CARMA2_HW 0x004dfe10
 // FUNCTION: CARMA2_SW 0x004dc310
@@ -1025,7 +1109,43 @@ void C2_HOOK_CDECL RenderChangingPowerup(br_actor* pActor, br_model* pModel, br_
     BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, pOn_screen, 0);
 }
 
-// SetSpinningPowerup
+// FUNCTION: CARMA2_HW 0x004df570
+// FUNCTION: CARMA2_SW 0x004dba70
+void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity) {
+    // GLOBAL: CARMA2_HW 0x0065ebc0
+    // GLOBAL: CARMA2_SW 0x00659520
+    static br_token_value spinning_powerup_extra_prim[2] = {
+        { BRT_BLEND_B, { 1 } },
+        { BRT_OPACITY_X, { BrScalarToFixed(75) } },
+    };
+    unsigned int i;
+
+    if (pActor == NULL) {
+        return;
+    }
+    BrMatrix34PreTranslate(&pActor->t.t.mat, 0.f, .1f, 0.f);
+    pActor->model->flags |= BR_MODF_CUSTOM;
+    pActor->model->custom = RenderSpinningPowerup;
+    if (pOpacity == 0 || pOpacity == 255) {
+        return;
+    }
+    if (pActor->material != NULL) {
+        pActor->material->extra_prim = spinning_powerup_extra_prim;
+        pActor->material->extra_prim[1].v.x = BR_FIXED_INT(pOpacity);
+        BrMaterialUpdate(pActor->material, BR_MATU_EXTRA_PRIM);
+        return;
+    }
+    for (i = 0; i < pActor->model->nfaces; i++) {
+        br_material* material;
+
+        material = pActor->model->faces[i].material;
+        if (material != NULL) {
+            material->extra_prim = spinning_powerup_extra_prim;
+            pActor->model->faces[i].material->extra_prim[1].v.x = BR_FIXED_INT(pOpacity);
+            BrMaterialUpdate(pActor->model->faces[i].material, BR_MATU_EXTRA_PRIM);
+        }
+    }
+}
 
 // DuplicateModel
 

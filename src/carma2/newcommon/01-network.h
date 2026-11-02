@@ -91,7 +91,7 @@ extern int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet
 
 extern int C2_HOOK_FASTCALL NetSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage);
 
-// NetSendMessageToAllPlayers
+extern int C2_HOOK_FASTCALL NetSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage);
 
 extern tU32 C2_HOOK_FASTCALL NetGetContentsSize(tU8 pType, tU32 pSize_decider);
 
@@ -213,11 +213,11 @@ extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_detail
 
 extern void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
-// AddToGuaranteeList
+extern void C2_HOOK_FASTCALL AddToGuaranteeList(tNet_message* pMessage, void* pAddress, tPlayer_ID pPlayer, void* pNotifyFail);
 
 extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToPlayer(tNet_game_details* pDetails, tNet_message* pMessage, tPlayer_ID pPlayer, void* pNotifyFail);
 
-// NetGuaranteedSendMessageToAddress
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress, void* pNotifyFail);
 
 extern void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
@@ -229,7 +229,7 @@ extern tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer);
 
 extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar);
 
-// GetCheckSum
+extern void C2_HOOK_FASTCALL GetCheckSum(tNet_message* pMessage);
 
 // CheckCheckSum
 
