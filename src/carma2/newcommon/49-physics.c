@@ -81,6 +81,10 @@ void* gPhysics_other_buffer;
 // GLOBAL: CARMA2_SW 0x0068e114
 void* gPhysics_scratch_ptr;
 
+// GLOBAL: CARMA2_HW 0x006940b0
+// GLOBAL: CARMA2_SW 0x0068e108
+int gFace_count;
+
 // count
 
 // FUNCTION: CARMA2_HW 0x004225b0
@@ -253,7 +257,19 @@ void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, 
     }
 }
 
-// AddOldForces
+// FUNCTION: CARMA2_HW 0x00428cf0
+// FUNCTION: CARMA2_SW 0x00428d80
+int C2_HOOK_FASTCALL AddOldForces(tPhysics_joint_force* pForces, int pCount, const tPhysics_joint_force* pOld_forces, int pOld_count) {
+    int i;
+
+    for (i = 0; i < pOld_count && pCount < 40; i++) {
+        if (pOld_forces[i].type != 9) {
+            pForces[pCount] = pOld_forces[i];
+            pCount++;
+        }
+    }
+    return pCount;
+}
 
 // FUNCTION: CARMA2_HW 0x00428d40
 // FUNCTION: CARMA2_SW 0x00428dd0
@@ -520,7 +536,19 @@ void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObject, int
 
 // CheckDoingNothingFlag
 
-// SetGroup
+// FUNCTION: CARMA2_HW 0x004bae80
+// FUNCTION: CARMA2_SW 0x004b75a0
+void C2_HOOK_FASTCALL SetGroup(tPhysics_object* pObject, int pGroup) {
+    tPhysics_object* child;
+
+    child = pObject->child;
+    pObject->field_0x1dc = (tU8)pGroup;
+    for (; child != NULL; child = child->next) {
+        if (child->physics_joint1 != NULL && child->physics_joint1->type != eJoint_none) {
+            SetGroup(child, pGroup);
+        }
+    }
+}
 
 // GroupTogether
 
@@ -562,10 +590,16 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 #pragma auto_inline(off)
 #endif
 
-// STUB: CARMA2_HW 0x004ba4f0
-// STUB: CARMA2_SW 0x004b6c10
+// FUNCTION: CARMA2_HW 0x004ba4f0
+// FUNCTION: CARMA2_SW 0x004b6c10
 int C2_HOOK_FASTCALL FlagsAreGo(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2) {
-    NOT_IMPLEMENTED();
+    int blocked;
+
+    blocked = (pCollision_1->field_0x1a0 & pCollision_2->field_0x1a4)
+        || (pCollision_2->field_0x1a0 & pCollision_1->field_0x1a4)
+        || (pCollision_1->flags & 4)
+        || (pCollision_2->flags & 4);
+    return !blocked;
 }
 
 #ifdef REC2_MATCHING
@@ -751,7 +785,18 @@ void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
     InternalPositionChildren(pCollision_info, pCollision_info);
 }
 
-// ApplyTorque
+// FUNCTION: CARMA2_HW 0x004c2c30
+// FUNCTION: CARMA2_SW 0x004bf360
+void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pTorque) {
+    br_vector3 torque;
+    br_vector3 inertia;
+
+    BrVector3Scale(&torque, pTorque, 1.0f / (WORLD_SCALE * WORLD_SCALE));
+    BrVector3Copy(&inertia, &pObject->I);
+    pObject->omega.v[0] += torque.v[0] / inertia.v[0];
+    pObject->omega.v[1] += torque.v[1] / inertia.v[1];
+    pObject->omega.v[2] += torque.v[2] / inertia.v[2];
+}
 
 // ApplyDiminishingTorque
 
@@ -1183,17 +1228,17 @@ void C2_HOOK_FASTCALL PhysicsAddObjectList(tPhysics_object* pParent, tPhysics_ob
 // FUNCTION: CARMA2_SW 0x004c2b40
 void C2_HOOK_FASTCALL PhysicsRemoveObject(tPhysics_object* pObject) {
     tPhysics_object* parent;
-    tPhysics_object* previous;
+    tPhysics_object* sibling;
 
     parent = pObject->parent;
-    previous = parent->child;
-    if (previous == pObject) {
+    sibling = parent->child;
+    if (sibling == pObject) {
         parent->child = pObject->next;
     } else {
-        while (previous->next != pObject) {
-            previous = previous->next;
+        while (sibling->next != pObject) {
+            sibling = sibling->next;
         }
-        previous->next = pObject->next;
+        sibling->next = pObject->next;
     }
     pObject->parent = NULL;
     pObject->next = NULL;

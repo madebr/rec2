@@ -25,6 +25,7 @@ extern tProximity_ray gProximity_rays[20];
 extern br_actor* gPed_limbed_actors[30];
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
+extern int gFace_count;
 
 // count
 
@@ -96,7 +97,7 @@ extern int C2_HOOK_FASTCALL BoundsOverlapTest(br_bounds3* pBounds_1, br_bounds3*
 
 extern void C2_HOOK_FASTCALL GetShapePoint(br_vector3* pPoint, tPhysics_shape* pShape, tU32 pIndex);
 
-// AddOldForces
+extern int C2_HOOK_FASTCALL AddOldForces(tPhysics_joint_force* pForces, int pCount, const tPhysics_joint_force* pOld_forces, int pOld_count);
 
 extern int C2_HOOK_FASTCALL TestObjectOverlap(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2);
 
@@ -190,7 +191,7 @@ extern void C2_HOOK_FASTCALL SetHierarchyDoingNothingFlag(tPhysics_object* pObje
 
 // CheckDoingNothingFlag
 
-// SetGroup
+extern void C2_HOOK_FASTCALL SetGroup(tPhysics_object* pObject, int pGroup);
 
 // GroupTogether
 
@@ -306,7 +307,7 @@ extern void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, 
 
 extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
-// ApplyTorque
+extern void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pTorque);
 
 // ApplyDiminishingTorque
 

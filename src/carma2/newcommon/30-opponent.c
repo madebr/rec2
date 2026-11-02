@@ -21,6 +21,14 @@
 #include "rec2_macros.h"
 #include <string.h>
 
+// GLOBAL: CARMA2_HW 0x0065a3bc
+// GLOBAL: CARMA2_SW 0x00654cd4
+const char* gCop_name = "Faceless Cop";
+
+// GLOBAL: CARMA2_HW 0x0065a3c0
+// GLOBAL: CARMA2_SW 0x00654cd8
+const char* gDrone_name = "Innocent Civilian";
+
 // GLOBAL: CARMA2_HW 0x0065a3c4
 // GLOBAL: CARMA2_SW 0x00654cdc
 int gBIG_APC_index = -1;
@@ -60,6 +68,10 @@ int gNum_of_opponents_pursuing;
 // GLOBAL: CARMA2_HW 0x0069175c
 // GLOBAL: CARMA2_SW 0x0068b7b4
 tU8* gBit_per_node;
+
+// GLOBAL: CARMA2_HW 0x00691764
+// GLOBAL: CARMA2_SW 0x0068b7bc
+float gIn_view_distance;
 
 // GLOBAL: CARMA2_HW 0x0069176c
 // GLOBAL: CARMA2_SW 0x0068b7c4
@@ -137,6 +149,17 @@ int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo) {
 // CalcRaceRoute
 
 // TopUpRandomRoute
+
+// FUNCTION: CARMA2_HW 0x004a9550
+// FUNCTION: CARMA2_SW 0x004a56c0
+void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOpponent_spec* pOpponent_spec) {
+
+    BrVector3Sub(&pOpponent_spec->player_to_oppo_v, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &gProgram_state.current_car.car_master_actor->t.t.translate.t);
+    pOpponent_spec->player_to_oppo_d = BrVector3Length(&pOpponent_spec->player_to_oppo_v);
+    if (pOpponent_spec->player_to_oppo_d < gIn_view_distance) {
+        pOpponent_spec->last_in_view = gTime_stamp_for_this_munging;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004ac180
 // FUNCTION: CARMA2_SW 0x004a82f0
@@ -590,10 +613,33 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
     }
 }
 
-// STUB: CARMA2_HW 0x004ae880
-// STUB: CARMA2_SW 0x004aa9f0
-char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x004ae880
+// FUNCTION: CARMA2_SW 0x004aa9f0
+const char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
+    tCar_spec* car;
+    char* name;
+
+    switch (pCategory) {
+    case eVehicle_self:
+        return gProgram_state.player_name;
+    case eVehicle_opponent:
+        car = gProgram_state.AI_vehicles.opponents[pIndex].car_spec;
+        if (car != NULL) {
+            name = car->driver_name;
+            if (name != NULL) {
+                return name;
+            }
+        }
+        return "???";
+    case eVehicle_rozzer:
+        return gCop_name;
+    case eVehicle_drone:
+        return gDrone_name;
+    case eVehicle_not_really:
+        return NULL;
+    default:
+        return NULL;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004ae8e0

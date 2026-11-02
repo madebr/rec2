@@ -196,7 +196,16 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
 
 // ResetExplosions
 
-// RemoveAllExplosionettes
+void C2_HOOK_FASTCALL RemoveAllExplosionettes(void) {
+    int i;
+    tExplosion* explosion;
+
+    for (i = REC2_ASIZE(gExplosions), explosion = gExplosions; i != 0; i--, explosion++) {
+        if (explosion->actor->parent != NULL) {
+            BrActorRemove(explosion->actor);
+        }
+    }
+}
 
 // MungeExplosions
 
@@ -714,9 +723,35 @@ void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
 
 // ReadConnotations
 
-// ReadSmashLevels
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// ReadSmashableData
+// STUB: CARMA2_HW 0x004eea20
+// STUB: CARMA2_SW 0x004ea6c0
+void C2_HOOK_FASTCALL ReadSmashLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004ee990
+// FUNCTION: CARMA2_SW 0x004ea630
+void C2_HOOK_FASTCALL ReadSmashableData(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage) {
+    int i;
+    tCar_crush_smashable_part* smashable;
+
+    pCar_crush_buffer_entry->count_smashables = (tU16)GetAnInt(pF);
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_smashable_part) != 124);
+    pCar_crush_buffer_entry->smashables = BrMemAllocate(pCar_crush_buffer_entry->count_smashables * sizeof(tCar_crush_smashable_part), kMem_smashable_info);
+    for (i = 0, smashable = pCar_crush_buffer_entry->smashables; i < pCar_crush_buffer_entry->count_smashables; i++, smashable++) {
+        GetAString(pF, smashable->material_name);
+        smashable->funk = -1;
+        ReadSmashLevels(pF, &smashable->levels, &smashable->count_smashable_levels, 0, pBrender_storage);
+    }
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -792,7 +827,16 @@ static void C2_HOOK_FASTCALL InitDecals(void) {
     }
 }
 
-// RemoveAllDecals
+void C2_HOOK_FASTCALL RemoveAllDecals(void) {
+    int i;
+    tDecal* decal;
+    for (i = REC2_ASIZE(gDecals), decal = gDecals; i != 0; i--, decal++) {
+        if (decal->time != 0) {
+            BrActorRemove(decal->actor);
+        }
+        decal->time = 0;
+    }
+}
 
 // STUB: CARMA2_HW 0x004efa00
 // STUB: CARMA2_SW 0x004eb660
@@ -812,18 +856,35 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 
 // DoFragMovement
 
-// MungeGlassFragments2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004f0150
+// STUB: CARMA2_SW 0x004ebdb0
+void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // MungeAnimationRepairs
 
 // MungeGlassFragments
 
-// KillAllGlassFragments
+void C2_HOOK_FASTCALL KillAllGlassFragments(void) {
+    MungeGlassFragments2(1);
+}
 
-// STUB: CARMA2_HW 0x004f02b0
-// STUB: CARMA2_SW 0x004ebf10
+// FUNCTION: CARMA2_HW 0x004f02b0
+// FUNCTION: CARMA2_SW 0x004ebf10
 void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
-    NOT_IMPLEMENTED();
+
+    KillAllGlassFragments();
+    RemoveAllDecals();
+    RemoveAllExplosionettes();
 }
 
 // FUNCTION: CARMA2_HW 0x004f0310
@@ -1201,6 +1262,30 @@ void C2_HOOK_FASTCALL DetermineTilitudinality(br_model* pModel, int* pArea_1, in
     }
     if (*pArea_2 > 250) {
         *pArea_2 = 250;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004f5c70
+// FUNCTION: CARMA2_SW 0x004f18d0
+void C2_HOOK_FASTCALL GetGlassFragmentCounts(int* pVisible_count, int* pActive_count) {
+    tU32 now;
+    tSmash_vertex* fragment;
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmash_glass_fragments) != 200);
+
+    *pVisible_count = 0;
+    *pActive_count = 0;
+    now = GetTotalTime();
+    fragment = gSmash_glass_fragments;
+    for (i = 0; i < (int)REC2_ASIZE(gSmash_glass_fragments); i++) {
+        if (fragment->end_time != 0) {
+            *pActive_count = *pActive_count + 1;
+            if (now < fragment->field_0x10) {
+                *pVisible_count = *pVisible_count + 1;
+            }
+        }
+        fragment++;
     }
 }
 

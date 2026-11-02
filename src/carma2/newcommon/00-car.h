@@ -192,9 +192,9 @@ extern void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 // SetAmbientPratCam
 
-// SetTextureBits
+extern void C2_HOOK_FASTCALL SetTextureBits(tCar_spec* pCar);
 
-// MungeSomeOtherCarGraphics
+extern void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void);
 
 extern void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period);
 
@@ -234,7 +234,7 @@ extern tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL AdjustNonCar(br_actor* pActor, const br_matrix34* pMatrix);
 
-// GetPrecalculatedFacesUnderCar
+extern int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** pFace_refs);
 
 extern void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex);
 
