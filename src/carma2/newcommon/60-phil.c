@@ -105,6 +105,7 @@ int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffe
 
 int C2_HOOK_FASTCALL SizeOfObjectNetworkStuff(tPhysics_joint_type pType) {
 
+    // FIXME: add structs and use sizeof(struct) + add static assertion making sure sizeof(struct) == {0x28,0xc,0x10}
     switch (pType & 0xf) {
     case eJoint_none:
         return 0x28;
