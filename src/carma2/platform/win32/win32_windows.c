@@ -82,9 +82,9 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
 
 // FUNCTION: CARMA2_HW 0x0044c830
 // FUNCTION: CARMA2_SW 0x0044c5e0
-void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void) {
-    if (gActionReplayBufferFile != NULL) {
-        PFfclose(gActionReplayBufferFile);
-        gActionReplayBufferFile = NULL;
+void C2_HOOK_FASTCALL PDCloseReplayFile(void) {
+    if (gAction_replay_buffer_file != NULL) {
+        PFfclose(gAction_replay_buffer_file);
+        gAction_replay_buffer_file = NULL;
     }
 }

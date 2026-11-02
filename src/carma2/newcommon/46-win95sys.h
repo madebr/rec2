@@ -120,7 +120,7 @@ extern void C2_HOOK_FASTCALL DoRunLengthX(tFlic_descriptor* pFlic_info, tU32 pCh
 
 extern void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** pBuffer, tU32* pSize);
 
-// PDDisposeActionReplayBuffer
+extern void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void* pBuffer);
 
 // PDInitJoysticks
 

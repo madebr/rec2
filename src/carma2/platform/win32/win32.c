@@ -215,7 +215,7 @@ DWORD gPD_page_size;
 
 // GLOBAL: CARMA2_HW 0x00681fa0
 // GLOBAL: CARMA2_SW 0x0067c6e0
-FILE *gActionReplayBufferFile;
+FILE *gAction_replay_buffer_file;
 
 #ifdef REC2_SW
 // GLOBAL: CARMA2_SW 0x006a6c08
@@ -439,7 +439,7 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #endif
     if (been_here) {
 #ifdef REC2_HW
-        PDDisposeActionReplayBuffer();
+        PDCloseReplayFile();
 #endif
         ExitProcess(702);
     } else {
@@ -468,7 +468,7 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
         }
         dr_dprintf("End of PDShutdownSystem()");
         CloseDiagnostics();
-        PDDisposeActionReplayBuffer();
+        PDCloseReplayFile();
         ExitProcess(gExit_code);
     }
 }

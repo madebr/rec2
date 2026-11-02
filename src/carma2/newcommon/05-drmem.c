@@ -455,4 +455,3 @@ void C2_HOOK_FASTCALL CreateStainlessClasses(void) {
 void C2_HOOK_FASTCALL CheckMemory(void) {
 
 }
-
