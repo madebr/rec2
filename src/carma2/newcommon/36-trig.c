@@ -109,15 +109,45 @@ float gFloat_sine_table[91] = {
 
 // FastFloatSin
 
-// FastFloatCos
+// FUNCTION: CARMA2_HW 0x00511440
+// FUNCTION: CARMA2_SW 0x0050c890
+float C2_HOOK_FASTCALL FastFloatCos(int pAngle_degrees) {
+
+    if (pAngle_degrees < 0) {
+        pAngle_degrees = 360 - -pAngle_degrees % 360;
+    } else {
+        pAngle_degrees = pAngle_degrees % 360;
+    }
+
+    if (pAngle_degrees > 270) {
+        return gFloat_sine_table[pAngle_degrees - 270];
+    }
+    if (pAngle_degrees > 180) {
+        return -gFloat_sine_table[270 - pAngle_degrees];
+    }
+    if (pAngle_degrees > 90) {
+        return -gFloat_sine_table[pAngle_degrees - 90];
+    }
+    return *(gFloat_sine_table + 90 - pAngle_degrees);
+}
 
 // FastScalarSin
 
-// FastScalarCos
+// FUNCTION: CARMA2_HW 0x00511620
+// FUNCTION: CARMA2_SW 0x0050ca70
+br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_degrees) {
+
+    return FastFloatCos(pAngle_degrees);
+}
 
 // FastScalarSinAngle
 
-// FastScalarCosAngle
+// FUNCTION: CARMA2_HW 0x00511810
+// FUNCTION: CARMA2_SW 0x0050cc60
+br_scalar C2_HOOK_FASTCALL FastScalarCosAngle(br_angle pAngle) {
+
+    return FastScalarCos((int)((double)pAngle * (360.0 / 65536.0)));
+}
 
 // FUNCTION: CARMA2_HW 0x005119c0
 // FUNCTION: CARMA2_SW 0x0050ce10
