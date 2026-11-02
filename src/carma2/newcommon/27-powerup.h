@@ -12,6 +12,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern br_model* gModel_powerup_armor;
+extern br_model* gModel_powerup_power;
+extern br_model* gModel_powerup_offence;
 extern int gInventory[20];
 extern int gINT_006a0a6c;
 extern int gINT_006a0a5c;
@@ -387,7 +390,7 @@ extern void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
-// RenderChangingPowerup
+extern void C2_HOOK_CDECL RenderChangingPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
 extern void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
 
