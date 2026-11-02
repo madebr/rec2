@@ -686,7 +686,12 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // MineExplode
 
-// TiggerMineToExplode
+// FUNCTION: CARMA2_HW 0x004ddc10
+// FUNCTION: CARMA2_SW 0x004da110
+void C2_HOOK_FASTCALL TiggerMineToExplode(tCar_spec* pCar) {
+
+    pCar->index |= 0x20;
+}
 
 // HitAShatOutMine
 
@@ -717,13 +722,6 @@ void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
 // KangerooJump
 
 // AnnihilatePeds
-
-// FUNCTION: CARMA2_HW 0x004ddc10
-// FUNCTION: CARMA2_SW 0x004da110
-void C2_HOOK_FASTCALL FUN_004ddc10(unsigned int* pFlags) {
-
-    *pFlags |= 0x20;
-}
 
 // NapalmPeds
 

@@ -261,7 +261,7 @@ extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* p
 
 // MineExplode
 
-// TiggerMineToExplode
+extern void C2_HOOK_FASTCALL TiggerMineToExplode(tCar_spec* pCar);
 
 // HitAShatOutMine
 
@@ -278,8 +278,6 @@ extern void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor);
 // KangerooJump
 
 // AnnihilatePeds
-
-extern void C2_HOOK_FASTCALL FUN_004ddc10(unsigned int* pFlags);
 
 // NapalmPeds
 
