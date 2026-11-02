@@ -9,6 +9,7 @@
 #include "28-world3.h"
 
 #include "08-loading1.h"
+#include "37-brucetrk.h"
 #include "41-utility.h"
 #include "51-smash.h"
 #include "52-errors.h"
@@ -96,7 +97,20 @@ void C2_HOOK_FASTCALL InitTreeSurgery(void) {
 
 // LoadTrack
 
-// RemoveBounds
+// FUNCTION: CARMA2_HW 0x00506e20
+// FUNCTION: CARMA2_SW 0x00502270
+intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_actor, type, 0x12);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_actor, type_data, 0x5c);
+    (void)pArg;
+
+    if (pActor->type == BR_ACTOR_BOUNDS || pActor->type == BR_ACTOR_BOUNDS_CORRECT) {
+        BrResFree(pActor->type_data);
+        pActor->type_data = NULL;
+    }
+    return 0;
+}
 
 // RemoveBoundsStructures
 
@@ -106,7 +120,15 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
     NOT_IMPLEMENTED();
 }
 
-// ProcessTrack
+// FUNCTION: CARMA2_HW 0x00506e50
+// FUNCTION: CARMA2_SW 0x005022a0
+void C2_HOOK_FASTCALL ProcessTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world) {
+
+    RenderTrack(pWorld, pTrack_spec, pCamera, pCamera_to_world);
+    if (gAdditional_actors != NULL) {
+        BrZbsSceneRenderAdd(gAdditional_actors);
+    }
+}
 
 // AnimateSky
 
