@@ -428,9 +428,9 @@ extern void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk);
 
-// ApplyShitMine
+extern void C2_HOOK_FASTCALL ApplyShitMine(tPipe_chunk** pChunk);
 
-// ApplyEndShitMine
+extern void C2_HOOK_FASTCALL ApplyEndShitMine(tPipe_chunk** pChunk);
 
 // ApplyTransformType
 
@@ -510,9 +510,9 @@ extern void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPre
 
 extern void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
-// UndoShitMine
+extern void C2_HOOK_FASTCALL UndoShitMine(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
-// UndoEndShitMine
+extern void C2_HOOK_FASTCALL UndoEndShitMine(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 extern void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 

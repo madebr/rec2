@@ -568,6 +568,8 @@ typedef struct tPipe_chunk {
         tPipe_single_vector vector;
         tPipe_chunk_powerup_lose powerup_lose;
         tPipe_chunk_powerup_respawn powerup_respawn;
+        br_matrix34 shit_mine;
+        tPipe_chunk_end_shit_mine end_shit_mine;
         char raw_data[0];
     } data;
 } tPipe_chunk;
