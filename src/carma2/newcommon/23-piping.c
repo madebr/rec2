@@ -1116,9 +1116,24 @@ void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
     ARDoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
 }
 
-// ApplyShitMine
+// FUNCTION: CARMA2_HW 0x004c9d50
+// FUNCTION: CARMA2_SW 0x004c6480
+void C2_HOOK_FASTCALL ApplyShitMine(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk, data.shit_mine, 0x30);
 
-// ApplyEndShitMine
+    ARDoShitMine((br_actor*)(*pChunk)->subject_index, &(*pChunk)->data.shit_mine);
+}
+
+// FUNCTION: CARMA2_HW 0x004c9d60
+// FUNCTION: CARMA2_SW 0x004c6490
+void C2_HOOK_FASTCALL ApplyEndShitMine(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_end_shit_mine, m, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_end_shit_mine, m, 0x30);
+
+    ARUndoShitMine((br_actor*)(*pChunk)->subject_index, &(*pChunk)->data.end_shit_mine.m);
+}
 
 // ApplyTransformType
 
@@ -1292,9 +1307,26 @@ void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPre
     ARUndoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
 }
 
-// UndoShitMine
+// FUNCTION: CARMA2_HW 0x004ca3c0
+// FUNCTION: CARMA2_SW 0x004c6af0
+void C2_HOOK_FASTCALL UndoShitMine(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
 
-// UndoEndShitMine
+    (void)pPrev_chunk;
+
+    ARUndoShitMine((br_actor*)(*pChunk)->subject_index, &(*pChunk)->data.shit_mine);
+}
+
+// FUNCTION: CARMA2_HW 0x004ca3d0
+// FUNCTION: CARMA2_SW 0x004c6b00
+void C2_HOOK_FASTCALL UndoEndShitMine(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_end_shit_mine, m, 0x0);
+
+    (void)pPrev_chunk;
+
+    ARDoShitMine((br_actor*)(*pChunk)->subject_index, &(*pChunk)->data.end_shit_mine.m);
+}
 
 // FUNCTION: CARMA2_HW 0x004ca3e0
 // FUNCTION: CARMA2_SW 0x004c6b10
