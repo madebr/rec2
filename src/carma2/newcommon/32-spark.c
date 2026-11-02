@@ -719,11 +719,41 @@ int C2_HOOK_FASTCALL GetSmokeOn(void) {
     return gSmoke_on;
 }
 
-// StopCarSmoking
+// FUNCTION: CARMA2_HW 0x004fca40
+// FUNCTION: CARMA2_SW 0x004f7fa0
+void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar) {
+    int i;
 
-// StopCarSmokingInstantly
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.car == pCar && gSmoke_column[i].lifetime > 2000) {
+            gSmoke_column[i].lifetime = 2000;
+        }
+    }
+}
 
-// StopObjectSmokingInstantly
+// FUNCTION: CARMA2_HW 0x004fca70
+// FUNCTION: CARMA2_SW 0x004f7fd0
+void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.car == pCar_spec) {
+            gSmoke_column[i].lifetime = 0;
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004fca90
+// FUNCTION: CARMA2_SW 0x004f7ff0
+void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.collision_info == pObject) {
+            gSmoke_column[i].lifetime = 0;
+        }
+    }
+}
 
 // ConditionalSmokeColumn
 
@@ -841,12 +871,20 @@ intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void* pContext) {
 
 // ForEveryCarModel
 
-// MightBlendifyMaterial
+int C2_HOOK_FASTCALL MightBlendifyMaterial(br_material* pMaterial, int pBlend_factor) {
 
-// STUB: CARMA2_HW 0x004fed00
-// STUB: CARMA2_SW 0x004fa5e0
+    if (GetBlenficatiousnessOfMaterial(pMaterial) != pBlend_factor) {
+        BlendifyMaterial(pMaterial, pBlend_factor);
+        BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+        return 1;
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004fed00
+// FUNCTION: CARMA2_SW 0x004fa5e0
 int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial) {
-    NOT_IMPLEMENTED();
+    return MightBlendifyMaterial(pMaterial, 25);
 }
 
 // FUNCTION: CARMA2_HW 0x004fecf0
@@ -867,7 +905,18 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
     ForEveryCarMaterial(pCar_spec, UnBlendifyMaterialCB, 1);
 }
 
-// IsCarSmoking
+// FUNCTION: CARMA2_HW 0x004fed90
+// FUNCTION: CARMA2_SW 0x004fa670
+int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if ((gColumn_flags & (1 << i)) && gSmoke_column[i].core.car == pCar) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // ClearSplashReplay
 
@@ -892,4 +941,3 @@ void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
 // AdjustSplashReplay
 
 // InitReplaySplashes
-
