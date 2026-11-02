@@ -189,11 +189,11 @@ void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
 extern int C2_HOOK_FASTCALL GetSmokeOn(void);
 
-// StopCarSmoking
+extern void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar);
 
-// StopCarSmokingInstantly
+extern void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec);
 
-// StopObjectSmokingInstantly
+extern void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject);
 
 // ConditionalSmokeColumn
 
@@ -235,7 +235,7 @@ extern intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void *pContex
 
 // ForEveryCarModel
 
-// MightBlendifyMaterial
+extern int C2_HOOK_FASTCALL MightBlendifyMaterial(br_material* pMaterial, int pBlend_factor);
 
 extern int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial);
 
@@ -245,7 +245,7 @@ extern int C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
-// IsCarSmoking
+extern int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar);
 
 // ClearSplashReplay
 
