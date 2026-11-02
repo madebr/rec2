@@ -87,6 +87,7 @@ int gPickup_respawn_max_extra_time_ms;
 int gBlind_pedestrians;
 
 // GLOBAL: CARMA2_HW 0x007447dc
+// GLOBAL: CARMA2_SW 0x0073b29c
 float gPed_gravity_multiplier;
 
 // GLOBAL: CARMA2_HW 0x007447e4
@@ -895,7 +896,13 @@ int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetLowGravityPeds
+// FUNCTION: CARMA2_HW 0x004de8d0
+// FUNCTION: CARMA2_SW 0x004dadd0
+int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_gravity_multiplier = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004de900
 // FUNCTION: CARMA2_SW 0x004dae00
