@@ -547,7 +547,7 @@ void C2_HOOK_FASTCALL LoadCarCrushDataEntry(FILE* pF, tCar_crush_buffer_entry* p
     if (strlen(pCar_crush_buffer_entry->actor_name) < 4) {
         PDFatalError("Less than 4 chars in car actor identifier");
     }
-    StringTransformToLower(pCar_crush_buffer_entry->actor_name);
+    DRstrlwr(pCar_crush_buffer_entry->actor_name);
     /* Softness */
     switch (GetALineAndInterpretCommand(pF, gSoftness_names, REC2_ASIZE(gSoftness_names))) {
     case eSoftness_VerySoft:
