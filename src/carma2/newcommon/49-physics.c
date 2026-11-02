@@ -594,38 +594,36 @@ int C2_HOOK_FASTCALL ReduceEffectOfForces(tPhysics_joint_force* pForces, br_scal
     int i;
     br_scalar total;
 
-    total = 0.f;
+    total = 0.0f;
     for (i = 0; i < pIndex_count; i++) {
         total += pImpulses[pIndices[i]];
     }
-    if (total > pThreshold) {
-        pThreshold /= total;
-        gINT_00692dc8 = 1;
-        for (i = 0; i < pCount; i++) {
-            pImpulses[i] = -pImpulses[i];
-        }
-        for (i = 0; i < pIndex_count; i++) {
-            pImpulses[pIndices[i]] *= -pThreshold;
-            if (pForces[pIndices[i]].type & 0x100) {
-                pForces[pIndices[i]].field_0x44.v[0] *= pThreshold;
-                pForces[pIndices[i]].field_0x44.v[1] *= pThreshold;
-                pForces[pIndices[i]].field_0x44.v[2] *= pThreshold;
-                if (pForces[pIndices[i]].object_b != NULL) {
-                    pForces[pIndices[i]].field_0x44.v[0] *= pThreshold;
-                    pForces[pIndices[i]].field_0x44.v[1] *= pThreshold;
-                    pForces[pIndices[i]].field_0x44.v[2] *= pThreshold;
-                }
-            }
-        }
-        for (i = 0; i < pCount; i++) {
-            if (!(pImpulses[i] >= 0.f)) {
-                pImpulses[i] = 0.f;
-            }
-            pForces[i].type = 9;
-        }
-        return 1;
+    if (total <= pThreshold) {
+        return 0;
     }
-    return 0;
+    pThreshold /= total;
+    gINT_00692dc8 = 1;
+    for (i = 0; i < pCount; i++) {
+        pImpulses[i] = -pImpulses[i];
+    }
+    for (i = 0; i < pIndex_count; i++) {
+        pImpulses[pIndices[i]] *= -pThreshold;
+        if (pForces[pIndices[i]].type & 0x100) {
+            BrVector3Scale(&pForces[pIndices[i]].field_0x44, &pForces[pIndices[i]].field_0x44,pThreshold);
+            if (pForces[pIndices[i]].object_b != NULL) {
+                BrVector3Scale(&pForces[pIndices[i]].field_0x44, &pForces[pIndices[i]].field_0x44, pThreshold);
+            }
+        }
+    }
+    for (i = 0; i < pCount; i++) {
+        if (pImpulses[i] < 0.0f) {
+            pImpulses[i] = 0.0f;
+        }
+        pForces[i].type = 9;
+    }
+    return 1;
+    // }
+    // return 0;
 }
 
 // DoCollisions
