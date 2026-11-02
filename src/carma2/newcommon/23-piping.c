@@ -16,6 +16,7 @@
 
 #include "51-smash.h"
 #include "61-pedestrn.h"
+#include "60-phil.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "platform.h"
@@ -1051,7 +1052,19 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 
 // ApplyPedModelChange
 
-// ApplyPHILObject
+// FUNCTION: CARMA2_HW 0x004c9b80
+// FUNCTION: CARMA2_SW 0x004c62b0
+void C2_HOOK_FASTCALL ApplyPHILObject(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, subject_index, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk, subject_index, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_phil_object, matrix, 0x0);
+
+    chunk = *pChunk;
+    PHILApplyPHILObject((tPhysics_object*)chunk->subject_index, &chunk->data.phil_object.matrix);
+}
 
 // ApplyGibShower
 
@@ -1078,7 +1091,16 @@ void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk) {
 
 // ApplyPowerupLose
 
-// ApplyFunkEnable
+// FUNCTION: CARMA2_HW 0x004c9c20
+// FUNCTION: CARMA2_SW 0x004c6350
+void C2_HOOK_FASTCALL ApplyFunkEnable(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk, subject_index, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_funk_enable, flags, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_funk_enable, flags, 0x2);
+
+    AdjustFunkEnable((int)(*pChunk)->subject_index, (tS16)(*pChunk)->data.funk_enable.flags);
+}
 
 // ApplyVanishDismembered
 
@@ -1267,7 +1289,17 @@ void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_c
 
 // UndoPowerupLose
 
-// UndoFunkEnable
+// FUNCTION: CARMA2_HW 0x004ca310
+// FUNCTION: CARMA2_SW 0x004c6a40
+void C2_HOOK_FASTCALL UndoFunkEnable(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk, subject_index, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_funk_enable, flags, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_funk_enable, flags, 0x2);
+
+    (void)pPrev_chunk;
+    AdjustFunkEnable((int)(*pChunk)->subject_index, (*pChunk)->data.funk_enable.flags == 0);
+}
 
 // UndoVanishDismembered
 

@@ -560,6 +560,7 @@ typedef struct tPipe_chunk {
         tPipe_ped_physics_data ped_physics;
         tPipe_single_ped_dismember ped_dismember;
         tPipe_phil_object phil_object;
+        tPipe_funk_enable funk_enable;
         tPipe_chunk_shrapnel shrapnel;
         tPipe_chunk_identity identity;
         tPipe_chunk_smash_model_change smash_model_change;
