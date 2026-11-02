@@ -33,6 +33,7 @@ extern int gCount_smashable_noncars;
 extern tBRender_smoke* gBR_smoke_pointers[35];
 extern int gN_BR_smoke_structs;
 extern int gColumn_flags;
+extern br_model* gShrapnel_model[2];
 extern br_pixelmap* gFlame_map[20];
 extern br_model* gLollipop_model;
 extern tSmoke_column gSmoke_column[10];
@@ -82,7 +83,7 @@ extern void C2_HOOK_FASTCALL ResetSparks(void);
 
 // InitShrapnel
 
-// LoadInShrapnel
+extern void C2_HOOK_FASTCALL LoadInShrapnel(void);
 
 // KillShrapnel
 
@@ -188,11 +189,11 @@ void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
 extern int C2_HOOK_FASTCALL GetSmokeOn(void);
 
-// StopCarSmoking
+extern void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar);
 
-// StopCarSmokingInstantly
+extern void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec);
 
-// StopObjectSmokingInstantly
+extern void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject);
 
 // ConditionalSmokeColumn
 
@@ -230,9 +231,11 @@ extern void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterial
 
 // ForEveryCarModelCB
 
+extern intptr_t C2_HOOK_CDECL ForEveryCarModelCB(br_actor* pActor, void *pContext);
+
 // ForEveryCarModel
 
-// MightBlendifyMaterial
+extern int C2_HOOK_FASTCALL MightBlendifyMaterial(br_material* pMaterial, int pBlend_factor);
 
 extern int C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial);
 
@@ -242,7 +245,7 @@ extern int C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
-// IsCarSmoking
+extern int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar);
 
 // ClearSplashReplay
 

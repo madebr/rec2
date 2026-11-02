@@ -477,6 +477,7 @@ void C2_HOOK_FASTCALL SSDXBlit(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00500c00
+// FUNCTION: CARMA2_SW 0x004fc560
 void C2_HOOK_FASTCALL SSDXSetPaletteEntries(PALETTEENTRY* pPalette, int pStart, int pCount) {
 
     if (gWindowed && gDirectDrawPalette != NULL) {

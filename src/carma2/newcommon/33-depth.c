@@ -202,6 +202,10 @@ void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial) {
     }
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // FUNCTION: CARMA2_HW 0x00445340
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8) {
 
@@ -234,6 +238,10 @@ void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* 
         FrobFog();
     }
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // Tan
 
@@ -280,6 +288,19 @@ void C2_HOOK_FASTCALL ReduceDepthStart(void) {
         gProgram_state.current_depth_effect.start--;
     }
     sprintf(s, "Depth start reduced to %d", gProgram_state.current_depth_effect.start);
+    NewTextHeadupSlot(4, 0, 500, -1, s);
+    gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
+}
+
+// FUNCTION: CARMA2_HW 0x004468f0
+// FUNCTION: CARMA2_SW 0x00446970
+void C2_HOOK_FASTCALL IncreaseDepthStart(void) {
+    char s[256];
+
+    if (gProgram_state.current_depth_effect.start < 13) {
+        gProgram_state.current_depth_effect.start++;
+    }
+    sprintf(s, "Depth start increased to %d", gProgram_state.current_depth_effect.start);
     NewTextHeadupSlot(4, 0, 500, -1, s);
     gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
 }
@@ -478,9 +499,9 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
     int temp_start;
     tDepth_effect_type temp_type;
 
+    temp_type = gProgram_state.current_depth_effect.type;
     temp_start = gProgram_state.current_depth_effect.start;
     temp_end = gProgram_state.current_depth_effect.end;
-    temp_type = gProgram_state.current_depth_effect.type;
     temp_red = gProgram_state.current_depth_effect.colour.red;
     temp_green = gProgram_state.current_depth_effect.colour.green;
     temp_blue = gProgram_state.current_depth_effect.colour.blue;
@@ -493,9 +514,9 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
         gSwap_depth_effect_colour_green,
         gSwap_depth_effect_colour_blue,
         gProgram_state.racing);
+    gSwap_depth_effect_type = temp_type;
     gSwap_depth_effect_start = temp_start;
     gSwap_depth_effect_end = temp_end;
-    gSwap_depth_effect_type = temp_type;
     gSwap_depth_effect_colour_red = temp_red;
     gSwap_depth_effect_colour_green = temp_green;
     gSwap_depth_effect_colour_blue = temp_blue;
@@ -505,7 +526,21 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
 #endif
 }
 
-// ToggleDepthCueing
+// FUNCTION: CARMA2_HW 0x00447110
+// STUB: CARMA2_SW 0x00447490
+void C2_HOOK_FASTCALL ToggleDepthCueing(void) {
+    int enabled;
+
+    enabled = GetDepthCueingOn();
+    SetDepthCueingOn(!enabled);
+    if (gProgram_state.current_depth_effect.type != eDepth_effect_none) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_depth_cueing_on));
+    } else if (gSwap_depth_effect_type != eDepth_effect_none) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_depth_cueing_off));
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_there_is_no_depth_cueing_for_this_race));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00447220
 // FUNCTION: CARMA2_SW 0x00447640

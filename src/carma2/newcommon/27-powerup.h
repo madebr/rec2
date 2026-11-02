@@ -12,6 +12,14 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern br_model* gModel_powerup_armor;
+extern br_model* gModel_powerup_power;
+extern br_model* gModel_powerup_offence;
+extern int gInventory[20];
+extern int gINT_006a0a6c;
+extern int gINT_006a0a5c;
+extern int gInventory_selected;
+
 extern tHeadup_icon gPickedup_powerups[20];
 extern tSlot_info gCost_APO;
 extern tSlot_info gTrade_in_value_APO;
@@ -25,13 +33,18 @@ extern int gPed_dismemberfest;
 extern int gPanicking_peds;
 extern float gPed_gravity_multiplier;
 extern int gCount_mutant_tail_parts;
-extern tPhysics_object* gMutant_tail_first_collision_info;
+extern tPhysics_joint* gMutant_tail_first_joint;
+extern int gMutant_tail_state;
+extern tPhysics_object* gMutant_tail_object;
 extern float gMass_mutant_tail_link;
 extern float gMass_mutant_tail_ball;
 extern float gMass_mine;
 extern int gInstant_handbrake;
 extern int gInventory_cycling;
 extern tU32 gInventory_timeout;
+extern tU32* gReal_render_palette;
+
+extern char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index);
 
 // GetNextGoodyTime
 
@@ -85,7 +98,7 @@ extern void C2_HOOK_FASTCALL InitPowerups(void);
 
 // ResetRepulseEffects
 
-// EmptyInventory
+extern void C2_HOOK_FASTCALL EmptyInventory(void);
 
 // ResetPowerups
 
@@ -125,25 +138,25 @@ extern void C2_HOOK_FASTCALL ToggleInventory(void);
 
 // GotPowerupN
 
-// GotPowerup0
+extern void C2_HOOK_FASTCALL GotPowerup0(void);
 
-// GotPowerup1
+extern void C2_HOOK_FASTCALL GotPowerup1(void);
 
-// GotPowerup2
+extern void C2_HOOK_FASTCALL GotPowerup2(void);
 
-// GotPowerup3
+extern void C2_HOOK_FASTCALL GotPowerup3(void);
 
-// GotPowerup4
+extern void C2_HOOK_FASTCALL GotPowerup4(void);
 
-// GotPowerup5
+extern void C2_HOOK_FASTCALL GotPowerup5(void);
 
-// GotPowerup6
+extern void C2_HOOK_FASTCALL GotPowerup6(void);
 
-// GotPowerup7
+extern void C2_HOOK_FASTCALL GotPowerup7(void);
 
-// GotPowerup8
+extern void C2_HOOK_FASTCALL GotPowerup8(void);
 
-// GotPowerup9
+extern void C2_HOOK_FASTCALL GotPowerup9(void);
 
 // GotCredits
 
@@ -201,11 +214,11 @@ extern int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar);
 
 // TrashBodywork
 
-// TakeDrugs
+extern int C2_HOOK_FASTCALL TakeDrugs(tPowerup* pPowerup, tCar_spec* pCar);
 
-// PaletteFuckedUpByDrugs
+extern void C2_HOOK_FASTCALL PaletteFuckedUpByDrugs(br_pixelmap* pPalette, int pOffset);
 
-// TheEffectsOfDrugs
+extern void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* pPowerup, tU32 pPeriod);
 
 // SetOpponentsSpeed
 
@@ -225,11 +238,11 @@ extern int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetImmortalPeds
+extern void C2_HOOK_FASTCALL ResetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetSuicidalPeds
+extern void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar);
 
@@ -283,7 +296,7 @@ extern int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* pPowerup, tCar_spec* pCar
 
 extern void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* pPowerup, tCar_spec* pCar);
 
-// PukeDrugsBackUp
+extern void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetOpponentsSpeed
 
@@ -297,15 +310,15 @@ extern void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* pPowerup, tCar_spec* pCar)
 
 extern void C2_HOOK_FASTCALL ResetBouncey(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetSuspension
+extern void C2_HOOK_FASTCALL ResetSuspension(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* pPowerup, tCar_spec* pCar);
 
-// PickAtRandom
+extern int C2_HOOK_FASTCALL PickAtRandom(tPowerup* pPowerup, tCar_spec* pCar);
 
-// GotVouchers
+extern int C2_HOOK_FASTCALL GotVouchers(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL MungeVouchers(tPowerup* pPowerup, tU32 pPeriod);
 
@@ -313,13 +326,13 @@ extern int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* pPowerup, tCar_spec* p
 
 extern void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetDancingPeds
+extern int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPanickingPeds
+extern int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetLowGravityPeds
+extern int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetPissedPeds
+extern int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetGhostPeds
 
@@ -329,7 +342,7 @@ extern void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* pPowerup, tCar_spec* p
 
 extern void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetPissedPeds
+extern void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ResetGhostPeds
 
@@ -349,9 +362,9 @@ extern int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* pPowerup, tCar_spec* pCa
 
 extern void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* pPowerup, tCar_spec* pCar);
 
-// SetMutantCorpses
+extern int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ResetMutantCorpses
+extern void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar);
 
 // ReceivedPowerup
 
@@ -365,9 +378,9 @@ extern int C2_HOOK_FASTCALL GetPowerupCount(void);
 
 extern void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition);
 
-// ARPowerupGot
+extern void C2_HOOK_FASTCALL ARPowerupGot(tPowerup* pPowerup, tCar_spec* pCar);
 
-// ARPowerupLose
+extern void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar);
 
 // SetPissed
 
@@ -375,11 +388,11 @@ extern void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPositio
 
 // PissedEffect
 
-// RenderSpinningPowerup
+extern void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
-// RenderChangingPowerup
+extern void C2_HOOK_CDECL RenderChangingPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
-// SetSpinningPowerup
+extern void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
 
 // DuplicateModel
 
