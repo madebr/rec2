@@ -639,21 +639,15 @@ void C2_HOOK_FASTCALL SetUpForce(br_vector3* pAngular, br_vector3* pLinear, cons
     int i;
 
     if (!(pObject->flags & 0x800)) {
-        pAngular->v[0] = pPoint->v[1] * pDirection->v[2] - pPoint->v[2] * pDirection->v[1];
-        pAngular->v[1] = pPoint->v[2] * pDirection->v[0] - pDirection->v[2] * pPoint->v[0];
-        pAngular->v[2] = pDirection->v[1] * pPoint->v[0] - pPoint->v[1] * pDirection->v[0];
+        BrVector3Cross(pAngular, pPoint, pDirection);
         for (i = 0; i < 3; i++) {
             pAngular->v[i] /= pObject->I.v[i];
         }
     } else {
-        pAngular->v[0] = 0.f;
-        pAngular->v[1] = 0.f;
-        pAngular->v[2] = 0.f;
+        BrVector3Set(pAngular, 0.0f, 0.0f, 0.f);
     }
     inverse_mass = (br_scalar)(1.0 / pObject->M);
-    pLinear->v[0] = pDirection->v[0] * inverse_mass;
-    pLinear->v[1] = pDirection->v[1] * inverse_mass;
-    pLinear->v[2] = pDirection->v[2] * inverse_mass;
+    BrVector3Scale(pLinear, pDirection, inverse_mass);
 }
 
 // SetUpTorqueHingePartners
