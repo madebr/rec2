@@ -1236,10 +1236,9 @@ void C2_HOOK_FASTCALL RepositionAndOrientateChildren(tPhysics_object* pObject, b
     if (child != NULL) {
         BrMatrix34LPInverse(&inverse, &pObject->transform_matrix);
         BrMatrix34Mul(&parent_matrix, &inverse, &pObject->actor->t.t.mat);
-        do {
+        for (; child != NULL; child = child->next) {
             RepositionAndOrientateChildren(child, pParent_matrix);
-            child = child->next;
-        } while (child != NULL);
+        }
     }
     BrMatrix34Copy(&pObject->transform_matrix, &pObject->actor->t.t.mat);
 }
