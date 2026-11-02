@@ -28,7 +28,7 @@ extern br_pixelmap* gPalette_source;
 
 br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
-void C2_HOOK_FASTCALL StringTransformToLower(char* pStr);
+void C2_HOOK_FASTCALL DRstrlwr(char* pStr);
 
 void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src);
 
@@ -144,7 +144,7 @@ int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialTablishly(br_material *pMat
 
 int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialPrimitively(br_material *pMaterial);
 
-int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material *pMaterial);
+int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterial(br_material *pMaterial);
 
 tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry);
 

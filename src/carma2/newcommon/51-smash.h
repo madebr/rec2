@@ -47,7 +47,7 @@ extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // ResetExplosions
 
-// RemoveAllExplosionettes
+extern void C2_HOOK_FASTCALL RemoveAllExplosionettes(void);
 
 // MungeExplosions
 
@@ -177,9 +177,9 @@ extern void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);
 
 // ReadConnotations
 
-// ReadSmashLevels
+extern void C2_HOOK_FASTCALL ReadSmashLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage);
 
-// ReadSmashableData
+extern void C2_HOOK_FASTCALL ReadSmashableData(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage);
 
 extern void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel);
 
@@ -195,7 +195,7 @@ extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush
 
 //static void C2_HOOK_FASTCALL InitDecals(void);
 
-//static void C2_HOOK_FASTCALL RemoveAllDecals(void);
+extern void C2_HOOK_FASTCALL RemoveAllDecals(void);
 
 extern void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF);
 
@@ -205,7 +205,7 @@ extern void C2_HOOK_FASTCALL InitSmashing(void);
 
 // DoFragMovement
 
-// MungeGlassFragments2
+extern void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race);
 
 // MungeAnimationRepairs
 
@@ -283,7 +283,7 @@ extern float C2_HOOK_FASTCALL BashObject(tPhysics_object* pObject, br_actor* pAc
 
 extern void C2_HOOK_FASTCALL NonCarSnapSmashCallback(tPhysics_object* pObject, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce);
 
-// SmashFaceMustBeUpdateable
+extern int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material* pMaterial);
 
 extern intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* pData);
 
@@ -302,6 +302,8 @@ extern intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec);
 // SmashEverything
 
 // DetermineTilitudinality
+
+extern void C2_HOOK_FASTCALL GetGlassFragmentCounts(int* pVisible_count, int* pActive_count);
 
 extern void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor);
 

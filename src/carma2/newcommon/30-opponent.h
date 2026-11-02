@@ -11,6 +11,9 @@
 
 #include "rec2_types.h"
 
+extern const char* gCop_name;
+extern const char* gDrone_name;
+
 extern int gBIG_APC_index;
 extern float gOpponent_nastyness_frigger;
 extern int gMinTimeOpponentRepair;
@@ -21,6 +24,7 @@ extern int gNum_of_opponents_completing_race;
 extern int gNum_of_opponents_getting_near;
 extern int gNum_of_opponents_pursuing;
 extern tU8* gBit_per_node;
+extern float gIn_view_distance;
 extern int gRoute_search_calls;
 extern int gRoute_search_last_target_count;
 extern int gRoute_search_target_count;
@@ -57,6 +61,8 @@ extern int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* 
 // CalcRaceRoute
 
 // TopUpRandomRoute
+
+extern void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOpponent_spec* pOpponent_spec);
 
 extern int C2_HOOK_FASTCALL SearchForSection(tRoute_section* pRoute, tRoute_section* pBest_route, int* pBest_count, tS16 pTarget, int pDepth, br_scalar pLength, tOpponent_spec* pOpponent_spec);
 
@@ -180,7 +186,7 @@ extern int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory);
 
 extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
 
-extern char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex);
+extern const char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex);
 
 extern tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec);
 

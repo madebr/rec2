@@ -706,6 +706,13 @@ const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
     return gMisc_strings[pIndex];
 }
 
+// FUNCTION: CARMA2_HW 0x00514d80
+// FUNCTION: CARMA2_SW 0x005101f0
+void C2_HOOK_FASTCALL CopyMiscString(int pIndex, char* pDestination) {
+
+    strcpy(pDestination, gMisc_strings[pIndex]);
+}
+
 // FUNCTION: CARMA2_HW 0x00514db0
 // FUNCTION: CARMA2_SW 0x00510220
 int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state) {
@@ -966,12 +973,25 @@ int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
 }
 
 // FUNCTION: CARMA2_HW 0x005158d0
-void C2_HOOK_FASTCALL DRstrlwr(char* s) {
+// FUNCTION: CARMA2_SW 0x00510d40
+void C2_HOOK_FASTCALL DRstrupr(char* s) {
     int l = (int)strlen(s);
     int i;
 
     for (i = 0; i < l; i++) {
         s[i] = toupper(s[i]);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00515910
+// FUNCTION: CARMA2_SW 0x00510d80
+void C2_HOOK_FASTCALL DRstrlwr(char* s) {
+    int i;
+    int length;
+
+    length = (int)strlen(s);
+    for (i = 0; i < length; i++) {
+        s[i] = (char)tolower(s[i]);
     }
 }
 
@@ -1053,6 +1073,13 @@ br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, 
     } else {
         return (br_material*)FindMaterialCB(pActor, (void*)pName);
     }
+}
+
+// FUNCTION: CARMA2_HW 0x00515e10
+// FUNCTION: CARMA2_SW 0x00511280
+void C2_HOOK_FASTCALL GetBlendTableName(int pPercent, char* pDest) {
+
+    sprintf(pDest, "BLEND%d.TAB", 100 - pPercent);
 }
 
 void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent) {
@@ -1168,7 +1195,12 @@ int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel,
     }
 }
 
-// DistanceFromFace
+// FUNCTION: CARMA2_HW 0x00516090
+// FUNCTION: CARMA2_SW 0x00511500
+br_scalar C2_HOOK_FASTCALL DistanceFromFace(const br_vector3* pPoint, const tFace_ref* pFace) {
+
+    return BrVector3Dot(pPoint, &pFace->normal) - pFace->d;
+}
 
 // FUNCTION: CARMA2_HW 0x005160c0
 void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* pSrc) {
@@ -1190,6 +1222,16 @@ int C2_HOOK_FASTCALL TestForNan(const float* f) {
     } else {
         return 0;
     }
+}
+
+// FUNCTION: CARMA2_HW 0x00516110
+// FUNCTION: CARMA2_SW 0x00511580
+int C2_HOOK_FASTCALL DRVector2TestForNan(const br_vector2* pVector) {
+
+    if (pVector != NULL) {
+        return TestForNan(&pVector->v[0]) || TestForNan(&pVector->v[1]);
+    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00516160
@@ -1766,7 +1808,29 @@ intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
 
 // GetBlenficatiousnessOfMaterialPrimitively
 
-// GetBlenficatiousnessOfMaterial
+// FUNCTION: CARMA2_HW 0x00518e70
+// FUNCTION: CARMA2_SW 0x00512950
+int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterial(br_material* pMaterial) {
+    br_token_value* prims;
+
+    if (gScreen->type == BR_PMT_INDEX_8) {
+        if (pMaterial->index_blend == BrTableFind("BLEND75.TAB")) {
+            return 25;
+        }
+        if (pMaterial->index_blend == BrTableFind("BLEND50.TAB")) {
+            return 50;
+        }
+        if (pMaterial->index_blend == BrTableFind("BLEND25.TAB")) {
+            return 75;
+        }
+        return 100;
+    }
+    prims = pMaterial->extra_prim;
+    if (prims != NULL && prims[0].t == BRT_BLEND_B && prims[0].v.b == 1 && prims[1].t == BRT_OPACITY_X) {
+        return (100 * (prims[1].v.x >> 16)) / 256;
+    }
+    return 100;
+}
 
 // FUNCTION: CARMA2_HW 0x00518f20
 // FUNCTION: CARMA2_SW 0x00512a00

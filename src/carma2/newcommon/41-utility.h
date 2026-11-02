@@ -60,7 +60,7 @@ extern int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_
 
 extern void C2_HOOK_FASTCALL WaitFor(tU32);
 
-extern intptr_t DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
 
 extern intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg);
 
@@ -94,6 +94,8 @@ extern void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg
 
 extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
+extern void C2_HOOK_FASTCALL CopyMiscString(int pIndex, char* pDestination);
+
 extern int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state);
 
 extern double C2_HOOK_FASTCALL RGBDifferenceSqr(tRGB_colour* pColour_1, tRGB_colour* pColour_2);
@@ -122,6 +124,8 @@ extern br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int
 
 extern int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
+extern void C2_HOOK_FASTCALL DRstrupr(char* s);
+
 extern void C2_HOOK_FASTCALL DRstrlwr(char* s);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
@@ -136,6 +140,8 @@ extern intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data);
 
 extern br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive);
 
+extern void C2_HOOK_FASTCALL GetBlendTableName(int pPercent, char* pDest);
+
 extern void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent);
 
 extern void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent);
@@ -146,11 +152,13 @@ extern void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pMode
 
 extern int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel, br_uint_16 pFlags);
 
-// DistanceFromFace
+extern br_scalar C2_HOOK_FASTCALL DistanceFromFace(const br_vector3* pPoint, const tFace_ref* pFace);
 
 extern void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* pSrc);
 
 extern int C2_HOOK_FASTCALL TestForNan(const float* f);
+
+extern int C2_HOOK_FASTCALL DRVector2TestForNan(const br_vector2* pVector);
 
 extern int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
@@ -212,7 +220,7 @@ extern intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData)
 
 // GetBlenficatiousnessOfMaterialPrimitively
 
-// GetBlenficatiousnessOfMaterial
+extern int C2_HOOK_FASTCALL GetBlenficatiousnessOfMaterial(br_material* pMaterial);
 
 extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
