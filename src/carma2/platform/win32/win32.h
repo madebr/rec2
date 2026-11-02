@@ -37,7 +37,7 @@ extern int gCursorPos_LastClick_Valid;
 extern int gScaleMouse;
 extern int gScreenWidth;
 extern int gScreenHeight;
-extern FILE *gActionReplayBufferFile;
+extern FILE *gAction_replay_buffer_file;
 
 extern int gKeyboardBufferLength;
 extern unsigned char gKeyboardBuffer[20];
@@ -77,7 +77,7 @@ extern void C2_HOOK_FASTCALL PDGetCurrentDate(char* pStr);
 
 extern void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only);
 
-extern void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void);
+extern void C2_HOOK_FASTCALL PDCloseReplayFile(void);
 
 extern int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count);
 
