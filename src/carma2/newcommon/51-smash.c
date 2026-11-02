@@ -1149,11 +1149,9 @@ intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser) {
 
 // SmashEverything
 
-// DetermineTilitudinality
-
 // FUNCTION: CARMA2_HW 0x004f5ae0
 // FUNCTION: CARMA2_SW 0x004f1740
-void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* pArea_2) {
+void C2_HOOK_FASTCALL DetermineTilitudinality(br_model* pModel, int* pArea_1, int* pArea_2) {
     int i;
 
     *pArea_1 = 0;
