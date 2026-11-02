@@ -155,6 +155,13 @@ float C2_HOOK_STDCALL FastFloatArcCos(float pValue) {
     return 90.f - FastFloatArcSin(pValue);
 }
 
+// FUNCTION: CARMA2_HW 0x00511b50
+// FUNCTION: CARMA2_SW 0x0050cfa0
+br_scalar C2_HOOK_STDCALL FastScalarArcSin(br_scalar pValue) {
+
+    return FastFloatArcSin(pValue);
+}
+
 // FUNCTION: CARMA2_HW 0x00511c10
 // FUNCTION: CARMA2_SW 0x0050d060
 br_scalar C2_HOOK_STDCALL FastScalarArcCos(br_scalar pValue) {
