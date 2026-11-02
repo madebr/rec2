@@ -27,6 +27,22 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x006a0a70
+// GLOBAL: CARMA2_SW 0x0069aac8
+int gInventory[20];
+
+// GLOBAL: CARMA2_HW 0x006a0a6c
+// GLOBAL: CARMA2_SW 0x0069aac4
+int gINT_006a0a6c;
+
+// GLOBAL: CARMA2_HW 0x006a0a5c
+// GLOBAL: CARMA2_SW 0x0069aab4
+int gINT_006a0a5c;
+
+// GLOBAL: CARMA2_HW 0x006a0a58
+// GLOBAL: CARMA2_SW 0x0069aab0
+int gInventory_selected = 0;
+
 // GLOBAL: CARMA2_HW 0x006a0ad4
 // GLOBAL: CARMA2_SW 0x0069ab2c
 const char* gPowerup_txt_path;
@@ -215,7 +231,20 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 
 // ResetRepulseEffects
 
-// EmptyInventory
+// FUNCTION: CARMA2_HW 0x004da600
+// FUNCTION: CARMA2_SW 0x004d6ad0
+void C2_HOOK_FASTCALL EmptyInventory(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gInventory) != 20);
+
+    for (i = 0; i < (int)REC2_ASIZE(gInventory); i++) {
+        gInventory[i] = -1;
+    }
+    gInventory_selected = -1;
+    gINT_006a0a6c = 0;
+    gINT_006a0a5c = 0;
+}
 
 // ResetPowerups
 

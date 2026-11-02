@@ -12,6 +12,11 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gInventory[20];
+extern int gINT_006a0a6c;
+extern int gINT_006a0a5c;
+extern int gInventory_selected;
+
 extern tHeadup_icon gPickedup_powerups[20];
 extern tSlot_info gCost_APO;
 extern tSlot_info gTrade_in_value_APO;
@@ -90,7 +95,7 @@ extern void C2_HOOK_FASTCALL InitPowerups(void);
 
 // ResetRepulseEffects
 
-// EmptyInventory
+extern void C2_HOOK_FASTCALL EmptyInventory(void);
 
 // ResetPowerups
 
