@@ -458,6 +458,21 @@ int C2_HOOK_FASTCALL sign(int pNumber) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00514950
+// FUNCTION: CARMA2_SW 0x0050fd90
+float C2_HOOK_FASTCALL fsign(float pValue) {
+    int result;
+
+    if (pValue > 0.0f) {
+        result = 1;
+    } else if (pValue < 0.0f) {
+        result = -1;
+    } else {
+        result = 0;
+    }
+    return (float)result;
+}
+
 // FUNCTION: CARMA2_HW 0x005149a0
 // FUNCTION: CARMA2_SW 0x0050fde0
 FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
