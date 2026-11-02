@@ -695,7 +695,8 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // FUNCTION: CARMA2_HW 0x004de000
 // FUNCTION: CARMA2_SW 0x004da500
-void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor, br_matrix34* pMatrix) {
+    (void)pMatrix;
     if (pActor->parent == NULL) {
         BrActorAdd(gNon_track_actor, pActor);
     }
@@ -704,7 +705,8 @@ void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor) {
 
 // FUNCTION: CARMA2_HW 0x004de020
 // FUNCTION: CARMA2_SW 0x004da520
-void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor, br_matrix34* pMatrix) {
+    (void)pMatrix;
     if (pActor->parent != NULL) {
         BrActorRemove(pActor);
     }
