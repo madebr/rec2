@@ -116,6 +116,8 @@ extern void C2_HOOK_FASTCALL PreloadBunchOfFlics(int pBunch_index);
 
 extern void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index);
 
+extern void C2_HOOK_FASTCALL FlushAllFlics(int pBunch_index);
+
 extern void C2_HOOK_FASTCALL InitFlicQueue(void);
 
 extern int C2_HOOK_FASTCALL FlicQueueFinished(void);
