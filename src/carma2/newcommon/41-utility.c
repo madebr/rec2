@@ -460,13 +460,12 @@ int C2_HOOK_FASTCALL sign(int pNumber) {
 
 // FUNCTION: CARMA2_HW 0x00514950
 // FUNCTION: CARMA2_SW 0x0050fd90
-float C2_HOOK_FASTCALL signf(float pValue) {
+float C2_HOOK_FASTCALL fsign(float pValue) {
     int result;
 
     if (pValue > 0.0f) {
         result = 1;
-    } else if (!(pValue >= 0.0f)) {
-        /* The original unordered comparison also returns -1 for NaN. */
+    } else if (pValue < 0.0f) {
         result = -1;
     } else {
         result = 0;
