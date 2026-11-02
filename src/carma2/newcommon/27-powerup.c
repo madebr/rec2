@@ -93,6 +93,7 @@ float gPed_gravity_multiplier;
 int gPed_dismemberfest;
 
 // GLOBAL: CARMA2_HW 0x007447f8
+// GLOBAL: CARMA2_SW 0x0073b2b8
 int gPanicking_peds;
 
 // GLOBAL: CARMA2_HW 0x007059c0
@@ -886,7 +887,13 @@ int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetPanickingPeds
+// FUNCTION: CARMA2_HW 0x004de8a0
+// FUNCTION: CARMA2_SW 0x004dada0
+int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPanicking_peds = 1;
+    return pPowerup - gPowerup_array;
+}
 
 // SetLowGravityPeds
 
