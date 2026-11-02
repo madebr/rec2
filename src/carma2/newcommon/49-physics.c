@@ -1216,7 +1216,32 @@ void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn) {
     gPhysics_error_cb = pError_cbfn;
 }
 
-// RepositionAndOrientateChildren
+// FUNCTION: CARMA2_HW 0x004c62e0
+// FUNCTION: CARMA2_SW 0x004c2a10
+void C2_HOOK_FASTCALL RepositionAndOrientateChildren(tPhysics_object* pObject, br_matrix34* pParent_matrix) {
+    br_matrix34 inverse;
+    br_matrix34 parent_matrix;
+    br_matrix34 transform;
+    tPhysics_object* child;
+
+    child = pObject->child;
+    if (pParent_matrix != NULL) {
+        BrMatrix34Mul(&pObject->actor->t.t.mat, &pObject->transform_matrix, pParent_matrix);
+    } else {
+        BrMatrix34LPInverse(&inverse, &pObject->transform_matrix);
+        BrMatrix34Mul(&transform, &inverse, &pObject->actor->t.t.mat);
+        BrMatrix34LPNormalise(&parent_matrix, &transform);
+        pParent_matrix = &parent_matrix;
+    }
+    if (child != NULL) {
+        BrMatrix34LPInverse(&inverse, &pObject->transform_matrix);
+        BrMatrix34Mul(&parent_matrix, &inverse, &pObject->actor->t.t.mat);
+        for (; child != NULL; child = child->next) {
+            RepositionAndOrientateChildren(child, pParent_matrix);
+        }
+    }
+    BrMatrix34Copy(&pObject->transform_matrix, &pObject->actor->t.t.mat);
+}
 
 // FUNCTION: CARMA2_HW 0x004c63b0
 // FUNCTION: CARMA2_SW 0x004c2ae0
