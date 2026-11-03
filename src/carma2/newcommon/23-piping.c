@@ -2026,7 +2026,42 @@ void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk) {
     return ApplyTime(((tPipe_chunk_frame_bound*)*pChunk)->field_0x4);
 }
 
-// ApplySound
+// FUNCTION: CARMA2_HW 0x004c9370
+void C2_HOOK_FASTCALL ApplySound(tPipe_chunk** pChunk) {
+
+    if (gDisable_piped_sounds != 0) return;
+
+    if (((tPipe_chunk_sound*)*pChunk)->field_0x16 == 0) {
+        DRS3StartSound2(
+            GetOutletFromIndex(((tPipe_chunk_sound*)*pChunk)->field_0x14),
+            ((tPipe_chunk_sound*)*pChunk)->field_0x0,
+            1, -1, -1,
+            (int)(fabs(ARGetReplayRate()) * 65536.0),
+            0x10000);
+        return;
+    }
+
+    if (BrVector3LengthSquared((br_vector3*)&((tPipe_chunk_sound*)*pChunk)->field_0x8) == 0.0f) {
+        DRS3StartSound2(
+            GetOutletFromIndex(((tPipe_chunk_sound*)*pChunk)->field_0x14),
+            ((tPipe_chunk_sound*)*pChunk)->field_0x0,
+            1,
+            ((tPipe_chunk_sound*)*pChunk)->field_0x16 & 0xff,
+            (((tPipe_chunk_sound*)*pChunk)->field_0x16 >> 8) & 0xff,
+            (int)(fabs(ARGetReplayRate()) * (double)((tPipe_chunk_sound*)*pChunk)->field_0x4),
+            0x10000);
+    } else {
+        DRS3StartSound3D(
+            GetOutletFromIndex(((tPipe_chunk_sound*)*pChunk)->field_0x14),
+            ((tPipe_chunk_sound*)*pChunk)->field_0x0,
+            (br_vector3*)((tU8*)&((tPipe_chunk_sound*)*pChunk)->field_0x8),
+            &gZero_vector__smash,
+            1,
+            ((tPipe_chunk_sound*)*pChunk)->field_0x16,
+            (int)(fabs(ARGetReplayRate()) * (double)((tPipe_chunk_sound*)*pChunk)->field_0x4),
+            0x10000);
+    }
+}
 
 // ApplyCar
 
