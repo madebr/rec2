@@ -254,7 +254,20 @@ static void NetJoinUpdateSelectedGameInfo(tFrontend_spec* pFrontend) {
     }
 }
 
-// NetJoinChooseThisGame
+// FUNCTION: CARMA2_HW 0x004682c0
+int C2_HOOK_FASTCALL NetJoinChooseThisGame(tFrontend_spec* pFrontend) {
+    int sel;
+
+    sel = gFrontend_selected_item_index - pFrontend->scrollers[2].indexFirstScrollableItem;
+    if (sel < 0 || gGames_to_join[sel].game == NULL || (!gGames_to_join[sel].game->options.open_game && !gGames_to_join[sel].game->no_races_yet) || gGames_to_join[sel].game->num_players >= kMax_netplayers) {
+        gLast_graph_sel = -1;
+    } else {
+        gLast_graph_sel = sel;
+    }
+    pFrontend->items[17].enabled = kFrontendItemEnabled_disabled;
+    NetJoinUpdateSelectedGameInfo(pFrontend);
+    return 0;
+}
 
 // GLOBAL: CARMA2_HW 0x00688748
 int gINT_00688748;
