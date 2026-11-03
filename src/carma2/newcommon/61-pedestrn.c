@@ -1631,7 +1631,11 @@ void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pPed
     pPed->field_0x8c.m[3][2] = 0.f;
 }
 
-// BonerActiveHalted2
+// STUB: CARMA2_HW 0x00409400
+int C2_HOOK_FASTCALL BonerActiveHalted2(tPed_character_instance* pCharacter, undefined4 pArg2) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
 
 // CharacterNoLongerPhysicworthy
 
@@ -2054,4 +2058,15 @@ int C2_HOOK_FASTCALL MakeCharacterPhysics(tPed_character_instance* pCharacter, t
         gPed_vtable->fill_in_object((undefined4*)pObject, pKind + 2);
     }
     return 1;
+}
+
+
+// FUNCTION: CARMA2_HW 0x004093e0
+int C2_HOOK_FASTCALL FUN_004093e0(tPed_character_instance* pCharacter) {
+
+    if ((pCharacter->field_0x14 & 4) == 0) {
+        return 0x1f;
+    }
+    BonerActiveHalted2(pCharacter, 1);
+    return 0;
 }
