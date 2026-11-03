@@ -2501,7 +2501,52 @@ tPhysics_object* C2_HOOK_FASTCALL MungeSphereObject(br_model* pModel, float pWei
 #endif
 /* `best` is initialised from pOrigin on purpose: the original loads ebp from the pOrigin stack slot
    (mov ebp, [esp+0x14]); initialising it with 0 breaks the match. */
-// AddRepulseLink
+// FUNCTION: CARMA2_HW 0x004da870
+void C2_HOOK_FASTCALL AddRepulseLink(tU32 pTime, tCar_spec* pCar, tCar_spec* pCar2, br_vector3* pOrigin, br_vector3* pVictim, float pField_0x18, float pField_0x1c) {
+    tRepulse_link* link;
+    tU32 link_time;
+    tU32 min_time;
+    int index;
+    int best;
+    int i;
+
+    min_time = 0x7fffffff;
+    best = (int)pOrigin;
+    index = -1;
+    i = 0;
+    link = &gRepulse_links[0];
+    while ((int)link < (int)&gRepulse_links[6]) {
+        link_time = link->time;
+        if (link_time == 0) {
+            index = i;
+            break;
+        }
+        if (link_time < min_time) {
+            min_time = link_time;
+            best = i;
+        }
+        link++;
+        i++;
+    }
+    if (index < 0) {
+        index = best;
+    }
+    gRepulse_links[index].pos_origin = pOrigin;
+    gRepulse_links[index].pos_victim = pVictim;
+    gRepulse_links[index].time = pTime;
+    gRepulse_links[index].field_0x10 = 0xffffffff;
+    gRepulse_links[index].field_0x18 = pField_0x18;
+    gRepulse_links[index].field_0x1c = pField_0x1c;
+    gRepulse_links[index].car = pCar;
+    gRepulse_links[index].field_0x24 = (undefined4)pCar2;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // ScalePedHeads
 // PlayExclusiveFFBEffect
 // FUN_0045c760
