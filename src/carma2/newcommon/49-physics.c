@@ -387,7 +387,7 @@ int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_
     int count_edges;
     int i;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(gDefault_box_collision_wireframe_edges) != 12);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gBox_edge_indexes) != 12);
 
     switch (pCollision_shape_1->common.type) {
     case kCollisionShapeType_Polyhedron:
@@ -410,8 +410,8 @@ int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_
             BrMatrix34ApplyP(&transformed, &points[i], &pCollision_info_1->transform_matrix);
             DrMatrix34ApplyLPInverse(&points[i], &transformed, &pCollision_info_2->transform_matrix);
         }
-        edges = gDefault_box_collision_wireframe_edges;
-        count_edges = REC2_ASIZE(gDefault_box_collision_wireframe_edges);
+        edges = gBox_edge_indexes;
+        count_edges = REC2_ASIZE(gBox_edge_indexes);
         break;
     }
     switch (pCollision_shape_2->common.type) {
@@ -1766,12 +1766,10 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 // GetCollObjFromID
 
 
-// STUB: CARMA2_HW 0x004c63d0
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004b9ef0
 void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tPhysics_object *pCollision_info, tU32 pDisable) {
     NOT_IMPLEMENTED();
 }
@@ -1781,7 +1779,6 @@ void C2_HOOK_FASTCALL GetFacesInBox(tPhysics_object* pCollision, tWorld_callback
     NOT_IMPLEMENTED();
 }
 
-// GLOBAL: CARMA2_HW 0x006793d0
 int gUNK_006793d0;
 
 // FUNCTION: CARMA2_HW 0x00421fd0
@@ -2363,7 +2360,6 @@ void C2_HOOK_FASTCALL PhysicsObjectSetImpulse(tPhysics_object* pObject, br_vecto
     }
 }
 
-// STUB: CARMA2_HW 0x0041e480
 int C2_HOOK_FASTCALL RayCastInBox(br_vector3* pRay_pos, br_vector3* pRay_dir, br_vector3* pHit_pos, br_scalar* pT, tPhysics_object* pObject) {
     NOT_IMPLEMENTED();
     return 0;

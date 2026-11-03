@@ -2199,7 +2199,6 @@ void C2_HOOK_FASTCALL PipeSingleCarIncident(tCar_spec* pCar, br_vector3* pPositi
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004c85b0
 void C2_HOOK_FASTCALL PipeSingleLocalCarIncident(br_vector3* pPosition, float pForce) {
     NOT_IMPLEMENTED();
 }
@@ -2357,7 +2356,6 @@ void C2_HOOK_FASTCALL InitializeActionReplayPix(void) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x00403260
 void C2_HOOK_FASTCALL ARDoActionReplay(int pFrames, tReplay_between_sessions_callback pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
     NOT_IMPLEMENTED();
 }

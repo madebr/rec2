@@ -24,13 +24,12 @@
 #include "c2_math.h"
 #include "c2_string.h"
 
-// GLOBAL: CARMA2_HW 0x0074b7d4
+extern tPolyhedron_edge_indexes gBox_edge_indexes[12];
+
 int gNumber_of_net_players;
 
-// GLOBAL: CARMA2_HW 0x0074bcc0
 tNet_game_player_info gNet_players[12];
 
-// GLOBAL: CARMA2_HW 0x0068b918
 tNet_mode gNet_mode;
 
 // GLOBAL: CARMA2_HW 0x0067bd58
@@ -66,7 +65,6 @@ typedef struct tCrush_net_reattach_list_item_local {
     undefined4 field_0x8;
 } tCrush_net_reattach_list_item_local;
 
-// GLOBAL: CARMA2_HW 0x0067be10
 tCrush_net_reattach_list_item_local gNet_crush_reattach_bit_list[8];
 
 // GLOBAL: CARMA2_HW 0x0067b7d8
@@ -84,15 +82,8 @@ int gCollision_face_mask__raycast;
 // GLOBAL: CARMA2_HW 0x00679438
 int gSensible_place_collect_active;
 
-// GLOBAL: CARMA2_HW 0x00744820
 tFace_ref gFace_list__car[300];
 
-// GLOBAL: CARMA2_HW 0x0058f7f0
-tPolyhedron_edge_indexes gBox_edge_indexes[12] = {
-    { 0, 1 }, { 2, 3 }, { 4, 5 }, { 6, 7 },
-    { 0, 2 }, { 1, 3 }, { 4, 6 }, { 5, 7 },
-    { 0, 4 }, { 1, 5 }, { 2, 6 }, { 3, 7 },
-};
 
 // GLOBAL: CARMA2_HW 0x00679698
 // GLOBAL: CARMA2_SW 0x00673e08
@@ -625,7 +616,6 @@ intptr_t C2_HOOK_FASTCALL SoftnessOfNearestPointCB(br_actor* pActor, br_vector3*
     return 0;
 }
 
-// FUNCTION: CARMA2_HW 0x0042b760
 // FUNCTION: CARMA2_HW 0x0042b760
 // FUNCTION: CARMA2_SW 0x0042b7f0
 intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* pCallback, void* pContext) {
@@ -2146,7 +2136,10 @@ void C2_HOOK_FASTCALL SetAllShapeStatusFlags(tCar_crush_network_shapes* pShapes)
 
 
 extern int C2_HOOK_FASTCALL ProcessForcesCallback(void* pContacts, float* pImpulses, int pCount);
-extern int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 param_2, undefined4 param_3);
+int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 param_2, undefined4 param_3) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
 extern void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefined4* arg2);
 extern int C2_HOOK_FASTCALL FindFacesInBox(tBounds* pBounds, tFace_ref* pFace_list, int pMax_face, tWorld_callbacks* pWorld_callbacks);
 extern tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor);
@@ -2171,11 +2164,7 @@ int C2_HOOK_FASTCALL ProcessForcesCallback(void* pContacts, float* pImpulses, in
     return 0;
 }
 
-// STUB: CARMA2_HW 0x0041e310
-int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 param_2, undefined4 param_3) {
-    NOT_IMPLEMENTED();
-    return 0;
-}
+extern int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 param_2, undefined4 param_3);
 
 // STUB: CARMA2_HW 0x0043b8a0
 void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec) {
@@ -2213,10 +2202,9 @@ void C2_HOOK_FASTCALL CompressPlane(tU16* pDest, const br_vector4* pSrc) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x0049f860
 tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(tU8 pType, int pSize_decider) {
     NOT_IMPLEMENTED();
-    return 0;
+    return NULL;
 }
 
 
@@ -2604,7 +2592,6 @@ intptr_t C2_HOOK_CDECL InitVertexDataCB(br_actor* pActor, void* data) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x0042ac70
 intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* pData) {
     NOT_IMPLEMENTED();
     return 0;

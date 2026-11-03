@@ -58,7 +58,7 @@ const float gCar_simplification_factor[2][5] = {
 
 // GLOBAL: CARMA2_HW 0x0058f7f0
 // GLOBAL: CARMA2_SW 0x0058a7f0
-tPolyhedron_edge_indexes gDefault_box_collision_wireframe_edges[12] = {
+tPolyhedron_edge_indexes gBox_edge_indexes[12] = {
     { 0, 1 }, { 2, 3 }, { 4, 5 }, { 6, 7 },
     { 0, 2 }, { 1, 3 }, { 4, 6 }, { 5, 7 },
     { 0, 4 }, { 1, 5 }, { 2, 6 }, { 3, 7 },

@@ -24,7 +24,7 @@ extern int gAR_camera_type;
 extern int gCar_car_collisions;
 
 extern const float gCar_simplification_factor[2][5];
-extern tPolyhedron_edge_indexes gDefault_box_collision_wireframe_edges[12];
+extern tPolyhedron_edge_indexes gBox_edge_indexes[12];
 
 // ActualActionReplayHeadups
 

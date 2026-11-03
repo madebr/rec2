@@ -3419,7 +3419,6 @@ void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004c2c30
 void C2_HOOK_FASTCALL PhysicsObjectApplyTorque(tPhysics_object* pObject, const br_vector3* pTorque) {
     NOT_IMPLEMENTED();
 }

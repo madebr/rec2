@@ -52,7 +52,6 @@ int gTotal_count_smash_peds;
 // GLOBAL: CARMA2_HW 0x0065d79c
 int gGib_shower_id = -1;
 
-// GLOBAL: CARMA2_HW 0x00655df0
 br_vector3 gY_unit_vector = { { 0.f, 1.f, 0.f } };
 
 // GLOBAL: CARMA2_HW 0x0065e598
@@ -316,7 +315,6 @@ void C2_HOOK_FASTCALL DoGibShower(volatile int pId, volatile int pTime, int pSee
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004eb120
 void C2_HOOK_FASTCALL InitFragmentSpeed(tSmash_vertex* pFragment, tSmashable_initial_speed_spec* pSpeed, br_vector3* pArg3, float pArg4, int* pArg5, int pArg6, br_vector3* pArg7, int pArg8, int pArg9) {
     NOT_IMPLEMENTED();
 }
@@ -327,17 +325,14 @@ float C2_HOOK_FASTCALL PositionFragment(br_actor* pActor, tSmashable_initial_pos
     return 0.f;
 }
 
-// STUB: CARMA2_HW 0x004ee5a0
 void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004ee500
 void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004ee550
 void C2_HOOK_FASTCALL ReadSmashableInitialPosition(FILE* pFile, tSmashable_initial_position_spec* pInitial_pos) {
     NOT_IMPLEMENTED();
 }
