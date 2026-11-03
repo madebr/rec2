@@ -679,9 +679,9 @@ void C2_HOOK_CDECL BrMatrix34PreScale(br_matrix34* mat, br_scalar sx, br_scalar 
 // FUNCTION: CARMA2_SW 0x0052f5d0
 void C2_HOOK_CDECL BrMatrix34PostScale(br_matrix34* mat, br_scalar sx, br_scalar sy, br_scalar sz) {
 
-    BrMatrix34Scale(&mattmp1, sx, sy, sz);
-    BrMatrix34Mul(&mattmp2, mat, &mattmp1);
-    BrMatrix34Copy(mat, &mattmp2);
+    BrMatrix34Scale(&mattmp2, sx, sy, sz);
+    BrMatrix34Mul(&mattmp1, mat, &mattmp2);
+    BrMatrix34Copy(mat, &mattmp1);
 }
 
 // FUNCTION: CARMA2_HW 0x00533fd0
