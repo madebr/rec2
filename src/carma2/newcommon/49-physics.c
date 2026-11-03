@@ -1555,7 +1555,22 @@ void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage)
     FatalError(1000 + pError, s);
 }
 
-// ResetMan2
+// FUNCTION: CARMA2_HW 0x004b5c00
+void C2_HOOK_FASTCALL ResetMan2(tPhysics_object* pObject) {
+
+    while (pObject != NULL) {
+        BrMatrix34Translate(&pObject->transform_matrix, 0.f, 0.f, 0.f);
+        BrVector3SetFloat(&pObject->v, 0.f, 0.f, 0.f);
+        BrVector3SetFloat(&pObject->omega, 0.f, 0.f, 0.f);
+        BrVector3SetFloat(&pObject->rotate_omega, 0.f, 0.f, 0.f);
+        BrVector3SetFloat(&pObject->velocity_car_space, 0.f, 0.f, 0.f);
+        pObject->disable_move_rotate = 1;
+        if (pObject->child != NULL) {
+            ResetMan2(pObject->child);
+        }
+        pObject = pObject->next;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004b5aa0
 void C2_HOOK_FASTCALL SetUpTestObjects(void) {
