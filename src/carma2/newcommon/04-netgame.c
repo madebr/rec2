@@ -655,7 +655,8 @@ void C2_HOOK_FASTCALL PlayerIsIt(tNet_game_player_info* pPlayer) {
 
 // SendPlayerScores
 
-// DoNetGameManagement
+// FUNCTION: CARMA2_HW 0x0049ab00
+void C2_HOOK_FASTCALL DoNetGameManagement(void) {
     // GLOBAL: CARMA2_HW 0x00659c34
     static tU32 last_playerscores_sent = -1;
     tNet_message_chunk* the_contents;
