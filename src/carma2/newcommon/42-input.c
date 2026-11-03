@@ -15,6 +15,8 @@
 
 #include "c2_string.h"
 
+#include <stdio.h>
+
 #define NBR_ROLLING_LETTERS 500
 #define ROLLING_LETTER_LOOP_RANDOM 96
 
@@ -423,8 +425,6 @@ int C2_HOOK_FASTCALL AnyKeyDown(void) {
     return (the_key != -1 && the_key != 4) || EitherMouseButtonDown();
 }
 
-// KevKeyService
-
 // FUNCTION: CARMA2_HW 0x00483040
 // FUNCTION: CARMA2_SW 0x00480180
 int C2_HOOK_FASTCALL KeyIsDown(int pKey_index) {
@@ -558,6 +558,26 @@ void C2_HOOK_FASTCALL AddRollingString(char* pStr, int pX, int pY, tRolling_type
         AddRollingLetter(pStr[i], pX + gCurrent_graf_data->rolling_letter_x_pitch * i, pY, pRolling_type);
     }
 }
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat="
+#endif
+// FUNCTION: CARMA2_HW 0x00483e20
+void C2_HOOK_FASTCALL AddRollingNumber(tU32 pNumber, int pWidth, int pX, int pY) {
+    char the_string[32];
+    unsigned int i;
+
+    sprintf(the_string, "%0.*d", pWidth, pNumber);
+    for (i = 0; i < strlen(the_string); i++) {
+        AddRollingLetter(the_string[i], i * gCurrent_graf_data->rolling_letter_x_pitch + pX, pY, eRT_numeric);
+    }
+}
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
+// InputNoOp
 
 // FUNCTION: CARMA2_HW 0x00483fd0
 void C2_HOOK_FASTCALL BlankSlot(int pIndex, int pName_length, int pVisible_length) {
@@ -693,3 +713,5 @@ void C2_HOOK_FASTCALL EdgeTriggerModeOff(void) {
     gEdge_trigger_mode = 0;
 }
 
+// STUB: CARMA2_HW 0x00482f10
+tU32* C2_HOOK_FASTCALL KevKeyService(void) { NOT_IMPLEMENTED(); }
