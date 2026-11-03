@@ -956,7 +956,50 @@ void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 pCh
 
 // DoMini
 
-// DrawTranslations
+// FUNCTION: CARMA2_HW 0x00462860
+void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
+    int* trans;
+    int i;
+    int x;
+    int width;
+    int right_edge;
+
+    i = 0;
+    if (gTranslation_count > 0) {
+        trans = &gTranslations->x;
+        do {
+            if (trans[-1] == pFlic_info->the_index) {
+                width = DRTextWidth(gTrans_fonts[trans[2]], (char*)trans[4]);
+                switch (trans[3]) {
+                    case eJust_left:
+                        x = pFlic_info->x_offset + trans[0];
+                        right_edge = x + width;
+                        break;
+                    case eJust_right:
+                        right_edge = x = pFlic_info->x_offset - width + trans[0];
+                        break;
+                    case eJust_centre:
+                        x = pFlic_info->x_offset + trans[0] - width / 2;
+                        right_edge = x + width / 2;
+                        break;
+                }
+                DRPixelmapText(
+                        pFlic_info->the_pixelmap,
+                        x,
+                        pFlic_info->y_offset + trans[1],
+                        gTrans_fonts[trans[2]],
+                        (char*)trans[4],
+                        right_edge);
+            }
+            i++;
+            trans += 6;
+        } while (i < gTranslation_count);
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // STUB: CARMA2_HW 0x00461da0
 int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info) {
