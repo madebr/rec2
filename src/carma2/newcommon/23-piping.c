@@ -10,23 +10,105 @@
 
 #include "00-car.h"
 #include "09-funks.h"
+#include "13-crush1.h"
 #include "16-graphics1.h"
 #include "27-powerup.h"
 #include "32-spark.h"
+#include "41-utility.h"
 
 #include "51-smash.h"
+#include "52-errors.h"
 #include "61-pedestrn.h"
 #include "69-sound.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "platform.h"
 
 #include <s3/internal/audio.h>
 
 #include <limits.h>
+#include <math.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
+/* defined in carma2/common/piping.c, which upstream does not compile */
+extern tPipe_smudge_data* gSmudge_space;
+extern volatile undefined4 gUNK_0069410c;
+extern tU32 gOldest_time;
+extern tU32 gTrigger_time;
+extern undefined4* gCrush_space;
+
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
+
+extern void C2_HOOK_FASTCALL WorkerCrush(int pField_0x4, void* pField_0x8, void* pField_0xe);
+extern void C2_HOOK_FASTCALL WorkerSmudge(tPipe_chunk** pChunk, int pScale);
+extern void C2_HOOK_FASTCALL WorkerSpark(int pField_0x0, void* pField_0x4, void* pField_0x10);
+extern void C2_HOOK_FASTCALL WorkerShrapnel(int pField_0x0, void* pField_0x4, tU16 pField_0x10, int pField_0x14);
+extern void C2_HOOK_FASTCALL WorkerExtendedSplash(int pField_0x0, int pField_0x4, int pField_0x8, br_vector3* pField_0xc, br_vector3* pField_0x18);
+extern void C2_HOOK_FASTCALL WorkerSpecial(void);
+extern void C2_HOOK_FASTCALL WorkerProxRay(int pField_0x0, tU16 pField_0x6, tU16 pField_0x4, int pField_0x8);
+extern void C2_HOOK_FASTCALL WorkerFlap(int pField_0x4, tU16 pField_0x8);
+extern void C2_HOOK_FASTCALL WorkerRepulseRay(int pField_0x0, int pField_0x4, int pField_0x8, int pField_0xc);
+extern void C2_HOOK_FASTCALL WorkerShrapnelShower(tU32 pOwner, tU32 pShrapnel, tU32 pSeed, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, tU32 pActor, tU32 pTime, tU32 pArg9, br_vector3* pTransform, br_vector3* pFragment_owner, br_vector3* pPosition, tU32 pDistance, br_vector3* pArg14, tU32 pArg15);
+extern void C2_HOOK_CDECL RelinkActorKeepWorldTransform(br_actor* pParent, br_actor* pActor);
+extern void C2_HOOK_FASTCALL AdjustOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap);
+extern void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
+extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vector3* pSrc);
+extern void C2_HOOK_FASTCALL FadePaletteDown(void);
+extern void C2_HOOK_FASTCALL ApplyTime(tU32 pTime);
+extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
+extern void C2_HOOK_FASTCALL WorkerPedStatus(int pField_0x0, tU8 pField_0x4, tU8 pField_0x5, tU8 pField_0x6, tU8 pField_0x7, tU8 pField_0x9, tU8 pField_0xb, br_vector3* pField_0xc, br_vector3* pField_0x18, br_vector3* pField_0x24);
+extern void C2_HOOK_FASTCALL WorkerPedDir(int pField_0x0, br_vector3* pDir);
+extern void C2_HOOK_FASTCALL WorkerPedMove(tPedestrian* pPed, int pField_0x4, int pField_0xc, int pField_0x8_1, int pField_0x14, int pZero, br_vector3* pField_0x24, int pField_0x34, br_vector3* pField_0x38);
+extern void C2_HOOK_FASTCALL WorkerPedPhysics(int pField_0x0, br_matrix34* pMatrix);
+extern void C2_HOOK_FASTCALL WorkerPedDismember(int pField_0x0, int pField_0x4, int pField_0x7);
+extern void C2_HOOK_FASTCALL WorkerPedFPChange(int pField_0x0, tPipe_stack_word pField_0x4);
+extern void C2_HOOK_FASTCALL WorkerPedPos(int pField_0x0, br_vector3* pVec);
+extern void C2_HOOK_FASTCALL WorkerPedModelChange(int pField_0x0, int pField_0x4, int pField_0x6, int pField_0x8);
+extern void C2_HOOK_FASTCALL WorkerPHILObject(int pField_0x0, br_matrix34* pField_0x4);
+extern void C2_HOOK_FASTCALL WorkerGibShower(int pField_0x0, int pField_0xc, int pField_0x8, int pField_0x10, int pField_0x4, br_vector3* pField_0x14, br_vector3* pField_0x20, br_vector3* pField_0x2c);
+extern void C2_HOOK_FASTCALL DoBloodSpurt(uintptr_t pArg1, int pArg2, int pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6);
+/* same signature as 27-powerup.h, declared here because this file must also compile in a branch
+   that carries neither that header nor its area; the chunk carries the two handles it was piped
+   with, so the call sites cast them back to the typed signature */
+extern void C2_HOOK_FASTCALL WorkerPowerupGot(tPowerup* pPowerup, tCar_spec* pCar);
+extern void C2_HOOK_FASTCALL WorkerPowerupLose(int pField_0x0, int pField_0x4);
+extern void C2_HOOK_FASTCALL DoVanishDismembered(uintptr_t pOwner, tS32 pValue);
+extern void C2_HOOK_FASTCALL WorkerPedDiagnostics(void* pOpponent, void* pField_0x4, void* pField_0x58, void* pField_0x144);
+extern void C2_HOOK_FASTCALL WorkerDroneCornerPos(int pField_0x0, tU16 pField_0x4, tU16 pField_0x6, tU16 pField_0x8, tU16* pField_0xa);
+extern void C2_HOOK_FASTCALL WorkerDroneStraightPos(int pField_0x0, int pField_0x4, tU16 pField_0x8, tU16 pField_0xa);
+extern void C2_HOOK_FASTCALL WorkerShitMine(int pField_0x0, br_vector3* pPos);
+extern void C2_HOOK_FASTCALL WorkerEndShitMine(int pField_0x0, br_vector3* pPos);
+extern void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender);
+extern void C2_HOOK_FASTCALL WorkerCrushUndo(int pField_0x4, void* pField_0x8, void* pField_0xe);
+extern void C2_HOOK_FASTCALL SetPipeUndoFlag(void);
+extern void C2_HOOK_FASTCALL ClearPipeUndoFlag(void);
+extern void C2_HOOK_FASTCALL ClearSplashReplay(uintptr_t pObject);
+extern void C2_HOOK_FASTCALL HideSkid(int pSkid_num);
+extern void C2_HOOK_FASTCALL WorkerModelMashUndo(int pField_0x4, tU8* pField_0x8);
+extern void C2_HOOK_FASTCALL WorkerSplitWeldUndo(void* pRoad_machine);
+extern void C2_HOOK_FASTCALL WorkerSplitWeldApply(void* pRoad_machine, br_vector3* pVector);
+extern void C2_HOOK_FASTCALL WorkerShrapnelShowerUndo(tU32 pChunk_0x48, tU32 pPrev_0x4, tU32 pPrev_0x84, tU32 pPrev_0x44, br_vector3* pPrev_0x8, br_vector3* pPrev_0x20, br_vector3* pPrev_0x2c, tU32 pPrev_0x50, tU32 pPrev_0x48, tU32 pPrev_0x0, br_vector3* pPrev_0x54, br_vector3* pPrev_0x88, br_vector3* pPrev_0x14, tU32 pPrev_0xa0, br_vector3* pPrev_0x38);
+extern void C2_HOOK_FASTCALL WorkerUndoSmashRemoveFaces(int pField_0x0, int pField_0x8, void* pField_0xc, int pField_0x4);
+extern void C2_HOOK_FASTCALL WorkerPedStatusUndo(int pField_0x0, tU8 pField_0x4, tU8 pField_0x5, tU8 pField_0x6, tU8 pField_0x7, tU8 pField_0x8, tU8 pField_0xa, br_vector3* pField_0xc, br_vector3* pField_0x18, br_vector3* pField_0x24);
+extern void C2_HOOK_FASTCALL WorkerPedMoveUndo(tPedestrian* pPed, int pField_0x6, int pField_0x10, int pZero, int pZero2, int pField_0xa, br_vector3* pField_0x18, int pField_0x30, br_vector3* pField_0x38);
+extern void C2_HOOK_FASTCALL WorkerPedModelChangeUndo(int pField_0x0, int pField_0x4, int pField_0xc, int pField_0xa);
+extern void C2_HOOK_FASTCALL WorkerGibShowerUndo(int pField_0xc, int pPrev_0x0, int pPrev_0xc, int pPrev_0x8, int pPrev_0x10, int pPrev_0x4, br_vector3* pPrev_0x14, br_vector3* pPrev_0x20, br_vector3* pPrev_0x2c);
+extern br_pixelmap* gReplay_pixelmaps[11];
+extern br_model* gPed_spurt_model;
+extern int gPed_spurty_lumps_count;
+extern int gPed_spurt_min_max_time[2];
+extern tMovement_spec gPed_spurt_initial_speed;
+extern tSmashable_initial_position_spec gPed_spurt_initial_position;
+extern float C2_HOOK_FASTCALL PositionFragment(br_actor* pActor, tSmashable_initial_position_spec* pPosition, int pArg3, int pArg4, int pArg5, br_vector3* pArg6, br_vector3* pArg7, int pArg8);
+extern void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float pDelta_time);
+extern void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** pBuffer, tU32* pSize);
+extern void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void* pBuffer);
+extern void C2_HOOK_FASTCALL InitializeActionReplayPix(void);
+extern void C2_HOOK_FASTCALL DisposeReplayPixelmaps(void);
+extern void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void);
+extern float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pCollision_info, int pParam);
 
 // GLOBAL: CARMA2_HW 0x006768b4
 // GLOBAL: CARMA2_SW 0x00671024
@@ -88,16 +170,97 @@ tU32 gPipe_sound_start_time;
 // GLOBAL: CARMA2_SW 0x00671018
 tU32 gPipe_sound_time_window;
 
-// STUB: CARMA2_HW 0x00402300
-int C2_HOOK_FASTCALL ARReplayForwards(void) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x006b78a0
+br_matrix34 gShrapnel_shower_matrix;
+
+/* UNCERTAIN: unreferenced dword (0x006a23b4 is only seen as the DisposeReplayPixelmaps loop end) */
+// GLOBAL: CARMA2_HW 0x006a23b4
+int gUNK_006a23b4 = 0;
+
+// GLOBAL: CARMA2_HW 0x006768c8
+tU8* gPipe_buffer_end_marker = NULL;
+
+// GLOBAL: CARMA2_HW 0x006768d0
+tPipe_chunk_type gReentrancy_array[5] = { 0, 0, 0, 0, 0 };
+
+// GLOBAL: CARMA2_HW 0x006768ec
+tU32 gPipe_buffer_size = 0;
+
+// GLOBAL: CARMA2_HW 0x006768fc
+int gReplay_pause_state = 0;
+
+// GLOBAL: CARMA2_HW 0x0067690c
+int gPipe_undo_enabled = 0;
+
+// GLOBAL: CARMA2_HW 0x00676910
+int gPipe_count_callbacks = 0;
+
+// GLOBAL: CARMA2_HW 0x006768a4
+tU32 gReplay_saved_frame_period = 0;
+
+// GLOBAL: CARMA2_HW 0x006768f8
+tU32 gReplay_saved_average_frame_period = 0;
+
+// GLOBAL: CARMA2_HW 0x00694108
+tU32 gYoungest_time;
+
+
+// GLOBAL: CARMA2_HW 0x006940d8
+br_scalar gMax_distance;
+
+// GLOBAL: CARMA2_HW 0x006940e0
+br_vector3 gReference_pos;
+
+// GLOBAL: CARMA2_HW 0x006940f0
+br_vector3 gCar_pos;
+
+// GLOBAL: CARMA2_HW 0x00694100
+tCar_spec* gCar_ptr;
+
+
+
+
+// GLOBAL: CARMA2_HW 0x0065d0c8
+const tReplay_callback gReplay_callbacks[70] = { 0 };
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00402300
+int C2_HOOK_FASTCALL ARReplayForwards(void) {
+
+    if (gPipe_play_ptr == gPipe_record_ptr) {
+        return 0;
+    }
+    if (gPipe_play_ptr == gPipe_buffer_oldest) {
+        return 1;
+    }
+    if (gReplay_rate != 0.f) {
+        if (gReplay_rate > 0.f) {
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        return gPlay_direction > 0;
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// STUB: CARMA2_HW 0x00402380
+int C2_HOOK_FASTCALL ARReplayPauseState(void) { NOT_IMPLEMENTED(); }
+
 // FUNCTION: CARMA2_HW 0x00402360
 // FUNCTION: CARMA2_SW 0x00402360
 int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
     return gReplay_rate == 0.f;
 }
 
-// STUB: CARMA2_HW 0x00402380
-int C2_HOOK_FASTCALL ARReplayPauseState(void) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x00402390
 // FUNCTION: CARMA2_SW 0x00402390
 float C2_HOOK_FASTCALL ARGetReplayRate(void) {
@@ -131,9 +294,17 @@ void C2_HOOK_FASTCALL ARResetPiping(void) {
     gReentrancy_count = 0;
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // ARInitialise
 
-// ARDispose
+// DisposePiping
+
+// SetPipeUndoFlag
+
+// ClearPipeUndoFlag
 
 // FUNCTION: CARMA2_HW 0x00403720
 // FUNCTION: CARMA2_SW 0x00403720
@@ -150,9 +321,7 @@ int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType) {
 
 // ARAdvanceChunkPtr
 
-// PipingFrameReset
-
-// ARPipeSearchForwards
+// ARReplayPlaying
 
 // ARIsActionReplayAvailable
 
@@ -167,13 +336,32 @@ int C2_HOOK_FASTCALL ARSomeReplayLeft(void) {
 
 // EnablePipedSounds
 
-// StartPipingSession2
+// StartPipingSession2 has no standalone address in CARMA2_HW: the original inlines it into
+// ARStartPipingSession (0x004025e0) and into EndPipingSession2 (0x00402660, pMunge=0 path).
+static void StartPipingSession2(tPipe_chunk_type pType, int pMunge_reentrancy) {
 
-// STUB: CARMA2_HW 0x004025e0
-void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) { NOT_IMPLEMENTED(); }
+    if (gPipe_buffer_start == NULL || gAction_replay_mode || !gProgram_state.racing) {
+        return;
+    }
+    /* Header of gLocal_buffer is { int chunk_type, int chunk_data_size } */
+    if (pMunge_reentrancy) {
+        if (gReentrancy_count != 0) {
+            gReentrancy_array[gReentrancy_count - 1] = ((int*)gLocal_buffer)[0];
+            EndPipingSession2(0);
+        }
+        gReentrancy_count += 1;
+    }
+    ((int*)gLocal_buffer)[0] = pType;
+    ((int*)gLocal_buffer)[1] = 0;
+    gLocal_buffer_size = 2 * sizeof(int);
+    gMr_chunky = gLocal_buffer + 2 * sizeof(int);
+}
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
+// STUB: CARMA2_HW 0x004025e0
+void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) { NOT_IMPLEMENTED(); }
 
 // STUB: CARMA2_HW 0x00402660
 // STUB: CARMA2_SW 0x00402660
@@ -259,15 +447,119 @@ void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
 // ApplyPipedSession
 
 // MoveSessionPointerBackOne
+// FUNCTION: CARMA2_HW 0x00402e10
+int C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDefault_time, void* pCallback, void* pTime_check) {
+    tU32* session;
+    tU32 type;
+    tU32 total;
+    tU32 length;
+    tU32 i;
+    tU32 time;
+    tU8* the_chunk;
+    tU16 previous_length;
+    const tReplay_callback* callbacks;
+    int forwards;
+    int result;
 
-// MoveSessionPointerForwardOne
+    time = pDefault_time;
+    for (;;) {
+        callbacks = gPipe_callbacks;
+        if (gPipe_play_ptr == gPipe_record_ptr) {
+            forwards = 0;
+        } else if (gPipe_play_ptr == gPipe_buffer_oldest) {
+            forwards = 1;
+        } else if (gReplay_rate != 0.f) {
+            if (gReplay_rate > 0.f) {
+                forwards = 1;
+            } else {
+                forwards = 0;
+            }
+        } else {
+            forwards = gPlay_direction > 0;
+        }
+        if (forwards) {
+            session = (tU32*)*pPtr;
+            total = 0;
+            i = 0;
+            if (i < session[1]) {
+                do {
+                    type = session[0];
+                    the_chunk = (tU8*)(session + 2) + total;
+                    if (callbacks[type].calc_length != NULL) {
+                        length = callbacks[type].calc_length((tPipe_chunk*)the_chunk);
+                        callbacks = gPipe_callbacks;
+                        length += callbacks[type].length + 4;
+                    } else {
+                        length = callbacks[type].length + 4;
+                    }
+                    total += length;
+                    i++;
+                } while (i < session[1]);
+            }
+            total += 10;
+            if ((total & 1) != 0) {
+                FatalError(0x62);
+            }
+            *pPtr += total;
+            if (*pPtr >= gPipe_buffer_working_end && *pPtr != gPipe_record_ptr) {
+                *pPtr = gPipe_buffer_start;
+            }
+            if (*pPtr == gPipe_record_ptr) {
+                return 0;
+            }
+        } else {
+            if (*pPtr == gPipe_buffer_oldest && *pPtr != gPipe_record_ptr) {
+                return 0;
+            }
+            if (*pPtr == gPipe_buffer_start) {
+                *pPtr = gPipe_buffer_working_end;
+            }
+            *pPtr -= sizeof(tU16);
+            memcpy(&previous_length, *pPtr, sizeof(previous_length));
+            *pPtr -= previous_length;
+        }
+        session = (tU32*)*pPtr;
+        total = 0;
+        i = 0;
+        callbacks = gPipe_callbacks;
+        if (i < session[1]) {
+            do {
+                type = session[0];
+                the_chunk = (tU8*)(session + 2) + total;
+                if (callbacks[type].calc_length != NULL) {
+                    length = callbacks[type].calc_length((tPipe_chunk*)the_chunk);
+                    callbacks = gPipe_callbacks;
+                    length += callbacks[type].length + 4;
+                } else {
+                    length = callbacks[type].length + 4;
+                }
+                total += length;
+                i++;
+            } while (i < session[1]);
+        }
+        total += 10;
+        if ((total & 1) != 0) {
+            FatalError(0x62);
+        }
+        gPipe_buffer_end_marker = *pPtr + total - 2;
+        if (*(tU32*)*pPtr == 0) {
+            time = ((tU32*)*pPtr)[3];
+        } else if (*(tU32*)*pPtr == (tU32)pType) {
+            result = ((tARScanBuffer_callback*)pCallback)((tPipe_chunk*)(*pPtr + sizeof(tPipe_session)), (int)((tU32*)*pPtr)[1], time);
+            if (result != 0) {
+                return result;
+            }
+        }
+        if (pTime_check != NULL && ((tARScanBuffer_time_check*)pTime_check)(time) == 0) {
+            return 0;
+        }
+    }
+}
 
-// FindPreviousChunk
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
-// UndoPipedSession
-
-// STUB: CARMA2_HW 0x00402e10
-int C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDefault_time, void* pCallback, void* pTime_check) { NOT_IMPLEMENTED(); }
 // CheckSound
 
 // FUNCTION: CARMA2_HW 0x00403c50
@@ -361,20 +653,8 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
 
 // STUB: CARMA2_HW 0x00403d60
 int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_off_AR_callback* pTurn_off_AR_cb, tAfter_AR_callback* pAfter_AR_cb, tZappy_AR_callback* pZappy_AR_cb, tPreprocess_AR_callback* pPreprocess_cb, tPostProcess_AR_callback* pPostProcess_cb, int* pArg7, int* pArg8) { NOT_IMPLEMENTED(); }
-// GetReducedPos
-
-// SaveReducedPos
-
-// InitLastDamageArrayEtc
 
 // PipeObjectPosition
-
-// PipeCarPositions
-
-// DoSmudge
-
-// DoOilSpillAR
-
 // CheckCar
 
 // CarTimeout
@@ -442,6 +722,15 @@ void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor) {
         SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
 }
 
+static void SaveReducedPos(tReduced_pos* p, br_vector3* v) {
+    br_vector3 tv;
+
+    BrVector3Sub(&tv, v, &gProgram_state.current_car.car_master_actor->t.t.translate.t);
+    p->v[0] = (tS16)(tv.v[0] * 800.f);
+    p->v[1] = (tS16)(tv.v[1] * 800.f);
+    p->v[2] = (tS16)(tv.v[2] * 800.f);
+}
+
 // AddSmokeToPipingSession
 
 // FUNCTION: CARMA2_HW 0x004c70c0
@@ -459,15 +748,19 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
 
 // STUB: CARMA2_HW 0x004c70f0
 void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z) { NOT_IMPLEMENTED(); }
+
 // AddSplashToPipingSession
 
 // STUB: CARMA2_HW 0x004c7160
 void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pCollision, void* pArg2) { NOT_IMPLEMENTED(); }
-// AddCarToPipingSession
 
-// AddDamageToPipingSession
+// AddGraphicalWheelStuffToPipingSession
+
+// AddSoundToPipingSession
 
 // AddProxRayToPipingSession
+
+// FUN_004c7500
 
 // FUNCTION: CARMA2_HW 0x004c7520
 // FUNCTION: CARMA2_SW 0x004c3c50
@@ -484,8 +777,6 @@ void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle) 
 // AddModelMashToPipingSession
 
 // AddRepulseRayToPipingSession
-
-// AddNapalmBoltToPipingSession
 
 // FUNCTION: CARMA2_HW 0x004c7e70
 // FUNCTION: CARMA2_SW 0x004c45a0
@@ -565,6 +856,8 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volum
     }
 }
 
+// FUN_004c8500
+
 // FUNCTION: CARMA2_HW 0x004c8530
 // FUNCTION: CARMA2_SW 0x004c4c60
 void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
@@ -574,6 +867,8 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
 // PipeSingleCarIncident
 
 // PipeSinglePedIncident
+
+// PipeSingleProxRay
 
 // FUNCTION: CARMA2_HW 0x004c85b0
 // FUNCTION: CARMA2_SW 0x004c4ce0
@@ -672,6 +967,8 @@ void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_mate
         SIZE_OFFSET_PIPING(tPipe_smash_texture_change, texture2), pTexture);
 }
 
+// PipeSingleRepulseRay
+
 // PipeSinglePedStatus
 
 // FUNCTION: CARMA2_HW 0x004c8b10
@@ -711,6 +1008,7 @@ void C2_HOOK_FASTCALL PipeSinglePedDismember(tPedestrian* pPed, tU8 pBone_index,
 
 // STUB: CARMA2_HW 0x004c8c30
 void C2_HOOK_FASTCALL PipeSinglePedFPChange(tPedestrian* pPed, float pValue, float pUnused) { NOT_IMPLEMENTED(); }
+
 // FUNCTION: CARMA2_HW 0x004c8c60
 // FUNCTION: CARMA2_SW 0x004c5390
 void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3* pPos, const br_vector3* pVelocity) {
@@ -725,6 +1023,7 @@ void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3
 
 // STUB: CARMA2_HW 0x004c8c80
 void C2_HOOK_FASTCALL PipeSinglePedModelChange(tPedestrian* pPed, undefined4 pArg2, br_model* pModel, undefined4 pArg4, undefined4 pArg5, undefined4 pArg6) { NOT_IMPLEMENTED(); }
+
 // FUNCTION: CARMA2_HW 0x004c8cc0
 // FUNCTION: CARMA2_SW 0x004c53f0
 void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* pObject) {
@@ -735,8 +1034,6 @@ void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* pObject) {
 }
 
 // PipeSingleGibShower
-
-// PipeSingleBloodSpurt
 
 // FUNCTION: CARMA2_HW 0x004c8d80
 // FUNCTION: CARMA2_SW 0x004c54b0
@@ -799,6 +1096,8 @@ void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
     ARDoSingleVariedSession(ePipe_single_vector3, (uintptr_t)pDest, 1,
         SIZE_OFFSET_PIPING(tPipe_single_vector, vector), pValue);
 }
+
+// PipeSinglePedestrian
 
 // FUNCTION: CARMA2_HW 0x004c8ea0
 // FUNCTION: CARMA2_SW 0x004c55d0
@@ -923,11 +1222,7 @@ void C2_HOOK_FASTCALL ApplySmokeColumn(tPipe_chunk** pChunk) {
 
 // ApplySound
 
-// ApplyCar
-
 // ApplyGWS
-
-// ApplyDamage
 
 // ApplySpecial
 
@@ -1034,7 +1329,6 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
 // ApplyRepulseRay
 
 // ApplyActorTrans
-
 // ApplyPedStatus
 
 // ApplyPedDir
@@ -1074,6 +1368,7 @@ void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk) {
     }
 }
 
+#ifdef REC2_HW
 // ApplyPowerupGot
 
 // ApplyPowerupLose
@@ -1096,6 +1391,7 @@ void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk) {
         (br_vector3*)(*pChunk)->subject_index);
 }
 
+#ifdef REC2_HW
 // ApplyDroneRender
 
 // ApplyDroneCornerPos
@@ -1107,6 +1403,7 @@ void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk) {
 void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk) {
 }
 
+#ifdef REC2_HW
 // ApplyNapalmBolt
 
 // FUNCTION: CARMA2_HW 0x004c9d40
@@ -1116,6 +1413,7 @@ void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
     ARDoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
 }
 
+#ifdef REC2_HW
 // ApplyShitMine
 
 // ApplyEndShitMine
@@ -1127,17 +1425,13 @@ void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
 // UndoCrush
 
 // UndoSmudge
-
-// UndoDamage
-
-// UndoSpecial
+// ApplyReplayFrameTime
 
 // UndoScreenWobble
 
 // UndoSplash
 
 // UndoExtendedSplash
-
 // UndoSkidAdjustment
 
 // UndoFlap
@@ -1160,6 +1454,7 @@ void C2_HOOK_FASTCALL UndoBend(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
 void C2_HOOK_FASTCALL UndoUnBend(void) {
 }
 
+#ifdef REC2_HW
 // UndoShrapnelShower
 
 // FUNCTION: CARMA2_HW 0x004ca100
@@ -1187,6 +1482,7 @@ void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pP
     }
 }
 
+#ifdef REC2_HW
 // UndoSmashRemoveFaces
 
 // FUNCTION: CARMA2_HW 0x004ca150
@@ -1215,6 +1511,7 @@ void C2_HOOK_FASTCALL UndoSmashTextureChange(tPipe_chunk** pChunk, tPipe_chunk* 
         chunk->data.smash_texture_change.texture1);
 }
 
+#ifdef REC2_HW
 // UndoActorTrans
 
 // UndoPedStatus
@@ -1236,6 +1533,7 @@ void C2_HOOK_FASTCALL UndoPedDismember(tPipe_chunk** pChunk, tPipe_chunk* pPrev_
         old_value);
 }
 
+#ifdef REC2_HW
 // UndoPedFPChange
 
 // UndoPedPos
@@ -1263,6 +1561,7 @@ void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_c
     }
 }
 
+#ifdef REC2_HW
 // UndoPowerupGot
 
 // UndoPowerupLose
@@ -1282,6 +1581,7 @@ void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk
         &((tPipe_single_vector*)(*pChunk)->data.raw_data)->vector);
 }
 
+#ifdef REC2_HW
 // UndoNapalmBolt
 
 // FUNCTION: CARMA2_HW 0x004ca3b0
@@ -1292,6 +1592,7 @@ void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPre
     ARUndoPowerupRespawn((br_actor*)(*pChunk)->subject_index, (*pChunk)->data.powerup_respawn.index);
 }
 
+#ifdef REC2_HW
 // UndoShitMine
 
 // UndoEndShitMine
@@ -1308,6 +1609,7 @@ void C2_HOOK_FASTCALL UndoTransformType(tPipe_chunk** pChunk, tPipe_chunk* pPrev
     ((br_actor*)chunk->subject_index)->t.type = chunk->data.transform_type.type_from;
 }
 
+#ifdef REC2_HW
 // CalcCrushLength
 
 // FUNCTION: CARMA2_HW 0x004ca400
@@ -1323,6 +1625,7 @@ int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
     }
 }
 
+#ifdef REC2_HW
 // CalcSmudgeLength
 
 // CalcModelMashLength
@@ -1330,6 +1633,11 @@ int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
 // CalcEndMyBendLength
 
 // CalcRemoveFacesLength
+// DoBloodSpurtUndo
+
+// DisposeReplayPixelmaps
+
+// FUN_00564e5e
 
 // GLOBAL: CARMA2_HW 0x00694104
 undefined4* gCrush_space;
