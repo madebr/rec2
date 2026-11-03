@@ -90,3 +90,7 @@ extern void C2_HOOK_FASTCALL UnloadDinputFFBEffectAtIndex(int index);
 extern void C2_HOOK_FASTCALL DownloadDinputFFBEffectAtIndex(int index);
 
 #endif // C2_WIN32_INPUT_H
+
+int C2_HOOK_FASTCALL SetJoystickFFBForce(int pMagnitude);
+
+int C2_HOOK_FASTCALL SetJoystickFFBSteeringForce(int pMagnitude);

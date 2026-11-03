@@ -365,3 +365,14 @@ tFace_ref* C2_HOOK_FASTCALL CastRayDownThruFaces(br_vector3* pPosition, tFace_re
     return face;
 }
 
+
+// STUB: CARMA2_HW 0x0045f0d0
+void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x00461740
+int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tPhysics_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

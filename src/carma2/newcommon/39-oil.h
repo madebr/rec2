@@ -51,3 +51,5 @@ extern void C2_HOOK_FASTCALL ReceivedOilSpill(tNet_message_chunk* pContents);
 // RemoveCarsOilSlicks
 
 #endif // GUARD_39_OIL_H
+
+void C2_HOOK_FASTCALL GetOilFrictionFactors(tCar_spec* pCar, br_scalar* pFl, br_scalar* pFr, br_scalar* pRl, br_scalar* pRr);

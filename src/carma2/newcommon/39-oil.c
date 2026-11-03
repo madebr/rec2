@@ -206,3 +206,8 @@ void C2_HOOK_FASTCALL ReceivedOilSpill(tNet_message_chunk* pContents) {
 
 // RemoveCarsOilSlicks
 
+
+// STUB: CARMA2_HW 0x004a7530
+void C2_HOOK_FASTCALL GetOilFrictionFactors(tCar_spec* pCar, br_scalar* pFl, br_scalar* pFr, br_scalar* pRl, br_scalar* pRr) {
+    NOT_IMPLEMENTED();
+}

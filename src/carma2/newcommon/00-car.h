@@ -278,3 +278,13 @@ void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime);
 void C2_HOOK_FASTCALL SendCarData(tU32 pNext_frame_time);
 
 void C2_HOOK_FASTCALL SendMines(tU32 pNext_frame_time);
+
+int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2);
+
+void C2_HOOK_FASTCALL ConditionallyNoteSkid(tCar_spec* pCar, tFace_ref** faces, int pIndex);
+
+void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups);
+
+void C2_HOOK_FASTCALL PhysicsObjectApplyTorque(tPhysics_object* pObject, const br_vector3* pTorque);
+
+void C2_HOOK_FASTCALL SkidNoise(tCar_spec* pCar, int pSide, br_scalar pV, int pMaterial_index);

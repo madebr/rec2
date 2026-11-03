@@ -340,3 +340,5 @@ extern void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spe
 #endif // GUARD_51_SMASH_H
 
 void C2_HOOK_FASTCALL UpdateCrushTimers(void);
+
+float C2_HOOK_FASTCALL SmashEnvironment(tPhysics_object* pObject, undefined4* pArg2, float pMagnitude, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce, int pSnap, int pNetwork);

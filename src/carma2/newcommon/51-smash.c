@@ -1421,3 +1421,9 @@ void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar
 void C2_HOOK_FASTCALL UpdateCrushTimers(void) {
     NOT_IMPLEMENTED();
 }
+
+// STUB: CARMA2_HW 0x004f1140
+float C2_HOOK_FASTCALL SmashEnvironment(tPhysics_object* pObject, undefined4* pArg2, float pMagnitude, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce, int pSnap, int pNetwork) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

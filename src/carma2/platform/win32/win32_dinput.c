@@ -1555,3 +1555,15 @@ int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void) {
     }
     return joystick_info->field_0xe0;
 }
+
+// STUB: CARMA2_HW 0x00458660
+int C2_HOOK_FASTCALL SetJoystickFFBForce(int pMagnitude) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
+
+// STUB: CARMA2_HW 0x004586b0
+int C2_HOOK_FASTCALL SetJoystickFFBSteeringForce(int pMagnitude) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
