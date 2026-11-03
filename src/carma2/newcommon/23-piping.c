@@ -796,10 +796,22 @@ int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_
 
 // InitLastDamageArrayEtc
 
-// PipeObjectPosition
+// FUNCTION: CARMA2_HW 0x004c68a0
+int C2_HOOK_FASTCALL PipeObjectPosition(tPhysics_object* pObject, void* pContext) {
+
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        ARAddVariedDataToSession(ePipe_chunk_non_car, (tU16)((tNon_car_spec*)pObject->actor->type_data)->car_ID, 2,
+            4, 0, pObject->actor,
+            48, 4, &pObject->actor->t.t.mat);
+    } else if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 0x20) {
+        ARAddVariedDataToSession(ePipe_chunk_non_car, (uintptr_t)pObject, 2,
+            4, 0, pObject->actor,
+            48, 4, &pObject->actor->t.t.mat);
+    }
+    return 0;
+}
 
 // PipeCarPositions
-
 // DoSmudge
 
 // DoOilSpillAR
