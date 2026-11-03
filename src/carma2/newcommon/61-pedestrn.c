@@ -1212,7 +1212,11 @@ tPed_remap* C2_HOOK_FASTCALL FindOrOpenRemap(const char* pName) {
 
 // RemapModelAxis
 
-// SetUpCharacterForm
+// STUB: CARMA2_HW 0x00404f60
+tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
+    NOT_IMPLEMENTED();
+    return NULL;
+}
 
 // DisposeCharacterForm
 
@@ -1226,7 +1230,19 @@ void C2_HOOK_FASTCALL DisposeCharacterInstance(tPed_character_instance* pCharact
     }
 }
 
-// FindOrOpenForm
+// FUNCTION: CARMA2_HW 0x00406a40
+tPed_form* C2_HOOK_FASTCALL FindOrOpenForm(const char* pName) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gPed_forms); i++) {
+        if (gPed_forms[i] != NULL) {
+            if (strcmp(pName, gPed_forms[i]->name) == 0) {
+                return gPed_forms[i];
+            }
+        }
+    }
+    return SetUpCharacterForm(pName);
+}
 
 // MakeRotationMatrix
 
