@@ -1111,3 +1111,29 @@ void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex) {
 void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_NONE;
 }
+
+
+// FUNCTION: CARMA2_HW 0x004c2c90
+void C2_HOOK_FASTCALL ApplyWaterOmegaBrake(tPhysics_object* pObject, const br_vector3* pV) {
+    br_scalar b0;
+    br_scalar b1;
+    br_scalar b2;
+    br_vector3 om;
+
+    b0 = (pV->v[0] * 0.0210039914f) / pObject->I.v[0];
+    om = pObject->omega;
+    b1 = (pV->v[1] * 0.0210039914f) / pObject->I.v[1];
+    b2 = (pV->v[2] * 0.0210039914f) / pObject->I.v[2];
+    pObject->omega.v[0] -= b0;
+    pObject->omega.v[1] -= b1;
+    pObject->omega.v[2] -= b2;
+    if (om.v[0] * pObject->omega.v[0] <= 0.0f) {
+        pObject->omega.v[0] = 0.0f;
+    }
+    if (om.v[1] * pObject->omega.v[1] <= 0.0f) {
+        pObject->omega.v[1] = 0.0f;
+    }
+    if (om.v[2] * pObject->omega.v[2] <= 0.0f) {
+        pObject->omega.v[2] = 0.0f;
+    }
+}
