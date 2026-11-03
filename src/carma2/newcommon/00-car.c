@@ -27,6 +27,7 @@
 #include "58-crush2.h"
 #include "60-phil.h"
 #include "brender/brender.h"
+#include "s3/s3.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrpb.h"
@@ -37,6 +38,52 @@
 #include "rec2_macros.h"
 
 #include <math.h>
+
+extern void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild);
+extern void C2_HOOK_FASTCALL InitialiseExternalCamera(void);
+extern void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar);
+extern void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
+extern void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar);
+extern void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* pPowerup, tCar_spec* pCar);
+extern tPhysics_object* C2_HOOK_FASTCALL SemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, int* pArg4, br_vector3* pArg5, br_bounds3* pArg6, br_vector3* pArg7, br_vector3* pArg8);
+extern tPhysics_object* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds);
+extern void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar, br_actor* pParent_actor, br_actor* pActor, tPhysics_object* pObject);
+extern void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info);
+extern void C2_HOOK_FASTCALL BendCar(tCar_spec* pCar, br_angle pAngle_x, br_angle pAngle_y, br_angle pAngle_z, const br_vector3* pArg5, float pArg6, int pArg7);
+extern br_scalar C2_HOOK_FASTCALL UnBendCar(tCar_spec* pCar_spec, tU32 pDelta_time, br_scalar* pOriginal_amount);
+extern void C2_HOOK_FASTCALL StartDinputEffect(int pIndex);
+extern int C2_HOOK_FASTCALL BonerActiveHalted(tPed_character_instance* pCharacter);
+extern int C2_HOOK_FASTCALL BonerPassiveCollision(tPed_character_instance* pCharacter, undefined4 pArg2);
+extern void C2_HOOK_FASTCALL BonerPedMovedByPhysics(tPed_character_instance* pCharacter, undefined4 pArg2);
+extern int C2_HOOK_FASTCALL MyDroneHathHalteth(tPhysics_object* pObject);
+extern int C2_HOOK_FASTCALL MyDroneHathCollideth(tPhysics_object* pObject, tPhysics_object* pOther);
+extern void C2_HOOK_FASTCALL MoveMyDroneBaby(tPhysics_object* pObject, undefined4 pArg2);
+extern void C2_HOOK_FASTCALL MungeSpecialVolume(tPhysics_object* pObject);
+extern void C2_HOOK_FASTCALL PipeSingleNonCarCreation2(uintptr_t pId, br_actor* pActor);
+/* declared here rather than through 13-crush1.h / 23-piping.h: those headers belong to other
+   feature areas, and this file must compile in a branch that does not carry them */
+extern void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject);
+extern void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush);
+extern void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
+extern tSlot_info gInitial_APO[3];
+extern tSlot_info gInitial_APO_potential[3];
+extern int gCamera_type;
+extern tActionReplayCameraMode gAction_replay_camera_mode;
+extern br_scalar gFLOAT_00589a2c;
+extern int gStop_opponents_moving;
+extern int gReplay_splash_flags;
+extern tReplay_splash gReplay_splashes[10];
+extern const br_scalar gFLOAT_0058b008;
+extern tS3_outlet* gCar_outlet;
+
+// GLOBAL: CARMA2_HW 0x00679360
+br_scalar gMin_world_y;
+
+// GLOBAL: CARMA2_HW 0x006793e4
+tPhysics_object* gUnknown_car_collision_info;
+
+// GLOBAL: CARMA2_HW 0x0058f680
+int gMetal_crunch_sound_id[5] = { 5000, 5001, 5002, 5003, 5004 };
 
 // GLOBAL: CARMA2_HW 0x0079eda0
 // GLOBAL: CARMA2_SW 0x00795340
@@ -212,10 +259,168 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
     pCar->field_0xe18 = pIndex;
 }
 
-// InitialiseCar2
+// FUNCTION: CARMA2_HW 0x00413f70
+void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag) {
+    int index;
+    int j;
+    int level;
+    br_matrix34 safe_position;
+    tNet_game_player_info* net_player;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x261, 0x261);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, message_time, 0x268);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x49c, 0x49c);
+
+    PossibleService();
+    if (pCar->disabled && pClear_disabled_flag) {
+        if (gNet_mode == eNet_mode_none) {
+            EnableCar(pCar);
+        } else {
+            net_player = NetPlayerFromCar(pCar);
+            if (net_player->player_status == ePlayer_status_ready || net_player->player_status == ePlayer_status_racing) {
+                EnableCar(pCar);
+            }
+        }
+    }
+    InitCarSkidStuff(pCar);
+    pCar->car_model_actor->render_style = BR_RSTYLE_DEFAULT;
+    SwitchCarModels(pCar, 0);
+    pCar->collision_info->last_special_volume = NULL;
+    pCar->collision_info->auto_special_volume = NULL;
+    pCar->field_0xc8 = NULL;
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        ResetRecoveryVouchers();
+    }
+    BrVector3SetFloat(&pCar->collision_info->v, 0.f, 0.f, 0.f);
+    BrVector3SetFloat(&pCar->collision_info->omega, 0.f, 0.f, 0.f);
+    pCar->curvature = 0.f;
+    pCar->field_0x1260 = 0.f;
+    BrMatrix34Copy(&safe_position, &pCar->car_master_actor->t.t.mat);
+    if (safe_position.m[3][0] > 500.0f) {
+        BrVector3Sub((br_vector3*)safe_position.m[3], (br_vector3*)safe_position.m[3], &gInitial_position);
+    }
+    BrMatrix34Copy(&pCar->old_frame_mat, &safe_position);
+    BrMatrix34Copy(&pCar->collision_info->transform_matrix, &safe_position);
+    BrMatrix34ApplyP(&pCar->pos, &pCar->collision_info->cmpos, &pCar->collision_info->transform_matrix);
+    for (j = 0; j < 4; j++) {
+        pCar->oldd[j] = pCar->ride_height;
+    }
+    pCar->gear = 0.f;
+    pCar->revs = 0.f;
+    pCar->traction_control = 1;
+    BrVector3Negate(&pCar->direction, (br_vector3*)pCar->car_master_actor->t.t.mat.m[2]);
+    for (j = 0; j < 20; j++) {
+        BrMatrix34Copy(&pCar->last_safe_positions[j], &safe_position);
+    }
+    pCar->collision_info->field_0x261 = 0;
+    pCar->collision_info->message_time = 0;
+    pCar->dt = -1.f;
+    pCar->collision_info->field_0x49c = 1;
+    pCar->time_to_recover = 0;
+    pCar->repair_time  = 0;
+    pCar->collision_info->water_d  = 10000.f;
+
+    switch (pCar->driver) {
+    case eDriver_oppo:
+        index = 0;
+        for (j = 0; j < gCurrent_race.number_of_racers; j++) {
+            if (gCurrent_race.opponent_list[j].car_spec != NULL
+                    && gCurrent_race.opponent_list[j].car_spec->driver == eDriver_oppo) {
+                if (pCar == gCurrent_race.opponent_list[j].car_spec) {
+                    pCar->car_ID = 0x200 + index;
+                }
+                index++;
+            }
+        }
+        break;
+    case eDriver_net_human:
+        index = 0;
+        for (j = 0; j < gCurrent_race.number_of_racers; j++) {
+            if (gCurrent_race.opponent_list[j].car_spec != NULL
+                    && gCurrent_race.opponent_list[j].car_spec->driver == eDriver_net_human) {
+                if (pCar == gCurrent_race.opponent_list[j].car_spec) {
+                    pCar->car_ID = 0x100 + index;
+                }
+                index++;
+            }
+        }
+        break;
+    case eDriver_local_human:
+        pCar->car_ID = 0;
+        break;
+    default:
+        break;
+    }
+    PossibleService();
+    pCar->collision_info->box_face_ref = gFace_num__car - 2;
+    pCar->collision_info->box_face_end = 0;
+    pCar->collision_info->box_face_start = 0;
+    pCar->collision_info->disable_move_rotate = 0;
+    pCar->end_steering_damage_effect = 0;
+    pCar->end_trans_damage_effect = 0;
+    pCar->wheel_dam_offset[0] = 0.f;
+    pCar->wheel_dam_offset[1] = 0.f;
+    pCar->wheel_dam_offset[2] = 0.f;
+    pCar->wheel_dam_offset[3] = 0.f;
+    pCar->shadow_intersection_flags = 0;
+    pCar->underwater_ability = 0;
+
+    if (gNet_mode == eNet_mode_none) {
+        net_player = NULL;
+    } else {
+        net_player = NetPlayerFromCar(pCar);
+    }
+    if (net_player != NULL && net_player->field_0x80) {
+        pCar->invulnerable_no_crushage = 1;
+        pCar->invulnerable_no_damage = 1;
+        pCar->invulnerable_no_wastage = 1;
+    } else {
+        pCar->invulnerable_no_crushage = 0;
+        pCar->invulnerable_no_damage = 0;
+        pCar->invulnerable_no_wastage = 0;
+    }
+    pCar->wall_climber_mode = 0;
+    pCar->grip_multiplier = 1.f;
+    pCar->damage_multiplier = 1.f;
+    pCar->field_0x4c8 = 1.f;
+    pCar->field_0x4d4 = 1.f;
+    pCar->bounce_rate = 0.f;
+    pCar->bounce_amount = 0.f;
+    pCar->knackered = 0;
+    pCar->collision_info->last_special_volume = NULL;
+    pCar->collision_info->auto_special_volume = NULL;
+    RemoveFromCloakingList(pCar);
+    TurnOffCloaking(NULL, pCar);
+    if (pCar == NULL || pCar->driver != eDriver_local_human) {
+        pCar->joystick.left = -1;
+        pCar->joystick.right = -1;
+    }
+    TotallyRepairACar(pCar);
+    SetCarSuspGiveAndHeight(pCar, 1.f, 1.f, 1.f, 0.f, 0.f);
+    for (j = 0; j < 100; j++) {
+        pCar->powerups[j] = 0;
+    }
+    if (gNet_mode != eNet_mode_none && (net_player == NULL || !net_player->field_0x80)) {
+        for (j = 0; j < 3; j++) {
+            if (gNet_mode != eNet_mode_none) {
+                level = gInitial_APO[j].initial_network[gCurrent_net_game->type];
+            } else {
+                level = gInitial_APO[j].initial[gProgram_state.skill_level];
+            }
+            pCar->power_up_levels[j] = level;
+            if (gNet_mode != eNet_mode_none) {
+                level = gInitial_APO_potential[j].initial_network[gCurrent_net_game->type];
+            } else {
+                level = gInitial_APO_potential[j].initial[gProgram_state.skill_level];
+            }
+            pCar->power_up_slots[j] = level;
+        }
+    }
+}
 
 // STUB: CARMA2_HW 0x00414400
 void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+
 // InitialiseCarsEtc
 
 // FUNCTION: CARMA2_HW 0x00414510
@@ -368,18 +573,6 @@ void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar) {
 
 // DragChildren
 
-// DoCarStuff
-
-// DoNonCarStuff
-
-// RemoveFlyingCar
-
-// RestoreFlyingCar
-
-// GetDrivableOnList
-
-// APTCPreCollision
-
 // FUNCTION: CARMA2_HW 0x004161a0
 // FUNCTION: CARMA2_SW 0x004161d0
 void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject) {
@@ -415,10 +608,6 @@ void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject) {
 // APTCPassiveActivated
 
 // APTCChangedObjects
-
-// ApplyPhysicsToCars
-
-// MoveAndCollideCar
 
 // MoveAndCollideNonCar
 
@@ -571,15 +760,22 @@ void C2_HOOK_FASTCALL ControlCar5(tCar_spec* pCar, br_scalar pDt) {
 
 // ControlCar1
 
-// SteeringSelfCentre
+typedef void (C2_HOOK_FASTCALL * tControl_car_fn)(tCar_spec* pCar_spec, float pT);
 
-// NonCarSnapOff
+// GLOBAL: CARMA2_HW 0x0058f660
+tControl_car_fn ControlCar[6] = {
+    NULL,
+    NULL,
+    NULL,
+    (tControl_car_fn)ControlCar3,
+    NULL,
+    NULL,
+};
 
-// TestNonCarSnapOff
+// GLOBAL: CARMA2_HW 0x0058f678
+int gControl__car = 3;
 
-// TumbleObjectWithV
-
-// TumbleObject
+// CycleControlCar
 
 // FUNCTION: CARMA2_HW 0x00418230
 // FUNCTION: CARMA2_SW 0x00418260
@@ -614,6 +810,37 @@ void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car) {
 // StopSkid
 
 // CrashNoise
+    // GLOBAL: CARMA2_HW 0x00679410
+    static tS3_sound_tag crunch_tag;
+    // GLOBAL: CARMA2_HW 0x0067935c
+    static tS3_volume last_crunch_vol;
+    tS3_volume vol;
+    br_vector3 velocity;
+
+    extern tS3_outlet* gCar_outlet;
+    extern int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
+    extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
+
+    vol = 60.0 * BrVector3Length(pForce);
+    if (gCurrent_race.material_modifiers[pMaterial].crash_noise_index == -1) {
+    } else {
+        if (vol > 255) {
+            vol = 255;
+        }
+        if (crunch_tag == 0 || !DRS3SoundStillPlaying(crunch_tag)) {
+            if (vol > 30) {
+                last_crunch_vol = vol;
+                (void)last_crunch_vol;
+                velocity.v[0] = 0.f;
+                velocity.v[1] = 0.f;
+                velocity.v[2] = 0.f;
+                crunch_tag = DRS3StartSound3D(gCar_outlet,
+                    gMetal_crunch_sound_id[IRandomBetween(0, 4)],
+                    pPosition, &velocity, 1, vol, IRandomBetween(49152, 81920), 0x10000);
+            }
+        }
+    }
+}
 
 // CrushAndDamageCar
 
@@ -864,9 +1091,7 @@ void C2_HOOK_FASTCALL FreezeMechanics(void) {
     }
 }
 
-// FlyCar
-
-// GetCarOverallBoundsMinY
+// PutOpponentsInNeutral
 
 // STUB: CARMA2_HW 0x0041fc60
 // STUB: CARMA2_SW 0x0041fce0
@@ -901,11 +1126,11 @@ tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* pActor) {
 #pragma auto_inline(on)
 #endif
 
+// FUN_00420310
+
+// FUN_00420360
+
 // PipeNonCarObject
-
-// PipeNonCars
-
-// CheckForDeAttachmentOfNonCars
 
 // FUNCTION: CARMA2_HW 0x004207e0
 // FUNCTION: CARMA2_SW 0x00420860
@@ -951,12 +1176,136 @@ void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_NONE;
 }
 
-// STUB: CARMA2_HW 0x0043ace0
-float C2_HOOK_FASTCALL ComputeCarImpact(tCar_spec* pCar, tU32 pDelta, float* pOut) { NOT_IMPLEMENTED(); }
+/* Crush network lists: the objects live in 13-crush1.c / 07-structur.c. */
+#define PO_U8(o, off) (*(tU8*)((char*)(o) + (off)))
+#define PO_U16(o, off) (*(tU16*)((char*)(o) + (off)))
+#define PO_U32(o, off) (*(tU32*)((char*)(o) + (off)))
+#define PO_F32(o, off) (*(float*)((char*)(o) + (off)))
 
-// STUB: CARMA2_HW 0x00414910
-void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefined4* arg2) { NOT_IMPLEMENTED(); }
+typedef struct {
+    br_actor* actor;
+    tCar_spec* car;
+    tU32 time;
+    br_vector3 field_0xc;
+    br_vector3 field_0x18;
+    br_vector3 field_0x24;
+    br_bounds3 bounds;
+    float field_0x48;
+} tUpdate_crush_semi_detach_item;
 
+typedef struct {
+    br_actor* actor;
+    tCar_spec* car;
+    tU32 time;
+    br_bounds3 bounds;
+} tUpdate_crush_detach_item;
+
+typedef struct {
+    tCar_spec* car;
+    tPhysics_object* object;
+    tU32 time;
+} tUpdate_crush_full_detach_item;
+
+typedef struct {
+    br_actor* actor;
+    tCar_spec* car;
+    tU32 time;
+} tUpdate_crush_reattach_item;
+
+extern tUpdate_crush_semi_detach_item gNet_crush_semi_detach_bit_list[8];
+extern int gCount_net_crush_semi_detach_bit_list;
+extern tUpdate_crush_detach_item gNet_crush_detach_list[8];
+extern int gCount_net_crush_detach_list;
+extern tUpdate_crush_full_detach_item gNet_crush_full_detach_bit_list[8];
+extern int gCount_net_crush_full_detach_bit_list;
+extern tUpdate_crush_reattach_item gNet_crush_reattach_bit_list[8];
+extern int gCount_net_crush_reattach_bit_list;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    undefined field_0x2[2];
+    tPlayer_ID player_id;
+    tU32 field_0x8;
+} tNet_message_chunk_crush_reattach_bit;
+
+/* DirectInput types are declared locally: the DirectX SDK headers are only
+   visible to the platform target, not to newcommon. The layouts match the SDK
+   ones and tJoystick_force_effect in win32_types.h (size 0xe8, name at 0x68). */
+typedef struct tCarDinputEffect tCarDinputEffect;
+
+typedef struct tCarDinputEffectVtbl {
+    void* slot_0x00[6];
+    int (C2_HOOK_STDCALL* SetParameters)(tCarDinputEffect* pEffect, const void* pEffect_params, tU32 pFlags);
+} tCarDinputEffectVtbl;
+
+struct tCarDinputEffect {
+    tCarDinputEffectVtbl* lpVtbl;
+};
+
+typedef struct {
+    tU8 di_effect[0x34];
+    tU8 type_specific_params[24];
+    tU8 field_0x4c[0x14];
+    tS32 field_0x60;
+    tU32 field_0x64;
+    char name[128];
+} tCarJoystickForceEffect;
+
+extern tCarJoystickForceEffect gJoystick_effects[30];
+extern tCarDinputEffect* gDirectInputEffects[30];
+extern int gForceFeedbackAvailable;
+extern int gCollision_force_joystick_effect_index;
+
+// ReceivedCrushReattachBit
+
+// GetCompressedCrushVertexDataSize
+
+// UpdateCrushPainList
+
+// FUN_0043d900
+
+// UpdateCrushVertices
+
+// WeldCarByNetwork
+
+// SetJoystickFFBCollisionForce
+
+// CompressCarDataChunk
+
+// ClearSplashes
+
+// MungeSpecialVolume
+
+// FUNCTION: CARMA2_HW 0x004c6ff0
+void C2_HOOK_FASTCALL PipeSingleNonCarCreation2(uintptr_t pId, br_actor* pActor) {
+    extern void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...);
+
+    ARAddVariedDataToSession(ePipe_chunk_non_car, pId, 2, 4, 0, pActor, 0x30, 4, &pActor->t.t.mat);
+}
+
+// STUB: CARMA2_HW 0x00415ef0
+void C2_HOOK_FASTCALL AddDrag(tCar_spec* pCar, tPhysics_object* pObject, br_scalar pDt) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x00418250
+void C2_HOOK_FASTCALL MoveNonCar(tNon_car_spec* pNon_car, br_scalar pDt) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ff5d0
+void C2_HOOK_FASTCALL TestAutoSpecialVolume(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+
+
+
+/* the stub below needs the type; workv4 defines it in this file (ported with ProcessForcesCallback) */
 typedef struct tCollision_contact {
     float impulse;
     tPhysics_object* object1;
@@ -971,6 +1320,12 @@ typedef struct tCollision_contact {
     br_vector3 impulse2;
     int type;
 } tCollision_contact;
+
+// STUB: CARMA2_HW 0x0043ace0
+float C2_HOOK_FASTCALL ComputeCarImpact(tCar_spec* pCar, tU32 pDelta, float* pOut) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00414910
+void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefined4* arg2) { NOT_IMPLEMENTED(); }
 
 // STUB: CARMA2_HW 0x0041c1b0
 int C2_HOOK_FASTCALL ProcessForcesCallback(tCollision_contact* pContacts, float* pImpulses, int pCount) { NOT_IMPLEMENTED(); }

@@ -54,11 +54,11 @@ extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
 extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
-// InitialiseCar2
+extern void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag);
 
-// InitialiseCar
+extern void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar);
 
-// InitialiseCarsEtc
+extern void C2_HOOK_FASTCALL InitialiseCarsEtc(tRace_info* pThe_race);
 
 extern void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, tU32 pGrid_index);
 
@@ -90,9 +90,9 @@ extern void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 // MungeCarsMass
 
-// AddDrag
+extern void C2_HOOK_FASTCALL AddDrag(tCar_spec* pCar, tPhysics_object* pObject, br_scalar pDt);
 
-// DragChildren
+extern void C2_HOOK_FASTCALL DragChildren(tCar_spec* pCar, tPhysics_object* pChild);
 
 // DoCarStuff
 
@@ -110,17 +110,17 @@ extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject)
 
 // APTCPostCollision
 
-// APTCActiveHalted
+extern int C2_HOOK_FASTCALL APTCActiveHalted(tPhysics_object* pObject);
 
-// APTCPassiveActivated
+extern int C2_HOOK_FASTCALL APTCPassiveActivated(tPhysics_object* pObject, undefined4 pArg2);
 
-// APTCChangedObjects
+extern void C2_HOOK_FASTCALL APTCChangedObjects(tPhysics_object* pObject, undefined4 pArg2);
 
 // ApplyPhysicsToCars
 
 // MoveAndCollideCar
 
-// MoveAndCollideNonCar
+extern void C2_HOOK_FASTCALL MoveAndCollideNonCar(tNon_car_spec* pNon_car, br_scalar pDt);
 
 extern void C2_HOOK_FASTCALL ControlCar2(tCar_spec* pCar, br_scalar pDt);
 
@@ -164,7 +164,7 @@ extern void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car);
 
 // StopSkid
 
-// CrashNoise
+extern void C2_HOOK_FASTCALL CrashNoise(br_vector3* pForce, br_vector3* pPosition, int pMaterial);
 
 // CrushAndDamageCar
 
@@ -202,7 +202,7 @@ extern void C2_HOOK_FASTCALL DoLODCarModels(void);
 
 extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
 
-// DoComplexCarModels
+extern void C2_HOOK_FASTCALL DoComplexCarModels(void);
 
 extern void C2_HOOK_FASTCALL ResetCarScreens(void);
 
@@ -226,7 +226,7 @@ extern tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* pActor);
 
 extern tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* pActor);
 
-// PipeNonCarObject
+extern int C2_HOOK_FASTCALL PipeNonCarObject(tPhysics_object* pCollision_info, void* pUser_data);
 
 // PipeNonCars
 
@@ -239,5 +239,36 @@ extern int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace
 extern void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex);
 
 extern void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex);
+
+extern void C2_HOOK_FASTCALL MoveNonCar(tNon_car_spec* pNon_car, br_scalar pDt);
+
+extern void C2_HOOK_FASTCALL TestAutoSpecialVolume(tPhysics_object* pObject);
+
+extern void C2_HOOK_FASTCALL CycleControlCar(void);
+
+extern void C2_HOOK_FASTCALL PutOpponentsInNeutral(void);
+
+extern int C2_HOOK_FASTCALL FUN_00420310(tPhysics_object* pObject);
+
+extern int C2_HOOK_FASTCALL FUN_00420360(tPhysics_object* pObject);
+
+/* crush / network group (00-car.c) */
+extern void C2_HOOK_FASTCALL UpdateCrushPainList(void);
+
+extern int C2_HOOK_FASTCALL FUN_0043d900(tCar_spec* pCar);
+
+extern int C2_HOOK_FASTCALL GetCompressedCrushVertexDataSize(tU8* pData);
+
+extern void C2_HOOK_FASTCALL UpdateCrushVertices(tCar_spec* pCar, tU8* pData);
+
+extern void C2_HOOK_FASTCALL WeldCarByNetwork(tCar_spec* pCar);
+
+extern int C2_HOOK_FASTCALL SetJoystickFFBCollisionForce(int pMagnitude, int pDirection);
+
+extern void C2_HOOK_FASTCALL CompressCarDataChunk(tNet_message_chunk* pMessage, int pPlayer_index);
+
+extern void C2_HOOK_FASTCALL ClearSplashes(tPhysics_object* pObject);
+
+extern void C2_HOOK_FASTCALL MungeSpecialVolume(tPhysics_object* pObject);
 
 #endif // GUARD_00_CAR_H
