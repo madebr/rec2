@@ -811,7 +811,90 @@ int C2_HOOK_FASTCALL PipeObjectPosition(tPhysics_object* pObject, void* pContext
     return 0;
 }
 
-// PipeCarPositions
+// FUNCTION: CARMA2_HW 0x004c6640
+void C2_HOOK_FASTCALL PipeCarPositions(void) {
+    int category;
+    int car_count;
+    int car_index;
+    int session_started;
+
+    ARStartPipingSession(ePipe_chunk_car);
+    for (category = eVehicle_self; category < eVehicle_not_really; category++) {
+        car_count = category == eVehicle_self ? 1 : GetCarCount(category);
+        for (car_index = 0; car_index < car_count; car_index++) {
+            tCar_spec* car;
+            int car_flags;
+
+            car = category == eVehicle_self ? &gProgram_state.current_car : GetCarSpec(category, car_index);
+            /* AddCarToPipingSession inlined; tPipe_car_chunk is { mat 0/48, v 48/12, speedo_speed 60/2, flags 62/2, field_0x40 64/4 } */
+            car_flags = (int)car->revs / 10 & 0x7ff;
+            car_flags += (*(tS32*)(void*)&car->gear + 1) << 12;
+            car_flags += car->frame_collision_flag ? 0x800 : 0;
+            ARAddVariedDataToSession(ePipe_chunk_car, (uintptr_t)((category << 8) | car_index), 5,
+                48, 0, &car->car_master_actor->t.t.mat,
+                12, 48, &car->collision_info->v,
+                2, 60, (int)(car->speedo_speed * 468100.0),
+                2, 62, car_flags,
+                4, 64, car->field_0x18cc);
+        }
+    }
+    AREndPipingSession();
+
+    session_started = 0;
+    for (category = eVehicle_self; category < eVehicle_net_player; category++) {
+        car_count = category == eVehicle_self ? 1 : GetCarCount(category);
+        for (car_index = 0; car_index < car_count; car_index++) {
+            tCar_spec* car;
+
+            car = category == eVehicle_self ? &gProgram_state.current_car : GetCarSpec(category, car_index);
+            if (car->active) {
+                tU8 damage_deltas[12];
+                int any_damage;
+                int i;
+
+                any_damage = 0;
+                for (i = 0; i < 12; i++) {
+                    int damage;
+                    int damage_delta;
+
+                    damage = car->damage_units[i].damage_level;
+                    damage_delta = damage - car->frame_start_damage[i];
+                    car->frame_start_damage[i] = damage;
+                    damage_deltas[i] = damage_delta;
+                    any_damage |= damage_delta;
+                }
+                if (any_damage) {
+                    if (!session_started) {
+                        ARStartPipingSession(ePipe_chunk_damage);
+                        session_started = 1;
+                    }
+                    /* AddDamageToPipingSession inlined */
+                    {
+                        tU8 damage_copy[12];
+
+                        memcpy(damage_copy, damage_deltas, sizeof(damage_copy));
+                        ARAddDataToSession(ePipe_chunk_damage, (uintptr_t)((category << 8) | car_index), damage_copy, sizeof(damage_copy));
+                    }
+                }
+            }
+        }
+    }
+    if (session_started) {
+        AREndPipingSession();
+    }
+
+    ARStartPipingSession(ePipe_chunk_non_car);
+    for (category = eVehicle_self; category < eVehicle_not_really; category++) {
+        car_count = category == eVehicle_self ? 1 : GetCarCount(category);
+        for (car_index = 0; car_index < car_count; car_index++) {
+            tCar_spec* car;
+
+            car = category == eVehicle_self ? &gProgram_state.current_car : GetCarSpec(category, car_index);
+            PhysicsObjectRecurseChildren(car->collision_info, PipeObjectPosition, NULL);
+        }
+    }
+    AREndPipingSession();
+}
 // DoSmudge
 
 // DoOilSpillAR
