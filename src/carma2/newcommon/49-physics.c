@@ -1781,17 +1781,9 @@ void C2_HOOK_FASTCALL GetFacesInBox(tPhysics_object* pCollision, tWorld_callback
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004c2970
-void C2_HOOK_FASTCALL PhysicsObjectMoveVelocityList(tPhysics_object* pObject) {
-    NOT_IMPLEMENTED();
-}
-
 // GLOBAL: CARMA2_HW 0x006793d0
 int gUNK_006793d0;
 
-// STUB: CARMA2_HW 0x004b9e40
-void C2_HOOK_FASTCALL SetCollisionInfoDoNothingChain(tPhysics_object* pCollision_info, tU32 pDisable) {
-    NOT_IMPLEMENTED();
 // FUNCTION: CARMA2_HW 0x00421fd0
 tCollision_shape_polyhedron_data* C2_HOOK_FASTCALL FUN_00421fd0(int pCount_points) {
     tCollision_shape_polyhedron_data* result;

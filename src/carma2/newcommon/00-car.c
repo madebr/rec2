@@ -65,8 +65,7 @@ typedef struct {
     tU32 time;
 } tUpdate_crush_reattach_item;
 
-// GLOBAL: CARMA2_HW 0x006a7fc8
-tRepair_animation gRepair_animations[25] = { 0 };
+extern tRepair_animation gRepair_animations[25];
 
 // GLOBAL: CARMA2_HW 0x00655e58
 float gForce_feedback_upper_limit = 2.7f;
@@ -3385,12 +3384,6 @@ apply:
     pNon_car->collision_info->v.v[2] = pNon_car->collision_info->v.v[2] * scale;
 }
 
-// STUB: CARMA2_HW 0x00425ba0
-int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2) {
-    NOT_IMPLEMENTED();
-    return 0;
-}
-
 // STUB: CARMA2_HW 0x0041bd40
 void C2_HOOK_FASTCALL ConditionallyNoteSkid(tCar_spec* pCar, tFace_ref** faces, int pIndex) {
     NOT_IMPLEMENTED();
@@ -3556,12 +3549,6 @@ int C2_HOOK_FASTCALL TrySplitCarOnVerticalForce(tCollision_contact* pContacts, f
             }
         }
     }
-    return 0;
-}
-
-// STUB: CARMA2_HW 0x004ba550
-int C2_HOOK_FASTCALL ScaleCollisionImpulses(tCollision_contact* pContacts, float* pImpulses, int pCount, int* pSmash_indices, int pNum_impacts, float pMax_impulse) {
-    NOT_IMPLEMENTED();
     return 0;
 }
 
