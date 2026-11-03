@@ -71,7 +71,7 @@ void* C2_HOOK_CDECL BrStdioOpenRead(const char* name, br_size_t n_magics, br_mod
             if (*brender_path_ptr == ';') {
                 brender_path_ptr++;
             }
-            if (path != path_ptr && path_ptr[-1] != ':'&& path_ptr[-1] != '/'&& path_ptr[-1] != '\\') {
+            if (path_ptr != path && path_ptr[-1] != ':'&& path_ptr[-1] != '/'&& path_ptr[-1] != '\\') {
                 *path_ptr++ = '/';
             }
             strcpy(path_ptr, name);
