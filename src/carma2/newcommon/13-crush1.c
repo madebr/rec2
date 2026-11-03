@@ -3873,7 +3873,6 @@ void C2_HOOK_FASTCALL SplitPolyhedronByPlane(tCollision_shape_polyhedron* pSourc
 
 // STUB: CARMA2_HW 0x004321d0
 void C2_HOOK_FASTCALL FUN_004321d0(tCar_spec* pCar, br_actor* pActor, br_vector3* pDirection, float pDistance, tU32 pMax_vertex, tU32 pField_0x50) {
-    NOT_IMPLEMENTED();
 }
 
 // STUB: CARMA2_HW 0x00432b80
