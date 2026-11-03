@@ -578,3 +578,5 @@ extern void C2_HOOK_FASTCALL DisableRetainRootMode(void);
 #endif // GUARD_61_PEDESTRN_H
 
 void C2_HOOK_FASTCALL PedPreCollisionStuff(void);
+
+int C2_HOOK_FASTCALL BonerActiveHalted(tPed_character_instance* pCharacter);

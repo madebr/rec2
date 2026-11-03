@@ -517,3 +517,9 @@ void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU16 pFie
 
 // WriteOutDronePaths
 
+
+// STUB: CARMA2_HW 0x00452360
+int C2_HOOK_FASTCALL MyDroneHathHalteth(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
