@@ -62,11 +62,11 @@ extern void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_i
 
 extern void C2_HOOK_FASTCALL DoSomeThingsToCheckpoints(br_pixelmap* pMap, tU32 pTime, tDoSomethingsToCheckpoints_cbfn* pCallback, int pDraw_prev);
 
-// CalcMapCheckpoint
+extern void C2_HOOK_FASTCALL CalcMapCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
 
 extern void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
 
-// DrawCheckpoint
+extern void C2_HOOK_FASTCALL DrawCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
 
 extern void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
 
@@ -84,7 +84,7 @@ extern void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, 
 
 // DoOpponentStatusHeadup
 
-// AllocateOppoBarActor
+extern void C2_HOOK_FASTCALL AllocateOppoBarActor(int pX, int pY);
 
 // DoNearestOpponentRelativeHeightMarkerStuff
 
@@ -92,7 +92,7 @@ extern void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, 
 
 // InitNearestCar
 
-// MapStuffBeforeRender
+extern void C2_HOOK_FASTCALL MapStuffBeforeRender(void);
 
 // MapStuffAfterRender
 
@@ -113,5 +113,7 @@ extern void C2_HOOK_FASTCALL InitSmashTargets(void);
 extern void C2_HOOK_FASTCALL AddSmashTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 
 extern int C2_HOOK_FASTCALL NearestPowerOfTwo(int pValue);
+
+extern void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void);
 
 #endif // GUARD_62_GRAPHICS3_H

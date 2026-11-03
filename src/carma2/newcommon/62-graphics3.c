@@ -25,6 +25,7 @@
 #include "70-packfile.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include <limits.h>
@@ -493,7 +494,15 @@ void C2_HOOK_FASTCALL DoSomeThingsToCheckpoints(br_pixelmap* pMap, tU32 pTime, t
     }
 }
 
-// CalcMapCheckpoint
+// FUNCTION: CARMA2_HW 0x004968f0
+void C2_HOOK_FASTCALL CalcMapCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    br_vector3 p;
+    tRace_checkpoint_spec* checkpoint;
+
+    checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
+    BrMatrix34ApplyP(&p, &checkpoint->pos, &gCurrent_race.map_transformation);
+    BrVector2Copy(&checkpoint->map_position, &p);
+}
 
 // FUNCTION: CARMA2_HW 0x00496940
 void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
@@ -510,6 +519,38 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU3
 }
 
 // DrawCheckpoint
+    // GLOBAL: CARMA2_HW 0x0068d8e8
+    static tU32 last_flash;
+    // GLOBAL: CARMA2_HW 0x0068d8ec
+    static int flash_rate;
+    tRace_checkpoint_spec* checkpoint;
+
+    if ((pCheckpoint >= 0 && pCheckpoint < gCurrent_race.check_point_count
+            && gTrack_version > 0 && pTarget == 0) || Flash(300, &last_flash, &flash_rate)) {
+        checkpoint = &gCurrent_race.checkpoints[pCheckpoint];
+
+        if (checkpoint->map_position.v[0] >= 0.f
+                && checkpoint->map_position.v[0] < (float)pMap->width
+                && checkpoint->map_position.v[1] >= 0.f
+                && checkpoint->map_position.v[1] < (float)pMap->height) {
+
+            if (gMap_view == 2) {
+                PossibleLock(1);
+            }
+            DRPixelmapRectangleMaskedCopy(pMap,
+                (int)(checkpoint->map_position.v[0] - (float)gCheckpoint_digit_center_x),
+                (int)(checkpoint->map_position.v[1] - (float)gCheckpoint_digit_center_y),
+                gCheckpoint_numbers,
+                0,
+                pCheckpoint * gCheckpoint_digit_height,
+                gCheckpoint_numbers->width,
+                gCheckpoint_digit_height);
+            if (gMap_view == 2) {
+                PossibleUnlock(1);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00495d00
 // FUNCTION: CARMA2_SW 0x00493350
@@ -539,8 +580,6 @@ void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, t
         }
     }
 }
-
-// DoMapOverlays
 
 // StartMap
 
@@ -573,47 +612,38 @@ void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pT
 
 // DoOpponentStatusHeadup
 
+// GLOBAL: CARMA2_HW 0x0068d8c0
+br_actor* gLit_op_stat_actor;
+
 // AllocateOppoBarActor
 
-// DoNearestOpponentRelativeHeightMarkerStuff
+// GLOBAL: CARMA2_HW 0x00659b20
+int gPrevious_opponent_status = -1;
 
-// MapOverlay
+// GLOBAL: CARMA2_HW 0x0068d8d0
+tU32 gTime_oppobar_target_wasted;
 
-// InitNearestCar
+// GLOBAL: CARMA2_HW 0x0074ab90
+float gFLOAT_0074ab90;
+
+// GLOBAL: CARMA2_HW 0x0068d6f4
+int gINT_0068d6f4;
+
+// GLOBAL: CARMA2_HW 0x0068d6e8
+int gBack_original_origin_y;
+
+// GLOBAL: CARMA2_HW 0x0068d6ec
+int gBack_original_origin_x;
+
+// GLOBAL: CARMA2_HW 0x0068d888
+int gBack_original_base_y;
+
+// GLOBAL: CARMA2_HW 0x0068d88c
+int gBack_original_base_x;
+
+extern void C2_HOOK_FASTCALL FRONTEND_Redraw(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h);
 
 // MapStuffBeforeRender
-
-// MapStuffAfterRender
-
-static void C2_HOOK_FASTCALL ReadMoodMessages(void) {
-    tPath_name path;
-    FILE *f;
-    int mood;
-    char s[256];
-
-    PathCat(path, gApplication_path, "STATUS.TXT");
-    f = PFfopen(path, "rt");
-    if (f != NULL) {
-        for (mood = 0; mood < (int)REC2_ASIZE(gOppo_status_messages); mood += 1) {
-            int i;
-
-            C2_HOOK_ASSERT(mood < REC2_ASIZE(gOppo_status_messages));
-
-            gOppo_status_messages[mood].count = GetAnInt(f);
-            C2_HOOK_ASSERT(gOppo_status_messages[mood].count < REC2_ASIZE(gOppo_status_messages[mood].messages));
-            for (i = 0; i < gOppo_status_messages[mood].count; i++) {
-
-
-                GetALineAndDontArgue(f, s);
-                gOppo_status_messages[mood].messages[i] = (char *) BrMemAllocate(strlen(s) + 1, kMem_misc_string);
-                strcpy(gOppo_status_messages[mood].messages[i], s);
-            }
-        }
-        PFfclose(f);
-    } else {
-        FatalError(kFatalError_CantOpen_S, "STATUS.TXT");
-    }
-}
 
 // FUNCTION: CARMA2_HW 0x00496e30
 // FUNCTION: CARMA2_SW 0x00493ca0
@@ -872,8 +902,14 @@ int C2_HOOK_FASTCALL NearestPowerOfTwo(int pValue) {
     return INT_MIN;
 }
 
+// STUB: CARMA2_HW 0x00497610
+void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00495e10
+void C2_HOOK_FASTCALL DoMapOverlays(br_pixelmap* pScreen) { NOT_IMPLEMENTED(); }
+
 // STUB: CARMA2_HW 0x005191b0
 void C2_HOOK_FASTCALL FRONTEND_Redraw(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h) { NOT_IMPLEMENTED(); }
 
-// STUB: CARMA2_HW 0x00497610
-void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004950b0
+void C2_HOOK_FASTCALL MapOverlay(void) { NOT_IMPLEMENTED(); }
