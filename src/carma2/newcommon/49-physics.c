@@ -1950,9 +1950,8 @@ void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char*
     exit(pError);
 }
 
-// PhysicsWarning
-
 // FUNCTION: CARMA2_HW 0x004c61e0
+// FUNCTION: CARMA2_SW 0x004c2910
 void C2_HOOK_FASTCALL PhysicsWarning(const char* pMessage) {
     (void)pMessage;
 }
