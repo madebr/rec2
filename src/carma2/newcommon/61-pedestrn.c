@@ -1631,10 +1631,67 @@ void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pPed
     pPed->field_0x8c.m[3][2] = 0.f;
 }
 
-// STUB: CARMA2_HW 0x00409400
+static tPhysics_object* C2_HOOK_FASTCALL PedGetRootObjectInline(tPed_character_instance *pPed) {
+    tPed_form* form;
+    tPed_form_boned_phys* boned_phys;
+    int i;
+
+    form = pPed->personality->form;
+    boned_phys = &form->boned_physicing[pPed->field_0x5];
+    for (i = 0; i < form->count_bones; i++) {
+        if (boned_phys->collision_infos[i]->shape != NULL) {
+            return boned_phys->collision_infos[i];
+        }
+    }
+    return NULL;
+}
+
+// FUNCTION: CARMA2_HW 0x00409400
 int C2_HOOK_FASTCALL BonerActiveHalted2(tPed_character_instance* pCharacter, undefined4 pArg2) {
-    NOT_IMPLEMENTED();
-    return 0;
+    tPed_personality* personality;
+    tPed_form* form;
+    tPhysics_object* obj;
+    br_matrix34* character_matrix;
+    br_matrix34 mat34;
+
+    personality = pCharacter->personality;
+    if (pCharacter->field_0x14 & 1) {
+        obj = personality->form->simple_physicing[pCharacter->field_0x5].collision_info;
+    } else {
+        obj = PedGetRootObjectInline(pCharacter);
+    }
+
+    form = personality->form;
+    if (pCharacter->field_0x4 < 0) {
+        character_matrix = &pCharacter->field_0x2c;
+    } else if (pCharacter->field_0xe8 != NULL) {
+        character_matrix = pCharacter->field_0xe8;
+    } else {
+        character_matrix = &form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+    }
+    BrMatrix34LPInverse(&mat34, &form->moves[pCharacter->field_0x7].move->frames[(tS16)pCharacter->field_0x1c].mat);
+    BrMatrix34Mul(&pCharacter->field_0x8c, &mat34, character_matrix);
+    pCharacter->field_0x8c.m[3][0] = 0.f;
+    pCharacter->field_0x8c.m[3][1] = 0.f;
+    pCharacter->field_0x8c.m[3][2] = 0.f;
+    SetCharacterBonePositions(pCharacter, 3, 0);
+    pCharacter->field_0x14 &= ~4;
+
+    if (gPed_vtable->active_halted != NULL) {
+        if (gPed_vtable->active_halted((undefined4*)pCharacter, (undefined4*)obj) == 0) {
+            pCharacter->field_0x14 |= 4;
+            return 0;
+        }
+    }
+
+    obj->disable_move_rotate = 1;
+    pCharacter->field_0xd8.v[0] = obj->v.v[0];
+    pCharacter->field_0xd8.v[1] = obj->v.v[1];
+    pCharacter->field_0xd8.v[2] = obj->v.v[2];
+    PHILSetObjectProperty(obj, 3, 1);
+    PHILSetObjectProperty(obj, 4, 1);
+    PHILSetObjectProperty(obj, 5, 1);
+    return 1;
 }
 
 // CharacterNoLongerPhysicworthy
