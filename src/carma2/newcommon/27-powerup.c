@@ -743,7 +743,19 @@ int C2_HOOK_FASTCALL GainAPO(tPowerup* pPowerup, tCar_spec* pCar) {
     return powerup_index;
 }
 
-// GotTimeOrPower
+// FUNCTION: CARMA2_HW 0x004dc470
+int C2_HOOK_FASTCALL GotTimeOrPower(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (gNet_mode) {
+        return GotPowerupX(pCar, gNet_powerup_time_replacement, 1, 1, 0);
+    }
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        AwardTime(IRandomBetween(pPowerup->integer_params[0], pPowerup->integer_params[1]));
+    }
+    return pPowerup - gPowerup_array;
+}
+
+// GainAPOPotential
 
 // FUNCTION: CARMA2_HW 0x004dc720
 // FUNCTION: CARMA2_SW 0x004d8c20
