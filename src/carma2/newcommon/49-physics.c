@@ -1468,10 +1468,21 @@ void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char*
     exit(pError);
 }
 
-// FUNCTION: CARMA2_HW 0x004c61e0
+// FUNCTION: CARMA2_HW 0x004c2910
 // FUNCTION: CARMA2_SW 0x004c2910
-void C2_HOOK_FASTCALL PhysicsWarning(const char* pMessage) {
-    (void)pMessage;
+void C2_HOOK_FASTCALL PhysicsObjectMoveVelocity(tPhysics_object* pObject) {
+    tPhysics_object* pChild;
+
+    if (!pObject->disable_move_rotate) {
+        pObject->v.v[0] += pObject->field_0x54.v[0];
+        pObject->v.v[1] += pObject->field_0x54.v[1];
+        pObject->v.v[2] += pObject->field_0x54.v[2];
+    }
+    if (pObject->child != NULL) {
+        for (pChild = pObject->child; pChild != NULL; pChild = pChild->next) {
+            PhysicsObjectMoveVelocity(pChild);
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004c61f0

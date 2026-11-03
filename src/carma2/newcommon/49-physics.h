@@ -318,6 +318,8 @@ extern void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* pObje
 
 extern void C2_HOOK_FAKE_THISCALL InterpolateObjects(tPhysics_object* pObject, float pDt);
 
+extern void C2_HOOK_FASTCALL PhysicsObjectMoveVelocity(tPhysics_object* pObject);
+
 // ApplyGravitySingleObject
 
 // ApplyGravity
