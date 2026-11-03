@@ -1241,7 +1241,45 @@ void C2_HOOK_FASTCALL ToggleShellModel(void) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// FUN_0045a7f0
+// FUNCTION: CARMA2_HW 0x0045a7f0
+int C2_HOOK_FASTCALL FUN_0045a7f0(char* pFilename, int* pArg2) {
+    extern void* C2_HOOK_CDECL malloc(unsigned int pSize);
+    extern int C2_HOOK_CDECL toupper(int pChar);
+    extern void C2_HOOK_FASTCALL StringTransformToLower(char* pStr);
+    extern int C2_HOOK_FASTCALL FUN_0045a920(tHeadup_text_buffer* pBuffer, tHeadup_text* pText, int pArg3);
+    char local_100[256];
+    char* substr;
+    void* this_ptr;
+    tHeadup_text* mem;
+
+    this_ptr = (void*)pArg2[0];
+    substr = (char*)pArg2[1];
+    strcpy(local_100, pFilename);
+    DRstrlwr(local_100);
+    if (strstr(local_100, "POWERUP") == NULL && strstr(local_100, "CPOINT") == NULL && strstr(local_100, "TRACKX") == NULL) {
+        if (strstr(local_100, substr) == NULL) {
+            if (strcmp(substr, ".*") != 0) {
+                return 0;
+            }
+        }
+        mem = malloc(sizeof(tHeadup_text));
+        if (mem != NULL) {
+            mem->next = NULL;
+            strncpy(mem->text, local_100, 0x28);
+            StringTransformToLower(mem->text);
+            mem->text[0] = (char)toupper((int)mem->text[0]);
+            FUN_0045a920(this_ptr, mem, 1);
+        }
+    }
+    return 0;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // CreateAccentPolyActor
 // FUN_0045acf0
 // FUN_0045c240
