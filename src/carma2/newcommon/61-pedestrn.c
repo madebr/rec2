@@ -1705,8 +1705,14 @@ void C2_HOOK_FASTCALL DeetherealiseCharacter1(void* pCharacter) {
     *(tU32*)((char*)pCharacter + 0x19c) &= ~4;
 }
 
-// STUB: CARMA2_HW 0x004d6bb0
-void C2_HOOK_FASTCALL MakePedsNotEthereal(void) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004d6bb0
+void C2_HOOK_FASTCALL MakePedsNotEthereal(void) {
+
+    MungeAllCharacterMaterials(DeetherealiseMaterial1);
+    MungeAllCharacterObjects(DeetherealiseCharacter1);
+    MungeAllCharacterModels(EtherealiseMaterial2);
+    gEthereal_pedestrians = 0;
+}
 
 // STUB: CARMA2_HW 0x004d6dc0
 int C2_HOOK_FASTCALL CalmDownAllPeds(void) { NOT_IMPLEMENTED(); }
