@@ -36,10 +36,18 @@ struct {
 
 // FUNCTION: CARMA2_HW 0x00540086
 // FUNCTION: CARMA2_SW 0x0053b726
-br_error C2_HOOK_CDECL HostSelectorReal(br_uint_16 *selp) {
+__declspec(naked) br_error C2_HOOK_CDECL HostSelectorReal(br_uint_16 *selp) {
 
-    *selp = _RealSelector;
-    return 0;
+    __asm {
+        push    ebp
+        mov     ebp, esp
+        mov     eax, dword ptr [ebp + 8]
+        mov     dx, word ptr [_RealSelector]
+        mov     word ptr [eax], dx
+        xor     eax, eax
+        leave
+        ret
+    }
 }
 
 #ifdef REC2_MATCHING
