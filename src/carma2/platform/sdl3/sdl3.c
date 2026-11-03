@@ -253,7 +253,7 @@ C2_NORETURN void PDShutdownSystem(void) {
 
     gBack_screen = NULL;
     if (been_here) {
-        PDDisposeActionReplayBuffer();
+        PDCloseReplayFile();
         exit(127);
     } else {
         been_here = 1;
@@ -282,7 +282,7 @@ C2_NORETURN void PDShutdownSystem(void) {
         }
         dr_dprintf("End of PDShutdownSystem()");
         CloseDiagnostics();
-        PDDisposeActionReplayBuffer();
+        PDCloseReplayFile();
         SDL_Quit();
         exit(gExit_code);
     }
@@ -719,7 +719,7 @@ void PDFileDelete(const char *pPath, int pIgnore_read_only) {
     SDL_RemovePath(pPath);
 }
 
-void PDDisposeActionReplayBuffer(void) {
+void PDCloseReplayFile(void) {
 }
 
 int PDmemicmp(const char* str1, const char* str2, size_t count) {

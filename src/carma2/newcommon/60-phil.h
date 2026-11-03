@@ -36,7 +36,7 @@ extern int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8*
 
 // GetVelocityAndPosition
 
-// SizeOfObjectNetworkStuff
+extern int C2_HOOK_FASTCALL SizeOfObjectNetworkStuff(tPhysics_joint_type pType);
 
 extern int C2_HOOK_STDCALL FloatToFixedFraction(float pValue, float pMin, float pMax);
 
@@ -48,7 +48,7 @@ extern int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, t
 
 // WriteHierarchyNetworkStuff
 
-// GetHierarchyNetworkSize
+extern int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tPhysics_object* pObject);
 
 // GetNetworkDataSize
 

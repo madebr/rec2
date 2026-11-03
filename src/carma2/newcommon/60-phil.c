@@ -8,6 +8,7 @@
 
 #include "60-phil.h"
 
+#include "49-physics.h"
 #include "55-volume.h"
 
 // GLOBAL: CARMA2_HW 0x0065d004
@@ -102,7 +103,23 @@ int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffe
 
 // GetVelocityAndPosition
 
-// SizeOfObjectNetworkStuff
+int C2_HOOK_FASTCALL SizeOfObjectNetworkStuff(tPhysics_joint_type pType) {
+
+    // FIXME: add structs and use sizeof(struct) + add static assertion making sure sizeof(struct) == {0x28,0xc,0x10}
+    switch (pType & 0xf) {
+    case eJoint_none:
+        return 0x28;
+    case eJoint_hinge:
+    case eJoint_quick_hinge:
+        return 0xc;
+    case eJoint_universal:
+    case eJoint_ball_n_socket:
+        return 0x10;
+    default:
+        PhysicsError(9, "netphys got messed up");
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0049c5e0
 // FUNCTION: CARMA2_SW 0x00498760
@@ -154,7 +171,18 @@ int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pBu
 
 // WriteHierarchyNetworkStuff
 
-// GetHierarchyNetworkSize
+// FUNCTION: CARMA2_HW 0x0049ce60
+// FUNCTION: CARMA2_SW 0x00498fe0
+int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tPhysics_object* pObject) {
+    int size;
+    tPhysics_object* child;
+
+    size = SizeOfObjectNetworkStuff(pObject->physics_joint1 != NULL ? pObject->physics_joint1->type : eJoint_none);
+    for (child = pObject->child; child != NULL; child = child->next) {
+        size += GetHierarchyNetworkSize(child);
+    }
+    return size;
+}
 
 // GetNetworkDataSize
 

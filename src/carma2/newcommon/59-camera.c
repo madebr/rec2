@@ -15,6 +15,7 @@
 #include "22-replay.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
+#include "42-input.h"
 #include "57-drone.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -203,7 +204,24 @@ void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar) {
 
 // SetPanningFieldOfView
 
-// IsCameraTypeAllowed
+int C2_HOOK_FASTCALL IsCameraTypeAllowed(int pCamera_mode) {
+    if (gAction_replay_mode && !gCamera_type_allowed_replay[pCamera_mode]) {
+        return 0;
+    }
+    if (!gAction_replay_mode && !gCamera_type_allowed_gameplay[pCamera_mode]) {
+        return 0;
+    }
+    if (pCamera_mode >= 9) {
+        return 0;
+    }
+    if (pCamera_mode == 6 && !OKToViewDrones()) {
+        return 0;
+    }
+    if (pCamera_mode == 5 && gPed_count == 0) {
+        return 0;
+    }
+    return 1;
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -260,7 +278,34 @@ void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
     MungeCarMaterials(&gProgram_state.current_car, gAction_replay_camera_mode == kActionReplayCameraMode_Internal);
 }
 
-// ChangeCameraType
+// FUNCTION: CARMA2_HW 0x0040e7f0
+// FUNCTION: CARMA2_SW 0x0040e7d0
+void C2_HOOK_FASTCALL ChangeCameraType(void) {
+    tActionReplayCameraMode mode;
+
+    if (KeyIsDown(8)) {
+        mode = gAction_replay_camera_mode;
+        gAction_replay_camera_mode = mode - 1;
+        if (gAction_replay_camera_mode >= 9 || gAction_replay_camera_mode < 0) {
+            gAction_replay_camera_mode = 8;
+        }
+    } else {
+        mode = gAction_replay_camera_mode;
+        gAction_replay_camera_mode = mode + 1;
+        if (gAction_replay_camera_mode >= 9) {
+            gAction_replay_camera_mode = 0;
+        }
+    }
+    if (!IsCameraTypeAllowed(gAction_replay_camera_mode)) {
+        ChangeCameraType();
+    }
+    if (gAction_replay_mode) {
+        gAR_camera_type = gAction_replay_camera_mode;
+    } else {
+        gCamera_type = gAction_replay_camera_mode;
+    }
+    SetCameraType(gAction_replay_camera_mode);
+}
 
 // FUNCTION: CARMA2_HW 0x0040e900
 // FUNCTION: CARMA2_SW 0x0040e8e0

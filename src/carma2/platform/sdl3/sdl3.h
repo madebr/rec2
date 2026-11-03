@@ -124,7 +124,7 @@ extern void PDExtractDirectory(char *pDest, const char *pPath);
 
 extern void PDPageInProcessMemory(void);
 
-extern void PDDisposeActionReplayBuffer(void);
+extern void PDCloseReplayFile(void);
 
 extern void SDL3ServiceMessages(void);
 extern void C2_HOOK_FASTCALL SDL3AddGamepad(SDL_JoystickID which);

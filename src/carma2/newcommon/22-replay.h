@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gPaused;
+
 extern const int gPow2_array[32];
 
 extern tU8 gCamera_type_allowed_replay[9];
@@ -26,7 +28,7 @@ extern tPolyhedron_edge_indexes gDefault_box_collision_wireframe_edges[12];
 
 // ActualActionReplayHeadups
 
-// DoActionReplayPostSwap
+extern void C2_HOOK_FASTCALL DoActionReplayPostSwap(void);
 
 // DoZappyActionReplayHeadups
 
@@ -56,7 +58,7 @@ extern tPolyhedron_edge_indexes gDefault_box_collision_wireframe_edges[12];
 
 // TurnOffActionReplay
 
-// AfterActionReplay
+extern void C2_HOOK_FASTCALL AfterActionReplay(void);
 
 // ToggleReplay
 
@@ -64,6 +66,6 @@ extern tPolyhedron_edge_indexes gDefault_box_collision_wireframe_edges[12];
 
 extern void C2_HOOK_FASTCALL ApplyTime(tU32 pTime);
 
-// ARSetPause
+extern void C2_HOOK_FASTCALL ARSetPause(int pPause);
 
 #endif // GUARD_22_REPLAY_H

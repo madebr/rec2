@@ -87,7 +87,7 @@ br_error C2_HOOK_FASTCALL DRBrEnd(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00515910
-void C2_HOOK_FASTCALL StringTransformToLower(char* pStr) {
+void C2_HOOK_FASTCALL DRstrlwr(char* pStr) {
     int i;
     int len;
 

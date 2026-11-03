@@ -8,7 +8,13 @@
 
 #include "22-replay.h"
 
+#include "18-graphics2.h"
+#include "30-opponent.h"
 #include "globvars.h"
+
+// GLOBAL: CARMA2_HW 0x006768fc
+// GLOBAL: CARMA2_SW 0x0067106c
+int gPaused;
 
 // GLOBAL: CARMA2_HW 0x0058f2d8
 // GLOBAL: CARMA2_SW 0x0058a2d8
@@ -60,7 +66,11 @@ tPolyhedron_edge_indexes gDefault_box_collision_wireframe_edges[12] = {
 
 // ActualActionReplayHeadups
 
-// DoActionReplayPostSwap
+// FUNCTION: CARMA2_HW 0x004e6260
+// FUNCTION: CARMA2_SW 0x004e2280
+void C2_HOOK_FASTCALL DoActionReplayPostSwap(void) {
+    RemoveTransientBitmaps(1);
+}
 
 // DoZappyActionReplayHeadups
 
@@ -90,7 +100,11 @@ tPolyhedron_edge_indexes gDefault_box_collision_wireframe_edges[12] = {
 
 // TurnOffActionReplay
 
-// AfterActionReplay
+// FUNCTION: CARMA2_HW 0x004e72d0
+// FUNCTION: CARMA2_SW 0x004e3110
+void C2_HOOK_FASTCALL AfterActionReplay(void) {
+    ForceRebuildActiveCarList();
+}
 
 // ToggleReplay
 
@@ -102,5 +116,9 @@ void C2_HOOK_FASTCALL ApplyTime(tU32 pTime) {
     gLast_replay_frame_time = pTime;
 }
 
-// ARSetPause
+// FUNCTION: CARMA2_HW 0x004022f0
+// FUNCTION: CARMA2_SW 0x004022f0
+void C2_HOOK_FASTCALL ARSetPause(int pPause) {
+    gPaused = pPause;
+}
 

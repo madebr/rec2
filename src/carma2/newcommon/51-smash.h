@@ -283,7 +283,7 @@ extern float C2_HOOK_FASTCALL BashObject(tPhysics_object* pObject, br_actor* pAc
 
 extern void C2_HOOK_FASTCALL NonCarSnapSmashCallback(tPhysics_object* pObject, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce);
 
-// SmashFaceMustBeUpdateable
+extern int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material* pMaterial);
 
 extern intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* pData);
 
@@ -301,7 +301,9 @@ extern intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec);
 
 // SmashEverything
 
-// DetermineTilitudinality
+extern void C2_HOOK_FASTCALL DetermineTilitudinality(br_model* pModel, int* pArea_1, int* pArea_2);
+
+extern void C2_HOOK_FASTCALL GetGlassFragmentCounts(int* pVisible_count, int* pActive_count);
 
 extern void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor);
 

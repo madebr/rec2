@@ -22,6 +22,8 @@ extern void C2_HOOK_FASTCALL MAMSInitMem(void);
 
 extern void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle);
 
+extern void C2_HOOK_FASTCALL TouchMemoryPages(void* pMemory, br_size_t pSize);
+
 extern void* C2_HOOK_CDECL DRStdlibAllocate(br_size_t size, br_uint_8 type);
 
 extern void C2_HOOK_CDECL DRStdlibFree(void* mem);

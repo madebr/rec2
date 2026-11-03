@@ -27,6 +27,22 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x006a0a70
+// GLOBAL: CARMA2_SW 0x0069aac8
+int gInventory[20];
+
+// GLOBAL: CARMA2_HW 0x006a0a6c
+// GLOBAL: CARMA2_SW 0x0069aac4
+int gINT_006a0a6c;
+
+// GLOBAL: CARMA2_HW 0x006a0a5c
+// GLOBAL: CARMA2_SW 0x0069aab4
+int gINT_006a0a5c;
+
+// GLOBAL: CARMA2_HW 0x006a0a58
+// GLOBAL: CARMA2_SW 0x0069aab0
+int gInventory_selected = 0;
+
 // GLOBAL: CARMA2_HW 0x006a0ad4
 // GLOBAL: CARMA2_SW 0x0069ab2c
 const char* gPowerup_txt_path;
@@ -34,6 +50,18 @@ const char* gPowerup_txt_path;
 // GLOBAL: CARMA2_HW 0x006a0ad8
 // GLOBAL: CARMA2_SW 0x0069ab30
 tU32* gReal_render_palette;
+
+// GLOBAL: CARMA2_HW 0x006a0ae0
+// GLOBAL: CARMA2_SW 0x0069ab38
+br_model* gModel_powerup_armor;
+
+// GLOBAL: CARMA2_HW 0x006a0ae4
+// GLOBAL: CARMA2_SW 0x0069ab3c
+br_model* gModel_powerup_power;
+
+// GLOBAL: CARMA2_HW 0x006a0ae8
+// GLOBAL: CARMA2_SW 0x0069ab40
+br_model* gModel_powerup_offence;
 
 // GLOBAL: CARMA2_HW 0x007059e0
 // GLOBAL: CARMA2_SW 0x006fc4a0
@@ -71,12 +99,14 @@ int gPickup_respawn_max_extra_time_ms;
 int gBlind_pedestrians;
 
 // GLOBAL: CARMA2_HW 0x007447dc
+// GLOBAL: CARMA2_SW 0x0073b29c
 float gPed_gravity_multiplier;
 
 // GLOBAL: CARMA2_HW 0x007447e4
 int gPed_dismemberfest;
 
 // GLOBAL: CARMA2_HW 0x007447f8
+// GLOBAL: CARMA2_SW 0x0073b2b8
 int gPanicking_peds;
 
 // GLOBAL: CARMA2_HW 0x007059c0
@@ -130,6 +160,13 @@ int gInstant_handbrake;
 // GLOBAL: CARMA2_HW 0x006a0a54
 // GLOBAL: CARMA2_SW 0x0069aaac
 tPowerup* gPowerup_array;
+
+// FUNCTION: CARMA2_HW 0x004d8d10
+// FUNCTION: CARMA2_SW 0x004d5240
+char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index) {
+
+    return gPowerup_array[pPowerup_index].message;
+}
 
 // GetNextGoodyTime
 
@@ -208,7 +245,20 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 
 // ResetRepulseEffects
 
-// EmptyInventory
+// FUNCTION: CARMA2_HW 0x004da600
+// FUNCTION: CARMA2_SW 0x004d6ad0
+void C2_HOOK_FASTCALL EmptyInventory(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gInventory) != 20);
+
+    for (i = 0; i < (int)REC2_ASIZE(gInventory); i++) {
+        gInventory[i] = -1;
+    }
+    gInventory_selected = -1;
+    gINT_006a0a6c = 0;
+    gINT_006a0a5c = 0;
+}
 
 // ResetPowerups
 
@@ -598,7 +648,12 @@ int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// ResetImmortalPeds
+// FUNCTION: CARMA2_HW 0x004dcf30
+// FUNCTION: CARMA2_SW 0x004d9430
+void C2_HOOK_FASTCALL ResetImmortalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gImmortal_peds = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dcf40
 // FUNCTION: CARMA2_SW 0x004d9440
@@ -608,7 +663,12 @@ int C2_HOOK_FASTCALL SetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// ResetSuicidalPeds
+// FUNCTION: CARMA2_HW 0x004dcf70
+// FUNCTION: CARMA2_SW 0x004d9470
+void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPeds_suicidal = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004dcf80
 // FUNCTION: CARMA2_SW 0x004d9480
@@ -638,7 +698,12 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // MineExplode
 
-// TiggerMineToExplode
+// FUNCTION: CARMA2_HW 0x004ddc10
+// FUNCTION: CARMA2_SW 0x004da110
+void C2_HOOK_FASTCALL TiggerMineToExplode(tCar_spec* pCar) {
+
+    pCar->index |= 0x20;
+}
 
 // HitAShatOutMine
 
@@ -832,11 +897,29 @@ void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* pPowerup, tCar_spec* pCar)
     }
 }
 
-// SetDancingPeds
+// FUNCTION: CARMA2_HW 0x004de870
+// FUNCTION: CARMA2_SW 0x004dad70
+int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
-// SetPanickingPeds
+    gDancing_peds = 1;
+    return pPowerup - gPowerup_array;
+}
 
-// SetLowGravityPeds
+// FUNCTION: CARMA2_HW 0x004de8a0
+// FUNCTION: CARMA2_SW 0x004dada0
+int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPanicking_peds = 1;
+    return pPowerup - gPowerup_array;
+}
+
+// FUNCTION: CARMA2_HW 0x004de8d0
+// FUNCTION: CARMA2_SW 0x004dadd0
+int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    gPed_gravity_multiplier = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004de900
 // FUNCTION: CARMA2_SW 0x004dae00
@@ -1003,7 +1086,33 @@ void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* pActor, br_model* pModel, br_
     BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, pOn_screen, 0);
 }
 
-// RenderChangingPowerup
+// FUNCTION: CARMA2_HW 0x004dfe10
+// FUNCTION: CARMA2_SW 0x004dc310
+void C2_HOOK_CDECL RenderChangingPowerup(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
+
+    if (pActor->user == NULL) {
+        pActor->user = (void*)(uintptr_t)GetTotalTime();
+        pActor->model = gModel_powerup_armor;
+    } else {
+        tU32 now;
+        tU32 elapsed;
+
+        now = GetTotalTime();
+        elapsed = (now - (tU32)(uintptr_t)pActor->user) / 16;
+        if (elapsed > 15) {
+            if (pActor->model == gModel_powerup_armor) {
+                pActor->model = gModel_powerup_power;
+            } else if (pActor->model == gModel_powerup_power) {
+                pActor->model = gModel_powerup_offence;
+            } else {
+                pActor->model = gModel_powerup_armor;
+            }
+            pActor->user = (void*)(uintptr_t)now;
+        }
+        BrMatrix34PreRotateY(&pActor->t.t.mat, BR_ANGLE_DEG(elapsed + 12));
+    }
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, pOn_screen, 0);
+}
 
 // FUNCTION: CARMA2_HW 0x004df570
 // FUNCTION: CARMA2_SW 0x004dba70

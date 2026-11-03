@@ -28,7 +28,7 @@ extern br_pixelmap* gPalette_source;
 
 br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
-void C2_HOOK_FASTCALL StringTransformToLower(char* pStr);
+void C2_HOOK_FASTCALL DRstrlwr(char* pStr);
 
 void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src);
 

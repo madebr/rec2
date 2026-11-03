@@ -107,17 +107,76 @@ float gFloat_sine_table[91] = {
     1.0f,
 };
 
-// FastFloatSin
+// FUNCTION: CARMA2_HW 0x005113d0
+// FUNCTION: CARMA2_SW 0x0050c820
+float C2_HOOK_FASTCALL FastFloatSin(int pAngle_degrees) {
 
-// FastFloatCos
+    if (pAngle_degrees < 0) {
+        pAngle_degrees = 360 - -pAngle_degrees % 360;
+    } else {
+        pAngle_degrees = pAngle_degrees % 360;
+    }
+    if (pAngle_degrees > 270) {
+        return -gFloat_sine_table[360 - pAngle_degrees];
+    }
+    if (pAngle_degrees > 180) {
+        return -gFloat_sine_table[pAngle_degrees - 180];
+    }
+    if (pAngle_degrees > 90) {
+        return *(gFloat_sine_table + 90 - (pAngle_degrees - 90));
+    }
+    return gFloat_sine_table[pAngle_degrees];
+}
 
-// FastScalarSin
+// FUNCTION: CARMA2_HW 0x00511440
+// FUNCTION: CARMA2_SW 0x0050c890
+float C2_HOOK_FASTCALL FastFloatCos(int pAngle_degrees) {
 
-// FastScalarCos
+    if (pAngle_degrees < 0) {
+        pAngle_degrees = 360 - -pAngle_degrees % 360;
+    } else {
+        pAngle_degrees = pAngle_degrees % 360;
+    }
 
-// FastScalarSinAngle
+    if (pAngle_degrees > 270) {
+        return gFloat_sine_table[pAngle_degrees - 270];
+    }
+    if (pAngle_degrees > 180) {
+        return -gFloat_sine_table[270 - pAngle_degrees];
+    }
+    if (pAngle_degrees > 90) {
+        return -gFloat_sine_table[pAngle_degrees - 90];
+    }
+    return *(gFloat_sine_table + 90 - pAngle_degrees);
+}
 
-// FastScalarCosAngle
+// FUNCTION: CARMA2_HW 0x005115b0
+// FUNCTION: CARMA2_SW 0x0050ca00
+br_scalar C2_HOOK_FASTCALL FastScalarSin(int pAngle_degrees) {
+
+    return FastFloatSin(pAngle_degrees);
+}
+
+// FUNCTION: CARMA2_HW 0x00511620
+// FUNCTION: CARMA2_SW 0x0050ca70
+br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_degrees) {
+
+    return FastFloatCos(pAngle_degrees);
+}
+
+// FUNCTION: CARMA2_HW 0x00511780
+// FUNCTION: CARMA2_SW 0x0050cbd0
+br_scalar C2_HOOK_FASTCALL FastScalarSinAngle(br_angle pAngle) {
+
+    return FastScalarSin((int)((double)pAngle * (360.0 / 65536.0)));
+}
+
+// FUNCTION: CARMA2_HW 0x00511810
+// FUNCTION: CARMA2_SW 0x0050cc60
+br_scalar C2_HOOK_FASTCALL FastScalarCosAngle(br_angle pAngle) {
+
+    return FastScalarCos((int)((double)pAngle * (360.0 / 65536.0)));
+}
 
 // FUNCTION: CARMA2_HW 0x005119c0
 // FUNCTION: CARMA2_SW 0x0050ce10
@@ -153,6 +212,13 @@ float C2_HOOK_STDCALL FastFloatArcSin(float pValue) {
 float C2_HOOK_STDCALL FastFloatArcCos(float pValue) {
 
     return 90.f - FastFloatArcSin(pValue);
+}
+
+// FUNCTION: CARMA2_HW 0x00511b50
+// FUNCTION: CARMA2_SW 0x0050cfa0
+br_scalar C2_HOOK_STDCALL FastScalarArcSin(br_scalar pValue) {
+
+    return FastFloatArcSin(pValue);
 }
 
 // FUNCTION: CARMA2_HW 0x00511c10
