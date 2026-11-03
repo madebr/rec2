@@ -1614,3 +1614,77 @@ void C2_HOOK_FASTCALL DisposeAllRemaps(void) {
         }
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x004067e0
+void C2_HOOK_FASTCALL DisposePedForm(tPed_form* pForm) {
+    int i;
+    int j;
+
+    if (gPed_vtable->dispose_form != NULL) {
+        gPed_vtable->dispose_form(pForm);
+    }
+    for (i = 0; i < pForm->max_rendering_at_once; i++) {
+        for (j = 0; j < pForm->count_bones; j++) {
+            if (IsActorRenderworthy(pForm->actor_sets[i].actors[j])) {
+                StopActorBeingRenderable(pForm->actor_sets[i].actors[j]);
+            }
+            BrActorFree(pForm->actor_sets[i].actors[j]);
+        }
+        if (pForm->actor_sets[i].actors != NULL) {
+            BrMemFree(pForm->actor_sets[i].actors);
+        }
+    }
+    for (i = 0; i < pForm->count_bones; i++) {
+        if (pForm->boned_physicing[0].collision_infos[i] != NULL) {
+            if (pForm->bones[i].hinge != NULL) {
+                FreePhysicsJoint(pForm->bones[i].hinge);
+            }
+            for (j = 0; j < pForm->max_boned_physicing_at_once; j++) {
+                if (pForm->boned_physicing[j].collision_infos[i]->shape != NULL) {
+                    FreeShape(pForm->boned_physicing[j].collision_infos[i]->shape);
+                }
+                if (pForm->boned_physicing[j].collision_infos[i] != NULL && pForm->boned_physicing[j].collision_infos[i] != NULL) {
+                    BrMemFree(pForm->boned_physicing[j].collision_infos[i]);
+                }
+            }
+        }
+    }
+    for (i = 0; i < pForm->max_boned_physicing_at_once; i++) {
+        if (pForm->boned_physicing[i].collision_infos != NULL) {
+            BrMemFree(pForm->boned_physicing[i].collision_infos);
+        }
+    }
+    for (i = 0; i < pForm->max_simple_physicing_at_once; i++) {
+        FreeShape(pForm->simple_physicing[i].collision_info->shape);
+        if (pForm->simple_physicing[i].collision_info != NULL) {
+            BrMemFree(pForm->simple_physicing[i].collision_info);
+        }
+    }
+    for (i = 0; i < pForm->max_stored_dismembered_characters; i++) {
+        if (pForm->stored_dismembered_characters[i] != NULL) {
+            BrMemFree(pForm->stored_dismembered_characters[i]);
+        }
+    }
+    if (pForm->stored_dismembered_characters != NULL) {
+        BrMemFree(pForm->stored_dismembered_characters);
+    }
+    if (pForm->moves != NULL) {
+        BrMemFree(pForm->moves);
+    }
+    if (pForm->actor_sets != NULL) {
+        BrMemFree(pForm->actor_sets);
+    }
+    if (pForm->simple_physicing != NULL) {
+        BrMemFree(pForm->simple_physicing);
+    }
+    if (pForm->boned_physicing != NULL) {
+        BrMemFree(pForm->boned_physicing);
+    }
+    if (pForm->bones != NULL) {
+        BrMemFree(pForm->bones);
+    }
+    if (pForm != NULL) {
+        BrMemFree(pForm);
+    }
+}
