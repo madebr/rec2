@@ -2149,3 +2149,37 @@ tPhysics_object** C2_HOOK_FASTCALL AppendOverlappingObjects(tPhysics_object* pOb
     }
     return pLink;
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004bca10
+int C2_HOOK_FASTCALL CollectJointLimitsIntoBuffer(tPhysics_object* pObject, tPhysics_joint_force* pContacts, int pCount, int pMax_count) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// FUNCTION: CARMA2_HW 0x004bd6d0
+int C2_HOOK_FASTCALL CollectJointLimitsOfTree(tPhysics_object* pObject, tPhysics_joint_force* pContacts, int pCount, int pMax_count) {
+    if (pObject != NULL) {
+        do {
+            pCount = CollectJointLimitsIntoBuffer(pObject, pContacts, pCount, pMax_count);
+            if (pObject->child != NULL) {
+                pCount = CollectJointLimitsOfTree(pObject->child, pContacts, pCount, pMax_count);
+            }
+            pObject = pObject->next;
+        } while (pObject != NULL);
+    }
+    return pCount;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
