@@ -1325,4 +1325,53 @@ void C2_HOOK_FASTCALL EncodeFileWrapper(char* pThe_path) {
     EncodeFile(pThe_path);
 }
 
-// DisposeKevStuff
+// FUNCTION: CARMA2_HW 0x004fe180
+void C2_HOOK_FASTCALL DisposeKevStuff(void) {
+    int i;
+    tShrapnel* shrapnel;
+    tSplash* splash;
+    extern tShrapnel gShrapnel[30];
+    extern int gShrapnel_flags;
+    extern br_model* gShrapnel_model[2];
+    extern void C2_HOOK_FASTCALL DisposeFlame(void);
+    extern int gNum_splash_types;
+    extern br_material* gSplash_material[20];
+    extern int gSplash_flags;
+    extern tSplash gSplash[32];
+    extern br_model* gSplash_model;
+
+    i = 0;
+    shrapnel = gShrapnel;
+    do {
+        if ((gShrapnel_flags & (1 << i)) != 0 && shrapnel->actor->parent != NULL) {
+            BrActorRemove(shrapnel->actor);
+        }
+        BrActorFree(shrapnel->actor);
+        shrapnel++;
+        i++;
+    } while ((int)shrapnel < (int)&gShrapnel[REC2_ASIZE(gShrapnel)]);
+    gShrapnel_flags = 0;
+    BrModelRemove(gShrapnel_model[0]);
+    BrModelRemove(gShrapnel_model[1]);
+    BrModelFree(gShrapnel_model[0]);
+    BrModelFree(gShrapnel_model[1]);
+    DisposeFlame();
+    for (i = 0; i < gNum_splash_types; i++) {
+        BrMapRemove(gSplash_material[i]->colour_map);
+        BrPixelmapFree(gSplash_material[i]->colour_map);
+        BrMaterialRemove(gSplash_material[i]);
+        BrMaterialFree(gSplash_material[i]);
+    }
+    i = 0;
+    splash = gSplash;
+    do {
+        if ((gSplash_flags & (1 << i)) != 0 && splash->actor->parent != NULL) {
+            BrActorRemove(splash->actor);
+        }
+        BrActorFree(splash->actor);
+        splash++;
+        i++;
+    } while ((int)splash < (int)&gSplash[REC2_ASIZE(gSplash)]);
+    BrModelRemove(gSplash_model);
+    BrModelFree(gSplash_model);
+}
