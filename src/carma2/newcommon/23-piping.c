@@ -1169,7 +1169,21 @@ void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar 
 
 // AddDamageToPipingSession
 
-// AddProxRayToPipingSession
+// FUNCTION: CARMA2_HW 0x004c74c0
+void C2_HOOK_FASTCALL AddProxRayToPipingSession(int pRay_index, tCar_spec* pCar, tU16 pPed_index, tU32 pTime) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_prox_ray, ped_index, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_prox_ray, ped_index, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_prox_ray, car_ID, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_prox_ray, car_ID, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_prox_ray, time, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_prox_ray, time, 0x4);
+
+    ARAddVariedDataToSession(ePipe_chunk_prox_ray, pRay_index, 3,
+        SIZE_OFFSET_PIPING(tPipe_chunk_prox_ray, ped_index), (tU16)pPed_index,
+        SIZE_OFFSET_PIPING(tPipe_chunk_prox_ray, car_ID), (tU16)pCar->car_ID,
+        SIZE_OFFSET_PIPING(tPipe_chunk_prox_ray, time), pTime);
+}
 
 // FUNCTION: CARMA2_HW 0x004c7520
 // FUNCTION: CARMA2_SW 0x004c3c50
