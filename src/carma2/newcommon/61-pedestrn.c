@@ -725,7 +725,66 @@ void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tPhy
     }
 }
 
-// PedProcessContact
+// FUNCTION: CARMA2_HW 0x004cdeb0
+void C2_HOOK_FASTCALL PedProcessContact(tPedestrian* pPed, tPhysics_object* pCollision_info) {
+    tPedestrian* other_ped;
+    tCar_spec* pCar;
+
+    if (pCollision_info == NULL) {
+        return;
+    }
+    if (pPed->field_0x0c == NULL) {
+        return;
+    }
+    if (pCollision_info->owner != NULL
+            && pCollision_info->flags_0x238 >= 2
+            && pCollision_info->flags_0x238 <= 4
+            && pPed->field_0x0c->field_0xc0 == NULL) {
+        other_ped = ((tPed_character_instance*)pCollision_info->owner)->ped;
+        if (other_ped != NULL && other_ped->field_0x0c != NULL) {
+            pPed->field_0x0c->field_0xc0 = other_ped->field_0x0c->field_0xc0;
+        }
+    }
+    if ((pCollision_info->owner == NULL || pCollision_info->flags_0x238 != 1)
+            && (pCollision_info->flags_0x238 != 0x20
+                || (gMutant_tail_state != 2 && GetTotalTime() - gINT_00705b70 >= 7500))
+            && pCollision_info->flags_0x238 != 0x40
+            && pCollision_info->flags_0x238 != 0x10) {
+        return;
+    }
+    if (pCollision_info->flags_0x238 == 0x40) {
+        pCar = ((tShit_mine*)pCollision_info->owner)->field_0x30;
+    } else if (pCollision_info->flags_0x238 == 0x10) {
+        pCar = (tCar_spec*)((tDrone_spec*)pCollision_info->owner)->field_0x5d4;
+    } else {
+        pCar = (tCar_spec*)pCollision_info->owner;
+    }
+    if ((pCar != NULL && pCar->driver > 5) || pCollision_info->parent != NULL) {
+        pPed->field_0x0c->field_0xc0 = pCar;
+        if (pCollision_info->owner != NULL && pCollision_info->flags_0x238 == 0x20) {
+            ((tU8*)pPed->field_0x0c)[0x2e] |= 8;
+        }
+        if (pCollision_info->owner != NULL
+                && pCollision_info->flags_0x238 == 0x20
+                && gMutant_tail_state == 1) {
+            ((tU8*)pPed->field_0x0c)[0x2e] |= 0x10;
+        }
+        if (pCollision_info->flags_0x238 == 0x40) {
+            pPed->field_0x0c->field_0x2e = 0x40;
+        }
+        if (pCollision_info->flags_0x238 == 0x10) {
+            pPed->field_0x0c->field_0x2e = 1;
+            return;
+        }
+    } else if (pCar != NULL && pPed->field_0x0c->field_0xc0 == NULL) {
+        pPed->field_0x0c->field_0xc0 = (tCar_spec*)pCar->field_0xc8;
+        ((tU8*)pPed->field_0x0c)[0x2e] |= 1;
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // STUB: CARMA2_HW 0x004cbcd0
 // STUB: CARMA2_SW 0x004c83d0
