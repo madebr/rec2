@@ -396,8 +396,31 @@ extern tActionReplayCameraMode gAction_replay_camera_mode;
 extern tNet_mode gNet_mode;
 extern int gCamera_type;
 
-// STUB: CARMA2_HW 0x004e71c0
-void C2_HOOK_FASTCALL TurnOnActionReplay(void) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004e71c0
+void C2_HOOK_FASTCALL TurnOnActionReplay(void) {
+
+    SavePedStuff();
+    if (gMap_view == 2) {
+        ToggleMap();
+    }
+    if (gNet_mode == eNet_mode_host) {
+        SendGameplayToAllPlayers(eNet_gameplay_host_paused, 0, 0, 0, 0);
+    }
+    gUnk_006a237c = PDGetTotalTime();
+    gUnk_006a2360 = ARGetStartTime();
+    LoadInterfaceStuff(1);
+    StartMouseCursor();
+    gKey_down = 0x34;
+    gUnk_006a2378 = 0;
+    gUnk_006a23c8 = PDGetTotalTime();
+    gUnk_006a2364 = GetTotalTime();
+    if (gRace_finished == 0) {
+        SaveCameraPosition(0);
+    }
+    gCamera_type = gAction_replay_camera_mode;
+    SetCameraType(gAR_camera_type);
+    InitReplaySplashes();
+}
 
 // STUB: CARMA2_HW 0x004e7270
 void C2_HOOK_FASTCALL TurnOffActionReplay(void) { NOT_IMPLEMENTED(); }
