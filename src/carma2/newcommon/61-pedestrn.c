@@ -1025,7 +1025,11 @@ void C2_HOOK_FASTCALL DoBloodSpurt(uintptr_t pArg1, int pArg2, int pArg3, br_vec
 
 // ScoreForKilledPedestrian
 
-// KillPedestrian
+// FUNCTION: CARMA2_HW 0x004cce70
+void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tPhysics_object* pCollision_info) {
+
+    NOT_IMPLEMENTED();
+}
 
 // DismemberPed
 
