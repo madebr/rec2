@@ -974,8 +974,30 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 // HackyMapFixForMac3dfx
 
-// STUB: CARMA2_HW 0x00444610
-void C2_HOOK_FASTCALL ToggleMap(void) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x00444610
+void C2_HOOK_FASTCALL ToggleMap(void) {
+
+    if (gMap_view == 2) {
+        gMap_view = 1;
+        gRender_indent = old_indent;
+        if (gCurrent_race.map_image != NULL) {
+            PixelmapSwapByteOrder(gCurrent_race.map_image);
+        }
+    } else if (gAction_replay_mode == 0) {
+        if (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_foxy && gThis_net_player_index == gIt_or_fox) {
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_fox_cant_do_that));
+        } else {
+            old_indent = gRender_indent;
+            gRender_indent = 0;
+            gMap_view = 2;
+            gMap_time = PDGetTotalTime();
+            if (gCurrent_race.map_image != NULL) {
+                PixelmapSwapByteOrder(gCurrent_race.map_image);
+            }
+        }
+    }
+    AdjustRenderScreenSize();
+}
 
 // FUNCTION: CARMA2_HW 0x004446f0
 // FUNCTION: CARMA2_SW 0x004447d0
