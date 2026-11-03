@@ -105,13 +105,47 @@ void C2_HOOK_CDECL HostFarBlockRead(br_uint_32 offset, br_uint_16 sel, void *blo
 }
 #endif
 
-// STUB: CARMA2_HW 0x005403f9
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x005403f9
 // STUB: CARMA2_SW 0x0053ba99
+__declspec(naked) br_uint_32 C2_HOOK_CDECL HostFarStringWrite(br_uint_32 offset, br_uint_16 sel, br_uint_8 *string, br_uint_32 max) {
+    __asm {
+        push ebp
+        mov ebp, esp
+        push es
+        push esi
+        push edi
+        les edi, fword ptr [ebp+8]
+        mov esi, [ebp+0x10]
+        mov ecx, [ebp+0x14]
+        xor eax, eax
+        and ecx, ecx
+        je done
+    loop_top:
+        mov dl, [esi]
+        mov es:[edi], dl
+        inc eax
+        and dl, dl
+        je done
+        inc esi
+        inc edi
+        dec ecx
+        jne loop_top
+        mov byte ptr es:[edi-1], 0
+    done:
+        pop edi
+        pop esi
+        pop es
+        leave
+        ret
+    }
+}
+#else
 br_uint_32 C2_HOOK_CDECL HostFarStringWrite(br_uint_32 offset, br_uint_16 sel, br_uint_8 *string, br_uint_32 max) {
-
-    NOT_IMPLEMENTED();
+    abort();
     return 0;
 }
+#endif
 
 // STUB: CARMA2_HW 0x00540427
 // STUB: CARMA2_SW 0x0053bac7
