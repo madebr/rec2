@@ -1846,9 +1846,183 @@ int C2_HOOK_FASTCALL MorphCharacterBonePositions(tPed_character_instance* pPed, 
 
 // ResetAnimation
 
-// STUB: CARMA2_HW 0x0040a050
+// FUNCTION: CARMA2_HW 0x0040a050
 int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, int pArg4, int pArg5, int pArg6) {
-    NOT_IMPLEMENTED();
+    tPed_personality* personality;
+    tPed_form* form;
+    tPed_move* original_ped_move;
+    tPed_move* ped_move;
+    tPed_move_frame* ped_frame;
+    br_matrix34* character_matrix;
+    br_matrix34 inverse;
+    int move_id;
+    int move_flag;
+    int original_field_0x7;
+    int i;
+    int speed;
+    short original_speed;
+    float sx;
+    float sy;
+    float sz;
+    float* p;
+
+    personality = pCharacter->personality;
+    form = personality->form;
+    original_field_0x7 = pCharacter->field_0x7;
+    original_ped_move = NULL;
+    if (original_field_0x7 >= 0) {
+        original_ped_move = form->moves[pCharacter->field_0x7].move;
+    }
+    if (pCharacter->field_0x4 < 0) {
+        character_matrix = &pCharacter->field_0x2c;
+    } else if (pCharacter->field_0xe8 != NULL) {
+        character_matrix = pCharacter->field_0xe8;
+    } else {
+        character_matrix = &pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+    }
+    move_flag = pMove_action & 0x40000000;
+    move_id = pMove_action & ~0x40000000;
+    if (move_id >= 0) {
+        for (i = 0; i < form->count_moves; i++) {
+            if (form->moves[i].id == move_id) {
+                if (pArg4 < 0) {
+                    pCharacter->field_0x8 = (tS8)i;
+                    if (pArg5 != 0) {
+                        pCharacter->field_0x9 |= 0x4;
+                    } else {
+                        pCharacter->field_0x9 &= ~0x4;
+                    }
+                } else {
+                    pCharacter->field_0x7 = (tS8)i;
+                    if (pArg5 != 0) {
+                        pCharacter->field_0x9 |= 0x2;
+                    } else {
+                        pCharacter->field_0x9 &= ~0x2;
+                    }
+                    pCharacter->field_0x8 = -1;
+                }
+                break;
+            }
+        }
+        if (i == form->count_moves) {
+            return 2;
+        }
+    }
+    original_speed = pCharacter->field_0x1e;
+    speed = (int)((pSpeed >= 0.f) ? pSpeed : -((float)form->moves[pCharacter->field_0x7].move->frametime * pSpeed));
+    if (pArg4 >= 0) {
+        pCharacter->field_0x1e = (undefined2)speed;
+    } else {
+        pCharacter->field_0x20 = (undefined2)speed;
+    }
+    if (original_field_0x7 >= 0) {
+        if ((form->moves[original_field_0x7].id == move_id && move_flag == 0) || move_id < 0 || pArg4 < 0) {
+            return 1;
+        }
+    }
+    ped_move = personality->form->moves[pCharacter->field_0x7].move;
+    sx = 0.f;
+    sy = 0.f;
+    sz = 0.f;
+    if (original_ped_move != NULL && original_ped_move->field_0x2a == 0 && !gPed_overall_movement_disabled) {
+        for (i = (tS16)pCharacter->field_0x1c; i > 0; i--) {
+            sx += original_ped_move->frames[i].mat.m[3][0];
+            sy += original_ped_move->frames[i].mat.m[3][1];
+            sz += original_ped_move->frames[i].mat.m[3][2];
+        }
+    }
+    if (original_ped_move != NULL) {
+        ped_frame = &original_ped_move->frames[(tS16)pCharacter->field_0x1c];
+    }
+    pCharacter->field_0x1c = 0;
+    pCharacter->field_0x24 = 0;
+    pCharacter->field_0x18 = 0;
+    pCharacter->field_0x8 = -1;
+    if (pCharacter->field_0xbc != NULL) {
+        pCharacter->field_0xbc->field_0x4 = 0.f;
+        pCharacter->field_0xbc = NULL;
+    }
+    if (pArg4 != 0 && original_ped_move != NULL && pArg6 != 0) {
+        for (i = 0; i < 20; i++) {
+            if (((tPed_morph*)((char*)gPed_morph_slots - 4))[i].field_0x4 == 0.f) {
+                pCharacter->field_0xbc = &((tPed_morph*)((char*)gPed_morph_slots - 4))[i];
+                break;
+            }
+        }
+    }
+    if (pCharacter->field_0xbc == NULL) {
+        pArg4 = 0;
+    }
+    if (pArg4 != 0) {
+        br_euler e;
+        float sum;
+        int i;
+
+        sum = 0.f;
+        pCharacter->field_0xbc->field_0x20 = original_ped_move->field_0x40;
+        if (original_speed != 0 && original_ped_move->field_0x2a == 0) {
+            pCharacter->field_0xbc->field_0x8.v[0] = pCharacter->field_0xbc->field_0x20.v[0] / (float)(original_ped_move->count_frames * original_speed);
+            pCharacter->field_0xbc->field_0x8.v[1] = pCharacter->field_0xbc->field_0x20.v[1] / (float)(original_ped_move->count_frames * original_speed);
+            pCharacter->field_0xbc->field_0x8.v[2] = pCharacter->field_0xbc->field_0x20.v[2] / (float)(original_ped_move->count_frames * original_speed);
+        } else {
+            BrVector3Set(&pCharacter->field_0xbc->field_0x8, 0.f, 0.f, 0.f);
+        }
+        if ((short)speed != 0 && ped_move->field_0x2a == 0) {
+            pCharacter->field_0xbc->field_0x14.v[0] = ped_move->field_0x34.v[0] / (float)(ped_move->count_frames * (short)speed);
+            pCharacter->field_0xbc->field_0x14.v[1] = ped_move->field_0x34.v[1] / (float)(ped_move->count_frames * (short)speed);
+            pCharacter->field_0xbc->field_0x14.v[2] = ped_move->field_0x34.v[2] / (float)(ped_move->count_frames * (short)speed);
+        } else {
+            BrVector3Set(&pCharacter->field_0xbc->field_0x14, 0.f, 0.f, 0.f);
+        }
+        e.order = 0;
+        BrMatrix34ToEuler(&e, &ped_frame->mat);
+        pCharacter->field_0xbc->field_0x2d[0][0] = e.a / 256;
+        pCharacter->field_0xbc->field_0x2d[0][1] = e.b / 256;
+        pCharacter->field_0xbc->field_0x2d[0][2] = e.c / 256;
+        BrMatrix34ToEuler(&e, &ped_move->frames[0].mat);
+        pCharacter->field_0xbc->field_0x2d[0][3] = e.a / 256 - pCharacter->field_0xbc->field_0x2d[0][0];
+        pCharacter->field_0xbc->field_0x2d[0][4] = e.b / 256 - pCharacter->field_0xbc->field_0x2d[0][1];
+        pCharacter->field_0xbc->field_0x2d[0][5] = e.c / 256 - pCharacter->field_0xbc->field_0x2d[0][2];
+        for (i = 1; i < form->count_bones; i++) {
+            pCharacter->field_0xbc->field_0x2d[i][0] = ped_frame->axis[i].euler1;
+            pCharacter->field_0xbc->field_0x2d[i][1] = ped_frame->axis[i].euler2;
+            pCharacter->field_0xbc->field_0x2d[i][2] = ped_frame->axis[i].euler3;
+            pCharacter->field_0xbc->field_0x2d[i][3] = ped_move->frames->axis[i].euler1 - ped_frame->axis[i].euler1;
+            pCharacter->field_0xbc->field_0x2d[i][4] = ped_move->frames->axis[i].euler2 - ped_frame->axis[i].euler2;
+            pCharacter->field_0xbc->field_0x2d[i][5] = ped_move->frames->axis[i].euler3 - ped_frame->axis[i].euler3;
+            sum += (float)(abs((signed char)pCharacter->field_0xbc->field_0x2d[i][3])
+                + abs((signed char)pCharacter->field_0xbc->field_0x2d[i][4])
+                + abs((signed char)pCharacter->field_0xbc->field_0x2d[i][5]));
+        }
+        pCharacter->field_0xbc->field_0x2c = (tU8)(((tU32)pArg4 >> 30) & 1);
+        pArg4 &= ~0x40000000;
+        pCharacter->field_0xbc->field_0x0 = 0.f;
+        pCharacter->field_0xbc->field_0x4 = (float)(1.0 / (sum / ((double)form->count_bones * 3.0) * pArg4 * 0.015625));
+        pCharacter->field_0x24 = 0;
+    }
+    if (gPed_retain_root_mode) {
+        if (pCharacter->field_0x4 < 0) {
+            character_matrix = &pCharacter->field_0x2c;
+        } else if (pCharacter->field_0xe8 != NULL) {
+            character_matrix = pCharacter->field_0xe8;
+        } else {
+            character_matrix = &pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+        }
+        BrMatrix34LPInverse(&inverse, &pCharacter->personality->form->moves[pCharacter->field_0x7].move->frames[pCharacter->field_0x1c].mat);
+        BrMatrix34Mul(&pCharacter->field_0x8c, &inverse, character_matrix);
+        pCharacter->field_0x8c.m[3][0] = 0.f;
+        pCharacter->field_0x8c.m[3][1] = 0.f;
+        pCharacter->field_0x8c.m[3][2] = 0.f;
+        SetCharacterBonePositions(pCharacter, 3, 0);
+        return 0;
+    }
+    if (personality->moves[pCharacter->field_0x7].grounding_mode == ePed_personality_grounded) {
+        p = character_matrix->m[3];
+        p[1] = pCharacter->personality->moves[pCharacter->field_0x7].grounding_offset + FindYVerticallyBelow2((br_vector3*)p);
+        p[0] = p[0];
+        p[2] = p[2];
+    }
+    SetCharacterBonePositions(pCharacter, 0, 0);
     return 0;
 }
 
