@@ -311,7 +311,100 @@ static int GrooveReversenessFromString(const char* pS) {
 #pragma auto_inline(off)
 #endif
 
-// LoadFunksAndGrooves
+// FUNCTION: CARMA2_HW 0x00450680
+void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF) {
+    char s[256];
+    tFunk_groove* funk_groove;
+    tU8 funk_type;
+    int axis;
+    int reverseness;
+    int speed_control;
+
+    if (!ReadPastThisLine(pF, "START OF FUNKYGROOVY STUFF")) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+    }
+    if (pDrone->funk_grooves == NULL) {
+        pDrone->funk_grooves = BrMemAllocate(sizeof(tFunk_grooves), kMem_drone_funk_groove);
+    }
+    GetALineAndDontArgue(pF, s);
+    while (strcmp(s, "END OF FUNKYGROOVY STUFF") != 0) {
+        if (PFfeof(pF)) {
+            return;
+        }
+        if (pDrone->funk_grooves->count >= 10) {
+            FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+        }
+        funk_groove = &pDrone->funk_grooves->items[pDrone->funk_grooves->count];
+        funk_type = MatchGrooveFunkType(s);
+        funk_groove->type = funk_type;
+        switch (funk_type) {
+        case eFunk_groove_type_spinny_groove:
+            GetALineAndDontArgue(pF, s);
+            funk_groove->actor = (br_actor*)DRActorEnumRecurse(pDrone->model_actor, (br_actor_enum_cbfn*)MrFindy, s);
+            if (funk_groove->actor == NULL) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            GetALineAndDontArgue(pF, s);
+            axis = GrooveAxisFromString(s);
+            if (axis < 0) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            funk_groove->spinny.axis = axis;
+            GetALineAndDontArgue(pF, s);
+            speed_control = GrooveSpeedControlFromString(s);
+            if (speed_control < 0) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            funk_groove->spinny.speed_control = speed_control;
+            GetALineAndDontArgue(pF, s);
+            reverseness = GrooveReversenessFromString(s);
+            if (reverseness < 0) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            funk_groove->spinny.reverse = reverseness;
+            funk_groove->spinny.omega = (float)(GetAScalar(pF) * REC2_PI);
+            break;
+
+        case eFunk_groove_type_steering_groove:
+            GetALineAndDontArgue(pF, s);
+            funk_groove->actor = (br_actor*)DRActorEnumRecurse(pDrone->model_actor, (br_actor_enum_cbfn*)MrFindy, s);
+            if (funk_groove->actor == NULL) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            GetALineAndDontArgue(pF, s);
+            reverseness = GrooveReversenessFromString(s);
+            if (reverseness < 0) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            funk_groove->steering.reverse = reverseness;
+            break;
+        }
+        pDrone->funk_grooves->count += 1;
+        GetALineAndDontArgue(pF, s);
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+/* local declarations for MineExplode (no new includes/externs in headers) */
+extern int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject);
+extern tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
+extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar);
+extern int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tPhysics_object* pObject);
+extern int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, int pSize);
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
+extern void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos);
+extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
+extern void C2_HOOK_FASTCALL PipeSingleEndShitMine(br_actor* pActor);
+extern tS3_outlet* gCar_outlet;
+extern br_vector3 gZero_v__car;
+extern tShit_mine gShit_mines[20];
 
 // MineExplode
 
