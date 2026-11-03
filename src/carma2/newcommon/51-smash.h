@@ -14,6 +14,8 @@
 
 extern int gAllow_material_adapt;
 extern br_material* gMaterials_to_adapt[200];
+
+extern const char* gPosition_type_names[2];
 extern int gMaterials_to_adapt_count;
 extern int gShrapnel_child_count;
 
@@ -162,6 +164,8 @@ extern void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnim
 extern void C2_HOOK_FASTCALL FreeExplosionAnimation(tExplosion_animation* pAnimation);
 
 extern void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs, int* pShrapnel_count);
+
+extern void C2_HOOK_FASTCALL ReadNonCarCuboidActivation(FILE* pF, tNon_car_cuboid_activations* pNon_car_cuboid_activations);
 
 extern void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);
 

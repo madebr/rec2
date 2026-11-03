@@ -39,6 +39,12 @@ int gAllow_material_adapt;
 // GLOBAL: CARMA2_HW 0x006a3340
 br_material* gMaterials_to_adapt[200];
 
+// GLOBAL: CARMA2_HW 0x0065ff00
+const char* gPosition_type_names[2] = {
+    "relative",
+    "absolute",
+};
+
 // GLOBAL: CARMA2_HW 0x006a3338
 // GLOBAL: CARMA2_SW 0x0069d398
 int gShrapnel_child_count;
@@ -1701,3 +1707,32 @@ intptr_t C2_HOOK_CDECL FUN_004edb20(br_actor* pActor, void* pContext) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(on)
 #endif
+
+
+// FUNCTION: CARMA2_HW 0x004efce0
+void C2_HOOK_FASTCALL ReadNonCarCuboidActivation(FILE* pF, tNon_car_cuboid_activations* pNon_car_cuboid_activations) {
+    int i;
+    int i1, i2;
+    float* p;
+
+    /* no. of non car cuboids activated */
+    pNon_car_cuboid_activations->count_activations = GetAnInt(pF);
+    if (pNon_car_cuboid_activations->count_activations != 0) {
+        pNon_car_cuboid_activations->activations = BrMemAllocate(pNon_car_cuboid_activations->count_activations * sizeof(tNon_car_cuboid_activation), kMem_smash_side_effects);
+        for (i = 0; i < pNon_car_cuboid_activations->count_activations; i++) {
+            GetPairOfInts(pF, &i1, &i2);
+            pNon_car_cuboid_activations->activations[i].field_0x0 = (tS16)(i1 * 1000);
+            pNon_car_cuboid_activations->activations[i].field_0x2 = (tS16)(i2 * 1000);
+            pNon_car_cuboid_activations->activations[i].field_0x4 = GetALineAndInterpretCommand(pF, gPosition_type_names, REC2_ASIZE(gPosition_type_names));
+            pNon_car_cuboid_activations->activations[i].field_0x8 = (tS8)GetAnInt(pF);
+            LoadMinMax(pF, &pNon_car_cuboid_activations->activations[i].bounds);
+            p = &pNon_car_cuboid_activations->activations[i].field_0x24;
+            GetPairOfFloats(pF, &p[0], &p[1]);
+            p[2] = GetAScalar(pF);
+            p[3] = GetAScalar(pF);
+            p[4] = GetAScalar(pF);
+            p[5] = GetAScalar(pF);
+            p[6] = GetAScalar(pF) / 10.f;
+        }
+    }
+}
