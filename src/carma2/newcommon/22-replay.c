@@ -461,8 +461,27 @@ void C2_HOOK_FASTCALL AfterActionReplay(void) {
     ForceRebuildActiveCarList();
 }
 
-// STUB: CARMA2_HW 0x004e72e0
-void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004e72e0
+void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
+    extern void C2_HOOK_FASTCALL TurnOnActionReplay(void);
+    extern void C2_HOOK_FASTCALL PreProcess(int pFrame_period);
+    extern void C2_HOOK_FASTCALL PostProcess(int pFrame_period);
+    extern void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on);
+    extern int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_off_AR_callback* pTurn_off_AR_cb, tAfter_AR_callback* pAfter_AR_cb, tZappy_AR_callback* pZappy_AR_cb, tPreprocess_AR_callback* pPreprocess_cb, tPostProcess_AR_callback* pPostProcess_cb, int* pArg7, int* pArg8);
+    extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
+    extern int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText);
+
+    if (gAction_replay_mode) {
+        RenderAFrame(1);
+        RenderAFrame(1);
+    }
+    if (!ARToggleReplay(TurnOnActionReplay, TurnOffActionReplay, AfterActionReplay,
+            (tZappy_AR_callback*)DoZappyActionReplayHeadups, PreProcess, PostProcess, pArg1, pArg2)) {
+        NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_action_replay_unavailable));
+    }
+}
+
+// DisplayMovieStatusPanel
 
 // FUNCTION: CARMA2_HW 0x004022e0
 // FUNCTION: CARMA2_SW 0x004022e0
