@@ -979,7 +979,43 @@ intptr_t C2_HOOK_FASTCALL CrushCarModelCbfn(br_actor* pActor, br_matrix34* pMat,
     return 0;
 }
 
-// FUN_004358a0
+// FUNCTION: CARMA2_HW 0x004358a0
+intptr_t C2_HOOK_FASTCALL FUN_004358a0(br_actor* pActor, br_vector3* pDelta, void* pContext) {
+    tUser_crush_data* user_crush_data;
+    tCar_spec** ppCar;
+    br_actor** piVar2;
+    int i;
+
+    user_crush_data = pActor->user;
+    if (user_crush_data != NULL) {
+        ppCar = pContext;
+        for (i = 0, piVar2 = (*ppCar)->wheel_actors; i < 6; i++, piVar2++) {
+            if (pActor == piVar2[6]) {
+                return 0;
+            }
+            if (pActor == piVar2[0]) {
+                return 0;
+            }
+        }
+        if (user_crush_data->groove != NULL) {
+            PipeSingleGrooveOnOff(0, pActor, 3);
+            DisableGroovidelic(pActor, 3);
+            PipeSingleTransformType(pActor, 5);
+            pActor->t.type = 5;
+        }
+        if (user_crush_data->crush_data != NULL) {
+            i = 0;
+            if (0 < (*ppCar)->count_detail_levels) {
+                do {
+                    FUN_00435960(((void**)user_crush_data)[i], pDelta, ppCar, pActor);
+                    i++;
+                } while (i < (*ppCar)->count_detail_levels);
+            }
+            user_crush_data->crush_data->field_0x2c = 1;
+        }
+    }
+    return 0;
+}
 
 // CrushShapeMorphVertex
 
