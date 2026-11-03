@@ -272,9 +272,9 @@ extern void C2_HOOK_FASTCALL TiggerMineToExplode(tCar_spec* pCar);
 
 // MungeShatMines
 
-extern void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor);
+extern void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor, br_matrix34* pMatrix);
 
-extern void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor);
+extern void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor, br_matrix34* pMatrix);
 
 // PissOutOil
 
@@ -352,7 +352,7 @@ extern void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar
 
 // SetMassMultiplier
 
-// ResetMassMultiplier
+extern void C2_HOOK_FASTCALL ResetMassMultiplier(tPowerup* pPowerup, tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* pPowerup, tCar_spec* pCar);
 

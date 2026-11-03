@@ -713,7 +713,8 @@ void C2_HOOK_FASTCALL TiggerMineToExplode(tCar_spec* pCar) {
 
 // FUNCTION: CARMA2_HW 0x004de000
 // FUNCTION: CARMA2_SW 0x004da500
-void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor, br_matrix34* pMatrix) {
+    (void)pMatrix;
     if (pActor->parent == NULL) {
         BrActorAdd(gNon_track_actor, pActor);
     }
@@ -722,7 +723,8 @@ void C2_HOOK_FASTCALL ARDoShitMine(br_actor* pActor) {
 
 // FUNCTION: CARMA2_HW 0x004de020
 // FUNCTION: CARMA2_SW 0x004da520
-void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
+void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor, br_matrix34* pMatrix) {
+    (void)pMatrix;
     if (pActor->parent != NULL) {
         BrActorRemove(pActor);
     }
@@ -964,7 +966,17 @@ void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SetMassMultiplier
 
-// ResetMassMultiplier
+// FUNCTION: CARMA2_HW 0x004debf0
+// FUNCTION: CARMA2_SW 0x004db0f0
+void C2_HOOK_FASTCALL ResetMassMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, field_0x4c8, 0x4c8);
+
+    (void)pPowerup;
+    pCar->field_0x4c8 = 1.f;
+    if (gNet_mode != eNet_mode_none) {
+        RestoreCarPixelmaps(pCar);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004dec10
 int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {

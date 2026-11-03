@@ -1428,10 +1428,24 @@ void C2_HOOK_FASTCALL S3ReverseSample(tS3_effect_tag pEffect, tS3_sound_tag pTag
     }
 }
 
-// STUB: CARMA2_HW 0x00564d75
-// STUB: CARMA2_SW 0x00560415
+// FUNCTION: CARMA2_HW 0x00564d75
+// FUNCTION: CARMA2_SW 0x00560415
 int C2_HOOK_FASTCALL S3SetSampleFilterCallbacks(tS3_sample_filter pEnable, tS3_sample_filter pDisable) {
-    NOT_IMPLEMENTED();
+
+    if (pEnable != NULL) {
+        gS3_sample_filter_func = pEnable;
+    }
+    if (pDisable != NULL) {
+        gS3_sample_filter_disable_func = pDisable;
+    } else if (pDisable == NULL) {
+        gS3_sample_filter_disable_func = gS3_sample_filter_func;
+    }
+    if (pEnable == NULL || (pEnable == NULL && pDisable == NULL)) {
+        gS3_effects_enabled = 0;
+    } else {
+        gS3_effects_enabled = 1;
+    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00564de0
