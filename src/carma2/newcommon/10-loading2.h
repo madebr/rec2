@@ -67,6 +67,8 @@ extern void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_s
 
 // GetDamageProgram
 
+extern void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_location pImpact_location);
+
 extern intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData);
 
 extern intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData);
@@ -136,5 +138,9 @@ extern void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void);
 extern void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void);
 
 extern void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void);
+
+extern void C2_HOOK_FASTCALL LoadingNoOp2(void);
+
+extern void C2_HOOK_FASTCALL LoadCarCrushDataEntry(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage);
 
 #endif // GUARD_10_LOADING2_H
