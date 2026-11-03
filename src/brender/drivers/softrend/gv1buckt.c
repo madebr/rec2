@@ -100,7 +100,6 @@ br_int_32 C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_space(br_geometry_v1_buck
 }
 
 // FUNCTION: CARMA2_HW 0x00541360
-// FUNCTION: CARMA2_SW 0x_0053ca00
 br_tv_template* C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_templateQuery(br_geometry_v1_buckets_soft* self) {
 
 #ifndef REC2_MATCHING
