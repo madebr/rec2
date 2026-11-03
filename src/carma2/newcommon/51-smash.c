@@ -1762,7 +1762,49 @@ void C2_HOOK_FASTCALL FUN_004f36c0(const void* pMap, br_vector2* pUV, br_vector3
     }
 }
 
-// FUN_004f1030
+// FUNCTION: CARMA2_HW 0x004f1030
+void C2_HOOK_FASTCALL FUN_004f1030(tPhysics_object* pObject, int pMode, br_actor* pActor) {
+    void* info;
+    int type;
+
+    info = pObject->owner;
+    if (pMode == 0xe) {
+        if (pObject != NULL && info != NULL && pObject->flags_0x238 == 1) {
+            type = *(volatile int*)((tU8*)info + 0xc);
+            if ((type == 0 || (type != 2 && type != 3))
+                    && gSize_powerup_queue < 0x32
+                    && *(volatile int*)((tU8*)info + 0xc) > 5) {
+                gPowerup_queue[gSize_powerup_queue].actor = pActor;
+                gPowerup_queue[gSize_powerup_queue].car = pObject->owner;
+                gPowerup_queue[gSize_powerup_queue].powerup_index = 0xe;
+                gSize_powerup_queue = gSize_powerup_queue + 1;
+                return;
+            }
+        }
+        FUN_004d9d00(pObject, 0xe);
+        return;
+    }
+    if (pObject != NULL && info != NULL && pObject->flags_0x238 == 1) {
+        type = *(volatile int*)((tU8*)info + 0xc);
+        if ((type == 0 || (type != 2 && type != 3))
+                && gSize_powerup_queue < 0x32
+                && *(volatile int*)((tU8*)info + 0xc) == 8) {
+            goto enqueue;
+        }
+    }
+    if (pObject->flags_0x238 == 0x20
+            && (gMutant_tail_state == 2 || GetTotalTime() - gINT_00705b70 < 0x1d4c)) {
+        goto enqueue;
+    }
+    return;
+enqueue:
+    gPowerup_queue[gSize_powerup_queue].actor = pActor;
+    gPowerup_queue[gSize_powerup_queue].car = &gProgram_state.current_car;
+    gPowerup_queue[gSize_powerup_queue].powerup_index = pMode;
+    gSize_powerup_queue = gSize_powerup_queue + 1;
+}
+
+extern tU32 gPHIL_last_physics_tick;
 
 // UpdateCrushTimers
 
