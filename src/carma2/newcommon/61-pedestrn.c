@@ -2708,8 +2708,41 @@ int C2_HOOK_FASTCALL GetCharacterBoneIndexByName(tPed_character_instance* pChara
     return -1;
 }
 
-// STUB: CARMA2_HW 0x0040b770
-void C2_HOOK_FASTCALL BonerPedMovedByPhysics(tPed_character_instance* pCharacter, undefined4 pArg2) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x0040b770
+void C2_HOOK_FASTCALL BonerPedMovedByPhysics(tPed_character_instance* pCharacter, undefined4 pArg2) {
+    tPhysics_object* obj;
+    br_matrix34* character_matrix;
+    br_matrix34 mat34;
+    tPed_form* form;
+
+    if (!(pCharacter->field_0x14 & 1)) {
+        return;
+    }
+
+    form = pCharacter->personality->form;
+    if (pCharacter->field_0x4 < 0) {
+        character_matrix = &pCharacter->field_0x2c;
+    } else if (pCharacter->field_0xe8 != NULL) {
+        character_matrix = pCharacter->field_0xe8;
+    } else {
+        character_matrix = &form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+    }
+    BrMatrix34LPInverse(&mat34, &form->moves[pCharacter->field_0x7].move->frames[(tS16)pCharacter->field_0x1c].mat);
+    BrMatrix34Mul(&pCharacter->field_0x8c, &mat34, character_matrix);
+    pCharacter->field_0x8c.m[3][0] = 0.f;
+    pCharacter->field_0x8c.m[3][1] = 0.f;
+    pCharacter->field_0x8c.m[3][2] = 0.f;
+    SetCharacterBonePositions(pCharacter, 3, 0);
+
+    obj = pCharacter->personality->form->simple_physicing[pCharacter->field_0x5].collision_info;
+    pCharacter->field_0xd8.v[0] = obj->v.v[0];
+    pCharacter->field_0xd8.v[1] = obj->v.v[1];
+    pCharacter->field_0xd8.v[2] = obj->v.v[2];
+
+    if (gPed_vtable->moved_by_physics != NULL) {
+        gPed_vtable->moved_by_physics((undefined4*)pCharacter, (undefined4*)obj, pArg2);
+    }
+}
 
 // SetPhysicsObjectOmegaRecursive
 
