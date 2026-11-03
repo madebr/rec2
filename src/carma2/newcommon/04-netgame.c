@@ -941,7 +941,15 @@ void C2_HOOK_FASTCALL SendDetachedNonCarDataToPlayer(tNet_game_player_info* pRec
     }
 }
 
-// ToggleFlapsFromNetwork
+// FUNCTION: CARMA2_HW 0x0043d670
+void C2_HOOK_FASTCALL ToggleFlapsFromNetwork(tNet_message_chunk* pChunk) {
+    tCar_spec* car;
+
+    car = NetCarFromPlayerID(pChunk->toggle_doors.id);
+    if (car != NULL) {
+        PhysicsObjectRecurse(car->collision_info, ToggleFlapsCB, car);
+    }
+}
 
 // FUN_43d7d0
 
