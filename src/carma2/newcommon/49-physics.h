@@ -443,6 +443,16 @@ extern void C2_HOOK_FASTCALL FUN_004b73a0(tPhysics_object* pObject, const br_mat
 
 extern void C2_HOOK_FASTCALL FUN_004b7310(tPhysics_object* pObject);
 
+extern void C2_HOOK_FASTCALL FUN_004bf490(br_scalar* pMatrix, int pStride, tPhysics_joint_force** pRecords, int pCount);
+
+extern void C2_HOOK_FASTCALL FUN_004b77b0(br_scalar* pVelocity, tPhysics_joint_force** pRecords, int pCount);
+
+extern void C2_HOOK_FASTCALL FUN_004b7960(tPhysics_joint_force* pForce, br_scalar pImpulse);
+
+extern void C2_HOOK_FASTCALL FUN_004be350(float* pDestination, const float* pSource);
+
+extern void C2_HOOK_FASTCALL FUN_004b8cf0(tPhysics_object* pObject);
+
 #endif // GUARD_49_PHYSICS_H
 
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild);

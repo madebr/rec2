@@ -1812,3 +1812,84 @@ void C2_HOOK_FASTCALL FUN_004b7310(tPhysics_object* pObject) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(on)
 #endif
+
+
+// STUB: CARMA2_HW 0x004bf490
+void C2_HOOK_FASTCALL FUN_004bf490(br_scalar* pMatrix, int pStride, tPhysics_joint_force** pRecords, int pCount) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004b77b0
+void C2_HOOK_FASTCALL FUN_004b77b0(br_scalar* pVelocity, tPhysics_joint_force** pRecords, int pCount) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004b7960
+void C2_HOOK_FASTCALL FUN_004b7960(tPhysics_joint_force* pForce, br_scalar pImpulse) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004be350
+void C2_HOOK_FASTCALL FUN_004be350(float* pDestination, const float* pSource) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth(0)
+#endif
+// FUNCTION: CARMA2_HW 0x004b8cf0
+void C2_HOOK_FASTCALL FUN_004b8cf0(tPhysics_object* pObject) {
+    int uVar1;
+    int uVar2;
+    int i;
+    int* piVar4;
+    char* puVar3;
+    int local_174[6];
+    float local_15c[15];
+    tPhysics_joint_force rows[3];
+    tPhysics_object* pObject2;
+    tPhysics_object* pOther;
+
+    pObject2 = pObject->field_0x230;
+    pOther = (tPhysics_object*)*(int*)(*(int*)((tU8*)pObject + 0x1e4) + 4);
+    if (pOther != pObject2) {
+        pObject2 = pObject;
+        pObject = pOther;
+    }
+    CreateJointForce(pObject, pObject2, &rows[0], (br_vector3*)((char*)pObject->physics_joint1 + 0x38));
+    CreateJointTorque(pObject, pObject2, &rows[1], (br_vector3*)((char*)pObject->physics_joint1 + 0x20));
+    CreateJointTorque(pObject, pObject2, &rows[2], (br_vector3*)((char*)pObject->physics_joint1 + 0x2c));
+    piVar4 = local_174;
+    puVar3 = (char*)rows;
+    i = 3;
+    do {
+        *piVar4 = (int)puVar3;
+        puVar3 += 0x60;
+        piVar4++;
+        i--;
+    } while (i != 0);
+    uVar1 = *(int*)&pObject2->field_0x1e0[4];
+    uVar2 = *(int*)&pObject->field_0x1e0[4];
+    *(int*)&pObject->field_0x1e0[4] = 0;
+    *(int*)&pObject2->field_0x1e0[4] = 0;
+    FUN_004bf490(&local_15c[3], 3, (tPhysics_joint_force**)local_174, 3);
+    FUN_004be350((float*)(uVar2 + 8), &local_15c[3]);
+    FUN_004b77b0((br_scalar*)&local_174[3], (tPhysics_joint_force**)local_174, 3);
+    BrMatrix34ApplyV((br_vector3*)&local_15c[0], (br_vector3*)&local_174[3], (br_matrix34*)(uVar2 + 8));
+    i = 0;
+    do {
+        FUN_004b7960((tPhysics_joint_force*)*(int*)((char*)local_174 + i), *(float*)((char*)local_15c + i));
+        i += 4;
+    } while (i < 0xc);
+    *(int*)&pObject->field_0x1e0[4] = uVar2;
+    *(int*)&pObject2->field_0x1e0[4] = uVar1;
+}
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth()
+#endif
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
