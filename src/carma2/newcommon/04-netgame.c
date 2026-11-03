@@ -287,7 +287,20 @@ void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
     NOT_IMPLEMENTED();
 }
 
-// ReinitialiseCar
+// FUNCTION: CARMA2_HW 0x00499220
+void C2_HOOK_FASTCALL ReinitialiseCar(tCar_spec* pCar) {
+
+    StopCarSmokingInstantly(pCar);
+    CloseDownPowerUpsForCar(pCar);
+    InitialiseCar(pCar);
+    TotallyRepairACar(pCar);
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gTime_for_punishment = PDGetTotalTime() + 2000;
+        EmptyInventory();
+    }
+}
+
+// RepositionPlayer
 
 // FUNCTION: CARMA2_HW 0x00499260
 // FUNCTION: CARMA2_SW 0x00495e90
