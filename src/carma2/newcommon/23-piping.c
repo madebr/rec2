@@ -194,6 +194,19 @@ typedef struct {
     br_vector3 delta;
 } tPipe_chunk_actor_trans;
 
+typedef struct {
+    int field_0x0;
+    br_vector3 field_0x4;
+} tPipe_chunk_ped_dir;
+
+typedef struct {
+    int field_0x0;
+    tU8 field_0x4[8];
+    br_vector3 field_0xc;
+    br_vector3 field_0x18;
+    br_vector3 field_0x24;
+} tPipe_chunk_ped_status;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -250,6 +263,16 @@ void C2_HOOK_CDECL RelinkActorKeepWorldTransform(br_actor* pParent, br_actor* pA
 
 // STUB: CARMA2_HW 0x004eb8f0
 void C2_HOOK_FASTCALL WorkerShrapnelShower(tU32 pOwner, tU32 pShrapnel, tU32 pSeed, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, tU32 pActor, tU32 pTime, tU32 pArg9, br_vector3* pTransform, br_vector3* pFragment_owner, br_vector3* pPosition, tU32 pDistance, br_vector3* pArg14, tU32 pArg15) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ca680
+void C2_HOOK_FASTCALL WorkerPedStatus(int field_0x0, tU8 field_0x4, tU8 field_0x5, tU8 field_0x6, tU8 field_0x7, tU8 field_0x9, tU8 field_0xb, br_vector3* p0xc, br_vector3* p0x18, br_vector3* p0x24) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ca6e0
+void C2_HOOK_FASTCALL WorkerPedStatusUndo(int field_0x0, tU8 field_0x4, tU8 field_0x5, tU8 field_0x6, tU8 field_0x7, tU8 field_0x8, tU8 field_0xa, br_vector3* p0xc, br_vector3* p0x18, br_vector3* p0x24) {
     NOT_IMPLEMENTED();
 }
 
@@ -2379,7 +2402,12 @@ void C2_HOOK_FASTCALL ApplyActorTrans(tPipe_chunk** pChunk) {
     ((tReplay_actor_trans_effect*)((tPipe_chunk_actor_trans*)*pChunk)->field_0x4)->z += ((tPipe_chunk_actor_trans*)*pChunk)->delta.v[2];
 }
 
-// ApplyPedStatus
+// FUNCTION: CARMA2_HW 0x004c9aa0
+void C2_HOOK_FASTCALL ApplyPedStatus(tPipe_chunk** pChunk) {
+    tPipe_chunk_ped_status* chunk = (tPipe_chunk_ped_status*)*pChunk;
+
+    return WorkerPedStatus(chunk->field_0x0, chunk->field_0x4[0], chunk->field_0x4[1], chunk->field_0x4[2], chunk->field_0x4[3], chunk->field_0x4[5], chunk->field_0x4[7], &chunk->field_0xc, &chunk->field_0x18, &chunk->field_0x24);
+}
 
 // ApplyPedDir
 
