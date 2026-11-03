@@ -3428,3 +3428,102 @@ int C2_HOOK_FASTCALL FUN_00420360(tPhysics_object* pObject) {
     }
     return 0;
 }
+
+
+// FUNCTION: CARMA2_HW 0x0042dfd0
+int C2_HOOK_FASTCALL TrySplitCarOnVerticalForce(tCollision_contact* pContacts, float* pImpulses, int pCount) {
+    int flags[40];
+    int split_indices[40];
+    br_vector4 split_plane;
+    int count;
+    int i;
+    int j;
+    int split_count;
+    int can_split;
+    float total_force;
+    float split_y;
+    float threshold;
+    tPhysics_object* object;
+    tCar_spec* car;
+    extern int C2_HOOK_FASTCALL FUN_00430e30(tCollision_contact* pContacts, float* pImpulses, int pCount);
+    extern int C2_HOOK_FASTCALL SplitCheck(tCar_spec* pCar, int pMode, const br_vector3* pLine, br_scalar pHeight, br_vector4* pPlane);
+    extern void C2_HOOK_FASTCALL SplitCar(tCar_spec* pCar, br_vector4* pPlane, int pFlag);
+    extern float gMin_force_to_split_Y_per_tonne;
+
+    if (FUN_00430e30(pContacts, pImpulses, pCount) != 0) {
+        return 1;
+    }
+    count = pCount;
+    if (count > 40) {
+        count = 40;
+    }
+    for (i = 0; i < count; i++) {
+        flags[i] = 0;
+    }
+    for (i = 0; i < count; i++) {
+        if (pImpulses[i] >= 0.01f
+                && flags[i] == 0
+                && (object = pContacts[i].object1) != NULL
+                && pContacts[i].object2 == NULL
+                && object->owner != NULL
+                && object->flags_0x238 == 1
+                && (car = (tCar_spec*)object->owner) != NULL
+                && car->driver > 5
+                && car->car_crush_spec != NULL
+                && car->car_crush_spec->field_0x4b8 == 0
+                && car->invulnerable_no_crushage == 0) {
+            can_split = 1;
+            split_y = car->car_crush_spec->split_y_pos - car->collision_info->cmpos.v[1];
+            if (pContacts[i].r1.v[1] < split_y) {
+                can_split = 0;
+            } else {
+                split_indices[0] = i;
+                split_count = 1;
+                total_force = pImpulses[i];
+            }
+            flags[i] = 1;
+            j = i + 1;
+            while (j < count) {
+                if (pImpulses[j] >= 0.01f
+                        && flags[j] == 0
+                        && pContacts[j].object2 == NULL
+                        && (tCar_spec*)pContacts[j].object1->owner == car) {
+                    if (can_split) {
+                        if (pContacts[j].r1.v[1] < split_y) {
+                            can_split = 0;
+                        } else {
+                            split_indices[split_count] = j;
+                            split_count++;
+                            total_force += pImpulses[j];
+                        }
+                    }
+                    flags[j] = 1;
+                }
+                j++;
+            }
+            if (can_split) {
+                threshold = (car->collision_info->M * gMin_force_to_split_Y_per_tonne)
+                    / (car->softness_factor * car->car_crush_spec->snappability_factor);
+                if (total_force > threshold
+                        && SplitCheck(car, 1, NULL, car->car_crush_spec->split_y_pos, &split_plane) != 0) {
+                    ScaleCollisionImpulses(pContacts, pImpulses, count, split_indices, split_count, threshold);
+                    SplitCar(car, &split_plane, 1);
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+// STUB: CARMA2_HW 0x004ba550
+int C2_HOOK_FASTCALL ScaleCollisionImpulses(tCollision_contact* pContacts, float* pImpulses, int pCount, int* pSmash_indices, int pNum_impacts, float pMax_impulse) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
+
+// STUB: CARMA2_HW 0x00430e30
+int C2_HOOK_FASTCALL FUN_00430e30(tCollision_contact* pContacts, float* pImpulses, int pCount) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

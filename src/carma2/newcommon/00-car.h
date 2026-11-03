@@ -11,6 +11,22 @@
 
 #include "rec2_types.h"
 
+typedef struct tCollision_contact {
+    float impulse;
+    tPhysics_object* object1;
+    tPhysics_object* object2;
+    void* field_0xc;
+    float field_0x10;
+    br_vector3 r1;
+    br_vector3 r2;
+    br_vector3 normal;
+    br_vector3 field_0x38;
+    br_vector3 impulse1;
+    br_vector3 impulse2;
+    int type;
+} tCollision_contact;
+
+
 extern int gTesting_car_for_sensible_place;
 extern int gCunning_stunt_bonus[3];
 extern float gArmour_starting_value[100];
@@ -292,3 +308,7 @@ void C2_HOOK_FASTCALL SkidNoise(tCar_spec* pCar, int pSide, br_scalar pV, int pM
 void C2_HOOK_FASTCALL FUN_0042d400(tCar_spec* pCar, int pChain_count, br_vector3* pChain, br_vector3* pForce, tU32 pTick);
 
 void C2_HOOK_FASTCALL FUN_0043fb70(tCar_spec* pCar, br_vector3* pPoint, br_vector3* pForce, int pCars_touch);
+
+int C2_HOOK_FASTCALL ScaleCollisionImpulses(tCollision_contact* pContacts, float* pImpulses, int pCount, int* pSmash_indices, int pNum_impacts, float pMax_impulse);
+
+int C2_HOOK_FASTCALL FUN_00430e30(tCollision_contact* pContacts, float* pImpulses, int pCount);

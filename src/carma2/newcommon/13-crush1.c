@@ -1574,3 +1574,14 @@ int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 p
 void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
+
+// STUB: CARMA2_HW 0x0042e2e0
+void C2_HOOK_FASTCALL SplitCar(tCar_spec* pCar, br_vector4* pPlane, int pFlag) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004307e0
+int C2_HOOK_FASTCALL SplitCheck(tCar_spec* pCar, int pMode, const br_vector3* pLine, br_scalar pHeight, br_vector4* pPlane) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
