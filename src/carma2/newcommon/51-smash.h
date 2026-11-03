@@ -157,7 +157,7 @@ extern void C2_HOOK_FASTCALL ReadSmokeFireChance(FILE* pF, tSmoke_fire_chance* p
 
 extern br_actor* C2_HOOK_FASTCALL LoadActorFromRace(const char *pName);
 
-// ReadSpillData
+extern void C2_HOOK_FASTCALL ReadSpillData(FILE* pF, tSlick_spec* pSlick);
 
 extern void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation);
 

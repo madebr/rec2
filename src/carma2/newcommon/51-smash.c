@@ -561,8 +561,52 @@ br_actor* C2_HOOK_FASTCALL LoadActorFromRace(const char *pName) {
     return BrActorLoad(path);
 }
 
-// ReadSpillData
+// FUNCTION: CARMA2_HW 0x004ee5e0
+void C2_HOOK_FASTCALL ReadSpillData(FILE* pF, tSlick_spec* pSlick) {
+    char s[256];
+    float a;
+    float b;
+    float c;
 
+    GetAString(pF, s);
+    if (strcmp(s, "none") != 0) {
+        pSlick->material = BrMaterialFind(s);
+        if (pSlick->material == NULL) {
+            FatalError(kFatalError_CannotFindSmashMaterial_S, s);
+        }
+        if (gMaterials_to_adapt_count < 200) {
+            gMaterials_to_adapt[gMaterials_to_adapt_count] = pSlick->material;
+            gMaterials_to_adapt_count++;
+        }
+        GetThreeFloats(pF, &b, &a, &c);
+        pSlick->field_0x0 = (int)b;
+        pSlick->field_0xc = a;
+        pSlick->field_0x10 = c;
+        GetThreeFloats(pF, &c, &a, &b);
+        pSlick->field_0x14 = c;
+        pSlick->field_0x4 = a;
+        pSlick->field_0x8 = b;
+        GetPairOfFloats(pF, &c, &b);
+        pSlick->field_0x20 = c;
+        pSlick->field_0x24 = b;
+        if (b != 0.0f) {
+            GetPairOfFloats(pF, &c, &a);
+            pSlick->field_0x18 = c;
+            pSlick->field_0x1c = a;
+            GetAString(pF, s);
+            pSlick->material2 = BrMaterialFind(s);
+            if (pSlick->material2 == NULL) {
+                FatalError(kFatalError_CannotFindSmashMaterial_S, s);
+            }
+            if (gMaterials_to_adapt_count < 200) {
+                gMaterials_to_adapt[gMaterials_to_adapt_count] = pSlick->material2;
+                gMaterials_to_adapt_count++;
+            }
+        }
+    } else {
+        pSlick->material = NULL;
+    }
+}
 // FUNCTION: CARMA2_HW 0x004ee780
 // FUNCTION: CARMA2_SW 0x004ea420
 void C2_HOOK_FASTCALL ReadExplosion(FILE* pF, tExplosion_animation* pAnimation) {
