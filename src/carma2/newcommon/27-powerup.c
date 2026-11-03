@@ -565,8 +565,24 @@ static void C2_HOOK_FASTCALL CheckRespawnQueue(tU32 pTime) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004db880
-void C2_HOOK_FASTCALL MungePowerupStuff(tU32 pArg1) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004db880
+void C2_HOOK_FASTCALL MungePowerupStuff(tU32 pArg1) {
+    tU32 time;
+
+    time = GetTotalTime();
+    MungeRepulseRays(time);
+    CheckRespawnQueue(time);
+}
+
+void C2_HOOK_FASTCALL GotPowerupN(int pN) {
+    int modifiers;
+
+    modifiers = PDKeyDown(0) ? 10 : 0;
+    modifiers += PDKeyDown(1) ? 20 : 0;
+    modifiers += PDKeyDown(2) ? 40 : 0;
+    modifiers += PDKeyDown(4) ? 80 : 0;
+    GotPowerupEarwig(&gProgram_state.current_car, modifiers + pN, 1, 1);
+}
 
 // FUNCTION: CARMA2_HW 0x004dbdb0
 // FUNCTION: CARMA2_SW 0x004d82b0
