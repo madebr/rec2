@@ -1844,7 +1844,11 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
 // DRVector3SafeCrossXZ
 
-// FUN_00402dd0
+// FUNCTION: CARMA2_HW 0x00402dd0
+void C2_HOOK_FASTCALL FUN_00402dd0(void) {
+
+    gPipe_play_ptr = gPipe_record_ptr;
+}
 
 // ScaleModelXYZ
 
