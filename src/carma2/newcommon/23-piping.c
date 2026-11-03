@@ -147,6 +147,13 @@ typedef struct {
     tU8 field_0x4[0x10];
 } tPipe_chunk_spark_replay;
 
+typedef struct {
+    tU32 field_0x0;
+    br_actor* actor;
+    tU32 field_0x8;
+    br_actor* field_0xc;
+} tPipe_chunk_relink;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -193,6 +200,11 @@ void C2_HOOK_FASTCALL WorkerFlame(int index, int flag, float f1, float f2, float
 
 // STUB: CARMA2_HW 0x004fef40
 void C2_HOOK_FASTCALL WorkerExtendedSplash(int field_0x0, int field_0x4, int field_0x8, br_vector3* pField_0xc, br_vector3* pField_0x18) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x0040ca40
+void C2_HOOK_CDECL RelinkActorKeepWorldTransform(br_actor* pParent, br_actor* pActor) {
     NOT_IMPLEMENTED();
 }
 
@@ -2145,7 +2157,23 @@ void C2_HOOK_FASTCALL ApplyModelMash(tPipe_chunk** pChunk) {
     return ARApplyModelMash((br_model*)chunk->field_0x4, (tCompressed_vector3*)chunk->field_0x8);
 }
 
-// ApplyRelink
+// FUNCTION: CARMA2_HW 0x004c9850
+void C2_HOOK_FASTCALL ApplyRelink(tPipe_chunk** pChunk) {
+    tPipe_chunk_relink* chunk = (tPipe_chunk_relink*)*pChunk;
+    br_actor* actor = chunk->actor;
+    br_actor* parent = chunk->field_0xc;
+    if (actor->parent != NULL) {
+        if (parent != NULL) {
+            RelinkActorKeepWorldTransform(parent, actor);
+        } else {
+            BrActorRemove(actor);
+        }
+    } else {
+        if (parent != NULL) {
+            BrActorAdd(parent, actor);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004c9890
 // FUNCTION: CARMA2_SW 0x004c5fc0
