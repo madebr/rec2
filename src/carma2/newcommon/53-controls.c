@@ -566,7 +566,66 @@ void C2_HOOK_FASTCALL ToggleMiniMap(void) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// CarWorldOffFallenCheckThingy
+// FUNCTION: CARMA2_HW 0x00442140
+int C2_HOOK_FASTCALL CarWorldOffFallenCheckThingy(tCar_spec* pCar, int pCheck_around) {
+
+    if (gCar_flying && pCar != NULL && pCar->driver == eDriver_local_human) {
+        return 0;
+    }
+    if (gAction_replay_mode) {
+        return 0;
+    }
+    if (pCar->number_of_wheels_on_ground != 0) {
+        int i;
+        const tFace_ref* face_ref;
+
+        for (i = pCar->collision_info->box_face_start; i < pCar->collision_info->box_face_end; i++) {
+            face_ref = &gFace_list__car[i];
+            if (face_ref->material != NULL && face_ref->material->identifier != NULL
+                    && face_ref->material->identifier[0] == '^') {
+                return 1;
+            }
+        }
+        return 0;
+    } else {
+        br_vector3 car_pos;
+        br_vector3 offset_c;
+        br_vector3 offset_w;
+        int result;
+
+        BrVector3Copy(&car_pos, &pCar->car_master_actor->t.t.translate.t);
+        car_pos.v[1] -= -0.5f;
+        if (FindYVerticallyBelow2(&car_pos) < -100.0f) {
+            BrVector3Set(&offset_c, 0.0f, 1.0f, 0.0f);
+            BrMatrix34ApplyV(&offset_w, &offset_c, &pCar->car_master_actor->t.t.mat);
+            BrVector3Add(&car_pos, &pCar->car_master_actor->t.t.translate.t, &offset_w);
+            if (FindYVerticallyBelow2(&car_pos) < -100.0f) {
+                if (pCheck_around) {
+                    pCar->car_master_actor->t.t.translate.t.v[0] -= -0.05f;
+                    result = CarWorldOffFallenCheckThingy(pCar, 0);
+                    pCar->car_master_actor->t.t.translate.t.v[0] -= 0.05f;
+                    if (result == 0) {
+                        return 0;
+                    }
+                    pCar->car_master_actor->t.t.translate.t.v[2] -= -0.05f;
+                    result = CarWorldOffFallenCheckThingy(pCar, 0);
+                    pCar->car_master_actor->t.t.translate.t.v[2] -= 0.05f;
+                    return result;
+                }
+                return 1;
+            }
+            return 0;
+        } else {
+            if (gMaterial_below->identifier != NULL && gMaterial_below->identifier[0] == '^') {
+                return 1;
+            }
+            return 0;
+        }
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // HasCarFallenOffWorld
 // CheckHorn3D
