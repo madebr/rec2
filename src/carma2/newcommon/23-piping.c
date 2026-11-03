@@ -952,7 +952,20 @@ int C2_HOOK_FASTCALL CheckCar(tPipe_chunk* pChunk_ptr, int pChunk_count, tU32 pT
 #pragma auto_inline(on)
 #endif
 
-// CarTimeout
+// FUNCTION: CARMA2_HW 0x004c6bc0
+int C2_HOOK_FASTCALL CarTimeout(tU32 pTime) {
+
+    if (ARReplayForwards()) {
+        if (pTime > gYoungest_time) {
+            return 0;
+        }
+    } else {
+        if (pTime < gYoungest_time) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 // ScanCarsPositions
 
