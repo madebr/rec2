@@ -2755,7 +2755,10 @@ int C2_HOOK_FASTCALL NapalmPedDistanceCallback(tPedestrian* pPed, tCar_spec* pCa
 #pragma auto_inline(on)
 #endif
 
-// NapalmPedDistanceCompare
+// FUNCTION: CARMA2_HW 0x004ce7b0
+int C2_HOOK_CDECL NapalmPedDistanceCompare(const void* pValue1, const void* pValue2) {
+    return (int)(((const tNapalm_ped_distance*)pValue1)->distance - ((const tNapalm_ped_distance*)pValue2)->distance);
+}
 
 // GLOBAL: CARMA2_HW 0x0058abe8
 const double gConst_2pi = 6.283185307179586;
