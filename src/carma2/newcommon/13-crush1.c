@@ -1520,8 +1520,67 @@ extern tU32 C2_HOOK_FASTCALL PDGetTotalTime(void);
 extern int gCrush_deferred;
 extern int gCount_net_crush_full_detach_bit_list;
 
-// STUB: CARMA2_HW 0x0042f4e0
-void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x0042f4e0
+void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) {
+    void* bit;
+    void* b2;
+    void* b3;
+    void* state;
+
+    bit = pObject->actor;
+    if (bit == NULL) {
+        return;
+    }
+    b2 = *(void**)((tU8*)bit + 0x60);
+    if (b2 == NULL) {
+        return;
+    }
+    b3 = *(void**)((tU8*)b2 + 0x8);
+    if (b3 == NULL) {
+        return;
+    }
+    state = *(void**)((tU8*)b3 + 0x34);
+    if (state == NULL) {
+        return;
+    }
+    if (*(int*)((tU8*)state + 0x28) != 1) {
+        return;
+    }
+
+    PHILRemoveFromParentChain(pObject);
+    if (pObject->physics_joint1 != NULL) {
+        *(int*)pObject->physics_joint1 = 0;
+        pObject->physics_joint1 = NULL;
+    }
+    if (gCrush_deferred != 0) {
+        PHILDetachObjectState(pCar->collision_info);
+    }
+    pObject->flags |= 0x100;
+
+    b2 = *(void**)((tU8*)bit + 0x5c);
+    if (gNum_active_non_cars != 0x63) {
+        *(int*)((tU8*)b2 + 0xc) = gDetached_bit_driver;
+        gActive_non_car_list[gNum_active_non_cars] = (tNon_car_spec*)b2;
+        gNum_active_non_cars += 1;
+        PHILAddActiveObjectImmediately(*(void**)((tU8*)b2 + 0x8), NULL, NULL, NULL);
+    }
+    PipeSingleNonCar(*(tU16*)((tU8*)b2 + 0x80), bit);
+    *(tU8*)((tU8*)(*(void**)((tU8*)bit + 0x14)) + 0x3) = 0x21;
+    *(int*)((tU8*)state + 0x28) = 2;
+    pCar->use_shell_model = 0;
+}
+
+typedef struct tNet_message_chunk_semi_detach_bit {
+    int ID;
+    tU8 field_0x4;
+    undefined field_0x5[0x8 - 0x5];
+    tU32 field_0x8;
+    tCompressed_vector3 field_0xc;
+    tCompressed_vector3 field_0x12;
+    tCompressed_vector3 field_0x18;
+    tCompressed_vector3 field_0x1e;
+    tCompressed_vector3 field_0x24;
+} tNet_message_chunk_semi_detach_bit;
 
 // SendFullyDetachBit
 
