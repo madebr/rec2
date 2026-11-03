@@ -33,6 +33,33 @@ typedef struct {
 } tDrone_crush_data;
 extern tDrone_crush_data* C2_HOOK_FASTCALL GetDroneCrushData(tPhysics_object* pObject);
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004c86b0
+void C2_HOOK_FASTCALL FUN_004c86b0(uintptr_t pId, br_actor* pActor) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004c6410
+void C2_HOOK_FASTCALL PHILRemoveFromParentChain(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// GLOBAL: CARMA2_HW 0x0058f860
+tU16 gNext_crush_actor_id = 10000;
+
+// GLOBAL: CARMA2_HW 0x0074a5f8
+int gCrush_deferred;
+
+extern int gNum_active_non_cars;
+extern tNon_car_spec* gActive_non_car_list[99];
+
 // GLOBAL: CARMA2_HW 0x0067c47c
 tU32 gToo_poor_for_recovery_timeout;
 
@@ -3239,4 +3266,110 @@ int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data) {
         }
     }
     return 0;
+}
+
+
+// FUNCTION: CARMA2_HW 0x0042f170
+tCrush_info* C2_HOOK_FASTCALL FUN_0042f170(tCrush_info_buffer* pInfo_buffer, br_actor* pActor, tCar_spec* pCar) {
+    int i;
+    int count;
+    int start_index;
+    int j;
+    tU16 id;
+    tCrush_info* info;
+    tCrush_info* candidate;
+
+    count = pInfo_buffer->capacity;
+    for (i = 0; i < count; i++) {
+        if (*(tDriver*)((tU8*)&pInfo_buffer->crush_infos[i] + 0xc) == 0) {
+            break;
+        }
+    }
+    if (i == count) {
+        tPhysics_object* object;
+
+        if (gCrush_deferred) {
+            return NULL;
+        }
+        start_index = (int)pInfo_buffer->field_0x8;
+        for (i = 0; i < count; i++) {
+            candidate = &pInfo_buffer->crush_infos[start_index];
+            if (*(tDriver*)((tU8*)candidate + 0xc) != 1) {
+                break;
+            }
+            start_index = (start_index + 1) % count;
+        }
+        if (i == count) {
+            return NULL;
+        }
+        info = &pInfo_buffer->crush_infos[start_index];
+        pInfo_buffer->field_0x8 = ((int)pInfo_buffer->field_0x8 + 1) % count;
+        (*(br_actor**)((tU8*)info + 0x10))->type_data = NULL;
+        PipeSingleNonCar(*(tU16*)((tU8*)info + 0x80), *(br_actor**)((tU8*)info + 0x10));
+        FUN_004c86b0(0, *(br_actor**)((tU8*)info + 0x10));
+        BrActorRemove(*(br_actor**)((tU8*)info + 0x10));
+
+        object = info->collision_object->child;
+        while (object != NULL) {
+            tPhysics_object* next;
+            tCrush_info* child_info;
+            br_actor* child_actor;
+            tCar_spec* child_car;
+
+            next = object->next;
+            child_actor = object->actor;
+            child_info = child_actor->type_data;
+            child_actor->type_data = NULL;
+            child_car = *(tCar_spec**)(*(char**)(*(char**)((char*)child_actor->user + 8) + 0x34) + 0x2c);
+            if (*(int*)((tU8*)child_car->car_crush_spec + 0x494) != 8) {
+                FUN_004c86b0(0, child_actor);
+                BrActorRemove(child_actor);
+                *(br_actor**)((tU8*)child_car->car_crush_spec + 0x498 + *(int*)((tU8*)child_car->car_crush_spec + 0x494) * 4) = child_actor;
+                (*(int*)((tU8*)child_car->car_crush_spec + 0x494))++;
+            }
+            *(tDriver*)((tU8*)child_info + 0xc) = 0;
+            PHILRemoveFromParentChain(object);
+            object = next;
+        }
+        i = 0;
+        for (i = 0; i < gNum_active_non_cars; i++) {
+            if (gActive_non_car_list[i] == (tNon_car_spec*)info) {
+                break;
+            }
+        }
+        if (i != gNum_active_non_cars) {
+            gNum_active_non_cars--;
+            if (i < gNum_active_non_cars) {
+                for (j = i; j < gNum_active_non_cars; j++) {
+                    gActive_non_car_list[j] = gActive_non_car_list[j + 1];
+                }
+            }
+        }
+        *(tDriver*)((tU8*)info + 0xc) = 0;
+        (*(br_actor**)((tU8*)info + 0x10))->type_data = NULL;
+        PHILRemoveObject(info->collision_object);
+    } else {
+        info = &pInfo_buffer->crush_infos[i];
+    }
+    pActor->type_data = info;
+    *(tDriver*)((tU8*)info + 0xc) = *(tDriver*)((tU8*)pInfo_buffer + 0xc);
+    info->collision_object->actor = pActor;
+    *(br_actor**)((tU8*)info + 0x10) = pActor;
+    *(undefined4*)((tU8*)info + 0x4) = 0;
+    *(float*)((tU8*)info + 0xc4) = -1.0f;
+    if (gNet_mode != eNet_mode_none) {
+        id = pCar->car_ID;
+    } else {
+        if (gNext_crush_actor_id == 20000) {
+            gNext_crush_actor_id = 10000;
+        }
+        id = gNext_crush_actor_id++;
+    }
+    *(tU16*)((tU8*)info + 0x80) = id;
+    *(tCar_spec**)((tU8*)info + 0xc8) = pCar;
+    info->collision_object->owner = info;
+    info->collision_object->flags_0x238 = 1;
+    info->collision_object->field_0x1a0 = 0xffff;
+    info->collision_object->field_0x1a4 = 0;
+    return info;
 }
