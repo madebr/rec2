@@ -1362,7 +1362,23 @@ int C2_HOOK_FASTCALL SetModelAFEUpdateCB(br_model* pModel) {
     return 1;
 }
 
-// SetMaterialPrelitCB
+// FUNCTION: CARMA2_HW 0x004f9600
+int C2_HOOK_FASTCALL SetMaterialPrelitCB(br_material* pMaterial) {
+    if (!(pMaterial->flags & BR_MATF_PRELIT)) {
+        pMaterial->flags |= BR_MATF_PRELIT;
+        BrMaterialUpdate(pMaterial, BR_MATU_RENDERING | BR_MATU_LIGHTING);
+        return 1;
+    }
+    return 0;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // FindNextChunk
 
