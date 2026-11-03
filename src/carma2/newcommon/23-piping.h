@@ -142,7 +142,7 @@ extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 // GetReducedPos
 
-// SaveReducedPos
+void C2_HOOK_FASTCALL SaveReducedPos(tReduced_pos* p, br_vector3* v);
 
 // InitLastDamageArrayEtc
 

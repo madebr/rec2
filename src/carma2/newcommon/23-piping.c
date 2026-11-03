@@ -34,6 +34,9 @@ extern void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 
 extern void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...);
 
+// GLOBAL: CARMA2_HW 0x0069410c
+volatile undefined4 gUNK_0069410c;
+
 // GLOBAL: CARMA2_HW 0x006940d4
 tPipe_smudge_data* gSmudge_space;
 
@@ -824,7 +827,14 @@ int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_
 }
 // GetReducedPos
 
-// SaveReducedPos
+void C2_HOOK_FASTCALL SaveReducedPos(tReduced_pos* p, br_vector3* v) {
+    br_vector3 tv;
+
+    BrVector3Sub(&tv, v, &gProgram_state.current_car.car_master_actor->t.t.translate.t);
+    p->v[0] = (tS16)(tv.v[0] * 800.f);
+    p->v[1] = (tS16)(tv.v[1] * 800.f);
+    p->v[2] = (tS16)(tv.v[2] * 800.f);
+}
 
 // InitLastDamageArrayEtc
 
@@ -1105,7 +1115,26 @@ void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor) {
         SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
 }
 
-// AddSmokeToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7010
+void C2_HOOK_FASTCALL AddSmokeToPipingSession(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength) {
+    tReduced_pos reduced_pos;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke, pos, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke, pos, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke, radius, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke, radius, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke, strength, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke, strength, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke, type, 0x9);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke, type, 0x1);
+
+    SaveReducedPos(&reduced_pos, pPos);
+    ARAddVariedDataToSession(ePipe_chunk_smoke, pIndex, 4,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke, pos), &reduced_pos,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke, radius), (int)(1024.f * pRadius),
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke, strength), (int)(pStrength * 255.f),
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke, type), (tU8)pType);
+}
 
 // FUNCTION: CARMA2_HW 0x004c70c0
 // FUNCTION: CARMA2_SW 0x004c37f0
@@ -1121,7 +1150,6 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
 }
 
 // AddFlameToPipingSession
-
 // AddSplashToPipingSession
 
 // AddExtendedSplashToPipingSession
