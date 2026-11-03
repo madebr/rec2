@@ -27,7 +27,7 @@ extern int C2_HOOK_CDECL TVCompare_MXYZUVN(const void* p1, const void* p2);
 
 extern int C2_HOOK_CDECL TVCompare_MVN(const void* p1, const void* p2);
 
-extern br_fraction C2_HOOK_CDECL BrScalarToFractionClamp(br_scalar s);
+extern br_fraction C2_HOOK_STDCALL BrScalarToFractionClamp(br_scalar s);
 
 extern void C2_HOOK_STDCALL PrepareFaceNormals(br_model* model);
 

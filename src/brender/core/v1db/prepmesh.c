@@ -285,12 +285,12 @@ int C2_HOOK_CDECL TVCompare_MVN(const void* p1, const void* p2) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051f5f0
-br_fraction C2_HOOK_CDECL BrScalarToFractionClamp(br_scalar s) {
+br_fraction C2_HOOK_STDCALL BrScalarToFractionClamp(br_scalar s) {
+    if (s <= -1.0f) {
+        return -0.99999988f;
+    }
     if (s >= 1.0f) {
         return 1.0f;
-    }
-    if (s < -1.0f) {
-        return -0.99999988f;
     }
     return s;
 }
