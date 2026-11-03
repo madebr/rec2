@@ -1698,7 +1698,40 @@ int C2_HOOK_FASTCALL BonerActiveHalted2(tPed_character_instance* pCharacter, und
 
 // SetCharacterPhysicsLevel
 
-// StopCharacterMorphing
+// FUNCTION: CARMA2_HW 0x004096f0
+void C2_HOOK_FASTCALL StopCharacterMorphing(tPed_character_instance* pCharacter) {
+
+    if (pCharacter->field_0xbc != NULL) {
+        pCharacter->field_0xbc->field_0x4 = 0;
+        if (pCharacter->field_0xbc->field_0x2c != 0) {
+            tPed_form* form = pCharacter->personality->form;
+            br_matrix34* destination;
+            tPed_move* move;
+            tPed_move_frame* frame;
+            br_matrix34 local;
+
+            if (pCharacter->field_0x4 < 0) {
+                destination = &pCharacter->field_0x2c;
+            } else if (pCharacter->field_0xe8 != NULL) {
+                destination = pCharacter->field_0xe8;
+            } else {
+                destination = &form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+            }
+
+            move = form->moves[pCharacter->field_0x7].move;
+            frame = &move->frames[(short)pCharacter->field_0x1c];
+            BrMatrix34LPInverse(&local, &frame->mat);
+            BrMatrix34Mul(&pCharacter->field_0x8c, &local, destination);
+
+            pCharacter->field_0x8c.m[3][0] = 0.0f;
+            pCharacter->field_0x8c.m[3][1] = 0.0f;
+            pCharacter->field_0x8c.m[3][2] = 0.0f;
+        }
+
+        pCharacter->field_0xbc = NULL;
+        SetCharacterBonePositions(pCharacter, 0, 0);
+    }
+}
 
 // MorphCharacterBonePositions
 
