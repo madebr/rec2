@@ -518,7 +518,10 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU3
     checkpoint->map_position.v[1] += (float)gINT_0074abd0;
 }
 
-// DrawCheckpoint
+// FUNCTION: CARMA2_HW 0x004969e0
+void C2_HOOK_FASTCALL DrawCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    extern void C2_HOOK_FASTCALL PossibleLock(int pValue);
+    extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
     // GLOBAL: CARMA2_HW 0x0068d8e8
     static tU32 last_flash;
     // GLOBAL: CARMA2_HW 0x0068d8ec
