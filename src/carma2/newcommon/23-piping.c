@@ -1638,6 +1638,15 @@ void C2_HOOK_FASTCALL PipeSingleDSModel(int pDouble_sided, void* pThing) {
         SIZE_OFFSET_PIPING(tPipe_single_ds_model, field_0x0), pDouble_sided);
 }
 
+// FUNCTION: CARMA2_HW 0x004c8e50
+void C2_HOOK_FASTCALL PipeSinglePedestrian(tPedestrian* pPed) {
+
+    ARDoSingleVariedSession(0x39, (uintptr_t)pPed, 3,
+        sizeof(tPedestrian), 0, pPed,
+        sizeof(tPed_character_instance), sizeof(tPedestrian), pPed->character,
+        sizeof(tPed_cache_006944c0), sizeof(tPedestrian) + sizeof(tPed_character_instance), pPed->field_0x0c);
+}
+
 // FUNCTION: CARMA2_HW 0x004c8e80
 // FUNCTION: CARMA2_SW 0x004c55b0
 void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
