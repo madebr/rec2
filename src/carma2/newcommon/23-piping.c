@@ -252,8 +252,10 @@ int C2_HOOK_FASTCALL ARReplayForwards(void) {
 #pragma auto_inline(on)
 #endif
 
-// STUB: CARMA2_HW 0x00402380
-int C2_HOOK_FASTCALL ARReplayPauseState(void) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x00402380
+int C2_HOOK_FASTCALL ARReplayPauseState(void) {
+    return gReplay_pause_state;
+}
 
 // FUNCTION: CARMA2_HW 0x00402360
 // FUNCTION: CARMA2_SW 0x00402360
