@@ -1888,3 +1888,40 @@ int C2_HOOK_FASTCALL FUN_00424140(tPhysics_object* pObject, tPhysics_shape* pBou
 int C2_HOOK_FASTCALL FUN_00424270(float* pStart, float* pEnd, int* pObject, int pBounds_shape, undefined4 pRay_shape, int pCollision_count, int pFace, int pPolyhedron_data) {
     return pCollision_count;
 }
+
+
+// FUNCTION: CARMA2_HW 0x004293c0
+int C2_HOOK_FASTCALL TestPairOverlap(tPhysics_object* pObject, tPhysics_object* pOther) {
+    tPhysics_object* child;
+    tPhysics_shape* shape1;
+    tPhysics_shape* shape2;
+    int found;
+
+    found = 0;
+    if (pOther != pObject && pObject->parent != pOther && pOther->parent != pObject) {
+        shape1 = pObject->shape;
+        shape2 = pOther->shape;
+        if (FlagsAreGo(pObject, pOther) && BoundsOverlapTest__finteray(&pObject->field_0xf4, &pOther->field_0xf4)) {
+            while (shape1 != NULL) {
+                while (shape2 != NULL) {
+                    if (TestShapeEdgeIntersection(pObject, pOther, shape1, shape2) || TestShapeEdgeIntersection(pOther, pObject, shape2, shape1)) {
+                        found = 1;
+                        goto done;
+                    }
+                    shape2 = shape2->common.next;
+                }
+                shape1 = shape1->common.next;
+            }
+        }
+    }
+done:
+    if (found != 0) {
+        return 1;
+    }
+    for (child = pOther->child; child != NULL; child = child->next) {
+        if (TestPairOverlap(pObject, child)) {
+            return 1;
+        }
+    }
+    return 0;
+}
