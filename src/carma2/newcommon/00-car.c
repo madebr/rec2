@@ -418,8 +418,11 @@ void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag) 
     }
 }
 
-// STUB: CARMA2_HW 0x00414400
-void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x00414400
+void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar) {
+
+    InitialiseCar2(pCar, 1);
+}
 
 // InitialiseCarsEtc
 
