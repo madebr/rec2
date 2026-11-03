@@ -1407,8 +1407,19 @@ void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec) {
 
 // ToggleFlapsCB2
 
-// STUB: CARMA2_HW 0x0042ddb0
-int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, void* data) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x0042ddb0
+int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, void* data) {
+    tCar_spec* pCar_spec = data;
+
+    DRActorEnumRecurse(pCollision_info->actor, ToggleDoorsActorCallback, pCar_spec);
+    return 0;
+}
+
+extern int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data);
+extern int gCount_toggled_doors;
+extern tU32 gToo_poor_for_recovery_timeout;
+extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec* pCar);
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(tU8 pType, int pOption);
 
 // ToggleDoorsActorCallback
 
