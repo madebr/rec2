@@ -2690,7 +2690,12 @@ void C2_HOOK_FASTCALL UndoPowerupGot(tPipe_chunk** pChunk, tPipe_chunk* pPrev_ch
     return WorkerPowerupLose(chunk->field_0x0, chunk->field_0x4);
 }
 
-// UndoPowerupLose
+// FUNCTION: CARMA2_HW 0x004ca300
+void C2_HOOK_FASTCALL UndoPowerupLose(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_powerup* chunk = (tPipe_chunk_powerup*)*pChunk;
+
+    return WorkerPowerupGot((tPowerup*)chunk->field_0x0, (tCar_spec*)chunk->field_0x4);
+}
 
 // UndoFunkEnable
 
