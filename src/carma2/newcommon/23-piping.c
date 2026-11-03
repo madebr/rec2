@@ -268,6 +268,17 @@ typedef struct {
     br_matrix34 field_0x4;
 } tPipe_chunk_phil_object;
 
+typedef struct {
+    int field_0x0;
+    int field_0x4;
+    int field_0x8;
+    int field_0xc;
+    int field_0x10;
+    br_vector3 field_0x14;
+    br_vector3 field_0x20;
+    br_vector3 field_0x2c;
+} tPipe_chunk_gib_shower;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -389,6 +400,16 @@ void C2_HOOK_FASTCALL WorkerPedModelChangeUndo(int field_0x0, int field_0x4, int
 
 // STUB: CARMA2_HW 0x004b7220
 void C2_HOOK_FASTCALL WorkerPHILObject(int field_0x0, br_matrix34* pField_0x4) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ccae0
+void C2_HOOK_FASTCALL WorkerGibShower(int field_0x0, int field_0xc, int field_0x8, int field_0x10, int field_0x4, br_vector3* pField_0x14, br_vector3* pField_0x20, br_vector3* pField_0x2c) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ccc40
+void C2_HOOK_FASTCALL WorkerGibShowerUndo(int field_0xc, int prev_0x0, int prev_0xc, int prev_0x8, int prev_0x10, int prev_0x4, br_vector3* prev_0x14, br_vector3* prev_0x20, br_vector3* prev_0x2c) {
     NOT_IMPLEMENTED();
 }
 
@@ -2581,7 +2602,12 @@ void C2_HOOK_FASTCALL ApplyPHILObject(tPipe_chunk** pChunk) {
     return WorkerPHILObject(chunk->field_0x0, &chunk->field_0x4);
 }
 
-// ApplyGibShower
+// FUNCTION: CARMA2_HW 0x004c9b90
+void C2_HOOK_FASTCALL ApplyGibShower(tPipe_chunk** pChunk) {
+    tPipe_chunk_gib_shower* chunk = (tPipe_chunk_gib_shower*)*pChunk;
+
+    return WorkerGibShower(chunk->field_0x0, chunk->field_0xc, chunk->field_0x8, chunk->field_0x10, chunk->field_0x4, &chunk->field_0x14, &chunk->field_0x20, &chunk->field_0x2c);
+}
 
 // ApplyBloodSpurt
 
