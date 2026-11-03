@@ -10,10 +10,65 @@
 
 #include "c2_stdlib.h"
 
-// STUB: CARMA2_HW 0x0054009c
+extern br_uint_16 _RealSelector;
+
+#if defined(__I86__) || defined(_M_IX86)
+C2_NAKED
+#endif
+// FUNCTION: CARMA2_HW 0x0054009c
 // STUB: CARMA2_SW 0x0053b73c
 void C2_HOOK_CDECL HostRealBlockWrite(br_uint_16 offset, br_uint_16 seg, void *block, br_uint_32 count) {
+#if defined(__I86__) || defined(_M_IX86)
+#if defined(_MSC_VER)
+    __asm {
+        push ebp
+        mov ebp, esp
+        push es
+        push esi
+        push edi
+        mov es, word ptr [_RealSelector]
+        mov edi, dword ptr [ebp+0xc]
+        shl edi, 4
+        add edi, dword ptr [ebp+8]
+        mov esi, dword ptr [ebp+0x10]
+        mov ecx, dword ptr [ebp+0x14]
+        shr ecx, 1
+        rep movsw
+        adc ecx, ecx
+        rep movsb
+        pop edi
+        pop esi
+        pop es
+        leave
+        ret
+    }
+#else
+    __asm__(
+        "push %ebp\n"
+        "mov %esp, %ebp\n"
+        "push %es\n"
+        "push %esi\n"
+        "push %edi\n"
+        "mov __RealSelector, %es\n"
+        "mov 0xc(%ebp), %edi\n"
+        "shl $4, %edi\n"
+        "add 8(%ebp), %edi\n"
+        "mov 0x10(%ebp), %esi\n"
+        "mov 0x14(%ebp), %ecx\n"
+        "shr $1, %ecx\n"
+        "rep movsw\n"
+        "adc %ecx, %ecx\n"
+        "rep movsb\n"
+        "pop %edi\n"
+        "pop %esi\n"
+        "pop %es\n"
+        "leave\n"
+        "ret\n"
+    );
+#endif
+#else
     abort();
+#endif
 }
 
 // STUB: CARMA2_HW 0x005400c6
