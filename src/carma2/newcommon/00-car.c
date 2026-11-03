@@ -3380,3 +3380,22 @@ void C2_HOOK_FASTCALL PutOpponentsInNeutral(void) {
         NewTextHeadupSlot(4, 0, 3000, -4, "Back in gear");
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x00420310
+int C2_HOOK_FASTCALL FUN_00420310(tPhysics_object* pObject) {
+    tNon_car_spec* non_car;
+
+    non_car = (tNon_car_spec*)pObject->owner;
+    pObject->field_0xed = 1;
+    *(int*)((tU8*)pObject + 0x194) = 0;
+    *(int*)((tU8*)pObject + 0x198) = 0;
+    if (non_car->snap_off_cosine < 1.0f) {
+        pObject->physics_joint2 = NULL;
+    }
+    pObject->field_0x218 = 0;
+    pObject->v.v[0] = 0.0f;
+    pObject->v.v[1] = 0.0f;
+    pObject->v.v[2] = 0.0f;
+    return 0;
+}
