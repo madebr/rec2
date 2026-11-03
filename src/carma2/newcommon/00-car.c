@@ -40,6 +40,70 @@
 
 #include <math.h>
 
+// GLOBAL: CARMA2_HW 0x006793ec
+tU32 gSafe_position_time_count = 0;
+
+extern void C2_HOOK_FASTCALL FlyCar(tCar_spec* c, br_scalar dt);
+
+static void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime_difference) {
+    int i;
+    br_vector3 r;
+
+    gSafe_position_time_count += pTime_difference;
+    if (gSafe_position_time_count < 5000) {
+        return;
+    }
+    gSafe_position_time_count = 4000;
+    if (car->disabled) {
+        return;
+    }
+    if (car->car_crush_spec != NULL && car->car_crush_spec->field_0x4b8) {
+        return;
+    }
+    for (i = 0; i < 4; i++) {
+        if (car->oldd[i] >= car->susp_height[i >> 1]) {
+            return;
+        }
+    }
+    if ((car->collision_info->last_special_volume == NULL || car->collision_info->last_special_volume->gravity_multiplier == 1.0)
+        && gCurrent_race.material_modifiers[car->material_index[0]].tyre_road_friction >= 0.1
+        && gCurrent_race.material_modifiers[car->material_index[1]].tyre_road_friction >= 0.1
+        && gCurrent_race.material_modifiers[car->material_index[2]].tyre_road_friction >= 0.1
+        && gCurrent_race.material_modifiers[car->material_index[3]].tyre_road_friction >= 0.1
+        && !car->field_0x195c
+        && car->car_master_actor->t.t.mat.m[1][1] >= 0.8f) {
+
+        for (i = 0; i < 4; i++) {
+            BrVector3Sub(&r, &car->car_master_actor->t.t.translate.t, (br_vector3*)car->last_safe_positions[i].m[3]);
+
+            if (BrVector3LengthSquared(&r) < 8.4015961f) {
+                return;
+            }
+        }
+        for (i = 18; i > 0; i--) {
+            BrMatrix34Copy(&car->last_safe_positions[i], &car->last_safe_positions[i - 1]);
+        }
+        BrMatrix34Copy(&car->last_safe_positions[0], &car->car_master_actor->t.t.mat);
+        gSafe_position_time_count = 0;
+    }
+}
+
+
+typedef void (C2_HOOK_FASTCALL * tControl_car_fn)(tCar_spec* pCar_spec, float pT);
+
+// GLOBAL: CARMA2_HW 0x0058f660
+tControl_car_fn ControlCar[6] = {
+    NULL,
+    NULL,
+    NULL,
+    (tControl_car_fn)ControlCar3,
+    NULL,
+    NULL,
+};
+
+// GLOBAL: CARMA2_HW 0x0058f678
+int gControl__car = 3;
+
 // GLOBAL: CARMA2_HW 0x006793d4
 int gDouble_pling_water;
 
@@ -554,7 +618,102 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // ControlNetCars
 
-// ControlOurCar
+// FUNCTION: CARMA2_HW 0x00414cb0
+void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
+    // GLOBAL: CARMA2_HW 0x0058f6d8
+    static int last_key_down = 1;
+    tCar_spec* car;
+    tU32 time;
+    br_vector3 minus_k;
+    br_vector3 tmp;
+    br_vector3 delta_omega;
+
+    car = &gProgram_state.current_car;
+
+    if (car->keys.change_down) {
+        if (!last_key_down) {
+            last_key_down = 1;
+
+            if (car->number_of_wheels_on_ground <= 2
+                    && BrVector3LengthSquared(&car->collision_info->v) < .04
+                    && car->oldd[0] == car->susp_height[0]
+                    && car->oldd[1] == car->susp_height[0]
+                    && (car->frame_collision_flag || car->collision_info->disable_move_rotate)) {
+
+                tmp.v[0] = -car->collision_info->transform_matrix.m[1][2];
+                *(int*)&tmp.v[1] = 0;
+                tmp.v[2] = car->collision_info->transform_matrix.m[1][0];
+                BrVector3Normalise(&tmp, &tmp);
+                BrMatrix34TApplyV(&delta_omega, &tmp, &car->collision_info->transform_matrix);
+                BrVector3Accumulate(&car->collision_info->omega, &delta_omega);
+                car->collision_info->disable_move_rotate = 0;
+            }
+        }
+    } else {
+        last_key_down = 0;
+    }
+    if (gNet_mode != eNet_mode_none) {
+        int i;
+
+        for (i = 0; i < gNumber_of_net_players; i++) {
+
+            if (i != gThis_net_player_index) {
+                ControlCar[gControl__car](gNet_players[i].car, 0.001f * pTime_difference);
+            }
+        }
+    }
+    if (gCar_flying) {
+        FlyCar(gCar_to_view, 0.001f * pTime_difference);
+        return;
+    }
+
+    time = GetTotalTime();
+    if (car->damage_units[eDamage_steering].damage_level > 40) {
+        if (car->end_steering_damage_effect != 0) {
+            if (car->end_steering_damage_effect > time || car->damage_units[eDamage_steering].damage_level == 99) {
+                car->keys.left = car->false_key_left;
+                car->keys.right = car->false_key_right;
+            } else {
+                car->end_steering_damage_effect = 0;
+            }
+        } else {
+            if (PercentageChance((int)(pTime_difference * (car->damage_units[eDamage_steering].damage_level - 40) * 0.0045)) && fabs(car->collision_info->velocity_car_space.v[2]) > 1. / (10000. * 6.9f)) {
+                if (car->keys.left || car->keys.right) {
+                    car->false_key_left = !car->keys.left;
+                    car->false_key_right = !car->keys.right;
+                } else {
+                    if (PercentageChance(50)) {
+                        car->false_key_left = 1;
+                    } else {
+                        car->false_key_right = 1;
+                    }
+                }
+                car->end_steering_damage_effect = (tU32)(time + FRandomBetween(0.0f, (float)(25 * (car->damage_units[eDamage_steering].damage_level - 40))));
+            }
+        }
+    }
+    if (car->damage_units[eDamage_transmission].damage_level > 40) {
+        if (car->end_trans_damage_effect != 0) {
+            if (car->end_trans_damage_effect > time || car->damage_units[eDamage_transmission].damage_level == 99) {
+                car->gear = 0;
+                car->just_changed_gear = 1;
+            } else {
+                car->end_trans_damage_effect = 0;
+            }
+        } else {
+            if (PercentageChance((int)(pTime_difference * (car->damage_units[eDamage_transmission].damage_level - 40) * 0.006))) {
+                car->end_trans_damage_effect = (tU32)(time + FRandomBetween(0.f, (float)(50 * (car->damage_units[eDamage_transmission].damage_level - 40))));
+            }
+        }
+    }
+    ControlCar[gControl__car](car, 0.001f * pTime_difference);
+    RememberSafePosition(car, pTime_difference);
+    if (gCamera_reset) {
+        BrVector3SetFloat(&minus_k, 0.0f, 0.0f, -1.0f);
+        gCamera_sign = 0;
+        BrMatrix34ApplyV(&car->direction, &minus_k, &car->car_master_actor->t.t.mat);
+    }
+}
 
 // CalcEngineForce
 
@@ -1306,4 +1465,9 @@ void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefine
             AREndPipingSession();
         }
     }
+}
+
+// STUB: CARMA2_HW 0x0041f4f0
+void C2_HOOK_FASTCALL FlyCar(tCar_spec* c, br_scalar dt) {
+    NOT_IMPLEMENTED();
 }
