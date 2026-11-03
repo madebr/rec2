@@ -26,6 +26,72 @@
 
 extern tPolyhedron_edge_indexes gBox_edge_indexes[12];
 
+typedef struct {
+    br_model* model;
+    float crushability;
+    br_bounds3 bounds;
+} tDrone_crush_data;
+extern tDrone_crush_data* C2_HOOK_FASTCALL GetDroneCrushData(tPhysics_object* pObject);
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004c86b0
+void C2_HOOK_FASTCALL FUN_004c86b0(uintptr_t pId, br_actor* pActor) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004c6410
+void C2_HOOK_FASTCALL PHILRemoveFromParentChain(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// GLOBAL: CARMA2_HW 0x00589aa4
+const br_scalar gFLOAT_00589aa4 = -0.007246376946568489f;
+
+// GLOBAL: CARMA2_HW 0x00589a74
+br_scalar gCrushSqrtHalf = 0.70710701f;
+// GLOBAL: CARMA2_HW 0x00589acc
+br_scalar gFLOAT_00589acc = 0.0014492754f;
+
+// GLOBAL: CARMA2_HW 0x00589a54
+const br_scalar gFLOAT_00589a54 = 1.0f;
+// GLOBAL: CARMA2_HW 0x00589a98
+const br_scalar gFLOAT_00589a98 = 0.0001f;
+// GLOBAL: CARMA2_HW 0x00589a9c
+const br_scalar gFLOAT_00589a9c = 0.9999f;
+// GLOBAL: CARMA2_HW 0x00589aa0
+const br_scalar gFLOAT_00589aa0 = 0.007246376946568489f;
+
+// GLOBAL: CARMA2_HW 0x0058f860
+tU16 gNext_crush_actor_id = 10000;
+
+// GLOBAL: CARMA2_HW 0x0074a5f8
+int gCrush_deferred;
+
+extern int gNum_active_non_cars;
+extern tNon_car_spec* gActive_non_car_list[99];
+
+// GLOBAL: CARMA2_HW 0x0067c47c
+tU32 gToo_poor_for_recovery_timeout;
+
+// GLOBAL: CARMA2_HW 0x0067be84
+tU32 gINT_0067be84;
+
+// GLOBAL: CARMA2_HW 0x006796bc
+int gCount_queued_drone_crushes;
+
+// GLOBAL: CARMA2_HW 0x0067bad8
+tQueued_drone_crush gQueued_drone_crushes[4];
+
+// GLOBAL: CARMA2_HW 0x0079ecbc
+tPhysics_object* gUNK_0079ecbc;
+
 int gNumber_of_net_players;
 
 tNet_game_player_info gNet_players[12];
@@ -1049,7 +1115,48 @@ float C2_HOOK_FASTCALL PointTriangleDistSq(const br_vector3* pP, const br_vector
     return distance * distance;
 }
 
-// PointRectDistSq
+// FUNCTION: CARMA2_HW 0x0042ce00
+float C2_HOOK_FASTCALL PointRectDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB, const br_vector3* pC) {
+    // based on ApexWorm/rec2 08141eedd
+    br_vector3 u;
+    br_vector3 v;
+    br_vector3 offset;
+    br_vector3 projected;
+    br_vector3 residual;
+    float u_scale;
+    float v_scale;
+
+    BrVector3Sub(&u, pC, pA);
+    BrVector3Sub(&v, pB, pA);
+    if ((float)fabs(BrVector3Dot(&u, &v)) > 0.001f) {
+        BrVector3Sub(&u, pC, pB);
+        BrVector3Sub(&v, pA, pB);
+        pA = pB;
+        if ((float)fabs(BrVector3Dot(&u, &v)) > 0.001f) {
+            BrVector3Sub(&u, pB, pC);
+            BrVector3Sub(&v, pA, pC);
+            pA = pC;
+        }
+    }
+    BrVector3Sub(&offset, pP, pA);
+    v_scale = BrVector3Dot(&offset, &v) / BrVector3LengthSquared(&v);
+    u_scale = BrVector3Dot(&offset, &u) / BrVector3LengthSquared(&u);
+    if (!(v_scale >= 0.0f)) {
+        v_scale = 0.0f;
+    } else if (v_scale > 1.0f) {
+        v_scale = 1.0f;
+    }
+    if (!(u_scale >= 0.0f)) {
+        u_scale = 0.0f;
+    } else if (u_scale > 1.0f) {
+        u_scale = 1.0f;
+    }
+    projected.v[0] = u_scale * u.v[0] + v_scale * v.v[0] + pA->v[0];
+    projected.v[1] = u_scale * u.v[1] + v_scale * v.v[1] + pA->v[1];
+    projected.v[2] = u_scale * u.v[2] + v_scale * v.v[2] + pA->v[2];
+    BrVector3Sub(&residual, &projected, pP);
+    return BrVector3LengthSquared(&residual);
+}
 
 // PointSimplexDistSq
 
@@ -1293,7 +1400,19 @@ void C2_HOOK_FASTCALL SimpleCrushModel(br_model* pModel, int pCount, float* pPoi
 
 // CrushDrone
 
-// CrushDroneObject
+// FUNCTION: CARMA2_HW 0x0042d180
+void C2_HOOK_FASTCALL CrushDroneObject(tPhysics_object* pObject, int pCount, float* pPoints, br_vector3* pScale) {
+    tDrone_crush_data* crush_data;
+    br_vector3 scaled;
+
+    crush_data = GetDroneCrushData(pObject);
+    if (crush_data != NULL && pCount >= 1) {
+        scaled.v[0] = crush_data->crushability * pScale->v[0];
+        scaled.v[1] = crush_data->crushability * pScale->v[1];
+        scaled.v[2] = crush_data->crushability * pScale->v[2];
+        SimpleCrushModel(crush_data->model, pCount, pPoints, scaled.v, (float*)&crush_data->bounds);
+    }
+}
 
 // DoDroneCrushing
 
@@ -1318,7 +1437,43 @@ void C2_HOOK_FASTCALL AddDroneCrush(tQueued_drone_crush_item* pCrush, const br_v
     }
 }
 
-// QueueDroneCrush
+// FUNCTION: CARMA2_HW 0x0042d1e0
+void C2_HOOK_FASTCALL QueueDroneCrush(tPhysics_object* pObject, int pChain_count, br_vector3* pChain, br_vector3* pForce) {
+    br_vector3 normal;
+    float length;
+    float dot;
+    int i;
+    int j;
+
+    length = (float)sqrt(pForce->v[0] * pForce->v[0] + pForce->v[2] * pForce->v[2] + pForce->v[1] * pForce->v[1]);
+    normal.v[0] = pForce->v[0] / length;
+    normal.v[1] = pForce->v[1] / length;
+    normal.v[2] = pForce->v[2] / length;
+    for (i = 0; i < gCount_queued_drone_crushes; i++) {
+        if (gQueued_drone_crushes[i].field_0x0 != (undefined4*)pObject) {
+            continue;
+        }
+        for (j = 0; j < gQueued_drone_crushes[i].count; j++) {
+            dot = gQueued_drone_crushes[i].items[j].field_0x38.v[0] * normal.v[0]
+                + gQueued_drone_crushes[i].items[j].field_0x38.v[1] * normal.v[1]
+                + gQueued_drone_crushes[i].items[j].field_0x38.v[2] * normal.v[2];
+            if (dot > 0.707107f) {
+                gQueued_drone_crushes[i].items[j].field_0x34 += length;
+                return;
+            }
+        }
+        if (gQueued_drone_crushes[i].count < 2) {
+            AddDroneCrush(&gQueued_drone_crushes[i].items[gQueued_drone_crushes[i].count], &normal, length, pChain_count, pChain);
+            gQueued_drone_crushes[i].count++;
+        }
+    }
+    if (gCount_queued_drone_crushes < 4) {
+        gQueued_drone_crushes[gCount_queued_drone_crushes].field_0x0 = (undefined4*)pObject;
+        gQueued_drone_crushes[gCount_queued_drone_crushes].count = 0;
+        AddDroneCrush(&gQueued_drone_crushes[gCount_queued_drone_crushes].items[0], &normal, length, pChain_count, pChain);
+        gCount_queued_drone_crushes++;
+    }
+}
 
 // DoCrushing
 
@@ -1339,7 +1494,59 @@ void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br_vector
 
 // QueueCarCrush
 
-// SetBitForDetachment
+// FUNCTION: CARMA2_HW 0x0042d7e0
+void C2_HOOK_FASTCALL SetBitForDetachment(br_actor* pActor, tCar_spec* pCar, float pArg3, int pArg4) {
+    int i;
+    tUser_crush_data* user;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_crush_detach_data* detach_data;
+    tCar_crush_spec* car_crush_spec;
+
+    if (gCount_crush_detach_list == REC2_ASIZE(gCrush_detach_list)) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_none || gNet_mode == eNet_mode_host) {
+        if (pActor == NULL) {
+            return;
+        }
+        user = pActor->user;
+        if (user == NULL) {
+            return;
+        }
+        crush_data = user->crush_data;
+        if (crush_data == NULL) {
+            return;
+        }
+        detach_data = crush_data->detach_data;
+        if (detach_data == NULL) {
+            return;
+        }
+        for (i = 0; i < gCount_crush_detach_list; i++) {
+            if (gCrush_detach_list[i].actor == pActor) {
+                return;
+            }
+        }
+        car_crush_spec = pCar->car_crush_spec;
+        for (i = 0; i < car_crush_spec->field_0x270; i++) {
+            if (car_crush_spec->field_0x274[i].field_0x0 == pActor) {
+                return;
+            }
+        }
+        gCrush_detach_list[gCount_crush_detach_list].actor = pActor;
+        gCrush_detach_list[gCount_crush_detach_list].car = pCar;
+        gCrush_detach_list[gCount_crush_detach_list].field_0x8 = pArg3;
+        if (pArg4) {
+            gCrush_detach_list[gCount_crush_detach_list].time = gPHIL_last_physics_tick;
+        } else {
+            gCrush_detach_list[gCount_crush_detach_list].time = gPHIL_last_physics_tick > gINT_0067be84 + 0x3e8 ? gPHIL_last_physics_tick : gINT_0067be84 + 0x3e8;
+        }
+        if (gCrush_detach_list[gCount_crush_detach_list].time > gINT_0067be84) {
+            gINT_0067be84 = gCrush_detach_list[gCount_crush_detach_list].time;
+        }
+        gCrush_detach_list[gCount_crush_detach_list].field_0x10 = (detach_data->type == eDetachType_fully_detachable);
+        gCount_crush_detach_list = gCount_crush_detach_list + 1;
+    }
+}
 
 // SetFlappage
 
@@ -1536,11 +1743,34 @@ void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec) {
 
 // ToggleFlapsCB2
 
-// ToggleFlapsCB
+// FUNCTION: CARMA2_HW 0x0042ddb0
+int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, void* data) {
+    tCar_spec* pCar_spec = data;
+
+    DRActorEnumRecurse(pCollision_info->actor, ToggleDoorsActorCallback, pCar_spec);
+    return 0;
+}
 
 // SendToggleFlaps
 
-// ToggleFlaps
+// FUNCTION: CARMA2_HW 0x0042dd50
+void C2_HOOK_FASTCALL ToggleFlaps(void) {
+    tNet_message_chunk* chunk;
+    tNet_game_player_info* player_info;
+
+    if (gCountdown || gToo_poor_for_recovery_timeout != 0) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_none || gNet_mode == eNet_mode_host) {
+        PhysicsObjectRecurse(gProgram_state.current_car.collision_info, ToggleFlapsCB, &gProgram_state.current_car);
+    } else {
+        chunk = NetAllocateMessageChunk(eNet_message_chunk_type_toggle_doors, 0);
+        player_info = NetPlayerFromCar(&gProgram_state.current_car);
+        if (player_info != NULL) {
+            chunk->toggle_doors.id = player_info->ID;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00434910
 // FUNCTION: CARMA2_SW 0x00434940
@@ -1589,7 +1819,28 @@ int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_ob
 
 // SplitCarCollisionShapes
 
-// QuantizeWithinBounds
+// FUNCTION: CARMA2_HW 0x00430d80
+int C2_HOOK_FASTCALL QuantizeWithinBounds(br_scalar* pValue, br_scalar pQuant, br_scalar pMin, br_scalar pMax) {
+    br_scalar range = pMax - pMin;
+    br_scalar t;
+    int count;
+    int index;
+
+    t = range / pQuant;
+    count = (int)(t > gCrushZero ? t - -0.5f : t - 0.5f);
+    if (count == 0) {
+        count = 1;
+    }
+    /* step reuses the dead pQuant argument home slot, as in the original */
+    pQuant = range / (br_scalar)count;
+    t = (*pValue - pMin) / pQuant;
+    index = (int)(t > gCrushZero ? t - -0.5f : t - 0.5f);
+    if (index >= 0 && index <= count) {
+        *pValue = (br_scalar)index * pQuant + pMin;
+        return 1;
+    }
+    return 0;
+}
 
 // SaveVitalBitsOfObject
 
@@ -2844,5 +3095,958 @@ void C2_HOOK_FASTCALL FUN_004c7f40(br_model* pModel, br_vector3* pSrc, const flo
 // STUB: CARMA2_HW 0x0042cc40
 int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3* pA, const br_vector3* pDirection, const br_vector3* pInside) {
     NOT_IMPLEMENTED();
+    return 0;
+}
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00450b50
+tDrone_crush_data* C2_HOOK_FASTCALL GetDroneCrushData(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+    return NULL;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00429070
+int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
+    tSensible_place_contact contacts[8];
+    tPhysics_object* p1;
+    tPhysics_object* p2;
+    tPhysics_object* child;
+    tPhysics_shape* shape1;
+    tPhysics_shape* shape2;
+    int count;
+    int i;
+    int found;
+    br_vector3 dir;
+    float len;
+
+    gUNK_0079ecbc = NULL;
+    p1 = pCollision_info_1;
+    p2 = pCollision_info_2;
+    GetNewBoundingBox(&p1->field_0xf4, &p1->bb1, &p1->transform_matrix);
+    GetFacesInBox(p1, pCar_callbacks);
+    gSensible_place_collect_active = 1;
+    count = FUN_004228b0(p1, contacts, 0);
+    gSensible_place_collect_active = 0;
+    if (count != 0) {
+        dir.v[0] = contacts[0].normal.v[0];
+        dir.v[1] = contacts[0].normal.v[1];
+        dir.v[2] = contacts[0].normal.v[2];
+        if (count > 1) {
+            for (i = 1; i < count; i++) {
+                dir.v[0] += contacts[i].normal.v[0];
+                dir.v[1] += contacts[i].normal.v[1];
+                dir.v[2] += contacts[i].normal.v[2];
+            }
+            len = (float)sqrt(dir.v[0] * dir.v[0] + dir.v[1] * dir.v[1] + dir.v[2] * dir.v[2]);
+            if (len > 2.3841858e-07f) {
+                len = 1.0 / len;
+                dir.v[0] *= len;
+                dir.v[1] *= len;
+                dir.v[2] *= len;
+            } else {
+                dir.v[0] = 1.f;
+                dir.v[1] = 0.f;
+                dir.v[2] = 0.f;
+            }
+        }
+        BrMatrix34ApplyV(pVec3, &dir, &p1->transform_matrix);
+        return 0;
+    }
+    if (p2 == NULL) {
+        return -1;
+    }
+    do {
+        found = 0;
+        if (p2 != p1 && p1->parent != p2 && p2->parent != p1) {
+            shape1 = p1->shape;
+            shape2 = p2->shape;
+            if (FlagsAreGo(p1, p2) && BoundsOverlapTest__finteray(&p1->field_0xf4, &p2->field_0xf4)) {
+                while (shape1 != NULL) {
+                    while (shape2 != NULL) {
+                        if (TestShapeEdgeIntersection(p1, p2, shape1, shape2) || TestShapeEdgeIntersection(p2, p1, shape2, shape1)) {
+                            found = 1;
+                            goto found_body;
+                        }
+                        shape2 = shape2->common.next;
+                    }
+                    shape1 = shape1->common.next;
+                }
+            }
+        }
+        if (found != 0) {
+            goto found_body;
+        }
+        for (child = p2->child; child != NULL; child = child->next) {
+            if (TestPairOverlap(p1, child)) {
+                goto found_body;
+            }
+        }
+    } while ((p2 = p2->next) != NULL);
+    return -1;
+found_body:
+    {
+        pVec3->v[0] = p1->field_0x10c.min.v[0] + p1->field_0x10c.max.v[0];
+        pVec3->v[1] = p1->field_0x10c.min.v[1] + p1->field_0x10c.max.v[1];
+        pVec3->v[2] = p1->field_0x10c.min.v[2] + p1->field_0x10c.max.v[2];
+        pVec3->v[0] -= p2->field_0x10c.min.v[0];
+        pVec3->v[1] -= p2->field_0x10c.min.v[1];
+        pVec3->v[2] -= p2->field_0x10c.min.v[2];
+        pVec3->v[0] -= p2->field_0x10c.max.v[0];
+        pVec3->v[1] -= p2->field_0x10c.max.v[1];
+        pVec3->v[2] -= p2->field_0x10c.max.v[2];
+        len = (float)sqrt(pVec3->v[0] * pVec3->v[0] + pVec3->v[1] * pVec3->v[1] + pVec3->v[2] * pVec3->v[2]);
+        if (len > 2.3841858e-07f) {
+            len = 1.0 / len;
+            pVec3->v[0] *= len;
+            pVec3->v[1] *= len;
+            pVec3->v[2] *= len;
+        } else {
+            pVec3->v[0] = 1.f;
+            pVec3->v[1] = 0.f;
+            pVec3->v[2] = 0.f;
+        }
+        gUNK_0079ecbc = p2;
+        return 0;
+    }
+}
+
+extern int gTesting_car_for_sensible_place;
+
+// FUNCTION: CARMA2_HW 0x0041fe50
+int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec* pCar_spec, br_vector3* pVec3) {
+    int r;
+
+    if (!gProgram_state.racing) {
+        return 1;
+    }
+    gTesting_car_for_sensible_place = 1;
+    r = TestForObjectInSensiblePlace(pCar_spec->collision_info, gPHIL_list_collision_infos, pVec3, &gWorld_callbacks);
+    gTesting_car_for_sensible_place = 0;
+    return r;
+}
+
+
+// FUNCTION: CARMA2_HW 0x0042d8f0
+void C2_HOOK_FASTCALL AddToggledDoor(br_actor* pActor, tCar_spec* pCar, int pFlag, float pDelay) {
+    extern tToggled_door gToggled_doors[16];
+    extern int gCount_toggled_doors;
+    int i;
+
+    if (gCount_toggled_doors != 16) {
+        for (i = 0; i < gCount_toggled_doors; i++) {
+            if (gToggled_doors[i].actor == pActor) {
+                return;
+            }
+        }
+        gToggled_doors[gCount_toggled_doors].actor = pActor;
+        gToggled_doors[gCount_toggled_doors].car = pCar;
+        gToggled_doors[gCount_toggled_doors].field_0x8 = pFlag;
+        gToggled_doors[gCount_toggled_doors].field_0xc = pDelay;
+        gCount_toggled_doors = gCount_toggled_doors + 1;
+    }
+}
+
+
+// FUNCTION: CARMA2_HW 0x0042ddc0
+int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data) {
+    tCar_spec* pCar = data;
+    tUser_crush_data* user_data;
+    tCar_crush_buffer_entry* crush_buffer;
+    int i;
+
+    user_data = pActor->user;
+    if (user_data == NULL) {
+        return 0;
+    }
+    crush_buffer = user_data->crush_data;
+    if (crush_buffer == NULL) {
+        return 0;
+    }
+    if (crush_buffer->flap_data == NULL || !crush_buffer->flap_data->kev_o_flap) {
+        return 0;
+    }
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gToggled_doors) != 16);
+
+    if (crush_buffer->flap_data->field_0x0) {
+        if (gCount_toggled_doors != REC2_ASIZE(gToggled_doors)) {
+            for (i = 0; i < gCount_toggled_doors; i++) {
+                if (gToggled_doors[i].actor == pActor) {
+                    return 0;
+                }
+            }
+            gToggled_doors[gCount_toggled_doors].actor = pActor;
+            gToggled_doors[gCount_toggled_doors].car = pCar;
+            gToggled_doors[gCount_toggled_doors].field_0x8 = 0;
+            gToggled_doors[gCount_toggled_doors].field_0xc = 0.f;
+            gCount_toggled_doors += 1;
+        }
+    } else {
+        if (gCount_toggled_doors != REC2_ASIZE(gToggled_doors)) {
+            for (i = 0; i < gCount_toggled_doors; i++) {
+                if (gToggled_doors[i].actor == pActor) {
+                    return 0;
+                }
+            }
+            gToggled_doors[gCount_toggled_doors].actor = pActor;
+            gToggled_doors[gCount_toggled_doors].car = pCar;
+            gToggled_doors[gCount_toggled_doors].field_0x8 = 1;
+            gToggled_doors[gCount_toggled_doors].field_0xc = 20.f;
+            gCount_toggled_doors += 1;
+        }
+    }
+    return 0;
+}
+
+
+// FUNCTION: CARMA2_HW 0x0042f170
+tCrush_info* C2_HOOK_FASTCALL FUN_0042f170(tCrush_info_buffer* pInfo_buffer, br_actor* pActor, tCar_spec* pCar) {
+    int i;
+    int count;
+    int start_index;
+    int j;
+    tU16 id;
+    tCrush_info* info;
+    tCrush_info* candidate;
+
+    count = pInfo_buffer->capacity;
+    for (i = 0; i < count; i++) {
+        if (*(tDriver*)((tU8*)&pInfo_buffer->crush_infos[i] + 0xc) == 0) {
+            break;
+        }
+    }
+    if (i == count) {
+        tPhysics_object* object;
+
+        if (gCrush_deferred) {
+            return NULL;
+        }
+        start_index = (int)pInfo_buffer->field_0x8;
+        for (i = 0; i < count; i++) {
+            candidate = &pInfo_buffer->crush_infos[start_index];
+            if (*(tDriver*)((tU8*)candidate + 0xc) != 1) {
+                break;
+            }
+            start_index = (start_index + 1) % count;
+        }
+        if (i == count) {
+            return NULL;
+        }
+        info = &pInfo_buffer->crush_infos[start_index];
+        pInfo_buffer->field_0x8 = ((int)pInfo_buffer->field_0x8 + 1) % count;
+        (*(br_actor**)((tU8*)info + 0x10))->type_data = NULL;
+        PipeSingleNonCar(*(tU16*)((tU8*)info + 0x80), *(br_actor**)((tU8*)info + 0x10));
+        FUN_004c86b0(0, *(br_actor**)((tU8*)info + 0x10));
+        BrActorRemove(*(br_actor**)((tU8*)info + 0x10));
+
+        object = info->collision_object->child;
+        while (object != NULL) {
+            tPhysics_object* next;
+            tCrush_info* child_info;
+            br_actor* child_actor;
+            tCar_spec* child_car;
+
+            next = object->next;
+            child_actor = object->actor;
+            child_info = child_actor->type_data;
+            child_actor->type_data = NULL;
+            child_car = *(tCar_spec**)(*(char**)(*(char**)((char*)child_actor->user + 8) + 0x34) + 0x2c);
+            if (*(int*)((tU8*)child_car->car_crush_spec + 0x494) != 8) {
+                FUN_004c86b0(0, child_actor);
+                BrActorRemove(child_actor);
+                *(br_actor**)((tU8*)child_car->car_crush_spec + 0x498 + *(int*)((tU8*)child_car->car_crush_spec + 0x494) * 4) = child_actor;
+                (*(int*)((tU8*)child_car->car_crush_spec + 0x494))++;
+            }
+            *(tDriver*)((tU8*)child_info + 0xc) = 0;
+            PHILRemoveFromParentChain(object);
+            object = next;
+        }
+        i = 0;
+        for (i = 0; i < gNum_active_non_cars; i++) {
+            if (gActive_non_car_list[i] == (tNon_car_spec*)info) {
+                break;
+            }
+        }
+        if (i != gNum_active_non_cars) {
+            gNum_active_non_cars--;
+            if (i < gNum_active_non_cars) {
+                for (j = i; j < gNum_active_non_cars; j++) {
+                    gActive_non_car_list[j] = gActive_non_car_list[j + 1];
+                }
+            }
+        }
+        *(tDriver*)((tU8*)info + 0xc) = 0;
+        (*(br_actor**)((tU8*)info + 0x10))->type_data = NULL;
+        PHILRemoveObject(info->collision_object);
+    } else {
+        info = &pInfo_buffer->crush_infos[i];
+    }
+    pActor->type_data = info;
+    *(tDriver*)((tU8*)info + 0xc) = *(tDriver*)((tU8*)pInfo_buffer + 0xc);
+    info->collision_object->actor = pActor;
+    *(br_actor**)((tU8*)info + 0x10) = pActor;
+    *(undefined4*)((tU8*)info + 0x4) = 0;
+    *(float*)((tU8*)info + 0xc4) = -1.0f;
+    if (gNet_mode != eNet_mode_none) {
+        id = pCar->car_ID;
+    } else {
+        if (gNext_crush_actor_id == 20000) {
+            gNext_crush_actor_id = 10000;
+        }
+        id = gNext_crush_actor_id++;
+    }
+    *(tU16*)((tU8*)info + 0x80) = id;
+    *(tCar_spec**)((tU8*)info + 0xc8) = pCar;
+    info->collision_object->owner = info;
+    info->collision_object->flags_0x238 = 1;
+    info->collision_object->field_0x1a0 = 0xffff;
+    info->collision_object->field_0x1a4 = 0;
+    return info;
+}
+
+
+// Global start of the split-polyhedron tables used by the model splitter.
+// GLOBAL: CARMA2_HW 0x0067a3b0
+tU16 gSplit_polyhedron_edge_map[2560];
+// GLOBAL: CARMA2_HW 0x00679444
+float* gSplit_polyhedron_source_vertices;
+// GLOBAL: CARMA2_HW 0x006796c0
+float* gSplit_polyhedron_positive_vertices;
+// GLOBAL: CARMA2_HW 0x006796c4
+float* gSplit_polyhedron_negative_vertices;
+// GLOBAL: CARMA2_HW 0x0067be70
+br_face* gSplit_polyhedron_source_faces;
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00430150
+void C2_HOOK_FASTCALL FUN_00430150(tU16 pVertex_a, tU16 pVertex_b, tU16* pOutput_a, tU16* pOutput_b, float* pDistances) {
+    tU16* edge_slot;
+    float* target;
+    float* source;
+    float ratio;
+    float other;
+    int offset_a;
+    int offset_b;
+
+    edge_slot = gSplit_polyhedron_edge_map;
+    if (gSplit_polyhedron_edge_map[2] == 0) {
+        return;
+    }
+    while (edge_slot[0] != pVertex_a || edge_slot[1] != pVertex_b) {
+        edge_slot += 5;
+        if (edge_slot[2] == 0) {
+            return;
+        }
+    }
+    *pOutput_a = edge_slot[2];
+    *pOutput_b = edge_slot[3];
+    if (((tU8*)edge_slot)[8] != 0) {
+        target = gSplit_polyhedron_positive_vertices + *pOutput_a * 10;
+        ratio = (float)fabs((pDistances[pVertex_b] + SRandomBetween(-0.028985507786273956f, 0.028985507786273956f)) / (pDistances[pVertex_a] - pDistances[pVertex_b]));
+        if (ratio > gCrushZero) {
+            if (ratio >= gFLOAT_00589a54) {
+                ratio = gFLOAT_00589a9c;
+            }
+        } else {
+            ratio = gFLOAT_00589a98;
+        }
+        other = gFLOAT_00589a54 - ratio;
+        source = gSplit_polyhedron_source_vertices;
+        offset_b = pVertex_b * 0x28;
+        offset_a = pVertex_a * 0x28;
+        target[1] = *(float*)((tU8*)source + 4 + offset_b) * other + *(float*)((tU8*)source + 4 + offset_a) * ratio;
+        target[2] = *(float*)((tU8*)source + 8 + offset_b) * other + *(float*)((tU8*)source + 8 + offset_a) * ratio;
+        target[0] = *(float*)((tU8*)source + offset_b) * other + *(float*)((tU8*)source + offset_a) * ratio;
+        target[4] = *(float*)((tU8*)source + 0x10 + offset_b) * other + *(float*)((tU8*)source + 0x10 + offset_a) * ratio;
+        target[3] = *(float*)((tU8*)source + 0xc + offset_b) * other + *(float*)((tU8*)source + 0xc + offset_a) * ratio;
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 0] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 0];
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 1] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 1];
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 2] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 2];
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 3] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 3];
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 4] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 4];
+        ((tU8*)edge_slot)[8] = 0;
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#define RECORD_SPLIT_EDGE(pEdge_a, pEdge_b) \
+    do { \
+        tU16* edge_slot = gSplit_polyhedron_edge_map; \
+        while (edge_slot[2] != 0 && (edge_slot[0] != (pEdge_a) || edge_slot[1] != (pEdge_b))) { \
+            edge_slot += 5; \
+        } \
+        if (edge_slot[2] == 0) { \
+            edge_slot[0] = (pEdge_a); \
+            edge_slot[1] = (pEdge_b); \
+            edge_slot[2] = positive_vertex_count; \
+            edge_slot[3] = negative_vertex_count; \
+            ((tU8*)edge_slot)[8] = 1; \
+            positive_vertex_count++; \
+            negative_vertex_count++; \
+        } \
+    } while (0)
+
+#define WRITE_SPLIT_FACE(pOutput_face, pInput_face, pFace_a, pFace_b, pFace_c) \
+    do { \
+        br_face* split_output_face = (pOutput_face); \
+        split_output_face->vertices[0] = (pFace_a); \
+        split_output_face->vertices[1] = (pFace_b); \
+        split_output_face->vertices[2] = (pFace_c); \
+        split_output_face->smoothing = (pInput_face)->smoothing; \
+        split_output_face->material = (pInput_face)->material; \
+    } while (0)
+
+// FUNCTION: CARMA2_HW 0x0042f5d0
+void C2_HOOK_FASTCALL FUN_0042f5d0(br_model* pSource_model, br_model** pModels, br_model** pModel_out, br_scalar* pPlane, int pFlag) {
+    br_vertex* source_vertices;
+    br_face* source_faces;
+    br_model* positive_model;
+    br_model* negative_model;
+    br_face* positive_faces;
+    br_face* negative_faces;
+    br_face* input_face;
+    br_vertex* vertex;
+    tU16 positive_vertex_count;
+    tU16 negative_vertex_count;
+    tU16 positive_vertex_index;
+    tU16 negative_vertex_index;
+    tS16 positive_face_count;
+    tS16 negative_face_count;
+    tU16 positive_face_index;
+    tU16 negative_face_index;
+    tU16 nvertices;
+    tU16 nfaces;
+    tU16 i;
+    tU16 v0;
+    tU16 v1;
+    tU16 v2;
+    tU16 positive01;
+    tU16 negative01;
+    tU16 positive02;
+    tU16 negative02;
+    tU16 positive12;
+    tU16 negative12;
+    tU8 side;
+    tU8 face_sides[1024];
+    tS16 output_vertex_indices[1024];
+    float distances[1024];
+    tU8 vertex_sides[1024];
+
+    if (pSource_model->nvertices > 0x400) {
+        PDFatalError("By the death spanners of Mars, there's a lot of vertices on that model.");
+    }
+    source_vertices = pSource_model->vertices;
+    source_faces = pSource_model->faces;
+    nvertices = pSource_model->nvertices;
+    nfaces = pSource_model->nfaces;
+    gSplit_polyhedron_source_vertices = (float*)source_vertices;
+    gSplit_polyhedron_source_faces = source_faces;
+    positive_vertex_count = 0;
+    negative_vertex_count = 0;
+    for (i = 0; i < nvertices; i++) {
+        float distance;
+
+        vertex = &source_vertices[i];
+        distance = vertex->p.v[1] * pPlane[1];
+        distance += vertex->p.v[2] * pPlane[2];
+        distance += vertex->p.v[0] * pPlane[0];
+        distance -= pPlane[3];
+        distances[i] = distance;
+        if (distance <= gCrushZero) {
+            vertex_sides[i] = 1;
+            negative_vertex_count++;
+        } else {
+            vertex_sides[i] = 0;
+            positive_vertex_count++;
+        }
+    }
+    for (i = 0; i < 512; i++) {
+        gSplit_polyhedron_edge_map[i * 5 + 2] = 0;
+    }
+    positive_face_count = 0;
+    negative_face_count = 0;
+    for (i = 0; i < nfaces; i++) {
+        input_face = &source_faces[i];
+        v0 = input_face->vertices[0];
+        v1 = input_face->vertices[1];
+        v2 = input_face->vertices[2];
+        side = (tU8)((vertex_sides[v2] << 2) | (vertex_sides[v1] << 1) | vertex_sides[v0]);
+        face_sides[i] = side;
+        switch (side) {
+        case 0:
+            positive_face_count++;
+            break;
+        case 1:
+            RECORD_SPLIT_EDGE(v1, v0);
+            RECORD_SPLIT_EDGE(v2, v0);
+            positive_face_count += 2;
+            negative_face_count++;
+            break;
+        case 2:
+            RECORD_SPLIT_EDGE(v0, v1);
+            RECORD_SPLIT_EDGE(v2, v1);
+            positive_face_count += 2;
+            negative_face_count++;
+            break;
+        case 3:
+            RECORD_SPLIT_EDGE(v2, v0);
+            RECORD_SPLIT_EDGE(v2, v1);
+            positive_face_count++;
+            negative_face_count += 2;
+            break;
+        case 4:
+            RECORD_SPLIT_EDGE(v0, v2);
+            RECORD_SPLIT_EDGE(v1, v2);
+            positive_face_count += 2;
+            negative_face_count++;
+            break;
+        case 5:
+            RECORD_SPLIT_EDGE(v1, v0);
+            RECORD_SPLIT_EDGE(v1, v2);
+            positive_face_count++;
+            negative_face_count += 2;
+            break;
+        case 6:
+            RECORD_SPLIT_EDGE(v0, v1);
+            RECORD_SPLIT_EDGE(v0, v2);
+            positive_face_count++;
+            negative_face_count += 2;
+            break;
+        case 7:
+            negative_face_count++;
+            break;
+        }
+        gSplit_polyhedron_source_faces++;
+    }
+    *pModels = BrModelAllocate(pSource_model->identifier, positive_vertex_count, positive_face_count);
+    *pModel_out = BrModelAllocate(pSource_model->identifier, negative_vertex_count, negative_face_count);
+    positive_model = *pModels;
+    negative_model = *pModel_out;
+    positive_model->flags |= 0x880;
+    negative_model->flags |= 0x880;
+    gSplit_polyhedron_positive_vertices = (float*)positive_model->vertices;
+    gSplit_polyhedron_negative_vertices = (float*)negative_model->vertices;
+    positive_vertex_index = 0;
+    negative_vertex_index = 0;
+    for (i = 0; i < nvertices; i++) {
+        if (vertex_sides[i] == 0) {
+            output_vertex_indices[i] = positive_vertex_index;
+            positive_model->vertices[positive_vertex_index].p = source_vertices[i].p;
+            positive_model->vertices[positive_vertex_index].map = source_vertices[i].map;
+            positive_vertex_index++;
+        } else {
+            output_vertex_indices[i] = negative_vertex_index;
+            negative_model->vertices[negative_vertex_index].p = source_vertices[i].p;
+            negative_model->vertices[negative_vertex_index].map = source_vertices[i].map;
+            negative_vertex_index++;
+        }
+    }
+    positive_faces = positive_model->faces;
+    negative_faces = negative_model->faces;
+    positive_face_index = 0;
+    negative_face_index = 0;
+    gSplit_polyhedron_source_faces = source_faces;
+    for (i = 0; i < nfaces; i++) {
+        input_face = gSplit_polyhedron_source_faces;
+        v0 = input_face->vertices[0];
+        v1 = input_face->vertices[1];
+        v2 = input_face->vertices[2];
+        switch (face_sides[i]) {
+        case 0:
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v0], output_vertex_indices[v1], output_vertex_indices[v2]);
+            break;
+        case 1:
+            FUN_00430150(v1, v0, &positive01, &negative01, distances);
+            FUN_00430150(v2, v0, &positive02, &negative02, distances);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v0], negative01, negative02);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v1], output_vertex_indices[v2], positive01);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v2], positive02, positive01);
+            break;
+        case 2:
+            FUN_00430150(v0, v1, &positive01, &negative01, distances);
+            FUN_00430150(v2, v1, &positive12, &negative12, distances);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v0], positive01, positive12);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v1], negative12, negative01);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v2], output_vertex_indices[v0], positive12);
+            break;
+        case 3:
+            FUN_00430150(v2, v0, &positive02, &negative02, distances);
+            FUN_00430150(v2, v1, &positive12, &negative12, distances);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v2], positive02, positive12);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v0], negative12, negative02);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v1], negative12, output_vertex_indices[v0]);
+            break;
+        case 4:
+            FUN_00430150(v0, v2, &positive02, &negative02, distances);
+            FUN_00430150(v1, v2, &positive12, &negative12, distances);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v0], positive12, positive02);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v1], positive12, output_vertex_indices[v0]);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v2], negative02, negative12);
+            break;
+        case 5:
+            FUN_00430150(v1, v0, &positive01, &negative01, distances);
+            FUN_00430150(v1, v2, &positive12, &negative12, distances);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v0], negative01, negative12);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v1], positive12, positive01);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v2], output_vertex_indices[v0], negative12);
+            break;
+        case 6:
+            FUN_00430150(v0, v1, &positive01, &negative01, distances);
+            FUN_00430150(v0, v2, &positive02, &negative02, distances);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v0], positive01, positive02);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v1], output_vertex_indices[v2], negative01);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v2], negative02, negative01);
+            break;
+        case 7:
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v0], output_vertex_indices[v1], output_vertex_indices[v2]);
+            break;
+        }
+        gSplit_polyhedron_source_faces++;
+    }
+    WhitenVertexRGB(pModels, 1);
+    BrModelAdd(*pModels);
+    if (pFlag != 0) {
+        BrModelFree(*pModel_out);
+        return;
+    }
+    WhitenVertexRGB(pModel_out, 1);
+    BrModelAdd(*pModel_out);
+}
+
+#undef WRITE_SPLIT_FACE
+#undef RECORD_SPLIT_EDGE
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00430600
+void C2_HOOK_FASTCALL ComputeSplitEdgeIntersections(br_vector3* pPositive_intersection, br_vector3* pNegative_intersection, const br_vector3* pPositive_point, const br_vector3* pNegative_point, float pPositive_distance, float pNegative_distance) {
+    float ratio1;
+    float ratio2;
+    float other1;
+    float other2;
+    float zn;
+    float zp;
+    float xn;
+    float xp;
+
+    ratio1 = -((pPositive_distance - gFLOAT_00589aa0) / (pNegative_distance - pPositive_distance));
+    ratio2 = -((pPositive_distance - gFLOAT_00589aa4) / (pNegative_distance - pPositive_distance));
+    other1 = gFLOAT_00589a54 - ratio1;
+    zn = pNegative_point->v[2];
+    zp = pPositive_point->v[2];
+    xp = pPositive_point->v[0];
+    xn = pNegative_point->v[0];
+    pPositive_intersection->v[1] = pNegative_point->v[1] * ratio1 + pPositive_point->v[1] * other1;
+    pPositive_intersection->v[2] = zn * ratio1 + zp * other1;
+    pPositive_intersection->v[0] = ratio1 * xn + xp * other1;
+    other2 = gFLOAT_00589a54 - ratio2;
+    zp = pPositive_point->v[2];
+    zn = pNegative_point->v[2];
+    xp = pPositive_point->v[0];
+    xn = pNegative_point->v[0];
+    pNegative_intersection->v[1] = pNegative_point->v[1] * ratio2 + pPositive_point->v[1] * other2;
+    pNegative_intersection->v[2] = zn * ratio2 + zp * other2;
+    pNegative_intersection->v[0] = ratio2 * xn + xp * other2;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004303c0
+void C2_HOOK_FASTCALL SplitPolyhedronByPlane(tCollision_shape_polyhedron* pSource, tCollision_shape_polyhedron* pPositive_output, tPhysics_shape* pNegative_output, br_scalar* pPlane) {
+    int i;
+    int negative_count;
+    int positive_count;
+    int j;
+    br_scalar distances[16];
+    int sides[16];
+    br_scalar* positive_points;
+    br_scalar* negative_points;
+    tU32 value;
+    br_scalar distance;
+    unsigned int index_a;
+    unsigned int index_b;
+
+    if (pSource->common.type != kCollisionShapeType_Polyhedron) {
+        PDFatalError("Oooh no. I can't split that sort of shape, Mrs Jabberwok.");
+    }
+    positive_points = (br_scalar*)pPositive_output->polyhedron.points;
+    j = 0;
+    negative_points = (br_scalar*)pNegative_output->polyhedron.polyhedron.points;
+    positive_count = 0;
+    negative_count = 0;
+    i = 0;
+    while (i < pSource->polyhedron.count_points) {
+        if (j >= 0xc0) {
+            break;
+        }
+        value = *(tU32*)((tU8*)pSource->polyhedron.points + j);
+        distance = pPlane[1] * *(br_scalar*)((tU8*)pSource->polyhedron.points + j + 4)
+                + pPlane[2] * *(br_scalar*)((tU8*)pSource->polyhedron.points + j + 8)
+                + pPlane[0] * *(br_scalar*)((tU8*)pSource->polyhedron.points + j)
+                - pPlane[3];
+        distances[i] = distance;
+        if (distance > gCrushZero) {
+            *(tU32*)positive_points = value;
+            positive_points[1] = *(br_scalar*)((tU8*)pSource->polyhedron.points + j + 4);
+            positive_points[2] = *(br_scalar*)((tU8*)pSource->polyhedron.points + j + 8);
+            positive_points += 3;
+            positive_count++;
+            sides[i] = 1;
+        } else {
+            *(tU32*)negative_points = value;
+            negative_points[1] = *(br_scalar*)((tU8*)pSource->polyhedron.points + j + 4);
+            negative_points[2] = *(br_scalar*)((tU8*)pSource->polyhedron.points + j + 8);
+            negative_points += 3;
+            negative_count++;
+            sides[i] = 2;
+        }
+        i++;
+        j += 0xc;
+    }
+    i = 0;
+    while (i < pSource->polyhedron.count_edges) {
+        if (positive_count >= 16 || negative_count >= 16) {
+            break;
+        }
+        index_a = pSource->polyhedron.edges[i].index1;
+        index_b = pSource->polyhedron.edges[i].index2;
+        if (sides[index_a] != sides[index_b]) {
+            if (sides[index_a] == 1) {
+                ComputeSplitEdgeIntersections((br_vector3*)positive_points, (br_vector3*)negative_points,
+                        (br_vector3*)((tU8*)pSource->polyhedron.points + index_a * 0xc),
+                        (br_vector3*)((tU8*)pSource->polyhedron.points + index_b * 0xc),
+                        distances[index_a], distances[index_b]);
+            } else {
+                ComputeSplitEdgeIntersections((br_vector3*)positive_points, (br_vector3*)negative_points,
+                        (br_vector3*)((tU8*)pSource->polyhedron.points + index_b * 0xc),
+                        (br_vector3*)((tU8*)pSource->polyhedron.points + index_a * 0xc),
+                        distances[index_b], distances[index_a]);
+            }
+            positive_points += 3;
+            negative_points += 3;
+            positive_count++;
+            negative_count++;
+        }
+        i++;
+    }
+    pPositive_output->polyhedron.count_points = positive_count;
+    pNegative_output->polyhedron.polyhedron.count_points = negative_count;
+    if (positive_count < 4) {
+        pPositive_output->polyhedron.count_points = 0;
+        pPositive_output->polyhedron.count_edges = 0;
+        pPositive_output->polyhedron.count_planes = 0;
+    } else {
+        FillInShape((tPhysics_shape*)pPositive_output);
+    }
+    if (negative_count < 4) {
+        pNegative_output->polyhedron.polyhedron.count_points = 0;
+        pNegative_output->polyhedron.polyhedron.count_edges = 0;
+        pNegative_output->polyhedron.polyhedron.count_planes = 0;
+        return;
+    }
+    FillInShape(pNegative_output);
+}
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004321d0
+void C2_HOOK_FASTCALL FUN_004321d0(tCar_spec* pCar, br_actor* pActor, br_vector3* pDirection, float pDistance, tU32 pMax_vertex, tU32 pField_0x50) {
+}
+
+// STUB: CARMA2_HW 0x00432b80
+void C2_HOOK_FASTCALL FUN_00432b80(br_model* pModel, int pCount, br_vector3* pPoints, br_vector3* pDirection, float pForce, const tCar_crush_limits* pLimits, int pAxis, int pFound, float* pMax_bend, float* pMax_distance, tU32* pMax_vertex) {
+    *pMax_bend = 0.f;
+    *pMax_distance = 0.f;
+    *pMax_vertex = 0;
+}
+
+// STUB: CARMA2_HW 0x004ee250
+void C2_HOOK_FASTCALL FUN_004ee250(tCar_spec* pCar, tPhysics_object* pCollision_info, br_vector3* pPos, void* pArg4, br_actor* pActor, int pArg6, tCar_crush_smashable_part* pSmashable, float pDamage, int pArg9) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00431e20
+intptr_t C2_HOOK_FASTCALL CrushCarActorCbfn(br_actor* pActor, br_matrix34* pMat, void* pContext) {
+    struct {
+        tCar_spec* car;
+        tCar_crush* crush;
+        float force;
+    }* context;
+    tUser_crush_data* user;
+    tCar_crush_buffer_entry* entry;
+    tCar_crush_spec* crush_spec;
+    tCar_crush_limits* limits;
+    tCar_crush_smashable_part* smashable;
+    br_vector3* crush_center;
+    tCar_spec* car;
+    br_vector3 centre;
+    br_vector3 direction;
+    br_vector3 points[4];
+    float force;
+    float max_bend;
+    float max_distance;
+    float dist_sq;
+    tU32 max_vertex;
+    volatile tU32 smashable_count;
+    int limit_count;
+    int axis;
+    int flip;
+    int found;
+    int i;
+
+    if (pActor->type != 1) {
+        return 0;
+    }
+    user = pActor->user;
+    if (user == NULL) {
+        return 0;
+    }
+    entry = user->crush_data;
+    if (entry == NULL) {
+        return 0;
+    }
+    context = pContext;
+    if (context->crush->count > 4) {
+        context->crush->count = 4;
+    }
+    centre.v[0] = 0.f;
+    centre.v[1] = 0.f;
+    centre.v[2] = 0.f;
+    for (i = 0; i < context->crush->count; i++) {
+        DrMatrix34ApplyLPInverse(&points[i], &context->crush->vectors[i], pMat);
+        centre.v[0] += points[i].v[0];
+        centre.v[1] += points[i].v[1];
+        centre.v[2] += points[i].v[2];
+    }
+    DrMatrix34ApplyLPInverse(&centre, &context->crush->field_0x34, pMat);
+    BrMatrix34TApplyV(&direction, &context->crush->field_0x44, pMat);
+    force = entry->softness_factor * context->force;
+    if (TooFarToCrush(pActor->model, context->crush->count, points, gMax_crush_dist_sq) != 0) {
+        return 0;
+    }
+    if ((float)fabs(direction.v[0]) > gCrushSqrtHalf) {
+        axis = 0;
+    } else if ((float)fabs(direction.v[1]) > gCrushSqrtHalf) {
+        axis = 1;
+    } else {
+        axis = 2;
+    }
+    flip = direction.v[axis] > gCrushZero;
+    crush_spec = context->car->car_crush_spec;
+    limit_count = crush_spec->count_limits.counts[axis][flip];
+    limits = &crush_spec->limits;
+    found = 0;
+    for (i = 0; i < limit_count; i++) {
+        if (flip != 0) {
+            if (limits->limits[axis][1].values[i] > direction.v[axis]) {
+                found = i;
+                break;
+            }
+        } else {
+            if (limits->limits[axis][0].values[i] < direction.v[axis]) {
+                found = i;
+                break;
+            }
+        }
+    }
+    FUN_00432b80(user->models[0], context->crush->count, points, &direction, force, limits, axis, found,
+        &max_bend, &max_distance, &max_vertex);
+    car = context->car;
+    crush_center = &context->crush->field_0x34;
+    smashable_count = entry->count_smashables;
+    if (smashable_count != 0) {
+        smashable = entry->smashables;
+        do {
+            dist_sq = (smashable->field_0x54.v[0] - crush_center->v[0]) * (smashable->field_0x54.v[0] - crush_center->v[0])
+                    + (smashable->field_0x54.v[2] - crush_center->v[2]) * (smashable->field_0x54.v[2] - crush_center->v[2])
+                    + (smashable->field_0x54.v[1] - crush_center->v[1]) * (smashable->field_0x54.v[1] - crush_center->v[1]);
+            if (dist_sq < gFLOAT_00589acc) {
+                dist_sq = gFLOAT_00589acc;
+            }
+            FUN_004ee250(car, car->collision_info, &car->pos, NULL, pActor, 0, smashable,
+                (force * gDistortion_factor) / (float)sqrt((double)dist_sq), 0);
+            smashable++;
+            smashable_count--;
+        } while (smashable_count != 0);
+    }
+    if (entry->detach_data != NULL) {
+        entry->detach_data->field_0x0 += context->force * max_bend;
+        if (entry->detach_data->field_0x0 > entry->detach_data->force) {
+            SetBitForDetachment(pActor, car, 0.f, 0);
+        }
+    }
+    if (entry->flap_data != NULL && entry->flap_data->kev_o_flap == 0 && max_distance > gCrushZero) {
+        FUN_004321d0(context->car, pActor, &direction, max_distance, max_vertex, context->crush->field_0x50);
+    }
+    if (max_bend != gCrushZero) {
+        entry->field_0x2c = 1;
+    }
+    for (i = 1; i < context->car->count_detail_levels; i++) {
+        FUN_00432b80(user->models[i], context->crush->count, points, &direction, force, limits, axis, found,
+            &max_bend, &max_distance, &max_vertex);
+    }
+    return 0;
+}
+
+
+// FUNCTION: CARMA2_HW 0x00433260
+intptr_t C2_HOOK_FASTCALL CrushCarModelCbfn(br_actor* pActor, br_matrix34* pMat, void* pContext) {
+    struct {
+        tCar_spec* car;
+        tCar_crush* crush;
+        float force;
+    }* context;
+    tUser_crush_data* user;
+    tCar_crush_buffer_entry* crush_data;
+    br_vector3 points[4];
+    br_vector3 direction;
+    float scale;
+    int i;
+
+    context = pContext;
+    if (pActor->type == 1 && pActor->user != NULL) {
+        user = pActor->user;
+        crush_data = user->crush_data;
+        if (crush_data != NULL) {
+            for (i = 0; i < context->crush->count; i++) {
+                DrMatrix34ApplyLPInverse(&points[i], &context->crush->vectors[i], pMat);
+            }
+            BrMatrix34TApplyV(&direction, &context->crush->field_0x44, pMat);
+            scale = context->force * crush_data->softness_factor;
+            direction.v[0] = direction.v[0] * scale;
+            direction.v[1] = direction.v[1] * scale;
+            direction.v[2] = direction.v[2] * scale;
+            for (i = 0; i < context->car->count_detail_levels; i++) {
+                SimpleCrushModel(user->models[i], context->crush->count, points[0].v, direction.v,
+                    (float*)&context->car->car_crush_spec->field_0x11c);
+            }
+        }
+    }
     return 0;
 }
