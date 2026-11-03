@@ -551,7 +551,20 @@ tU32 C2_HOOK_FASTCALL ARGetStartTime(void) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// FUN_0040b500
+// FUNCTION: CARMA2_HW 0x0040b500
+void C2_HOOK_FASTCALL FUN_0040b500(tPed_character_instance* pCharacter, int pBone_index, int pArg3, int pArg4) {
+    if (pCharacter->field_0x4 >= 0) {
+        pCharacter->field_0xa = (tS8)pArg4;
+        pCharacter->personality->form->actor_sets[(tS8)pCharacter->field_0x4].actors[pBone_index]->model = (br_model*)pArg3;
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // ActorToActorMatrix34Local
 
 // RelinkActorKeepWorldTransform
