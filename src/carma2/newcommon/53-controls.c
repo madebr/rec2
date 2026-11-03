@@ -1326,7 +1326,55 @@ void C2_HOOK_STDCALL CreateAccentPolyActor(float pX, float pY, float pWidth, flo
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// FUN_0045acf0
+// FUNCTION: CARMA2_HW 0x0045acf0
+void C2_HOOK_FASTCALL FUN_0045acf0(void) {
+    extern int C2_HOOK_FASTCALL FUN_0045a920(tHeadup_text_buffer* pBuffer, tHeadup_text* pText, int pArg3);
+    extern void* C2_HOOK_CDECL malloc(unsigned int pSize);
+    tHeadup_text* text;
+    int i;
+
+    if (gINT_0068b8e4) {
+        gINT_0068b8e4 = 0;
+        if (gAcc_poly_actor != NULL && gRender_acc_poly_actor != 0) {
+            BrActorRemove(gAcc_poly_actor);
+            gRender_acc_poly_actor = 0;
+        }
+    } else {
+        gINT_0068b8e4 = 2;
+        MoveHeadupTo(gProgram_state.frame_rate_headup, 10, 350);
+        for (i = 0; i < 22; i++) {
+            MoveHeadupTo(gRace_head_ups[i], 10, 120 + i * 10);
+            ChangeHeadupFont(gRace_head_ups[i], -2);
+        }
+        CreateAccentPolyActor(8.f, 118.f, 130.f, 224.f);
+        if (gHeadup_text_buffer_0079d880.count == 0) {
+            if (gHeadup_text_buffer_0079d880.field_0x14 < 5) {
+                gHeadup_text_buffer_0079d880.field_0x14 = 10;
+            }
+            gHeadup_text_buffer_0079d880.texts = NULL;
+            gHeadup_text_buffer_0079d880.count = 0;
+            gHeadup_text_buffer_0079d880.pos_last_add = 0;
+            gHeadup_text_buffer_0079d880.text_last_add = NULL;
+            gHeadup_text_buffer_0079d880.field_0x4 = NULL;
+            gHeadup_text_buffer_0079d880.field_0x10 = 22;
+            for (i = 0; i < 10; i++) {
+                text = malloc(sizeof(tHeadup_text));
+                if (text != NULL) {
+                    *(int*)text = 0;
+                    sprintf(text->text, "WANKER  %02d", i);
+                    FUN_0045a920(&gHeadup_text_buffer_0079d880, text, 0);
+                }
+            }
+        }
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // FUN_0045c240
 // RightInventory
 
