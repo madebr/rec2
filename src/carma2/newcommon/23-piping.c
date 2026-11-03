@@ -2652,7 +2652,18 @@ void C2_HOOK_FASTCALL UndoGibShower(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chu
     return WorkerGibShowerUndo(((tPipe_chunk_gib_shower*)*pChunk)->field_0xc, prev->field_0x0, prev->field_0xc, prev->field_0x8, prev->field_0x10, prev->field_0x4, &prev->field_0x14, &prev->field_0x20, &prev->field_0x2c);
 }
 
-// UndoBloodSpurt
+// FUNCTION: CARMA2_HW 0x004ca2a0
+void C2_HOOK_FASTCALL UndoBloodSpurt(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+
+    if (pPrev_chunk != NULL) {
+        extern void C2_HOOK_FASTCALL DoBloodSpurtUndo(int pCurrent_time, uintptr_t pOwner, int pSpurt_time, tU32 pSeed, br_vector3* pPosition, br_vector3* pDirection, br_vector3* pRandom_direction);
+        tPipe_chunk_blood_spurt* chunk = (tPipe_chunk_blood_spurt*)*pChunk;
+        tPipe_chunk_blood_spurt* prev = (tPipe_chunk_blood_spurt*)pPrev_chunk;
+
+        DoBloodSpurtUndo(chunk->field_0x8, prev->pOwner, prev->field_0x8, prev->field_0x4, &prev->field_0xc, &prev->field_0x18, &prev->field_0x24);
+    }
+}
+#endif
 
 // FUNCTION: CARMA2_HW 0x004ca2d0
 // FUNCTION: CARMA2_SW 0x004c6a00
