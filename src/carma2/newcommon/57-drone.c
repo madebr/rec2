@@ -523,3 +523,9 @@ int C2_HOOK_FASTCALL MyDroneHathHalteth(tPhysics_object* pObject) {
     NOT_IMPLEMENTED();
     return 0;
 }
+
+// STUB: CARMA2_HW 0x00452230
+int C2_HOOK_FASTCALL MyDroneHathCollideth(tPhysics_object* pObject, tPhysics_object* pOther) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

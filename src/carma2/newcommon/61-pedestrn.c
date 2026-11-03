@@ -1431,3 +1431,9 @@ int C2_HOOK_FASTCALL BonerActiveHalted(tPed_character_instance* pCharacter) {
     NOT_IMPLEMENTED();
     return 0;
 }
+
+// STUB: CARMA2_HW 0x0040b620
+int C2_HOOK_FASTCALL BonerPassiveCollision(tPed_character_instance* pCharacter, undefined4 pArg2) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

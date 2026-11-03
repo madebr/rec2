@@ -208,3 +208,5 @@ extern void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU
 #endif // GUARD_57_DRONE_H
 
 int C2_HOOK_FASTCALL MyDroneHathHalteth(tPhysics_object* pObject);
+
+int C2_HOOK_FASTCALL MyDroneHathCollideth(tPhysics_object* pObject, tPhysics_object* pOther);
