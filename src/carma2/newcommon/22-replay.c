@@ -1056,7 +1056,32 @@ void C2_HOOK_FASTCALL DrawStatusMessage(int pReplay_only) {
 #pragma auto_inline(on)
 #endif
 
-// WorkerUndoSmashRemoveFaces
+// FUNCTION: CARMA2_HW 0x004f5fa0
+void C2_HOOK_FASTCALL WorkerUndoSmashRemoveFaces(int field_0x0, int field_0x8, void* pField_0xc, int field_0x4) {
+    extern void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags);
+    br_model* pModel;
+    br_material* pMaterial;
+    const br_uint_16* source;
+    br_face* face;
+    int i;
+
+    pModel = (br_model*)field_0x0;
+    source = pField_0xc;
+    pMaterial = (br_material*)field_0x4;
+    face = pModel->faces + pModel->nfaces;
+    for (i = 0; i < field_0x8; i++) {
+        face->material = pMaterial;
+        face->vertices[0] = source[0];
+        face->vertices[1] = source[1];
+        face->vertices[2] = source[2];
+        face->smoothing = source[3];
+        face->flags = 0;
+        face++;
+        source += 4;
+    }
+    pModel->nfaces += field_0x8;
+    DRModelUpdateAndKevificateMaterials(pModel, BR_MODU_ALL);
+}
 
 // WorkerShrapnelShowerUndo
 
