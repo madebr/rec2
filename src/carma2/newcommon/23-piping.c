@@ -2166,7 +2166,12 @@ void C2_HOOK_FASTCALL ApplyPedDismember(tPipe_chunk** pChunk) {
     return WorkerPedDismember(chunk->field_0x0, (int)chunk->field_0x4, (int)chunk->field_0x7);
 }
 
-// ApplyPedFPChange
+// FUNCTION: CARMA2_HW 0x004c9b40
+void C2_HOOK_FASTCALL ApplyPedFPChange(tPipe_chunk** pChunk) {
+    tPipe_chunk_ped_fp_change* chunk = (tPipe_chunk_ped_fp_change*)*pChunk;
+
+    return WorkerPedFPChange(chunk->field_0x0, *(tPipe_stack_word*)&chunk->field_0x8);
+}
 
 // ApplyPedPos
 
