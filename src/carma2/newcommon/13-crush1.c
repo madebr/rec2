@@ -1667,7 +1667,34 @@ void C2_HOOK_FASTCALL DoFullyDetaching(void) {
 extern tCar_spec* gCar_to_view;
 extern void C2_HOOK_FASTCALL DeleteFarCrushes(tCar_spec* pCar);
 
-// FUN_00439500
+// FUNCTION: CARMA2_HW 0x00439500
+void C2_HOOK_FASTCALL FUN_00439500(void) {
+    DeleteFarCrushes(gCar_to_view);
+}
+
+// CalculateCollisionObjectStuffForSplitHalves
+
+// SetUpCollisionInfoStuffForSplitHalf
+
+// SetFace
+
+// AddSplitVertexIndex
+
+// CreateSplitVertex
+
+// GetSplitVertex
+
+// SplitModel
+
+// CreateSplitPoints
+
+// SplitCollisionShape
+
+// SplitCarCollisionShapes
+
+// QuantizeWithinBounds
+
+// SaveVitalBitsOfObject
 
 // FUNCTION: CARMA2_HW 0x00430730
 // FUNCTION: CARMA2_SW 0x00430760
