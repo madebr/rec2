@@ -564,8 +564,49 @@ void C2_HOOK_CDECL HostRealDWordWrite(br_uint_16 offset, br_uint_16 seg, br_uint
 #endif
 }
 
-// STUB: CARMA2_HW 0x0054021a
+#if defined(__I86__) || defined(_M_IX86)
+C2_NAKED
+#endif
+// FUNCTION: CARMA2_HW 0x0054021a
 // STUB: CARMA2_SW 0x0053b8ba
 br_uint_32 C2_HOOK_CDECL HostRealDWordRead(br_uint_16 offset, br_uint_16 seg) {
+#if defined(__I86__) || defined(_M_IX86)
+#if defined(_MSC_VER)
+    __asm {
+        push ebp
+        mov ebp, esp
+        push ds
+        mov ds, word ptr [_RealSelector]
+        mov edx, dword ptr [ebp+0xc]
+        shl edx, 4
+        add edx, dword ptr [ebp+8]
+        mov eax, dword ptr [ebp+0xc]
+        shl eax, 4
+        add eax, dword ptr [ebp+8]
+        mov eax, dword ptr [eax]
+        pop ds
+        leave
+        ret
+    }
+#else
+    __asm__(
+        "push %ebp\n"
+        "mov %esp, %ebp\n"
+        "push %ds\n"
+        "mov __RealSelector, %ds\n"
+        "mov 0xc(%ebp), %edx\n"
+        "shl $4, %edx\n"
+        "add 8(%ebp), %edx\n"
+        "mov 0xc(%ebp), %eax\n"
+        "shl $4, %eax\n"
+        "add 8(%ebp), %eax\n"
+        "mov (%eax), %eax\n"
+        "pop %ds\n"
+        "leave\n"
+        "ret\n"
+    );
+#endif
+#else
     abort();
+#endif
 }
