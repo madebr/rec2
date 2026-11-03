@@ -872,7 +872,14 @@ void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
     }
 }
 
-// DoInstantRepair
+// FUNCTION: CARMA2_HW 0x004dc990
+int C2_HOOK_FASTCALL DoInstantRepair(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        TotallyRepairCar();
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc9c0
 // FUNCTION: CARMA2_SW 0x004d8ec0
