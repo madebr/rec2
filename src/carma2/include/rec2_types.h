@@ -2345,6 +2345,7 @@ typedef struct {
 } tDamage_condition;
 
 typedef enum {
+    eDamage_start = 0,
     eDamage_engine = 0,
     eDamage_transmission = 1,
     eDamage_driver = 2,
@@ -2356,7 +2357,8 @@ typedef enum {
     eDamage_lf_wheel = 8,
     eDamage_rf_wheel = 9,
     eDamage_lr_wheel = 10,
-    eDamage_rr_wheel = 11
+    eDamage_rr_wheel = 11,
+    eDamage_count = 12,
 } tDamage_type;
 
 typedef struct  {

@@ -31,7 +31,7 @@ extern void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar);
 
 // SetKnackeredFlag
 
-// DamageUnit2
+extern void C2_HOOK_FASTCALL DamageUnit2(tCar_spec *pCar, tDamage_type pDamage_type, int pMagnitude);
 
 // RecordLastDamage
 
@@ -57,6 +57,6 @@ extern void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2);
 
 // PercentageCarHealth
 
-// ChristmasLights
+extern void C2_HOOK_FASTCALL ChristmasLights(tCar_spec* pCar, int pMin_damage, int pMax_damage);
 
 #endif // GUARD_58_CRUSH2_H

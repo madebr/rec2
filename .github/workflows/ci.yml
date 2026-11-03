@@ -83,7 +83,7 @@ jobs:
       id: reccmp
       if: ${{ matrix.platform.msvc5 }}
       with:
-        root-repo: madebr/rec2
+        root-repo: dethrace-labs/rec2
         root-branch: master
         gist-repo: madebr/92b121cfd427c51b771fb614b4c893f4
         targets: CARMA2_HW CARMA2_SW

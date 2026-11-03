@@ -99,13 +99,26 @@ void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
 
 // SetKnackeredFlag
 
-// DamageUnit2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0043f930
+// STUB: CARMA2_SW 0x0043fa10
+void C2_HOOK_FASTCALL DamageUnit2(tCar_spec *pCar, tDamage_type pDamage_type, int pMagnitude) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // RecordLastDamage
 
 // DoDamage
 
 // FUNCTION: CARMA2_HW 0x0043f9f0
+// FUNCTION: CARMA2_SW 0x0043fad0
 void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar) {
     int i;
 
@@ -295,5 +308,25 @@ void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
 
 // PercentageCarHealth
 
-// ChristmasLights
+// FUNCTION: CARMA2_HW 0x00441420
+// FUNCTION: CARMA2_SW 0x00441500
+void C2_HOOK_FASTCALL ChristmasLights(tCar_spec* pCar, int pMin_damage, int pMax_damage) {
+    int restarts = 0;
+    tDamage_type damage_type = eDamage_start;
 
+    for (;;) {
+        DamageUnit2(pCar, damage_type, IRandomBetween(pMin_damage, pMax_damage));
+        if (damage_type == eDamage_engine && pCar->damage_units[damage_type].damage_level < 80) {
+            restarts += 1;
+            if (restarts < 30) {
+                continue;
+            }
+        }
+        damage_type++;
+        if (damage_type >= eDamage_count) {
+            break;
+
+        }
+    }
+    pCar->damage_magnitude_accumulator += 0.5f;
+}
