@@ -367,7 +367,23 @@ void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
 
 // ApplyPipedSession
 
-// MoveSessionPointerBackOne
+// FUNCTION: CARMA2_HW 0x004037c0
+int C2_HOOK_FASTCALL MoveSessionPointerBackOne(tU8** pSession) {
+    tU8* footer;
+    tU16 length;
+
+    if (*pSession == gPipe_buffer_oldest && *pSession != gPipe_record_ptr) {
+        return 1;
+    }
+    if (*pSession == gPipe_buffer_start) {
+        *pSession = gPipe_buffer_working_end;
+    }
+    *pSession -= sizeof(tU16);
+    footer = *pSession;
+    memcpy(&length, footer, sizeof(length));
+    *pSession = footer - length;
+    return 0;
+}
 
 // MoveSessionPointerForwardOne
 
