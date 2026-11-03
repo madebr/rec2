@@ -24,6 +24,9 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x006aa568
+int gDust_rotate;
+
 // GLOBAL: CARMA2_HW 0x00660110
 // GLOBAL: CARMA2_SW 0x0065aa58
 int gSmoke_on = 1;
@@ -431,7 +434,64 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
 
 // ReplaySmoke
 
-// GenerateContinuousSmoke
+// FUNCTION: CARMA2_HW 0x004fa5b0
+void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 pTime) {
+    br_vector3 pos;
+    br_vector3 v;
+    br_vector3 vcs;
+    br_vector3 tv;
+    br_scalar decay_factor;
+    br_scalar ts;
+    br_scalar alpha;
+    br_scalar beta;
+    int colour;
+
+    if ((tU32)pCar->dust_time[pWheel] > pTime) {
+        pCar->dust_time[pWheel] -= pTime;
+        return;
+    }
+    pCar->dust_time[pWheel] += IRandomBetween(200, 400) - pTime;
+    if (pCar->dust_time[pWheel] < 0) {
+        pCar->dust_time[pWheel] = 0;
+    }
+    tv.v[0] = pCar->wpos[pWheel].v[2] * pCar->collision_info->omega.v[1] - pCar->collision_info->omega.v[2] * pCar->wpos[pWheel].v[1];
+    tv.v[1] = pCar->wpos[pWheel].v[0] * pCar->collision_info->omega.v[2] - pCar->collision_info->omega.v[0] * pCar->wpos[pWheel].v[2];
+    tv.v[2] = pCar->wpos[pWheel].v[0] * pCar->collision_info->omega.v[1] - pCar->collision_info->omega.v[0] * pCar->wpos[pWheel].v[1];
+    BrVector3Scale(&vcs, &pCar->collision_info->velocity_car_space, WORLD_SCALE);
+    BrVector3Accumulate(&vcs, &tv);
+    ts = BrVector3LengthSquared(&vcs);
+    if (ts < 25.0f) {
+        return;
+    }
+    decay_factor = (float)sqrt(ts) * 0.04f;
+    if (decay_factor > 1.0f) {
+        decay_factor = 1.0f;
+    }
+    BrVector3InvScale(&tv, &pCar->wpos[pWheel], WORLD_SCALE);
+    tv.v[1] -= pCar->oldd[pWheel] * 0.14492753623188406;
+    alpha = -1000.0f;
+    if (vcs.v[2] < 0.0f) {
+        alpha = (pCar->collision_info->bb2.max.v[2] - tv.v[2]) / vcs.v[2];
+    } else if (vcs.v[2] > 0.0f) {
+        alpha = (pCar->collision_info->bb2.min.v[2] - tv.v[2]) / vcs.v[2];
+    }
+    beta = -1000.0f;
+    if (vcs.v[0] < 0.0f) {
+        beta = (pCar->collision_info->bb2.max.v[0] - tv.v[0]) / vcs.v[0];
+    } else if (vcs.v[0] > 0.0f) {
+        beta = (pCar->collision_info->bb2.min.v[0] - tv.v[0]) / vcs.v[0];
+    }
+    ts = MAX(alpha, beta);
+    BrVector3Scale(&pos, &vcs, ts);
+    BrVector3Accumulate(&tv, &pos);
+    BrMatrix34ApplyP(&pos, &tv, &pCar->car_master_actor->t.t.mat);
+    BrMatrix34ApplyV(&v, &vcs, &pCar->car_master_actor->t.t.mat);
+    colour = gDust_rotate + gCurrent_race.material_modifiers[pCar->material_index[pWheel]].smoke_type - 2;
+    while (colour >= gNum_dust_tables) {
+        colour -= gNum_dust_tables;
+    }
+    CreatePuffOfSmoke(&pos, &v, decay_factor, decay_factor + decay_factor, colour + 8);
+}
 
 // RenderSmoke
 
