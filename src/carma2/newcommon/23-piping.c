@@ -154,6 +154,27 @@ typedef struct {
     br_actor* field_0xc;
 } tPipe_chunk_relink;
 
+typedef struct {
+    tU32 field_0x0;
+    tU32 field_0x4;
+    br_vector3 field_0x8;
+    br_vector3 field_0x14;
+    br_vector3 field_0x20;
+    br_vector3 field_0x2c;
+    br_vector3 field_0x38;
+    tU32 field_0x44;
+    tU32 field_0x48;
+    tU32 field_0x4c;
+    tU32 field_0x50;
+    br_vector3 field_0x54;
+    tU8 field_0x60[0x24];
+    tU32 field_0x84;
+    br_vector3 field_0x88;
+    tU8 field_0x94[0xc];
+    tU32 field_0xa0;
+    br_matrix34 field_0xa4;
+} tPipe_chunk_shrapnel_shower;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -208,6 +229,16 @@ void C2_HOOK_CDECL RelinkActorKeepWorldTransform(br_actor* pParent, br_actor* pA
     NOT_IMPLEMENTED();
 }
 
+// STUB: CARMA2_HW 0x004eb8f0
+void C2_HOOK_FASTCALL WorkerShrapnelShower(tU32 pOwner, tU32 pShrapnel, tU32 pSeed, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, tU32 pActor, tU32 pTime, tU32 pArg9, br_vector3* pTransform, br_vector3* pFragment_owner, br_vector3* pPosition, tU32 pDistance, br_vector3* pArg14, tU32 pArg15) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004f0380
+void C2_HOOK_FASTCALL WorkerShrapnelShowerUndo(tU32 chunk_0x48, tU32 prev_0x4, tU32 prev_0x84, tU32 prev_0x44, br_vector3* prev_0x8, br_vector3* prev_0x20, br_vector3* prev_0x2c, tU32 prev_0x50, tU32 prev_0x48, tU32 prev_0x0, br_vector3* prev_0x54, br_vector3* prev_0x88, br_vector3* prev_0x14, tU32 prev_0xa0, br_vector3* prev_0x38) {
+    NOT_IMPLEMENTED();
+}
+
 // STUB: CARMA2_HW 0x0043c240
 void C2_HOOK_FASTCALL WorkerSplitWeldApply(void* roadMachine, br_vector3* pVector) {
     NOT_IMPLEMENTED();
@@ -223,6 +254,9 @@ void C2_HOOK_FASTCALL WorkerSplitWeldUndo(void* roadMachine) {
 #endif
 
 extern int gPaused;
+
+// GLOBAL: CARMA2_HW 0x006b78a0
+br_matrix34 gShrapnel_shower_matrix;
 
 extern void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 
@@ -2230,7 +2264,18 @@ void C2_HOOK_FASTCALL ApplyUnBend(tPipe_chunk** pChunk) {
 void C2_HOOK_FASTCALL ApplyEndMyBend(tPipe_chunk** pChunk) {
 }
 
-// ApplyShrapnelShower
+// FUNCTION: CARMA2_HW 0x004c9960
+void C2_HOOK_FASTCALL ApplyShrapnelShower(tPipe_chunk** pChunk) {
+    tPipe_chunk_shrapnel_shower* chunk = (tPipe_chunk_shrapnel_shower*)*pChunk;
+
+    if (chunk->field_0x84 == 0) {
+        return;
+    }
+
+    memcpy(&gShrapnel_shower_matrix, &chunk->field_0xa4, sizeof(chunk->field_0xa4));
+
+    return WorkerShrapnelShower(((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x4, ((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x84, ((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x44, &((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x8, &((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x20, &((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x2c, ((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x50, ((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x48, ((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x0, &((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x54, &((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x88, &((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x14, ((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0xa0, &((tPipe_chunk_shrapnel_shower*)*pChunk)->field_0x38, 0);
+}
 
 // FUNCTION: CARMA2_HW 0x004c99d0
 // FUNCTION: CARMA2_SW 0x004c6100
