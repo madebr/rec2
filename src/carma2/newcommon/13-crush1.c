@@ -1328,8 +1328,49 @@ void C2_HOOK_FASTCALL SendAllSemiDetachedBits(tNet_game_player_info* pPlayer) {
 
 // StartFlapping
 
-// STUB: CARMA2_HW 0x0042f3d0
-void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x0042f3d0
+void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush) {
+    int i;
+    int new_count;
+
+    new_count = 0;
+    for (i = 0; i < pCar_crush->field_0x270; i++) {
+        tCar_bit_spec* car_bit = &pCar_crush->field_0x274[i];
+
+        /* FIXME: what is type ot tCar_bit_spec::field_0xc? */
+        switch (car_bit->field_0xc[10]) {
+        case 1:
+            if (new_count != i) {
+                pCar_crush->field_0x274[new_count] = *car_bit;
+            }
+            new_count += 1;
+            break;
+        case 2:
+            pCar_crush->field_0x2b4[pCar_crush->field_0x2b0] = *car_bit;
+            pCar_crush->field_0x2b0 += 1;
+            break;
+        }
+    }
+    pCar_crush->field_0x270 = new_count;
+
+    new_count = 0;
+    for (i = 0; i < pCar_crush->field_0x2b0; i++) {
+        /* FIXME: what is type ot tCar_bit_spec::field_0xc? */
+        switch (pCar_crush->field_0x2b4[i].field_0xc[10]) {
+        case 1:
+            pCar_crush->field_0x274[pCar_crush->field_0x270] = pCar_crush->field_0x2b4[i];
+            pCar_crush->field_0x270 += 1;
+            break;
+        case 2:
+            if (new_count != i) {
+                pCar_crush->field_0x2b4[new_count] = pCar_crush->field_0x2b4[i];
+            }
+            new_count += 1;
+            break;
+        }
+    }
+    pCar_crush->field_0x2b0 = new_count;
+}
 
 // FUNCTION: CARMA2_HW 0x0043b250
 // FUNCTION: CARMA2_SW 0x0043b2a0
