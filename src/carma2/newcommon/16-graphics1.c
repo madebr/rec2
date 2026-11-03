@@ -644,4 +644,22 @@ extern void C2_HOOK_FASTCALL MapOverlay(void);
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// MapStuffAfterRender
+// FUNCTION: CARMA2_HW 0x00496d80
+void C2_HOOK_FASTCALL MapStuffAfterRender(void) {
+    if (gCurrent_race.map_image != NULL) {
+        if (gMap_view == 2) {
+            gOrigin_headup_map.v[0] = 0.f;
+            gOrigin_headup_map.v[1] = 0.f;
+            DoMapOverlays(gBack_screen);
+            gBack_screen->origin_x = gBack_original_origin_x;
+            gBack_screen->origin_y = gBack_original_origin_y;
+            gBack_screen->base_x = gBack_original_base_x;
+            gBack_screen->base_y = gBack_original_base_y;
+        } else if (gMap_view == 1 && !gAction_replay_mode && !(gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_foxy && gThis_net_player_index == gIt_or_fox)) {
+            MapOverlay();
+        }
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
