@@ -1280,7 +1280,52 @@ int C2_HOOK_FASTCALL FUN_0045a7f0(char* pFilename, int* pArg2) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// CreateAccentPolyActor
+// FUNCTION: CARMA2_HW 0x0045aa60
+void C2_HOOK_STDCALL CreateAccentPolyActor(float pX, float pY, float pWidth, float pHeight) {
+    extern br_actor* g2d_camera;
+
+    if (gAcc_poly_material == NULL) {
+        gAcc_poly_material = BrMaterialAllocate("Acc Poly Mat");
+        gAcc_poly_material->colour = 0x80;
+        gAcc_poly_material->flags = BR_MATF_ALWAYS_VISIBLE;
+        BrMaterialAdd(gAcc_poly_material);
+        gAcc_poly_material->extra_prim = gAccent_poly_prims;
+        gAcc_poly_material->extra_prim[1].v.x = 0x800000;
+        BrMaterialUpdate(gAcc_poly_material, BR_MATU_EXTRA_PRIM);
+    }
+    if (gAcc_poly_actor == NULL) {
+        gAcc_poly_model = BrModelAllocate("Tint Poly", 6, 2);
+        BrVector3Set(&gAcc_poly_model->vertices[0].p, pX, -pY, -1.01f);
+        BrVector3Set(&gAcc_poly_model->vertices[1].p, pX + pWidth, -pY, -1.01f);
+        BrVector3Set(&gAcc_poly_model->vertices[2].p, pX, -(pY + pHeight), -1.01f);
+        BrVector3Set(&gAcc_poly_model->vertices[3].p, pX + pWidth, -pY, -1.01f);
+        BrVector3Set(&gAcc_poly_model->vertices[4].p, pX + pWidth, -(pY + pHeight), -1.01f);
+        BrVector3Set(&gAcc_poly_model->vertices[5].p, pX, -(pY + pHeight), -1.01f);
+        gAcc_poly_model->faces[0].vertices[0] = 0;
+        gAcc_poly_model->faces[0].vertices[1] = 1;
+        gAcc_poly_model->faces[0].vertices[2] = 2;
+        gAcc_poly_model->faces[1].vertices[0] = 3;
+        gAcc_poly_model->faces[1].vertices[1] = 4;
+        gAcc_poly_model->faces[1].vertices[2] = 5;
+        gAcc_poly_actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        gAcc_poly_actor->material = gAcc_poly_material;
+        gAcc_poly_model->faces[0].material = gAcc_poly_material;
+        gAcc_poly_model->faces[1].material = gAcc_poly_material;
+        gAcc_poly_actor->model = gAcc_poly_model;
+        BrModelAdd(gAcc_poly_model);
+    }
+    if (!gRender_acc_poly_actor) {
+        gRender_acc_poly_actor = 1;
+        BrActorAdd(g2d_camera, gAcc_poly_actor);
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // FUN_0045acf0
 // FUN_0045c240
 // RightInventory
