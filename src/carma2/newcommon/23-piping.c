@@ -2065,7 +2065,23 @@ void C2_HOOK_FASTCALL ApplySound(tPipe_chunk** pChunk) {
 
 // ApplyCar
 
-// ApplyGWS
+// FUNCTION: CARMA2_HW 0x004c96c0
+void C2_HOOK_FASTCALL ApplyGWS(tPipe_chunk** pChunk) {
+    tCar_spec* car;
+    tU32 code = ((tPipe_chunk_graphpical_wheel_stuff*)*pChunk)->field_0x0;
+
+    if ((code & 0xffffff00u) == 0) {
+        car = &gProgram_state.current_car;
+    } else {
+        car = GetCarSpec(code >> 8, code & 0xffu);
+    }
+
+    *(float*)((tU8*)car + 0x4a8) = (float)((double)(int)((tPipe_chunk_graphpical_wheel_stuff*)*pChunk)->field_0x6 * 0.001181102362);
+    *(float*)((tU8*)car + 0x4ac) = (float)((double)(int)((tPipe_chunk_graphpical_wheel_stuff*)*pChunk)->field_0x7 * 0.001181102362);
+    *(float*)((tU8*)car + 0x4b0) = (float)((double)(int)((tPipe_chunk_graphpical_wheel_stuff*)*pChunk)->field_0x8 * 0.001181102362);
+    *(float*)((tU8*)car + 0x4b4) = (float)((double)(int)((tPipe_chunk_graphpical_wheel_stuff*)*pChunk)->field_0x9 * 0.001181102362);
+    *(float*)((tU8*)car + 0x4a0) = (float)((double)(int)((tPipe_chunk_graphpical_wheel_stuff*)*pChunk)->field_0x4 * 0.001831110569);
+}
 
 // ApplyDamage
 
