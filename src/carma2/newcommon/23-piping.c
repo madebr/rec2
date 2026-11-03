@@ -2422,7 +2422,17 @@ void C2_HOOK_FASTCALL UndoExtendedSplash(tPipe_chunk** pChunk, tPipe_chunk* pPre
 #endif
 
 #ifdef REC2_HW
-// UndoSkidAdjustment
+// FUNCTION: CARMA2_HW 0x004c9f20
+void C2_HOOK_FASTCALL UndoSkidAdjustment(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    SetPipeUndoFlag();
+    if (pPrev_chunk != NULL) {
+        tPipe_chunk_skid_adjust* chunk = (tPipe_chunk_skid_adjust*)pPrev_chunk;
+        AdjustSkid(chunk->skid_num, &chunk->matrix, chunk->material);
+    } else {
+        HideSkid(((tPipe_chunk_skid_adjust*)*pChunk)->skid_num);
+    }
+    ClearPipeUndoFlag();
+}
 
 // UndoFlap
 
