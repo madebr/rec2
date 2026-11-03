@@ -45,7 +45,45 @@ static int C2_HOOK_CDECL SortScores(const void* pArg1, const void* pArg2) {
 
 // DoNetRaceSummary
 
-// DoEndRaceSummary
+// FUNCTION: CARMA2_HW 0x004e32b0
+void C2_HOOK_FASTCALL DoEndRaceSummary(tRace_result pRace_result, int pGame_completed) {
+    int start_time;
+    int i;
+    int count;
+
+    OriginalResetInterfaceTimeout();
+    if (gNet_mode != eNet_mode_none) {
+        NetPlayerStatusChanged(ePlayer_status_summary);
+        start_time = PDGetTotalTime();
+        while (!gReceived_game_scores && (int)PDGetTotalTime() - start_time < 20000) {
+            NetService(0);
+        }
+        if (!gReceived_game_scores) {
+            return;
+        }
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            gPlayer_lookup_racesumm[i] = i;
+        }
+        qsort(gPlayer_lookup_racesumm, gNumber_of_net_players, sizeof(int), SortScores);
+        FRONTEND_Main(kFrontend_menu_networksummary);
+        NetPlayerStatusChanged(ePlayer_status_loading);
+        FadePaletteDown();
+        return;
+    }
+
+    if (pGame_completed) {
+        return;
+    }
+
+    count = GetCarCount(eVehicle_opponent);
+    for (i = 0; i < count; i++) {
+        if (GetCarSpec(eVehicle_opponent, i) != NULL) {
+            StartMusicTrack(0x270e);
+            FRONTEND_Main(kFrontend_menu_wrecks);
+            return;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e33d0
 // FUNCTION: CARMA2_SW 0x004df760
