@@ -413,3 +413,18 @@ void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void) {
     gPedTexturePath = "ALPIXELMAP";
 }
 
+
+// FUNCTION: CARMA2_HW 0x0048f170
+void C2_HOOK_FASTCALL DRLoadPixelmaps(const char* pPath_name) {
+    br_pixelmap* pixelmaps[100];
+    int number_of_pixelmaps;
+    int i;
+
+    PossibleService();
+    number_of_pixelmaps = DRPixelmapLoadMany(pPath_name, pixelmaps, REC2_ASIZE(pixelmaps));
+    for (i = number_of_pixelmaps - 1; i >= 0; i--) {
+        pixelmaps[i]->origin_x = 0;
+        pixelmaps[i]->origin_y = 0;
+    }
+    BrMapAddMany(pixelmaps, number_of_pixelmaps);
+}
