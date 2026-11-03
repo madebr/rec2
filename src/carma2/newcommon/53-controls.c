@@ -443,7 +443,11 @@ void C2_HOOK_FASTCALL NumberKey7(void) {
     DoEditModeKey(14);
 }
 
-// NumberKey8
+// FUNCTION: CARMA2_HW 0x00441d10
+void C2_HOOK_FASTCALL NumberKey8(void) {
+
+    DoEditModeKey(15);
+}
 
 // NumberKey9
 
