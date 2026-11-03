@@ -36,10 +36,58 @@ typedef struct {
     tU8 field_0x8[0x10];
 } tPipe_chunk_crush;
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0043c0e0
+void C2_HOOK_FASTCALL WorkerFlap(int field_0x4, tU16 field_0x8) {
+    NOT_IMPLEMENTED();
+}
+
 // STUB: CARMA2_HW 0x0043bd70
 void C2_HOOK_FASTCALL WorkerCrush(int field_0x4, void* pField_0x8, void* pField_0xe) {
     NOT_IMPLEMENTED();
 }
+
+// STUB: CARMA2_HW 0x004c9070
+void C2_HOOK_FASTCALL WorkerSmudge(tPipe_chunk** pChunk, int pScale) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004d6180
+void C2_HOOK_FASTCALL WorkerProxRay(int field_0x0, tU16 field_0x6, tU16 field_0x4, int field_0x8) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004e0710
+void C2_HOOK_FASTCALL WorkerSpecial(void) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004f8630
+void C2_HOOK_FASTCALL WorkerSpark(int field_0x0, void* pField_0x4, void* pField_0x10) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004f86f0
+void C2_HOOK_FASTCALL WorkerShrapnel(int field_0x0, void* pField_0x4, tU16 field_0x10, int field_0x14) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004fba00
+void C2_HOOK_FASTCALL WorkerFlame(int index, int flag, float f1, float f2, float f3, float f4) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004fef40
+void C2_HOOK_FASTCALL WorkerExtendedSplash(int field_0x0, int field_0x4, int field_0x8, br_vector3* pField_0xc, br_vector3* pField_0x18) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 extern int gPaused;
 
