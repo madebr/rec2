@@ -875,7 +875,19 @@ void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smash
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// ActuallyRepairSmashThunk
+// FUNCTION: CARMA2_HW 0x004ef830
+void C2_HOOK_FASTCALL ActuallyRepairSmashThunk(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pUnused, int pLevel) {
+    extern void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel);
+
+    ActuallyRepairSmash(pCar_spec, pSmashable, pLevel);
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// KillFragment
+
+// AddRepairAnimationToQueue
 
 // RepairSmash
 
