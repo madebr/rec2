@@ -921,7 +921,32 @@ void C2_HOOK_FASTCALL FUN_004b73a0(tPhysics_object* pObject, const br_matrix34* 
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma inline_depth(0)
 #endif
-// FUN_004b7310
+// FUNCTION: CARMA2_HW 0x004b7310
+void C2_HOOK_FASTCALL FUN_004b7310(tPhysics_object* pObject) {
+    tPhysics_object* parent;
+    br_matrix34 inverse;
+    br_matrix34 normalised;
+
+    parent = pObject->parent;
+    pObject->flags |= 0x400;
+    while (parent != NULL && (parent->flags & 0x400) != 0) {
+        parent = parent->parent;
+    }
+    BrMatrix34LPInverse(&inverse, &parent->transform_matrix);
+    BrMatrix34LPNormalise(&normalised, &inverse);
+    BrMatrix34Mul(&pObject->field_0x1e8, &pObject->transform_matrix, &normalised);
+    FUN_004b73a0(pObject->child, &pObject->transform_matrix, &parent->transform_matrix);
+}
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth()
+#endif
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// PrepareForCollisions
+
+// CheckPointVelocities
 
 // FUNCTION: CARMA2_HW 0x004c2a10
 // FUNCTION: CARMA2_SW 0x004bf140
