@@ -26,6 +26,13 @@
 
 extern tPolyhedron_edge_indexes gBox_edge_indexes[12];
 
+typedef struct {
+    br_model* model;
+    float crushability;
+    br_bounds3 bounds;
+} tDrone_crush_data;
+extern tDrone_crush_data* C2_HOOK_FASTCALL GetDroneCrushData(tPhysics_object* pObject);
+
 int gNumber_of_net_players;
 
 tNet_game_player_info gNet_players[12];
@@ -1334,7 +1341,19 @@ void C2_HOOK_FASTCALL SimpleCrushModel(br_model* pModel, int pCount, float* pPoi
 
 // CrushDrone
 
-// CrushDroneObject
+// FUNCTION: CARMA2_HW 0x0042d180
+void C2_HOOK_FASTCALL CrushDroneObject(tPhysics_object* pObject, int pCount, float* pPoints, br_vector3* pScale) {
+    tDrone_crush_data* crush_data;
+    br_vector3 scaled;
+
+    crush_data = GetDroneCrushData(pObject);
+    if (crush_data != NULL && pCount >= 1) {
+        scaled.v[0] = crush_data->crushability * pScale->v[0];
+        scaled.v[1] = crush_data->crushability * pScale->v[1];
+        scaled.v[2] = crush_data->crushability * pScale->v[2];
+        SimpleCrushModel(crush_data->model, pCount, pPoints, scaled.v, (float*)&crush_data->bounds);
+    }
+}
 
 // DoDroneCrushing
 
@@ -2888,6 +2907,20 @@ int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3*
     return 0;
 }
 
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00450b50
+tDrone_crush_data* C2_HOOK_FASTCALL GetDroneCrushData(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+    return NULL;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // GLOBAL: CARMA2_HW 0x0079ecbc
 tPhysics_object* gUNK_0079ecbc;
