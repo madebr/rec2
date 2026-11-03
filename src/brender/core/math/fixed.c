@@ -803,9 +803,40 @@ br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedFMac3(br_fixed_lsf a, br_fixed_ls b, b
 }
 
 // FUNCTION: CARMA2_HW 0x0053740b
-br_fixed_ls C2_HOOK_CDECL BrFixedFMac4(br_fixed_lsf a, br_fixed_ls b, br_fixed_lsf c, br_fixed_ls d, br_fixed_lsf e, br_fixed_ls f, br_fixed_lsf g, br_fixed_ls h) {
-
+br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedFMac4(br_fixed_lsf a, br_fixed_ls b, br_fixed_lsf c, br_fixed_ls d, br_fixed_lsf e, br_fixed_ls f, br_fixed_lsf g, br_fixed_ls h) {
+#ifndef REC2_MATCHING
     return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d + (br_int_64)e * (br_int_64)f + (br_int_64)g * (br_int_64)h) >> 15;
+#else
+    __asm {
+        push ebp
+        mov ebp, esp
+        push edx
+        push ebx
+        push ecx
+        movsx eax, word ptr [ebp + 8]
+        imul dword ptr [ebp + 0xc]
+        mov ebx, eax
+        mov ecx, edx
+        movsx eax, word ptr [ebp + 0x10]
+        imul dword ptr [ebp + 0x14]
+        add ebx, eax
+        adc ecx, edx
+        movsx eax, word ptr [ebp + 0x18]
+        imul dword ptr [ebp + 0x1c]
+        add ebx, eax
+        adc ecx, edx
+        movsx eax, word ptr [ebp + 0x20]
+        imul dword ptr [ebp + 0x24]
+        add eax, ebx
+        adc edx, ecx
+        shrd eax, edx, 15
+        pop ecx
+        pop ebx
+        pop edx
+        leave
+        ret
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00537446
