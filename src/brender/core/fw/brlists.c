@@ -29,10 +29,9 @@ void C2_HOOK_CDECL BrAddHead(br_list* list, br_node* node) {
     assert(list != NULL);
     assert(list->head != NULL);
 
-    //node->prev = (br_node*)list;
-    node->prev = (br_node*)&(list->head);
+    node->prev = (br_node*)list;
     node->next = list->head;
-    list->head->prev = node;
+    node->next->prev = node;
     list->head = node;
 }
 
