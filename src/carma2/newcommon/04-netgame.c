@@ -923,7 +923,23 @@ void C2_HOOK_FASTCALL SendDetachedNonCarData(tNon_car_spec* pNon_car, undefined4
     }
 }
 
-// SendDetachedNonCarDataToPlayer
+// FUNCTION: CARMA2_HW 0x0043d5b0
+void C2_HOOK_FASTCALL SendDetachedNonCarDataToPlayer(tNet_game_player_info* pRecipient) {
+    int i;
+    tNon_car_spec** pNon_car;
+
+    i = 0;
+    if (gNum_active_non_cars > 0) {
+        pNon_car = gActive_non_car_list;
+        do {
+            if ((*pNon_car)->driver == 2) {
+                SendDetachedNonCarData(*pNon_car, -1, pRecipient);
+            }
+            i++;
+            pNon_car++;
+        } while (i < gNum_active_non_cars);
+    }
+}
 
 // ToggleFlapsFromNetwork
 
