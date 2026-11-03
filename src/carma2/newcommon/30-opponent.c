@@ -620,7 +620,38 @@ void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec) {
 extern int C2_HOOK_FASTCALL RematerialiseOpponent(tOpponent_spec* pOpponent_spec, br_scalar pSpeed);
 extern void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
 
-// RematerialiseOpponentOnNearestSection
+// FUNCTION: CARMA2_HW 0x004a8170
+int C2_HOOK_FASTCALL RematerialiseOpponentOnNearestSection(tOpponent_spec* pOpponent_spec, br_scalar pSpeed) {
+    br_vector3 intersect;
+    br_vector3 direction_v;
+    br_vector3 car_to_end;
+    br_vector3* finish;
+    br_scalar distance;
+    br_scalar distance_to_end;
+    tS16 section_no;
+
+    if (pOpponent_spec->physics_me) {
+        DoNotDprintf("%s: Actually, we're already materialised", pOpponent_spec->car_spec->driver_name);
+        return 1;
+    }
+    section_no = FindNearestGeneralSection(NULL, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &direction_v, &intersect, &distance);
+    finish = &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[section_no].node_indices[1]].pos;
+    BrVector3Copy(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &intersect);
+    PointActorAlongThisBloodyVector(pOpponent_spec->car_spec->car_master_actor, &direction_v);
+    BrVector3Sub(&car_to_end, finish, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t);
+    if (RematerialiseOpponent(pOpponent_spec, pSpeed)) {
+        pOpponent_spec->car_spec->brake_force = 0.0f;
+        pOpponent_spec->car_spec->acc_force = 0.0f;
+
+        distance_to_end = BrVector3Length(&car_to_end);
+        if (distance_to_end < 5.0f) {
+            pOpponent_spec->car_spec->brake_force = pOpponent_spec->car_spec->collision_info->M * 15.0f;
+        } else {
+            pOpponent_spec->car_spec->acc_force = pOpponent_spec->car_spec->collision_info->M / 2.0f;
+        }
+    }
+    return 0;
+}
 
 // CalcPlayerConspicuousness
 
