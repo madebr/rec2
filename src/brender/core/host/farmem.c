@@ -13,11 +13,35 @@
 // Win32 uses protected mode. No need to support segmented memory.
 
 
-// STUB: CARMA2_HW 0x005403a0
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x005403a0
 // STUB: CARMA2_SW 0x0053ba40
-void C2_HOOK_CDECL HostFarBlockWrite(br_uint_32 offset, br_uint_16 sel, void *block, br_uint_32 count) {
-    NOT_IMPLEMENTED();
+__declspec(naked) void C2_HOOK_CDECL HostFarBlockWrite(br_uint_32 offset, br_uint_16 sel, void *block, br_uint_32 count) {
+    __asm {
+        push ebp
+        mov ebp, esp
+        push es
+        push esi
+        push edi
+        les edi, fword ptr [ebp+8]
+        mov esi, [ebp+0x10]
+        mov ecx, [ebp+0x14]
+        shr ecx, 1
+        rep movsw
+        adc ecx, ecx
+        rep movsb
+        pop edi
+        pop esi
+        pop es
+        leave
+        ret
+    }
 }
+#else
+void C2_HOOK_CDECL HostFarBlockWrite(br_uint_32 offset, br_uint_16 sel, void *block, br_uint_32 count) {
+    abort();
+}
+#endif
 
 // STUB: CARMA2_HW 0x005403bd
 // STUB: CARMA2_SW 0x0053ba5d
