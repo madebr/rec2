@@ -2812,7 +2812,13 @@ int C2_HOOK_FASTCALL CalcEndMyBendLength(tPipe_chunk* pChunk) {
     return *(int*)((tU8*)pChunk + 4);
 }
 
-// CalcRemoveFacesLength
+// FUNCTION: CARMA2_HW 0x004ca460
+int C2_HOOK_FASTCALL CalcRemoveFacesLength(tPipe_chunk* pChunk) {
+    return 8 + 8 * *(int*)((tU8*)pChunk + 8);
+}
+#endif
+
+#ifdef REC2_HW
 // DoBloodSpurtUndo
 
 // DisposeReplayPixelmaps
