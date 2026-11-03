@@ -1600,3 +1600,14 @@ void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush) {
 void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) {
     NOT_IMPLEMENTED();
 }
+
+// STUB: CARMA2_HW 0x0043deb0
+void C2_HOOK_FASTCALL CompressPlane(tU16* pDest, const br_vector4* pSrc) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x0049f860
+tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(tU8 pType, int pSize_decider) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

@@ -9,6 +9,7 @@
  */
 
 #include "00-car.h"
+#include "52-errors.h"
 
 #include "01-network.h"
 #include "04-netgame.h"
@@ -3803,4 +3804,146 @@ void C2_HOOK_FASTCALL FUN_0045c910(tCar_spec* pCar, br_vector3* pPoint, br_vecto
         angle_degrees = 360 - angle_degrees;
     }
     SetJoystickFFBCollisionForce(magnitude, angle_degrees * 100);
+}
+
+
+typedef struct {
+    tU8 size;
+    tU8 type;
+    undefined field_0x2[2];
+    tPlayer_ID player_id;
+    tU32 next_frame_time;
+    tU8 suspension_compression[4];
+    tU32 controls;
+    tU32 hierarchy_flags;
+    tU16 curvature;
+    tU16 revs;
+    tS32 repair_time;
+    tU8 damage_levels[12];
+    tU8 power_up_levels[3];
+    undefined field_0x2f;
+    tU16 crush_state;
+    tU8 flags;
+    undefined field_0x33;
+    tU8 object_hierarchy[0x208];
+} tNet_message_chunk_car_data;
+
+// FUNCTION: CARMA2_HW 0x00497fc0
+void C2_HOOK_FASTCALL SendLocalCarData(tU32 pNext_frame_time) {
+    tNet_message_chunk_car_data* message;
+    tNet_message_chunk* chunk;
+    tU8* pData;
+    tU8 flags;
+    tU8 hierarchy_size;
+    tU8 deformation_flags;
+    tU16 deformation_value;
+    int message_size;
+    int crush_size;
+    int i;
+
+    if (gProgram_state.current_car.disabled != 0) {
+        return;
+    }
+    flags = 0;
+    hierarchy_size = (tU8)GetHierarchyNetworkSize(gProgram_state.current_car.collision_info);
+    message_size = hierarchy_size + 0x34;
+    if (gProgram_state.current_car.damage_units[8].damage_level > 0x1e
+            || gProgram_state.current_car.damage_units[9].damage_level > 0x1e
+            || gProgram_state.current_car.damage_units[10].damage_level > 0x1e
+            || gProgram_state.current_car.damage_units[11].damage_level > 0x1e) {
+        flags = 8;
+        message_size += 0x10;
+    }
+    if (gProgram_state.current_car.car_crush_spec->version_le_100 != 0) {
+        if (gProgram_state.current_car.car_crush_spec->field_0x28 != 0) {
+            gProgram_state.current_car.car_crush_spec->field_0x24 = (tU16)(gProgram_state.current_car.car_crush_spec->field_0x24 + (2 - ((gProgram_state.current_car.car_crush_spec->field_0x24 & 1) != 0)));
+            gProgram_state.current_car.car_crush_spec->field_0x28 = 0;
+        }
+        if (gProgram_state.current_car.car_crush_spec->field_0x24 != gProgram_state.current_car.car_crush_spec->field_0x26) {
+            crush_size = FUN_0043d900(&gProgram_state.current_car);
+            message_size += crush_size;
+            flags |= 1;
+            if (gProgram_state.current_car.car_crush_spec->field_0x144 != 0) {
+                message_size += 3;
+                flags |= 2;
+            }
+            if (gProgram_state.current_car.car_crush_spec->field_0x4b8 != 0) {
+                message_size += 8;
+                flags |= 4;
+            }
+        }
+    }
+    message = (tNet_message_chunk_car_data*)NetAllocateMessageChunk(0x10, message_size);
+    message->next_frame_time = pNext_frame_time;
+    message->player_id = gNet_players[gThis_net_player_index].ID;
+    message->curvature = (tU16)(gProgram_state.current_car.curvature / gProgram_state.current_car.maxcurve * 32767.0f);
+    message->controls = *(tU32*)&gProgram_state.current_car.keys;
+    message->controls = (message->controls & 0xffffff00) | ((gProgram_state.current_car.joystick.acc >> 9) & 0xff);
+    message->controls = (message->controls & 0xffff00ff) | ((gProgram_state.current_car.joystick.dec >> 1) & 0xff00);
+    message->revs = (tU16)gProgram_state.current_car.revs;
+    message->hierarchy_flags = gProgram_state.current_car.collision_info->field_0x49c;
+    for (i = 0; i < 4; i++) {
+        message->suspension_compression[i] = (tU8)(gProgram_state.current_car.oldd[i] / gProgram_state.current_car.susp_height[i >> 1] * 255.0f);
+    }
+    for (i = 0; i < 12; i++) {
+        message->damage_levels[i] = (tU8)gProgram_state.current_car.damage_units[i].damage_level;
+    }
+    message->power_up_levels[0] = (tU8)gProgram_state.current_car.power_up_levels[0];
+    message->power_up_levels[1] = (tU8)gProgram_state.current_car.power_up_levels[1];
+    message->power_up_levels[2] = (tU8)gProgram_state.current_car.power_up_levels[2];
+    message->repair_time = gProgram_state.current_car.repair_time;
+    message->crush_state = gProgram_state.current_car.car_crush_spec->field_0x24;
+    message->flags = flags;
+    pData = message->object_hierarchy;
+    if (GetHierarchyNetworkStuff(gProgram_state.current_car.collision_info, message->object_hierarchy, 0x68) != hierarchy_size) {
+        FatalError(0x72, "in car object data");
+    }
+    pData += hierarchy_size;
+    if ((flags & 8) != 0) {
+        for (i = 0; i < 4; i++) {
+            *(float*)pData = gProgram_state.current_car.wheel_dam_offset[i];
+            pData += sizeof(float);
+        }
+    }
+    if ((flags & 1) != 0) {
+        EncodeNetShapeData(pData, &gProgram_state.current_car);
+        pData += crush_size;
+    }
+    if ((flags & 2) != 0) {
+        deformation_flags = 0;
+        if (gProgram_state.current_car.car_crush_spec->field_0x174 == gProgram_state.current_car.car_crush_spec->bend_z_min) {
+            deformation_flags |= 1;
+        }
+        if (*(tU16*)((char*)gProgram_state.current_car.car_crush_spec + 0x190) != 0) {
+            deformation_flags |= 2;
+            deformation_value = *(tU16*)((char*)gProgram_state.current_car.car_crush_spec + 0x190);
+        } else if (*(tU16*)((char*)gProgram_state.current_car.car_crush_spec + 0x192) != 0) {
+            deformation_flags |= 4;
+            deformation_value = *(tU16*)((char*)gProgram_state.current_car.car_crush_spec + 0x192);
+        } else {
+            deformation_flags |= 8;
+            deformation_value = *(tU16*)((char*)gProgram_state.current_car.car_crush_spec + 0x194);
+        }
+        *pData = deformation_flags;
+        pData++;
+        *(tU16*)pData = deformation_value;
+        pData += 2;
+    }
+    if ((flags & 4) != 0) {
+        CompressPlane((tU16*)pData, (const br_vector4*)&gProgram_state.current_car.car_crush_spec->field_0x548);
+    }
+    if (gProgram_state.current_car.time_to_recover != 0 && gProgram_state.current_car.time_to_recover - 500 < pNext_frame_time) {
+        chunk = NetAllocateMessageChunk(0x17, 0);
+        *(tU32*)((tU8*)chunk + 4) = gNet_players[gThis_net_player_index].ID;
+        *(tU32*)((tU8*)chunk + 8) = gProgram_state.current_car.time_to_recover;
+    }
+    chunk = NetAllocateMessageChunk(0x2a, gNumber_of_net_players * 8 + 4);
+    *(tU32*)((tU8*)chunk + 4) = gNet_players[gThis_net_player_index].ID;
+    *(tU8*)((tU8*)chunk + 8) = (tU8)(gNumber_of_net_players - 1);
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (i != gThis_net_player_index) {
+            *(tU32*)((tU8*)chunk + 0xc + i * 8) = gNet_players[i].ID;
+            *(tU16*)((tU8*)chunk + 0x10 + i * 8) = gNet_players[i].car->car_crush_spec->field_0x24;
+        }
+    }
 }
