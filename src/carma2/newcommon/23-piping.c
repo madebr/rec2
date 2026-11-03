@@ -1219,7 +1219,13 @@ void C2_HOOK_FASTCALL AddProxRayToPipingSession(int pRay_index, tCar_spec* pCar,
         SIZE_OFFSET_PIPING(tPipe_chunk_prox_ray, time), pTime);
 }
 
-// FUN_004c7500
+// FUNCTION: CARMA2_HW 0x004c7500
+void C2_HOOK_FASTCALL FUN_004c7500(uintptr_t pOwner, void* pData, tU32 pArg3) {
+
+    ARAddVariedDataToSession(0x16, pOwner, 2,
+        0x30, 0, (uintptr_t)pData,
+        4, 0x30, pArg3);
+}
 
 // FUNCTION: CARMA2_HW 0x004c7520
 // FUNCTION: CARMA2_SW 0x004c3c50
