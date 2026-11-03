@@ -64,6 +64,30 @@ typedef struct {
     tU32 time;
 } tUpdate_crush_reattach_item;
 
+// GLOBAL: CARMA2_HW 0x00655e58
+float gForce_feedback_upper_limit = 2.7f;
+
+// GLOBAL: CARMA2_HW 0x00655e5c
+float gForce_feedback_lower_limit = 1.5f;
+
+// GLOBAL: CARMA2_HW 0x00589f80
+const double gJoystick_collision_force_scale = 10000.0;
+
+// GLOBAL: CARMA2_HW 0x00589f88
+const float gJoystick_collision_force_min_length = 0.0000002384185791015625f;
+
+// GLOBAL: CARMA2_HW 0x00589f90
+const double gJoystick_collision_force_one = 1.0;
+
+// GLOBAL: CARMA2_HW 0x00589f9c
+const float gJoystick_collision_force_zero_f = 0.0f;
+
+// GLOBAL: CARMA2_HW 0x00589f98
+const float gJoystick_collision_force_one_f = 1.0f;
+
+// GLOBAL: CARMA2_HW 0x00589fa0
+const double gJoystick_collision_force_radians_to_degrees = 57.29577951308;
+
 // GLOBAL: CARMA2_HW 0x0067be10
 tUpdate_crush_reattach_item gNet_crush_reattach_bit_list[8];
 
@@ -3720,3 +3744,63 @@ int C2_HOOK_FASTCALL GetCompressedCrushVertexDataSize(tU8* pData) {
 }
 
 
+
+// FUNCTION: CARMA2_HW 0x0045c910
+void C2_HOOK_FASTCALL FUN_0045c910(tCar_spec* pCar, br_vector3* pPoint, br_vector3* pForce, float pImpulse) {
+    extern float gForce_feedback_upper_limit;
+    extern float gForce_feedback_lower_limit;
+    extern const double gJoystick_collision_force_scale;
+    extern const float gJoystick_collision_force_min_length;
+    extern const double gJoystick_collision_force_one;
+    extern const float gJoystick_collision_force_one_f;
+    extern const float gJoystick_collision_force_zero_f;
+    extern const double gJoystick_collision_force_radians_to_degrees;
+    extern int C2_HOOK_FASTCALL SetJoystickFFBCollisionForce(int pMagnitude, int pDirection);
+    float force_length;
+    float inverse_force_length;
+    float impulse;
+    br_vector3 normalized_position;
+    register int angle_degrees;
+    int magnitude;
+    int flip;
+    float force_x;
+    float force_y;
+    float force_z;
+
+    (void)pCar;
+    (void)pForce;
+    impulse = pImpulse;
+    if (pImpulse > gForce_feedback_upper_limit) {
+        impulse = gForce_feedback_upper_limit;
+    }
+    if (impulse < gForce_feedback_lower_limit) {
+        impulse = gForce_feedback_lower_limit;
+    }
+    magnitude = (int)(impulse * (gJoystick_collision_force_scale / gForce_feedback_upper_limit));
+    force_x = pPoint->v[0];
+    force_y = pPoint->v[1];
+    force_z = pPoint->v[2];
+    force_length = sqrt(force_x * force_x + force_y * force_y + force_z * force_z);
+    if (force_length > gJoystick_collision_force_min_length) {
+        inverse_force_length = gJoystick_collision_force_one / force_length;
+        normalized_position.v[0] = force_x * inverse_force_length;
+        normalized_position.v[1] = force_y * inverse_force_length;
+        normalized_position.v[2] = force_z * inverse_force_length;
+    } else {
+        normalized_position.v[0] = gJoystick_collision_force_one_f;
+        normalized_position.v[1] = gJoystick_collision_force_zero_f;
+        normalized_position.v[2] = gJoystick_collision_force_zero_f;
+    }
+    flip = (normalized_position.v[0] + gJoystick_collision_force_zero_f) <= gJoystick_collision_force_zero_f;
+    angle_degrees = (int)(acos(gJoystick_collision_force_zero_f - normalized_position.v[2] * gJoystick_collision_force_one_f) * gJoystick_collision_force_radians_to_degrees);
+    if (angle_degrees < 45) {
+        angle_degrees = 90 - angle_degrees;
+    }
+    if (angle_degrees > 135) {
+        angle_degrees = 270 - angle_degrees;
+    }
+    if (flip) {
+        angle_degrees = 360 - angle_degrees;
+    }
+    SetJoystickFFBCollisionForce(magnitude, angle_degrees * 100);
+}
