@@ -277,7 +277,18 @@ void C2_HOOK_FASTCALL DoZappyActionReplayHeadups(int pFrame_number) {
     }
 }
 
-// DoActionReplayHeadups
+// FUNCTION: CARMA2_HW 0x004e6270
+void C2_HOOK_FASTCALL DoActionReplayHeadups(void) {
+
+    ActualActionReplayHeadups(0);
+}
+
+/* the original passes pFrame_period in ecx to MungePedestrians (rec2 defines it with no parameter) */
+#ifdef REC2_MATCHING
+#define REPLAY_CALL_MUNGE_PEDESTRIANS(P) ((void (C2_HOOK_FASTCALL *)(int))MungePedestrians)(P)
+#else
+#define REPLAY_CALL_MUNGE_PEDESTRIANS(P) MungePedestrians()
+#endif
 
 // STUB: CARMA2_HW 0x004e6950
 void C2_HOOK_FASTCALL PreProcess(int pFrame_period) { NOT_IMPLEMENTED(); }
