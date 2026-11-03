@@ -1733,7 +1733,110 @@ void C2_HOOK_FASTCALL StopCharacterMorphing(tPed_character_instance* pCharacter)
     }
 }
 
-// MorphCharacterBonePositions
+// FUNCTION: CARMA2_HW 0x004097b0
+int C2_HOOK_FASTCALL MorphCharacterBonePositions(tPed_character_instance* pPed, tU32 pArg2) {
+    float time;
+    br_matrix34 inverse;
+    tPed_form* form;
+    tPed_personality* personality;
+    br_matrix34* mat;
+    int i;
+    tPed_form_actor_set* actor_set;
+
+    time = (float)pArg2;
+    pPed->field_0xbc->field_0x0 = pPed->field_0xbc->field_0x4 * time + pPed->field_0xbc->field_0x0;
+    if (pPed->field_0xbc->field_0x0 >= 1.0f) {
+        if (pPed->field_0xbc != NULL) {
+            pPed->field_0xbc->field_0x4 = 0.f;
+            if (*(tU8*)&pPed->field_0xbc->field_0x2c != 0) {
+                form = pPed->personality->form;
+                if (pPed->field_0x4 < 0) {
+                    mat = &pPed->field_0x2c;
+                } else {
+                    mat = pPed->field_0xe8;
+                    if (mat == NULL) {
+                        mat = &form->actor_sets[pPed->field_0x4].actors[0]->t.t.mat;
+                    }
+                }
+                BrMatrix34LPInverse(&inverse, &form->moves[pPed->field_0x7].move->frames[(tS16)pPed->field_0x1c].mat);
+                BrMatrix34Mul(&pPed->field_0x8c, &inverse, mat);
+                pPed->field_0x8c.m[3][0] = 0.f;
+                pPed->field_0x8c.m[3][1] = 0.f;
+                pPed->field_0x8c.m[3][2] = 0.f;
+            }
+            pPed->field_0xbc = NULL;
+            SetCharacterBonePositions(pPed, 0, 0);
+        }
+        return 0;
+    }
+    personality = pPed->personality;
+    form = personality->form;
+    if (pPed->field_0x4 < 0) {
+        actor_set = NULL;
+    } else {
+        actor_set = &form->actor_sets[pPed->field_0x4];
+    }
+    for (i = 0; i < form->count_bones; i++) {
+        int parent_index = form->bones[i].indices[0];
+
+        if (parent_index >= 0) {
+            if (!(gPow2_array[i] & pPed->field_0xc) && !(gPow2_array[parent_index] & pPed->field_0xc) && actor_set != NULL) {
+                br_matrix34* parent_mat;
+                tS8* b = (tS8*)pPed->field_0xbc->field_0x2d[i];
+
+                if (pPed->field_0xe8 != NULL) {
+                    parent_mat = &pPed->field_0xe8[i];
+                } else {
+                    parent_mat = &actor_set->actors[parent_index]->t.t.mat;
+                }
+                if (pPed->field_0xe8 != NULL) {
+                    mat = &pPed->field_0xe8[i];
+                } else {
+                    mat = &actor_set->actors[i]->t.t.mat;
+                }
+                SetBoner(pPed, mat, parent_mat, &pPed->field_0x8c,
+                    (tU8)(int)(b[3] * pPed->field_0xbc->field_0x0 + b[0]),
+                    (int)(b[4] * pPed->field_0xbc->field_0x0 + b[1]),
+                    (int)(b[5] * pPed->field_0xbc->field_0x0 + b[2]),
+                    &personality->bones[i].field_0x20, &personality->bones[i].field_0x2c);
+            }
+        } else {
+            if (!(pPed->field_0x14 & 0x4) && *(tU8*)&pPed->field_0xbc->field_0x2c == 0) {
+                tS8* b = (tS8*)pPed->field_0xbc->field_0x2d[i];
+                br_matrix34 rot;
+                br_vector3 original_pos;
+                br_vector3 vec;
+                br_vector3 delta;
+                float t;
+                tPed_morph* morph;
+
+                if (pPed->field_0x4 < 0) {
+                    mat = &pPed->field_0x2c;
+                } else if (pPed->field_0xe8 == NULL) {
+                    mat = &form->actor_sets[pPed->field_0x4].actors[0]->t.t.mat;
+                } else {
+                    mat = pPed->field_0xe8;
+                }
+                BrVector3Copy(&original_pos, (br_vector3*)mat->m[3]);
+                MakeRotationMatrix(&rot,
+                    (tU8)(int)(b[3] * pPed->field_0xbc->field_0x0 + b[0]),
+                    (int)(b[4] * pPed->field_0xbc->field_0x0 + b[1]),
+                    (int)(b[5] * pPed->field_0xbc->field_0x0 + b[2]));
+                BrMatrix34Mul(mat, &rot, &pPed->field_0x8c);
+                morph = pPed->field_0xbc;
+                t = 1.0f - morph->field_0x0;
+                vec.v[0] = (morph->field_0x14.v[0] * morph->field_0x0 + morph->field_0x8.v[0] * t) * time;
+                vec.v[1] = (morph->field_0x14.v[1] * morph->field_0x0 + morph->field_0x8.v[1] * t) * time;
+                vec.v[2] = (morph->field_0x14.v[2] * morph->field_0x0 + morph->field_0x8.v[2] * t) * time;
+                BrMatrix34ApplyV(&delta, &vec, &pPed->field_0x5c);
+                mat->m[3][0] = delta.v[0] + original_pos.v[0];
+                mat->m[3][1] = delta.v[1] + original_pos.v[1];
+                mat->m[3][2] = delta.v[2] + original_pos.v[2];
+            }
+        }
+    }
+    return 1;
+}
 
 // StopCharacterMove
 
