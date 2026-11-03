@@ -322,6 +322,8 @@ extern void C2_HOOK_FASTCALL PhysicsObjectMoveVelocity(tPhysics_object* pObject)
 
 extern void C2_HOOK_FASTCALL PhysicsObjectMoveVelocityList(tPhysics_object* pObject);
 
+extern void C2_HOOK_FASTCALL PhysicsObjectSetImpulse(tPhysics_object* pObject, br_vector3* pImpulse);
+
 // ApplyGravitySingleObject
 
 // ApplyGravity

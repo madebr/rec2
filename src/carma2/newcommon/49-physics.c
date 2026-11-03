@@ -2359,3 +2359,14 @@ void C2_HOOK_FASTCALL PhysicsObjectMoveVelocityList(tPhysics_object* pObject) {
         pObject = pObject->next;
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x004c29d0
+void C2_HOOK_FASTCALL PhysicsObjectSetImpulse(tPhysics_object* pObject, br_vector3* pImpulse) {
+    tPhysics_object* pChild;
+
+    pObject->field_0x54 = *pImpulse;
+    for (pChild = pObject->child; pChild != NULL; pChild = pChild->next) {
+        PhysicsObjectSetImpulse(pChild, pImpulse);
+    }
+}
