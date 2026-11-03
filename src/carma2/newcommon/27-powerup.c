@@ -1306,7 +1306,24 @@ int C2_HOOK_FASTCALL AnnihilatePeds(tPowerup* pPowerup, tCar_spec* pCar) {
     return result;
 }
 
-// NapalmPeds
+// FUNCTION: CARMA2_HW 0x004de190
+int C2_HOOK_FASTCALL NapalmPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+    int result;
+
+    if (NapalmPedestrianNearCar(pCar) != 0) {
+        result = pPowerup - gPowerup_array;
+    } else {
+        result = -1;
+    }
+    if (result != -1) {
+        PlayExclusiveFFBEffect("Flamer", 0);
+    }
+    return result;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // STUB: CARMA2_HW 0x004de1f0
 // STUB: CARMA2_SW 0x004da6f0
