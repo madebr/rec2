@@ -1323,7 +1323,43 @@ void C2_HOOK_FASTCALL ResumePendingFlic(void) {
 
 extern void C2_HOOK_FASTCALL EnsurePaletteUp(void);
 
-// PlayFlic
+// FUNCTION: CARMA2_HW 0x00462930
+int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, void (C2_HOOK_FASTCALL* DoPerFrame)(void), int pInterruptable, int pFrame_rate) {
+    int finished_playing;
+    tFlic_descriptor the_flic;
+    tU32 last_frame;
+    tU32 new_time;
+
+    finished_playing = 0;
+    the_flic.data_start = NULL;
+    if (StartFlic(gMain_flic_list[pIndex].file_name, pIndex, &the_flic, pSize, pData_ptr, pDest_pixelmap, pX_offset, pY_offset, pFrame_rate)) {
+        return -1;
+    }
+    last_frame = 0;
+    while ((!pInterruptable || !AnyKeyDown()) && !finished_playing) {
+        new_time = PDGetTotalTime();
+        if (gSound_time != 0 && new_time >= gSound_time) {
+            DRS3StartSound(gEffects_outlet, gSound_ID);
+            gSound_time = finished_playing;
+        }
+        if (new_time - last_frame >= the_flic.frame_period) {
+            last_frame = new_time;
+            finished_playing = PlayNextFlicFrame(&the_flic);
+            DoPerFrame();
+            if (!gDark_mode) {
+                EnsurePaletteUp();
+            }
+            ServiceGame();
+        }
+    }
+    ServiceGame();
+    if (the_flic.f != NULL) {
+        BrMemFree(the_flic.data_start);
+        the_flic.data_start = NULL;
+        PFfclose(the_flic.f);
+    }
+    return 0;
+}
 
 // RunFlicAt
 
