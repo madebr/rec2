@@ -245,6 +245,11 @@ void C2_HOOK_FASTCALL WorkerShrapnelShowerUndo(tU32 chunk_0x48, tU32 prev_0x4, t
     NOT_IMPLEMENTED();
 }
 
+// STUB: CARMA2_HW 0x004da960
+void C2_HOOK_FASTCALL WorkerRepulseRay(int field_0x0, int field_0x4, int field_0x8, int field_0xc) {
+    NOT_IMPLEMENTED();
+}
+
 // STUB: CARMA2_HW 0x0043c240
 void C2_HOOK_FASTCALL WorkerSplitWeldApply(void* roadMachine, br_vector3* pVector) {
     NOT_IMPLEMENTED();
@@ -2348,7 +2353,11 @@ void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk) {
         chunk->data.smash_texture_change.texture2);
 }
 
-// ApplyRepulseRay
+// FUNCTION: CARMA2_HW 0x004c9a50
+void C2_HOOK_FASTCALL ApplyRepulseRay(tPipe_chunk** pChunk) {
+
+    return WorkerRepulseRay(*(int*)*pChunk, *(int*)((tU8*)*pChunk + 4), *(int*)((tU8*)*pChunk + 8), *(int*)((tU8*)*pChunk + 0xc));
+}
 
 // ApplyActorTrans
 
