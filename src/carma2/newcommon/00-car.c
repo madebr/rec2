@@ -2754,7 +2754,15 @@ tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* pActor) {
 #pragma auto_inline(on)
 #endif
 
-// PipeNonCarObject
+// FUNCTION: CARMA2_HW 0x004207a0
+int C2_HOOK_FASTCALL PipeNonCarObject(tPhysics_object* pCollision_info, void* pUser_data) {
+
+    if (!pCollision_info->disable_move_rotate && pCollision_info->actor != NULL && pCollision_info->actor->type_data != NULL) {
+        AddNonCarToPipingSession((tU16)((tNon_car_spec*)pCollision_info->actor->type_data)->car_ID, pCollision_info->actor);
+    }
+    ((tNon_car_spec*)pCollision_info->owner)->field_0xfc = pCollision_info->disable_move_rotate;
+    return 0;
+}
 
 // PipeNonCars
 
