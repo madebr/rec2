@@ -1014,7 +1014,50 @@ void C2_HOOK_FASTCALL DisposeVertexData(tModel_detail_vertex_data* pVertex_data)
 
 // OutsideEdgeLine
 
-// PointTriangleDistSq
+// FUNCTION: CARMA2_HW 0x0042ca30
+float C2_HOOK_FASTCALL PointTriangleDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB, const br_vector3* pC) {
+    br_vector3 ab;
+    br_vector3 bc;
+    br_vector3 ca;
+    br_vector3 projected;
+    float nx;
+    float ny;
+    float nz;
+    float length;
+    float distance;
+
+    BrVector3Sub(&ab, pB, pA);
+    BrVector3Sub(&bc, pC, pB);
+    nx = bc.v[2] * ab.v[1] - bc.v[1] * ab.v[2];
+    BrVector3Sub(&ca, pA, pC);
+    ny = bc.v[0] * ab.v[2] - bc.v[2] * ab.v[0];
+    nz = bc.v[1] * ab.v[0] - bc.v[0] * ab.v[1];
+    length = (br_scalar)sqrt(nz * nz + ny * ny + nx * nx);
+    if (length > BR_SCALAR_EPSILON * 2) {
+        length = (br_scalar)(1.0 / length);
+        nx = nx * length;
+        ny = ny * length;
+        nz = nz * length;
+    } else {
+        nx = 1.0f;
+        ny = 0.0f;
+        nz = 0.0f;
+    }
+    distance = (pP->v[0] - pA->v[0]) * nx + (pP->v[2] - pA->v[2]) * nz + (pP->v[1] - pA->v[1]) * ny;
+    projected.v[0] = pP->v[0] - distance * nx;
+    projected.v[1] = pP->v[1] - distance * ny;
+    projected.v[2] = pP->v[2] - distance * nz;
+    if (OutsideEdgeLine(&projected, pA, &ab, pC)) {
+        return PointEdgeDistSq(pP, pA, pB);
+    }
+    if (OutsideEdgeLine(&projected, pB, &bc, pA)) {
+        return PointEdgeDistSq(pP, pB, pC);
+    }
+    if (OutsideEdgeLine(&projected, pA, &ca, pB)) {
+        return PointEdgeDistSq(pP, pA, pC);
+    }
+    return distance * distance;
+}
 
 // PointRectDistSq
 
@@ -2809,4 +2852,10 @@ float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* p
 // STUB: CARMA2_HW 0x004c7f40
 void C2_HOOK_FASTCALL FUN_004c7f40(br_model* pModel, br_vector3* pSrc, const float* pScalars) {
     NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x0042cc40
+int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3* pA, const br_vector3* pDirection, const br_vector3* pInside) {
+    NOT_IMPLEMENTED();
+    return 0;
 }
