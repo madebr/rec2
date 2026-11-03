@@ -961,7 +961,70 @@ tPed_move* C2_HOOK_FASTCALL FindOrOpenMove(const char* pName, tPed_form* pForm, 
     return ReadMove(pName, pForm, pLooping_reset_flags, pMovement_direction, pFlags);
 }
 
-// MungeFaces
+// FUNCTION: CARMA2_HW 0x0040d530
+void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
+    int i;
+    int j;
+    int k;
+    br_face* face;
+    br_face* blendy_face;
+    br_vertex* bv;
+    int changed_one;
+
+    changed_one = 0;
+
+    for (i = 0, face = pModel->faces; i < pModel->nfaces; i++, face++) {
+        SpawnPedsOnFace(face, pModel);
+#ifdef REC2_MATCHING
+        if (((int (C2_HOOK_FASTCALL *)(br_material*, br_model*))SmashFaceMustBeUpdateable)(face->material, pModel)) {
+#else
+        if (SmashFaceMustBeUpdateable(face->material)) {
+#endif
+            if (gMr_blendy == NULL) {
+                gMr_blendy = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+                gMr_blendy->render_style = BR_RSTYLE_FACES;
+                gMr_blendy->model = BrModelAllocate(NULL, 2000, 2000);
+                gMr_blendy->model->nfaces = 0;
+                gMr_blendy->model->nvertices = 0;
+                gMr_blendy->model->flags |= BR_MODF_UPDATEABLE;
+            }
+            blendy_face = &gMr_blendy->model->faces[gMr_blendy->model->nfaces];
+            gMr_blendy->model->nfaces += 1;
+            memcpy(blendy_face, face, sizeof(br_face));
+            for (j = 0; j < 3; j++) {
+                br_vertex* vertex_j = &pModel->vertices[face->vertices[j]];
+                for (k = 0, bv = gMr_blendy->model->vertices; k < gMr_blendy->model->nvertices; k++, bv++) {
+                    if (Vector3Equals(&bv->p, &vertex_j->p)
+                            && Vector2Equals(&bv->map, &vertex_j->map)) {
+                        blendy_face->vertices[j] = k;
+                        vertex_j = NULL;
+                        break;
+                    }
+                }
+                if (vertex_j != NULL) {
+                    blendy_face->vertices[j] = gMr_blendy->model->nvertices;
+                    memcpy(&gMr_blendy->model->vertices[gMr_blendy->model->nvertices], vertex_j, sizeof(br_vertex));
+                    gMr_blendy->model->nvertices += 1;
+                }
+            }
+            if (i < pModel->nfaces - 1) {
+                memmove(&pModel->faces[i], &pModel->faces[i + 1], (pModel->nfaces - (i + 1)) * sizeof(br_vertex));
+            }
+            pModel->nfaces -= 1;
+            i -= 1;
+            face = &pModel->faces[i];
+            changed_one = 1;
+        }
+    }
+    if (changed_one) {
+        if (pModel->nfaces != 0) {
+            BrModelUpdate(pModel, BR_MODU_ALL);
+        } else {
+            pActor->model = NULL;
+            pActor->render_style = BR_RSTYLE_NONE;
+        }
+    }
+}
 
 // FinishUpLoadingPeds
 
