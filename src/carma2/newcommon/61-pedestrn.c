@@ -1499,7 +1499,21 @@ int C2_HOOK_FASTCALL MakeCharacterCollideworthy(tPed_character_instance* pCharac
     return MakeCharacterCollideworthy2(pCharacter, pArg2, pArg3, -1);
 }
 
-// GetRootObject
+// FUNCTION: CARMA2_HW 0x00409040
+tPhysics_object* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed) {
+    tPed_form* form;
+    tPed_form_boned_phys* boned_phys;
+    int i;
+
+    form = pPed->personality->form;
+    boned_phys = &form->boned_physicing[pPed->field_0x5];
+    for (i = 0; i < form->count_bones; i++) {
+        if (boned_phys->collision_infos[i]->shape != NULL) {
+            return boned_phys->collision_infos[i];
+        }
+    }
+    return NULL;
+}
 
 // STUB: CARMA2_HW 0x00409090
 int C2_HOOK_FASTCALL CharacterNoLongerCollideworthy(tPed_character_instance* pCharacter) {
