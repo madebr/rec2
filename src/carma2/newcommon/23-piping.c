@@ -447,7 +447,11 @@ int C2_HOOK_FASTCALL ARReplayPlaying(void) {
     }
 }
 
-// ARIsActionReplayAvailable
+// FUNCTION: CARMA2_HW 0x004025a0
+int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void) {
+
+    return gPipe_buffer_start != NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x004025b0
 // FUNCTION: CARMA2_SW 0x004025b0
