@@ -715,4 +715,10 @@ void C2_HOOK_FASTCALL ToggleJoystickDPad(void) {
     NewTextHeadupSlot(4, 0, 3000, -4, buffer);
 }
 
-// IncreaseJoystickFFB
+// FUNCTION: CARMA2_HW 0x00511390
+void C2_HOOK_FASTCALL IncreaseJoystickFFB(void) {
+    char buffer[256];
+
+    sprintf(buffer, "FFB Gain Set to %d%%", CycleJoystickFFBGain());
+    NewTextHeadupSlot(4, 0, 3000, -4, buffer);
+}
