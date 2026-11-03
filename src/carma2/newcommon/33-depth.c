@@ -736,7 +736,14 @@ void C2_HOOK_FASTCALL SetSkyColour(br_colour c) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// DRPixelmapRectangleFill
+// FUNCTION: CARMA2_HW 0x005156d0
+void C2_HOOK_FASTCALL DRPixelmapRectangleFill(br_pixelmap* dst, br_int_16 x, br_int_16 y, br_uint_16 w, br_uint_16 h, br_uint_32 colour) {
+
+    BrPixelmapRectangleFill(dst, x, y, w, h, colour);
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x00446680
 void C2_HOOK_FASTCALL DoWobbleCamera(br_actor* pCamera) { NOT_IMPLEMENTED(); }
