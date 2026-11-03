@@ -476,8 +476,26 @@ int C2_HOOK_FASTCALL PHILAddObjectImmediately(tPhysics_object* pObject) {
 }
 
 
-// STUB: CARMA2_HW 0x004b62e0
-int C2_HOOK_FASTCALL PHILAddActiveObjectImmediately(tPhysics_object* pInfo, br_matrix34* pMatrix, const br_vector3* pArg3, const br_vector3* pArg4) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004b62e0
+int C2_HOOK_FASTCALL PHILAddActiveObjectImmediately(tPhysics_object* pInfo, br_matrix34* pMatrix, const br_vector3* pArg3, const br_vector3* pArg4) {
+    int result;
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    if (gPHIL_munging_objects) {
+        gPHIL_object_added = 1;
+    }
+    result = PHILAddActiveObject(pInfo, pMatrix, pArg3, pArg4);
+    gPHIL_object_added = 0;
+    return result;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+extern int gFace_num__car;
+extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 // STUB: CARMA2_HW 0x004b63b0
 int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) { NOT_IMPLEMENTED(); }
