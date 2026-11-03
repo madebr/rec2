@@ -1365,7 +1365,9 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
     }
 }
 
-// FUN_004d3600
+// FUNCTION: CARMA2_HW 0x004d3600
+void C2_HOOK_FASTCALL FUN_004d3600(void) {
+}
 
 // InitPedsForRace
 
