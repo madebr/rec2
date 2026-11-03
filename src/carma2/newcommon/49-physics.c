@@ -450,7 +450,18 @@ void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_objec
 
 // LimitOmega
 
-// CapOmega
+// FUNCTION: CARMA2_HW 0x004c1840
+// FUNCTION: CARMA2_SW 0x004bdf70
+void C2_HOOK_FASTCALL CapOmega(tPhysics_object* pObject) {
+    br_scalar ts = BrVector3LengthSquared(&pObject->omega) * REC2_SQR(0.04f);
+    if (ts > REC2_SQR(1.57f)) {
+        ts = (br_scalar)sqrt(ts) * (2.0f / 3.14f);
+        ts = ts + ts;
+        pObject->omega.v[0] = pObject->omega.v[0] / ts;
+        pObject->omega.v[1] = pObject->omega.v[1] / ts;
+        pObject->omega.v[2] = pObject->omega.v[2] / ts;
+    }
+}
 
 // ListLimitOmega
 
