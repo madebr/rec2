@@ -2670,7 +2670,25 @@ void C2_HOOK_FASTCALL MakePedsEthereal(void) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// PipeSingleMatrix34Type66
+// FUNCTION: CARMA2_HW 0x004c8fb0
+void C2_HOOK_FASTCALL PipeSingleMatrix34Type66(br_actor* pActor) {
+    extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
+
+    ARDoSingleVariedSession(0x42, (uintptr_t)pActor, 1,
+        0x30, 0, (uintptr_t)&pActor->t.t.mat);
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+extern tPed_personality* gPed_personalities[50];
+extern tPed_form* gPed_forms[20];
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+/* ScalePedPersonality (0x0040bb20) and ScalePedForm (0x0040bee0) are not implemented in rec2
+   yet; inert stubs keep ScaleAllPeds linkable and runtime-safe. */
 // STUB: CARMA2_HW 0x0040bb20
 void C2_HOOK_FASTCALL ScalePedPersonality(tPed_personality* pPersonality, int pIndex, br_scalar* pScale, int pMode) {
     (void)pPersonality; (void)pIndex; (void)pScale; (void)pMode;
