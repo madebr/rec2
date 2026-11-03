@@ -50,6 +50,9 @@
 extern tU32 gPalette_fade_time;
 extern tWorld_callbacks gWorld_callbacks;
 
+// GLOBAL: CARMA2_HW 0x00661678
+br_vector3 gVector3_00661678 = { { 0.0f, 1.0f, 0.0f } };
+
 // GLOBAL: CARMA2_HW 0x0058f6e0
 tPhysics_callbacks gCar_physics_callbacks = {
     &gWorld_callbacks,
@@ -2140,4 +2143,170 @@ void C2_HOOK_FASTCALL ApplyNonCarTumble(tPhysics_object* pObject, br_vector3* pV
         pObject->omega.v[1] = ny * scale;
         pObject->omega.v[2] = nz * scale;
     }
+}
+
+
+// FUNCTION: CARMA2_HW 0x00418250
+void C2_HOOK_FASTCALL MoveNonCar(tNon_car_spec* pNon_car, br_scalar pDt) {
+    tSpecial_volume* last_special_volume;
+    tJoint_translation_params* translation_parameters;
+    br_vector3 drag_vector;
+    br_vector3 projected_axis;
+    br_scalar drag;
+    br_scalar k;
+    br_scalar speed;
+    br_scalar along;
+    br_scalar acceleration;
+    br_scalar scale;
+    br_scalar gravity;
+
+    last_special_volume = pNon_car->collision_info->last_special_volume;
+    pNon_car->flags |= 0x100000;
+    if (gCar_flying && gCar_to_view == (tCar_spec*)pNon_car) {
+        return;
+    }
+    if (pNon_car->actor->identifier[3] != '!') {
+        pNon_car->actor->identifier[3] = '&';
+        if (pNon_car->collision_info->physics_joint2 == NULL) {
+            pNon_car->collision_info->actor->identifier[3] = '!';
+            pNon_car->collision_info->omega.v[0] = 0.f;
+            pNon_car->collision_info->omega.v[1] = 0.f;
+            pNon_car->collision_info->omega.v[2] = 0.f;
+            pNon_car->collision_info->v.v[0] = 0.f;
+            pNon_car->collision_info->v.v[1] = 0.f;
+            pNon_car->collision_info->v.v[2] = 0.f;
+            pNon_car->collision_info->M = pNon_car->free_mass;
+            pNon_car->collision_info->field_0xed = 1;
+            pNon_car->collision_info->I.v[0] = pNon_car->I_over_M.v[0] * pNon_car->collision_info->M;
+            pNon_car->collision_info->I.v[1] = pNon_car->I_over_M.v[1] * pNon_car->collision_info->M;
+            pNon_car->collision_info->I.v[2] = pNon_car->I_over_M.v[2] * pNon_car->collision_info->M;
+            if (pNon_car->collision_info->field183_0x1d8 != 0
+                    && ((tPhysics_object*)pNon_car->collision_info->field183_0x1d8)->owner != NULL
+                    && ((tPhysics_object*)pNon_car->collision_info->field183_0x1d8)->flags_0x238 == 1
+                    && ((tPhysics_object*)pNon_car->collision_info->field183_0x1d8)->owner != (void*)pNon_car) {
+                NonCarSnapSmashCallback(pNon_car->collision_info, &((tCar_spec*)pNon_car)->pos, &pNon_car->collision_info->v, &gVector3_00661678);
+            }
+        } else {
+            BrVector3SetFloat(&pNon_car->collision_info->v, 0.f, 0.f, 0.f);
+            BrVector3SetFloat(&pNon_car->collision_info->omega, 0.f, 0.f, 0.f);
+            BrVector3SetFloat(&pNon_car->collision_info->rotate_omega, 0.f, 0.f, 0.f);
+            pNon_car->collision_info->disable_move_rotate = 1;
+        }
+    }
+    if (pNon_car->actor->identifier[3] != '!') {
+        return;
+    }
+    if (last_special_volume != NULL) {
+        gravity = pDt * 10.f;
+        gravity *= last_special_volume->gravity_multiplier;
+        gravity *= 0.14492753623188406;
+    } else {
+        gravity = pDt * 1.4492753623188406;
+    }
+    pNon_car->collision_info->field_0x54.v[0] = 0.f;
+    pNon_car->collision_info->field_0x54.v[1] = -gravity;
+    pNon_car->collision_info->field_0x54.v[2] = 0.f;
+    pNon_car->collision_info->v.v[1] -= gravity;
+    speed = BrVector3Length(&pNon_car->collision_info->v) * 6.9;
+    if (last_special_volume != NULL) {
+        speed *= last_special_volume->viscosity_multiplier;
+    }
+    drag = pDt * 0.0005f;
+    speed *= drag;
+    k = speed / pNon_car->collision_info->M;
+    drag_vector.v[0] = pNon_car->collision_info->v.v[0] * k;
+    drag_vector.v[1] = pNon_car->collision_info->v.v[1] * k;
+    drag_vector.v[2] = pNon_car->collision_info->v.v[2] * k;
+    DRVector3Diminish(&pNon_car->collision_info->v, &drag_vector);
+    speed = BrVector3Length(&pNon_car->collision_info->omega);
+    if (last_special_volume != NULL) {
+        speed *= last_special_volume->viscosity_multiplier;
+    }
+    speed *= drag;
+    k = speed;
+    drag_vector.v[0] = pNon_car->collision_info->omega.v[0] * k;
+    drag_vector.v[1] = pNon_car->collision_info->omega.v[1] * k;
+    drag_vector.v[2] = pNon_car->collision_info->omega.v[2] * k;
+    ApplyWaterOmegaBrake(pNon_car->collision_info, &drag_vector);
+    if (pNon_car->tumble_factor != 0.f) {
+        ApplyNonCarTumble(pNon_car->collision_info, &pNon_car->collision_info->v, pNon_car->tumble_factor, pNon_car->tumble_threshold);
+    }
+    if ((pNon_car->flags & 0x10000) == 0) {
+        return;
+    }
+    BrMatrix34ApplyV(&projected_axis, &pNon_car->field_0xf0->hinge_axis, &pNon_car->collision_info->transform_matrix);
+    translation_parameters = pNon_car->translation_parameters;
+    along = BrVector3Dot(&pNon_car->collision_info->velocity_car_space, &pNon_car->field_0xf0->hinge_axis);
+    scale = translation_parameters->forward_resistance;
+    acceleration = 0.f;
+    speed = along - (BrVector3Dot((br_vector3*)pNon_car->collision_info->field_0x1b4, &projected_axis) + translation_parameters->forward_resistance);
+    if ((pNon_car->flags & 0x20000) != 0
+            && (pNon_car->collision_info->collision_flag & 2) != 0
+            && (pNon_car->flags & 0xff) == 0
+            && (pNon_car->flags & 0xff00) == 0
+            && *(int*)pNon_car->field_0xf8 == 0
+            && gNet_mode != eNet_mode_client) {
+        pNon_car->flags = (pNon_car->flags & 1) | 1;
+    }
+    if ((pNon_car->flags & 0xff) != 0) {
+        goto forward;
+    }
+    if (pNon_car->collision_info->disable_move_rotate == 0 && *(int*)pNon_car->field_0xf8 != 0) {
+        goto forward;
+    }
+    if ((pNon_car->flags & 0xff00) != 0) {
+        goto reverse;
+    }
+    if (pNon_car->collision_info->disable_move_rotate != 0 || *(int*)pNon_car->field_0xf8 != 0) {
+        goto apply;
+    }
+reverse:
+    acceleration = -translation_parameters->reverse_acceleration * 0.057971014492753624;
+    scale = translation_parameters->reverse_resistance;
+    if (speed <= 0.05) {
+        goto apply;
+    }
+    if (along <= -0.005) {
+        goto apply;
+    }
+    if ((pNon_car->flags >> 8) < pNon_car->number_of_pushes && (pNon_car->collision_info->collision_flag & 2) != 0) {
+        pNon_car->flags = (pNon_car->flags & ~0xff00) | 0x100;
+        goto apply;
+    }
+    pNon_car->flags = pNon_car->flags & ~0xff00;
+    pNon_car->collision_info->disable_move_rotate = 1;
+    BrVector3SetFloat(&pNon_car->collision_info->v, 0.f, 0.f, 0.f);
+    BrVector3SetFloat(&pNon_car->collision_info->omega, 0.f, 0.f, 0.f);
+    acceleration = 0.f;
+    goto apply;
+forward:
+    acceleration = translation_parameters->forward_acceleration * 0.057971014492753624;
+    if (speed >= -0.05) {
+        goto apply;
+    }
+    if (along >= 0.005) {
+        goto apply;
+    }
+    if (*(int*)pNon_car->field_0xf8 == 0 || (pNon_car->flags & 0xff) == 1) {
+        *(int*)pNon_car->field_0xf8 = GetRaceTime() + translation_parameters->pause_at_top;
+    }
+    if ((pNon_car->flags & 0xff) < pNon_car->number_of_pushes && (pNon_car->collision_info->collision_flag & 2) != 0) {
+        if ((pNon_car->flags & 0xff) == 0) {
+            goto apply;
+        }
+        pNon_car->flags = (pNon_car->flags & ~0xff) | ((pNon_car->flags + 1) & 0xff);
+        goto apply;
+    }
+    pNon_car->flags = pNon_car->flags & ~0xff;
+    pNon_car->collision_info->disable_move_rotate = 1;
+    BrVector3SetFloat(&pNon_car->collision_info->v, 0.f, 0.f, 0.f);
+    BrVector3SetFloat(&pNon_car->collision_info->omega, 0.f, 0.f, 0.f);
+    acceleration = 0.f;
+apply:
+    pNon_car->collision_info->v.v[0] = pNon_car->field_0xf0->hinge_axis.v[0] * acceleration + pNon_car->collision_info->v.v[0];
+    pNon_car->collision_info->v.v[1] = pNon_car->field_0xf0->hinge_axis.v[1] * acceleration + pNon_car->collision_info->v.v[1];
+    pNon_car->collision_info->v.v[2] = pNon_car->field_0xf0->hinge_axis.v[2] * acceleration + pNon_car->collision_info->v.v[2];
+    pNon_car->collision_info->v.v[0] = pNon_car->collision_info->v.v[0] * scale;
+    pNon_car->collision_info->v.v[1] = pNon_car->collision_info->v.v[1] * scale;
+    pNon_car->collision_info->v.v[2] = pNon_car->collision_info->v.v[2] * scale;
 }
