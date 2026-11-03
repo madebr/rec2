@@ -438,7 +438,41 @@ void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor) {
 
 // DoConnotations
 
-// DoPowerupRespawnSmash
+// FUNCTION: CARMA2_HW 0x004ecea0
+void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor* pActor) {
+    br_bounds3* pBounds;
+    float yon_squared;
+
+    if (gPowerup_respawn_smashable.mode_data.shrapnel.connotations.count_sounds != 0) {
+        DRS3StartSound3D(gCar_outlet, gPowerup_respawn_smashable.mode_data.shrapnel.connotations.sounds[IRandomBetween(0, gPowerup_respawn_smashable.mode_data.shrapnel.connotations.count_sounds - 1)], &pActor->t.t.translate.t, &gZero_v__car, 1, 255, IRandomBetween(0xe000, 0x12000), 0x10000);
+    }
+    pBounds = &pActor->model->bounds;
+    yon_squared = gYon_squared;
+    if (gAction_replay_mode != 0 || PointOutOfSight(&pActor->t.t.translate.t, yon_squared) == 0) {
+        if (gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.explosion_animation.count_groups != 0) {
+            Explode(&gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.explosion_animation, pActor, pBounds, NULL);
+        }
+    }
+    if (gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.material != NULL) {
+        QueueOilSpill2(NULL, pActor, pActor->model,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x0,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x4,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x8,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0xc,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x10,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x14,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x20,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x24,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x18,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x1c,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.material,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.material2);
+    }
+}
+
+// DoConnotationsMultiLevel
+
+// SmashItIntoVerySmallPiecesIndeed
 
 // FUNCTION: CARMA2_HW 0x004ecfa0
 // FUNCTION: CARMA2_SW 0x004e8c70
