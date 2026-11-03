@@ -8,11 +8,20 @@
 
 #include "27-powerup.h"
 
+#include <stdio.h>
+
 #include "00-car.h"
 #include "01-network.h"
 
+#include "13-crush1.h"
+#include "15-displays.h"
 #include "16-graphics1.h"
 #include "18-graphics2.h"
+#include "19-font.h"
+#include "21-mainloop.h"
+#include "23-piping.h"
+#include "25-grafdata.h"
+#include "28-world3.h"
 #include "32-spark.h"
 #include "41-utility.h"
 #include "42-input.h"
@@ -21,11 +30,105 @@
 #include "53-controls.h"
 #include "60-phil.h"
 #include "61-pedestrn.h"
+#include "69-sound.h"
+#include "70-packfile.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+
+/* upstream's c2_hooks.h does not define this yet (same guard as 09-funks.h / 61-pedestrn.h;
+   the sibling feature branches do not carry those headers' upgraded form) */
+#ifndef C2_HOOK_FAKE_THISCALL
+#ifdef REC2_MATCHING
+#define C2_HOOK_FAKE_THISCALL __fastcall
+#else
+#define C2_HOOK_FAKE_THISCALL
+#endif
+#endif
+
+/* declared here rather than through 61-pedestrn.h: that header belongs to another feature area */
+extern void C2_HOOK_FASTCALL MungeAllCharacterMaterials(void (C2_HOOK_FASTCALL* pCallback)(void*));
+extern void C2_HOOK_FASTCALL MungeAllCharacterObjects(void (C2_HOOK_FASTCALL* pCallback)(void*));
+extern void C2_HOOK_FASTCALL MungeAllCharacterModels(void (C2_HOOK_FASTCALL* pCallback)(void*));
+
+extern void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, float pDamage);
+extern void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info);
+extern tS3_outlet* gCar_outlet;
+extern float gPed_head_scale;
+extern int gEthereal_pedestrians;
+extern void C2_HOOK_FASTCALL EtherealiseMaterial1(void* pMaterial);
+extern void C2_HOOK_FASTCALL EtherealiseCharacter1(void* pCharacter);
+extern void C2_HOOK_FASTCALL EtherealiseMaterial2(void* pMaterial);
+extern int gForceFeedbackAvailable;
+extern void C2_HOOK_FASTCALL StopDinputEffect(int pIndex);
+extern void C2_HOOK_FASTCALL UnloadDinputFFBEffectAtIndex(int index);
+extern void C2_HOOK_FASTCALL StartDinputEffect(int pIndex);
+extern char gJoystick_effects[];
+extern int gCount_joystick_effects;
+extern int C2_HOOK_FASTCALL SelectCrushNetwork(undefined4* pField, tPhysics_object* pObj, int pMode);
+extern void C2_HOOK_FASTCALL QueueOilSpill2(tCar_spec* pCar, br_actor* pCar_actor, br_model* pCar_model, tU32 pTime_delay, br_scalar pMin_size, br_scalar pMax_size, br_scalar pMin_grow_rate, br_scalar pMax_grow_rate, br_scalar pInitial_size, br_scalar pField_0x48, br_scalar pField_0x4c, br_scalar pField_0x40, br_scalar pField_0x44, br_material* pMaterial, br_material* pField_0x50);
+extern br_material* oily_material;
+extern int C2_HOOK_FASTCALL DoPedestrianRepulsifictor(tCar_spec* pCar, float pF0, float pF1, float pF2, float pF3);
+extern int C2_HOOK_FASTCALL NapalmPedestrianNearCar(tCar_spec* pCar);
+extern int C2_HOOK_FASTCALL FindPedestrianNearCar(tCar_spec* pCar, br_scalar pRadius);
+extern int C2_HOOK_FASTCALL CalmDownAllPeds(void);
+extern void C2_HOOK_FASTCALL MakePedsNotEthereal(void);
+extern int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* pInfo, br_matrix34* pMatrix, const br_vector3* pArg3, const br_vector3* pArg4);
+extern int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...);
+extern void C2_HOOK_FASTCALL PHILRemoveFromParentChain(tPhysics_object* pObject);
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
+extern tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer);
+extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
+extern void C2_HOOK_FASTCALL RecalculateCarMassMomentOfInertia(tCar_spec* pCar);
+extern br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName);
+extern FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
+extern void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
+extern float gCamera_angle;
+extern int gNumber_of_icons;
+extern float gCosine_array[64];
+extern tPlayer_ID gLocal_net_ID;
+extern tU32 gINT_00705b70;
+extern double C2_HOOK_CDECL fmod(double pX, double pY);
+extern void C2_HOOK_FASTCALL PratcamEvent(int pIndex);
+extern const double gConst_inverse_world_scale;
+extern const double gConst_2pi;
+extern const float gConst_0p5;
+extern const float gConst_0p0;
+extern const double gConst_3pi_over_2;
+extern const double gConst_minus_128_over_pi;
+extern const double gConst_pi;
+extern const double gConst_pi_over_2;
+extern const float gConst_minus_1p0;
+extern const double gConst_radians_to_degrees;
+extern const double gConst_0p95;
+extern const double gConst_minus_0p15;
+
+// GLOBAL: CARMA2_HW 0x006a0458
+tRespawn_powerup gRespawn_powerups[100] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a0a50
+tU8* gRace_powerup_respawn_bools = NULL;
+
+// GLOBAL: CARMA2_HW 0x006a0ad0
+int gNumber_of_powerups;
+
+// GLOBAL: CARMA2_HW 0x006a0a68
+int gPissed_next_time;
+
+// GLOBAL: CARMA2_HW 0x00705be0
+int gCredit_multiplier;
+
+// GLOBAL: CARMA2_HW 0x00705c14
+float gPissed_flicker_frames[3];
+
+// GLOBAL: CARMA2_HW 0x00705c20
+float gPissed_flicker_limit;
+
+// GLOBAL: CARMA2_HW 0x00705c74
+float gPissed_hold_time;
 
 // GLOBAL: CARMA2_HW 0x006a0a70
 // GLOBAL: CARMA2_SW 0x0069aac8
@@ -161,6 +264,23 @@ int gInstant_handbrake;
 // GLOBAL: CARMA2_SW 0x0069aaac
 tPowerup* gPowerup_array;
 
+// GLOBAL: CARMA2_HW 0x0059630c
+int gCurrent_ffb_effect_index = -1;
+
+
+
+// GLOBAL: CARMA2_HW 0x006a0ac0
+br_pixelmap* gFizzle_in[3];
+
+// GLOBAL: CARMA2_HW 0x006a0adc
+int gCollision_info_uid_counter;
+
+// GLOBAL: CARMA2_HW 0x0058ac40
+const float gConst_0p1 = 0.1f;
+
+// GLOBAL: CARMA2_HW 0x0058ac48
+const double gConst_10_over_7 = 10.0 / 7.0;
+
 // FUNCTION: CARMA2_HW 0x004d8d10
 // FUNCTION: CARMA2_SW 0x004d5240
 char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index) {
@@ -172,7 +292,19 @@ char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index) {
 
 // DoPowerupTextHeadup
 
-// QueueIconGoing
+// FUNCTION: CARMA2_HW 0x004d9670
+void C2_HOOK_FASTCALL QueueIconGoing(tPowerup* pPowerup, tHeadup_icon* pHeadup_icons, int* pCount_icons) {
+    int i;
+
+    for (i = 0; i < *pCount_icons; i++) {
+        if (pPowerup == pHeadup_icons[i].powerup) {
+            pHeadup_icons[i].fizzle_stage = 3;
+            pHeadup_icons[i].fizzle_direction = -1;
+            pHeadup_icons[i].fizzle_start = GetTotalTime();
+            break;
+        }
+    }
+}
 
 // QueueIconComing
 
@@ -188,7 +320,10 @@ char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index) {
 
 // ExcludedPowerup
 
-// GotPowerupX
+// STUB: CARMA2_HW 0x004d9150
+int C2_HOOK_FASTCALL GotPowerupX(tCar_spec* pCar, int pIndex, int pArg3, int pMessage, tU32 pTime) {
+    NOT_IMPLEMENTED();
+}
 
 // GotPowerupXX
 
@@ -272,17 +407,16 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 
 // RemoveRepulsiveReferences
 
-// MungeRepulseRays
+// STUB: CARMA2_HW 0x004db8e0
+void C2_HOOK_FASTCALL MungeRepulseRays(tU32 pTime) {
+    NOT_IMPLEMENTED();
+}
 
 // AdjustRepulseRay
 
 // ResetRepulseRay
 
 // DrawSinglePowerupIcon
-
-// DrawPowerupIcons2
-
-// DrawKeyPowerups
 
 // FUNCTION: CARMA2_HW 0x004da9d0
 // FUNCTION: CARMA2_SW 0x004d6ea0
@@ -304,19 +438,14 @@ void C2_HOOK_FASTCALL ToggleInventory(void) {
 
 // DoPowerupPeriodics
 
-// CheckRespawnQueue
+/* inlined into MungePowerupStuff in the original (no standalone copy) */
+static void C2_HOOK_FASTCALL CheckRespawnQueue(tU32 pTime) {
+    (void)pTime;
+    NOT_IMPLEMENTED();
+}
 
 // STUB: CARMA2_HW 0x004db880
 void C2_HOOK_FASTCALL MungePowerupStuff(tU32 pArg1) { NOT_IMPLEMENTED(); }
-void C2_HOOK_FASTCALL GotPowerupN(int pN) {
-    int modifiers;
-
-    modifiers = PDKeyDown(0) ? 10 : 0;
-    modifiers += PDKeyDown(1) ? 20 : 0;
-    modifiers += PDKeyDown(2) ? 40 : 0;
-    modifiers += PDKeyDown(4) ? 80 : 0;
-    GotPowerupEarwig(&gProgram_state.current_car, modifiers + pN, 1, 1);
-}
 
 // FUNCTION: CARMA2_HW 0x004dbdb0
 // FUNCTION: CARMA2_SW 0x004d82b0
@@ -382,13 +511,9 @@ void C2_HOOK_FASTCALL GotPowerup9(void) {
 
 // GainAPO2
 
-// GainAPOPot2
-
 // GainAPO
 
 // GotTimeOrPower
-
-// GainAPOPotential
 
 // FUNCTION: CARMA2_HW 0x004dc720
 // FUNCTION: CARMA2_SW 0x004d8c20
@@ -686,17 +811,9 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // MinePreCollisionStuff
 
-// ActivateMine
+// ConfigureShitMine
 
-// PositionMine
-
-// MineSound
-
-// ReceivedMine
-
-// ShitMine
-
-// MineExplode
+// InitializeMineMotion
 
 // FUNCTION: CARMA2_HW 0x004ddc10
 // FUNCTION: CARMA2_SW 0x004da110
@@ -737,10 +854,6 @@ void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
 
 // NapalmPeds
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
 // STUB: CARMA2_HW 0x004de1f0
 // STUB: CARMA2_SW 0x004da6f0
 int C2_HOOK_FASTCALL RepulseOpponents2(tPowerup* pPowerup, tCar_spec* pCar, int pSend_message) {
@@ -760,7 +873,7 @@ int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // RepulsePedestrians
 
-// ReceivedRepulse
+// ReceivedRepulseOpponents
 
 // ResetEngineFactor
 
@@ -958,10 +1071,6 @@ void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // ResetGhostPeds
 
-// DoBouncey
-
-// HitMine
-
 // SetMassMultiplier
 
 // ResetMassMultiplier
@@ -1044,7 +1153,7 @@ void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition) {
 
 // FUNCTION: CARMA2_HW 0x004df200
 // FUNCTION: CARMA2_SW 0x004db700
-void C2_HOOK_FASTCALL ARPowerupGot(tPowerup* pPowerup, tCar_spec* pCar) {
+void C2_HOOK_FASTCALL WorkerPowerupGot(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (pPowerup->got_proc != NULL) {
         pPowerup->got_proc(pPowerup, pCar);
@@ -1059,6 +1168,8 @@ void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar) {
         pPowerup->lose_proc(pPowerup, pCar);
     }
 }
+
+// ARPowerupGot
 
 // SetPissed
 
@@ -1152,13 +1263,27 @@ void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity) {
     }
 }
 
-// DuplicateModel
+static br_model* SetChangingPowerup_DupModel(br_model* pModel, const char* pName) {
+    br_model* copy;
+
+    copy = BrModelAllocate((char*)pName, pModel->nvertices, pModel->nfaces);
+    if (copy == NULL) {
+        return copy;
+    }
+    copy->pivot = pModel->pivot;
+    copy->flags = pModel->flags;
+    copy->user = pModel->user;
+    copy->crease_angle = pModel->crease_angle;
+    copy->radius = pModel->radius;
+    copy->bounds = pModel->bounds;
+    memcpy(copy->vertices, pModel->vertices, pModel->nvertices * sizeof(br_vertex));
+    memcpy(copy->faces, pModel->faces, pModel->nfaces * sizeof(br_face));
+    return copy;
+}
 
 // SetChangingPowerup
 
 // PedValium
-
-// PowerupCancel
 
 // GrowATail
 
@@ -1208,6 +1333,8 @@ void C2_HOOK_FASTCALL UndoInitialTail(void) {
 }
 
 // MayQueuePowerupRespawn
+
+// DisposeBillBoard
 
 // FUNCTION: CARMA2_HW 0x004e07d0
 // FUNCTION: CARMA2_SW 0x004dccd0
@@ -1413,14 +1540,77 @@ void C2_HOOK_FASTCALL PeriodicCloaking(void) {
     }
 }
 
-// STUB: CARMA2_HW 0x004c60a0
-void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info) { NOT_IMPLEMENTED(); }
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// MungeSphereObject
+// AddRepulseLink
+// ScalePedHeads
+// PlayExclusiveFFBEffect
+// FUN_0045c760
+// GetJoystickEffect
+// MakePedsEthereal
+// PipeSingleMatrix34Type66
+// STUB: CARMA2_HW 0x0040bb20
+void C2_HOOK_FASTCALL ScalePedPersonality(tPed_personality* pPersonality, int pIndex, br_scalar* pScale, int pMode) {
+    (void)pPersonality; (void)pIndex; (void)pScale; (void)pMode;
+}
+// STUB: CARMA2_HW 0x0040bee0
+void C2_HOOK_FASTCALL ScalePedForm(tPed_form* pForm, int pIndex, br_scalar* pScale, int pMode) {
+    (void)pForm; (void)pIndex; (void)pScale; (void)pMode;
+}
+// ScaleAllPeds
+// NapalmPedDistanceCallback
 
-// STUB: CARMA2_HW 0x004df200
-void C2_HOOK_FASTCALL WorkerPowerupGot(tPowerup* pPowerup, tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+// NapalmPedDistanceCompare
+
+// GLOBAL: CARMA2_HW 0x0058abe8
+const double gConst_2pi = 6.283185307179586;
+
+// GLOBAL: CARMA2_HW 0x0058ac00
+const float gConst_0p5 = 0.5f;
+
+// GLOBAL: CARMA2_HW 0x0058ac0c
+const float gConst_0p0 = 0.0f;
+
+// GLOBAL: CARMA2_HW 0x0058ac70
+const double gConst_minus_0p15 = -0.15;
+
+// GLOBAL: CARMA2_HW 0x0058ac90
+const double gConst_inverse_world_scale = 1.0 / 6.9;
+
+// GLOBAL: CARMA2_HW 0x0058ac98
+const double gConst_3pi_over_2 = 4.71238898038469;
+
+// GLOBAL: CARMA2_HW 0x0058aca0
+const double gConst_minus_128_over_pi = -40.74366543152521;
+
+// GLOBAL: CARMA2_HW 0x0058aca8
+const double gConst_pi = 3.141592653589793;
+
+// GLOBAL: CARMA2_HW 0x0058acb0
+const double gConst_pi_over_2 = 1.5707963267948966;
+
+// GLOBAL: CARMA2_HW 0x0058acb8
+const float gConst_minus_1p0 = -1.0f;
+
+// GLOBAL: CARMA2_HW 0x0058acc0
+const double gConst_radians_to_degrees = 182.04444444444445;
+
+// GLOBAL: CARMA2_HW 0x0058acc8
+const double gConst_0p95 = 0.95;
+
+// STUB: CARMA2_HW 0x004f9020
+void C2_HOOK_FASTCALL RecalculateCarMassMomentOfInertia(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
 
 // GLOBAL: CARMA2_HW 0x006a0960
 tRepulse_link gRepulse_links[6];
 
 // GLOBAL: CARMA2_HW 0x00705560
 tShit_mine gShit_mines[20];
+
+// STUB: CARMA2_HW 0x004ce560
+int C2_HOOK_FASTCALL NapalmPedestrianNearCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004c60a0
+void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info) { NOT_IMPLEMENTED(); }
