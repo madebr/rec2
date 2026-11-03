@@ -32,6 +32,14 @@ extern int gPaused;
 
 extern void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 
+extern void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...);
+
+// GLOBAL: CARMA2_HW 0x006768f8
+tU32 gReplay_saved_average_frame_period = 0;
+
+// GLOBAL: CARMA2_HW 0x006768a4
+tU32 gReplay_saved_frame_period = 0;
+
 // GLOBAL: CARMA2_HW 0x006768b0
 tU32 gPipe_UNK_006768b0 = 0;
 
@@ -733,7 +741,55 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
     gLast_replay_frame_time = PDGetTotalTime();
 }
 
-// ARToggleReplay
+// FUNCTION: CARMA2_HW 0x00403d60
+int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_off_AR_callback* pTurn_off_AR_cb, tAfter_AR_callback* pAfter_AR_cb, tZappy_AR_callback* pZappy_AR_cb, tPreprocess_AR_callback* pPreprocess_cb, tPostProcess_AR_callback* pPostProcess_cb, int* pArg7, int* pArg8) {
+    float old_rate;
+
+    if (gPipe_buffer_start != NULL) {
+        if (gAction_replay_mode == 0) {
+            dr_dprintf("Action replay getting turned on");
+            InitializeActionReplayPix();
+            if (pArg7 != NULL) {
+                gReplay_saved_frame_period = *pArg7;
+            } else {
+                gReplay_saved_frame_period = gFrame_period;
+            }
+            if (pArg8 != NULL) {
+                gReplay_saved_average_frame_period = *pArg8;
+            } else {
+                gReplay_saved_average_frame_period = gFrame_period;
+            }
+            gReplay_rate = 1.f;
+            gPaused = 1;
+            gPlay_direction = 1;
+            gLast_replay_frame_time = GetTotalTime();
+            gPipe_play_ptr = gPipe_record_ptr;
+            pTurn_on_AR_cb();
+        } else {
+            gDisable_piped_sounds = 1;
+            old_rate = gReplay_rate;
+            gReplay_rate = 100.f;
+            ARDoActionReplay(0x7fffffff, (tReplay_between_sessions_callback)pZappy_AR_cb, pPreprocess_cb, pPostProcess_cb);
+            gDisable_piped_sounds = 0;
+            gReplay_rate = old_rate;
+            S3SetSampleFilterCallbacks(NULL, NULL);
+            pTurn_off_AR_cb();
+            if (pArg7 != NULL) {
+                *pArg7 = gReplay_saved_frame_period;
+            }
+            if (pArg8 != NULL) {
+                *pArg8 = gReplay_saved_average_frame_period;
+            }
+            MovieStopRecordingIfNecessary();
+            dr_dprintf("Action replay getting turned off");
+            DisposeReplayPixelmaps();
+        }
+        gAction_replay_mode = (gAction_replay_mode == 0);
+        pAfter_AR_cb();
+        return 1;
+    }
+    return 0;
+}
 // GetReducedPos
 
 // SaveReducedPos
@@ -1876,4 +1932,19 @@ int C2_HOOK_FASTCALL FUN_00564e5e(int pSound) {
     }
     locals.buffer_description = locals.descriptor->buffer_description;
     return locals.buffer_description->sample_size * 1000 / locals.buffer_description->sample_rate;
+}
+
+// STUB: CARMA2_HW 0x004e7090
+void C2_HOOK_FASTCALL InitializeActionReplayPix(void) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x00403260
+void C2_HOOK_FASTCALL ARDoActionReplay(int pFrames, tReplay_between_sessions_callback pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004e70d0
+void C2_HOOK_FASTCALL DisposeReplayPixelmaps(void) {
+    NOT_IMPLEMENTED();
 }
