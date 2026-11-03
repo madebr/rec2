@@ -1292,7 +1292,13 @@ tU32 C2_HOOK_FASTCALL DecimalDigitsToBitmask(tU32 pValue) {
 
 void C2_HOOK_FASTCALL EncodeFileWrapper(char* pThe_path);
 
-// EncodeAllFilesInDirectory
+// FUNCTION: CARMA2_HW 0x00490b90
+void C2_HOOK_FASTCALL EncodeAllFilesInDirectory(char* pThe_path) {
+    char path[256];
+
+    PathCat(path, gApplication_path, pThe_path);
+    PFForEveryFile(path, (tPDForEveryFileRecurse_cbfn)EncodeFileWrapper);
+}
 
 // EncodeFileWrapper
 
