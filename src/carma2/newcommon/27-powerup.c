@@ -2697,7 +2697,44 @@ void C2_HOOK_FASTCALL ScalePedPersonality(tPed_personality* pPersonality, int pI
 void C2_HOOK_FASTCALL ScalePedForm(tPed_form* pForm, int pIndex, br_scalar* pScale, int pMode) {
     (void)pForm; (void)pIndex; (void)pScale; (void)pMode;
 }
-// ScaleAllPeds
+// FUNCTION: CARMA2_HW 0x0040c420
+void C2_HOOK_FASTCALL ScaleAllPeds(int pMorph_or_personality, br_scalar* pScale, int pMode) {
+    int i;
+
+    for (i = 0; i < 50; i++) {
+        int index;
+
+        if (gPed_personalities[i] == NULL) {
+            continue;
+        }
+        if (pMorph_or_personality != -2) {
+            index = pMorph_or_personality;
+        } else {
+            index = gPed_personalities[i]->form->index_head_bone;
+        }
+        ScalePedPersonality(gPed_personalities[i], index, pScale, pMode);
+    }
+    for (i = 0; i < 20; i++) {
+        int index;
+
+        if (gPed_forms[i] == NULL) {
+            continue;
+        }
+        if (pMorph_or_personality != -2) {
+            index = pMorph_or_personality;
+        } else {
+            index = gPed_forms[i]->index_head_bone;
+        }
+        ScalePedForm(gPed_forms[i], index, pScale, pMode);
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // NapalmPedDistanceCallback
 
 // NapalmPedDistanceCompare
