@@ -2391,7 +2391,20 @@ void C2_HOOK_FASTCALL UndoScreenWobble(tPipe_chunk** pChunk, tPipe_chunk* pPrev_
     ClearPipeUndoFlag();
 }
 
-// UndoSplash
+// FUNCTION: CARMA2_HW 0x004c9e80
+void C2_HOOK_FASTCALL UndoSplash(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    SetPipeUndoFlag();
+    if (pPrev_chunk != NULL) {
+        tPipe_chunk_splash* chunk = (tPipe_chunk_splash*)pPrev_chunk;
+        ((tReplay_splash_effect*)chunk->pOwner)->size = ((tPipe_chunk_splash*)pPrev_chunk)->v[0];
+        ((tReplay_splash_effect*)chunk->pOwner)->x = ((tPipe_chunk_splash*)pPrev_chunk)->v[1];
+        ((tReplay_splash_effect*)chunk->pOwner)->y = ((tPipe_chunk_splash*)pPrev_chunk)->v[2];
+        ((tReplay_splash_effect*)chunk->pOwner)->z = ((tPipe_chunk_splash*)pPrev_chunk)->v[3];
+    } else {
+        ((tReplay_splash_effect*)((tPipe_chunk_splash*)*pChunk)->pOwner)->size = 10000.0f;
+    }
+    ClearPipeUndoFlag();
+}
 
 // UndoExtendedSplash
 // UndoSkidAdjustment
