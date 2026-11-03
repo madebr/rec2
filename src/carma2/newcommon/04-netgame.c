@@ -951,7 +951,23 @@ void C2_HOOK_FASTCALL ToggleFlapsFromNetwork(tNet_message_chunk* pChunk) {
     }
 }
 
-// FUN_43d7d0
+// FUNCTION: CARMA2_HW 0x0043d7d0
+void C2_HOOK_FASTCALL FUN_43d7d0(tNet_game_player_info* pRecipient) {
+    int i;
+    tNon_car_spec** pNon_car;
+
+    i = 0;
+    if (gNum_active_non_cars > 0) {
+        pNon_car = gActive_non_car_list;
+        do {
+            if ((*pNon_car)->driver == 3) {
+                SendSplitHalfNonCarData(*pNon_car, -1, pRecipient);
+            }
+            i++;
+            pNon_car++;
+        } while (i < gNum_active_non_cars);
+    }
+}
 
 // StopCarBeingIt
 
