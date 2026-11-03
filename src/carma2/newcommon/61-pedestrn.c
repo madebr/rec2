@@ -39,6 +39,10 @@ extern br_vector3 gZero_v__car;
 
 extern tU32 gINT_00705b70;
 
+extern int C2_HOOK_FASTCALL DoPedAnnihilator(tPedestrian* pPed, tCar_spec* pCar, float pDistance_squared, tU32 pArg4, tPedestrian_distances* pDistances);
+
+extern int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback);
+
 typedef struct {
     float min_speed;
     float max_speed;
@@ -74,6 +78,12 @@ float gAverage_ped_scale;
 char gPed_noise_table[16] = {
     0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
 };
+
+// GLOBAL: CARMA2_HW 0x007447a0
+int gEthereal_pedestrians = 0;
+
+// GLOBAL: CARMA2_HW 0x007447b4
+tPedestrian* gPedestrians_in_sight;
 
 // GLOBAL: CARMA2_HW 0x007447cc
 int gCount_killed_peds;
@@ -1360,11 +1370,92 @@ void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tPhysics_object* pCollis
 
 // MungeProxRay
 
-// FindPedestrianNearCar
+// FUNCTION: CARMA2_HW 0x004ce030
+int C2_HOOK_FASTCALL FindPedestrianNearCar(tCar_spec* pCar, br_scalar pRadius) {
 
-// DoToPeds
+    return DoToPeds(pCar, 1, pRadius, 1, NULL, (tForEachPedestrian_cbfn*)DoPedAnnihilator);
+}
 
-// DoPedAnnihilator
+// FUNCTION: CARMA2_HW 0x004ce140
+int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback) {
+    tPedestrian* ped;
+    tU32 now;
+    br_vector3* pos;
+    br_scalar dist_sq;
+    float t;
+    int result = 0;
+
+    if (gEthereal_pedestrians) {
+        return 0;
+    }
+    pos = &pCar_spec->pos;
+    now = GetTotalTime();
+
+    for (ped = gPedestrians_in_sight; ped != NULL; ped = ped->next) {
+        dist_sq = (pos->v[0] - ped->pos.v[0]) * (pos->v[0] - ped->pos.v[0])
+                + (pos->v[1] - ped->pos.v[1]) * (pos->v[1] - ped->pos.v[1])
+                + (pos->v[2] - ped->pos.v[2]) * (pos->v[2] - ped->pos.v[2]);
+
+        if (pOnly_alive != 0 && ped->hit_points <= 0) {
+            continue;
+        }
+        if (pMax_distance != 0.f && dist_sq >= pMax_distance) {
+            continue;
+        }
+        if (pParam_4 != 0) {
+            br_material* material;
+            br_vector3 nor;
+            br_vector3 dir;
+
+            dir.v[0] = ped->pos.v[0] - pos->v[0];
+            dir.v[1] = ped->pos.v[1] - pos->v[1];
+            dir.v[2] = ped->pos.v[2] - pos->v[2];
+            FindFace(pos, &dir, &nor, &t, &material);
+        } else {
+            t = 100.f;
+        }
+        if (t < 1.0) {
+            continue;
+        }
+        pCallback(ped, pCar_spec, dist_sq, now, pData);
+        result = 1;
+    }
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x004ce050
+int C2_HOOK_FASTCALL DoPedAnnihilator(tPedestrian* pPed, tCar_spec* pCar, float pDistance_squared, tU32 pArg4, tPedestrian_distances* pDistances) {
+    extern void C2_HOOK_FASTCALL PipeSinglePedIncident(tPedestrian* pPed, br_actor* pActor);
+    extern void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tPhysics_object* pCollision_info);
+    extern tS3_outlet* gCar_outlet;
+    int i;
+
+    pPed->field_0x0c->field_0xc0 = pCar;
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        PipeSinglePedIncident(pPed, pCar->collision_info->actor);
+    }
+    if (!gImmortal_peds) {
+        KillPedestrian(pPed, pCar->collision_info);
+        SetPedMove(pPed, 0x71, -1, 0, 1, pArg4, ePed_action_dead);
+    }
+    i = 0;
+    while (gProximity_rays[i].start_time != 0) {
+        i++;
+        /* original compares the walk pointer with the address just past the table */
+        if ((tU32*)&gProximity_rays[i].start_time >= (tU32*)&gPed_slick) {
+            return 0;
+        }
+    }
+    gProximity_rays[i].start_time = GetTotalTime();
+    gProximity_rays[i].car = pCar;
+    gProximity_rays[i].ped = pPed;
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        DRS3StartSound(gCar_outlet, 0x157c);
+        return 0;
+    }
+    DRS3StartSound3D(gCar_outlet, 0x157c, &pCar->pos, &gZero_v__car, 1, 0xff, 0x10000, 0x10000);
+    return 0;
+}
 
 // RepulseIt
 
