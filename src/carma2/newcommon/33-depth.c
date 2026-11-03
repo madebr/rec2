@@ -13,11 +13,16 @@
 #include "17-world2.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
+#include "07-structur.h"
+#include "66-tintedpoly.h"
+#include "platform.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
+#include "c2_math.h"
 
 // GLOBAL: CARMA2_HW 0x00591188
 // GLOBAL: CARMA2_SW 0x0058c180
@@ -69,6 +74,12 @@ int gHas_sky_texture;
 br_pixelmap* gDepth_shade_table;
 
 static void C2_HOOK_FASTCALL FrobFog(void);
+
+extern void C2_HOOK_FASTCALL DoWobbleCamera(br_actor* pCamera);
+
+extern br_scalar C2_HOOK_FASTCALL FastScalarSin(int pAngle_in_degrees);
+
+extern tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
 
 // Log2
 
@@ -249,7 +260,60 @@ void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* 
 
 // CreateHorizonModel
 
-// LoadDepthTable
+static int Log2(int pNumber) {
+    int i;
+    int bits[16];
+
+    bits[0] = 1;
+    bits[1] = 2;
+    bits[2] = 4;
+    bits[3] = 8;
+    bits[4] = 16;
+    bits[5] = 32;
+    bits[6] = 64;
+    bits[7] = 128;
+    bits[8] = 256;
+    bits[9] = 512;
+    bits[10] = 1024;
+    bits[11] = 2048;
+    bits[12] = 4096;
+    bits[13] = 0x2000;
+    bits[14] = 0x4000;
+    bits[15] = 0x8000;
+    for (i = REC2_ASIZE(bits) - 1; i >= 0; --i) {
+        if (bits[i] & pNumber) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00445860
+void C2_HOOK_FASTCALL LoadDepthTable(char* pName, br_pixelmap** pTable, int* pPower) {
+    tPath_name the_path;
+    int i;
+    int j;
+    tU8 temp;
+
+#define PTABLE_PIXEL_AT(X, Y) ((tU8*)((*pTable)->pixels))[(X) + (Y) * (*pTable)->row_bytes]
+
+    PathCat(the_path, gApplication_path, "SHADETAB");
+    PathCat(the_path, the_path, pName);
+    *pTable = DRPixelmapLoad(the_path);
+    if (*pTable == NULL) {
+        FatalError(kFatalError_CannotLoadDepthCueShadeTable);
+    }
+    *pPower = Log2((*pTable)->height);
+    for (i = 0; i < (*pTable)->width; i++) {
+        for (j = 0; j < (*pTable)->height / 2; j++) {
+            temp = PTABLE_PIXEL_AT(i, j);
+            PTABLE_PIXEL_AT(i, j) = PTABLE_PIXEL_AT(i, ((*pTable)->height - j - 1));
+            PTABLE_PIXEL_AT(i, ((*pTable)->height - j - 1)) = temp;
+        }
+    }
+
+#undef PTABLE_PIXEL_AT
+}
 
 // STUB: CARMA2_HW 0x00445620
 // STUB: CARMA2_SW 0x00445450
@@ -271,13 +335,89 @@ void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* 
 
 // DepthEffectSky
 
-// DoWobbleCamera
-
 // DoDrugWobbleCamera
 
 // DoSubaquaCam
 
+extern tSpecial_volume* gLast_camera_special_volume;
+
 // DoSpecialCameraEffect
+    // GLOBAL: CARMA2_HW 0x005911d0
+    static float mag00 = 0.03f;
+    // GLOBAL: CARMA2_HW 0x005911d4
+    static float mag01 = 0.03f;
+    // GLOBAL: CARMA2_HW 0x005911d8
+    static float mag02 = 0.03f;
+    // GLOBAL: CARMA2_HW 0x005911dc
+    static float mag10 = 0.2f;
+    // GLOBAL: CARMA2_HW 0x005911e0
+    static float mag11 = 0.07f;
+    // GLOBAL: CARMA2_HW 0x005911e4
+    static float mag12 = 0.03f;
+    // GLOBAL: CARMA2_HW 0x005911e8
+    static float mag20 = 0.02f;
+    // GLOBAL: CARMA2_HW 0x005911ec
+    static float mag21 = 0.03f;
+    // GLOBAL: CARMA2_HW 0x005911f0
+    static float mag22 = 0.01f;
+    // GLOBAL: CARMA2_HW 0x005911f4
+    static float period00 = 550.f;
+    // GLOBAL: CARMA2_HW 0x005911f8
+    static float period01 = 700.f;
+    // GLOBAL: CARMA2_HW 0x005911fc
+    static float period02 = 200.f;
+    // GLOBAL: CARMA2_HW 0x00591200
+    static float period10 = 100.f;
+    // GLOBAL: CARMA2_HW 0x00591204
+    static float period11 = 1300.f;
+    // GLOBAL: CARMA2_HW 0x00591208
+    static float period12 = 500.f;
+    // GLOBAL: CARMA2_HW 0x0059120c
+    static float period20 = 800.f;
+    // GLOBAL: CARMA2_HW 0x00591210
+    static float period21 = 1500.f;
+    // GLOBAL: CARMA2_HW 0x00591214
+    static float period22 = 300.f;
+
+    UpdateTintedPolys();
+    if (gOn_drugs && !gAction_replay_mode) {
+        TurnTintedPolyOn(gHud_tinted2);
+        f_time = (float)(int)PDGetTotalTime();
+        pCamera->t.t.mat.m[0][0] += FastScalarSin((int)fmod(f_time / period00 * 360.f, 360.f)) * mag00;
+        pCamera->t.t.mat.m[0][1] += FastScalarSin((int)fmod(f_time / period01 * 360.f, 360.f)) * mag01;
+        pCamera->t.t.mat.m[0][2] += FastScalarSin((int)fmod(f_time / period02 * 360.f, 360.f)) * mag02;
+        pCamera->t.t.mat.m[1][0] += FastScalarSin((int)fmod(f_time / period10 * 360.f, 360.f)) * mag10;
+        pCamera->t.t.mat.m[1][1] += FastScalarSin((int)fmod(f_time / period11 * 360.f, 360.f)) * mag11;
+        pCamera->t.t.mat.m[1][2] += FastScalarSin((int)fmod(f_time / period12 * 360.f, 360.f)) * mag12;
+        pCamera->t.t.mat.m[2][0] += FastScalarSin((int)fmod(f_time / period20 * 360.f, 360.f)) * mag20;
+        pCamera->t.t.mat.m[2][1] += FastScalarSin((int)fmod(f_time / period21 * 360.f, 360.f)) * mag21;
+        pCamera->t.t.mat.m[2][2] += FastScalarSin((int)fmod(f_time / period22 * 360.f, 360.f)) * mag22;
+    } else {
+        TurnTintedPolyOff(gHud_tinted2);
+        gLast_camera_special_volume = FindSpecialVolume((br_vector3*)pCamera_to_world->m[3], gLast_camera_special_volume, 0);
+        if (gLast_camera_special_volume != NULL) {
+            if (gLast_camera_special_volume->camera_special_effect_index == 0) {
+                DoWobbleCamera(pCamera);
+            }
+        }
+        if (gHas_sky_texture && gSky_on) {
+            if ((gProgram_state.current_depth_effect.sky_texture != NULL) == (gLast_camera_special_volume != NULL && gLast_camera_special_volume->sky_col == -2)) {
+                ToggleSkyQuietly();
+            }
+        }
+    }
+    SetTintedPolyRefMaterial(gHud_tinted1, (br_vector3*)pCamera_to_world->m[3]);
+    r = 0;
+    if (InWater(gHud_tinted1)) {
+        TurnTintedPolyOn(gHud_tinted1);
+        r = 1;
+    } else {
+        TurnTintedPolyOff(gHud_tinted1);
+    }
+    if (r) {
+        DoWobbleCamera(pCamera);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00446890
 // FUNCTION: CARMA2_SW 0x00446910
@@ -590,3 +730,10 @@ void C2_HOOK_FASTCALL SetSkyColour(br_colour c) {
     gHorizon_material->colour = c;
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// DRPixelmapRectangleFill
+
+// STUB: CARMA2_HW 0x00446680
+void C2_HOOK_FASTCALL DoWobbleCamera(br_actor* pCamera) { NOT_IMPLEMENTED(); }

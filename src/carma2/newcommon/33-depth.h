@@ -40,7 +40,7 @@ extern void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel);
 
 // CreateHorizonModel
 
-// LoadDepthTable
+extern void C2_HOOK_FASTCALL LoadDepthTable(char* pName, br_pixelmap** pTable, int* pPower);
 
 extern void C2_HOOK_FASTCALL InitDepthEffects(void);
 
@@ -62,7 +62,7 @@ extern void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pix
 
 // DoSubaquaCam
 
-// DoSpecialCameraEffect
+extern void C2_HOOK_FASTCALL DoSpecialCameraEffect(br_actor* pCamera, br_matrix34* pCamera_to_world);
 
 extern void C2_HOOK_FASTCALL ReduceDepthStart(void);
 
@@ -109,5 +109,7 @@ extern void C2_HOOK_FASTCALL MungeRearviewSky(void);
 extern void C2_HOOK_FASTCALL SkyTextureChanged(void);
 
 extern void C2_HOOK_FASTCALL SetSkyColour(br_colour c);
+
+extern void C2_HOOK_FASTCALL DRPixelmapRectangleFill(br_pixelmap* dst, br_int_16 x, br_int_16 y, br_uint_16 w, br_uint_16 h, br_uint_32 colour);
 
 #endif // GUARD_33_DEPTH_H
