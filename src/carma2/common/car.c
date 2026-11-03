@@ -713,8 +713,6 @@ void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime_difference
     }
 }
 
-typedef void (C2_HOOK_FASTCALL * tControl_car_fn)(tCar_spec* pCar_spec, float pT);
-
 // GLOBAL: CARMA2_HW 0x0058f660
 tControl_car_fn ControlCar[6] = {
     ControlCar1,

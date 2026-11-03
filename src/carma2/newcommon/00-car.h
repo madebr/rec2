@@ -77,7 +77,7 @@ extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 // ControlOurCar
 
-// CalcEngineForce
+extern void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt);
 
 // PrepareCars
 
