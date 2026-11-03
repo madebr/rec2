@@ -1860,3 +1860,20 @@ tPipe_chunk* C2_HOOK_FASTCALL FUN_00403800(tPipe_chunk* pSession, tPipe_chunk_ty
         }
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x00564e5e
+int C2_HOOK_FASTCALL FUN_00564e5e(int pSound) {
+    extern tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id);
+    struct {
+        tS3_descriptor* descriptor;
+        tS3_buffer_desc* buffer_description;
+    } volatile locals;
+
+    locals.descriptor = S3GetDescriptorByID(pSound);
+    if (locals.descriptor == NULL) {
+        return 0;
+    }
+    locals.buffer_description = locals.descriptor->buffer_description;
+    return locals.buffer_description->sample_size * 1000 / locals.buffer_description->sample_rate;
+}
