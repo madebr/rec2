@@ -230,7 +230,58 @@ typedef struct {
     float displacement;
 } tCrush_displacement_context_local;
 
-// FUN_0043b2e0
+// FUNCTION: CARMA2_HW 0x0043b2e0
+intptr_t C2_HOOK_CDECL FUN_0043b2e0(br_actor* pActor, tCrush_displacement_context_local* pContext) {
+    extern br_scalar gCrushZero;
+    tUser_crush_data* user;
+    br_vector3 original_position;
+    float displacement;
+    int model_index;
+    int vertex_index;
+    int axis;
+    br_model** model_cursor;
+
+    user = pActor->user;
+    if (user == NULL || user->crush_data == NULL || user->crush_data->field_0x2c == 0) {
+        return 0;
+    }
+    model_index = 0;
+    if (model_index < pContext->car->count_detail_levels) {
+        model_cursor = user->models;
+        do {
+            br_model* model;
+            float* total_displacement;
+
+            total_displacement = pContext->total_displacement;
+            model = *model_cursor;
+            if (model != NULL && model->user != NULL
+                    && ((tUser_detail_level_model*)model->user)->field_0x4 != NULL) {
+                tModel_detail_vertex_data* original_vertices;
+
+                original_vertices = ((tUser_detail_level_model*)model->user)->field_0x4;
+                displacement = gCrushZero;
+                for (vertex_index = 0; vertex_index < model->nvertices; vertex_index++) {
+                    ExpandVector3(&original_position, &original_vertices[vertex_index].p, -10.f, 10.f);
+                    for (axis = 0; axis < 3; axis++) {
+                        float delta;
+                        delta = original_position.v[axis] - model->vertices[vertex_index].p.v[axis];
+                        delta = fabs(delta);
+                        displacement = displacement + delta;
+                    }
+                }
+                *total_displacement = displacement + *total_displacement;
+            }
+            model_index++;
+            model_cursor++;
+        } while (model_index < pContext->car->count_detail_levels);
+    }
+    return 0;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// GetDirection
 
 // FUNCTION: CARMA2_HW 0x00440210
 void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
