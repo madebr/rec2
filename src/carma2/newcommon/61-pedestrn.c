@@ -3865,7 +3865,11 @@ void C2_HOOK_FASTCALL AdjustPedDiagnostics(tU32 pSubject_index, void* pUnused2, 
 
 // MakePedsNotEthereal
 
-// DeetherealiseCharacter1
+// FUNCTION: CARMA2_HW 0x004d6c00
+void C2_HOOK_FASTCALL DeetherealiseCharacter1(void* pCharacter) {
+
+    *(tU32*)((char*)pCharacter + 0x19c) &= ~4;
+}
 
 // CalmDownAllPeds
 
