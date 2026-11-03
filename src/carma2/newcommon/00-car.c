@@ -1472,7 +1472,29 @@ extern tCarDinputEffect* gDirectInputEffects[30];
 extern int gForceFeedbackAvailable;
 extern int gCollision_force_joystick_effect_index;
 
-// ReceivedCrushReattachBit
+// FUNCTION: CARMA2_HW 0x0043ce60
+void C2_HOOK_FASTCALL ReceivedCrushReattachBit(tNet_message_chunk_crush_reattach_bit* pContents) {
+    extern tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer);
+    tCar_spec* car;
+    int item_offset;
+    int count;
+    tU32 bit_index;
+
+    if (gCount_net_crush_reattach_bit_list != 8) {
+        car = NetCarFromPlayerID(pContents->player_id);
+        if (car != NULL) {
+            count = gCount_net_crush_reattach_bit_list;
+            item_offset = count * 3;
+            item_offset <<= 2;
+            count++;
+            *(tCar_spec**)((tU8*)&gNet_crush_reattach_bit_list[0].car + item_offset) = car;
+            *(tU32*)((tU8*)&gNet_crush_reattach_bit_list[0].actor + item_offset) = 0;
+            bit_index = pContents->field_0x8;
+            gCount_net_crush_reattach_bit_list = count;
+            *(tU32*)((tU8*)&gNet_crush_reattach_bit_list[0].time + item_offset) = bit_index;
+        }
+    }
+}
 
 // GetCompressedCrushVertexDataSize
 
