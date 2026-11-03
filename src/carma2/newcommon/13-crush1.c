@@ -577,7 +577,53 @@ tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crus
     return (tU16)number;
 }
 
-// SoftnessOfNearestPointCB
+// FUNCTION: CARMA2_HW 0x0042b590
+intptr_t C2_HOOK_FASTCALL SoftnessOfNearestPointCB(br_actor* pActor, br_vector3* pPoint, void* pData) {
+    tUser_crush_data* user_crush_data = pActor->user;
+    tCar_crush_buffer_entry* crush_data;
+    br_model* model;
+    tSoftnessOfNearestPointCB_Context* context;
+    const br_vector3* point;
+    br_vector3 diagonal;
+    br_vector3 delta_point;
+    float dist_bb_min;
+    float dist_bb_max;
+    float dist_bb_diagonal;
+    float dist_p;
+    tU16 i;
+
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    crush_data = user_crush_data->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
+    model = user_crush_data->models[0];
+    if (model == NULL) {
+        return 0;
+    }
+    context = pData;
+    point = context->point;
+    BrVector3Sub(&delta_point, point, pPoint);
+    BrVector3Sub(&diagonal, &model->bounds.max, &model->bounds.min);
+    dist_bb_diagonal = BrVector3LengthSquared(&diagonal);
+    dist_bb_min = Vector3DistanceSquared(&model->bounds.min, &delta_point);
+    dist_bb_max = Vector3DistanceSquared(&model->bounds.max, &delta_point);
+    dist_p = dist_bb_min > dist_bb_max ? dist_bb_min : dist_bb_max;
+    if (dist_p - dist_bb_diagonal <= context->distance) {
+        for (i = 0; i < model->nvertices; i++) {
+            float d;
+
+            d = Vector3DistanceSquared(&model->vertices[i].p, &delta_point);
+            if (d < context->distance) {
+                context->distance = d;
+                context->softness_factor = crush_data->softness_factor;
+            }
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0042b760
 // FUNCTION: CARMA2_SW 0x0042b7f0
