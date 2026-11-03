@@ -1132,7 +1132,131 @@ void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_cru
 
 // RemoveDuplicatePoints
 
-// SimpleCrushModel
+// FUNCTION: CARMA2_HW 0x0042c540
+void C2_HOOK_FASTCALL SimpleCrushModel(br_model* pModel, int pCount, float* pPoints, float* pDir, float* pBounds) {
+    float unique[12];
+    float weights[1024];
+    float* pNext;
+    float* pOut;
+    float* pVert;
+    int remaining;
+    int count;
+    int axis;
+    int found;
+    int k;
+    float len;
+    float scale;
+    float norm_x;
+    float norm_y;
+    float bend;
+    float a;
+    float b;
+    float dist_sq;
+    tU16 v;
+
+    if (pModel == NULL) {
+        return;
+    }
+    if (pModel->nvertices > 0x400) {
+        PDFatalError("SimpleCrushModel can't cope with that many vertices");
+    }
+    if (pCount < 1) {
+        return;
+    }
+    if (pCount > 4) {
+        pCount = 4;
+    }
+    count = 1;
+    unique[0] = pPoints[0];
+    unique[1] = pPoints[1];
+    unique[2] = pPoints[2];
+    if (pCount > 1) {
+        remaining = pCount - 1;
+        pNext = pPoints + 3;
+        pOut = unique + 4;
+        do {
+            found = 1;
+            for (k = 0; k < count; k++) {
+                float* pU = unique + k * 3;
+
+                if ((float)fabs(pU[0] - pNext[0]) < 0.005f && (float)fabs(pU[1] - pNext[1]) < 0.005f
+                    && (float)fabs(pU[2] - pNext[2]) < 0.005f) {
+                    found = 0;
+                    break;
+                }
+            }
+            if (found) {
+                pOut[-1] = pNext[0];
+                pOut[0] = pNext[1];
+                pOut[1] = pNext[2];
+                pOut += 3;
+                count++;
+            }
+            remaining--;
+            pNext += 3;
+        } while (remaining != 0);
+    }
+    if (TooFarToCrush(pModel, count, (br_vector3*)unique, gMax_crush_dist_sq) != 0) {
+        return;
+    }
+    len = (float)sqrt(pDir[1] * pDir[1] + pDir[2] * pDir[2] + pDir[0] * pDir[0]);
+    if (len > 2.3841858e-07f) {
+        scale = 1.0 / len;
+        norm_x = pDir[0] * scale;
+        norm_y = pDir[1] * scale;
+    } else {
+        norm_x = 1.0f;
+        norm_y = 0.0f;
+    }
+    if ((float)fabs(norm_x) <= 0.707107f) {
+        axis = 1;
+        if ((float)fabs(norm_y) <= 0.707107f) {
+            axis = 2;
+        }
+    } else {
+        axis = 0;
+    }
+    v = 0;
+    if (pModel->nvertices > 0) {
+        do {
+            pVert = (float*)((tU8*)pModel->vertices + (tU32)v * 0x28);
+            dist_sq = DistSq((br_vector3*)pVert, count, (br_vector3*)unique);
+            if (dist_sq <= gMax_crush_dist_sq) {
+                bend = 1.0f - (float)sqrt(dist_sq * 47.61f);
+            } else {
+                bend = 0.0f;
+            }
+            weights[v] = bend;
+            if (bend != gCrushZero) {
+                a = (pBounds[axis] - pVert[axis]) / pDir[axis];
+                b = (pBounds[axis + 3] - pVert[axis]) / pDir[axis];
+                if (b <= a) {
+                    a = b;
+                }
+                if (a > gCrushZero) {
+                    if (a < bend) {
+                        weights[v] = a;
+                    }
+                } else {
+                    weights[v] = 0.0f;
+                }
+                if (weights[v] != gCrushZero) {
+                    pVert[0] = pVert[0] + weights[v] * pDir[0];
+                    pVert[1] = pDir[1] * weights[v] + pVert[1];
+                    pVert[2] = pDir[2] * weights[v] + pVert[2];
+                }
+            }
+            v++;
+        } while (v < pModel->nvertices);
+    }
+    FUN_004c7f40(pModel, (br_vector3*)pDir, weights);
+    if ((pModel->flags & 0x20) != 0 && pModel->user != NULL) {
+        *(int*)pModel->user = 1;
+        return;
+    }
+    pModel->custom = JitModelUpdate;
+    pModel->flags = pModel->flags | 0x20;
+}
 
 // CrushDrone
 
@@ -2680,4 +2804,9 @@ float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* p
     BrVector3Add(&pProj, &pProj, pA);
     BrVector3Sub(&pProj, pP, &pProj);
     return BrVector3LengthSquared(&pProj);
+}
+
+// STUB: CARMA2_HW 0x004c7f40
+void C2_HOOK_FASTCALL FUN_004c7f40(br_model* pModel, br_vector3* pSrc, const float* pScalars) {
+    NOT_IMPLEMENTED();
 }
