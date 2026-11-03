@@ -2819,7 +2819,39 @@ int C2_HOOK_FASTCALL CalcRemoveFacesLength(tPipe_chunk* pChunk) {
 #endif
 
 #ifdef REC2_HW
-// DoBloodSpurtUndo
+// FUNCTION: CARMA2_HW 0x004ccd70
+void C2_HOOK_FASTCALL DoBloodSpurtUndo(int pCurrent_time, uintptr_t pOwner, int pSpurt_time, tU32 pSeed, br_vector3* pPosition, br_vector3* pDirection, br_vector3* pRandom_direction) {
+    int saved_random_seed;
+    int i;
+    tSmash_vertex* fragment;
+    float scale;
+    float time_since_spurt;
+
+    saved_random_seed = rand();
+    srand(pSeed);
+    for (i = 0; i < gPed_spurty_lumps_count; i++) {
+        fragment = FindShrapnelFragment(gPed_spurt_model, pOwner, 1);
+        if (fragment == NULL) {
+            break;
+        }
+        scale = PositionFragment(fragment->actor, &gPed_spurt_initial_position, 0, (int)pPosition, (int)pPosition, 0, NULL, 0);
+        SetShrapnelFragment(fragment, &gPed_spurt_initial_speed, pDirection, scale, (tShrapnel_time_info*)gPed_spurt_min_max_time, pSpurt_time, pRandom_direction, NULL, NULL);
+    }
+    srand(saved_random_seed);
+
+    time_since_spurt = (float)(pCurrent_time - pSpurt_time);
+    fragment = gSmash_glass_fragments;
+    i = 200;
+    do {
+        if (fragment->end_time != 0 && fragment->field_0x18 == pOwner) {
+            fragment->field_0x34 = 0;
+            DoFragMovement(fragment, GetTotalTime(), time_since_spurt);
+            fragment->field_0x34 = 1;
+        }
+        fragment++;
+        i--;
+    } while (i != 0);
+}
 
 // DisposeReplayPixelmaps
 
