@@ -45,6 +45,10 @@ extern int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, floa
 
 extern void C2_HOOK_FASTCALL RepulseIt(tPedestrian* pPed, tCar_spec* pCar, float pDist_sq, tU32 pNow, void* pData);
 
+extern int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, int pArg4, int pArg5, int pArg6);
+
+extern void C2_HOOK_FASTCALL PipeSinglePedFPChange(tPedestrian* pPed, float pValue, float pUnused);
+
 extern tS3_outlet* gCar_outlet;
 
 typedef struct {
@@ -664,7 +668,35 @@ void C2_HOOK_FASTCALL PedApplyPedDir(tU32 pId, const br_vector3* pDir) {
     }
 }
 
-// SetCharacterMoveAR
+// FUNCTION: CARMA2_HW 0x004d1c60
+void C2_HOOK_FASTCALL SetCharacterMoveAR(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, undefined4 pArg4, undefined4 pArg5, tU32 pTime) {
+    br_vector3 original_pos;
+    br_matrix34* matrix;
+    int original_move_id;
+    int original_field_0x1c;
+    float move_anim;
+
+    if (gAction_replay_mode == 0 || gBOOL_00744804 != 0) {
+        if (pSpeed == 0.f) {
+            pSpeed = 0.f;
+        }
+        matrix = GetCharacterMatrixPtr(pCharacter);
+        original_pos.v[0] = matrix->m[3][0];
+        original_pos.v[1] = matrix->m[3][1];
+        original_pos.v[2] = matrix->m[3][2];
+        original_move_id = pCharacter->personality->form->moves[pCharacter->field_0x7].id;
+        original_field_0x1c = (tS16)pCharacter->field_0x1c;
+        move_anim = (float)(tS16)pCharacter->field_0x1e;
+        SetCharacterMove(pCharacter, pMove_action, pSpeed, pArg4, pArg5, pTime);
+        if (pMove_action == -1) {
+            PipeSinglePedFPChange(pCharacter->ped, (float)(tS16)pCharacter->field_0x1e, pSpeed);
+            return;
+        }
+        PipeSinglePedMove(pCharacter->ped, (tS16)original_field_0x1c, (tS16)original_move_id, (tS16)pMove_action,
+            move_anim, pSpeed, (int)pArg5, (int)pArg4, &original_pos, (br_vector3*)matrix->m[3],
+            -1, -1, &pCharacter->field_0x8c);
+    }
+}
 
 // SetPedStartRun
 
