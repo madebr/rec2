@@ -673,7 +673,27 @@ float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* 
 
 // CheckHingePointOrder
 
-// FindNearestVertex
+// FUNCTION: CARMA2_HW 0x0042bb00
+tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_model* pModel) {
+    tU16 closest_vertex;
+    br_scalar closest_dist;
+    tU16 i;
+
+    closest_vertex = 0;
+    closest_dist = BR_SCALAR_MAX;
+    for (i = 0; i < pModel->nvertices; i++) {
+        br_scalar d;
+
+        d = Vector3DistanceSquared(pPoint, &pModel->vertices[i].p);
+        if (d >= closest_dist) {
+            goto next_vertex;
+        }
+        closest_dist = d;
+        closest_vertex = i;
+next_vertex:;
+    }
+    return closest_vertex;
+}
 
 // DistanceToBounds
 
