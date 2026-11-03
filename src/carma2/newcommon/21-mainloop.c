@@ -15,6 +15,11 @@
 #include "platform.h"
 #include "rec2_macros.h"
 #include <stdlib.h>
+#include <math.h>
+#include <string.h>
+
+// GLOBAL: CARMA2_HW 0x006a2368
+int gReplay_show_controls;
 
 // GLOBAL: CARMA2_HW 0x0068c814
 // GLOBAL: CARMA2_SW 0x00686868
@@ -55,6 +60,12 @@ int gQueued_wasted_messages_count;
 // GLOBAL: CARMA2_HW 0x0068c77c
 // GLOBAL: CARMA2_SW 0x006867d0
 tU32 gLast_wasted_message_start;
+
+// GLOBAL: CARMA2_HW 0x0068c738
+br_vector3 gPrev_camera_position;
+
+// GLOBAL: CARMA2_HW 0x00704e44
+float gCamera_to_horiz_angle;
 
 // CalculateFrameRate
 
@@ -163,7 +174,26 @@ void C2_HOOK_FASTCALL UpdateFramePeriod(tU32* pCamera_period) {
 
 // MungeRaceFinished
 
-// CalculateCameraStuff
+// FUNCTION: CARMA2_HW 0x004940e0
+void C2_HOOK_FASTCALL CalculateCameraStuff(tU32 pCamera_period) {
+    extern br_scalar C2_HOOK_STDCALL FastScalarArcTan2(br_scalar pY, br_scalar pX);
+    extern void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime);
+    extern void C2_HOOK_FASTCALL ResetPedNearness(void);
+    extern br_vector3 gPrev_camera_position;
+    extern float gCamera_to_horiz_angle;
+    extern float gYon_squared;
+
+    gOur_pos = &gPlayer_car_master_actor->t.t.translate.t;
+    PositionExternalCamera(&gProgram_state.current_car, pCamera_period);
+    BrActorToActorMatrix34(&gCamera_to_world, gCamera, gUniverse_actor);
+    BrActorToActorMatrix34(&gRearview_camera_to_world, gRearview_camera, gUniverse_actor);
+    gCamera_to_horiz_angle = FastScalarArcTan2(gCamera_to_world.m[2][1], gCamera_to_world.m[1][1]);
+    gYon_squared = gYon_multiplier * gYon_multiplier * ((br_camera*)gCamera->type_data)->yon_z * ((br_camera*)gCamera->type_data)->yon_z;
+    if ((REC2_SQR(gCamera_to_world.m[3][0] - gPrev_camera_position.v[0]) + REC2_SQR(gCamera_to_world.m[3][1] - gPrev_camera_position.v[1])) + REC2_SQR(gCamera_to_world.m[3][2] - gPrev_camera_position.v[2]) > 400.0) {
+        ResetPedNearness();
+    }
+    gPrev_camera_position = *(br_vector3*)gCamera_to_world.m[3];
+}
 
 // CheckActiveCarList
 
@@ -197,8 +227,75 @@ tRace_result C2_HOOK_FASTCALL DoRace(void) {
     return result;
 }
 
+
+/* ---- action replay ---- */
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// GLOBAL: CARMA2_HW 0x0065fbf8
+int gReplay_button_keys[10] = { 0x58, 0x55, 0x3b, 0x6a, 0x3a, 0x57, 0x5a, 0x4c, 0x4b, 0 };
+
+// GLOBAL: CARMA2_HW 0x0065fc20
+int gReplay_button_rects[2][9][4] = {
+    { { 0x10c, 0x9c, 0x116, 0xae }, { 0x117, 0x96, 0x121, 0xa0 }, { 0x117, 0xaa, 0x121, 0xb4 }, { 0x119, 0xa0, 0x12a, 0xaa }, { 0x122, 0xaa, 0x12c, 0xb4 }, { 0x122, 0x96, 0x12c, 0xa0 }, { 0x12d, 0x9c, 0x137, 0xae }, { 0xef, 0xa8, 0xfb, 0xb4 }, { 0xfe, 0xa8, 0x10a, 0xb4 } },
+    { { 0x207, 0x18b, 0x21f, 0x1a3 }, { 0x21e, 0x174, 0x236, 0x18c }, { 0x221, 0x1a2, 0x239, 0x1ba }, { 0x22b, 0x18b, 0x243, 0x1a3 }, { 0x236, 0x1a2, 0x24e, 0x1ba }, { 0x239, 0x174, 0x251, 0x18c }, { 0x253, 0x18b, 0x26b, 0x1a3 }, { 0x1bf, 0x19f, 0x1d7, 0x1b7 }, { 0x1e1, 0x1a1, 0x1f9, 0x1b9 } },
+};
+
+
+// GLOBAL: CARMA2_HW 0x006a23cc
+int gUnk_006a23cc;
+
+// GLOBAL: CARMA2_HW 0x006a23d0
+tU32 gUnk_006a23d0;
+
+extern int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
+extern void C2_HOOK_FASTCALL EdgeTriggerModeOff(void);
+extern int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText);
+extern void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on);
+extern void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period);
+extern void C2_HOOK_FASTCALL GrooveThoseDelics(void);
+extern void C2_HOOK_FASTCALL PickActionReplayManualCameraTarget(int pCursor_x, int pCursor_y, int pArg3);
+extern int C2_HOOK_FASTCALL ARGoForwards(void);
+extern int C2_HOOK_FASTCALL ARGoBackwards(void);
+extern void C2_HOOK_FASTCALL FUN_00403c70(tZappy_AR_callback* pZappy, tPreprocess_AR_callback* pPre, tPostProcess_AR_callback* pPost);
+extern void C2_HOOK_FASTCALL FUN_00403210(tZappy_AR_callback* pZappy, tPreprocess_AR_callback* pPre, tPostProcess_AR_callback* pPost);
+
+// FUN_00403cc0
+
+// DoActionReplay
+
+// PollActionReplayControls
+
+// GLOBAL: CARMA2_HW 0x006a82a4
+tU32 gLast_munge_smash_edge_triggers;
+
+extern tSmashable_item_spec* gTrack_smashable_environment_specs;
+extern int gCount_track_smashable_environment_specs;
+extern tU32 gPHIL_last_physics_tick;
+extern int gQueued_headup_count;
+extern tQueued_headup gQueued_headups[4];
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+#ifdef REC2_MATCHING
+// ClearQueuedHeadups
+
+// MungeSmashEdgeTriggers
+
+// AdjustHeadupTextBuffer
+
+// STUB: CARMA2_HW 0x00403210
+void C2_HOOK_FASTCALL FUN_00403210(tZappy_AR_callback* pZappy, tPreprocess_AR_callback* pPre, tPostProcess_AR_callback* pPost) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00403c70
+void C2_HOOK_FASTCALL FUN_00403c70(tZappy_AR_callback* pZappy, tPreprocess_AR_callback* pPre, tPostProcess_AR_callback* pPost) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00413860
+void C2_HOOK_FASTCALL PickActionReplayManualCameraTarget(int pCursor_x, int pCursor_y, int pArg3) { NOT_IMPLEMENTED(); }
+
 // GLOBAL: CARMA2_HW 0x0079d8a0
 tHeadup_text_buffer gJoystick_headup_buffer_0079d8a0;
-
-// GLOBAL: CARMA2_HW 0x006a2368
-int gReplay_show_controls;

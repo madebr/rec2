@@ -39,12 +39,24 @@ extern void C2_HOOK_FASTCALL UpdateFramePeriod(tU32* pCamera_period);
 
 // MungeRaceFinished
 
-// CalculateCameraStuff
+extern void C2_HOOK_FASTCALL CalculateCameraStuff(tU32 pCamera_period);
 
 // CheckActiveCarList
 
 extern tRace_result C2_HOOK_FASTCALL MainGameLoop(void);
 
 extern tRace_result C2_HOOK_FASTCALL DoRace(void);
+
+extern void C2_HOOK_FASTCALL FUN_00403cc0(int pUnused, void (C2_HOOK_FASTCALL * pBetween_sessions)(int), tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
+
+extern void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period);
+
+extern void C2_HOOK_FASTCALL PollActionReplayControls(tU32* pFrame_period, tU32* pAverage_frame_period);
+
+extern void C2_HOOK_FASTCALL ClearQueuedHeadups(void);
+
+extern void C2_HOOK_FASTCALL AdjustHeadupTextBuffer(tHeadup_text_buffer* pBuffer);
+
+extern void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime);
 
 #endif // GUARD_21_MAINLOOP_H
