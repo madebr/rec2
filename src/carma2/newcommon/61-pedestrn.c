@@ -183,8 +183,17 @@ tU32 gPed_last_score_time;
 // GLOBAL: CARMA2_HW 0x00694120
 tPedestrian* gPed_recent_ped;
 
+// GLOBAL: CARMA2_HW 0x006a0410
+int gPipe_halted_ped_status;
+
+// GLOBAL: CARMA2_HW 0x007447c0
+br_vector3 gPed_scale;
+
 // GLOBAL: CARMA2_HW 0x0069bc24
 float gAverage_ped_scale;
+
+// GLOBAL: CARMA2_HW 0x00744800
+float gPed_head_scale;
 
 // GLOBAL: CARMA2_HW 0x0069bc28
 tExplosion_animation gNapalmed_ped_animation;
@@ -3524,7 +3533,62 @@ void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3
     }
 }
 
-// InitPedsForRace
+// FUNCTION: CARMA2_HW 0x004d5bd0
+void C2_HOOK_FASTCALL InitPedsForRace(void) {
+    int i;
+    int j;
+
+    for (i = 0; i < (int)REC2_ASIZE(gPed_cache_sizes_1); i++) {
+        gPed_face_caches[i] = gPed_face_cache_heads[i];
+        for (j = 0; j < gPed_cache_sizes_1[i]; j++) {
+            gPed_face_cache_heads[i][j].field_0x14 = NULL;
+            if (j != gPed_cache_sizes_1[i] - 1) {
+                gPed_face_cache_heads[i][j].next = &gPed_face_cache_heads[i][j + 1];
+                gPed_face_cache_heads[i][j + 1].prev = &gPed_face_cache_heads[i][j];
+            } else {
+                gPed_face_cache_heads[i][j].next = &gPed_face_cache_heads[i][0];
+                gPed_face_cache_heads[i][0].prev = &gPed_face_cache_heads[i][j];
+            }
+        }
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gPed_cache_006944c0); i++) {
+        gPed_cache_006944c0[i].field_0xb4 = NULL;
+        gPed_cache_006944c0[i].field_0xb0 = NULL;
+        gPed_cache_006944c0[i].field_0x74 = 0;
+    }
+    gPed_count = 0;
+    gCount_changed_points = 0;
+    gTwtPeds = -1;
+    gTotal_count_smash_peds = 0;
+    gPed_score_multiplier = 0;
+    gPed_recent_points = 0;
+    gPipe_halted_ped_status = 0;
+    gImmortal_peds = 0;
+    gPeds_suicidal = 0;
+    gMutant_speed = 0.f;
+    gExploding_pedestrians = 0;
+    gPed_dismemberfest = 0;
+    gBlind_pedestrians = 0;
+    gDancing_peds = 0;
+    gPanicking_peds = 0;
+    gDrunk_pedestrians = 0;
+    gEthereal_pedestrians = 0;
+    gPedestrian_speed_factor = 1.f;
+    BrVector3Set(&gPed_scale, 1.f, 1.f, 1.f);
+    gAverage_ped_scale = 1.f;
+    gPed_head_scale = 1.f;
+    gPed_gravity_multiplier = 1.f;
+    gBOOL_00744804 = 0;
+    gCount_killed_peds = 0;
+    gPed_valium_left = 0;
+    for (i = 0; i < (int)REC2_ASIZE(gNapalm_bolts); i++) {
+        gNapalm_bolts[i].ped = NULL;
+        for (j = 0; j < (int)REC2_ASIZE(gNapalm_bolts[i].actors); j++) {
+            gNapalm_bolts[i].actors[j]->render_style = BR_RSTYLE_NONE;
+        }
+    }
+    memset(gPed_cache_006944c0, 0, sizeof(gPed_cache_006944c0));
+}
 
 // RenderElectroBastardRays
 
