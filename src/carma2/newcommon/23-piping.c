@@ -34,6 +34,17 @@ extern void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 
 extern void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...);
 
+// GLOBAL: CARMA2_HW 0x006940d4
+tPipe_smudge_data* gSmudge_space;
+
+// GLOBAL: CARMA2_HW 0x00694104
+undefined4* gCrush_space;
+
+// GLOBAL: CARMA2_HW 0x0065d0c8
+const tReplay_callback gReplay_callbacks[70] = { 0 };
+
+extern tNet_mode gNet_mode;
+
 // GLOBAL: CARMA2_HW 0x00694108
 tU32 gYoungest_time;
 
@@ -1007,7 +1018,18 @@ void C2_HOOK_FASTCALL ScanCarsPositions(tCar_spec* pCar, br_vector3* pSource_pos
     }
     *pTime_returned = gTrigger_time;
 }
-// InitialiseActionReplay
+// FUNCTION: CARMA2_HW 0x004c6bf0
+void C2_HOOK_FASTCALL InitialiseActionReplay(void) {
+
+    ARInitialise(!gAusterity_mode && gNet_mode == eNet_mode_none, 70, gReplay_callbacks);
+    if (!gAusterity_mode && gNet_mode == eNet_mode_none) {
+        gCrush_space = BrMemAllocate(0x4000, kMem_pipe_model_geometry);
+        gSmudge_space = (tPipe_smudge_data*)gCrush_space;
+    } else {
+        gCrush_space = NULL;
+        gSmudge_space = NULL;
+    }
+}
 
 // STUB: CARMA2_HW 0x004c6c60
 // STUB: CARMA2_SW 0x004c3390
