@@ -687,7 +687,19 @@ void C2_HOOK_FASTCALL ToggleJoystickYAxis(void) {
     NewTextHeadupSlot(4, 0, 3000, -4, buffer);
 }
 
-// ToggleJoystickEnable
+// FUNCTION: CARMA2_HW 0x005112d0
+void C2_HOOK_FASTCALL ToggleJoystickEnable(void) {
+    char buffer[256];
+
+    if (HasCurrentJoystick()) {
+        PDDisableJoysticks();
+        sprintf(buffer, "Joystick Disabled");
+    } else {
+        PDEnableJoysticks();
+        sprintf(buffer, "Joystick Enabled");
+    }
+    NewTextHeadupSlot(4, 0, 3000, -4, buffer);
+}
 
 // ToggleJoystickDPad
 
