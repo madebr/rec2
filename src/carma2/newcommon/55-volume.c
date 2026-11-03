@@ -42,7 +42,57 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
 
 // FindSpecialVolume
 
-// MungeSpecialVolume
+// FUNCTION: CARMA2_HW 0x004ff410
+void C2_HOOK_FASTCALL MungeSpecialVolume(tPhysics_object* pObject) {
+    extern tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
+    extern tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
+    extern int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar);
+    extern void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar);
+    extern tS3_outlet* gCar_outlet;
+    tSpecial_volume* new_vol;
+    tCar_spec* sv;
+
+    new_vol = FindSpecialVolume(&pObject->pos, pObject->last_special_volume, 0);
+
+    sv = NULL;
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        sv = (tCar_spec*)pObject->owner;
+    } else {
+        sv = NULL;
+    }
+
+    if (pObject->auto_special_volume != NULL) {
+        if (new_vol == NULL || new_vol->gravity_multiplier == 1.0f) {
+            if (pObject->water_d == 10000.0f && pObject->water_depth_factor != 1.0f) {
+                pObject->auto_special_volume = NULL;
+            } else {
+                new_vol = pObject->auto_special_volume;
+            }
+        }
+    }
+
+    if (new_vol != pObject->last_special_volume && sv != NULL && sv->driver == eDriver_local_human) {
+        if (pObject->last_special_volume != NULL && pObject->last_special_volume->exit_noise >= 0
+                && (new_vol == NULL || new_vol->exit_noise != pObject->last_special_volume->exit_noise)) {
+            DRS3StartSound(gCar_outlet, pObject->last_special_volume->exit_noise);
+        }
+        if (new_vol != NULL && new_vol->entry_noise >= 0
+                && (pObject->last_special_volume == NULL || pObject->last_special_volume->entry_noise != new_vol->entry_noise)) {
+            DRS3StartSound(gCar_outlet, new_vol->entry_noise);
+        }
+    }
+
+    pObject->last_special_volume = new_vol;
+
+    if (sv != NULL && new_vol != NULL) {
+        br_scalar gravity_multiplier = new_vol->gravity_multiplier;
+        if (gravity_multiplier < 1.0f) {
+            if (IsCarSmoking(sv) != 0) {
+                StopCarSmoking(sv);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004ff530
 // FUNCTION: CARMA2_SW 0x004fae10
@@ -194,3 +244,9 @@ void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
 }
 
 // ReadSpecialVolumes
+
+// STUB: CARMA2_HW 0x004ff120
+tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

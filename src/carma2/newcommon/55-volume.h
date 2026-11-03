@@ -36,3 +36,5 @@ extern void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec);
 // ReadSpecialVolumes
 
 #endif // GUARD_55_VOLUME_H
+
+tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
