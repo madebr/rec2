@@ -675,7 +675,17 @@ float C2_HOOK_FASTCALL GetJoystickY(void) {
     return gJoystick_y_throttle;
 }
 
-// ToggleJoystickYAxis
+// FUNCTION: CARMA2_HW 0x00511280
+void C2_HOOK_FASTCALL ToggleJoystickYAxis(void) {
+    char buffer[256];
+
+    if (ToggleJoystickThrottle()) {
+        sprintf(buffer, "Y Axis Enabled");
+    } else {
+        sprintf(buffer, "Y Axis Disabled");
+    }
+    NewTextHeadupSlot(4, 0, 3000, -4, buffer);
+}
 
 // ToggleJoystickEnable
 
