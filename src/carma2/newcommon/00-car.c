@@ -3694,3 +3694,27 @@ int C2_HOOK_FASTCALL FUN_0043d900(tCar_spec* pCar) {
     }
     return total * 6 + 1;
 }
+
+
+// FUNCTION: CARMA2_HW 0x0043d960
+int C2_HOOK_FASTCALL GetCompressedCrushVertexDataSize(tU8* pData) {
+    tU8 count_or_points;
+    int count;
+    int size;
+
+    count_or_points = *pData++;
+    if (count_or_points <= 4) {
+        count = count_or_points;
+        size = 1;
+        if (count > 0) {
+            do {
+                count_or_points = *pData;
+                size = size + 1 + count_or_points * 6;
+                pData = pData + count_or_points * 6 + 1;
+                count--;
+            } while (count != 0);
+        }
+        return size;
+    }
+    return count_or_points * 6 + 1;
+}
