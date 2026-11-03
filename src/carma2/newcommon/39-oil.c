@@ -288,7 +288,20 @@ void C2_HOOK_FASTCALL RemoveCarsOilSlicks(tCar_spec* pCar) {
 extern volatile undefined4 gUNK_0069410c;
 extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
 
-// PipeSingleOilSpill
+// FUNCTION: CARMA2_HW 0x004c82e0
+void C2_HOOK_FASTCALL PipeSingleOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap) {
+    (void)pGrow_rate;
+    *(volatile float*)&gUNK_0069410c = pFull_size;
+    ARDoSingleVariedSession(0x10, pIndex, 8,
+        0x30, 0, pMat,
+        4, 0x30, *(tU32*)&gUNK_0069410c,
+        4, 0x34, *(tU32*)&gUNK_0069410c,
+        4, 0x38, pSpill_time,
+        4, 0x3c, pStop_time,
+        4, 0x40, pCar,
+        0xc, 0x44, pOriginal_pos,
+        4, 0x50, pPixelmap);
+}
 
 // STUB: CARMA2_HW 0x004a6e50
 void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) { NOT_IMPLEMENTED(); }
