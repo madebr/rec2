@@ -234,6 +234,8 @@ extern int C2_HOOK_FASTCALL ClampObjectSpin(tPhysics_object* pObject);
 
 extern int C2_HOOK_FASTCALL ClampObjectSpinTree(tPhysics_object* pObject);
 
+extern void C2_HOOK_FASTCALL FUN_004be0e0(tPhysics_object* pObject, tPhysics_object* pList);
+
 extern void C2_HOOK_FASTCALL SetObjectTrialPositionType(tPhysics_object* pObject, int pType);
 
 // FillInTrialWorkspace
