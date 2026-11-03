@@ -1274,7 +1274,9 @@ int GetRegisterSourceLocation(char* pSource_location) {
 #endif
 }
 
-// LoadingNoOp
+// FUNCTION: CARMA2_HW 0x0044bf80
+void C2_HOOK_FASTCALL LoadingNoOp(void) {
+}
 
 // DecimalDigitsToBitmask
 
