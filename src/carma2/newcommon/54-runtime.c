@@ -26,7 +26,17 @@ int C2_HOOK_FASTCALL GetRuntimeVariable(int pAddress) {
 #endif
 }
 
-// AccumulateRuntimeVariable
+// FUNCTION: CARMA2_HW 0x004e7460
+int C2_HOOK_FASTCALL AccumulateRuntimeVariable(int pAddress, int pDelta) {
+
+    if (pAddress >= 0 && pAddress < (int)REC2_ASIZE(gRace_memory)) {
+        gRace_memory[pAddress] += pDelta;
+        return gRace_memory[pAddress];
+    }
+#ifdef REC2_FIX_BUGS
+    return 0;
+#endif
+}
 
 // ToggleRuntimeVariable
 
