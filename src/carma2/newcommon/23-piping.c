@@ -2248,7 +2248,12 @@ void C2_HOOK_FASTCALL ApplyFunkEnable(tPipe_chunk** pChunk) {
     return AdjustFunkEnable(chunk->field_0x0, chunk->field_0x4);
 }
 
-// ApplyVanishDismembered
+// FUNCTION: CARMA2_HW 0x004c9c30
+void C2_HOOK_FASTCALL ApplyVanishDismembered(tPipe_chunk** pChunk) {
+    tPipe_chunk_vanish* chunk = (tPipe_chunk_vanish*)*pChunk;
+
+    DoVanishDismembered(chunk->field_0x0, chunk->field_0x8);
+}
 
 // ApplyDSModel
 
