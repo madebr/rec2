@@ -1214,7 +1214,17 @@ void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
 
 // DoBackwardShrapnel
 
-// InitRepairAnimations
+// FUNCTION: CARMA2_HW 0x004f0430
+void C2_HOOK_FASTCALL InitRepairAnimations(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tRepair_animation) != 0xc);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gRepair_animations) != 25);
+
+    for (i = 0; i < (int)REC2_ASIZE(gRepair_animations); i++) {
+        gRepair_animations[i].field_0x0 = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004f3560
 // FUNCTION: CARMA2_SW 0x004ef1c0
