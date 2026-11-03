@@ -2076,3 +2076,68 @@ void C2_HOOK_FASTCALL CycleControlCar(void) {
         return;
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x00417fb0
+void C2_HOOK_FASTCALL ApplyNonCarTumble(tPhysics_object* pObject, br_vector3* pV, br_scalar pTumbleFactor, br_scalar pTumbleThreshold) {
+    extern void C2_HOOK_FASTCALL DRVector3SafeCross(br_vector3* pDest, const br_vector3* pA, const br_vector3* pB);
+    br_vector3 cross;
+    br_vector3 out;
+    br_vector3 size;
+    br_scalar len2;
+    br_scalar speed;
+    br_scalar over;
+    br_scalar scale;
+    br_scalar k;
+    br_scalar nx;
+    br_scalar ny;
+    br_scalar nz;
+    br_scalar new_len2;
+    int i;
+
+    if (pObject->collision_flag == 0 && pObject->disable_move_rotate == 0) {
+        return;
+    }
+    len2 = pV->v[0] * pV->v[0] + pV->v[1] * pV->v[1] + pV->v[2] * pV->v[2];
+    if (len2 < pTumbleThreshold * pTumbleThreshold) {
+        return;
+    }
+    DRVector3SafeCross(&cross, &gFace_list__car[pObject->box_face_start].normal, pV);
+    scale = (float)sqrt(cross.v[0] * cross.v[0] + cross.v[1] * cross.v[1] + cross.v[2] * cross.v[2]);
+    if (scale > BR_SCALAR_EPSILON * 2) {
+        scale = (float)(1.0 / scale);
+        cross.v[0] = cross.v[0] * scale;
+        cross.v[1] = cross.v[1] * scale;
+        cross.v[2] = cross.v[2] * scale;
+    } else {
+        cross.v[0] = 1.f;
+        cross.v[1] = 0.f;
+        cross.v[2] = 0.f;
+    }
+    BrMatrix34TApplyV(&out, &cross, &pObject->actor->t.t.mat);
+    if (out.v[0] * pObject->omega.v[0] + out.v[2] * pObject->omega.v[2] + out.v[1] * pObject->omega.v[1] > 1.5f) {
+        return;
+    }
+    speed = (float)sqrt(len2);
+    size.v[0] = pObject->bb1.max.v[0] - pObject->bb1.min.v[0];
+    size.v[1] = pObject->bb1.max.v[1] - pObject->bb1.min.v[1];
+    size.v[2] = pObject->bb1.max.v[2] - pObject->bb1.min.v[2];
+    over = speed - pTumbleThreshold;
+    for (i = 0; i < 3; i++) {
+        out.v[i] = out.v[i] * (0.5f * size.v[i]) / pObject->I.v[i];
+    }
+    k = 0.1f * pTumbleFactor * over * pObject->M;
+    nx = out.v[0] * k + pObject->omega.v[0];
+    ny = out.v[1] * k + pObject->omega.v[1];
+    nz = out.v[2] * k + pObject->omega.v[2];
+    new_len2 = nx * nx + ny * ny + nz * nz;
+    pObject->omega.v[0] = nx;
+    pObject->omega.v[1] = ny;
+    pObject->omega.v[2] = nz;
+    if (new_len2 > 400.f) {
+        scale = (float)sqrt(400.f / new_len2);
+        pObject->omega.v[0] = nx * scale;
+        pObject->omega.v[1] = ny * scale;
+        pObject->omega.v[2] = nz * scale;
+    }
+}

@@ -1442,3 +1442,8 @@ int C2_HOOK_FASTCALL BonerPassiveCollision(tPed_character_instance* pCharacter, 
 void C2_HOOK_FASTCALL BonerPedMovedByPhysics(tPed_character_instance* pCharacter, undefined4 pArg2) {
     NOT_IMPLEMENTED();
 }
+
+// STUB: CARMA2_HW 0x00403f90
+void C2_HOOK_FASTCALL DRVector3SafeCross(br_vector3* pDest, const br_vector3* pA, const br_vector3* pB) {
+    NOT_IMPLEMENTED();
+}
