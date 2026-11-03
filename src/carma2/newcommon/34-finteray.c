@@ -380,7 +380,40 @@ int C2_HOOK_FASTCALL LinePolyCollWithSphere(br_vector3* pStart, br_vector3* pEnd
     NOT_IMPLEMENTED();
 }
 
-// ShapeRayCast
+// FUNCTION: CARMA2_HW 0x00461740
+int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tPhysics_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal) {
+    int index;
+    int result;
+
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        result = LineBoxColl((br_vector3*)p1, (br_vector3*)p2, (br_bounds*)&pShape->box.common.bb, pPos, pFactor);
+        if (pNormal != NULL && result > 0) {
+            index = (result - 1) & 3;
+            pNormal->v[0] = 0.0f;
+            pNormal->v[1] = 0.0f;
+            pNormal->v[2] = 0.0f;
+            pNormal->v[index] = (result & 4) ? 1.0f : -1.0f;
+        }
+        return result;
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        result = LinePolyColl((br_vector3*)p1, (br_vector3*)p2, (tCollision_shape_polyhedron_data*)&pShape->polyhedron.polyhedron, pPos, 0, pFactor);
+        if (pNormal != NULL && result > 0) {
+            index = (result & 0x3f) - 1;
+            pNormal->v[0] = pShape->polyhedron.polyhedron.planes[index].v[0];
+            pNormal->v[1] = pShape->polyhedron.polyhedron.planes[index].v[1];
+            pNormal->v[2] = pShape->polyhedron.polyhedron.planes[index].v[2];
+        }
+        return result;
+    case kCollisionShapeType_Sphere:
+        return LineSphereColl((br_vector3*)p1, (br_vector3*)p2, (tCollision_shape_sphere_data*)&pShape->sphere.sphere, pPos, pNormal, pFactor);
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType, "");
+    case kCollisionShapeType_Wireframe:
+        return 0;
+    }
+}
 
 // ShapeRayCastWithSphere
 
