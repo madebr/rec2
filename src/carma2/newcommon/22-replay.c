@@ -350,7 +350,20 @@ void C2_HOOK_FASTCALL CheckReplayTurnOn(void) {
     }
 }
 
-// InitializeActionReplayPix
+// FUNCTION: CARMA2_HW 0x004e7090
+void C2_HOOK_FASTCALL InitializeActionReplayPix(void) {
+    extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
+    extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
+    int i;
+
+    for (i = 0; i < 11; i++) {
+        gReplay_pixelmaps[i] = LoadPixelmap(gReplay_pixie_names[i]);
+        BRPM_convert(gReplay_pixelmaps[i], gBack_screen->type);
+        BrMapAdd(gReplay_pixelmaps[i]);
+    }
+}
+
+// FreeActionReplayPix
 
 
 // GLOBAL: CARMA2_HW 0x006a23d4
