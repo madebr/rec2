@@ -1610,7 +1610,26 @@ int C2_HOOK_FASTCALL MakeCharacterPhysicworthy(tPed_character_instance* pCharact
     return 0;
 }
 
-// RecalculateOrientationOfRoot
+// FUNCTION: CARMA2_HW 0x00409340
+void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pPed) {
+    br_matrix34* character_matrix;
+    tPed_form* form;
+    br_matrix34 inverse;
+
+    form = pPed->personality->form;
+    if (pPed->field_0x4 < 0) {
+        character_matrix = &pPed->field_0x2c;
+    } else if (pPed->field_0xe8 != NULL) {
+        character_matrix = pPed->field_0xe8;
+    } else {
+        character_matrix = &form->actor_sets[pPed->field_0x4].actors[0]->t.t.mat;
+    }
+    BrMatrix34LPInverse(&inverse, &form->moves[pPed->field_0x7].move->frames[(short)pPed->field_0x1c].mat);
+    BrMatrix34Mul(&pPed->field_0x8c, &inverse, character_matrix);
+    pPed->field_0x8c.m[3][0] = 0.f;
+    pPed->field_0x8c.m[3][1] = 0.f;
+    pPed->field_0x8c.m[3][2] = 0.f;
+}
 
 // BonerActiveHalted2
 
