@@ -1000,7 +1000,48 @@ extern int gFaded_palette;
 extern tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
 extern void C2_HOOK_FASTCALL MungeSoundGenerators(void);
 
-// MungeEnvironmentalSound
+// FUNCTION: CARMA2_HW 0x00456e20
+void C2_HOOK_FASTCALL MungeEnvironmentalSound(void) {
+    int* puVar1;
+    int* piVar2;
+
+    if (gAmbient_sound != 0) {
+        puVar1 = (int*)&gEnvironment_sound_sources[0].field_0x18;
+        do {
+            *puVar1 = 0;
+            puVar1 = puVar1 + 7;
+        } while ((int)puVar1 < (int)&gXXX_outlet);
+        if (gFaded_palette == 0) {
+            FindSpecialVolume((br_vector3*)&gCamera_to_world.m[3], NULL, 1);
+            MungeSoundGenerators();
+        }
+        piVar2 = (int*)&gEnvironment_sound_sources[0].field_0x10;
+        do {
+            if (piVar2[2] == 0 && piVar2[0] != 0) {
+                S3UpdateSoundSource(gXXX_outlet, -1, (tS3_sound_source*)piVar2[-4], -1.f, -1, -1, 0, -1, -1);
+                piVar2[0] = 0;
+            }
+            piVar2 = piVar2 + 7;
+        } while ((int)piVar2 < (int)&gPedestrians_outlet);
+    }
+}
+
+void C2_HOOK_FASTCALL BuggerModelName(tTrack_spec* pTrack_spec, const char* pName, int pIndex) {
+    br_model* model;
+    char identifier[4];
+
+    sprintf(identifier, "%c%02d", ')', pIndex);
+    model = BrModelFind(identifier);
+    if (model == NULL || model->identifier == NULL) {
+#ifdef REC2_FIX_BUGS
+        FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S, identifier);
+#else
+        FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S);
+#endif
+    } else {
+        memcpy(model->identifier, identifier, sizeof(identifier));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004572f0
 // FUNCTION: CARMA2_SW 0x00457080
