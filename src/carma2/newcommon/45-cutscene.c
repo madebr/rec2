@@ -124,7 +124,45 @@ void C2_HOOK_FASTCALL DustRotate(void) {
     NewTextHeadupSlot(4, 0, 1000, -4, "Dust colour rotated");
 }
 
-// DoFeatureUnavailableInDemo
+// FUNCTION: CARMA2_HW 0x0043f3a0
+void C2_HOOK_FASTCALL DoFeatureUnavailableInDemo(void) {
+    extern void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle);
+    extern void C2_HOOK_FASTCALL SuspendPendingFlic(void);
+    extern void C2_HOOK_FASTCALL FadePaletteDown(void);
+    extern float gFlic_sound_delay_not_in_demo;
+    extern tS3_error_codes C2_HOOK_FASTCALL DRS3LoadSound(tS3_sound_id pThe_sound);
+    extern tU32 C2_HOOK_FASTCALL PDGetTotalTime(void);
+    extern void C2_HOOK_FASTCALL FUN_00461980(int pSound_ID, tU32 pSound_time);
+    extern void C2_HOOK_FASTCALL SetNonFatalAllocationErrors(void);
+    extern void C2_HOOK_FASTCALL RunFlic(int pIndex);
+    extern void C2_HOOK_FASTCALL ResetNonFatalAllocationErrors(void);
+    extern void C2_HOOK_FASTCALL FUN_004835d0(void);
+    extern void C2_HOOK_FASTCALL ClearEntireScreen(void);
+    extern int C2_HOOK_FASTCALL DRS3ReleaseSound(int pSound_id);
+    float sound_delay;
+
+    PrintMemoryDump(0, "BEFORE DEMO-ONLY SCREEN");
+    SuspendPendingFlic();
+    FadePaletteDown();
+    sound_delay = gFlic_sound_delay_not_in_demo;
+    gProgram_state.cut_scene = 1;
+    DRS3LoadSound(0x2136);
+    FUN_00461980(0x2136, PDGetTotalTime() - (int)(sound_delay * -1000.0f));
+    SetNonFatalAllocationErrors();
+    RunFlic(7);
+    ResetNonFatalAllocationErrors();
+    FUN_004835d0();
+    FadePaletteDown();
+    ClearEntireScreen();
+    DRS3ReleaseSound(0x2136);
+    FUN_00461980(0, 0);
+    gProgram_state.cut_scene = 0;
+    FadePaletteDown();
+    PrintMemoryDump(0, "AFTER DEMO-ONLY SCREEN");
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x004835d0
 void C2_HOOK_FASTCALL FUN_004835d0(void) { NOT_IMPLEMENTED(); }
