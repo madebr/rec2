@@ -2754,7 +2754,13 @@ void C2_HOOK_FASTCALL UndoShitMine(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chun
     return WorkerEndShitMine(chunk->field_0x0, &chunk->field_0x4);
 }
 
-// UndoEndShitMine
+// FUNCTION: CARMA2_HW 0x004ca3d0
+void C2_HOOK_FASTCALL UndoEndShitMine(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_shit_mine* chunk = (tPipe_chunk_shit_mine*)*pChunk;
+
+    return WorkerShitMine(chunk->field_0x0, &chunk->field_0x4);
+}
+#endif
 
 // FUNCTION: CARMA2_HW 0x004ca3e0
 // FUNCTION: CARMA2_SW 0x004c6b10
