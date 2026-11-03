@@ -2683,7 +2683,12 @@ void C2_HOOK_FASTCALL UndoGrooveOnOff(tPipe_chunk** pChunk, tPipe_chunk* pPrev_c
 }
 
 #ifdef REC2_HW
-// UndoPowerupGot
+// FUNCTION: CARMA2_HW 0x004ca2f0
+void C2_HOOK_FASTCALL UndoPowerupGot(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_powerup* chunk = (tPipe_chunk_powerup*)*pChunk;
+
+    return WorkerPowerupLose(chunk->field_0x0, chunk->field_0x4);
+}
 
 // UndoPowerupLose
 
