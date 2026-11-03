@@ -1276,7 +1276,19 @@ int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend) {
 
 // MainMenuSelectRace
 
-// testUp
+// FUNCTION: CARMA2_HW 0x0046a010
+int C2_HOOK_FASTCALL testUp(tFrontend_spec *pFrontend) {
+
+    if (PDGetTotalTime() - gFrontend_last_scroll > 400) {
+        gFrontend_last_scroll = PDGetTotalTime();
+        if ((gCurrent_race_group - gRace_groups) % 10 > 0) {
+            gCurrent_race_group -= 1;
+        }
+        RefreshRacesScroller(pFrontend);
+        FuckWithWidths(pFrontend);
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0046a080
 // FUNCTION: CARMA2_SW 0x00469de0
