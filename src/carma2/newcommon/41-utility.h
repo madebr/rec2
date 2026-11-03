@@ -70,7 +70,7 @@ extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, b
 
 extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_matrix34* pMatrix, recurse_with_trans_cbfn* pCall_back, void* pArg);
 
-// DRActorEnumRecurseWithSnart
+extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithSnart(br_actor* pActor, br_matrix34* pMat, tDRActorEnumRecurseWithSnart_cbfn* pCallback, void* pContext);
 
 extern int C2_HOOK_FASTCALL sign(int pNumber);
 
@@ -235,5 +235,23 @@ extern void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* ds
 extern void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap);
 
 extern void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2);
+
+extern void C2_HOOK_FASTCALL CycleJoystick(void);
+
+extern void C2_HOOK_FASTCALL FUN_0045c420(void);
+
+extern void C2_HOOK_FASTCALL CopyBrMaterial(br_material* pDestination, const br_material* pSource);
+
+extern int C2_HOOK_FASTCALL DRVector4TestForNan(const float* pV);
+
+extern void C2_HOOK_FASTCALL FUN_005162d0(br_vector4* pDst, const br_vector4* pSrc);
+
+extern br_actor* C2_HOOK_FASTCALL CreateBoundsActor(br_actor* pParent, const br_bounds* pBounds);
+
+extern void C2_HOOK_FASTCALL DisposeActorAndModel(br_actor* pActor);
+
+extern void C2_HOOK_FASTCALL FUN_005192a0(br_uint_16* pPixel);
+
+extern void C2_HOOK_FASTCALL FUN_00519400(br_pixelmap* pMap);
 
 #endif // GUARD_41_UTILITY_H

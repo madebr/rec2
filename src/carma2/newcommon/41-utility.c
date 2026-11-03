@@ -441,9 +441,30 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_mat
     return 0;
 }
 
-// STUB: CARMA2_HW 0x005148c0
-// STUB: CARMA2_SW 0x0050fd00
-// DRActorEnumRecurseWithSnart
+// FUNCTION: CARMA2_HW 0x005148c0
+// FUNCTION: CARMA2_SW 0x0050fd00
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithSnart(br_actor* pActor, br_matrix34* pMat, tDRActorEnumRecurseWithSnart_cbfn* pCallback, void* pContext) {
+    br_actor* child;
+    br_matrix34 mat;
+    intptr_t result;
+
+    if (pMat != NULL) {
+        BrMatrix34Mul(&mat, &pActor->t.t.mat, pMat);
+    } else {
+        BrMatrix34Identity(&mat);
+    }
+    result = pCallback(pActor, &mat, pContext);
+    if (result != 0) {
+        return result;
+    }
+    for (child = pActor->children; child != NULL; child = child->next) {
+        result = DRActorEnumRecurseWithSnart(child, &mat, pCallback, pContext);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00514930
 // FUNCTION: CARMA2_SW 0x0050fd70
@@ -1002,25 +1023,7 @@ int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
     return PDCheckDriveExists2(pThe_path, NULL, 0);
 }
 
-br_actor* C2_HOOK_FASTCALL CloneActor(br_actor* pActor) {
-    br_actor *clone;
-    br_actor *child;
-
-    clone = BrActorAllocate(pActor->type, pActor->type_data);
-    clone->model = pActor->model;
-    clone->material = pActor->material;
-    if (pActor->identifier != NULL) {
-        if (clone->identifier != NULL) {
-            BrResFree(clone->identifier);
-        }
-        clone->identifier = BrResStrDup(clone, pActor->identifier);;
-    }
-    clone->t = pActor->t;
-    for (child = pActor->children; child != NULL; child = child->next) {
-        BrActorAdd(clone, CloneActor(child));
-    }
-    return clone;
-}
+// CloneActor
 
 // FUNCTION: CARMA2_HW 0x00515b80
 void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) {
@@ -1387,6 +1390,17 @@ int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
         return 1;
     }
     return 0;
+}
+#endif
+
+#ifdef REC2_SW
+/* direct surface locking is hardware-only; the ported HW callers still name the pair */
+void C2_HOOK_FASTCALL PossibleLock(int pValue) {
+    NOT_IMPLEMENTED();
+}
+
+int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
+    NOT_IMPLEMENTED();
 }
 #endif
 
@@ -1932,16 +1946,31 @@ void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2)
 
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// CycleJoystick
+
+// STUB: CARMA2_HW 0x0045c420
+void C2_HOOK_FASTCALL FUN_0045c420(void) {
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// CopyBrMaterial
+
+// DRVector4TestForNan
+
+// FUN_005162d0
+
+// CreateBoundsActor
+
+// DisposeActorAndModel
+
+// FUN_005192a0
+
+// FUN_00519400
+
 // STUB: CARMA2_HW 0x00515910
 void C2_HOOK_FASTCALL StringTransformToLower(char* pStr) { NOT_IMPLEMENTED(); }
-
-#ifdef REC2_SW
-/* direct surface locking is hardware-only; the ported HW callers still name the pair */
-void C2_HOOK_FASTCALL PossibleLock(int pValue) {
-    NOT_IMPLEMENTED();
-}
-
-int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
-    NOT_IMPLEMENTED();
-}
-#endif
