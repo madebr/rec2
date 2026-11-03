@@ -2383,7 +2383,13 @@ void C2_HOOK_FASTCALL FUN_004c86b0(uintptr_t pId, br_actor* pActor) {
         4, 8, pId);
 }
 
-// FUN_004c86f0
+// FUNCTION: CARMA2_HW 0x004c86f0
+void C2_HOOK_FASTCALL FUN_004c86f0(int pOwner, void* pData, tU32 pArg3) {
+    ARDoSingleVariedSession(0x1b, pOwner, 2, 0x10, 0, pData, 4, 0x10, pArg3);
+}
+
+extern int gINT_006a3334;
+extern tSmashable_level* C2_HOOK_FASTCALL FUN_004ee290(tCar_spec* pCar, tPhysics_object* pCollision_info, br_vector3* pPos, br_vector3* pOptional_position, br_actor* pActor, undefined4 pArg6, tCar_crush_smashable_part* pSmashable, float pDamage, undefined4 pArg9, undefined4 pArg10);
 
 // FUN_004ee250
 
