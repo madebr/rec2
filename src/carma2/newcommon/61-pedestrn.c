@@ -43,6 +43,9 @@ typedef struct {
     float random_spin_rate_max;
 } tSmashable_initial_speed_spec;
 
+// GLOBAL: CARMA2_HW 0x00655df0
+br_vector3 gY_unit_vector = { { 0.f, 1.f, 0.f } };
+
 // GLOBAL: CARMA2_HW 0x0065e598
 const char* gBurning_ped_map_names[7] = {
     "Ex00006",
@@ -291,6 +294,8 @@ int gPed_cache_notify_flags;
 
 void C2_HOOK_FASTCALL DisposePedForm(tPed_form* pForm);
 void C2_HOOK_FASTCALL DisposePedPersonality(tPed_personality* pPersonality);
+tPhysics_object* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance* pPed);
+void C2_HOOK_FASTCALL DRVector3SafeCross(br_vector3* pDest, const br_vector3* pA, const br_vector3* pB);
 
 // STUB: CARMA2_HW 0x004ee5a0
 void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes) {
@@ -723,7 +728,98 @@ int C2_HOOK_FASTCALL IsActorRenderworthy(br_actor* pActor) {
     }
 }
 
-// SetPedXZDirection
+// FUNCTION: CARMA2_HW 0x004cc2c0
+void C2_HOOK_FASTCALL SetPedXZDirection(tPedestrian* pPed, br_vector3* pDir, float pArg3, tU32 pTime) {
+    tPed_face_cache_0x34* face_cache;
+    tPed_character_instance* pCharacter;
+    tPhysics_object* collision_info;
+    br_vector3* pDirxz;
+    br_matrix34* m1;
+    br_matrix34* m2;
+    br_vector3 cross1;
+    br_vector3 cross2;
+    float len;
+    float scale;
+    float value;
+    int i;
+    int j;
+
+    face_cache = pPed->field_0x0c->field_0xb0;
+    if (face_cache == NULL) {
+        return;
+    }
+    if (face_cache->field_0x30 == NULL) {
+        return;
+    }
+    DRVector3SafeCross(&cross1, &gY_unit_vector, pDir);
+    DRVector3SafeCross(&cross2, &cross1, &face_cache->field_0x30->normal);
+    len = BR_LENGTH3(cross2.v[0], cross2.v[1], cross2.v[2]);
+    if (len > BR_SCALAR_EPSILON * 2) {
+        scale = 1.0 / len;
+        cross1.v[0] = cross2.v[0] * scale;
+        cross1.v[1] = cross2.v[1] * scale;
+        cross1.v[2] = cross2.v[2] * scale;
+    } else {
+        cross1.v[0] = 1.0f;
+        cross1.v[1] = 0.0f;
+        cross1.v[2] = 0.0f;
+    }
+    if (pPed->field_0x0c->field_0x6c != 0 && BrVector3Dot(&pPed->field_0x0c->field_0x48, &cross1) > 0.95) {
+        return;
+    }
+    pPed->field_0x0c->field_0x48.v[0] = cross1.v[0];
+    pPed->field_0x0c->field_0x48.v[1] = cross1.v[1];
+    pPed->field_0x0c->field_0x48.v[2] = cross1.v[2];
+    if (pArg3 != 0.f) {
+        pPed->field_0x0c->field_0x54.v[0] = pPed->field_0x0c->field_0x48.v[0];
+        pPed->field_0x0c->field_0x54.v[1] = pPed->field_0x0c->field_0x48.v[1];
+        pPed->field_0x0c->field_0x54.v[2] = pPed->field_0x0c->field_0x48.v[2];
+        len = BR_LENGTH3(pPed->character->field_0xd8.v[0], pPed->character->field_0xd8.v[1], pPed->character->field_0xd8.v[2]);
+        value = (pArg3 / len) * (float)(tS16)pPed->character->field_0x1e * (1.f / 30.f);
+        if (value > 0.5) {
+            value = 0.5f;
+        }
+        pPed->field_0x0c->field_0x6c = pTime;
+        pPed->field_0x0c->field_0x70 = pTime - value * -1000.f;
+        pPed->field_0x0c->field_0x60.v[0] = pPed->character->field_0xc0.v[0];
+        pPed->field_0x0c->field_0x60.v[1] = pPed->character->field_0xc0.v[1];
+        pPed->field_0x0c->field_0x60.v[2] = pPed->character->field_0xc0.v[2];
+        return;
+    }
+    pPed->field_0x0c->field_0x6c = 0;
+    pCharacter = pPed->character;
+    pDirxz = &pPed->field_0x0c->field_0x48;
+    if (pCharacter->field_0x14 & 0x1) {
+        collision_info = pCharacter->personality->form->simple_physicing[pCharacter->field_0x5].collision_info;
+    } else {
+        collision_info = GetRootObject(pCharacter);
+    }
+    if (!gAction_replay_mode || gBOOL_00744804) {
+        if (!(pCharacter->field_0x14 & 0x4) && gProgram_state.racing) {
+            PipeSinglePedDir((((short)pCharacter->ped->field_0x06) << 16) | (pCharacter->ped - gPedestrian_array), pDirxz);
+        }
+        SetCharacterDirection(pCharacter, pDirxz, &pCharacter->field_0xcc);
+        if (gProgram_state.racing) {
+            m1 = &collision_info->transform_matrix;
+            m2 = &collision_info->actor->t.t.mat;
+            if (BrVector3Dot((br_vector3*)m1->m[0], (br_vector3*)m2->m[0]) < 0.7f
+                    || BrVector3Dot((br_vector3*)m1->m[1], (br_vector3*)m2->m[1]) < 0.7f
+                    || BrVector3Dot((br_vector3*)m2->m[2], (br_vector3*)m1->m[2]) < 0.7f) {
+                if (pCharacter->field_0x14 & 0x1) {
+                    collision_info = pCharacter->personality->form->simple_physicing[pCharacter->field_0x5].collision_info;
+                } else {
+                    collision_info = GetRootObject(pCharacter);
+                }
+                for (i = 0; i < 3; i++) {
+                    for (j = 0; j < 3; j++) {
+                        collision_info->transform_matrix.m[i][j] = collision_info->actor->t.t.mat.m[i][j];
+                    }
+                }
+                collision_info->flags |= 0x100;
+            }
+        }
+    }
+}
 
 // StopPedNoise
 
