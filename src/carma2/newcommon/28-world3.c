@@ -896,8 +896,58 @@ const char* gPed_remap_axis_choices[6] = {
     "-Z",
 };
 
-// STUB: CARMA2_HW 0x00404410
-tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char* pFile_name) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x00404410
+tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char* pFile_name) {
+    FILE* f;
+    tPed_remap* remap;
+    char s[256];
+    int i;
+    int j;
+
+    if (strcmp(pFile_name, "NONE") == 0) {
+        return NULL;
+    }
+    f = BonerOpenRemaps(pFile_name);
+    if (f == NULL) {
+        FatalError(kFatalError_BonerError_UnableToOpenFile_S, pFile_name);
+    }
+    remap = BrMemAllocate(sizeof(tPed_remap), kBoner_mem_type_remap);
+    if (remap == NULL) {
+        FatalError(kFatalError_BonerError_UnableToAllocateMemory, 0);
+    }
+    remap->count_bones = 0;
+    GetALineAndDontArgue(f, s);
+    if (strcmp("START OF BONES", s) != 0) {
+        FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
+    }
+    while (!PFfeof(f)) {
+        GetALineAndDontArgue(f, s);
+        if ((remap->count_bones == 0 && strcmp("END OF BONES", s) != 0) || strcmp("NEXT BONE", s) == 0) {
+            remap->count_bones++;
+        }
+    }
+    remap->bones = BrMemAllocate(sizeof(tPed_remap_bone) * remap->count_bones, kBoner_mem_type_remap);
+    PFrewind(f);
+    GetALineAndDontArgue(f, s);
+    for (i = 0; i < remap->count_bones; i++) {
+        GetALineAndDontArgue(f, remap->bones[i].name);
+        for (j = 0; j < 3; j++) {
+            remap->bones[i].general_remap[j] = GetALineAndInterpretCommand(f, gPed_remap_axis_choices, REC2_ASIZE(gPed_remap_axis_choices));
+        }
+        for (j = 0; j < 3; j++) {
+            remap->bones[i].powerup_axis[j] = GetALineAndInterpretCommand(f, gPed_remap_axis_choices, REC2_ASIZE(gPed_remap_axis_choices));
+        }
+        GetALineAndDontArgue(f, s);
+    }
+    strcpy(remap->name, pFile_name);
+    for (i = 0; i < (int)REC2_ASIZE(gPed_remaps); i++) {
+        if (gPed_remaps[i] == NULL) {
+            gPed_remaps[i] = remap;
+            return remap;
+        }
+    }
+    FatalError(kFatalError_BonerError_TooManyRemapsLoaded, 0);
+}
 
 // FindOrOpenMove
 
