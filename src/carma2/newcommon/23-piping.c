@@ -34,6 +34,27 @@ extern void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 
 extern void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...);
 
+// GLOBAL: CARMA2_HW 0x00694108
+tU32 gYoungest_time;
+
+// GLOBAL: CARMA2_HW 0x006940f0
+br_vector3 gCar_pos;
+
+// GLOBAL: CARMA2_HW 0x00694100
+tCar_spec* gCar_ptr;
+
+// GLOBAL: CARMA2_HW 0x006940d0
+tU32 gOldest_time;
+
+// GLOBAL: CARMA2_HW 0x006940e0
+br_vector3 gReference_pos;
+
+// GLOBAL: CARMA2_HW 0x006940d8
+br_scalar gMax_distance;
+
+// GLOBAL: CARMA2_HW 0x00694110
+tU32 gTrigger_time;
+
 // GLOBAL: CARMA2_HW 0x006768f8
 tU32 gReplay_saved_average_frame_period = 0;
 
@@ -900,11 +921,22 @@ void C2_HOOK_FASTCALL PipeCarPositions(void) {
 // DoOilSpillAR
 
 // CheckCar
+// FUNCTION: CARMA2_HW 0x004c6bc0
+int C2_HOOK_FASTCALL CarTimeout(tU32 pTime) {
 
-// CarTimeout
+    if (ARReplayForwards()) {
+        if (pTime > gYoungest_time) {
+            return 0;
+        }
+    } else {
+        if (pTime < gYoungest_time) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 // ScanCarsPositions
-
 // InitialiseActionReplay
 
 // STUB: CARMA2_HW 0x004c6c60
