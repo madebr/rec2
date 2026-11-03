@@ -1655,7 +1655,55 @@ int C2_HOOK_FASTCALL FUN_0043d900(tCar_spec* pCar) {
     return total * 6 + 1;
 }
 
-// UpdateCrushVertices
+// FUNCTION: CARMA2_HW 0x0043db00
+void C2_HOOK_FASTCALL UpdateCrushVertices(tCar_spec* pCar, tU8* pData) {
+    extern float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar_spec);
+    extern void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape);
+    extern void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info);
+    tPhysics_shape* shape;
+    tCar_crush_shape_info* shape_info;
+    int i;
+    int j;
+    int count;
+
+    if (pCar->car_crush_spec->field_0x4b8 != 0) {
+        count = *pData++;
+        shape = pCar->collision_info->shape;
+        while (shape != NULL && count > 0) {
+            if (shape->common.type == kCollisionShapeType_Polyhedron
+                    || shape->common.type == kCollisionShapeType_Wireframe_Polyhedron) {
+                shape->polyhedron.polyhedron.count_points = *pData++;
+                for (i = 0; i < shape->polyhedron.polyhedron.count_points; i++) {
+                    ExpandVector3(&shape->polyhedron.polyhedron.points[i], (const tCompressed_vector3*)pData, -2.5f, 2.5f);
+                    pData += 6;
+                }
+                count--;
+            }
+            shape = shape->common.next;
+        }
+    } else {
+        pData++;
+        for (i = 0; i < pCar->car_crush_spec->count_shapes; i++) {
+            shape_info = &pCar->car_crush_spec->field_0x4[i];
+            for (j = 0; j < shape_info->count_points; j++) {
+                ExpandVector3(&shape_info->field_0x18[j].field_0x18, (const tCompressed_vector3*)pData, -2.5f, 2.5f);
+                pData += 6;
+                shape_info->field_0x18[j].field_0xc.v[0] = shape_info->field_0x18[j].field_0x18.v[0];
+                shape_info->field_0x18[j].field_0xc.v[1] = shape_info->field_0x18[j].field_0x18.v[1];
+                shape_info->field_0x18[j].field_0xc.v[2] = shape_info->field_0x18[j].field_0x18.v[2];
+                shape_info->field_0x0->polyhedron.points[j].v[0] = shape_info->field_0x18[j].field_0xc.v[0];
+                shape_info->field_0x0->polyhedron.points[j].v[1] = shape_info->field_0x18[j].field_0xc.v[1];
+                shape_info->field_0x0->polyhedron.points[j].v[2] = shape_info->field_0x18[j].field_0xc.v[2];
+            }
+            FillInShape((tPhysics_shape*)shape_info->field_0x0);
+        }
+    }
+    UpdateCollisionObject(pCar->collision_info);
+    pCar->collision_info->bb2.min.v[1] = GetCarOverallBoundsMinY(pCar);
+    pCar->car_crush_spec->field_0x26 = PO_U16(pCar->collision_info, 0x290);
+    pCar->car_crush_spec->field_0x24 = pCar->car_crush_spec->field_0x26;
+    pCar->car_crush_spec->expand_bounding_box = 0;
+}
 
 // WeldCarByNetwork
 
