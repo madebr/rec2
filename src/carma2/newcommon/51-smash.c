@@ -1829,7 +1829,25 @@ void C2_HOOK_FASTCALL UpdateCrushTimers(void) {
 #pragma auto_inline(off)
 #endif
 
-// PipeSingleShrapnelShower
+// FUNCTION: CARMA2_HW 0x004c8870
+void C2_HOOK_FASTCALL PipeSingleShrapnelShower(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, br_vector3* pArg5, br_vector3* pArg6, float pArg7, br_vector3* pArg8, br_vector3* pArg9, undefined4 pArg10, br_bounds3* pArg11, undefined4 pArg12, br_matrix34* pArg13, br_vector3* pArg14, void* pArg15) {
+
+    ARDoSingleVariedSession(0x1e, pId, 14,
+        4, 0x40, pArg3,
+        4, 0, pArg4,
+        0xc, 4, pArg5,
+        0xc, 0x10, pArg6,
+        4, 0x9c, (int)pArg7,
+        0xc, 0x1c, pArg8,
+        0xc, 0x28, pArg9,
+        4, 0x44, pArg2,
+        0x30, 0x50, pArg13,
+        4, 0x4c, pArg12,
+        4, 0x80, pArg10,
+        0x18, 0x84, pArg11,
+        0xc, 0x34, pArg14,
+        0x30, 0xa0, pArg15);
+}
 
 // PipeSingleBloodSpurt
 
