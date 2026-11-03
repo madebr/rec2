@@ -1945,7 +1945,17 @@ void C2_HOOK_FASTCALL ApplyScreenWobble(tPipe_chunk** pChunk) {
         ((tPipe_chunk_screen_wobble*)(*pChunk)->data.raw_data)->wobble_y);
 }
 
-// ApplyGrooveStop
+// FUNCTION: CARMA2_HW 0x004c9190
+void C2_HOOK_FASTCALL ApplyGrooveStop(tPipe_chunk** pChunk) {
+    tPipe_chunk_groove_stop* chunk = (tPipe_chunk_groove_stop*)*pChunk;
+
+#ifdef REC2_MATCHING
+    /* the original passes the raw ints as arguments */
+    ((void (C2_HOOK_FASTCALL*)(int, br_vector3*, int, int, int, int))(void*)SetGrooveInterrupt)(chunk->field_0x0, &chunk->field_0x14, chunk->field_0x4, chunk->field_0x8, chunk->field_0xc, chunk->field_0x10);
+#else
+    SetGrooveInterrupt(chunk->field_0x0, (const br_matrix34*)&chunk->field_0x14, (tInterrupt_status)chunk->field_0x4, (tInterrupt_status)chunk->field_0x8, *(float*)&chunk->field_0xc, *(float*)&chunk->field_0x10);
+#endif
+}
 
 // FUNCTION: CARMA2_HW 0x004c91b0
 // FUNCTION: CARMA2_SW 0x004c58e0
