@@ -453,8 +453,21 @@ extern void C2_HOOK_FASTCALL PipeSingleDroneRender(tDrone_spec* pDrone_spec, int
 extern int gCount_rendered_drones;
 extern tDrone_state_function* gDrone_state_functions[6];
 
-// STUB: CARMA2_HW 0x0044cfc0
-void C2_HOOK_CDECL DoNotDprintf_drone(const char* pMessage, ...) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x0044cfc0
+void C2_HOOK_CDECL DoNotDprintf_drone(const char* pMessage, ...) {
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+/* inlined copy of CrappyLittleVector3DPrintf (0x451620) at this call site in the original */
+static void C2_HOOK_CDECL DroneCrappyLittleVector3DPrintf(const char* pMessage, br_vector3* pPosition) {
+    DoNotDprintf_drone("%d: %s: %3.3f, %3.3f, %3.3f", gFrame, pMessage, pPosition->v[0], pPosition->v[1], pPosition->v[2]);
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // StopProcessingThisDrone
 
