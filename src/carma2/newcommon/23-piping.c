@@ -652,6 +652,7 @@ void C2_HOOK_FASTCALL ScanAndPlaySoundsToBe(tU8* pFirst_session, tU32 pStart_tim
         }
     } while (more);
 }
+#undef chunk
 // ARGetStartTime
 
 // ARDisableAdvance
