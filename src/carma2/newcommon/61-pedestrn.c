@@ -33,6 +33,8 @@
 #include "c2_stdio.h"
 #include "c2_string.h"
 
+extern void C2_HOOK_FASTCALL PipeSinglePedMove(tPedestrian* pPed, tS16 pArg2, tS16 pOriginal_move_id, tS16 pMove_id, float pArg5, float pArg6, int pArg7, int pArg8, br_vector3* pOriginal_pos, br_vector3* pPos, int pOriginal_action, int pAction, br_matrix34* pArg13);
+
 typedef struct {
     float min_speed;
     float max_speed;
@@ -42,6 +44,24 @@ typedef struct {
     float random_normal_velocity_max;
     float random_spin_rate_max;
 } tSmashable_initial_speed_spec;
+
+// GLOBAL: CARMA2_HW 0x0069bcf8
+int gPed_points[3];
+
+// GLOBAL: CARMA2_HW 0x00694268
+int gPed_times[3];
+
+// GLOBAL: CARMA2_HW 0x0069bce4
+int gPed_score_multiplier;
+
+// GLOBAL: CARMA2_HW 0x0069bc30
+int gPed_recent_points;
+
+// GLOBAL: CARMA2_HW 0x006a0418
+tU32 gPed_last_score_time;
+
+// GLOBAL: CARMA2_HW 0x00694120
+tPedestrian* gPed_recent_ped;
 
 // GLOBAL: CARMA2_HW 0x007447cc
 int gCount_killed_peds;
@@ -1096,7 +1116,118 @@ void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed) {
     }
 }
 
-// ScoreForKilledPedestrian
+// FUNCTION: CARMA2_HW 0x004cd260
+void C2_HOOK_FASTCALL ScoreForKilledPedestrian(tPedestrian* pPed, float pHeight) {
+    tU32 now;
+    tPed_action action;
+    tCar_spec* car;
+    tPhysics_object* obj;
+    int points;
+    /* NB: single struct (not two locals) so VC5 packs rel at [esp+0x14] and out at [esp+0x20] as in the original. */
+    struct {
+        br_vector3 rel;
+        br_vector3 out;
+    } vecs;
+    br_actor* actor;
+    tU16 flags;
+
+    now = GetTotalTime();
+    action = pPed->action;
+    pPed->hit_points = 0;
+    if (action != ePed_action_dead) {
+        PipeSinglePedMove(pPed, -1, -1, -1, 0.f, 0.f, 0, 0, NULL, NULL, action, ePed_action_dead, NULL);
+        pPed->action = ePed_action_dead;
+    }
+    *(tU32*)((char*)pPed + 0x30) = now;
+    if (pPed->field_0x0c == NULL) {
+        return;
+    }
+    car = pPed->field_0x0c->field_0xc0;
+    if (car == NULL) {
+        return;
+    }
+    if (car->driver != eDriver_local_human) {
+        return;
+    }
+    if (now - gPed_last_score_time <= 1000) {
+        if (gPed_score_multiplier < 10) {
+            gPed_score_multiplier = gPed_score_multiplier + 1;
+        }
+    } else {
+        gPed_score_multiplier = 1;
+    }
+    gPed_last_score_time = now;
+    points = gPed_points[gProgram_state.skill_level];
+    points *= gPed_score_multiplier;
+    obj = pPed->character->personality->form->simple_physicing[pPed->character->field_0x5].collision_info;
+    vecs.rel.v[0] = pPed->pos.v[0] - car->pos.v[0];
+    vecs.rel.v[1] = pPed->pos.v[1] - car->pos.v[1];
+    vecs.rel.v[2] = pPed->pos.v[2] - car->pos.v[2];
+    BrMatrix34TApplyV(&vecs.out, &vecs.rel, &car->collision_info->actor->t.t.mat);
+    flags = *(tU16*)&pPed->field_0x0c->field_0x2e;
+    if (flags & 0x10) {
+        points *= 20;
+        PratcamEvent(0x1e);
+        DoFancyHeadup(0x20);
+    } else if (flags & 8) {
+        points *= 5;
+        PratcamEvent(0x1e);
+        DoFancyHeadup(0x1f);
+    } else if (flags & 0x40) {
+        points *= 2;
+        PratcamEvent(0x1e);
+        DoFancyHeadup(2);
+    } else if (flags & 1) {
+        points *= 4;
+        PratcamEvent(0x1e);
+        DoFancyHeadup(0x11);
+    } else if (flags & 0x20) {
+        points *= 2;
+        PratcamEvent(0x1e);
+        DoFancyHeadup(0x1e);
+    } else if ((pHeight == 0.0f
+            && ((float)fabs(car->collision_info->omega.v[0]) > 5.0f
+                || (float)fabs(car->collision_info->omega.v[2]) > 5.0f
+                || (actor = car->collision_info->actor, actor->t.t.mat.m[1][1] < 0.1f)
+                || actor->t.t.mat.m[3][1] - pPed->pos.v[1] > 0.05f))
+            || pPed->field_0x0c->field_0x98 > 0) {
+        points *= 4;
+        PratcamEvent(0x1e);
+        DoFancyHeadup(3);
+    } else if (pHeight > 1.0) {
+        points *= 2;
+        DoFancyHeadup(6);
+        PratcamEvent(0x1e);
+    } else if (obj == NULL
+            || (BrVector3LengthSquared(&obj->v) < 2.0
+                && BrVector3LengthSquared((br_vector3*)obj->field_0x1b4) < 2.0)) {
+        if (pHeight == 0.0f
+                && (((float)fabs(vecs.out.v[0]) / (float)fabs(vecs.out.v[2]) >= 0.5
+                        && ((float)fabs(car->collision_info->velocity_car_space.v[0]) > (float)fabs(car->collision_info->velocity_car_space.v[2])
+                            || (float)fabs(car->collision_info->omega.v[1] / car->collision_info->velocity_car_space.v[2]) > 600.0f))
+                    || (vecs.out.v[2] > 0.0f && car->collision_info->velocity_car_space.v[2] > 0.0f))) {
+            points *= 2;
+            DoFancyHeadup(2);
+        } else {
+            if (gPed_score_multiplier > 1) {
+                DoFancyHeadup(gPed_score_multiplier + 6);
+                PratcamEvent(0x1e);
+            } else if (flags & 2) {
+                points *= 2;
+                DoFancyHeadup(0);
+                PratcamEvent(0x1e);
+            }
+        }
+    } else {
+        points *= 4;
+        DoFancyHeadup(5);
+        PratcamEvent(0x1e);
+    }
+    EarnCredits(points);
+    gPed_recent_points = points;
+    gPed_recent_ped = pPed;
+    AwardTime(gPed_times[gProgram_state.skill_level]);
+}
 
 // FUNCTION: CARMA2_HW 0x004cce70
 void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tPhysics_object* pCollision_info) {
