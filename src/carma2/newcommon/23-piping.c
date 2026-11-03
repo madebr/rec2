@@ -400,7 +400,32 @@ tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession) {
     return size;
 }
 
-// ARAdvanceChunkPtr
+// FUNCTION: CARMA2_HW 0x004024e0
+void C2_HOOK_FASTCALL ARAdvanceChunkPtr(tPipe_chunk** pChunk_ptr, tPipe_chunk_type pType) {
+    tU8* cur;
+    tU8* next;
+    tU32 size;
+
+    cur = (tU8*)*pChunk_ptr;
+    if (gPipe_undo_enabled != 0) {
+        return;
+    }
+    size = sizeof(void*);
+    if (gPipe_callbacks[pType].calc_length != NULL) {
+        size += gPipe_callbacks[pType].calc_length((tPipe_chunk*)cur) + gPipe_callbacks[pType].length;
+    } else {
+        size += gPipe_callbacks[pType].length;
+    }
+    *pChunk_ptr = (tPipe_chunk*)((tU8*)*pChunk_ptr + size);
+    next = (tU8*)*pChunk_ptr;
+    if (gPipe_buffer_end_marker == next || (intptr_t)next > (intptr_t)gPipe_buffer_end_marker) {
+        *pChunk_ptr = (tPipe_chunk*)cur;
+    }
+}
+
+// PipingFrameReset
+
+// ARPipeSearchForwards
 
 // ARReplayPlaying
 
