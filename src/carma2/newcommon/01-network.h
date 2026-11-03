@@ -59,11 +59,11 @@ extern void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
 
 // NetSetPlayerSystemInfo
 
-// FillInThisPlayer
+extern void C2_HOOK_FASTCALL FillInThisPlayer(tNet_game_details* pGame, tNet_game_player_info* pPlayer, int pCar_index, int pHost);
 
 // LoadCarN
 
-// DisposeCarN
+extern void C2_HOOK_FASTCALL DisposeCarN(int pPlayer_index);
 
 // PlayerHasLeft
 
@@ -101,7 +101,7 @@ extern tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined
 
 extern tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
 
-extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pPlayer, int pContents_size);
+extern void* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pNet_player, int pSize);
 
 extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContents(tNet_message_type pType, tU32 pSize_decider, tPlayer_ID pPlayer);
 
