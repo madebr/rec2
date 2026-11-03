@@ -1738,7 +1738,29 @@ void C2_HOOK_FASTCALL FUN_004f3740(const int* pIndices, const float* pTransform,
         / pData[pIndices[2] + 3];
 }
 
-// FUN_004f36c0
+// FUNCTION: CARMA2_HW 0x004f36c0
+void C2_HOOK_FASTCALL FUN_004f36c0(const void* pMap, br_vector2* pUV, br_vector3* pOut) {
+    const float* pData;
+    float dy1;
+    float dx1;
+    float dy0;
+    float dx0;
+    float distance1;
+    float distance0;
+
+    pData = (const float*)pMap;
+    dy1 = pData[27] - pUV->v[1];
+    dx1 = pData[26] - pUV->v[0];
+    dy0 = pData[15] - pUV->v[1];
+    dx0 = pData[14] - pUV->v[0];
+    distance1 = dy1 * dy1 + dx1 * dx1;
+    distance0 = dy0 * dy0 + dx0 * dx0;
+    if (distance1 < distance0) {
+        FUN_004f3740(pMap, (const float*)((const tU8*)pMap + 0x54), (const float*)pUV, (float*)pOut);
+    } else {
+        FUN_004f3740(pMap, (const float*)((const tU8*)pMap + 0x24), (const float*)pUV, (float*)pOut);
+    }
+}
 
 // FUN_004f1030
 
