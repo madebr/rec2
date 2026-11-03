@@ -24,15 +24,23 @@ extern int gHeadup_map_w;
 extern int gHeadup_map_h;
 extern int gRecovery_voucher_count;
 
+extern float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pTotal_deflection);
+
 // CompleteRace
 
 extern int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend);
 
-// F4Key
+extern void C2_HOOK_FASTCALL FUN_00511210(void);
 
-// SetFlag
+extern void C2_HOOK_FASTCALL FUN_00511200(void);
 
-// FinishRace
+extern void C2_HOOK_FASTCALL ToggleJoystickHeadup(void);
+
+extern void C2_HOOK_FASTCALL F4Key(void);
+
+extern void C2_HOOK_FASTCALL SetFlag(int i);
+
+extern void C2_HOOK_FASTCALL FinishRace(int i);
 
 extern void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void);
 
@@ -40,39 +48,39 @@ extern void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void);
 
 // DoEditModeKey
 
-// F5Key
+extern void C2_HOOK_FASTCALL F5Key(void);
 
-// F6Key
+extern void C2_HOOK_FASTCALL F6Key(void);
 
-// F7Key
+extern void C2_HOOK_FASTCALL F7Key(void);
 
-// F8Key
+extern void C2_HOOK_FASTCALL F8Key(void);
 
-// F10Key
+extern void C2_HOOK_FASTCALL F10Key(void);
 
-// F11Key
+extern void C2_HOOK_FASTCALL F11Key(void);
 
 extern void C2_HOOK_FASTCALL F12Key(void);
 
-// NumberKey0
+extern void C2_HOOK_FASTCALL NumberKey0(void);
 
-// NumberKey1
+extern void C2_HOOK_FASTCALL NumberKey1(void);
 
-// NumberKey2
+extern void C2_HOOK_FASTCALL NumberKey2(void);
 
-// NumberKey3
+extern void C2_HOOK_FASTCALL NumberKey3(void);
 
-// NumberKey4
+extern void C2_HOOK_FASTCALL NumberKey4(void);
 
-// NumberKey5
+extern void C2_HOOK_FASTCALL NumberKey5(void);
 
-// NumberKey6
+extern void C2_HOOK_FASTCALL NumberKey6(void);
 
-// NumberKey7
+extern void C2_HOOK_FASTCALL NumberKey7(void);
 
-// NumberKey8
+extern void C2_HOOK_FASTCALL NumberKey8(void);
 
-// NumberKey9
+extern void C2_HOOK_FASTCALL NumberKey9(void);
 
 extern void C2_HOOK_FASTCALL LookLeft(void);
 
@@ -90,19 +98,19 @@ extern void C2_HOOK_FASTCALL TDamageTrans(void);
 
 extern void C2_HOOK_FASTCALL TDamageLFWheel(void);
 
-// ToggleMiniMap
+extern void C2_HOOK_FASTCALL ToggleMiniMap(void);
 
 // CheckToggles
 
-// CarWorldOffFallenCheckThingy
+extern int C2_HOOK_FASTCALL CarWorldOffFallenCheckThingy(tCar_spec* pCar, int pCheck_around);
 
-// HasCarFallenOffWorld
+extern int C2_HOOK_FASTCALL HasCarFallenOffWorld(tCar_spec* pCar);
 
 // CheckForBeingOutOfThisWorld
 
 // CheckHornLocal
 
-// CheckHorn3D
+extern void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar);
 
 // CheckHorns
 
@@ -122,21 +130,21 @@ extern void C2_HOOK_FASTCALL TDamageLFWheel(void);
 
 // CheckOtherRacingKeys
 
-// CheckRecoverCost
+extern int C2_HOOK_FASTCALL CheckRecoverCost(void);
 
 // SortOutRecover
 
-// SetFlipUpCar
+extern void C2_HOOK_FASTCALL SetFlipUpCar(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL AlignChildren(tPhysics_object* pCollision_info);
 
-// FlipUpCar
+extern void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 // CheckSystemKeys
 
-// CheckForCheatingGits
+extern void C2_HOOK_FASTCALL CheckForCheatingGits(void);
 
 // CheckKevKeys
 
@@ -144,13 +152,13 @@ extern void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 // PollCarControls
 
-// PollCameraControls
+extern void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period);
 
-// SetFlag2
+extern void C2_HOOK_FASTCALL SetFlag2(int i);
 
-// ToggleFlying
+extern void C2_HOOK_FASTCALL ToggleFlying(void);
 
-// CycleInvulnerability
+extern void C2_HOOK_FASTCALL CycleInvulnerability(void);
 
 extern void C2_HOOK_FASTCALL ToggleTimerFreeze(void);
 
@@ -162,7 +170,7 @@ extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
 // HackyMapFixForMac3dfx
 
-// ToggleMap
+extern void C2_HOOK_FASTCALL ToggleMap(void);
 
 extern int C2_HOOK_FASTCALL GetRecoverVoucherCount(void);
 
@@ -178,22 +186,34 @@ extern void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void);
 
 extern void C2_HOOK_FASTCALL ToggleAccessoryRendering(void);
 
-// UserSendMessage
+extern void C2_HOOK_FASTCALL UserSendMessage(void);
 
 // EnterUserMessage
 
-// DisplayUserMessage
+extern void C2_HOOK_FASTCALL DisplayUserMessage(void);
 
 extern void C2_HOOK_FASTCALL InitAbuseomatic(void);
 
 extern void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
-// ChangeCameraTypeInGame
+extern void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void);
 
 // SteelBollock
 
-// RichardsSphere
+extern void C2_HOOK_FASTCALL RichardsSphere(int pNum);
 
-// ToggleHeadupLevel
+extern void C2_HOOK_FASTCALL ToggleHeadupLevel(void);
+
+extern void C2_HOOK_FASTCALL ToggleShellModel(void);
+
+extern int C2_HOOK_FASTCALL FUN_0045a7f0(char* pFilename, int* pArg2);
+
+extern void C2_HOOK_STDCALL CreateAccentPolyActor(float pX, float pY, float pWidth, float pHeight);
+
+extern void C2_HOOK_FASTCALL FUN_0045acf0(void);
+
+extern void C2_HOOK_FASTCALL FUN_0045c240(void);
+
+extern void C2_HOOK_FASTCALL RightInventory(void);
 
 #endif // GUARD_53_CONTROLS_H
