@@ -441,6 +441,8 @@ extern int C2_HOOK_FASTCALL FUN_00422500(tCollision_shape_polyhedron_data* pPoly
 
 extern void C2_HOOK_FASTCALL FUN_004b73a0(tPhysics_object* pObject, const br_matrix34* pParent_matrix, const br_matrix34* pRoot_matrix);
 
+extern void C2_HOOK_FASTCALL FUN_004b7310(tPhysics_object* pObject);
+
 #endif // GUARD_49_PHYSICS_H
 
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild);
