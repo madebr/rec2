@@ -779,7 +779,28 @@ void C2_HOOK_FASTCALL WorkerFlap(int field_0x4, tU16 field_0x8) {
     BrMatrix34PostTranslate(&actor->t.t.mat, parent_model->vertices[flap->field_0xc].p.v[0], parent_model->vertices[flap->field_0xc].p.v[1], parent_model->vertices[flap->field_0xc].p.v[2]);
 }
 
-// WorkerSplitWeldUndo
+// FUNCTION: CARMA2_HW 0x0043c3d0
+void C2_HOOK_FASTCALL WorkerSplitWeldUndo(void* roadMachine) {
+    extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
+    extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg);
+    tCar_spec* car;
+    tCar_crush_spec* spec;
+    tUser_crush_data* user;
+    int i;
+
+    car = roadMachine;
+    spec = car->car_crush_spec;
+    user = (tUser_crush_data*)car->car_model_actor->user;
+    for (i = 0; i < car->count_detail_levels; i++) {
+        if (user->models[i] != NULL) {
+            BrModelFree(BrModelRemove(user->models[i]));
+            user->models[i] = (br_model*)*(undefined4*)&spec->field_0x4c4[i * 4];
+        }
+    }
+    car->car_model_actor->model = user->models[0];
+    BrModelFree(BrModelRemove(spec->model_actor->model));
+    DRActorEnumRecurse(car->car_model_actor, MakeCarModelsMaterialsSingleSided, car);
+}
 
 // WorkerPHILObject
 
