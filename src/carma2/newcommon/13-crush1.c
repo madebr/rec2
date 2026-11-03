@@ -2325,7 +2325,15 @@ void C2_HOOK_FASTCALL ApplyRandomDamageToCar(tCar_spec* pCar_spec, int pMin_dama
     }
 }
 
-// PHILDetachObjectState
+// FUNCTION: CARMA2_HW 0x004b9750
+void C2_HOOK_FASTCALL PHILDetachObjectState(tPhysics_object* pObject) {
+    pObject->field_0x218 = 0;
+    MoveJointedObject(pObject, 0.f);
+    gINT_00692dc8 = 1;
+}
+
+extern undefined4* gCrush_space;
+extern void C2_HOOK_FASTCALL FUN_0043bca0(undefined4* pArg1, void* pArg2, br_model* pModel, const br_vector3* pSrc, const float* pScalars);
 
 // FUN_004c7f40
 
