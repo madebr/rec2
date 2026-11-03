@@ -1375,7 +1375,60 @@ void C2_HOOK_FASTCALL FUN_0045acf0(void) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// FUN_0045c240
+// FUNCTION: CARMA2_HW 0x0045c240
+void C2_HOOK_FASTCALL FUN_0045c240(void) {
+    extern void C2_HOOK_STDCALL CreateAccentPolyActor(float pX, float pY, float pWidth, float pHeight);
+    extern int C2_HOOK_FASTCALL FUN_0045a920(tHeadup_text_buffer* pBuffer, tHeadup_text* pText, int pArg3);
+    extern void* C2_HOOK_CDECL malloc(unsigned int pSize);
+    extern tHeadup_text_buffer gJoystick_headup_buffer_0079d8a0;
+    tJoystick_headup_text* entry;
+    tHeadup_text* text;
+    int i;
+
+    if (gINT_0068b8e8) {
+        gINT_0068b8e8 = 0;
+        if (gAcc_poly_actor != NULL && gRender_acc_poly_actor != 0) {
+            BrActorRemove(gAcc_poly_actor);
+            gRender_acc_poly_actor = 0;
+        }
+    } else {
+        gINT_0068b8e8 = 1;
+        MoveHeadupTo(gProgram_state.frame_rate_headup, 10, 350);
+        for (i = 0; i < 22; i++) {
+            MoveHeadupTo(gRace_head_ups[i], 10, 120 + i * 10);
+            ChangeHeadupFont(gRace_head_ups[i], -2);
+        }
+        CreateAccentPolyActor(8.f, 118.f, 130.f, 224.f);
+        if (gJoystick_headup_buffer_0079d8a0.count == 0) {
+            if (gJoystick_headup_buffer_0079d8a0.field_0x14 < 5) {
+                gJoystick_headup_buffer_0079d8a0.field_0x14 = 10;
+            }
+            gJoystick_headup_buffer_0079d8a0.texts = NULL;
+            gJoystick_headup_buffer_0079d8a0.count = 0;
+            gJoystick_headup_buffer_0079d8a0.pos_last_add = 0;
+            gJoystick_headup_buffer_0079d8a0.text_last_add = NULL;
+            gJoystick_headup_buffer_0079d8a0.field_0x4 = NULL;
+            gJoystick_headup_buffer_0079d8a0.field_0x10 = 22;
+            entry = gJoystick_headup_texts;
+            do {
+                text = malloc(sizeof(tHeadup_text));
+                if (text != NULL) {
+                    text->next = NULL;
+                    strncpy(text->text, entry->text, 0x28);
+                    FUN_0045a920(&gJoystick_headup_buffer_0079d8a0, text, 0);
+                }
+                entry++;
+            } while ((int)entry < (int)gAccent_poly_prims);
+        }
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // RightInventory
 
 // STUB: CARMA2_HW 0x0045a920
