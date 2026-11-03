@@ -272,10 +272,85 @@ br_uint_32 C2_HOOK_CDECL HostRealStringWrite(br_uint_16 offset, br_uint_16 seg, 
 #endif
 }
 
-// STUB: CARMA2_HW 0x00540157
+#if defined(__I86__) || defined(_M_IX86)
+C2_NAKED
+#endif
+// FUNCTION: CARMA2_HW 0x00540157
 // STUB: CARMA2_SW 0x0053b7f7
 br_uint_32 C2_HOOK_CDECL HostRealStringRead(br_uint_16 offset, br_uint_16 seg, br_uint_8 *string, br_uint_32 max) {
+#if defined(__I86__) || defined(_M_IX86)
+#if defined(_MSC_VER)
+    __asm {
+        push ebp
+        mov ebp, esp
+        push es
+        push esi
+        push edi
+        mov es, word ptr [_RealSelector]
+        mov edi, dword ptr [ebp+0xc]
+        shl edi, 4
+        add edi, dword ptr [ebp+8]
+        mov esi, dword ptr [ebp+0x10]
+        mov ecx, dword ptr [ebp+0x14]
+        xor eax, eax
+        and ecx, ecx
+        je string_read_done
+    string_read_loop:
+        mov dl, byte ptr es:[edi]
+        mov byte ptr [esi], dl
+        inc eax
+        and dl, dl
+        je string_read_done
+        inc esi
+        inc edi
+        dec ecx
+        jne string_read_loop
+        mov byte ptr [esi - 1], 0
+    string_read_done:
+        pop edi
+        pop esi
+        pop es
+        leave
+        ret
+    }
+#else
+    __asm__(
+        "push %ebp\n"
+        "mov %esp, %ebp\n"
+        "push %es\n"
+        "push %esi\n"
+        "push %edi\n"
+        "mov __RealSelector, %es\n"
+        "mov 0xc(%ebp), %edi\n"
+        "shl $4, %edi\n"
+        "add 8(%ebp), %edi\n"
+        "mov 0x10(%ebp), %esi\n"
+        "mov 0x14(%ebp), %ecx\n"
+        "xor %eax, %eax\n"
+        "and %ecx, %ecx\n"
+        "je 1f\n"
+        "0:\n"
+        "mov %es:(%edi), %dl\n"
+        "mov %dl, (%esi)\n"
+        "inc %eax\n"
+        "and %dl, %dl\n"
+        "je 1f\n"
+        "inc %esi\n"
+        "inc %edi\n"
+        "dec %ecx\n"
+        "jne 0b\n"
+        "movb $0, -1(%esi)\n"
+        "1:\n"
+        "pop %edi\n"
+        "pop %esi\n"
+        "pop %es\n"
+        "leave\n"
+        "ret\n"
+    );
+#endif
+#else
     abort();
+#endif
 }
 
 // STUB: CARMA2_HW 0x00540191
