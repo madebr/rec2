@@ -1759,7 +1759,11 @@ void C2_HOOK_FASTCALL ARPowerupLose(tPowerup* pPowerup, tCar_spec* pCar) {
     }
 }
 
-// ARPowerupGot
+// FUNCTION: CARMA2_HW 0x004c8da0
+void C2_HOOK_FASTCALL ARPowerupGot(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    ARDoSingleVariedSession(0x34, (uintptr_t)pPowerup, 1, 4, 0, (uintptr_t)pCar);
+}
 
 // SetPissed
 
