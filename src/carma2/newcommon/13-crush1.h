@@ -582,3 +582,9 @@ int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* pObject, tPhysics_shape* pSha
 int C2_HOOK_FASTCALL FUN_00424140(tPhysics_object* pObject, tPhysics_shape* pBounds_shape, tPhysics_shape* pRay_shape, int pCollision_count, undefined4 pArg5, tU8* pPolyhedron_data, undefined4 pArg7);
 
 int C2_HOOK_FASTCALL FUN_00424270(float* pStart, float* pEnd, int* pObject, int pBounds_shape, undefined4 pRay_shape, int pCollision_count, int pFace, int pPolyhedron_data);
+
+intptr_t C2_HOOK_CDECL InitPhysCrushDataCB(br_actor* actor, void* data);
+
+intptr_t C2_HOOK_CDECL InitVertexDataCB(br_actor* pActor, void* data);
+
+void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec);
