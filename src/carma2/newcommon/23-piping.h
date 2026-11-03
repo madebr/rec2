@@ -529,3 +529,9 @@ extern int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk);
 // CalcRemoveFacesLength
 
 #endif // GUARD_23_PIPING_H
+
+void C2_HOOK_FASTCALL AddSplashToPipingSession(tPhysics_object* pCollision);
+
+void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pCollision, void* pArg2);
+
+void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);

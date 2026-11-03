@@ -40,6 +40,9 @@
 
 #include <math.h>
 
+// GLOBAL: CARMA2_HW 0x006793d4
+int gDouble_pling_water;
+
 // GLOBAL: CARMA2_HW 0x0079eda0
 // GLOBAL: CARMA2_SW 0x00795340
 tNon_car_spec* gActive_non_car_list[99];
@@ -1216,5 +1219,91 @@ void C2_HOOK_FASTCALL ApplyWaterOmegaBrake(tPhysics_object* pObject, const br_ve
     }
     if (om.v[2] * pObject->omega.v[2] <= 0.0f) {
         pObject->omega.v[2] = 0.0f;
+    }
+}
+
+
+// FUNCTION: CARMA2_HW 0x00414910
+void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefined4* arg2) {
+    tFace_ref* pFace;
+    br_bounds3 current_bounds;
+    br_scalar old_d;
+    float prop7;
+
+    pFace = (tFace_ref*)arg2;
+    old_d = pCollision->water_d;
+    if (pCollision->owner == NULL) {
+        return;
+    }
+    prop7 = PHILGetObjectProperty(pCollision, 7);
+    if (pCollision->flags_0x238 != 1 && prop7 == 0.f) {
+        return;
+    }
+    if (pCollision != NULL
+        && pCollision->owner != NULL
+        && pCollision->flags_0x238 == 1
+        && ((tCar_spec*)pCollision->owner)->driver == eDriver_local_human
+        && pCollision->water_d != 10000.f
+        && gDouble_pling_water
+        && BrVector3Dot(&pCollision->water_normal, &pCollision->field_0xf4.max) - pCollision->water_d <= 0.f) {
+        gInTheSea = 1;
+        FreezeCamera();
+    }
+    if (pFace != NULL && fabs(pFace->normal.v[1]) > 0.9f) {
+        BrVector3Copy(&pCollision->water_normal, &pFace->normal);
+        if (pCollision->water_normal.v[1] < 0.f) {
+            BrVector3Negate(&pCollision->water_normal, &pCollision->water_normal);
+        }
+        pCollision->water_d = (((pFace->v[0].v[2]) * (pCollision->water_normal.v[2])) + ((pFace->v[0].v[1]) * (pCollision->water_normal.v[1]))) + ((pFace->v[0].v[0]) * (pCollision->water_normal.v[0]));
+        if (pCollision != NULL
+            && pCollision->owner != NULL
+            && pCollision->flags_0x238 == 1
+            && ((tCar_spec*)pCollision->owner)->driver == eDriver_local_human) {
+            if (pFace->material->identifier[1] == '!') {
+                if (BrVector3Dot(&pCollision->field_0xf4.min, &pCollision->water_normal) - pCollision->water_d < 0.f) {
+                    GetNewBoundingBox(&current_bounds, &pCollision->bb1, &pCollision->actor->t.t.mat);
+                    if ((((pCollision->water_normal.v[0]) * (current_bounds.min.v[0])) + ((pCollision->water_normal.v[1]) * (current_bounds.min.v[1]))) + ((pCollision->water_normal.v[2]) * (current_bounds.min.v[2])) - pCollision->water_d < 0.f) {
+                        gInTheSea = 1;
+                        FreezeCamera();
+                    }
+                }
+                gDouble_pling_water = 1;
+            } else {
+                gDouble_pling_water = 0;
+            }
+        }
+    } else {
+        pCollision->water_d = 10000.f;
+        if (pCollision != NULL
+            && pCollision->owner != NULL
+            && pCollision->flags_0x238 == 1
+            && ((tCar_spec*)pCollision->owner)->driver == eDriver_local_human) {
+            gInTheSea = gInTheSea == 1 ? 2 : 0;
+        }
+    }
+    if (fabs(old_d - pCollision->water_d) > 1e-05) {
+        if (PHILGetObjectProperty(pCollision, 6) != 0.f) {
+            ARStartPipingSession((tPipe_chunk_type)59);
+            AddExtendedSplashToPipingSession(pCollision, pCollision);
+            AREndPipingSession();
+        }
+        if (pCollision != NULL && pCollision->owner != NULL && pCollision->flags_0x238 == 1) {
+            tCar_spec* owner = (tCar_spec*)pCollision->owner;
+            if (owner != NULL && owner->driver > 5) {
+                ARStartPipingSession((tPipe_chunk_type)20);
+                AddSplashToPipingSession(pCollision);
+                AREndPipingSession();
+                return;
+            }
+            ARStartPipingSession((tPipe_chunk_type)59);
+            AddExtendedSplashToPipingSession(pCollision, pCollision->actor);
+            AREndPipingSession();
+            return;
+        }
+        if (pCollision != NULL && pCollision->owner != NULL && pCollision->flags_0x238 >= 2 && pCollision->flags_0x238 <= 4) {
+            ARStartPipingSession((tPipe_chunk_type)59);
+            AddExtendedSplashToPipingSession(pCollision, pCollision->owner);
+            AREndPipingSession();
+        }
     }
 }
