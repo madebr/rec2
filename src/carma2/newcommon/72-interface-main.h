@@ -9,8 +9,11 @@
 #ifndef GUARD_72_MAIN_H
 #define GUARD_72_MAIN_H
 
+#include "c2_hooks.h"
 #include "rec2_types.h"
 
 extern tFrontend_spec gFrontend_MAIN;
+
+extern int C2_HOOK_FASTCALL LoadGameInFunc(tFrontend_spec* pFrontend);
 
 #endif /* GUARD_72_MAIN_H */
