@@ -559,6 +559,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
         tPipe_single_ped_dismember ped_dismember;
+        tPipe_chunk_repulse_ray repulse_ray;
         tPipe_phil_object phil_object;
         tPipe_chunk_shrapnel shrapnel;
         tPipe_chunk_identity identity;
@@ -568,6 +569,7 @@ typedef struct tPipe_chunk {
         tPipe_single_vector vector;
         tPipe_chunk_powerup_lose powerup_lose;
         tPipe_chunk_powerup_respawn powerup_respawn;
+        tPipe_model_mash model_mash;
         char raw_data[0];
     } data;
 } tPipe_chunk;
