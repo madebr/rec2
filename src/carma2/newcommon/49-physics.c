@@ -1461,7 +1461,17 @@ void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects) {
 
 // InterpolateObjects
 
-// InterpolateObjects
+// FUNCTION: CARMA2_HW 0x004c27c0
+void C2_HOOK_FAKE_THISCALL InterpolateObjects(tPhysics_object* pObject, float pDt) {
+    br_vector3 omega_world;
+
+    pObject->rotate_omega.v[0] = pObject->omega.v[0];
+    pObject->rotate_omega.v[1] = pObject->omega.v[1];
+    pObject->rotate_omega.v[2] = pObject->omega.v[2];
+    BrMatrix34ApplyV(&omega_world, &pObject->omega, &pObject->actor->t.t.mat);
+    InterpolateSingleObject(pObject, pDt);
+    BrMatrix34TApplyV(&pObject->omega, &omega_world, &pObject->actor->t.t.mat);
+}
 
 // PhysicsObjectMoveVelocity
 
