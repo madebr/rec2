@@ -93,3 +93,38 @@ br_uint_32 C2_HOOK_CDECL BrResClassEnum(char* pattern, br_resclass_enum_cbfn* ca
 
     return BrRegistryEnum(&fw.reg_resource_classes, pattern, (br_enum_cbfn*)callback, arg);
 }
+
+#if defined(_MSC_VER) && defined(_M_IX86)
+C2_NAKED
+#endif
+// FUNCTION: CARMA2_HW 0x00528130
+void C2_HOOK_CDECL FUN_00528130(br_uint_32* pDestination, br_uint_32 pValue, int pCount) {
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        push ebp
+        mov ebp, esp
+        push eax
+        push ecx
+        push edi
+        push es
+        mov ax, ds
+        mov es, ax
+        mov eax, dword ptr [ebp+0xc]
+        mov ecx, dword ptr [ebp+0x10]
+        mov edi, dword ptr [ebp+0x8]
+        rep stosd
+        pop es
+        pop edi
+        pop ecx
+        pop eax
+        leave
+        ret
+    }
+#else
+    int i;
+
+    for (i = 0; i < pCount; i++) {
+        pDestination[i] = pValue;
+    }
+#endif
+}
