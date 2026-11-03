@@ -106,7 +106,11 @@ extern void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 // APTCPreCollision
 
-extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject);
+extern void C2_HOOK_FASTCALL APTCPostCollisionTree(tPhysics_object* pObject);
+
+extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tCar_spec* pCar);
+
+extern void C2_HOOK_FASTCALL WeldCarPartial(tCar_spec* pCar);
 
 // APTCPostCollision
 
@@ -247,3 +251,9 @@ void C2_HOOK_FASTCALL MoveAndCollideNonCar(tNon_car_spec* pNon_car, br_scalar pD
 void C2_HOOK_FASTCALL MoveAndCollideCar(tCar_spec* pCar, br_scalar pDt);
 
 #endif // GUARD_00_CAR_H
+
+float C2_HOOK_FASTCALL ComputeCarImpact(tCar_spec* pCar, tU32 pDelta, float* pOut);
+
+void C2_HOOK_FASTCALL UpdateCrushVertices(tCar_spec* pCar, tU8* pData);
+
+void C2_HOOK_FASTCALL WeldCarByNetwork(tCar_spec* pCar);

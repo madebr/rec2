@@ -546,3 +546,5 @@ extern void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar);
 extern void C2_HOOK_FASTCALL SetAllShapeStatusFlags(tCar_crush_network_shapes* pShapes);
 
 #endif // GUARD_13_CRUSH1_H
+
+void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec);

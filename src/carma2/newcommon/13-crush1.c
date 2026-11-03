@@ -1569,3 +1569,8 @@ int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 p
     NOT_IMPLEMENTED();
     return 0;
 }
+
+// STUB: CARMA2_HW 0x0043b8a0
+void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec) {
+    NOT_IMPLEMENTED();
+}

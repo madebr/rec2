@@ -138,3 +138,5 @@ extern void C2_HOOK_FASTCALL AddPlayerToShapeStatusLists(int pPlayer_id, int pCo
 // RemovePlayerFromShapeStatusLists
 
 #endif // GUARD_04_NETGAME_H
+
+int C2_HOOK_FASTCALL SelectCrushNetwork(undefined4* pField, tPhysics_object* pObj, int pMode);
