@@ -2868,7 +2868,29 @@ void C2_HOOK_FASTCALL DisposeReplayPixelmaps(void) {
     } while ((int)pp < (int)&gUNK_006a23b4);
 }
 
-// FUN_00564e5e
+// FUNCTION: CARMA2_HW 0x00564e5e
+int C2_HOOK_FASTCALL FUN_00564e5e(int pSound) {
+    extern tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id);
+    struct {
+        tS3_descriptor* descriptor;
+        tS3_buffer_desc* buffer_description;
+    } volatile locals;
+
+    locals.descriptor = S3GetDescriptorByID(pSound);
+    if (locals.descriptor == NULL) {
+        return 0;
+    }
+    locals.buffer_description = locals.descriptor->buffer_description;
+    return locals.buffer_description->sample_size * 1000 / locals.buffer_description->sample_rate;
+}
+#endif
+
+#ifdef REC2_SW
+/* the replay pixelmaps are a hardware-renderer concept; the ported HW callers still name it */
+void C2_HOOK_FASTCALL DisposeReplayPixelmaps(void) {
+    NOT_IMPLEMENTED();
+}
+#endif
 
 // GLOBAL: CARMA2_HW 0x00694104
 undefined4* gCrush_space;
