@@ -165,6 +165,152 @@ float gPed_cos_max_slope;
 // GLOBAL: CARMA2_HW 0x0069bd08
 tPed_prox_flag_cell gPed_prox_flag_cells[16];
 
+// GLOBAL: CARMA2_HW 0x0065d7f0
+int gPed_move_fsm[118][7] = {
+    {   0,  -2,   5,   6, 111,  31, 112 },
+    {   0,   0,   5,   6, 111,  31, 112 },
+    {   0,   1,   5,   6, 111,  31, 112 },
+    {   0,   2,   5,   6, 111,  31, 112 },
+    {   0,   2,   5,   6, 111,  31, 112 },
+    {   0,   2,   2,   6, 111,  31, 112 },
+    {   0,   2,   2,   6, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,   2,   5,   6, 111,  31, 112 },
+    {   0,  10,   5,   6, 111,  31, 112 },
+    {   0,   2,   5,   6, 111,  31, 112 },
+    {   0,  10,   5,   6, 111,  31, 112 },
+    {   0,   1,   5,   6, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -2,  50,  51, 111,  31, 112 },
+    {   1,  30,  31,  31, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -2,  50,  51, 111,  31, 112 },
+    {   1,  40,  50,  51, 111,  31, 112 },
+    {   1,  40,  50,  51, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  52,  50,  51, 111,  31, 112 },
+    {   1,  52,  50,  51, 111,  31, 112 },
+    {   1,  40,  50,  51, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  72,  71,  71,  71,  71,  71 },
+    {   1,  -2,  72,  72,  72,  72,  72 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -2,  74,  74,  74,  74,  74 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -2,  82,  83,  80,  80,  80 },
+    {   0,  -2,  84,  85,  81,  81,  81 },
+    {   0,  80,  82,  83,  80,  80,  80 },
+    {   0,  80,  82,  83,  80,  80,  80 },
+    {   0,  81,  84,  85,  81,  81,  81 },
+    {   0,  81,  84,  85,  81,  81,  81 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  91,  90,  90,  90,  90,  90 },
+    {   0,  -2,  91,  91,  91,  91,  91 },
+    {   0,  91,  92,  92,  92,  92,  92 },
+    {   0,  94,  93,  93,  93,  93,  93 },
+    {   0,  -2,  94,  94,  94,  94,  94 },
+    {   0,  -2,  95,  95,  95,  95,  95 },
+    {   0,  91,  96,  96,  96,  96,  96 },
+    {   0,  72,  97,  97,  97,  97,  97 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  72, 110, 110, 110, 110, 110 },
+    {   1,  -2, 111, 111, 111,  31, 112 },
+    {   1,  -2, 112, 112, 111,  31, 112 },
+    {   0,  91, 113, 113, 113, 113, 113 },
+    {   2,   2,   2,   2,   2,   2,   3 },
+    {   4,   2,   2,   2,  10,  11,  13 },
+    { -41, -41, -41,   0,   2,   2,   2 },
+    {   2,   2,   3,   4,   4,  10,  11 },
+};
+
+// GLOBAL: CARMA2_HW 0x006a041c
+int gPed_valium_left;
+
+/* tPed_anim_seq has a flexible poses[] member: use a fixed-size twin for the initializer */
+typedef struct {
+    tU8 count;
+    tU8 poses[2];
+} tPed_anim_seq_2;
+
+// GLOBAL: CARMA2_HW 0x0065e4e4
+tPed_anim_seq_2 gCalm_ped_anim_sequence = {
+    2, { 0, 99 },
+};
+
+// GLOBAL: CARMA2_HW 0x0065e4d8
+const tU8 gScare_ped_anim_sequence[8] = { 4, 1, 2, 1, 99 };
+
+// GLOBAL: CARMA2_HW 0x0065e4e0
+const tU8 gPed_anim_sequence_0065e4e0[4] = { 3, 1, 2, 1 };
+
+/* NOT annotated: the original 0x0058a988 is the compiler's shared 0.0f constant; a GLOBAL annotation makes
+   reccmp name it and breaks every function that compares against a literal 0.0f. */
+float gConst_replay_rate_zero;
+
 /* One triangle-vertex side test with the original's memoisation (it is inlined there): a cached
    entry returns the stored result, a miss evaluates and caches test/result bits. */
 static int C2_HOOK_FASTCALL PedProxSideTest(tPed_prox_flag_cell* pCell, int pIndex, br_vector3* pPoint, br_vector3* pNormal, br_scalar pD, tU16 pTest_flag, tU16 pResult_flag) {
@@ -2156,7 +2302,283 @@ float C2_HOOK_FASTCALL RescanPedProximity(tPedestrian* pPed, br_vector3* pArg2) 
 
 // CachePedestrianFaces
 
-// PedScanForObjects
+// STUB: CARMA2_HW 0x004525c0
+void C2_HOOK_FASTCALL DroneNoOp(void) { }
+
+// FUNCTION: CARMA2_HW 0x004cef80
+void C2_HOOK_FASTCALL PedScanForObjects(tPedestrian* pPed, tU32 pTime) {
+    extern br_vector3 gY_unit_vector;
+    extern void C2_HOOK_FASTCALL DroneNoOp(void);
+    tPed_cache_006944c0* ped_cache;
+    tPhysics_object* object;
+    tPhysics_object* best_object;
+    tPhysics_object* player_object;
+    tCar_spec* car;
+    br_actor* actor;
+    const br_vector3* object_pos;
+    br_vector3 target_pos;
+    br_matrix34 rotation;
+    float search_distance;
+    float best_distance;
+    float delta_x;
+    float delta_y;
+    float delta_z;
+    float relative_x;
+    float relative_z;
+    float distance;
+    float projection;
+    int move;
+
+    if (pPed->field_0x0c == NULL) {
+        return;
+    }
+    pPed->field_0x0c->field_0x18 &= ~4;
+    srand((tU32)pPed);
+    search_distance = SRandomBetween(0.8f, 1.2f) * 7.0;
+    best_distance = 3.402823466e+38f;
+    best_object = NULL;
+    object = PHILGetFirstObject();
+    player_object = gProgram_state.current_car.collision_info;
+    ped_cache = pPed->field_0x0c;
+
+    if (gProgram_state.current_car.keys.horn) {
+        best_object = player_object;
+        actor = best_object->actor;
+        object_pos = &actor->t.t.translate.t;
+        delta_x = object_pos->v[0] - pPed->pos.v[0];
+        delta_y = object_pos->v[1] - pPed->pos.v[1];
+        delta_z = object_pos->v[2] - pPed->pos.v[2];
+        if ((float)fabs(delta_x) < 5.f
+                && (float)fabs(delta_y) < 5.f
+                && (float)fabs(delta_z) < 5.f) {
+            target_pos = *object_pos;
+            best_distance = 0.f;
+            goto found_target;
+        }
+    }
+
+    while (object != NULL) {
+        car = (tCar_spec*)object->owner;
+        if (car == NULL || ((object->flags_0x238 < 2 || object->flags_0x238 > 4)
+                && (car == NULL || (tS8)object->flags_0x238 != 5))) {
+            actor = object->actor;
+            object_pos = &actor->t.t.translate.t;
+            delta_x = object_pos->v[0] - pPed->pos.v[0];
+            delta_y = object_pos->v[1] - pPed->pos.v[1];
+            delta_z = object_pos->v[2] - pPed->pos.v[2];
+            if ((float)fabs(delta_x) < 5.f
+                    && (float)fabs(delta_y) < 5.f
+                    && (float)fabs(delta_z) < 5.f) {
+                relative_x = object->v.v[0] - pPed->character->field_0xd8.v[0];
+                relative_z = object->v.v[2] - pPed->character->field_0xd8.v[2];
+                if (gPeds_suicidal) {
+                    distance = delta_x * delta_x + delta_y * delta_y + delta_z * delta_z;
+                    if (!gEthereal_pedestrians && car != NULL && object->flags_0x238 == 1
+                            && car != NULL && car->driver > 5 && distance < car->proxy_ray_distance) {
+                        DoPedAnnihilator(pPed, car, distance, pTime, NULL);
+                        goto calm_down;
+                    }
+                    if (distance < best_distance) {
+                        best_distance = distance;
+                        best_object = object;
+                        target_pos = *object_pos;
+                    }
+                } else if (relative_x != gConst_replay_rate_zero || relative_z != gConst_replay_rate_zero
+                        || (car != NULL && ((tS8)object->flags_0x238 == 1
+                            && car != NULL && car->driver > 5
+                            && car->proxy_ray_distance != gConst_replay_rate_zero))) {
+                    if (relative_x == gConst_replay_rate_zero && relative_z == gConst_replay_rate_zero) {
+                        distance = delta_x * delta_x + delta_z * delta_z;
+                    } else {
+                        float cross;
+
+                        cross = relative_z * delta_x - relative_x * delta_z;
+                        distance = (cross * cross) / (relative_x * relative_x + relative_z * relative_z);
+                    }
+                    if (!gEthereal_pedestrians && car != NULL && (tS8)object->flags_0x238 == 1
+                            && car != NULL && car->driver > 5 && distance < car->proxy_ray_distance) {
+                        DoPedAnnihilator(pPed, car, distance, pTime, NULL);
+                        goto calm_down;
+                    }
+                    if (distance < object->radius + object->radius) {
+                        projection = -((relative_z * delta_z + relative_x * delta_x)
+                                / (relative_x * relative_x + relative_z * relative_z));
+                        if (projection >= gConst_replay_rate_zero && projection < search_distance) {
+                            best_distance = distance;
+                            best_object = object;
+                            target_pos = *object_pos;
+                            if (object->flags_0x238 == 16) {
+                                DroneNoOp();
+                            }
+                            srand(pTime ^ (tU32)pPed);
+                            goto found_target;
+                        }
+                    }
+                }
+            }
+        }
+        object = PHILGetNextObject(object);
+    }
+
+    srand(pTime ^ (tU32)pPed);
+    if (!gPeds_suicidal || best_distance == 3.402823466e+38f) {
+        goto calm_down;
+    }
+
+found_target:
+    if ((gBlind_pedestrians != 0 || gPed_valium_left != 0) && !gProgram_state.current_car.keys.horn) {
+        goto calm_down;
+    }
+    if ((ped_cache->field_0x18 & 2) != 0
+            && !(best_distance / *(float*)ped_cache->field_0xbc < 0.25)) {
+        goto calm_down;
+    }
+    ped_cache->field_0x18 |= 4;
+    if (gPeds_suicidal) {
+        target_pos.v[0] -= pPed->pos.v[0];
+        target_pos.v[1] -= pPed->pos.v[1];
+        target_pos.v[2] -= pPed->pos.v[2];
+        SetPedXZDirection(pPed, &target_pos, 0.f, pTime);
+        RescanPedProximity(pPed, NULL);
+        return;
+    }
+
+    ped_cache->field_0x30 = best_object->v;
+    ped_cache->field_0x3c = target_pos;
+    target_pos.v[0] = pPed->pos.v[0] - target_pos.v[0];
+    target_pos.v[1] = pPed->pos.v[1] - target_pos.v[1];
+    target_pos.v[2] = pPed->pos.v[2] - target_pos.v[2];
+    distance = (float)sqrt(target_pos.v[0] * target_pos.v[0] + target_pos.v[1] * target_pos.v[1] + target_pos.v[2] * target_pos.v[2]);
+    if (distance <= 2.384185791015625e-07f) {
+        ped_cache->field_0xa4.v[0] = 1.f;
+        ped_cache->field_0xa4.v[1] = 0.f;
+        ped_cache->field_0xa4.v[2] = 0.f;
+    } else {
+        float scale;
+
+        scale = (float)(1.0 / distance);
+        ped_cache->field_0xa4.v[0] = scale * target_pos.v[0];
+        ped_cache->field_0xa4.v[1] = scale * target_pos.v[1];
+        ped_cache->field_0xa4.v[2] = scale * target_pos.v[2];
+    }
+    BrMatrix34Rotate(&rotation, IRandomPosNeg(0x2aa8), &gY_unit_vector);
+    if (best_object->v.v[0] * best_object->v.v[0]
+            + best_object->v.v[1] * best_object->v.v[1]
+            + best_object->v.v[2] * best_object->v.v[2] <= 1.0) {
+        if (!gProgram_state.current_car.keys.horn || best_object != player_object) {
+            return;
+        }
+    }
+    if (pPed->action == ePed_action_walking) {
+        target_pos.v[0] = -ped_cache->field_0xa4.v[0];
+        target_pos.v[1] = -ped_cache->field_0xa4.v[1];
+        target_pos.v[2] = -ped_cache->field_0xa4.v[2];
+        SetPedXZDirection(pPed, &target_pos, 0.f, pTime);
+        RescanPedProximity(pPed, NULL);
+        if (pPed->action != ePed_action_running && pPed->action != ePed_action_panicking
+                && pPed->action != ePed_action_getting_up) {
+            SetPedMove(pPed, gPed_move_fsm[114][IRandomBetween(0, 7)], -1, 0, 1, pTime, 2);
+            MakePedNoise(pPed, 6, 0, NULL);
+            if (pPed->hit_points > 0 && pPed->field_0x0c != NULL) {
+                pPed->field_0x0c->field_0x1c = (const tPed_anim_seq*)gScare_ped_anim_sequence;
+                pPed->field_0x0c->field_0x78 = pTime;
+                pPed->field_0x0c->field_0x1a = 0;
+                SetCharacterBoneModelAR(pPed->character,
+                    pPed->character->personality->form->index_head_bone,
+                    pPed->field_0x0c->field_0x1c->poses[0],
+                    0);
+            }
+        }
+        pPed->field_0x28 = pTime;
+        *(tU32*)pPed->field_0x2c = pTime;
+        return;
+    }
+
+    if (pTime - *(tU32*)pPed->field_0x2c > 9999 && ped_cache->field_0x98 < 1) {
+        if (pPed->hit_points > 0 && pPed->field_0x0c != NULL) {
+            int bone_index;
+            int model_set;
+            int pose;
+
+            ped_cache->field_0x1c = (const tPed_anim_seq*)gPed_anim_sequence_0065e4e0;
+            ped_cache->field_0x78 = pTime;
+            ped_cache->field_0x1a = 0;
+            bone_index = pPed->character->personality->form->index_head_bone;
+            pose = ped_cache->field_0x1c->poses[0];
+            if (pPed->character->field_0x4 >= 0) {
+                model_set = GetCharacterModelSet(pPed->character);
+                if (bone_index < 0) {
+                    PipeSinglePedModelChange(pPed, bone_index, NULL, -1, model_set, 0);
+                    SetCharacterAllBonesModel(pPed->character, pose, 0);
+                } else {
+                    PipeSinglePedModelChange(pPed, bone_index,
+                        GetCharacterBoneModel(pPed->character, bone_index), pose, model_set, 0);
+                    SetCharacterBoneModel(pPed->character, bone_index, pose, 0);
+                }
+            }
+        }
+        move = ((int*)((char*)gPed_move_fsm + 0xc98))[IRandomBetween(0, 8)];
+        if (move < 0) {
+            move = -move;
+            SetPedMove(pPed, move, -1, 0, 1, pTime, 1);
+        } else {
+            SetPedMove(pPed, move, -1, 0, 1, pTime, 2);
+        }
+        if (move == 2) {
+            MakePedNoise(pPed, 6, 0, NULL);
+        } else if (move == 10 || move == 11) {
+            MakePedNoise(pPed, 8, 0, NULL);
+        } else if (move == 13) {
+            MakePedNoise(pPed, 10, 1, NULL);
+        }
+    }
+    if (pPed->action != ePed_action_running && pPed->action != ePed_action_panicking
+            && pPed->action != ePed_action_getting_up) {
+        SetPedMove(pPed, gPed_move_fsm[114][IRandomBetween(0, 7)], -1, 0, 1, pTime, 2);
+        MakePedNoise(pPed, 6, 0, NULL);
+        if (pPed->hit_points > 0 && pPed->field_0x0c != NULL) {
+            ped_cache->field_0x1c = (const tPed_anim_seq*)gScare_ped_anim_sequence;
+            ped_cache->field_0x78 = pTime;
+            ped_cache->field_0x1a = 0;
+            SetCharacterBoneModelAR(pPed->character,
+                pPed->character->personality->form->index_head_bone,
+                ped_cache->field_0x1c->poses[0],
+                0);
+        }
+    }
+    pPed->field_0x28 = pTime;
+    return;
+
+calm_down:
+    if (pPed->hit_points > 0 && pPed->action == ePed_action_running
+            && ped_cache->field_0x18 == 0 && pTime - pPed->field_0x28 > 9999
+            && pPed->character->field_0xc == 0 && ped_cache->field_0x98 < 1) {
+        int bone_index;
+        int model_set;
+        int pose;
+
+        move = IRandomBetween(pPed->movement_spec->min_walk_speed_factor, pPed->movement_spec->max_walk_speed_factor);
+        SetPedMove(pPed, 30, move, 0, 1, pTime, 0);
+        if (pPed->hit_points > 0 && pPed->field_0x0c != NULL) {
+            ped_cache->field_0x1c = (const tPed_anim_seq*)&gCalm_ped_anim_sequence;
+            ped_cache->field_0x78 = pTime;
+            ped_cache->field_0x1a = 0;
+            bone_index = pPed->character->personality->form->index_head_bone;
+            pose = ped_cache->field_0x1c->poses[0];
+            if (pPed->character->field_0x4 >= 0) {
+                model_set = GetCharacterModelSet(pPed->character);
+                if (bone_index < 0) {
+                    PipeSinglePedModelChange(pPed, bone_index, NULL, -1, model_set, 0);
+                    SetCharacterAllBonesModel(pPed->character, pose, 0);
+                    return;
+                }
+                PipeSinglePedModelChange(pPed, bone_index,
+                    GetCharacterBoneModel(pPed->character, bone_index), pose, model_set, 0);
+                SetCharacterBoneModel(pPed->character, bone_index, pose, 0);
+            }
+        }
+    }
+}
 
 // CatAndMouseBonus
 
