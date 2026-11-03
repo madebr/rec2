@@ -2353,7 +2353,12 @@ void C2_HOOK_FASTCALL ApplyOppoRenderage(tPipe_chunk** pChunk) {
     SetOppoRender((tOpponent_spec*)*(tU32*)*pChunk, *(tU16*)((tU8*)*pChunk + 4));
 }
 
-// UndoCrush
+// FUNCTION: CARMA2_HW 0x004c9d90
+void C2_HOOK_FASTCALL UndoCrush(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_crush* chunk = (tPipe_chunk_crush*)*pChunk;
+
+    return WorkerCrushUndo(chunk->field_0x4, &chunk->field_0x8[0], &chunk->field_0x8[6]);
+}
 
 // UndoSmudge
 // ApplyReplayFrameTime
