@@ -50,13 +50,15 @@ extern int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* 
 
 // DeadStopCar
 
-// TurnOpponentPhysicsOn
+extern void C2_HOOK_FASTCALL TurnOpponentPhysicsOn(tOpponent_spec* pOpponent_spec);
 
-// TurnOpponentPhysicsOff
+extern void C2_HOOK_FASTCALL TurnOpponentPhysicsOff(tOpponent_spec* pOpponent_spec);
+
+extern void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender);
 
 // ApplyOppoRenderage2
 
-// NewObjective
+extern void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_objective_type pObjective_type, ...);
 
 // CalcRaceRoute
 
@@ -104,7 +106,7 @@ extern void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOppon
 
 // ProcessLevitate
 
-// ProcessGetNearPlayer
+extern void C2_HOOK_FASTCALL ProcessGetNearPlayer(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 
 // ProcessFrozen
 
@@ -128,7 +130,7 @@ extern void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec);
 
 // NoteCarsCurrentlyUsed
 
-// AddIfNotInList
+extern void C2_HOOK_FASTCALL AddIfNotInList(tPhysics_object* pObject, tPhysics_object** pList, int pCount);
 
 extern void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCount);
 
@@ -154,11 +156,11 @@ extern void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec
 
 // RematerialiseOpponentOnThisSection
 
-// RematerialiseOpponentOnNearestSection
+extern int C2_HOOK_FASTCALL RematerialiseOpponentOnNearestSection(tOpponent_spec* pOpponent_spec, br_scalar pSpeed);
 
 // RematerialiseOpponent
 
-// CalcPlayerConspicuousness
+extern void C2_HOOK_FASTCALL CalcPlayerConspicuousness(tOpponent_spec* pOpponent_spec);
 
 // CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck
 
@@ -202,7 +204,9 @@ extern int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOppon
 
 // GetOpponentsSectionFinishNodePoint
 
-// GetOpponentsSectionWidth
+extern float C2_HOOK_FASTCALL GetOpponentsSectionWidth(const tOpponent_spec* pOpponent_spec, tS16 pSection);
+
+extern void C2_HOOK_FASTCALL SetChallengerIndexIf(int pIndex, int pSet);
 
 extern int C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
 

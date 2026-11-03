@@ -12,6 +12,7 @@
 #include "00-car.h"
 #include "08-loading1.h"
 #include "13-crush1.h"
+#include "23-piping.h"
 #include "41-utility.h"
 #include "60-phil.h"
 #include "globvars.h"
@@ -19,7 +20,12 @@
 #include "c2_stdio.h"
 #include "platform.h"
 #include "rec2_macros.h"
+#include <stdarg.h>
 #include <string.h>
+
+extern tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance);
+extern tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle);
+extern void C2_HOOK_FASTCALL NewCalcGetNearPlayerRoute(tOpponent_spec* pOpponent_spec, tCar_spec* pPursuee, int pForce);
 
 // GLOBAL: CARMA2_HW 0x0065a3bc
 // GLOBAL: CARMA2_SW 0x00654cd4
@@ -97,13 +103,14 @@ tCar_spec* gActive_car_list[139];
 // GLOBAL: CARMA2_SW 0x007430ac
 int gNum_active_cars;
 
+// GLOBAL: CARMA2_HW 0x0058a478
+float gOppo_render_zero = 0.0f;
+
 // FUNCTION: CARMA2_HW 0x004a8160
 // FUNCTION: CARMA2_SW 0x004a42d0
 void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 }
-
-// ProcessCurrentObjective
 
 // ReallocExtraPathNodes
 
@@ -132,23 +139,25 @@ int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo) {
 
 // WeightedFindNearestNodeAndSection
 
-// FindNearestGeneralSection
-
 // FindNearestPathSection
 
 // DeadStopCar
 
-// TurnOpponentPhysicsOn
+// FUNCTION: CARMA2_HW 0x004a7960
+void C2_HOOK_FASTCALL TurnOpponentPhysicsOn(tOpponent_spec* pOpponent_spec) {
+    pOpponent_spec->car_spec->car_master_actor->render_style = BR_RSTYLE_DEFAULT;
+    PipeSingleOppoRenderage(pOpponent_spec, 1);
+    if (!pOpponent_spec->physics_me) {
+        pOpponent_spec->physics_me = 1;
+        gActive_car_list_rebuild_required = 1;
+    }
+}
 
 // TurnOpponentPhysicsOff
 
-// ApplyOppoRenderage2
-
+// STUB: CARMA2_HW 0x004a7a20
+void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender) { NOT_IMPLEMENTED(); }
 // NewObjective
-
-// CalcRaceRoute
-
-// TopUpRandomRoute
 
 // FUNCTION: CARMA2_HW 0x004a9550
 // FUNCTION: CARMA2_SW 0x004a56c0
@@ -259,8 +268,6 @@ int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
     }
 }
 
-// NewCalcGetNearPlayerRoute
-
 // CalcReturnToStartPointRoute
 
 // ClearOpponentsProjectedRoute
@@ -338,17 +345,10 @@ void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spe
 
 // ProcessLevitate
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // ProcessGetNearPlayer
-
-// ProcessFrozen
-
-// HeadOnWithPlayerPossible
-
-// AlreadyPursuingCar
-
-// LastTwatteeAPlayer
-
-// LastTwatterAPlayer
 
 // FUNCTION: CARMA2_HW 0x004ace20
 // FUNCTION: CARMA2_SW 0x004a8f90
@@ -379,6 +379,8 @@ void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec) {
 // IsNetCarActive
 
 // NoteCarsCurrentlyUsed
+
+extern int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* pInfo, br_matrix34* pMatrix, const br_vector3* pArg3, const br_vector3* pArg4);
 
 // AddIfNotInList
 
@@ -478,17 +480,12 @@ void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec) {
 
 // RematerialiseOpponentOnThisSection
 
+extern int C2_HOOK_FASTCALL RematerialiseOpponent(tOpponent_spec* pOpponent_spec, br_scalar pSpeed);
+extern void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
+
 // RematerialiseOpponentOnNearestSection
 
-// RematerialiseOpponent
-
 // CalcPlayerConspicuousness
-
-// CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck
-
-// NumberOfOpponentsStillRunning
-
-// ResetPredominantJobbies
 
 // FUNCTION: CARMA2_HW 0x004a9600
 // FUNCTION: CARMA2_SW 0x004a5770
@@ -734,6 +731,7 @@ int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spe
 // GetOpponentsSectionFinishNodePoint
 
 // GetOpponentsSectionWidth
+// SetChallengerIndexIf
 
 // FUNCTION: CARMA2_HW 0x004aed50
 // FUNCTION: CARMA2_SW 0x004aaec0
@@ -792,5 +790,17 @@ void C2_HOOK_FASTCALL TwoCarsHitEachOther(tCar_spec* pA_car, tCar_spec* pAnother
 
 // GetOpponentMood
 
-// STUB: CARMA2_HW 0x004a7a20
-void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004ac9e0
+void C2_HOOK_FASTCALL NewCalcGetNearPlayerRoute(tOpponent_spec* pOpponent_spec, tCar_spec* pPursuee, int pForce) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x00676854
+int gStop_opponents_moving;
+
+// STUB: CARMA2_HW 0x004a82d0
+tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004aa900
+void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004a87a0
+int C2_HOOK_FASTCALL RematerialiseOpponent(tOpponent_spec* pOpponent_spec, br_scalar pSpeed) { NOT_IMPLEMENTED(); }
