@@ -13,6 +13,8 @@
 #include "rec2_types.h"
 #include <s3/s3.h>
 
+typedef void (C2_HOOK_FASTCALL * tReplay_between_sessions_callback)(int pFrames);
+
 extern tU8* gLocal_buffer;
 extern tU8* gPipe_buffer_working_end;
 extern int gReentrancy_count;
@@ -140,11 +142,11 @@ extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 // GetReducedPos
 
-// SaveReducedPos
+void C2_HOOK_FASTCALL SaveReducedPos(tReduced_pos* p, br_vector3* v);
 
 // InitLastDamageArrayEtc
 
-// PipeObjectPosition
+int C2_HOOK_FASTCALL PipeObjectPosition(tPhysics_object* pObject, void* pContext);
 
 // PipeCarPositions
 
@@ -539,3 +541,9 @@ void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
 void C2_HOOK_FASTCALL PipeSingleCarIncident(tCar_spec* pCar, br_vector3* pPosition, float pForce);
 
 void C2_HOOK_FASTCALL PipeSingleLocalCarIncident(br_vector3* pPosition, float pForce);
+
+void C2_HOOK_FASTCALL InitializeActionReplayPix(void);
+
+void C2_HOOK_FASTCALL ARDoActionReplay(int pFrames, tReplay_between_sessions_callback pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
+
+void C2_HOOK_FASTCALL DisposeReplayPixelmaps(void);
