@@ -107,6 +107,18 @@ float gFloat_sine_table[91] = {
     1.0f,
 };
 
+// GLOBAL: CARMA2_HW 0x006ab950
+br_matrix23 mat23tmp1;
+
+// GLOBAL: CARMA2_HW 0x006ab968
+br_matrix23 mat23tmp2;
+
+// GLOBAL: CARMA2_HW 0x006ab980
+br_matrix34 mattmp1__trig;
+
+// GLOBAL: CARMA2_HW 0x006ab9b0
+br_matrix34 mattmp2__trig;
+
 // FUNCTION: CARMA2_HW 0x005113d0
 // FUNCTION: CARMA2_SW 0x0050c820
 float C2_HOOK_FASTCALL FastFloatSin(int pAngle_degrees) {
@@ -320,11 +332,99 @@ br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX) {
     return FastFloatArcTan2Angle(pY, pX);
 }
 
-// DRMatrix34RotateX
+// FUNCTION: CARMA2_HW 0x00512030
+void C2_HOOK_FASTCALL DRMatrix34RotateX(br_matrix34* mat, br_angle rx) {
+    int angle_in_degrees;
+    int angle;
+    br_scalar s;
+    br_scalar c;
+
+    angle_in_degrees = (int)((double)rx * (360.0 / 65536.0));
+    angle = angle_in_degrees;
+    if (angle < 0) {
+        angle = 360 - -angle % 360;
+    } else {
+        angle = angle % 360;
+    }
+    if (angle > 270) {
+        s = -*(gFloat_sine_table + 360 - angle);
+    } else if (angle > 180) {
+        s = -gFloat_sine_table[angle - 180];
+    } else if (angle > 90) {
+        s = *(gFloat_sine_table + 180 - angle);
+    } else {
+        s = gFloat_sine_table[angle];
+    }
+    angle = angle_in_degrees;
+    if (angle < 0) {
+        angle = 360 - -angle % 360;
+    } else {
+        angle = angle % 360;
+    }
+    if (angle > 270) {
+        c = gFloat_sine_table[angle - 270];
+    } else if (angle > 180) {
+        c = -*(gFloat_sine_table + 270 - angle);
+    } else if (angle > 90) {
+        c = -gFloat_sine_table[angle - 90];
+    } else {
+        c = *(gFloat_sine_table + 90 - angle);
+    }
+    mat->m[0][0] = 1.0f;
+    mat->m[0][1] = 0.0f;
+    mat->m[0][2] = 0.0f;
+    mat->m[1][0] = 0.0f;
+    mat->m[1][1] = c;
+    mat->m[1][2] = s;
+    mat->m[2][0] = 0.0f;
+    mat->m[2][1] = -s;
+    mat->m[2][2] = c;
+    mat->m[3][0] = 0.0f;
+    mat->m[3][1] = 0.0f;
+    mat->m[3][2] = 0.0f;
+}
 
 // DRMatrix34RotateY
 
 // DRMatrix34RotateZ
+// FUNCTION: CARMA2_HW 0x005123f0
+void C2_HOOK_FASTCALL DRMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3* a) {
+    br_scalar sz;
+    br_scalar sy;
+    br_scalar sx;
+    br_scalar tyz;
+    br_scalar txz;
+    br_scalar txy;
+    br_scalar c;
+    br_scalar s;
+    br_scalar t;
+
+    s = FastScalarSinAngle(r);
+    c = FastScalarCosAngle(r);
+    t = 1.f - c;
+    txy = t * a->v[0] * a->v[1];
+    txz = t * a->v[0] * a->v[2];
+    tyz = t * a->v[1] * a->v[2];
+    sx = s * a->v[0];
+    sy = s * a->v[1];
+    sz = s * a->v[2];
+
+    mat->m[0][0] = a->v[0] * a->v[0] * t + c;
+    mat->m[0][1] = sx + txy;
+    mat->m[0][2] = txz - sy;
+    mat->m[1][0] = txy - sz;
+    mat->m[1][1] = a->v[1] * a->v[1] * t + c;
+    mat->m[1][2] = sx + tyz;
+    mat->m[2][0] = sy + txz;
+    mat->m[2][1] = tyz - sx;
+    mat->m[2][2] = a->v[2] * a->v[2] * t + c;
+    mat->m[3][2] = 0.f;
+    mat->m[3][1] = 0.f;
+    mat->m[3][0] = 0.f;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // DRMatrix34PostRotateX
 
@@ -337,6 +437,10 @@ void C2_HOOK_FASTCALL DRMatrix34PostRotateY(br_matrix34* mat, br_angle ry) {
 // DRMatrix34PreRotateZ
 
 // DRMatrix34PostRotateZ
+
+// DRMatrix34PreRotate
+
+// DRMatrix34PostRotate
 
 // DRMatrix23Rotate
 

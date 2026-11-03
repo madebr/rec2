@@ -42,22 +42,28 @@ extern br_angle C2_HOOK_STDCALL FastFloatArcTan2Angle(float pY, float pX);
 
 extern br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX);
 
-// DRMatrix34RotateX
+extern void C2_HOOK_FASTCALL DRMatrix34RotateX(br_matrix34* mat, br_angle rx);
 
-// DRMatrix34RotateY
+extern void C2_HOOK_FASTCALL DRMatrix34RotateY(br_matrix34* mat, br_angle ry);
 
-// DRMatrix34RotateZ
+extern void C2_HOOK_FASTCALL DRMatrix34RotateZ(br_matrix34* mat, br_angle rz);
 
-// DRMatrix34PostRotateX
+extern void C2_HOOK_FASTCALL DRMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3* a);
+
+extern void C2_HOOK_FASTCALL DRMatrix34PostRotateX(br_matrix34* mat, br_angle rx);
 
 extern void C2_HOOK_FASTCALL DRMatrix34PostRotateY(br_matrix34* mat, br_angle ry);
 
-// DRMatrix34PreRotateZ
+extern void C2_HOOK_FASTCALL DRMatrix34PreRotateZ(br_matrix34* mat, br_angle rz);
 
-// DRMatrix34PostRotateZ
+extern void C2_HOOK_FASTCALL DRMatrix34PostRotateZ(br_matrix34* mat, br_angle rz);
 
-// DRMatrix23Rotate
+extern void C2_HOOK_FASTCALL DRMatrix34PreRotate(br_matrix34* mat, br_angle r, br_vector3* axis);
 
-// DRMatrix23PostRotate
+extern void C2_HOOK_FASTCALL DRMatrix34PostRotate(br_matrix34* mat, br_angle r, br_vector3* axis);
+
+extern void C2_HOOK_FASTCALL DRMatrix23Rotate(br_matrix23* mat, br_angle rz);
+
+extern void C2_HOOK_FASTCALL DRMatrix23PostRotate(br_matrix23* mat, br_angle rz);
 
 #endif // GUARD_36_TRIG_H
