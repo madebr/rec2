@@ -598,7 +598,70 @@ void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pC
 #pragma auto_inline(off)
 #endif
 
-// CreateSmokeColumn2
+// FUNCTION: CARMA2_HW 0x004fb630
+void C2_HOOK_FASTCALL CreateSmokeColumn2(int pType, br_actor* pActor, tCar_spec* pCar, tPhysics_object* pObject, int pColour, int pVertex, tU32 pLifetime) {
+    tSmoke_column* old_column;
+    tSmoke_column_core core;
+    br_actor* flame;
+    int i;
+
+    old_column = &gSmoke_column[gColumn_next];
+    if (pObject == NULL) {
+        pObject = (pCar != NULL) ? pCar->collision_info : NULL;
+    }
+    core.collision_info = pObject;
+    core.car = pCar;
+    core.car_actor = pActor;
+    core.field_0x0 = pType;
+    if (!gSmoke_on) {
+        return;
+    }
+    if ((gColumn_flags & (1 << gColumn_next)) != 0) {
+        ARStartPipingSession(ePipe_chunk_smoke_column);
+        AddSmokeColumnToPipingSession(gColumn_next, &gSmoke_column[gColumn_next].core, gSmoke_column[gColumn_next].vertex_index, gSmoke_column[gColumn_next].colour);
+        AREndPipingSession();
+        if (gSmoke_column[gColumn_next].colour == 0) {
+            ARStartPipingSession((tPipe_chunk_type)18);
+            flame = old_column->flame_actor->children;
+            for (i = 0; i < 3; i++) {
+                if (flame->type == 1) {
+                    AddFlameToPipingSession((gColumn_next << 4) + i, old_column->frame_count[i], old_column->scale_x[i], old_column->scale_y[i], old_column->offset_x[i], old_column->offset_z[i]);
+                }
+                flame->type = 0;
+                flame = flame->next;
+            }
+            AREndPipingSession();
+        }
+    }
+    if (pColour == 0) {
+        if ((gColumn_flags & (1 << gColumn_next)) == 0 || gSmoke_column[gColumn_next].colour != 0) {
+            BrActorAdd(gNon_track_actor, gSmoke_column[gColumn_next].flame_actor);
+        }
+    }
+    if (pColour != 0) {
+        if ((gColumn_flags & (1 << gColumn_next)) != 0 && gSmoke_column[gColumn_next].colour == 0) {
+            BrActorRemove(gSmoke_column[gColumn_next].flame_actor);
+        }
+    }
+    ARStartPipingSession(ePipe_chunk_smoke_column);
+    AddSmokeColumnToPipingSession(gColumn_next, &core, pVertex, pColour);
+    AREndPipingSession();
+    gSmoke_column[gColumn_next].core = core;
+    gSmoke_column[gColumn_next].colour = pColour;
+    gSmoke_column[gColumn_next].lifetime = pLifetime;
+    gSmoke_column[gColumn_next].time = 0;
+    gSmoke_column[gColumn_next].smudge_timer = 1000;
+    gSmoke_column[gColumn_next].vertex_index = pVertex;
+    gSmoke_column[gColumn_next].upright = 1;
+    gColumn_flags |= 1 << gColumn_next;
+    for (i = 0; i < 3; i++) {
+        gSmoke_column[gColumn_next].frame_count[i] = 100;
+    }
+    gColumn_next++;
+    if (gColumn_next >= 10) {
+        gColumn_next = 0;
+    }
+}
 
 // STUB: CARMA2_HW 0x004fb890
 void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec* pCar, int pType, int pRandom, int pLifetime) { NOT_IMPLEMENTED(); }
