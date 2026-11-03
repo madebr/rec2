@@ -118,7 +118,19 @@ int C2_HOOK_FASTCALL NetworkJoinMenuOutfunc(tFrontend_spec* pFrontend) {
 // GLOBAL: CARMA2_HW 0x0059c820
 tNet_mode gFrontend_net_mode = eNet_mode_thinking_about_it;
 
-// NetToggleMode
+// FUNCTION: CARMA2_HW 0x004682a0
+int C2_HOOK_FASTCALL NetToggleMode(tFrontend_spec* pFrontend) {
+    extern void C2_HOOK_FASTCALL WaitFor(tU32 pDelay);
+
+    (void)pFrontend;
+    if (gFrontend_net_mode == eNet_mode_thinking_about_it) {
+        gFrontend_net_mode = eNet_mode_host;
+    } else {
+        gFrontend_net_mode = eNet_mode_thinking_about_it;
+    }
+    WaitFor(6000);
+    return 0;
+}
 
 // NetCancel
 // NetRaceUp
