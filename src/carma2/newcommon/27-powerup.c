@@ -1278,7 +1278,18 @@ int C2_HOOK_FASTCALL PissOutOil(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// KangerooJump
+// FUNCTION: CARMA2_HW 0x004de0c0
+int C2_HOOK_FASTCALL KangerooJump(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    PlayExclusiveFFBEffect("Kangeroo", 0);
+    PratcamEvent(0x2a);
+    *(float*)((tU8*)pCar->collision_info + 0x6c) = pPowerup->float_params[0] * gConst_inverse_world_scale + *(float*)((tU8*)pCar->collision_info + 0x6c);
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        DRS3StartSound(gCar_outlet, 0x2332);
+    }
+    *((tU8*)pCar->collision_info + 0xec) = 0;
+    return pPowerup - gPowerup_array;
+}
 
 // AnnihilatePeds
 
