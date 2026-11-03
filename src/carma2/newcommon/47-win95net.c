@@ -27,6 +27,12 @@
 
 // CreateNBPAddress
 
+// FUNCTION: CARMA2_HW 0x0051a070
+void C2_HOOK_FASTCALL PDNetDisposeGameDetails(void) {
+
+    dr_dprintf("PDNetDisposeGameDetails()");
+}
+
 // FUNCTION: CARMA2_HW 0x0051a080
 int C2_HOOK_FASTCALL PDNetHostGame(tNet_game_details* pDetails, char* pHost_name, void** pHost_address) {
     dr_dprintf("PDNetHostGame()");
@@ -41,16 +47,6 @@ int C2_HOOK_FASTCALL PDNetHostGame(tNet_game_details* pDetails, char* pHost_name
 // PDNetHostFinishGame
 
 // PDNetExtractGameID
-
-// PDNetExtractPlayerID
-
-// PDNetObtainSystemUserName
-
-// PDNetSendMessageToAddress
-
-// PDNetGetNextMessage
-
-// SetForRecieve
 
 // FUNCTION: CARMA2_HW 0x0051a5f0
 // FUNCTION: CARMA2_SW 0x005140d0
