@@ -299,10 +299,24 @@ void C2_HOOK_CDECL HostFarDWordWrite(br_uint_32 offset, br_uint_16 sel, br_uint_
 }
 #endif
 
-// STUB: CARMA2_HW 0x0054049c
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x0054049c
 // STUB: CARMA2_SW 0x0053bb3c
+__declspec(naked) br_uint_32 C2_HOOK_CDECL HostFarDWordRead(br_uint_32 offset, br_uint_16 sel) {
+    __asm {
+        push ebp
+        mov ebp, esp
+        push ds
+        lds eax, fword ptr [ebp+8]
+        mov eax, [eax]
+        pop ds
+        leave
+        ret
+    }
+}
+#else
 br_uint_32 C2_HOOK_CDECL HostFarDWordRead(br_uint_32 offset, br_uint_16 sel) {
-
-    NOT_IMPLEMENTED();
+    abort();
     return 0;
 }
+#endif
