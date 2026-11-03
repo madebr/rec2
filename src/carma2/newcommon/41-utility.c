@@ -2012,7 +2012,13 @@ int C2_HOOK_FASTCALL DRVector4TestForNan(const float* pV) {
     }
 }
 
-// FUN_005162d0
+// FUNCTION: CARMA2_HW 0x005162d0
+void C2_HOOK_FASTCALL FUN_005162d0(br_vector4* pDst, const br_vector4* pSrc) {
+    pDst->v[0] = -pSrc->v[0];
+    pDst->v[1] = -pSrc->v[1];
+    pDst->v[2] = -pSrc->v[2];
+    pDst->v[3] = -pSrc->v[3];
+}
 
 // CreateBoundsActor
 
