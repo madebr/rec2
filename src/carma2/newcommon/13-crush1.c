@@ -2036,7 +2036,23 @@ intptr_t C2_HOOK_FASTCALL UnBendActorCB(br_actor* pActor, br_vector3* pDelta, vo
     return 0;
 }
 
-// UnBendCollisionShape
+// FUNCTION: CARMA2_HW 0x0043aa20
+void C2_HOOK_FASTCALL UnBendCollisionShape(tCar_crush_shape_info* pShape, const tBend_point_context_local* pContext) {
+    int i;
+
+    for (i = 0; i < pShape->count_points; i++) {
+        pShape->field_0x18[i].field_0x18.v[0] = pShape->field_0x18[i].field_0x2c.v[0];
+        pShape->field_0x18[i].field_0x18.v[1] = pShape->field_0x18[i].field_0x2c.v[1];
+        pShape->field_0x18[i].field_0x18.v[2] = pShape->field_0x18[i].field_0x2c.v[2];
+        BendPoint(&pShape->field_0x18[i].field_0x18, pContext);
+    }
+}
+
+// UnBendCollisionShapes
+
+// UnBendWheels
+
+// UnBendOtherThings
 
 // FUNCTION: CARMA2_HW 0x0043ac90
 // FUNCTION: CARMA2_SW 0x0043ace0
