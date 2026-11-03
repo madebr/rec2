@@ -14,6 +14,15 @@
 
 #include "brender/brender.h"
 
+/* upstream's c2_hooks.h does not define this yet (see 61-pedestrn.h for the same guard) */
+#ifndef C2_HOOK_FAKE_THISCALL
+#ifdef REC2_MATCHING
+#define C2_HOOK_FAKE_THISCALL __fastcall
+#else
+#define C2_HOOK_FAKE_THISCALL
+#endif
+#endif
+
 extern tFunkotronic_spec* gFunkotronics_array;
 extern tGroovidelic_spec* gGroovidelics_array;
 extern int gGroovidelics_array_size;
@@ -31,7 +40,7 @@ extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 extern void C2_HOOK_FASTCALL ControlBoundFunkGroove(int pSlot_number, float pValue);
 
-// ControlBoundFunkGroovePlus
+extern float C2_HOOK_FAKE_THISCALL ControlBoundFunkGroovePlus(int pSlot_number, undefined4 pArg2, float pValue);
 
 // ShiftBoundGrooveFunks
 
