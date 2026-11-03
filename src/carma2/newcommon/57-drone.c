@@ -516,7 +516,43 @@ void C2_HOOK_FASTCALL DroneStateFuncPhysicsActive(tDrone_spec* pDrone, tDroneSta
     }
 }
 
+// FUNCTION: CARMA2_HW 0x0044ec50
+void C2_HOOK_FASTCALL DroneStateFuncStationaryPassive(tDrone_spec* pDrone, tDroneStateFuncState state) {
+
+    switch ((int)state) {
+    case eDrone_state_RUN:
+        DoNotDprintf_drone("DroneStateFuncStationaryPassive() RUN");
+        if (pDrone->field_0x44) {
+            if (!(pDrone->form->flags & 0x4)) {
+                return;
+            }
+            if (pDrone->field_0x45) {
+                return;
+            }
+        }
+        if (!(pDrone->form->flags & 0x2)) {
+            return;
+        }
+        DoNotDprintf_drone("NewDroneState() Drone %d, Current state %d, New state %d", pDrone->id, pDrone->current_state, 1);
+        if (pDrone->current_state != 1) {
+            if (gDrone_state_functions[pDrone->current_state] != NULL) {
+                gDrone_state_functions[pDrone->current_state](pDrone, eDrone_state_STOP);
+            }
+            pDrone->time_last_munge = gTime_stamp_for_this_munging;
+            pDrone->prev_states[1] = pDrone->prev_states[0];
+            pDrone->prev_states[0] = pDrone->current_state;
+            pDrone->current_state = 1;
+            if (gDrone_state_functions[1] != NULL) {
+                gDrone_state_functions[1](pDrone, eDrone_state_START);
+            }
+        }
+        break;
+    }
+}
+
 // DroneStateFuncStationaryPassive
+
+// GetNewCrushyModelForDrone
 
 // FUNCTION: CARMA2_HW 0x0044ecf0
 // FUNCTION: CARMA2_SW 0x0044ea90
