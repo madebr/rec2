@@ -955,7 +955,8 @@ void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car) {
 
 // StopSkid
 
-// CrashNoise
+// FUNCTION: CARMA2_HW 0x0041ddc0
+void C2_HOOK_FASTCALL CrashNoise(br_vector3* pForce, br_vector3* pPosition, int pMaterial) {
     // GLOBAL: CARMA2_HW 0x00679410
     static tS3_sound_tag crunch_tag;
     // GLOBAL: CARMA2_HW 0x0067935c
