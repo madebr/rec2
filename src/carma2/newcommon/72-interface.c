@@ -1081,7 +1081,32 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 
 // UpdateNetGameTypeScroller
 
-// NetGameTypeUp
+// FUNCTION: CARMA2_HW 0x00467ce0
+int C2_HOOK_FASTCALL NetGameTypeUp(tFrontend_spec* pFrontend) {
+    tFrontend_scroller_spec* scroller;
+    int i;
+    int text_idx;
+
+    if (PDGetTotalTime() - gFrontend_last_scroll > 400) {
+        gFrontend_last_scroll = PDGetTotalTime();
+        scroller = &pFrontend->scrollers[0];
+        if (scroller->indexTopItem > scroller->indexFirstScrollableItem) {
+            scroller->indexTopItem -= 1;
+        }
+    }
+    scroller = &pFrontend->scrollers[0];
+    text_idx = scroller->indexTopItem - scroller->indexFirstScrollableItem;
+    for (i = scroller->indexFirstScrollableItem; i < scroller->indexFirstScrollableItem + scroller->nbDisplayedAtOnce; text_idx++, i++) {
+        int text_num;
+
+        text_num = text_idx >= 2 ? text_idx + 1 : text_idx;
+        strcpy(pFrontend->items[i].text, GetMiscString(eMiscString_network_type_start + text_num));
+    }
+    FuckWithWidths(pFrontend);
+    return 0;
+}
+
+// NetGameTypeDn
 
 // FUNCTION: CARMA2_HW 0x00467eb0
 // FUNCTION: CARMA2_SW 0x00467c30
