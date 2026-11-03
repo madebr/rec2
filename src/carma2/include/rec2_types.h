@@ -325,6 +325,10 @@ typedef struct {
 } tPipe_model_mash;
 
 typedef struct {
+    undefined4 field_0x00;
+} tPipe_bend_data;
+
+typedef struct {
     tU16 flags;
 } tPipe_funk_enable;
 
@@ -568,6 +572,9 @@ typedef struct tPipe_chunk {
         tPipe_single_vector vector;
         tPipe_chunk_powerup_lose powerup_lose;
         tPipe_chunk_powerup_respawn powerup_respawn;
+        tPipe_smudge_data smudge;
+        tPipe_model_mash model_mash;
+        tPipe_bend_data bend;
         char raw_data[0];
     } data;
 } tPipe_chunk;
