@@ -1474,7 +1474,24 @@ int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data) {
 
 // SendToggleFlaps
 
-// ToggleFlaps
+// FUNCTION: CARMA2_HW 0x0042dd50
+void C2_HOOK_FASTCALL ToggleFlaps(void) {
+    tNet_message_chunk* chunk;
+    tNet_game_player_info* player_info;
+
+    if (gCountdown || gToo_poor_for_recovery_timeout != 0) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_none || gNet_mode == eNet_mode_host) {
+        PhysicsObjectRecurse(gProgram_state.current_car.collision_info, ToggleFlapsCB, &gProgram_state.current_car);
+    } else {
+        chunk = NetAllocateMessageChunk(eNet_message_chunk_type_toggle_doors, 0);
+        player_info = NetPlayerFromCar(&gProgram_state.current_car);
+        if (player_info != NULL) {
+            chunk->toggle_doors.id = player_info->ID;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00434910
 // FUNCTION: CARMA2_SW 0x00434940
