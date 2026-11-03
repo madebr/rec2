@@ -197,7 +197,7 @@ void C2_HOOK_CDECL BrPointToScreenXYZOMany(br_vector3* screens, br_uint_32* outc
 // FUNCTION: CARMA2_HW 0x00527240
 br_scalar C2_HOOK_CDECL BrZbDepthToScreenZ(br_uint_32 depth_z, br_camera* camera) {
 
-    return BrFixedToScalar(BrFixedNeg(depth_z));
+    return BrFixedToScalar((br_int_32)BrFixedNeg(depth_z));
 }
 
 // FUNCTION: CARMA2_HW 0x00527260
