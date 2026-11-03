@@ -33,6 +33,10 @@
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
 typedef struct {
+    tU32 value;
+} tPipe_stack_word;
+
+typedef struct {
     int field_0x0;
     int field_0x4;
     tU8 field_0x8[0x10];
@@ -236,6 +240,12 @@ typedef struct {
     tS8 field_0x7;
 } tPipe_chunk_ped_dismember;
 
+typedef struct {
+    int field_0x0;
+    int field_0x4;
+    int field_0x8;
+} tPipe_chunk_ped_fp_change;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -332,6 +342,11 @@ void C2_HOOK_FASTCALL WorkerPedDismember(int field_0x0, int field_0x4, int field
 
 // STUB: CARMA2_HW 0x004ca980
 void C2_HOOK_FASTCALL WorkerPedDismemberUndo(int field_0x0, int field_0x4, int field_0x6) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ca650
+void C2_HOOK_FASTCALL WorkerPedFPChange(int field_0x0, tPipe_stack_word field_0x4) {
     NOT_IMPLEMENTED();
 }
 
@@ -2496,7 +2511,12 @@ void C2_HOOK_FASTCALL ApplyPedDismember(tPipe_chunk** pChunk) {
     return WorkerPedDismember(chunk->field_0x0, (int)chunk->field_0x4, (int)chunk->field_0x7);
 }
 
-// ApplyPedFPChange
+// FUNCTION: CARMA2_HW 0x004c9b40
+void C2_HOOK_FASTCALL ApplyPedFPChange(tPipe_chunk** pChunk) {
+    tPipe_chunk_ped_fp_change* chunk = (tPipe_chunk_ped_fp_change*)*pChunk;
+
+    return WorkerPedFPChange(chunk->field_0x0, *(tPipe_stack_word*)&chunk->field_0x8);
+}
 
 // ApplyPedPos
 
