@@ -49,6 +49,49 @@ extern int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pCharacter
 
 extern void C2_HOOK_FASTCALL PipeSinglePedFPChange(tPedestrian* pPed, float pValue, float pUnused);
 
+// GLOBAL: CARMA2_HW 0x0058aae0
+double gPed_face_cache_margin = -0.21739130434782608;
+
+// GLOBAL: CARMA2_HW 0x0058aae8
+double gPed_face_normal_threshold = 0.99;
+
+#define RECACHE_FACE_BOUNDS(cache__) ((br_bounds3*)&(cache__)->field_0x18)
+
+// GLOBAL: CARMA2_HW 0x00694124
+int gPed_face_cache_flags;
+
+// GLOBAL: CARMA2_HW 0x0058aaf0
+const float gPed_face_bounds_min_x = -0.43478259444236755f;
+
+// GLOBAL: CARMA2_HW 0x0058aaf8
+const double gPed_face_bounds_vertical_margin = -0.36231884057971014;
+
+// GLOBAL: CARMA2_HW 0x0058ab00
+const float gPed_face_bounds_min_z = -0.28985506296157837f;
+
+// GLOBAL: CARMA2_HW 0x0058ab04
+const float gPed_face_bounds_max_x = 0.43478259444236755f;
+
+// GLOBAL: CARMA2_HW 0x0058ab08
+const float gPed_face_bounds_max_z = 1.4492753744125366f;
+
+// GLOBAL: CARMA2_HW 0x0065e568
+const br_matrix34 gPed_face_bounds_identity = {
+    { { 1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f, 0.0f } }
+};
+
+typedef struct {
+    br_matrix34 matrix;
+    tBounds bounds;
+} tPed_face_bounds_context;
+
+extern tFace_ref* C2_HOOK_FASTCALL CastRayDownThruFaces(br_vector3* pPosition, tFace_ref* pFaces, int pCount, br_scalar pOffset, br_vector3* pCollision_position);
+extern void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds);
+extern int C2_HOOK_FASTCALL FindFacesInBox(tBounds* pBounds, tFace_ref* pFace_list, int pMax_face, tWorld_callbacks* pWorld_callbacks);
+extern tWorld_callbacks gWorld_callbacks;
+
+extern void C2_HOOK_FASTCALL CachePedestrianFaces(tPedestrian* pPed, br_vector3* pHit_pos, tU32 pCache_key);
+
 extern tS3_outlet* gCar_outlet;
 
 typedef struct {
@@ -572,6 +615,15 @@ int gPed_cache_sizes_1[4] = { 40, 25, 15, 5 };
 // GLOBAL: CARMA2_HW 0x0069bc58
 // GLOBAL: CARMA2_SW 0x00695cb0
 tPed_face_cache_0x34* gPed_face_cache_heads[4];
+
+// GLOBAL: CARMA2_HW 0x0065d7a8
+int gPed_cache_sizes_2[4] = { 5, 10, 40, 75 };
+
+// GLOBAL: CARMA2_HW 0x006a03f8
+tPed_face_cache_0x34* gPed_face_caches[4];
+
+// GLOBAL: CARMA2_HW 0x0069bc54
+tPed_face_cache_0x50* gPed_face_cache;
 
 // GLOBAL: CARMA2_HW 0x00694124
 // GLOBAL: CARMA2_SW 0x0068e17c
@@ -2330,9 +2382,175 @@ float C2_HOOK_FASTCALL RescanPedProximity(tPedestrian* pPed, br_vector3* pArg2) 
     return best;
 }
 
-// RecacheAndSetFace
+// FUNCTION: CARMA2_HW 0x004d1d70
+tPed_face_cache_0x34* C2_HOOK_FASTCALL RecacheAndSetFace(tPedestrian* pPed, int* pArg2, int* pArg3, br_vector3* pArg4, int pArg5, tU32 pTime) {
+    br_matrix34* mat;
+    tPed_face_cache_0x34* face_cache;
+    tFace_ref* face;
+    br_vector3* pos;
+    float f3;
+    float f4;
+    float f5;
+    float f6;
+    float f7;
+    float f8;
+    int inside;
 
-// CachePedestrianFaces
+    *pArg2 = 0;
+    *pArg3 = 0;
+    mat = GetCharacterMatrixPtr(pPed->character);
+    pos = (br_vector3*)mat->m[3];
+    face_cache = pPed->field_0x0c->field_0xb0;
+    if (pArg5 != 0 || face_cache == NULL
+            || gPed_face_cache_margin < pos->v[0] - RECACHE_FACE_BOUNDS(face_cache)->max.v[0]
+            || gPed_face_cache_margin < pos->v[1] - RECACHE_FACE_BOUNDS(face_cache)->max.v[1]
+            || gPed_face_cache_margin < pos->v[2] - RECACHE_FACE_BOUNDS(face_cache)->max.v[2]
+            || gPed_face_cache_margin < RECACHE_FACE_BOUNDS(face_cache)->min.v[0] - pos->v[0]
+            || gPed_face_cache_margin < RECACHE_FACE_BOUNDS(face_cache)->min.v[1] - pos->v[1]
+            || gPed_face_cache_margin < RECACHE_FACE_BOUNDS(face_cache)->min.v[2] - pos->v[2]) {
+        CachePedestrianFaces(pPed, pArg4, pTime);
+        face_cache = pPed->field_0x0c->field_0xb0;
+        *pArg2 = face_cache != NULL;
+        *pArg3 = 1;
+    } else {
+        face = face_cache->field_0x30;
+        inside = 1;
+        if (face != NULL) {
+            f6 = face->v[1].v[0] - face->v[0].v[0];
+            f3 = face->v[1].v[2] - face->v[0].v[2];
+            f8 = face->v[2].v[2] - face->v[0].v[2];
+            f7 = face->v[2].v[0] - face->v[0].v[0];
+            f4 = pos->v[2] - face->v[0].v[2];
+            f5 = pos->v[0] - face->v[0].v[0];
+            if (gConst_replay_rate_zero <= (f6 * f8 - f3 * f7) * (f6 * f4 - f3 * f5)
+                    && gConst_replay_rate_zero <= (f7 * f3 - f8 * f6) * (f7 * f4 - f8 * f5)) {
+                f3 = face->v[2].v[0] - face->v[1].v[0];
+                f4 = face->v[2].v[2] - face->v[1].v[2];
+                inside = ((face->v[0].v[2] - face->v[1].v[2]) * f3
+                        - (face->v[0].v[0] - face->v[1].v[0]) * f4)
+                        * ((pos->v[2] - face->v[1].v[2]) * f3
+                        - (pos->v[0] - face->v[1].v[0]) * f4) < gConst_replay_rate_zero;
+            }
+        }
+        if (inside) {
+            if (pPed->field_0x0c != NULL) {
+                mat = GetCharacterMatrixPtr(pPed->character);
+                face_cache->field_0x30 = CastRayDownThruFaces((br_vector3*)mat->m[3], (tFace_ref*)face_cache->field_0x0,
+                        (int)face_cache->field_0x4, GetClearanceFromCharacterInstance(pPed->character, 0), pArg4);
+            }
+            *pArg2 = 1;
+            if (face == NULL || face_cache->field_0x30 == NULL
+                    || face->normal.v[0] * pPed->field_0x0c->field_0x00.v[0]
+                        + pPed->field_0x0c->field_0x00.v[2] * face->normal.v[2]
+                        + pPed->field_0x0c->field_0x00.v[1] * face->normal.v[1] < gPed_face_normal_threshold) {
+                *pArg3 = 1;
+            }
+        }
+    }
+    return face_cache;
+}
+
+// FUNCTION: CARMA2_HW 0x004d2060
+void C2_HOOK_FASTCALL CachePedestrianFaces(tPedestrian* pPed, br_vector3* pHit_pos, tU32 pCache_key) {
+    tPed_face_bounds_context bounds_context;
+    br_matrix34* character_matrix;
+    tPed_face_cache_0x34* face_cache;
+    tPed_face_cache_0x34* head;
+    int* cache_size;
+    int face_count;
+    int cache_index;
+
+    if (pPed->hit_points <= 0 && gBOOL_00744804 == 0) {
+        SetPedMove(pPed, 0x5e, -1, 0, 1, GetTotalTime(), 6);
+        return;
+    }
+
+    character_matrix = GetCharacterMatrixPtr(pPed->character);
+    bounds_context.matrix.m[0][0] = pPed->character->field_0x5c.m[0][0];
+    bounds_context.matrix.m[0][1] = pPed->character->field_0x5c.m[0][1];
+    bounds_context.matrix.m[0][2] = pPed->character->field_0x5c.m[0][2];
+    bounds_context.matrix.m[1][0] = pPed->character->field_0x5c.m[1][0];
+    bounds_context.matrix.m[1][1] = pPed->character->field_0x5c.m[1][1];
+    bounds_context.matrix.m[1][2] = pPed->character->field_0x5c.m[1][2];
+    bounds_context.matrix.m[2][0] = pPed->character->field_0x5c.m[2][0];
+    bounds_context.matrix.m[2][1] = pPed->character->field_0x5c.m[2][1];
+    bounds_context.matrix.m[2][2] = pPed->character->field_0x5c.m[2][2];
+    bounds_context.matrix.m[3][0] = character_matrix->m[3][0];
+    bounds_context.matrix.m[3][1] = character_matrix->m[3][1];
+    bounds_context.matrix.m[3][2] = character_matrix->m[3][2];
+
+    bounds_context.bounds.mat = &bounds_context.matrix;
+    bounds_context.bounds.original_bounds.min.v[0] = gPed_face_bounds_min_x;
+    bounds_context.bounds.original_bounds.min.v[1] = (br_scalar)(gPed_face_bounds_vertical_margin - pPed->character->personality->jump_height);
+    bounds_context.bounds.original_bounds.min.v[2] = gPed_face_bounds_min_z;
+    bounds_context.bounds.original_bounds.max.v[0] = gPed_face_bounds_max_x;
+    bounds_context.bounds.original_bounds.max.v[1] = (br_scalar)(pPed->character->personality->jump_height - gPed_face_bounds_vertical_margin);
+    bounds_context.bounds.original_bounds.max.v[2] = gPed_face_bounds_max_z;
+    FillInBounds(&bounds_context.bounds);
+
+    bounds_context.bounds.original_bounds.min.v[0] = bounds_context.bounds.real_bounds.min.v[0];
+    bounds_context.bounds.original_bounds.min.v[1] = bounds_context.bounds.real_bounds.min.v[1];
+    bounds_context.bounds.original_bounds.min.v[2] = bounds_context.bounds.real_bounds.min.v[2];
+    bounds_context.bounds.original_bounds.max.v[0] = bounds_context.bounds.real_bounds.max.v[0];
+    bounds_context.bounds.original_bounds.max.v[1] = bounds_context.bounds.real_bounds.max.v[1];
+    bounds_context.bounds.original_bounds.max.v[2] = bounds_context.bounds.real_bounds.max.v[2];
+    bounds_context.bounds.mat = (br_matrix34*)&gPed_face_bounds_identity;
+    face_count = FindFacesInBox(&bounds_context.bounds, (tFace_ref*)gPed_face_cache, gPed_cache_sizes_2[3] + 1, &gWorld_callbacks);
+    if (face_count > gPed_cache_sizes_2[3]) {
+        gPed_face_cache_flags |= 2;
+        face_count = gPed_cache_sizes_2[3];
+    }
+
+    cache_index = 0;
+    cache_size = gPed_cache_sizes_2;
+    do {
+        if (face_count <= *cache_size) {
+            break;
+        }
+        cache_size++;
+        cache_index++;
+    } while (cache_size < &gPed_cache_sizes_2[4]);
+
+    face_cache = pPed->field_0x0c->field_0xb0;
+    if (face_cache == NULL || face_cache->count != gPed_cache_sizes_2[cache_index]) {
+        if (face_cache != NULL) {
+            face_cache->field_0x14 = NULL;
+        }
+        face_cache = gPed_face_caches[cache_index];
+        if (face_cache->field_0x14 != NULL) {
+            face_cache->field_0x14->field_0x0c->field_0xb0 = NULL;
+            if (face_cache->field_0x8 == pCache_key) {
+                gPed_face_cache_flags |= 1;
+            }
+        }
+    }
+
+    head = gPed_face_caches[cache_index];
+    if (face_cache == head) {
+        gPed_face_caches[cache_index] = head->next;
+    } else {
+        face_cache->next->prev = face_cache->prev;
+        face_cache->prev->next = face_cache->next;
+        face_cache->prev = head->prev;
+        face_cache->next = head;
+        head->prev->next = face_cache;
+        head->prev = face_cache;
+    }
+
+    memcpy(face_cache->field_0x0, gPed_face_cache, face_count * sizeof(tFace_ref));
+    face_cache->field_0x8 = pCache_key;
+    face_cache->field_0x14 = pPed;
+    face_cache->field_0x4 = (tU8)face_count;
+    *RECACHE_FACE_BOUNDS(face_cache) = bounds_context.bounds.real_bounds;
+    pPed->field_0x0c->field_0xb0 = face_cache;
+
+    if (pPed->field_0x0c != NULL) {
+        face_cache = pPed->field_0x0c->field_0xb0;
+        character_matrix = GetCharacterMatrixPtr(pPed->character);
+        face_cache->field_0x30 = CastRayDownThruFaces((br_vector3*)character_matrix->m[3], (tFace_ref*)face_cache->field_0x0,
+                face_cache->field_0x4, GetClearanceFromCharacterInstance(pPed->character, 0), pHit_pos);
+    }
+}
 
 // STUB: CARMA2_HW 0x004525c0
 void C2_HOOK_FASTCALL DroneNoOp(void) { }
