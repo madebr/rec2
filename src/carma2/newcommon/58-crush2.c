@@ -119,8 +119,50 @@ void C2_HOOK_FASTCALL ExplodeMeCarUpMeOldMatey(tCar_spec* pCar) {
     }
 }
 
-// STUB: CARMA2_HW 0x0043f730
-int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x0043f730
+int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar) {
+
+    if (gNet_mode == eNet_mode_client || pCar->knackered
+        || (pCar->damage_units[0].damage_level < 99 && pCar->damage_units[1].damage_level < 99 && pCar->damage_units[2].damage_level < 99
+            && (pCar->damage_units[8].damage_level < 99 || pCar->damage_units[9].damage_level < 99 || pCar->damage_units[10].damage_level < 99 || pCar->damage_units[11].damage_level < 99))) {
+        return 0;
+    }
+    ExplodeMeCarUpMeOldMatey(pCar);
+    if (!pCar->invulnerable_no_wastage && gNet_mode != eNet_mode_client) {
+        if (gNet_mode == eNet_mode_none && pCar != NULL && pCar->driver == eDriver_local_human) {
+            RaceCompleted(eRace_over_6);
+        }
+        pCar->knackered = 1;
+        QueueWastedMassage(pCar->index);
+        if (gNet_mode == eNet_mode_none && GetCarCount(eVehicle_opponent) != 0 && NumberOfOpponentsLeft() == 0) {
+            if (gCurrent_race.race_spec->race_type == kRaceType_Carma1 || gCurrent_race.race_spec->race_type == kRaceType_Cars) {
+                if (gCurrent_race.race_spec->race_type == kRaceType_Carma1) {
+                    NewTextHeadupSlot(4, 0, 5000, -4, GetMiscString(10));
+                }
+                RaceCompleted(eRace_over_2);
+            }
+        }
+        QueueOilSpill(pCar);
+        if (gNet_mode == eNet_mode_none) {
+            KillGroovadelic(pCar->index);
+            KillFunkotronic(pCar->index);
+        }
+    }
+    if (gNet_mode == eNet_mode_none) {
+        if (IRandomBetween(0, 1) && gNet_mode == eNet_mode_none) {
+            StopCarSmoking(pCar);
+            CreateSmokeColumn(pCar, 0, IRandomBetween(0, 11), 20000);
+        }
+        CreateSmokeColumn(pCar, 0, IRandomBetween(0, 11), 180000);
+    }
+    return 1;
+}
+
+// DamageUnit2
+
+// RecordLastDamage
+
+// DoDamage
 
 // FUNCTION: CARMA2_HW 0x0043f9f0
 void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar) {
