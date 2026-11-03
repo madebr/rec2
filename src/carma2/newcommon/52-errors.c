@@ -322,4 +322,11 @@ void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...) {
 #endif
 }
 
+// FUNCTION: CARMA2_HW 0x0044c5a0
+void C2_HOOK_FASTCALL DumpVector3Diagnostic(const char* pName, const br_vector3* pVec) {
+
+    dr_dprintf(pName);
+    dr_dprintf("(%8.3f, %8.3f, %8.3f)", pVec->v[0], pVec->v[1], pVec->v[2]);
+}
+
 
