@@ -329,7 +329,23 @@ void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
 // GLOBAL: CARMA2_HW 0x006a2128
 void* gLollipop_queue[100] = { 0 };
 
-// AddToLollipopQueue
+// FUNCTION: CARMA2_HW 0x004e4910
+int C2_HOOK_FASTCALL AddToLollipopQueue(void* pItem, int pIndex) {
+    extern void* gLollipop_queue[100];
+
+    if (pIndex < 0) {
+        if (gNumber_of_lollipops < 100) {
+            gLollipop_queue[gNumber_of_lollipops] = pItem;
+            gNumber_of_lollipops++;
+            return gNumber_of_lollipops - 1;
+        }
+        return -1;
+    }
+    gLollipop_queue[pIndex] = pItem;
+    return pIndex;
+}
+
+// RenderLollipops
 
 // FUNCTION: CARMA2_HW 0x004e4940
 // FUNCTION: CARMA2_SW 0x004e0cd0
