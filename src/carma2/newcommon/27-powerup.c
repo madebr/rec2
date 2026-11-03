@@ -1617,7 +1617,14 @@ int C2_HOOK_FASTCALL SetMassMultiplier(tPowerup* powerup, tCar_spec* car) {
     return powerup - gPowerup_array;
 }
 
-// ResetMassMultiplier
+// FUNCTION: CARMA2_HW 0x004debf0
+void C2_HOOK_FASTCALL ResetMassMultiplier(tPowerup* powerup, tCar_spec* car) {
+
+    car->field_0x4c8 = 1.0f;
+    if (gNet_mode) {
+        RestoreCarPixelmaps(car);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004dec10
 int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* pPowerup, tCar_spec* pCar) {
