@@ -422,8 +422,38 @@ void C2_HOOK_FASTCALL TurnOnActionReplay(void) {
     InitReplaySplashes();
 }
 
-// STUB: CARMA2_HW 0x004e7270
-void C2_HOOK_FASTCALL TurnOffActionReplay(void) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004e7270
+void C2_HOOK_FASTCALL TurnOffActionReplay(void) {
+    extern void C2_HOOK_FASTCALL UnlockInterfaceStuff(void);
+    extern void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void);
+    extern void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex);
+    extern void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
+    extern void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos);
+    extern void C2_HOOK_FASTCALL ComparePedStuff(void);
+    extern void C2_HOOK_FASTCALL EndMouseCursor(void);
+    extern tNet_mode gNet_mode;
+    extern tActionReplayCameraMode gAction_replay_camera_mode;
+    extern int gCamera_type;
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth(0)
+#endif
+
+    UnlockInterfaceStuff();
+    AssertThisTimeAsCurrentTime();
+    if (gRace_finished == 0) {
+        RestoreCameraPosition(0);
+    }
+    if (gNet_mode == eNet_mode_host) {
+        SendGameplayToAllPlayers(eNet_gameplay_host_unpaused, 0, 0, 0, 0);
+    }
+    gAR_camera_type = gAction_replay_camera_mode;
+    SetCameraType(gCamera_type);
+    ComparePedStuff();
+    EndMouseCursor();
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth()
+#endif
+}
 
 // FUNCTION: CARMA2_HW 0x004e72d0
 // FUNCTION: CARMA2_SW 0x004e3110
