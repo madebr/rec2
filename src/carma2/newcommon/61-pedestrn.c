@@ -32,6 +32,9 @@
 #include "c2_stdio.h"
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x007447fc
+float gPed_buoyancy_factor;
+
 // GLOBAL: CARMA2_HW 0x00589358
 const br_scalar gFloat_00589358 = 0.f;
 
@@ -1897,4 +1900,72 @@ void C2_HOOK_FASTCALL DisposeAllPedPersonalities(void) {
         }
         p++;
     } while ((int)p < (int)&gPed_personalities[REC2_ASIZE(gPed_personalities)]);
+}
+
+
+// STUB: CARMA2_HW 0x004b63b0
+int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
+
+// STUB: CARMA2_HW 0x004b62b0
+int C2_HOOK_FASTCALL PHILAddObjectImmediately(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
+
+// STUB: CARMA2_HW 0x004087b0
+void C2_HOOK_FASTCALL MakeCharacterPhysicsSetup(tPhysics_object* pObject, br_bounds3* pFrame, int pNull, br_vector3* pBoneVec, br_vector3* pBonePtr) {
+    NOT_IMPLEMENTED();
+}
+
+
+// FUNCTION: CARMA2_HW 0x004085f0
+int C2_HOOK_FASTCALL MakeCharacterPhysics(tPed_character_instance* pCharacter, tPhysics_object* pObject, br_actor* pActor, void* pFrame, br_vector3* pBonePos, int pKind, undefined4 pArg3, int pFlag, int pBoneIndex, br_vector3* pBoneVec, br_vector3* pBonePtr) {
+    extern void C2_HOOK_FASTCALL MakeCharacterPhysicsSetup(tPhysics_object* pObject, br_bounds3* pFrame, int pNull, br_vector3* pBoneVec, br_vector3* pBonePtr);
+
+    BrMatrix34Copy(&pObject->transform_matrix, &pActor->t.t.mat);
+    pObject->actor = pActor;
+    MakeCharacterPhysicsSetup(pObject, pFrame, pBonePos == NULL, pBoneVec, pBonePtr);
+    pObject->flags_0x238 = (tU8)pKind + 2;
+    pObject->owner = pCharacter;
+    if (pBonePos != NULL) {
+        pObject->cmpos.v[0] = pBonePos->v[0];
+        pObject->cmpos.v[1] = pBonePos->v[1];
+        pObject->cmpos.v[2] = pBonePos->v[2];
+    }
+    pObject->disable_move_rotate = 1;
+    pObject->field_0xed = 1;
+    BrVector3SetFloat(&pObject->v, 0.f, 0.f, 0.f);
+    BrVector3SetFloat(&pObject->omega, 0.f, 0.f, 0.f);
+    BrVector3SetFloat(&pObject->rotate_omega, 0.f, 0.f, 0.f);
+    BrVector3SetFloat(&pObject->velocity_car_space, 0.f, 0.f, 0.f);
+    pObject->uid = (tU8)pBoneIndex;
+    pObject->world_friction = 1.f;
+    pObject->last_special_volume = NULL;
+    pObject->auto_special_volume = NULL;
+    if (pKind == 1) {
+        pObject->flags |= pKind;
+    } else if (pKind == 2) {
+        pObject->flags |= pKind;
+    }
+    if (pFlag != 0) {
+        if (PHILAddObjectImmediately(pObject) != 0) {
+            return 0;
+        }
+        PHILSetObjectProperty(pObject, 0, 1.0);
+        PHILSetObjectProperty(pObject, 3, pArg3 == 0);
+        PHILSetObjectProperty(pObject, 4, 1);
+        PHILSetObjectProperty(pObject, 5, 1);
+        PHILSetObjectProperty(pObject, 7, 1);
+        PHILSetObjectProperty(pObject, 8, gPed_buoyancy_factor);
+        if (pKind == 3) {
+            PHILSetObjectProperty(pObject, 6, 1);
+        }
+    }
+    if (gPed_vtable->fill_in_object != NULL) {
+        gPed_vtable->fill_in_object((undefined4*)pObject, pKind + 2);
+    }
+    return 1;
 }
