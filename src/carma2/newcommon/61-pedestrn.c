@@ -2446,7 +2446,19 @@ void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pPed
     pPed->field_0x8c.m[3][2] = 0.f;
 }
 
-// FUN_004093e0
+// FUNCTION: CARMA2_HW 0x004093e0
+int C2_HOOK_FASTCALL FUN_004093e0(tPed_character_instance* pCharacter) {
+
+    if ((pCharacter->field_0x14 & 4) == 0) {
+        return 0x1f;
+    }
+    BonerActiveHalted2(pCharacter, 1);
+    return 0;
+}
+
+// CharacterNoLongerPhysicworthy
+
+// SetCharacterPhysicsLevel
 
 // StopCharacterMorphing
 
