@@ -35,6 +35,8 @@
 
 extern void C2_HOOK_FASTCALL PipeSinglePedMove(tPedestrian* pPed, tS16 pArg2, tS16 pOriginal_move_id, tS16 pMove_id, float pArg5, float pArg6, int pArg7, int pArg8, br_vector3* pOriginal_pos, br_vector3* pPos, int pOriginal_action, int pAction, br_matrix34* pArg13);
 
+extern br_vector3 gZero_v__car;
+
 typedef struct {
     float min_speed;
     float max_speed;
@@ -62,6 +64,14 @@ tU32 gPed_last_score_time;
 
 // GLOBAL: CARMA2_HW 0x00694120
 tPedestrian* gPed_recent_ped;
+
+// GLOBAL: CARMA2_HW 0x0069bc24
+float gAverage_ped_scale;
+
+// GLOBAL: CARMA2_HW 0x0065d758
+char gPed_noise_table[16] = {
+    0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+};
 
 // GLOBAL: CARMA2_HW 0x007447cc
 int gCount_killed_peds;
@@ -868,7 +878,47 @@ void C2_HOOK_FASTCALL SetPedXZDirection(tPedestrian* pPed, br_vector3* pDir, flo
 
 // StopPedNoise
 
-// MakePedNoise
+// FUNCTION: CARMA2_HW 0x004cd880
+void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tPhysics_object* pCollision_info) {
+    extern char gPed_noise_table[16];
+    extern float gAverage_ped_scale;
+    typedef struct { tU16 count_sounds; tU16 sounds[5]; } tPed_sound_group;
+    tPed_personality_sounds* sounds;
+    tPed_sound_group* sound_group;
+    int sound;
+
+    if (pPed->field_0x0c == NULL) {
+        return;
+    }
+    if (pPed->field_0x0c->field_0x9c != 0
+            && pPed->field_0x0c->field_0xa0 >= 0
+            && DRS3SoundStillPlaying(pPed->field_0x0c->field_0x9c)) {
+        if (pPed->field_0x0c->field_0xa0 == pArg2) {
+            return;
+        }
+        if (gPed_noise_table[pArg2] != 0) {
+            return;
+        }
+        if (gPed_noise_table[pPed->field_0x0c->field_0xa0] == 0) {
+            return;
+        }
+        DRS3StopSound(pPed->field_0x0c->field_0x9c);
+        pPed->field_0x0c->field_0x9c = 0;
+    }
+    pPed->field_0x0c->field_0x20[0] = pArg3;
+    pPed->field_0x0c->field_0xa0 = pArg2;
+    sounds = pPed->character->personality->sounds;
+    sound_group = (tPed_sound_group*)&sounds->sounds[pArg2];
+    sound = sound_group->sounds[IRandomBetween(0, sound_group->count_sounds - 1)];
+    if (pCollision_info != NULL
+            && pCollision_info->owner != NULL
+            && pCollision_info->flags_0x238 == 1
+            && ((tCar_spec*)pCollision_info->owner)->driver == eDriver_local_human) {
+        pPed->field_0x0c->field_0x9c = DRS3StartSound2(gPedestrians_outlet, sound, pArg3 == 0, 0xff, 0xff, (int)(65536.0 / gAverage_ped_scale), 0x10000);
+    } else {
+        pPed->field_0x0c->field_0x9c = DRS3StartSound3D(gPedestrians_outlet, sound, &pPed->pos, &gZero_v__car, pArg3 == 0, 0xff, (int)(65536.0 / gAverage_ped_scale), 0x10000);
+    }
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
