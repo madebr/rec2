@@ -2276,7 +2276,14 @@ void C2_HOOK_FASTCALL CompressPlane(tU16* pDest, const br_vector4* pSrc) {
     pDest[3] = DRScalarToU16(pSrc->v[3], -2.5f, 2.5f);
 }
 
-// ExpandPlane
+// FUNCTION: CARMA2_HW 0x0043dee0
+void C2_HOOK_FASTCALL ExpandPlane(br_vector4* pDest, const tU16* pSrc) {
+
+    ExpandVector3((br_vector3*)pDest, (const tCompressed_vector3*)pSrc, -1.f, 1.f);
+    pDest->v[3] = DRU16ToScalar(pSrc[3], -2.5f, 2.5f);
+}
+
+// CopySplitInMessage
 
 // FUNCTION: CARMA2_HW 0x0043dfd0
 // FUNCTION: CARMA2_SW 0x0043e020
