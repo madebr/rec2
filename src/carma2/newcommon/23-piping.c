@@ -254,6 +254,15 @@ typedef struct {
     br_vector3 field_0x10;
 } tPipe_chunk_ped_pos;
 
+typedef struct {
+    int field_0x0;
+    tS16 field_0x4;
+    tS16 field_0x6;
+    tS16 field_0x8;
+    tS16 field_0xa;
+    int field_0xc;
+} tPipe_chunk_ped_model_change;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -360,6 +369,16 @@ void C2_HOOK_FASTCALL WorkerPedFPChange(int field_0x0, tPipe_stack_word field_0x
 
 // STUB: CARMA2_HW 0x004ca830
 void C2_HOOK_FASTCALL WorkerPedPos(int field_0x0, br_vector3* pVec) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ca8d0
+void C2_HOOK_FASTCALL WorkerPedModelChange(int field_0x0, int field_0x4, int field_0x6, int field_0x8) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ca8a0
+void C2_HOOK_FASTCALL WorkerPedModelChangeUndo(int field_0x0, int field_0x4, int field_0xc, int field_0xa) {
     NOT_IMPLEMENTED();
 }
 
@@ -2538,7 +2557,12 @@ void C2_HOOK_FASTCALL ApplyPedPos(tPipe_chunk** pChunk) {
     return WorkerPedPos(chunk->field_0x0, &chunk->field_0x10);
 }
 
-// ApplyPedModelChange
+// FUNCTION: CARMA2_HW 0x004c9b60
+void C2_HOOK_FASTCALL ApplyPedModelChange(tPipe_chunk** pChunk) {
+    tPipe_chunk_ped_model_change* chunk = (tPipe_chunk_ped_model_change*)*pChunk;
+
+    return WorkerPedModelChange(chunk->field_0x0, (int)chunk->field_0x4, (int)chunk->field_0x6, (int)chunk->field_0x8);
+}
 
 // ApplyPHILObject
 
