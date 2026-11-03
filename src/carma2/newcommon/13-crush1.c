@@ -24,6 +24,51 @@
 #include "c2_math.h"
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x0067bd58
+int gCount_toggled_doors;
+
+// GLOBAL: CARMA2_HW 0x0067b838
+int gCount_net_crush_semi_detach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067bd60
+int gCount_net_crush_full_detach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067bdf0
+int gCount_net_crush_detach_list;
+
+// GLOBAL: CARMA2_HW 0x0067b7cc
+int gCount_car_damage_crush_list;
+
+// GLOBAL: CARMA2_HW 0x00679450
+tToggled_door gToggled_doors[16];
+
+// GLOBAL: CARMA2_HW 0x0067bd18
+tCar_damge_crush_list_item gCar_damage_crush_list[8];
+
+// GLOBAL: CARMA2_HW 0x00679558
+tCrush_detach_list_item gCrush_detach_list[16];
+
+// GLOBAL: CARMA2_HW 0x0067bad0
+int gCount_crush_detach_list;
+
+typedef struct tCrush_net_reattach_list_item_local {
+    tCar_spec* actor;
+    tCar_spec* car;
+    undefined4 field_0x8;
+} tCrush_net_reattach_list_item_local;
+
+// GLOBAL: CARMA2_HW 0x0067be10
+tCrush_net_reattach_list_item_local gNet_crush_reattach_bit_list[8];
+
+// GLOBAL: CARMA2_HW 0x0067b7d8
+tCrush_net_full_detach_bit_list_item gNet_crush_full_detach_bit_list[8];
+
+// GLOBAL: CARMA2_HW 0x0067b840
+tCrush_net_semi_detach_bit_list_item gNet_crush_semi_detach_bit_list[8];
+
+// GLOBAL: CARMA2_HW 0x0067a290
+tCrush_net_detach_list_item gNet_crush_detach_list[8];
+
 // GLOBAL: CARMA2_HW 0x00679430
 int gCollision_face_mask__raycast;
 
@@ -228,7 +273,95 @@ void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
 
 // ClearCrushLists
 
-// RemoveCarFromCrushLists
+// FUNCTION: CARMA2_HW 0x00429d90
+void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec) {
+    extern int gCount_net_crush_detach_list;
+    extern int gCount_net_crush_semi_detach_bit_list;
+    extern int gCount_net_crush_full_detach_bit_list;
+    extern int gCount_net_crush_reattach_bit_list;
+    extern int gCount_toggled_doors;
+    extern int gCount_car_damage_crush_list;
+    int i;
+    int new_count;
+
+    i = 0;
+    new_count = 0;
+    for (; i < gCount_net_crush_detach_list; i++) {
+        if (gNet_crush_detach_list[i].car != pCar_spec) {
+            if (new_count != i) {
+                gNet_crush_detach_list[new_count] = gNet_crush_detach_list[i];
+            }
+            new_count += 1;
+        }
+    }
+    gCount_net_crush_detach_list = new_count;
+    i = 0;
+    new_count = 0;
+    for (; i < gCount_net_crush_semi_detach_bit_list; i++) {
+        if (gNet_crush_semi_detach_bit_list[i].car != pCar_spec) {
+            if (new_count != i) {
+                gNet_crush_semi_detach_bit_list[new_count] = gNet_crush_semi_detach_bit_list[i];
+            }
+            new_count += 1;
+        }
+    }
+    gCount_net_crush_semi_detach_bit_list = new_count;
+    i = 0;
+    new_count = 0;
+    for (; i < gCount_net_crush_full_detach_bit_list; i++) {
+        if (gNet_crush_full_detach_bit_list[i].car != pCar_spec) {
+            if (new_count != i) {
+                gNet_crush_full_detach_bit_list[new_count] = gNet_crush_full_detach_bit_list[i];
+            }
+            new_count += 1;
+        }
+    }
+    gCount_net_crush_full_detach_bit_list = new_count;
+    i = 0;
+    new_count = 0;
+    for (; i < gCount_net_crush_reattach_bit_list; i++) {
+        if (gNet_crush_reattach_bit_list[i].car != pCar_spec) {
+            if (new_count != i) {
+                gNet_crush_reattach_bit_list[new_count] = gNet_crush_reattach_bit_list[i];
+            }
+            new_count += 1;
+        }
+    }
+    gCount_net_crush_reattach_bit_list = new_count;
+    i = 0;
+    new_count = 0;
+    for (; i < gCount_crush_detach_list; i++) {
+        if (gCrush_detach_list[i].car != pCar_spec) {
+            if (new_count != i) {
+                gCrush_detach_list[new_count] = gCrush_detach_list[i];
+            }
+            new_count += 1;
+        }
+    }
+    gCount_crush_detach_list = new_count;
+    i = 0;
+    new_count = 0;
+    for (; i < gCount_toggled_doors; i++) {
+        if (gToggled_doors[i].car != pCar_spec) {
+            if (new_count != i) {
+                gToggled_doors[new_count] = gToggled_doors[i];
+            }
+            new_count += 1;
+        }
+    }
+    gCount_toggled_doors = new_count;
+    i = 0;
+    new_count = 0;
+    for (; i < gCount_car_damage_crush_list; i++) {
+        if (gCar_damage_crush_list[i].car != pCar_spec) {
+            if (new_count != i) {
+                gCar_damage_crush_list[new_count] = gCar_damage_crush_list[i];
+            }
+            new_count += 1;
+        }
+    }
+    gCount_car_damage_crush_list = new_count;
+}
 
 // FUNCTION: CARMA2_HW 0x00429fa0
 // FUNCTION: CARMA2_SW 0x0042a030
