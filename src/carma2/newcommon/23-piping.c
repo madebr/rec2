@@ -263,6 +263,11 @@ typedef struct {
     int field_0xc;
 } tPipe_chunk_ped_model_change;
 
+typedef struct {
+    int field_0x0;
+    br_matrix34 field_0x4;
+} tPipe_chunk_phil_object;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -379,6 +384,11 @@ void C2_HOOK_FASTCALL WorkerPedModelChange(int field_0x0, int field_0x4, int fie
 
 // STUB: CARMA2_HW 0x004ca8a0
 void C2_HOOK_FASTCALL WorkerPedModelChangeUndo(int field_0x0, int field_0x4, int field_0xc, int field_0xa) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004b7220
+void C2_HOOK_FASTCALL WorkerPHILObject(int field_0x0, br_matrix34* pField_0x4) {
     NOT_IMPLEMENTED();
 }
 
@@ -2564,7 +2574,12 @@ void C2_HOOK_FASTCALL ApplyPedModelChange(tPipe_chunk** pChunk) {
     return WorkerPedModelChange(chunk->field_0x0, (int)chunk->field_0x4, (int)chunk->field_0x6, (int)chunk->field_0x8);
 }
 
-// ApplyPHILObject
+// FUNCTION: CARMA2_HW 0x004c9b80
+void C2_HOOK_FASTCALL ApplyPHILObject(tPipe_chunk** pChunk) {
+    tPipe_chunk_phil_object* chunk = (tPipe_chunk_phil_object*)*pChunk;
+
+    return WorkerPHILObject(chunk->field_0x0, &chunk->field_0x4);
+}
 
 // ApplyGibShower
 
