@@ -96,7 +96,7 @@ extern void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex);
 
 // CollideCamera2
 
-// CollideCameraWithOtherCars
+extern int C2_HOOK_FASTCALL CollideCameraWithOtherCars(br_vector3* pPos, br_vector3* pCamera_pos);
 
 extern void C2_HOOK_FASTCALL InitialiseExternalCamera(void);
 
