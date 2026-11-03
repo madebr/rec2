@@ -9,14 +9,17 @@
 #include "51-smash.h"
 
 #include "08-loading1.h"
+#include "09-funks.h"
 #include "17-world2.h"
 #include "20-skidmark.h"
+#include "23-piping.h"
 #include "28-world3.h"
 #include "32-spark.h"
 #include "33-depth.h"
 #include "39-oil.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "59-camera.h"
 #include "62-graphics3.h"
 
 #include "globvars.h"
@@ -835,6 +838,21 @@ void C2_HOOK_FASTCALL ReadSmashableData(FILE* pF, tCar_crush_buffer_entry* pCar_
         ReadSmashLevels(pF, &smashable->levels, &smashable->count_smashable_levels, 0, pBrender_storage);
     }
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004ef830
+void C2_HOOK_FASTCALL ActuallyRepairSmashThunk(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pUnused, int pLevel) {
+    extern void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel);
+
+    ActuallyRepairSmash(pCar_spec, pSmashable, pLevel);
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
