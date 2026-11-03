@@ -2360,7 +2360,18 @@ void C2_HOOK_FASTCALL UndoCrush(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) 
     return WorkerCrushUndo(chunk->field_0x4, &chunk->field_0x8[0], &chunk->field_0x8[6]);
 }
 
-// UndoSmudge
+// FUNCTION: CARMA2_HW 0x004c9db0
+void C2_HOOK_FASTCALL UndoSmudge(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+
+    return WorkerSmudge(pChunk, -1);
+}
+#endif
+
+// UndoDamage
+
+// UndoSpecial
+
+#ifdef REC2_HW
 // ApplyReplayFrameTime
 
 // UndoScreenWobble
