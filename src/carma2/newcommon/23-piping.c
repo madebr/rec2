@@ -2327,3 +2327,12 @@ void C2_HOOK_FASTCALL FUN_004c7500(uintptr_t pOwner, void* pData, tU32 pArg3) {
         0x30, 0, (uintptr_t)pData,
         4, 0x30, pArg3);
 }
+
+
+// FUNCTION: CARMA2_HW 0x004c8500
+void C2_HOOK_FASTCALL FUN_004c8500(uintptr_t pOwner, const br_vector3* pVector) {
+    br_vector3 vector;
+
+    vector = *pVector;
+    ARDoSingleSession(7, pOwner, &vector, sizeof(vector));
+}
