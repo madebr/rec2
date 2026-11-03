@@ -2132,7 +2132,11 @@ void C2_HOOK_FASTCALL ApplySkidAdjustment(tPipe_chunk** pChunk) {
     AdjustSkid(chunk->skid_num, &chunk->matrix, chunk->material);
 }
 
-// ApplyFlap
+// FUNCTION: CARMA2_HW 0x004c9830
+void C2_HOOK_FASTCALL ApplyFlap(tPipe_chunk** pChunk) {
+
+    return WorkerFlap(*(int*)((tU8*)*pChunk + 4), *(tU16*)((tU8*)*pChunk + 8));
+}
 
 // ApplyModelMash
 
