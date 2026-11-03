@@ -2391,7 +2391,13 @@ void C2_HOOK_FASTCALL FUN_004c86f0(int pOwner, void* pData, tU32 pArg3) {
 extern int gINT_006a3334;
 extern tSmashable_level* C2_HOOK_FASTCALL FUN_004ee290(tCar_spec* pCar, tPhysics_object* pCollision_info, br_vector3* pPos, br_vector3* pOptional_position, br_actor* pActor, undefined4 pArg6, tCar_crush_smashable_part* pSmashable, float pDamage, undefined4 pArg9, undefined4 pArg10);
 
-// FUN_004ee250
+// FUNCTION: CARMA2_HW 0x004ee250
+void C2_HOOK_FASTCALL FUN_004ee250(tCar_spec* pCar, tPhysics_object* pCollision_info, br_vector3* pPos, void* pArg4, br_actor* pActor, int pArg6, tCar_crush_smashable_part* pSmashable, float pDamage, int pArg9) {
+    gINT_006a3334 = 0;
+    FUN_004ee290(pCar, pCollision_info, pPos, pArg4, pActor, pArg6, pSmashable, pDamage, pArg9, 0);
+}
+
+extern intptr_t C2_HOOK_CDECL FUN_004f5a70(br_actor* pActor, void* pContext);
 
 // FUN_004f5a60
 
