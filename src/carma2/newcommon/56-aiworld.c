@@ -501,7 +501,55 @@ void C2_HOOK_FASTCALL StopProcessingThisDrone(tDrone_spec* pDrone, int pForce) {
 
 extern void C2_HOOK_CDECL FUN_00528130(br_uint_32* pDestination, br_uint_32 pValue, int pCount);
 
-// FUN_00452f40
+// FUNCTION: CARMA2_HW 0x00452f40
+void C2_HOOK_FASTCALL FUN_00452f40(br_model* pModel, int pFaces, int pVertices) {
+    br_vertex* new_vertices;
+    br_face* new_faces;
+    int vertex_size;
+    int face_size;
+    int offset;
+    int i;
+
+    vertex_size = pVertices * sizeof(br_vertex);
+    new_vertices = BrResAllocate(pModel, vertex_size, BR_MEMORY_VERTICES);
+    FUN_00528130((br_uint_32*)new_vertices, 0, vertex_size / sizeof(br_uint_32));
+    if (pModel->nvertices != 0) {
+        i = 0;
+        offset = 0;
+        while (i < (pModel->nvertices < pVertices ? pModel->nvertices : pVertices)) {
+            memcpy(&new_vertices[i], &pModel->vertices[i], sizeof(br_vertex));
+            i++;
+            offset += sizeof(br_vertex);
+        }
+        BrResRemove(pModel->vertices);
+        BrResFree(pModel->vertices);
+    }
+    pModel->nvertices = (br_uint_16)pVertices;
+    pModel->vertices = new_vertices;
+
+    face_size = pFaces * sizeof(br_face);
+    new_faces = BrResAllocate(pModel, face_size, BR_MEMORY_FACES);
+    FUN_00528130((br_uint_32*)new_faces, 0, face_size / sizeof(br_uint_32));
+    if (pModel->nfaces != 0) {
+        i = 0;
+        offset = 0;
+        while (i < (pModel->nfaces < pFaces ? pModel->nfaces : pFaces)) {
+            memcpy(&new_faces[i], &pModel->faces[i], sizeof(br_face));
+            i++;
+            offset += sizeof(br_face);
+        }
+        BrResRemove(pModel->faces);
+        BrResFree(pModel->faces);
+    }
+    pModel->nfaces = (br_uint_16)pFaces;
+    pModel->faces = new_faces;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+/* data used by LoadFunksAndGrooves and its helpers above */
 // GLOBAL: CARMA2_HW 0x00594790
 const char* gDrone_axis_names[4] = {
     "x",
