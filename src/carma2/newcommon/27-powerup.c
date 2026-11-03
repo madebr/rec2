@@ -1068,7 +1068,17 @@ int C2_HOOK_FASTCALL SetBouncey(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetSuspension
+// FUNCTION: CARMA2_HW 0x004dce80
+int C2_HOOK_FASTCALL SetSuspension(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    SetCarSuspGiveAndHeight(pCar,
+                            ((volatile float*)pPowerup->float_params)[0],
+                            ((volatile float*)pPowerup->float_params)[1],
+                            ((volatile float*)pPowerup->float_params)[4],
+                            ((volatile float*)pPowerup->float_params)[2],
+                            ((volatile float*)pPowerup->float_params)[3]);
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dced0
 // FUNCTION: CARMA2_SW 0x004d93d0
