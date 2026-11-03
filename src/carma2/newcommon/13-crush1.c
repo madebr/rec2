@@ -33,6 +33,9 @@ typedef struct {
 } tDrone_crush_data;
 extern tDrone_crush_data* C2_HOOK_FASTCALL GetDroneCrushData(tPhysics_object* pObject);
 
+// GLOBAL: CARMA2_HW 0x0067be84
+tU32 gINT_0067be84;
+
 // GLOBAL: CARMA2_HW 0x006796bc
 int gCount_queued_drone_crushes;
 
@@ -1444,7 +1447,59 @@ void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br_vector
 
 // QueueCarCrush
 
-// SetBitForDetachment
+// FUNCTION: CARMA2_HW 0x0042d7e0
+void C2_HOOK_FASTCALL SetBitForDetachment(br_actor* pActor, tCar_spec* pCar, float pArg3, int pArg4) {
+    int i;
+    tUser_crush_data* user;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_crush_detach_data* detach_data;
+    tCar_crush_spec* car_crush_spec;
+
+    if (gCount_crush_detach_list == REC2_ASIZE(gCrush_detach_list)) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_none || gNet_mode == eNet_mode_host) {
+        if (pActor == NULL) {
+            return;
+        }
+        user = pActor->user;
+        if (user == NULL) {
+            return;
+        }
+        crush_data = user->crush_data;
+        if (crush_data == NULL) {
+            return;
+        }
+        detach_data = crush_data->detach_data;
+        if (detach_data == NULL) {
+            return;
+        }
+        for (i = 0; i < gCount_crush_detach_list; i++) {
+            if (gCrush_detach_list[i].actor == pActor) {
+                return;
+            }
+        }
+        car_crush_spec = pCar->car_crush_spec;
+        for (i = 0; i < car_crush_spec->field_0x270; i++) {
+            if (car_crush_spec->field_0x274[i].field_0x0 == pActor) {
+                return;
+            }
+        }
+        gCrush_detach_list[gCount_crush_detach_list].actor = pActor;
+        gCrush_detach_list[gCount_crush_detach_list].car = pCar;
+        gCrush_detach_list[gCount_crush_detach_list].field_0x8 = pArg3;
+        if (pArg4) {
+            gCrush_detach_list[gCount_crush_detach_list].time = gPHIL_last_physics_tick;
+        } else {
+            gCrush_detach_list[gCount_crush_detach_list].time = gPHIL_last_physics_tick > gINT_0067be84 + 0x3e8 ? gPHIL_last_physics_tick : gINT_0067be84 + 0x3e8;
+        }
+        if (gCrush_detach_list[gCount_crush_detach_list].time > gINT_0067be84) {
+            gINT_0067be84 = gCrush_detach_list[gCount_crush_detach_list].time;
+        }
+        gCrush_detach_list[gCount_crush_detach_list].field_0x10 = (detach_data->type == eDetachType_fully_detachable);
+        gCount_crush_detach_list = gCount_crush_detach_list + 1;
+    }
+}
 
 // SetFlappage
 
