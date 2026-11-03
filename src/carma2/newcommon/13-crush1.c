@@ -1606,7 +1606,66 @@ void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tPhysics_object* pObje
     }
 }
 
-// DoFullyDetaching
+// FUNCTION: CARMA2_HW 0x00438900
+void C2_HOOK_FASTCALL DoFullyDetaching(void) {
+    int i;
+
+    if (gNet_mode == eNet_mode_none || gNet_mode == eNet_mode_host) {
+        for (i = 0; i < gNum_active_cars; i++) {
+            if (gActive_car_list[i] != NULL && gActive_car_list[i]->driver > 5 && gActive_car_list[i]->car_crush_spec != NULL) {
+                tCar_crush_spec* car_crush = gActive_car_list[i]->car_crush_spec;
+                int j;
+
+                for (j = 0; j < car_crush->field_0x270; j++) {
+                    tCar_bit_spec* bit_car = &car_crush->field_0x274[j];
+                    int detach;
+                    int dt;
+
+                    switch (bit_car->field_0xc[9]) {
+                    case 2:
+                    case 4:
+                        detach = 1;
+                        break;
+                    case 0:
+                    case 1:
+                        detach = BitObjectIsSufficientlyOutsideCarObjectToDetach(bit_car->field_0x8);
+                        dt = PDGetTotalTime() - bit_car->field_0x10;
+                        if (dt < gMax_detach_time_ms) {
+                            detach &= PercentageChance((int)((float)(100 * dt) / gMax_detach_time_ms));
+                        }
+                        break;
+                    default:
+                        detach = 0;
+                        break;
+                    }
+                    if (detach) {
+                        if (gNet_mode != eNet_mode_none) {
+                            int bit_synced;
+                            int k;
+
+                            bit_synced = 0;
+                            for (k = 0; k < gCount_net_crush_full_detach_bit_list; k++) {
+                                if (gNet_crush_full_detach_bit_list[k].object == bit_car->field_0x8) {
+                                    bit_synced = 1;
+                                    break;
+                                }
+                            }
+                            if (!bit_synced) {
+                                SendFullyDetachBit(gActive_car_list[i], bit_car->field_0x8);
+                            }
+                        } else {
+                            FullyDetachBit(gActive_car_list[i], bit_car->field_0x8);
+                        }
+                    }
+                }
+                MungeDetachLists(car_crush);
+            }
+        }
+    }
+}
+
+extern tCar_spec* gCar_to_view;
+extern void C2_HOOK_FASTCALL DeleteFarCrushes(tCar_spec* pCar);
 
 // FUN_00439500
 
