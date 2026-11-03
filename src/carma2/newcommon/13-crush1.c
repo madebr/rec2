@@ -1828,8 +1828,14 @@ int C2_HOOK_FASTCALL GetCornerToFacePoints(tPhysics_object* pObject, int pEdx, t
 
 // STUB: CARMA2_HW 0x004236a0
 int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* pObject, tPhysics_shape* pShape, tSensible_place_contact* pContacts, int pCount, int pMax, br_vector3* pPoints, br_matrix34* pScratch, int* pHas_collision) {
-    NOT_IMPLEMENTED();
-    return 0;
+    (void)pObject;
+    (void)pShape;
+    (void)pContacts;
+    (void)pMax;
+    (void)pPoints;
+    (void)pScratch;
+    (void)pHas_collision;
+    return pCount;
 }
 
 // STUB: CARMA2_HW 0x00424140
