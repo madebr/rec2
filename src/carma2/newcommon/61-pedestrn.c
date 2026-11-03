@@ -2338,7 +2338,26 @@ void C2_HOOK_FASTCALL MungeAllCharacterMaterials(void (C2_HOOK_FASTCALL* pCallba
     }
 }
 
-// MungeAllCharacterObjects
+// FUNCTION: CARMA2_HW 0x0040c4e0
+void C2_HOOK_FASTCALL MungeAllCharacterObjects(void (C2_HOOK_FASTCALL* pCallback)(void*)) {
+    int i;
+    int j;
+    int k;
+
+    for (i = 0; i < (int)REC2_ASIZE(gPed_forms); i++) {
+        if (gPed_forms[i] == NULL) {
+            continue;
+        }
+        for (j = 0; j < gPed_forms[i]->max_boned_physicing_at_once; j++) {
+            for (k = 0; k < gPed_forms[i]->count_bones; k++) {
+                pCallback(gPed_forms[i]->boned_physicing[j].collision_infos[k]);
+            }
+        }
+        for (k = 0; k < gPed_forms[i]->max_simple_physicing_at_once; k++) {
+            pCallback(gPed_forms[i]->simple_physicing[k].collision_info);
+        }
+    }
+}
 
 // MungeAllCharacterModels
 
