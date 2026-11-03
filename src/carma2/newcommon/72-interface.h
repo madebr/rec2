@@ -23,6 +23,27 @@ extern int gPicked_wreck;
 extern tWreck_gallery_car_info gWreck_gallery_car_infos[30];
 
 extern tU32 gFrontend_last_scroll;
+extern br_material* gFrontend_backdrop_materials[3];
+extern br_token_value gFrontend_backdrop0_material_prims[3];
+extern br_token_value gFrontend_backdrop1_material_prims[3];
+extern br_token_value gFrontend_backdrop2_material_prims[3];
+extern br_actor* gFrontend_backdrop_actors[3];
+extern br_actor* gFrontend_camera;
+extern br_actor* gFrontend_wrecks_camera;
+extern br_actor* gFrontend_wrecks_actor;
+extern int gFrontend_controls_count_keys;
+extern tFrontend_slider gControls_slider_1;
+extern tFrontend_slider gControls_slider_2;
+extern tFrontend_slider gControls_slider_3;
+extern int gBackup_key_mappings[4][77];
+extern int gOrig_key_map_index;
+extern int gOrig_joystick_index;
+extern float gOriginal_joystick_x;
+extern float gOriginal_joystick_y;
+extern int gOriginal_joystick_fbb;
+extern int gOriginal_joystick_dpad;
+extern tSave_game gStashed_save_game;
+
 extern tU32 gNet_synch_start;
 
 extern tFrontend_brender_item gFrontend_brender_items[100];
@@ -113,7 +134,7 @@ extern void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend);
 
 // RestoreSinglePlayerState
 
-// MaybeRestoreSavedGame
+extern void C2_HOOK_FASTCALL MaybeRestoreSavedGame(void);
 
 // NetworkJoinUpdateScroller
 
@@ -137,7 +158,7 @@ extern int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend);
 
 // UpdateNetGameTypeScroller
 
-// NetGameTypeUp
+extern int C2_HOOK_FASTCALL NetGameTypeUp(tFrontend_spec* pFrontend);
 
 // NetGameTypeDn
 
@@ -189,7 +210,7 @@ extern int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend);
 
 // MainMenuSelectRace
 
-// testUp
+extern int C2_HOOK_FASTCALL testUp(tFrontend_spec *pFrontend);
 
 extern int C2_HOOK_FASTCALL testDn(tFrontend_spec* pFrontend);
 
@@ -209,7 +230,11 @@ extern int C2_HOOK_FASTCALL CarClickNext(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend);
 
-// FRONTEND_ChangeCarMenuHandler
+extern int C2_HOOK_FASTCALL InterfaceMenuInfunc(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL InterfaceReturnTrue(void);
+
+extern int C2_HOOK_FASTCALL FRONTEND_ChangeCarMenuHandler(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL StartGameInfunc(tFrontend_spec* pFrontend);
 
@@ -231,7 +256,7 @@ extern void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void);
 
 // FRONTEND_DrawMenu
 
-// FRONTEND_Setup2D
+extern void C2_HOOK_FASTCALL FRONTEND_Setup2D(void);
 
 // FRONTEND_Setup
 
@@ -249,7 +274,7 @@ extern int C2_HOOK_FASTCALL StopGettingInputString(void);
 
 extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size);
 
-// DisposeWrecksGallery
+extern void C2_HOOK_FASTCALL DisposeWrecksGallery(void);
 
 extern int C2_HOOK_FASTCALL ScrollToNextCar(tFrontend_spec* pFrontend);
 
@@ -261,7 +286,7 @@ extern int C2_HOOK_FASTCALL ScrollToPrevCar(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange);
 
-// WrecksOutFunc
+extern int C2_HOOK_FASTCALL WrecksOutFunc(tFrontend_spec* pFrontend);
 
 // WrecksUpdateFunc
 
@@ -351,7 +376,7 @@ extern tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem);
 
 extern int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected, int pItem);
 
-// Generic_FindNextActiveItem
+extern int C2_HOOK_FASTCALL Generic_FindNextActiveItem(tFrontend_spec* pFrontend, int pItem);
 
 // Generic_FindPrevActiveItem
 
@@ -389,19 +414,19 @@ extern void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec* pFrontend);
 
 // SaveAllJoystickData
 
-// Controls_SwitchKeymapSet
+extern int C2_HOOK_FASTCALL Controls_SwitchKeymapSet(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend);
 
-// Controls_Infunc
+extern int C2_HOOK_FASTCALL Controls_Infunc(tFrontend_spec* pFrontend);
 
-// Controls_Outfunc
+extern int C2_HOOK_FASTCALL Controls_Outfunc(tFrontend_spec* pFrontend);
 
-// Controls_SlotActivated
+extern int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend);
 
-// Controls_Ok
+extern int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend);
 
 // DisplayNetworkOptions
 
@@ -439,7 +464,7 @@ extern int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
 
 // static void C2_HOOK_FASTCALL NetSummary_Draw(tFrontend_spec* pFrontend);
 
-// SortScores
+extern int C2_HOOK_CDECL SortScores(const void* pArg1, const void* pArg2);
 
 // SortGameScores
 

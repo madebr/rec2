@@ -45,6 +45,15 @@
 #include "c2_string.h"
 #include <ctype.h>
 
+/* declared here rather than through 62-graphics3.c / carma2/common/frontend.h: those belong to
+   another feature area, and this file must compile in a branch that does not carry them.
+   The 8-argument form is the one the call sites use (see 62-graphics3.c). */
+extern void C2_HOOK_FASTCALL FRONTEND_Redraw(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h);
+extern void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend);
+/* upstream's 41-utility.h declares these only under REC2_HW, so the software build needs them here */
+extern void C2_HOOK_FASTCALL PossibleLock(int pValue);
+extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
+
 // GLOBAL: CARMA2_HW 0x00688b1c
 // GLOBAL: CARMA2_SW 0x0068307c
 int gNet_storage_space_initialized;
@@ -363,7 +372,67 @@ const int gControls_frontend_to_key_mapping_lut[29] = {
     59, 70, 72, 73, 75, 76, 35, 65, 66,
 };
 
+// GLOBAL: CARMA2_HW 0x00686f10
+br_material* gFrontend_backdrop_materials[3];
+
+// GLOBAL: CARMA2_HW 0x00686f50
+br_token_value gFrontend_backdrop0_material_prims[3];
+
+// GLOBAL: CARMA2_HW 0x00686f20
+br_token_value gFrontend_backdrop1_material_prims[3];
+
+// GLOBAL: CARMA2_HW 0x00686f38
+br_token_value gFrontend_backdrop2_material_prims[3];
+
+// GLOBAL: CARMA2_HW 0x00687030
+br_actor* gFrontend_backdrop_actors[3];
+
+// GLOBAL: CARMA2_HW 0x00686f94
+br_actor* gFrontend_camera;
+
+// GLOBAL: CARMA2_HW 0x00688af0
+br_actor* gFrontend_wrecks_camera;
+
+// GLOBAL: CARMA2_HW 0x00688aec
+br_actor* gFrontend_wrecks_actor;
+
+// GLOBAL: CARMA2_HW 0x006864f8
+int gFrontend_controls_count_keys;
+
+// GLOBAL: CARMA2_HW 0x00686f68
+tFrontend_slider gControls_slider_1;
+
+// GLOBAL: CARMA2_HW 0x006883c8
+tFrontend_slider gControls_slider_2;
+
+// GLOBAL: CARMA2_HW 0x00688ac0
+tFrontend_slider gControls_slider_3;
+
+// GLOBAL: CARMA2_HW 0x006869e0
+int gBackup_key_mappings[4][77] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x00688440
+int gOrig_key_map_index;
+
+// GLOBAL: CARMA2_HW 0x00688700
+int gOrig_joystick_index;
+
+// GLOBAL: CARMA2_HW 0x00688704
+float gOriginal_joystick_x;
+
+// GLOBAL: CARMA2_HW 0x00688708
+float gOriginal_joystick_y;
+
+// GLOBAL: CARMA2_HW 0x0068870c
+int gOriginal_joystick_fbb;
+
+// GLOBAL: CARMA2_HW 0x00688710
+int gOriginal_joystick_dpad;
+
+
 // SetGameTarget
+
+
 
 // FUNCTION: CARMA2_HW 0x00468140
 // FUNCTION: CARMA2_SW 0x00467ec0
@@ -860,7 +929,22 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 
 // RestoreSinglePlayerState
 
+static void C2_HOOK_FASTCALL RestoreSinglePlayerState(void) {
+
+    LoadRaces(gRace_list, &gNumber_of_races, -1);
+    DoLoadGame2(&gStashed_save_game);
+    gValid_stashed_save_game = 0;
+}
+
 // MaybeRestoreSavedGame
+
+// FUNCTION: CARMA2_HW 0x00466e90
+void C2_HOOK_FASTCALL MaybeRestoreSavedGame(void) {
+
+    if (gValid_stashed_save_game) {
+        RestoreSinglePlayerState();
+    }
+}
 
 // NetworkJoinUpdateScroller
 
@@ -998,8 +1082,6 @@ int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
 // UpdateNetGameTypeScroller
 
 // NetGameTypeUp
-
-// NetGameTypeDn
 
 // FUNCTION: CARMA2_HW 0x00467eb0
 // FUNCTION: CARMA2_SW 0x00467c30
@@ -1308,6 +1390,10 @@ int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend) {
 
     return 1;
 }
+
+// InterfaceMenuInfunc
+
+// InterfaceReturnTrue
 
 // FRONTEND_ChangeCarMenuHandler
 
@@ -1685,10 +1771,6 @@ void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void) {
 
 // FRONTEND_Setup2D
 
-// FRONTEND_Setup
-
-// FRONTEND_Redraw
-
 // FUNCTION: CARMA2_HW 0x0046d8b0
 void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
 
@@ -1832,12 +1914,6 @@ int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange) {
 }
 
 // WrecksOutFunc
-
-// WrecksUpdateFunc
-
-// GotItAlready
-
-// GetCarSelectedByMouse
 
 // FUNCTION: CARMA2_HW 0x0046f4f0
 // FUNCTION: CARMA2_SW 0x0046eba0
@@ -2488,6 +2564,13 @@ void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec*
 }
 #endif
 
+#ifdef REC2_SW
+/* the frontend morpher is hardware-renderer only; the ported HW callers still name it */
+void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec* pNext) {
+    NOT_IMPLEMENTED();
+}
+#endif
+
 // FUNCTION: CARMA2_HW 0x00470bb0
 int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend) {
 
@@ -2543,6 +2626,17 @@ tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem) {
 
 // GetUpdown
 
+static tStruct_00686508* GetUpdown(int pItem) {
+    tStruct_00686508* up_down;
+
+    for (up_down = gPTR_00686508; up_down != NULL; up_down = up_down->next) {
+        if (pItem == up_down->field_0x0 || pItem == up_down->field_0x4 || pItem == up_down->field_0x8) {
+            return up_down;
+        }
+    }
+    return NULL;
+}
+
 // FUNCTION: CARMA2_HW 0x00471d70
 int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected, int pItem) {
     int offset;
@@ -2568,16 +2662,6 @@ int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected
 }
 
 // Generic_FindNextActiveItem
-
-// Generic_FindPrevActiveItem
-
-// Generic_MungeActiveItems
-
-// Generic_UnMungeActiveItems
-
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
 
 // STUB: CARMA2_HW 0x00470c20
 // STUB: CARMA2_SW 0x004701b0
@@ -2641,6 +2725,13 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
 }
 
 // DetermineKeyArrayIndex
+
+static int DetermineKeyArrayIndex(void) {
+    int index;
+
+    index = gFrontend_selected_item_index;
+    return gControls_scroller.field_0x8 + (index >= 53 ? index + -10 : index) - 43;
+}
 
 // Joystick_BackupSettings
 
@@ -2709,6 +2800,55 @@ void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec* pFrontend) {
 
 // Controls_SwitchKeymapSet
 
+extern int gKey_map_index;
+extern int gINT_00688748;
+
+static void C2_HOOK_FASTCALL SaveKeyMapping_(void) {
+    FILE* f;
+    tPath_name the_path;
+    int i;
+
+    PathCat(the_path, gApplication_path, "KEYMAP_X.TXT");
+    the_path[strlen(the_path) - 5] = '0' + gKey_map_index;
+    PDFileUnlock(the_path);
+    f = DRfopen(the_path, "wb");
+    if (f == NULL) {
+        FatalError(kFatalError_CouldNotOpenKeyMapFile);
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gKey_mapping); i++) {
+        fprintf(f, "%d", gKey_mapping[i]);
+        fputc('\r', f);
+        fputc('\n', f);
+    }
+    PFfclose(f);
+}
+
+static void C2_HOOK_FASTCALL LoadKeyMapping_(void) {
+    FILE* f;
+    tPath_name the_path;
+    int i;
+
+    PathCat(the_path, gApplication_path, "KEYMAP_X.TXT");
+    the_path[strlen(the_path) - 5] = '0' + gKey_map_index;
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CouldNotOpenKeyMapFile);
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gKey_mapping); i++) {
+        fscanf(f, "%d", &gKey_mapping[i]);
+    }
+    PFfclose(f);
+}
+
+static void C2_HOOK_FASTCALL ChangeKeyMapIndex_(int pKey_map_index) {
+
+    SaveKeyMapping_();
+    gKey_map_index = pKey_map_index;
+    LoadKeyMapping_();
+}
+
+// Controls_SwitchKeymapSet
+
 // FUNCTION: CARMA2_HW 0x004725a0
 // FUNCTION: CARMA2_SW 0x00471b30
 int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend) {
@@ -2735,17 +2875,91 @@ int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend) {
 
 // Controls_Outfunc
 
-// Controls_SlotActivated
+// FUNCTION: CARMA2_HW 0x00472b00
+int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend) {
+    int key_array_index;
+    float dy;
+    br_model* model;
+    br_vertex** vertices;
+    int match;
+    int key;
+    int i;
+    int j;
+
+    key_array_index = DetermineKeyArrayIndex();
+
+    CyclePollKeys();
+    PollKeys();
+    WaitForNoKeys();
+    pFrontend->items[0].visible = 1;
+    dy = (float)(17 * (key_array_index - gControls_scroller.field_0x8));
+    model = gFrontend_brender_items[0].model;
+    vertices = &model->vertices;
+    (*vertices)[0].p.v[1] = (*vertices)[3].p.v[1] = -(pFrontend->items[0].y + dy);
+    (*vertices)[1].p.v[1] = (*vertices)[2].p.v[1] = -(pFrontend->items[0].y + dy - -20.0f);
+    BrModelUpdate(model, BR_MODU_VERTEX_POSITIONS);
+    match = -1;
+    for (;;) {
+        /* FrontendRedrawMenu inlined */
+        gBack_screen->origin_x = 0;
+        gBack_screen->origin_y = 0;
+        if (gFrontend_backdrop != NULL) {
+            FRONTEND_Redraw(gBack_screen, 0, 0, gFrontend_backdrop, 0, 0, gFrontend_backdrop->width, gFrontend_backdrop->height);
+        }
+        BrPixelmapFill(gDepth_buffer, 0xffffffff);
+        for (i = 0; i < gFrontend_count_brender_items; i++) {
+            if (gCurrent_frontend_spec->items[i].visible) {
+                gFrontend_brender_items[i].actor->render_style = BR_RSTYLE_FACES;
+            } else {
+                gFrontend_brender_items[i].actor->render_style = BR_RSTYLE_NONE;
+            }
+        }
+        BrZbsSceneRender(gFrontend_actor, gFrontend_camera, gBack_screen, gDepth_buffer);
+        FRONTEND_DrawMenu(gCurrent_frontend_spec);
+        if (!gFrontend_suppress_mouse) {
+            PossibleLock(1);
+            DoMouseCursor();
+            PossibleUnlock(1);
+        }
+        PDScreenBufferSwap(0);
+
+        key = PDAnyKeyDown();
+        if (key != -1 && key != 63) {
+            for (i = 28; i <= 76; i++) {
+                if (gKey_mapping[i] == key && i != gControls_frontend_to_key_mapping_lut[key_array_index]) {
+                    for (j = 0; j < gFrontend_controls_count_keys; j++) {
+                        if (gControls_frontend_to_key_mapping_lut[j] == i) {
+                            gKey_mapping[i] = -2;
+                            match = j;
+                            break;
+                        }
+                    }
+                    if (match < 0) {
+                        DRS3StartSound(gEffects_outlet, eSoundId_CantAffordPart);
+                        key = -1;
+                        break;
+                    }
+                }
+            }
+        }
+        CyclePollKeys();
+        PollKeys();
+        ServiceGame();
+        if (key != -1 || EitherMouseButtonDown()) {
+            break;
+        }
+    }
+    pFrontend->items[0].visible = 0;
+    DRS3StartSound(gEffects_outlet, eSoundId_Done);
+    WaitForNoKeys();
+    if (key != 63 && key != -1) {
+        gKey_mapping[gControls_frontend_to_key_mapping_lut[key_array_index]] = key;
+    }
+    RefreshScrollSet(pFrontend);
+    return 0;
+}
 
 // Controls_Ok
-
-// DisplayNetworkOptions
-
-// BackupNetworkOptions
-
-// RestoreNetworkOptions
-
-// NetOptions_Infunc
 
 // FUNCTION: CARMA2_HW 0x00473210
 // FUNCTION: CARMA2_SW 0x00472780
@@ -2856,13 +3070,7 @@ static void C2_HOOK_FASTCALL NetSummary_Draw(tFrontend_spec* pFrontend) {
     }
 }
 
-// SortScores
-
-// SortGameScores
-
-// NetworkSummarySetup
-
-// NetSummary_Infunc
+// SortScores(1)
 
 // FUNCTION: CARMA2_HW 0x00474400
 // FUNCTION: CARMA2_SW 0x00473960
@@ -3033,6 +3241,9 @@ void C2_HOOK_FASTCALL FrontEndHideMouse(void) {
 
     gFrontend_suppress_mouse = 1;
 }
+
+// GLOBAL: CARMA2_HW 0x00688afc
+int gFrontend_wrecks_hscroll;
 
 // GLOBAL: CARMA2_HW 0x00688780
 tSave_game gStashed_save_game;
