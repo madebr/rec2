@@ -1023,7 +1023,10 @@ void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY) {
 }
 
 
-// TimerStringGlobalTimer
+// FUNCTION: CARMA2_HW 0x00449070
+void C2_HOOK_FASTCALL TimerStringGlobalTimer(char* pStr, undefined4 pArg3) {
+    TimerString(gTimer, pStr, pArg3, 0, 0);
+}
 
 // ChangeHeadupImage
 
