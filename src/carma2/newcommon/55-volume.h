@@ -33,6 +33,6 @@ extern void C2_HOOK_FASTCALL SaveSpecialVolumes(void);
 
 extern void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec);
 
-// ReadSpecialVolumes
+extern void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF);
 
 #endif // GUARD_55_VOLUME_H

@@ -12,6 +12,7 @@
 #include "08-loading1.h"
 #include "34-finteray.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
@@ -28,6 +29,17 @@ tSpecial_volume gDefault_default_water_spec_vol;
 // GLOBAL: CARMA2_SW 0x007584a4
 tSpecial_volume* gDefault_water_spec_vol_real;
 
+// GLOBAL: CARMA2_HW 0x00660258
+const char* gSpecial_effects_boundary_choices[4] = {
+    "BOX",
+    "PLANE",
+    "DEFAULT",
+    "NEW",
+};
+
+// GLOBAL: CARMA2_HW 0x0068b878
+int gDefault_engine_noise_index;
+
 // GLOBAL: CARMA2_HW 0x00660268
 // GLOBAL: CARMA2_SW 0x0065ab48
 const char* gSoundType_choices[2] = {
@@ -40,8 +52,6 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
     return gDefault_water_spec_vol_real;
 }
 
-// STUB: CARMA2_HW 0x004ff120
-tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) { NOT_IMPLEMENTED(); }
 // MungeSpecialVolume
 
 // FUNCTION: CARMA2_HW 0x004ff530
@@ -193,4 +203,70 @@ void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
     BrMatrix34Inverse(&pSpec->boundary.box.inv_mat, &pSpec->boundary.box.mat);
 }
 
-// ReadSpecialVolumes
+// FUNCTION: CARMA2_HW 0x004ffd80
+void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
+    gDefault_engine_noise_index = GetAnInt(pF);
+    gDefault_water_spec_vol_real = &gDefault_default_water_spec_vol;
+    gProgram_state.special_volume_count = GetAnInt(pF);
+    if (gProgram_state.special_volume_count != 0) {
+        int i;
+        int type;
+        tSpecial_volume* spec;
+
+        gProgram_state.special_volumes = BrMemAllocate(gProgram_state.special_volume_count * sizeof(tSpecial_volume), kMem_special_volume);
+        for (i = 0, spec = gProgram_state.special_volumes; i < gProgram_state.special_volume_count; i++, spec++) {
+            br_bounds unit_bounds;
+
+            PossibleService();
+            type = GetALineAndInterpretCommand(pF, gSpecial_effects_boundary_choices, REC2_ASIZE(gSpecial_effects_boundary_choices));
+            spec->boundary_type = type;
+            if (type == eFx_boundary_new) {
+                spec->boundary_type = eFx_boundary_box;
+            }
+            switch (spec->boundary_type) {
+            case eFx_boundary_box:
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[0][0], &spec->boundary.box.mat.m[0][1], &spec->boundary.box.mat.m[0][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[1][0], &spec->boundary.box.mat.m[1][1], &spec->boundary.box.mat.m[1][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[2][0], &spec->boundary.box.mat.m[2][1], &spec->boundary.box.mat.m[2][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[3][0], &spec->boundary.box.mat.m[3][1], &spec->boundary.box.mat.m[3][2]);
+                unit_bounds.min.v[0] = -1.0f;
+                unit_bounds.min.v[1] = -1.0f;
+                unit_bounds.min.v[2] = -1.0f;
+                unit_bounds.max.v[0] = 1.0f;
+                unit_bounds.max.v[1] = 1.0f;
+                unit_bounds.max.v[2] = 1.0f;
+                GetNewBoundingBox(&spec->boundary.box.bounds, &unit_bounds, &spec->boundary.box.mat);
+                BrMatrix34Inverse(&spec->boundary.box.inv_mat, &spec->boundary.box.mat);
+                spec->boundary.box.axis_length.v[0] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[0]);
+                spec->boundary.box.axis_length.v[1] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[1]);
+                spec->boundary.box.axis_length.v[2] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[2]);
+                ParseSpecialVolume(pF, spec, NULL, type == eFx_boundary_box);
+                if (spec->soundfx_type != kSoundFx_None) {
+                    int j;
+
+                    for (j = 0; j < 3; j++) {
+                        spec->boundary.box.bounds.min.v[j] -= 10.f;
+                    }
+                    for (j = 0; j < 3; j++) {
+                        spec->boundary.box.bounds.max.v[j] += 10.f;
+                    }
+                }
+                break;
+            case eFx_boundary_plane:
+                GetFourScalars(pF, &spec->boundary.plane.v[0], &spec->boundary.plane.v[1], &spec->boundary.plane.v[2], &spec->boundary.plane.v[3]);
+                ParseSpecialVolume(pF, spec, NULL, 1);
+                break;
+            case eFx_boundary_default:
+                ParseSpecialVolume(pF, spec, NULL, 0);
+                gDefault_water_spec_vol_real = spec;
+                break;
+            default:
+                FatalError(kFatalError_ProblemWithSpecialVolumeNumber_I);
+                break;
+            }
+        }
+    }
+}
+
+// STUB: CARMA2_HW 0x004ff120
+tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) { NOT_IMPLEMENTED(); }
