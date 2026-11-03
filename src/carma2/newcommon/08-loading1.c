@@ -1300,6 +1300,29 @@ void C2_HOOK_FASTCALL EncodeAllFilesInDirectory(char* pThe_path) {
     PFForEveryFile(path, (tPDForEveryFileRecurse_cbfn)EncodeFileWrapper);
 }
 
-// EncodeFileWrapper
+// FUNCTION: CARMA2_HW 0x00490bc0
+void C2_HOOK_FASTCALL EncodeFileWrapper(char* pThe_path) {
+    int len;
+
+    len = strlen(pThe_path);
+    if (strcmp(&pThe_path[len - 4], ".TXT") != 0) {
+        return;
+    }
+    if (strcmp(&pThe_path[len - 12], "DKEYMAP0.TXT") == 0
+            || strcmp(&pThe_path[len - 12], "DKEYMAP1.TXT") == 0
+            || strcmp(&pThe_path[len - 12], "DKEYMAP2.TXT") == 0
+            || strcmp(&pThe_path[len - 12], "DKEYMAP3.TXT") == 0
+            || strcmp(&pThe_path[len - 12], "KEYMAP_0.TXT") == 0
+            || strcmp(&pThe_path[len - 12], "KEYMAP_1.TXT") == 0
+            || strcmp(&pThe_path[len - 12], "KEYMAP_2.TXT") == 0
+            || strcmp(&pThe_path[len - 12], "KEYMAP_3.TXT") == 0
+            || strcmp(&pThe_path[len - 11], "OPTIONS.TXT") == 0
+            || strcmp(&pThe_path[len - 12], "KEYNAMES.TXT") == 0
+            || strcmp(&pThe_path[len - 10], "KEYMAP.TXT") == 0
+            || strcmp(&pThe_path[len - 9], "PATHS.TXT") == 0) {
+        return;
+    }
+    EncodeFile(pThe_path);
+}
 
 // DisposeKevStuff
