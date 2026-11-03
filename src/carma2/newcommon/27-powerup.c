@@ -2735,7 +2735,25 @@ void C2_HOOK_FASTCALL ScaleAllPeds(int pMorph_or_personality, br_scalar* pScale,
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// NapalmPedDistanceCallback
+// FUNCTION: CARMA2_HW 0x004ce770
+/* not static: its only caller, NapalmPedestrianNearCar (0x4ce560), is still an unported partial,
+   so a file-local definition would be dropped by -Wunused-function in the warning-free build */
+int C2_HOOK_FASTCALL NapalmPedDistanceCallback(tPedestrian* pPed, tCar_spec* pCar, float pDistance_squared, tU32 pNow, tPedestrian_distances* pDistances) {
+    tNapalm_ped_distances* data = (tNapalm_ped_distances*)pDistances;
+    int result;
+
+    result = (int)pPed->field_0x0c;
+    if (result != 0 && pPed->field_0x0c->field_0x98 == 0) {
+        data->peds[data->count].ped = pPed;
+        data->peds[data->count].distance = pDistance_squared;
+        data->count++;
+        result = 1;
+    }
+    return result;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // NapalmPedDistanceCompare
 
