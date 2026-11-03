@@ -1886,6 +1886,5 @@ int C2_HOOK_FASTCALL FUN_00424140(tPhysics_object* pObject, tPhysics_shape* pBou
 
 // STUB: CARMA2_HW 0x00424270
 int C2_HOOK_FASTCALL FUN_00424270(float* pStart, float* pEnd, int* pObject, int pBounds_shape, undefined4 pRay_shape, int pCollision_count, int pFace, int pPolyhedron_data) {
-    NOT_IMPLEMENTED();
-    return 0;
+    return pCollision_count;
 }
