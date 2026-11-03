@@ -599,6 +599,20 @@ void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x0044a860
+void C2_HOOK_FASTCALL MoveHeadupKeepOffset(int pHeadup_index, int pX, int pY) {
+    tHeadup* the_headup;
+    int delta_x;
+
+    if (pHeadup_index >= 0) {
+        the_headup = &gHeadups[pHeadup_index];
+        delta_x = the_headup->x - the_headup->original_x;
+        the_headup->original_x = pX;
+        the_headup->x = delta_x + pX;
+        the_headup->y = pY;
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x0044a8a0
 void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pNew_x, int pNew_y) {
     tHeadup* the_headup;
@@ -884,7 +898,72 @@ void C2_HOOK_FASTCALL AwardTime5(tU32 pTime) {
 #endif
 }
 
+// GLOBAL: CARMA2_HW 0x0079eb00
+char gHeadup_oppo_ped_text[64];
+
+#ifdef REC2_HW
 // DoTestHeadup
+    // GLOBAL: CARMA2_HW 0x006815c0
+    static int do_headup_material;
+
+    do_headup_material = !do_headup_material;
+    if (do_headup_material) {
+        BrMapUpdate(gCurrent_rev, BR_MAPU_ALL);
+        gStatbarHUD1_material->colour_map = gCurrent_rev;
+        BrMaterialUpdate(gStatbarHUD1_material, BR_MATU_COLOURMAP);
+    }
+    if (!do_headup_material) {
+        BrMapUpdate(gDamage_hud, BR_MAPU_ALL);
+        gStatbarHUD5_material->colour_map = gDamage_hud;
+        BrMaterialUpdate(gStatbarHUD5_material, BR_MATU_COLOURMAP);
+    }
+
+    if (gNet_mode != eNet_mode_none) {
+        if (gHeadup_detail_level % 3 > 0) {
+            BrMatrix34Translate(&gStatbarHUD5_actor->t.t.mat, -448.f, 0.f, 0.f);
+            RenderThisHeadup(gStatbarHUD5_actor);
+            RenderThisHeadup(gStatbarHUD1_actor);
+            if (gHeadup_detail_level % 3 > 1) {
+                BrMatrix34Translate(&gArmour_actor->t.t.mat, 48.f, 35.f, 0.f);
+                BrMatrix34Translate(&gPower_actor->t.t.mat, -102.f, 5.f, 0.f);
+                BrMatrix34Translate(&gOffense_actor->t.t.mat, -252.f, -25.f, 0.f);
+                RenderThisHeadup(gArmour_actor);
+                RenderThisHeadup(gPower_actor);
+                RenderThisHeadup(gOffense_actor);
+            }
+        }
+        if (gHeadup_detail_level > 2) {
+            RenderThisHeadup(gHeadup_actor);
+        }
+    } else {
+        BrMatrix34Translate(&gArmour_actor->t.t.mat, 0.f, 0.f, 0.f);
+        BrMatrix34Translate(&gPower_actor->t.t.mat, 0.f, 0.f, 0.f);
+        BrMatrix34Translate(&gOffense_actor->t.t.mat, 0.f, 0.f, 0.f);
+        if (gHeadup_detail_level % 3 > 0) {
+            BrMatrix34Translate(&gStatbarHUD1_actor->t.t.mat, 142.f, 0.f, 0.f);
+            BrMatrix34Translate(&gStatbarHUD5_actor->t.t.mat, -178.f, 0.f, 0.f);
+            RenderThisHeadup(gStatbarHUD1_actor);
+            RenderThisHeadup(gStatbarHUD5_actor);
+            RenderThisHeadup(gTimerLeftHUD_actor);
+            RenderThisHeadup(gTimerRightHUD_actor);
+            if (gHeadup_detail_level % 3 > 1) {
+                RenderThisHeadup(gArmour_actor);
+                RenderThisHeadup(gPower_actor);
+                RenderThisHeadup(gOffense_actor);
+                RenderThisHeadup(gStatbarRightHUD_actor);
+                RenderThisHeadup(gStatbarHUD3_actor);
+                BrMatrix34Translate(&gStatbarHUD1_actor->t.t.mat, 0.f, 0.f, 0.f);
+                BrMatrix34Translate(&gStatbarHUD5_actor->t.t.mat, 0.f, 0.f, 0.f);
+            } else {
+                PolyFontText(gHeadup_oppo_ped_text, 335, 50, kPolyfont_ingame_medium_blue, eJust_centre, 0);
+            }
+        }
+        if (gHeadup_detail_level > 2) {
+            RenderThisHeadup(gHeadup_actor);
+        }
+    }
+}
+#endif
 
 // FUNCTION: CARMA2_HW 0x0044ba60
 int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth) {
@@ -938,8 +1017,12 @@ void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY) {
 #endif
 }
 
-// STUB: CARMA2_HW 0x0044a860
-void C2_HOOK_FASTCALL MoveHeadupKeepOffset(int pHeadup_index, int pX, int pY) { NOT_IMPLEMENTED(); }
+
+// TimerStringGlobalTimer
+
+// ChangeHeadupImage
+
+// DisplayTimedMessage
 
 // GLOBAL: CARMA2_HW 0x0067f890
 tQueued_headup gQueued_headups[4];

@@ -84,6 +84,8 @@ extern int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate,
 
 extern void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
+extern void C2_HOOK_FASTCALL MoveHeadupKeepOffset(int pHeadup_index, int pX, int pY);
+
 extern void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pNew_x, int pNew_y);
 
 extern void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text);
@@ -102,7 +104,7 @@ extern void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text)
 
 extern void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
-// EarnCredits100
+extern void C2_HOOK_FASTCALL EarnCredits100(int pAmount);
 
 extern int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
@@ -112,12 +114,20 @@ extern void C2_HOOK_FASTCALL AwardTime(tU32 pTime);
 
 extern void C2_HOOK_FASTCALL AwardTime5(tU32 pTime);
 
-// DoTestHeadup
+#ifdef REC2_HW
+extern void C2_HOOK_FASTCALL DoTestHeadup(void);
+#endif
 
 extern int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth);
 
 extern int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight);
 
 extern void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY);
+
+extern void C2_HOOK_FASTCALL TimerStringGlobalTimer(char* pStr, undefined4 pArg3);
+
+extern void C2_HOOK_FASTCALL ChangeHeadupImage(int pHeadup_index, int pImage_index);
+
+extern void C2_HOOK_FASTCALL DisplayTimedMessage(char* pText);
 
 #endif // GUARD_15_DISPLAYS_H
