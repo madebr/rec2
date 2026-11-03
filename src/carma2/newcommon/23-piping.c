@@ -279,6 +279,15 @@ typedef struct {
     br_vector3 field_0x2c;
 } tPipe_chunk_gib_shower;
 
+typedef struct {
+    uintptr_t pOwner;
+    tU32 field_0x4;
+    int field_0x8;
+    br_vector3 field_0xc;
+    br_vector3 field_0x18;
+    br_vector3 field_0x24;
+} tPipe_chunk_blood_spurt;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -2609,7 +2618,12 @@ void C2_HOOK_FASTCALL ApplyGibShower(tPipe_chunk** pChunk) {
     return WorkerGibShower(chunk->field_0x0, chunk->field_0xc, chunk->field_0x8, chunk->field_0x10, chunk->field_0x4, &chunk->field_0x14, &chunk->field_0x20, &chunk->field_0x2c);
 }
 
-// ApplyBloodSpurt
+// FUNCTION: CARMA2_HW 0x004c9bc0
+void C2_HOOK_FASTCALL ApplyBloodSpurt(tPipe_chunk** pChunk) {
+    tPipe_chunk_blood_spurt* chunk = (tPipe_chunk_blood_spurt*)*pChunk;
+
+    return DoBloodSpurt(chunk->pOwner, chunk->field_0x8, chunk->field_0x4, &chunk->field_0xc, &chunk->field_0x18, &chunk->field_0x24);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9be0
 // FUNCTION: CARMA2_SW 0x004c6310
