@@ -411,7 +411,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // ReadRemap
 
-// DisposeRemap
+extern void C2_HOOK_FASTCALL DisposeRemap(tPed_remap* pRemap);
 
 // DisposeAllLoadedRemaps
 
@@ -435,7 +435,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // DisposeAllLoadedForms
 
-// DisposeCharacterInstance
+extern void C2_HOOK_FASTCALL DisposeCharacterInstance(tPed_character_instance* pCharacter);
 
 // FindOrOpenForm
 
