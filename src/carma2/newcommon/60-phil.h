@@ -54,7 +54,7 @@ extern int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tPhysics_object* pObject);
 
 // GetSingleMatrixFromNetworkData
 
-// PHILInit
+extern int C2_HOOK_FASTCALL PHILInit(void);
 
 extern void C2_HOOK_FASTCALL PHILDisable(void);
 
@@ -66,7 +66,7 @@ extern tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void);
 
 extern tPhysics_object* C2_HOOK_FASTCALL PHILGetNextObject(tPhysics_object* pObject);
 
-// PHILReturnObjectStatus
+extern tU32 C2_HOOK_FASTCALL PHILReturnObjectStatus(tPhysics_object* pObject);
 
 extern int C2_HOOK_FASTCALL PHILMakeObjectPassive(tPhysics_object* pObject);
 
@@ -76,7 +76,7 @@ extern int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject
 
 // PHILAddActiveObject
 
-// PHILAddObjectImmediately
+extern int C2_HOOK_FASTCALL PHILAddObjectImmediately(tPhysics_object* pObject);
 
 // PHILAddActiveObjectImmediately
 
