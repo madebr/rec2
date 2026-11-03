@@ -61,7 +61,9 @@ extern void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosio
 
 // DoExplosionette
 
-// Explode
+extern float gYon_squared;
+
+extern void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos);
 
 extern void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec);
 
@@ -121,7 +123,7 @@ extern void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor);
 
 // DoConnotations
 
-// DoPowerupRespawnSmash
+extern void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor* pActor);
 
 // DoConnotationsMultiLevel
 

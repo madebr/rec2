@@ -64,6 +64,10 @@ const char* gSmashable_track_environment_path;
 // GLOBAL: CARMA2_SW 0x0069f620
 tStored_smash* gNet_host_smashes;
 
+// GLOBAL: CARMA2_HW 0x00762100
+/* owned by 09-funks.c; defined here because that file does not have it yet */
+float gYon_squared = 0.f;
+
 /* explicit initializers keep gExplosions, gSmash_explosions and gPowerup_respawn_smashable adjacent as in the original (loop-end compares) */
 // GLOBAL: CARMA2_HW 0x006a55c8
 // GLOBAL: CARMA2_SW 0x0069f628
@@ -247,6 +251,19 @@ void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion) {
 
 // Explode
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004ead00
+void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
 // FUNCTION: CARMA2_HW 0x004eb020
 // FUNCTION: CARMA2_SW 0x004e6d00
 void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec) {
@@ -388,7 +405,47 @@ void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor) {
 
 // DoConnotations
 
-// DoPowerupRespawnSmash
+extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
+extern tS3_outlet* gCar_outlet;
+extern br_vector3 gZero_v__car;
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// FUNCTION: CARMA2_HW 0x004ecea0
+void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor* pActor) {
+    br_bounds3* pBounds;
+    float yon_squared;
+
+    if (gPowerup_respawn_smashable.mode_data.shrapnel.connotations.count_sounds != 0) {
+        DRS3StartSound3D(gCar_outlet, gPowerup_respawn_smashable.mode_data.shrapnel.connotations.sounds[IRandomBetween(0, gPowerup_respawn_smashable.mode_data.shrapnel.connotations.count_sounds - 1)], &pActor->t.t.translate.t, &gZero_v__car, 1, 255, IRandomBetween(0xe000, 0x12000), 0x10000);
+    }
+    pBounds = &pActor->model->bounds;
+    yon_squared = gYon_squared;
+    if (gAction_replay_mode != 0 || PointOutOfSight(&pActor->t.t.translate.t, yon_squared) == 0) {
+        if (gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.explosion_animation.count_groups != 0) {
+            Explode(&gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.explosion_animation, pActor, pBounds, NULL);
+        }
+    }
+    if (gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.material != NULL) {
+        QueueOilSpill2(NULL, pActor, pActor->model,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x0,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x4,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x8,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0xc,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x10,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x14,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x20,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x24,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x18,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.field_0x1c,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.material,
+            gPowerup_respawn_smashable.mode_data.shrapnel.connotations.special_effects.slick.material2);
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // DoConnotationsMultiLevel
 
