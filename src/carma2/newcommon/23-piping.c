@@ -2329,7 +2329,12 @@ void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk) {
 }
 
 #ifdef REC2_HW
-// ApplyShitMine
+// FUNCTION: CARMA2_HW 0x004c9d50
+void C2_HOOK_FASTCALL ApplyShitMine(tPipe_chunk** pChunk) {
+    tPipe_chunk_shit_mine* chunk = (tPipe_chunk_shit_mine*)*pChunk;
+
+    return WorkerShitMine(chunk->field_0x0, &chunk->field_0x4);
+}
 
 // ApplyEndShitMine
 
