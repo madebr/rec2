@@ -24,6 +24,9 @@
 #include "c2_math.h"
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x00679430
+int gCollision_face_mask__raycast;
+
 // GLOBAL: CARMA2_HW 0x00679438
 int gSensible_place_collect_active;
 
@@ -1838,8 +1841,51 @@ int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* pObject, tPhysics_shape* pSha
     return pCount;
 }
 
-// STUB: CARMA2_HW 0x00424140
+// FUNCTION: CARMA2_HW 0x00424140
 int C2_HOOK_FASTCALL FUN_00424140(tPhysics_object* pObject, tPhysics_shape* pBounds_shape, tPhysics_shape* pRay_shape, int pCollision_count, undefined4 pArg5, tU8* pPolyhedron_data, undefined4 pArg7) {
+    br_vector3 actor_translation;
+    int face_index;
+    tFace_ref* face;
+
+    (void)pRay_shape;
+    (void)pArg5;
+    (void)pArg7;
+    gCollision_face_mask__raycast = 0;
+    BrMatrix34TApplyV(&actor_translation, (const br_vector3*)&pObject->actor->t.t.mat.m[3], &pObject->actor->t.t.mat);
+    pBounds_shape->common.field_0x1c.min.v[0] += actor_translation.v[0];
+    pBounds_shape->common.field_0x1c.min.v[1] += actor_translation.v[1];
+    pBounds_shape->common.field_0x1c.min.v[2] += actor_translation.v[2];
+    pBounds_shape->common.field_0x1c.max.v[0] += actor_translation.v[0];
+    pBounds_shape->common.field_0x1c.max.v[1] += actor_translation.v[1];
+    pBounds_shape->common.field_0x1c.max.v[2] += actor_translation.v[2];
+
+    face_index = (int)pObject->box_face_start;
+    face = &gFace_list__car[face_index];
+    if (face_index < pObject->box_face_end) {
+        do {
+            if ((face->flags & 0x80) == 0) {
+                if ((face->flags & 1) == 0) {
+                    pCollision_count = FUN_00424270((float*)&face->v[0], (float*)&face->v[1], (int*)pObject, (int)pBounds_shape,
+                            (undefined4)pRay_shape, pCollision_count, (int)face, (int)pPolyhedron_data);
+                }
+                if ((face->flags & 2) == 0) {
+                    pCollision_count = FUN_00424270((float*)&face->v[1], (float*)&face->v[2], (int*)pObject, (int)pBounds_shape,
+                            (undefined4)pRay_shape, pCollision_count, (int)face, (int)pPolyhedron_data);
+                }
+                if ((face->flags & 4) == 0) {
+                    pCollision_count = FUN_00424270((float*)&face->v[2], (float*)&face->v[0], (int*)pObject, (int)pBounds_shape,
+                            (undefined4)pRay_shape, pCollision_count, (int)face, (int)pPolyhedron_data);
+                }
+            }
+            face_index++;
+            face++;
+        } while (face_index < pObject->box_face_end);
+    }
+    return pCollision_count;
+}
+
+// STUB: CARMA2_HW 0x00424270
+int C2_HOOK_FASTCALL FUN_00424270(float* pStart, float* pEnd, int* pObject, int pBounds_shape, undefined4 pRay_shape, int pCollision_count, int pFace, int pPolyhedron_data) {
     NOT_IMPLEMENTED();
     return 0;
 }
