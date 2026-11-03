@@ -368,7 +368,32 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
 
 // ThisObjectHitAMineSoSpamItUpUsingThisPowerupsSettings
 
-// InitMineShit
+// FUNCTION: CARMA2_HW 0x004da530
+void C2_HOOK_FASTCALL InitMineShit(void) {
+    tPath_name the_path;
+    tTWTVFS twt;
+    int i;
+    br_model* model;
+
+    PathCat(the_path, gApplication_path, "MINE");
+    twt = OpenPackFileAndSetTiffLoading(the_path);
+    LoadAllStuffInDirectory(&gMisc_storage_space, the_path, kRendererShadingType_Specular);
+    ClosePackFileAndSetTiffLoading(twt);
+
+    C2_HOOK_BUG_ON(sizeof(tShit_mine) != 56);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gShit_mines) != 20);
+    for (i = 0; i < (int)REC2_ASIZE(gShit_mines); i++) {
+        gShit_mines[i].flags = 4;
+        gShit_mines[i].field_0x35 = 0;
+        model = BrModelFind("SHITMINE.ACT");
+        gShit_mines[i].collision_info = MungeSphereObject(model, gMass_mine);
+        gShit_mines[i].collision_info->uid = i;
+        gShit_mines[i].collision_info->flags_0x238 = 0x40;
+        gShit_mines[i].collision_info->owner = &gShit_mines[i];
+        BrMatrix34Translate(&gShit_mines[i].collision_info->transform_matrix, 0.f, 0.f, 0.f);
+        BrMatrix34Translate(&gShit_mines[i].collision_info->actor->t.t.mat, 0.f, 0.f, 0.f);
+    }
+}
 
 // STUB: CARMA2_HW 0x004d9ea0
 // STUB: CARMA2_SW 0x004d6370
