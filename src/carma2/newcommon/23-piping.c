@@ -1346,3 +1346,13 @@ void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pCollisi
 void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) {
     NOT_IMPLEMENTED();
 }
+
+// STUB: CARMA2_HW 0x004c8540
+void C2_HOOK_FASTCALL PipeSingleCarIncident(tCar_spec* pCar, br_vector3* pPosition, float pForce) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004c85b0
+void C2_HOOK_FASTCALL PipeSingleLocalCarIncident(br_vector3* pPosition, float pForce) {
+    NOT_IMPLEMENTED();
+}

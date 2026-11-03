@@ -535,3 +535,7 @@ void C2_HOOK_FASTCALL AddSplashToPipingSession(tPhysics_object* pCollision);
 void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pCollision, void* pArg2);
 
 void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
+
+void C2_HOOK_FASTCALL PipeSingleCarIncident(tCar_spec* pCar, br_vector3* pPosition, float pForce);
+
+void C2_HOOK_FASTCALL PipeSingleLocalCarIncident(br_vector3* pPosition, float pForce);
