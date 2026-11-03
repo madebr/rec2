@@ -2126,7 +2126,11 @@ void C2_HOOK_FASTCALL ApplyProxRay(tPipe_chunk** pChunk) {
     return WorkerProxRay(chunk->field_0x0, chunk->field_0x6, chunk->field_0x4, chunk->field_0x8);
 }
 
-// ApplySkidAdjustment
+// FUNCTION: CARMA2_HW 0x004c9810
+void C2_HOOK_FASTCALL ApplySkidAdjustment(tPipe_chunk** pChunk) {
+    tPipe_chunk_skid_adjust* chunk = (tPipe_chunk_skid_adjust*)*pChunk;
+    AdjustSkid(chunk->skid_num, &chunk->matrix, chunk->material);
+}
 
 // ApplyFlap
 
