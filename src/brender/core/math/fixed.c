@@ -1084,12 +1084,38 @@ br_angle BR_NAKED C2_HOOK_CDECL BrFixedASin(br_fixed_ls a) {
 }
 
 // FUNCTION: CARMA2_HW 0x0053757b
-br_angle C2_HOOK_CDECL BrFixedACos(br_fixed_ls a) {
-
+br_angle BR_NAKED C2_HOOK_CDECL BrFixedACos(br_fixed_ls a) {
+#ifndef REC2_MATCHING
     assert(a <= BrFloatToFixed(1.f) && "a must be <= BrFloatToFixed(1.f)");
     assert(a >= BrFloatToFixed(-1.f) && "a must be >= BrFloatToFixed(-1.f)");
 
     return fixed_lut_interpolate(fixed_acos_table, (a+0x10000) >> 1);
+#else
+    __asm {
+        push ebp
+        mov ebp, esp
+        push ebx
+        push ecx
+        push edx
+        mov eax, dword ptr [ebp + 8]
+        add eax, 0x10000
+        sar eax, 1
+        xor ebx, ebx
+        xchg bl, ah
+        mov cx, word ptr [ebx*2 + fixed_acos_table]
+        mov dx, word ptr [ebx*2 + fixed_acos_table + 2]
+        sub edx, ecx
+        imul dx
+        mov al, ah
+        mov ah, dl
+        add eax, ecx
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005375af
