@@ -69,4 +69,10 @@ extern void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void);
 
 extern void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void);
 
+extern void C2_HOOK_FASTCALL ResetCrushSystems(void);
+
+extern void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);
+
+extern void C2_HOOK_FASTCALL InitPlayers(void);
+
 #endif // GUARD_07_STRUCTUR_H

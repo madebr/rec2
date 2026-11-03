@@ -21,6 +21,15 @@
 #include "globvars.h"
 #include "globvrpb.h"
 #include "c2_stdio.h"
+#include "rec2_macros.h"
+
+/* crush lists are defined in carma2/common/crush.c, which upstream does not compile */
+extern int gCount_toggled_doors;
+extern int gCount_net_crush_detach_list;
+extern int gCount_net_crush_semi_detach_bit_list;
+extern int gCount_net_crush_full_detach_bit_list;
+extern int gCount_net_crush_reattach_bit_list;
+extern int gCount_car_damage_crush_list;
 
 // GLOBAL: CARMA2_HW 0x00655e48
 // GLOBAL: CARMA2_SW 0x00650d30
@@ -359,6 +368,67 @@ void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void) {
         SendGameplayToAllPlayers(eNet_gameplay_host_unpaused, 0, 0, 0, 0);
     }
 }
+
+
+/* Crush-list counters and lists cleared by ResetCrushSystems (crush.c globals) */
+// GLOBAL: CARMA2_HW 0x006796bc
+int gCount_queued_drone_crushes;
+
+// GLOBAL: CARMA2_HW 0x006796c8
+tCrush_list_item gCrush_lists[8];
+
+
+
+
+
+
+
+// GLOBAL: CARMA2_HW 0x0067bdfc
+int gINT_0067bdfc;
+
+// GLOBAL: CARMA2_HW 0x0067be08
+tU8 gCrush_data_entry_counter;
+
+/* Defined in 13-crush1.c; ResetCrushSystems only clears it. */
+extern int gCount_crush_detach_list;
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// FUNCTION: CARMA2_HW 0x0042a190
+void C2_HOOK_FASTCALL ResetCrushSystems(void) {
+    int i;
+    tCrush_list_item* crush_list;
+
+    for (i = 0; i < (int)REC2_ASIZE(gTrack_crush_joints); i++) {
+        gTrack_crush_joints[i]->type = eJoint_none;
+    }
+    gDetached_bit_crush_info_buffer.field_0x8 = 0;
+    gSplit_car_crush_info_buffer.field_0x8 = 0;
+    crush_list = gCrush_lists;
+    while (crush_list->car_spec != NULL) {
+        crush_list->car_spec = NULL;
+        crush_list++;
+    }
+    gCount_queued_drone_crushes = 0;
+    gCount_crush_detach_list = 0;
+    gINT_0067bdfc = 0;
+    gCount_toggled_doors = 0;
+    gCrush_data_entry_counter = 0;
+    gCount_net_crush_detach_list = 0;
+    gCount_net_crush_semi_detach_bit_list = 0;
+    gCount_net_crush_full_detach_bit_list = 0;
+    gCount_net_crush_reattach_bit_list = 0;
+    gCount_car_damage_crush_list = 0;
+}
+
+// InitLastDamageArrayEtc
+
+// GLOBAL: CARMA2_HW 0x0068d938
+int gWinner_declared = 0;
+
+// InitPlayers
 
 // GLOBAL: CARMA2_HW 0x0067b7cc
 int gCount_car_damage_crush_list;
