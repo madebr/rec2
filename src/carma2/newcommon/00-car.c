@@ -888,7 +888,40 @@ tControl_car_fn ControlCar[6] = {
 // GLOBAL: CARMA2_HW 0x0058f678
 int gControl__car = 3;
 
-// CycleControlCar
+// FUNCTION: CARMA2_HW 0x004170c0
+void C2_HOOK_FASTCALL CycleControlCar(void) {
+    gControl__car++;
+    if (ControlCar[gControl__car] == NULL) {
+        gControl__car = 0;
+    }
+    switch (gControl__car) {
+    case 0:
+        NewTextHeadupSlot(4, 0, 500, -1, "Original Controls");
+        return;
+    case 1:
+        NewTextHeadupSlot(4, 0, 500, -1, "Accelerated steering");
+        return;
+    case 2:
+        NewTextHeadupSlot(4, 0, 500, -1, "0.75 Accelerated");
+        return;
+    case 3:
+        NewTextHeadupSlot(4, 0, 500, -1, "0.5 Accelerated");
+        return;
+    default:
+        NewTextHeadupSlot(4, 0, 500, -1, "New controls");
+        return;
+    }
+}
+
+// SteeringSelfCentre
+
+// NonCarSnapOff
+
+// TestNonCarSnapOff
+
+// TumbleObjectWithV
+
+// TumbleObject
 
 // FUNCTION: CARMA2_HW 0x00418230
 // FUNCTION: CARMA2_SW 0x00418260
