@@ -1575,8 +1575,9 @@ int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics) {
 // FUNCTION: CARMA2_SW 0x005275e0
 br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar_type) {
     int mode;
-    br_datafile* df;
     void* h;
+    br_datafile* df;
+    br_file_primitives* prims;
 
     mode = fw.open_mode;
     if (write != 0) {
@@ -1588,23 +1589,31 @@ br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar
         return NULL;
     }
     df = BrResAllocate(fw.res, sizeof(br_datafile), BR_MEMORY_DATAFILE);
-    df->prims = &_BrFilePrimsNull;
     df->h = h;
+    df->prims = &_BrFilePrimsNull;
     df->scalar_type = scalar_type;
 
-    if (mode == BR_FS_MODE_BINARY) {
-        if (write != 0) {
-            df->prims = &_BrFilePrimsWriteBinary;
-        } else {
-            df->prims = &_BrFilePrimsReadBinary;
-        }
-    } else {
-        if (write != 0)
-            df->prims = &_BrFilePrimsWriteText;
-        else
-            df->prims = &_BrFilePrimsReadText;
+    switch (mode) {
+    case BR_FS_MODE_BINARY:
+        prims = &_BrFilePrimsWriteBinary;
+        if (write == 0)
+            prims = &_BrFilePrimsReadBinary;
+        df->prims = prims;
+        break;
+    case BR_FS_MODE_TEXT:
+        prims = &_BrFilePrimsWriteText;
+        if (write == 0)
+            prims = &_BrFilePrimsReadText;
+        df->prims = prims;
+        break;
     }
-    DfPush(BR_MEMORY_FILE, df, 1); // Wrong enum -> should be DF_STACK_FILE (see comment in src/BRSRC13/CORE/V1DB/v1dbfile.c)
+    if (DatafileStackTop >= 1024) {
+        BrFailure("DatafileStack Overflow");
+    }
+    DatafileStack[DatafileStackTop].type = BR_MEMORY_FILE;
+    DatafileStack[DatafileStackTop].value = df;
+    DatafileStack[DatafileStackTop].count = 1;
+    DatafileStackTop++;
     return df;
 }
 
