@@ -14,6 +14,8 @@
 #include "15-displays.h"
 #include "17-world2.h"
 #include "18-graphics2.h"
+#include "10-loading2.h"
+#include "59-camera.h"
 
 #include "22-replay.h"
 #include "23-piping.h"
@@ -41,6 +43,12 @@
 // GLOBAL: CARMA2_HW 0x0079eda0
 // GLOBAL: CARMA2_SW 0x00795340
 tNon_car_spec* gActive_non_car_list[99];
+
+// GLOBAL: CARMA2_HW 0x00679360
+br_scalar gMin_world_y;
+
+// GLOBAL: CARMA2_HW 0x006793e4
+tPhysics_object* gUnknown_car_collision_info;
 
 // GLOBAL: CARMA2_HW 0x0067939c
 // GLOBAL: CARMA2_SW 0x00673b0c
@@ -381,7 +389,47 @@ void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar) {
     InitialiseCar2(pCar, 1);
 }
 
-// InitialiseCarsEtc
+// FUNCTION: CARMA2_HW 0x00414410
+void C2_HOOK_FASTCALL InitialiseCarsEtc(tRace_info* pThe_race) {
+    int i;
+    int cat;
+    int car_count;
+    tCar_spec* car;
+    br_bounds bnds;
+
+    gProgram_state.initial_position = pThe_race->initial_position;
+    gProgram_state.initial_yaw = pThe_race->initial_yaw;
+    BrActorToBounds(&bnds, gProgram_state.track_spec.the_actor);
+    gMin_world_y = bnds.min.v[1];
+    gNum_active_non_cars = 0;
+    for (cat = eVehicle_self; cat <= eVehicle_not_really; cat++) {
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (i = 0; i < car_count; i++) {
+            PossibleService();
+            if (cat == eVehicle_self) {
+                car = &gProgram_state.current_car;
+            } else {
+                car = GetCarSpec(cat, i);
+            }
+            if (cat != eVehicle_not_really) {
+                InitialiseCar2(car, 1);
+            }
+        }
+    }
+    gCamera_yaw = 0;
+    if (gAction_replay_camera_mode == kActionReplayCameraMode_Manual) {
+        gCamera_type = 0;
+        gAction_replay_camera_mode = kActionReplayCameraMode_Standard;
+    }
+    InitialiseExternalCamera();
+    if (gUnknown_car_collision_info != NULL && gProgram_state.current_car.collision_info != gUnknown_car_collision_info->parent) {
+        AddCollisionInfoChild(gProgram_state.current_car.collision_info, gUnknown_car_collision_info);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00414510
 // FUNCTION: CARMA2_SW 0x00414540

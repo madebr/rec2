@@ -432,3 +432,5 @@ extern void C2_HOOK_FASTCALL InitPhysics(void);
 // GetCollObjFromID
 
 #endif // GUARD_49_PHYSICS_H
+
+void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild);
