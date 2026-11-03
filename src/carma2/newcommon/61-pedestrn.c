@@ -12,6 +12,7 @@
 #include "10-loading2.h"
 #include "21-mainloop.h"
 #include "22-replay.h"
+#include "23-piping.h"
 #include "27-powerup.h"
 #include "30-opponent.h"
 #include "41-utility.h"
@@ -1446,4 +1447,11 @@ void C2_HOOK_FASTCALL BonerPedMovedByPhysics(tPed_character_instance* pCharacter
 // STUB: CARMA2_HW 0x00403f90
 void C2_HOOK_FASTCALL DRVector3SafeCross(br_vector3* pDest, const br_vector3* pA, const br_vector3* pB) {
     NOT_IMPLEMENTED();
+}
+
+
+// FUNCTION: CARMA2_HW 0x00402dd0
+void C2_HOOK_FASTCALL FUN_00402dd0(void) {
+
+    gPipe_play_ptr = gPipe_record_ptr;
 }

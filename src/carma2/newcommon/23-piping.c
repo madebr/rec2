@@ -28,6 +28,21 @@
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
+// GLOBAL: CARMA2_HW 0x006768c8
+tU8* gPipe_buffer_end_marker = NULL;
+
+// GLOBAL: CARMA2_HW 0x0067690c
+int gPipe_undo_enabled = 0;
+
+// GLOBAL: CARMA2_HW 0x006768ec
+tU32 gPipe_buffer_size = 0;
+
+// GLOBAL: CARMA2_HW 0x00676910
+int gPipe_count_callbacks = 0;
+
+// GLOBAL: CARMA2_HW 0x006768fc
+int gReplay_pause_state = 0;
+
 // GLOBAL: CARMA2_HW 0x006768b4
 // GLOBAL: CARMA2_SW 0x00671024
 tU8* gLocal_buffer;
