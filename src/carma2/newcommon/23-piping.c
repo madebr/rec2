@@ -1514,7 +1514,15 @@ void C2_HOOK_FASTCALL PipeSinglePedDismember(tPedestrian* pPed, tU8 pBone_index,
         SIZE_OFFSET_PIPING(tPipe_single_ped_dismember, new_value), pNew_value);
 }
 
-// PipeSinglePedFPChange
+// FUNCTION: CARMA2_HW 0x004c8c30
+void C2_HOOK_FASTCALL PipeSinglePedFPChange(tPedestrian* pPed, float pValue, float pUnused) {
+
+    gUNK_0069410c = *(tU32*)&pValue;
+    /* chunk type 45 (0x2d): no tPipe_chunk_type constant yet (adding enum constants to rec2_types.h shifts codegen elsewhere) */
+    ARDoSingleVariedSession(45, (uintptr_t)pPed, 2,
+        4, 0, *(tU32*)&pValue,
+        4, 4, *(tU32*)&pValue);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8c60
 // FUNCTION: CARMA2_SW 0x004c5390
