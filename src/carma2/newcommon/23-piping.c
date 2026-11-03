@@ -322,7 +322,22 @@ void C2_HOOK_FASTCALL ARInitialise(int pEnable, int pCount_callbacks, const tRep
 
 // ARDispose
 
-// DisposePiping
+// FUNCTION: CARMA2_HW 0x004024a0
+void C2_HOOK_FASTCALL DisposePiping(void) {
+
+    if (gPipe_buffer_start != NULL) {
+        PDDisposeActionReplayBuffer(gPipe_buffer_start);
+    }
+    gPipe_buffer_start = NULL;
+    if (gLocal_buffer != NULL) {
+        BrMemFree(gLocal_buffer);
+        gLocal_buffer = NULL;
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // SetPipeUndoFlag
 
