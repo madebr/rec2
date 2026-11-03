@@ -2069,7 +2069,18 @@ void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor) {
     pActor->model->custom = RenderChangingPowerup;
 }
 
-// PedValium
+// FUNCTION: CARMA2_HW 0x004dfec0
+int C2_HOOK_FASTCALL PedValium(tPowerup* powerup, tCar_spec* car) {
+
+    if (CalmDownAllPeds()) {
+        NewTextHeadupSlot(4, 0, 3000, -4, GetMiscString(eMiscString_pedestrians_are_calm_now));
+        DRS3StartSound2(gCar_outlet, eSoundId_PedValium, 1, 0xff, 0xff, -1, -1);
+        return powerup - gPowerup_array;
+    }
+    return -1;
+}
+
+// PowerupCancel
 
 // GrowATail
 
