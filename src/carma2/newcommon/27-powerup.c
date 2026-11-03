@@ -1818,7 +1818,54 @@ void C2_HOOK_FASTCALL ResetPissed(tPowerup* powerup, tCar_spec* car) {
     gRearview_camera->t.t.mat.m[3][2] = sz;
 }
 
-// PissedEffect
+// FUNCTION: CARMA2_HW 0x004df3b0
+void C2_HOOK_FASTCALL PissedEffect(tPowerup* pPowerup, tU32 pTime) {
+    tU32 now;
+    float* pOut;
+    float* p;
+    int k;
+    float amp;
+    double ph;
+    float c;
+    int idx;
+    float v;
+
+    now = GetTotalTime();
+    if (gCredit_multiplier == 0) {
+        return;
+    }
+    pOut = gPissed_flicker_frames;
+    do {
+        p = pOut;
+        for (k = 1; k; k--) {
+            amp = p[-12];
+            if (amp != gConst_0p0) {
+                ph = fmod(now + p[12], p[0]) / p[0] * gConst_2pi;
+                if (ph > gConst_3pi_over_2) {
+                    idx = (int)((gConst_2pi - ph) * gConst_minus_128_over_pi);
+                    c = gCosine_array[-idx];
+                } else if (ph > gConst_pi) {
+                    idx = (int)((ph - gConst_pi) * gConst_minus_128_over_pi);
+                    c = -gCosine_array[-idx];
+                } else if (ph > gConst_pi_over_2) {
+                    idx = (int)((gConst_pi - ph) * gConst_minus_128_over_pi);
+                    c = -gCosine_array[-idx];
+                } else {
+                    idx = (int)(ph * gConst_minus_128_over_pi);
+                    c = gCosine_array[-idx];
+                }
+                v = (c * amp - gConst_minus_1p0) * gCamera_angle * gConst_radians_to_degrees;
+                *(tU16*)((tU8*)gCamera->type_data + 6) = (tU16)(int)v;
+            }
+            p += 1;
+        }
+        pOut += 3;
+    } while ((int)pOut < (int)&gPissed_flicker_limit);
+    if (GetTotalTime() > (tU32)gPissed_next_time) {
+        DRS3StartSound2(gCar_outlet, PercentageChance(50) ? 0xe12 : 0xe13, 1, 0xff, 0xff, IRandomBetween(0xc000, 0x14000), -1);
+        gPissed_next_time = GetTotalTime() + IRandomBetween(0x5dc, 0xbb8);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004df650
 // FUNCTION: CARMA2_SW 0x004dbb50
