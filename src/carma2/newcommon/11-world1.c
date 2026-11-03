@@ -20,6 +20,21 @@ int gDelete_count;
 // GLOBAL: CARMA2_SW 0x006a4a18
 br_actor* gDelete_list[500];
 
+// GLOBAL: CARMA2_HW 0x006b6400
+char gAdditional_model_path[256];
+
+// GLOBAL: CARMA2_HW 0x006b6500
+char gAdditional_actor_path[256];
+
+// GLOBAL: CARMA2_HW 0x006b6620
+br_model* gAdditional_models[1000];
+
+// GLOBAL: CARMA2_HW 0x006ab948
+int gNumber_of_additional_models;
+
+// GLOBAL: CARMA2_HW 0x006b6600
+br_actor* gLast_actor;
+
 // FUNCTION: CARMA2_HW 0x00507210
 // FUNCTION: CARMA2_SW 0x00502660
 br_uint_32 C2_HOOK_FASTCALL DeleteBastards(br_actor* pActor, br_matrix34* pMatrix, void* pArg) {
@@ -93,4 +108,42 @@ void C2_HOOK_FASTCALL MungeMaterialSV(br_matrix34* pMat, br_material* pMat_1, br
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
     NOT_IMPLEMENTED();
 }
+
+// FUNCTION: CARMA2_HW 0x00507580
+void C2_HOOK_FASTCALL LoadAdditionalStuff(void) {
+    extern int gNum_active_non_cars;
+    extern int gNumber_of_additional_models;
+    extern br_model* gAdditional_models[1000];
+    extern char gAdditional_model_path[256];
+    extern char gAdditional_actor_path[256];
+    extern br_actor* gLast_actor;
+    extern br_actor* gUniverse_actor;
+    extern int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText);
+    int i;
+
+    if (gNum_active_non_cars != 0) {
+        NewTextHeadupSlot(4, 0, 2000, -2, "Can't load with active non cars");
+        return;
+    }
+    NewTextHeadupSlot(4, 0, 2000, -2, "Loading Additional Stuff");
+    for (i = 0; i < gNumber_of_additional_models; i++) {
+        BrModelRemove(gAdditional_models[i]);
+        BrModelFree(gAdditional_models[i]);
+    }
+    BrActorRemove(gAdditional_actors);
+    BrActorFree(gAdditional_actors);
+    gLast_actor = NULL;
+    gNumber_of_additional_models = BrModelLoadMany(gAdditional_model_path, gAdditional_models, 1000);
+    for (i = 0; i < gNumber_of_additional_models; i++) {
+        gAdditional_models[i]->flags = 0x80;
+    }
+    BrModelAddMany(gAdditional_models, gNumber_of_additional_models);
+    gAdditional_actors = BrActorLoad(gAdditional_actor_path);
+    if (gAdditional_actors == NULL) {
+        gAdditional_actors = BrActorAllocate(0, NULL);
+    }
+    BrActorAdd(gUniverse_actor, gAdditional_actors);
+}
+
+// MoveModelVertices
 
