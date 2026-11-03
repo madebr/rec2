@@ -627,7 +627,19 @@ int C2_HOOK_FASTCALL CarWorldOffFallenCheckThingy(tCar_spec* pCar, int pCheck_ar
 #pragma auto_inline(on)
 #endif
 
-// HasCarFallenOffWorld
+// FUNCTION: CARMA2_HW 0x00442130
+int C2_HOOK_FASTCALL HasCarFallenOffWorld(tCar_spec* pCar) {
+
+    return CarWorldOffFallenCheckThingy(pCar, 1);
+}
+
+// CheckForBeingOutOfThisWorld
+
+// CheckHornLocal
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // CheckHorn3D
 
 // CheckRecoverCost
