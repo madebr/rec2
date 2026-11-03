@@ -288,6 +288,11 @@ typedef struct {
     br_vector3 field_0x24;
 } tPipe_chunk_blood_spurt;
 
+typedef struct {
+    int field_0x0;
+    int field_0x4;
+} tPipe_chunk_powerup;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -419,6 +424,16 @@ void C2_HOOK_FASTCALL WorkerGibShower(int field_0x0, int field_0xc, int field_0x
 
 // STUB: CARMA2_HW 0x004ccc40
 void C2_HOOK_FASTCALL WorkerGibShowerUndo(int field_0xc, int prev_0x0, int prev_0xc, int prev_0x8, int prev_0x10, int prev_0x4, br_vector3* prev_0x14, br_vector3* prev_0x20, br_vector3* prev_0x2c) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004df200
+void C2_HOOK_FASTCALL WorkerPowerupGot(int field_0x0, int field_0x4) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004e07d0
+void C2_HOOK_FASTCALL WorkerPowerupRespawn(int field_0x0, int field_0x4) {
     NOT_IMPLEMENTED();
 }
 
@@ -2642,7 +2657,12 @@ void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk) {
     }
 }
 
-// ApplyPowerupGot
+// FUNCTION: CARMA2_HW 0x004c9c00
+void C2_HOOK_FASTCALL ApplyPowerupGot(tPipe_chunk** pChunk) {
+    tPipe_chunk_powerup* chunk = (tPipe_chunk_powerup*)*pChunk;
+
+    return WorkerPowerupGot(chunk->field_0x0, chunk->field_0x4);
+}
 
 // ApplyPowerupLose
 
