@@ -2348,7 +2348,10 @@ void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk) {
     ((br_actor*)((tPipe_chunk_transform_type*)*pChunk)->pOwner)->t.type = ((tPipe_chunk_transform_type*)*pChunk)->type_to;
 }
 
-// ApplyOppoRenderage
+// FUNCTION: CARMA2_HW 0x004c9d80
+void C2_HOOK_FASTCALL ApplyOppoRenderage(tPipe_chunk** pChunk) {
+    SetOppoRender((tOpponent_spec*)*(tU32*)*pChunk, *(tU16*)((tU8*)*pChunk + 4));
+}
 
 // UndoCrush
 
