@@ -565,7 +565,93 @@ void C2_HOOK_FASTCALL FUN_0040b500(tPed_character_instance* pCharacter, int pBon
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// ActorToActorMatrix34Local
+// FUNCTION: CARMA2_HW 0x0040c660
+br_uint_8 C2_HOOK_CDECL ActorToActorMatrix34Local(br_matrix34* m, br_actor* a, br_actor* b) {
+    br_uint_8 transform_type_combine[7][7] = {
+        { 0, 0, 0, 0, 0, 0, 0 },
+        { 0, 1, 1, 1, 1, 1, 1 },
+        { 0, 1, 1, 1, 1, 2, 2 },
+        { 0, 1, 1, 1, 1, 3, 3 },
+        { 0, 1, 1, 1, 1, 4, 4 },
+        { 0, 1, 2, 3, 4, 5, 5 },
+        { 0, 1, 2, 3, 4, 5, 6 },
+    };
+    br_matrix34 mat_a;
+    br_matrix34 mat_b;
+    br_matrix34 mat_c;
+    br_uint_8 a_type;
+    br_uint_8 b_type;
+
+    if (a == b) {
+        BrMatrix34Identity(m);
+        return BR_TRANSFORM_IDENTITY;
+    }
+    if (a->parent == b) {
+        BrTransformToMatrix34(m, &a->t);
+        return (br_uint_8)a->t.type;
+    }
+    if (b->parent == a) {
+        BrTransformToMatrix34(&mat_b, &b->t);
+        if (b->t.type != BR_TRANSFORM_MATRIX34) {
+            BrMatrix34LPInverse(m, &mat_b);
+        } else {
+            BrMatrix34Inverse(m, &mat_b);
+        }
+        return (br_uint_8)b->t.type;
+    }
+    a_type = BR_TRANSFORM_IDENTITY;
+    BrMatrix34Identity(&mat_a);
+    b_type = BR_TRANSFORM_IDENTITY;
+    BrMatrix34Identity(&mat_b);
+    while (a != NULL && b != NULL && a != b) {
+        if (a->depth > b->depth) {
+            if (a->t.type != BR_TRANSFORM_IDENTITY) {
+                BrMatrix34PostTransform(&mat_a, &a->t);
+                a_type = transform_type_combine[a_type][a->t.type];
+            }
+            a = a->parent;
+        } else if (b->depth > a->depth) {
+            if (b->t.type != BR_TRANSFORM_IDENTITY) {
+                BrMatrix34PostTransform(&mat_b, &b->t);
+                b_type = transform_type_combine[b_type][b->t.type];
+            }
+            b = b->parent;
+        } else {
+            if (a->t.type != BR_TRANSFORM_IDENTITY) {
+                BrMatrix34PostTransform(&mat_a, &a->t);
+                a_type = transform_type_combine[a_type][a->t.type];
+            }
+            if (b->t.type != BR_TRANSFORM_IDENTITY) {
+                BrMatrix34PostTransform(&mat_b, &b->t);
+                b_type = transform_type_combine[b_type][b->t.type];
+            }
+            b = b->parent;
+            a = a->parent;
+        }
+    }
+    if (b_type == BR_TRANSFORM_IDENTITY) {
+        BrMatrix34Copy(m, &mat_a);
+        return a_type;
+    }
+    if (a_type == BR_TRANSFORM_IDENTITY) {
+        if (b_type != BR_TRANSFORM_MATRIX34) {
+            BrMatrix34LPInverse(m, &mat_b);
+        } else {
+            BrMatrix34Inverse(m, &mat_b);
+        }
+        return b_type;
+    }
+    if (b_type != BR_TRANSFORM_MATRIX34) {
+        BrMatrix34LPInverse(&mat_c, &mat_b);
+    } else {
+        BrMatrix34Inverse(&mat_c, &mat_b);
+    }
+    BrMatrix34Mul(m, &mat_a, &mat_c);
+    return transform_type_combine[a_type][b_type];
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // RelinkActorKeepWorldTransform
 
