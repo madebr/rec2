@@ -237,7 +237,12 @@ void C2_HOOK_FASTCALL FUN_00511210(void) {
     FUN_0045a670();
 }
 
-// FUN_00511200
+// FUNCTION: CARMA2_HW 0x00511200
+void C2_HOOK_FASTCALL FUN_00511200(void) {
+    extern void C2_HOOK_FASTCALL FUN_0045acf0(void);
+
+    FUN_0045acf0();
+}
 
 // ToggleJoystickHeadup
 
