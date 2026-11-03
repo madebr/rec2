@@ -2625,7 +2625,36 @@ void C2_HOOK_FASTCALL FUN_0045c760(void) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// GetJoystickEffect
+// FUNCTION: CARMA2_HW 0x00458430
+int* C2_HOOK_FASTCALL GetJoystickEffect(int index) {
+
+    if (index < 0 || index > gCount_joystick_effects) {
+        return NULL;
+    }
+    return (int*)&gJoystick_effects[index * 232];
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+typedef struct {
+    float distance;
+    tPedestrian* ped;
+} tNapalm_ped_distance;
+
+typedef struct {
+    int count;
+    tNapalm_ped_distance peds[100];
+} tNapalm_ped_distances;
+
+/* not static: their only caller, NapalmPedestrianNearCar (0x4ce560), is still an unported
+   partial, so file-local definitions would be dropped by -Wunused-function */
+int C2_HOOK_FASTCALL NapalmPedDistanceCallback(tPedestrian* pPed, tCar_spec* pCar, float pDistance_squared, tU32 pNow, tPedestrian_distances* pDistances);
+int C2_HOOK_CDECL NapalmPedDistanceCompare(const void* pValue1, const void* pValue2);
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // MakePedsEthereal
 // PipeSingleMatrix34Type66
 // STUB: CARMA2_HW 0x0040bb20
