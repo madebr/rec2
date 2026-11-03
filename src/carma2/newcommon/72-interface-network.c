@@ -8,7 +8,40 @@
 
 #include "72-interface-network.h"
 
+#include <stdio.h>
+
 #include "72-interface.h"
+#include "01-network.h"
+#include "02-init.h"
+#include "10-loading2.h"
+#include "24-loadsave.h"
+#include "41-utility.h"
+#include "globvars.h"
+#include "globvrpb.h"
+#include "rec2_macros.h"
+
+#include "c2_string.h"
+
+/* local declarations (no extern added to a header, see PROGRESS: header-count sensitivity) */
+extern tU32 C2_HOOK_FASTCALL PDGetTotalTime(void);
+extern int gFrontend_selected_item_index;
+extern void C2_HOOK_FASTCALL NetEndJoinList(void);
+extern int gValid_stashed_save_game;
+extern tSave_game gStashed_save_game;
+
+// GLOBAL: CARMA2_HW 0x00763920
+tNet_game_type gFrontend_game_type;
+
+// GLOBAL: CARMA2_HW 0x00764e98
+int gRace_index;
+
+/* explicit initializers keep gGames_to_join and the next global adjacent (loop-end compare) */
+// GLOBAL: CARMA2_HW 0x00688718
+tJoinable_game gGames_to_join[6] = { 0 };
+
+
+// GLOBAL: CARMA2_HW 0x00688760
+int gLast_graph_sel;
 
 
 // GLOBAL: CARMA2_HW 0x005b39b8
@@ -65,6 +98,34 @@ tFrontend_spec gFrontend_NETWORK = {
     0
 #endif
 };
+
+// FUNCTION: CARMA2_HW 0x00468260
+int C2_HOOK_FASTCALL NetworkJoinMenuOutfunc(tFrontend_spec* pFrontend) {
+    int i;
+    int selected;
+
+    NetEndJoinList();
+    selected = gLast_graph_sel;
+    for (i = 0; i < (int)REC2_ASIZE(gGames_to_join); i++) {
+        if (i != selected && gGames_to_join[i].game != NULL) {
+            NetDisposeGameDetails(gGames_to_join[i].game);
+            gGames_to_join[i].game = NULL;
+        }
+    }
+    return 0;
+}
+
+// GLOBAL: CARMA2_HW 0x0059c820
+tNet_mode gFrontend_net_mode = eNet_mode_thinking_about_it;
+
+// NetToggleMode
+
+// NetCancel
+// NetRaceUp
+
+// NetHostChooseThisRace
+
+// NetJoinChooseThisGame
 
 // GLOBAL: CARMA2_HW 0x00688748
 int gINT_00688748;

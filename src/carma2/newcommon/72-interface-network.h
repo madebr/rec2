@@ -9,8 +9,21 @@
 #ifndef GUARD_72_NETWORK_H
 #define GUARD_72_NETWORK_H
 
+#include "c2_hooks.h"
 #include "rec2_types.h"
 
 extern tFrontend_spec gFrontend_NETWORK;
+
+extern int C2_HOOK_FASTCALL NetworkJoinMenuOutfunc(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL NetToggleMode(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL NetCancel(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL NetRaceUp(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL NetHostChooseThisRace(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL NetJoinChooseThisGame(tFrontend_spec* pFrontend);
 
 #endif /* GUARD_72_NETWORK_H */
