@@ -2747,7 +2747,12 @@ void C2_HOOK_FASTCALL UndoPowerupRespawn(tPipe_chunk** pChunk, tPipe_chunk* pPre
 }
 
 #ifdef REC2_HW
-// UndoShitMine
+// FUNCTION: CARMA2_HW 0x004ca3c0
+void C2_HOOK_FASTCALL UndoShitMine(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_shit_mine* chunk = (tPipe_chunk_shit_mine*)*pChunk;
+
+    return WorkerEndShitMine(chunk->field_0x0, &chunk->field_0x4);
+}
 
 // UndoEndShitMine
 
