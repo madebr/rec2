@@ -1032,8 +1032,11 @@ int C2_HOOK_FASTCALL NearestPowerOfTwo(int pValue) {
     return INT_MIN;
 }
 
-// STUB: CARMA2_HW 0x00497610
-void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x00497610
+void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void) {
+    InitMap();
+    SaveOptions();
+}
 
 // STUB: CARMA2_HW 0x00495e10
 void C2_HOOK_FASTCALL DoMapOverlays(br_pixelmap* pScreen) { NOT_IMPLEMENTED(); }
