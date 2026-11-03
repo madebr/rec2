@@ -194,7 +194,44 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, br_vecto
 
 // CheckSingleEdgeWithSphere
 
-// GetSphereToEdgePoints
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// STUB: CARMA2_HW 0x00423ce0
+int C2_HOOK_FASTCALL CheckSingleEdgeWithSphere(br_vector3* pEdgeStart, br_vector3* pEdgeEnd, tPhysics_object* pObject, float* pSphere, float* pWalls, int pCount, br_vector3* pStart, br_vector3* pEnd, tFace_ref* pFace) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00423c00
+int C2_HOOK_FASTCALL GetSphereToEdgePoints(tPhysics_object* pObject, int pEdx, int pParam1, int pParam2, int pParam3, int pParam4, int pParam5, int pParam6) {
+    int local_4;
+    char* puVar1;
+
+    local_4 = (int)*(tU16*)((char*)pObject + 0x174);
+    puVar1 = (char*)gFace_list__car + local_4 * 0x50;
+    if (local_4 < (int)*(tU16*)((char*)pObject + 0x176)) {
+        do {
+            if ((*(tU32*)(puVar1 + 0x40) & 0x80) == 0) {
+                if ((*(tU32*)(puVar1 + 0x40) & 1) == 0) {
+                    pParam2 = CheckSingleEdgeWithSphere((br_vector3*)(puVar1 + 0x4), (br_vector3*)(puVar1 + 0x10), pObject, (float*)pEdx, (float*)pParam1, pParam2, (br_vector3*)pParam4, (br_vector3*)pParam5, (tFace_ref*)puVar1);
+                }
+                if ((*(tU32*)(puVar1 + 0x40) & 2) == 0) {
+                    pParam2 = CheckSingleEdgeWithSphere((br_vector3*)(puVar1 + 0x10), (br_vector3*)(puVar1 + 0x1c), pObject, (float*)pEdx, (float*)pParam1, pParam2, (br_vector3*)pParam4, (br_vector3*)pParam5, (tFace_ref*)puVar1);
+                }
+                if ((*(tU32*)(puVar1 + 0x40) & 4) == 0) {
+                    pParam2 = CheckSingleEdgeWithSphere((br_vector3*)(puVar1 + 0x1c), (br_vector3*)(puVar1 + 0x4), pObject, (float*)pEdx, (float*)pParam1, pParam2, (br_vector3*)pParam4, (br_vector3*)pParam5, (tFace_ref*)puVar1);
+                }
+            }
+            local_4 = local_4 + 1;
+            puVar1 = puVar1 + 0x50;
+        } while ((int)local_4 < (int)(tU32)*(tU16*)((char*)pObject + 0x176));
+    }
+    return pParam2;
+}
 
 // GetCornerToFacePoints
 
