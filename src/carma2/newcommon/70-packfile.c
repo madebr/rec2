@@ -173,6 +173,56 @@ int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
 
 // PFgetc
 
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x004b48c0
+C2_NAKED int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile) {
+    __asm {
+        cmp ecx, 0x33
+        jb drfgetc2_small
+        push ecx
+        call fgetc
+        add esp, 4
+        ret
+
+    drfgetc2_small:
+        shl ecx, 4
+        mov edx, dword ptr [ecx + gTwatVfsFiles + 4]
+        mov eax, dword ptr [ecx + gTwatVfsFiles + 8]
+        lea ecx, dword ptr [ecx + gTwatVfsFiles]
+        cmp edx, eax
+        jb drfgetc2_read
+        or eax, 0xffffffff
+        mov dword ptr [ecx + 0xc], eax
+        ret
+
+    drfgetc2_read:
+        mov dword ptr [ecx + 0xc], 0
+        movsx eax, byte ptr [edx]
+        inc edx
+        mov dword ptr [ecx + 4], edx
+        ret
+    }
+}
+#else
+int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile) {
+    tTwatVfsFile* twtFile;
+    int result;
+
+    if ((intptr_t)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
+        return fgetc(pFile);
+    }
+    twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
+    if (twtFile->pos >= twtFile->end) {
+        twtFile->error = -1;
+        return EOF;
+    }
+    twtFile->error = 0;
+    result = *(tS8*)twtFile->pos;
+    twtFile->pos++;
+    return result;
+}
+#endif
+
 // FUNCTION: CARMA2_HW 0x004b4900
 // FUNCTION: CARMA2_SW 0x004b0a70
 char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
@@ -366,6 +416,8 @@ int C2_HOOK_FASTCALL DRferror(FILE* pFile) {
         return gTwatVfsFiles[(uintptr_t)pFile].error;
     }
 }
+
+// PFclearerr
 
 // FUNCTION: CARMA2_HW 0x004b4c80
 // FUNCTION: CARMA2_SW 0x004b0df0

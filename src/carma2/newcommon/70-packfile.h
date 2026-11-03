@@ -30,6 +30,8 @@ extern int C2_HOOK_FASTCALL PFfgetc(FILE* pFile);
 
 // PFgetc
 
+extern int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile);
+
 extern char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile);
 
 extern int C2_HOOK_FASTCALL PFungetc(int ch, FILE* file);
@@ -49,6 +51,8 @@ extern void C2_HOOK_FASTCALL PFrewind(FILE* pF);
 extern int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
 
 extern int C2_HOOK_FASTCALL DRferror(FILE* pFile);
+
+extern void C2_HOOK_FASTCALL PFclearerr(FILE* pFile);
 
 extern void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 
