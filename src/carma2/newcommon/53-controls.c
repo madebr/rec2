@@ -727,7 +727,17 @@ int C2_HOOK_FASTCALL CheckRecoverCost(void) {
 
 // SortOutRecover
 
-// SetFlipUpCar
+// FUNCTION: CARMA2_HW 0x00442970
+void C2_HOOK_FASTCALL SetFlipUpCar(tCar_spec* pCar) {
+
+    if (gNet_mode != eNet_mode_none && pCar != NULL && pCar->driver == eDriver_local_human) {
+        DisableCar(pCar);
+        gPalette_fade_time = GetRaceTime();
+        NetPlayerStatusChanged(ePlayer_status_recovering);
+    } else {
+        FlipUpCar(pCar);
+    }
+}
 
 
 // FUNCTION: CARMA2_HW 0x00442e10
