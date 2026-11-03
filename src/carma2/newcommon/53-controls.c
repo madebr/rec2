@@ -1227,7 +1227,20 @@ void C2_HOOK_FASTCALL ToggleHeadupLevel(void) {
     NewTextHeadupSlot2(4, 0, 250, -4, GetMiscString(eMiscString_no_HUD + (gHeadup_detail_level % 3)), 0);
 }
 
-// ToggleShellModel
+// FUNCTION: CARMA2_HW 0x00444fa0
+void C2_HOOK_FASTCALL ToggleShellModel(void) {
+
+    gCar_to_view->use_shell_model = !gCar_to_view->use_shell_model;
+    if (gCar_to_view->use_shell_model) {
+        NewTextHeadupSlot(4, 0, 2000, -4, "SHELL MODEL");
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, "COMPLEX MODELS");
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // FUN_0045a7f0
 // CreateAccentPolyActor
 // FUN_0045acf0
