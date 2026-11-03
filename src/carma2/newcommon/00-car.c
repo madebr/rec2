@@ -213,7 +213,167 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
     pCar->field_0xe18 = pIndex;
 }
 
-// InitialiseCar2
+extern tSlot_info gInitial_APO[3];
+extern tSlot_info gInitial_APO_potential[3];
+
+// FUNCTION: CARMA2_HW 0x00413f70
+void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag) {
+    int index;
+    int j;
+    int level;
+    br_matrix34 safe_position;
+    tNet_game_player_info* net_player;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x261, 0x261);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, message_time, 0x268);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x49c, 0x49c);
+
+    PossibleService();
+    if (pCar->disabled && pClear_disabled_flag) {
+        if (gNet_mode == eNet_mode_none) {
+            EnableCar(pCar);
+        } else {
+            net_player = NetPlayerFromCar(pCar);
+            if (net_player->player_status == ePlayer_status_ready || net_player->player_status == ePlayer_status_racing) {
+                EnableCar(pCar);
+            }
+        }
+    }
+    InitCarSkidStuff(pCar);
+    pCar->car_model_actor->render_style = BR_RSTYLE_DEFAULT;
+    SwitchCarModels(pCar, 0);
+    pCar->collision_info->last_special_volume = NULL;
+    pCar->collision_info->auto_special_volume = NULL;
+    pCar->field_0xc8 = NULL;
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        ResetRecoveryVouchers();
+    }
+    BrVector3SetFloat(&pCar->collision_info->v, 0.f, 0.f, 0.f);
+    BrVector3SetFloat(&pCar->collision_info->omega, 0.f, 0.f, 0.f);
+    pCar->curvature = 0.f;
+    pCar->field_0x1260 = 0.f;
+    BrMatrix34Copy(&safe_position, &pCar->car_master_actor->t.t.mat);
+    if (safe_position.m[3][0] > 500.0f) {
+        BrVector3Sub((br_vector3*)safe_position.m[3], (br_vector3*)safe_position.m[3], &gInitial_position);
+    }
+    BrMatrix34Copy(&pCar->old_frame_mat, &safe_position);
+    BrMatrix34Copy(&pCar->collision_info->transform_matrix, &safe_position);
+    BrMatrix34ApplyP(&pCar->pos, &pCar->collision_info->cmpos, &pCar->collision_info->transform_matrix);
+    for (j = 0; j < 4; j++) {
+        pCar->oldd[j] = pCar->ride_height;
+    }
+    pCar->gear = 0.f;
+    pCar->revs = 0.f;
+    pCar->traction_control = 1;
+    BrVector3Negate(&pCar->direction, (br_vector3*)pCar->car_master_actor->t.t.mat.m[2]);
+    for (j = 0; j < 20; j++) {
+        BrMatrix34Copy(&pCar->last_safe_positions[j], &safe_position);
+    }
+    pCar->collision_info->field_0x261 = 0;
+    pCar->collision_info->message_time = 0;
+    pCar->dt = -1.f;
+    pCar->collision_info->field_0x49c = 1;
+    pCar->time_to_recover = 0;
+    pCar->repair_time  = 0;
+    pCar->collision_info->water_d  = 10000.f;
+
+    switch (pCar->driver) {
+    case eDriver_oppo:
+        index = 0;
+        for (j = 0; j < gCurrent_race.number_of_racers; j++) {
+            if (gCurrent_race.opponent_list[j].car_spec != NULL
+                    && gCurrent_race.opponent_list[j].car_spec->driver == eDriver_oppo) {
+                if (pCar == gCurrent_race.opponent_list[j].car_spec) {
+                    pCar->car_ID = 0x200 + index;
+                }
+                index++;
+            }
+        }
+        break;
+    case eDriver_net_human:
+        index = 0;
+        for (j = 0; j < gCurrent_race.number_of_racers; j++) {
+            if (gCurrent_race.opponent_list[j].car_spec != NULL
+                    && gCurrent_race.opponent_list[j].car_spec->driver == eDriver_net_human) {
+                if (pCar == gCurrent_race.opponent_list[j].car_spec) {
+                    pCar->car_ID = 0x100 + index;
+                }
+                index++;
+            }
+        }
+        break;
+    case eDriver_local_human:
+        pCar->car_ID = 0;
+        break;
+    default:
+        break;
+    }
+    PossibleService();
+    pCar->collision_info->box_face_ref = gFace_num__car - 2;
+    pCar->collision_info->box_face_end = 0;
+    pCar->collision_info->box_face_start = 0;
+    pCar->collision_info->disable_move_rotate = 0;
+    pCar->end_steering_damage_effect = 0;
+    pCar->end_trans_damage_effect = 0;
+    pCar->wheel_dam_offset[0] = 0.f;
+    pCar->wheel_dam_offset[1] = 0.f;
+    pCar->wheel_dam_offset[2] = 0.f;
+    pCar->wheel_dam_offset[3] = 0.f;
+    pCar->shadow_intersection_flags = 0;
+    pCar->underwater_ability = 0;
+
+    if (gNet_mode == eNet_mode_none) {
+        net_player = NULL;
+    } else {
+        net_player = NetPlayerFromCar(pCar);
+    }
+    if (net_player != NULL && net_player->field_0x80) {
+        pCar->invulnerable_no_crushage = 1;
+        pCar->invulnerable_no_damage = 1;
+        pCar->invulnerable_no_wastage = 1;
+    } else {
+        pCar->invulnerable_no_crushage = 0;
+        pCar->invulnerable_no_damage = 0;
+        pCar->invulnerable_no_wastage = 0;
+    }
+    pCar->wall_climber_mode = 0;
+    pCar->grip_multiplier = 1.f;
+    pCar->damage_multiplier = 1.f;
+    pCar->field_0x4c8 = 1.f;
+    pCar->field_0x4d4 = 1.f;
+    pCar->bounce_rate = 0.f;
+    pCar->bounce_amount = 0.f;
+    pCar->knackered = 0;
+    pCar->collision_info->last_special_volume = NULL;
+    pCar->collision_info->auto_special_volume = NULL;
+    RemoveFromCloakingList(pCar);
+    TurnOffCloaking(NULL, pCar);
+    if (pCar == NULL || pCar->driver != eDriver_local_human) {
+        pCar->joystick.left = -1;
+        pCar->joystick.right = -1;
+    }
+    TotallyRepairACar(pCar);
+    SetCarSuspGiveAndHeight(pCar, 1.f, 1.f, 1.f, 0.f, 0.f);
+    for (j = 0; j < 100; j++) {
+        pCar->powerups[j] = 0;
+    }
+    if (gNet_mode != eNet_mode_none && (net_player == NULL || !net_player->field_0x80)) {
+        for (j = 0; j < 3; j++) {
+            if (gNet_mode != eNet_mode_none) {
+                level = gInitial_APO[j].initial_network[gCurrent_net_game->type];
+            } else {
+                level = gInitial_APO[j].initial[gProgram_state.skill_level];
+            }
+            pCar->power_up_levels[j] = level;
+            if (gNet_mode != eNet_mode_none) {
+                level = gInitial_APO_potential[j].initial_network[gCurrent_net_game->type];
+            } else {
+                level = gInitial_APO_potential[j].initial[gProgram_state.skill_level];
+            }
+            pCar->power_up_slots[j] = level;
+        }
+    }
+}
 
 // InitialiseCar
 
