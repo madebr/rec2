@@ -33,6 +33,9 @@ typedef struct {
 } tDrone_crush_data;
 extern tDrone_crush_data* C2_HOOK_FASTCALL GetDroneCrushData(tPhysics_object* pObject);
 
+// GLOBAL: CARMA2_HW 0x0067c47c
+tU32 gToo_poor_for_recovery_timeout;
+
 // GLOBAL: CARMA2_HW 0x0067be84
 tU32 gINT_0067be84;
 
@@ -1696,11 +1699,34 @@ void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec) {
 
 // ToggleFlapsCB2
 
-// ToggleFlapsCB
+// FUNCTION: CARMA2_HW 0x0042ddb0
+int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, void* data) {
+    tCar_spec* pCar_spec = data;
+
+    DRActorEnumRecurse(pCollision_info->actor, ToggleDoorsActorCallback, pCar_spec);
+    return 0;
+}
 
 // SendToggleFlaps
 
-// ToggleFlaps
+// FUNCTION: CARMA2_HW 0x0042dd50
+void C2_HOOK_FASTCALL ToggleFlaps(void) {
+    tNet_message_chunk* chunk;
+    tNet_game_player_info* player_info;
+
+    if (gCountdown || gToo_poor_for_recovery_timeout != 0) {
+        return;
+    }
+    if (gNet_mode == eNet_mode_none || gNet_mode == eNet_mode_host) {
+        PhysicsObjectRecurse(gProgram_state.current_car.collision_info, ToggleFlapsCB, &gProgram_state.current_car);
+    } else {
+        chunk = NetAllocateMessageChunk(eNet_message_chunk_type_toggle_doors, 0);
+        player_info = NetPlayerFromCar(&gProgram_state.current_car);
+        if (player_info != NULL) {
+            chunk->toggle_doors.id = player_info->ID;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00434910
 // FUNCTION: CARMA2_SW 0x00434940
@@ -3161,4 +3187,56 @@ void C2_HOOK_FASTCALL AddToggledDoor(br_actor* pActor, tCar_spec* pCar, int pFla
         gToggled_doors[gCount_toggled_doors].field_0xc = pDelay;
         gCount_toggled_doors = gCount_toggled_doors + 1;
     }
+}
+
+
+// FUNCTION: CARMA2_HW 0x0042ddc0
+int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data) {
+    tCar_spec* pCar = data;
+    tUser_crush_data* user_data;
+    tCar_crush_buffer_entry* crush_buffer;
+    int i;
+
+    user_data = pActor->user;
+    if (user_data == NULL) {
+        return 0;
+    }
+    crush_buffer = user_data->crush_data;
+    if (crush_buffer == NULL) {
+        return 0;
+    }
+    if (crush_buffer->flap_data == NULL || !crush_buffer->flap_data->kev_o_flap) {
+        return 0;
+    }
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gToggled_doors) != 16);
+
+    if (crush_buffer->flap_data->field_0x0) {
+        if (gCount_toggled_doors != REC2_ASIZE(gToggled_doors)) {
+            for (i = 0; i < gCount_toggled_doors; i++) {
+                if (gToggled_doors[i].actor == pActor) {
+                    return 0;
+                }
+            }
+            gToggled_doors[gCount_toggled_doors].actor = pActor;
+            gToggled_doors[gCount_toggled_doors].car = pCar;
+            gToggled_doors[gCount_toggled_doors].field_0x8 = 0;
+            gToggled_doors[gCount_toggled_doors].field_0xc = 0.f;
+            gCount_toggled_doors += 1;
+        }
+    } else {
+        if (gCount_toggled_doors != REC2_ASIZE(gToggled_doors)) {
+            for (i = 0; i < gCount_toggled_doors; i++) {
+                if (gToggled_doors[i].actor == pActor) {
+                    return 0;
+                }
+            }
+            gToggled_doors[gCount_toggled_doors].actor = pActor;
+            gToggled_doors[gCount_toggled_doors].car = pCar;
+            gToggled_doors[gCount_toggled_doors].field_0x8 = 1;
+            gToggled_doors[gCount_toggled_doors].field_0xc = 20.f;
+            gCount_toggled_doors += 1;
+        }
+    }
+    return 0;
 }
