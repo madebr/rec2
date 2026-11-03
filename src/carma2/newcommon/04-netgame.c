@@ -427,7 +427,28 @@ typedef struct tNet_score_entry {
     int out_of_game;
 } tNet_score_entry;
 
-// SortNetHeadAscending
+// FUNCTION: CARMA2_HW 0x0049a330
+int C2_HOOK_CDECL SortNetHeadAscending(const void* pFirst, const void* pSecond) {
+    const tNet_score_entry* first;
+    const tNet_score_entry* second;
+
+    first = (const tNet_score_entry*)pFirst;
+    second = (const tNet_score_entry*)pSecond;
+    if (first->out_of_game != 0) {
+        if (second->out_of_game != 0) {
+            return first->out_of_game - second->out_of_game;
+        }
+        return 2147483647;
+    }
+    if (second->out_of_game != 0) {
+        return -2147483647;
+    }
+    if (first->score != second->score) {
+        return first->score - second->score;
+    }
+    return *(int*)&gNet_players[first->player_index].last_score_index
+        - *(int*)&gNet_players[second->player_index].last_score_index;
+}
 
 // SortNetHeadDescending
 
