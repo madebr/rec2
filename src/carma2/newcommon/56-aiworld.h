@@ -16,6 +16,14 @@
 
 #include <stdio.h>
 
+extern int gFirst_drone_processing;
+
+extern tU32 gFrame_period_for_this_munging;
+
+extern float gDrone_delta_time;
+
+extern float gTrack_drone_min_y;
+
 // MakeVertexAndOffsetIt
 
 extern void C2_HOOK_FASTCALL MakeFaceAndTextureIt(br_model* pModel, int pFace_num, br_uint_16 pV0, br_uint_16 pV1, br_uint_16 pV2, br_material* pMaterial);
@@ -26,7 +34,7 @@ extern void C2_HOOK_FASTCALL LoadAIWorldTrackInfo(FILE* pF);
 
 extern void C2_HOOK_FASTCALL LoadAIWorldForRace(tRace_info* pRace_info);
 
-// InitialiseAIWorldForRace
+extern void C2_HOOK_FASTCALL InitialiseAIWorldForRace(tRace_info* pRace_info);
 
 extern void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void);
 
@@ -43,5 +51,9 @@ extern br_material* C2_HOOK_FASTCALL CreateSimpleMaterial(int pIndex);
 // CalcNegativeXVector
 
 // MakeAISimpleEditSectionHere
+
+extern void C2_HOOK_FASTCALL InitDrones(tRace_info* pRace_info);
+
+extern void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info);
 
 #endif // GUARD_56_AIWORLD_H

@@ -9,10 +9,48 @@
 #include "56-aiworld.h"
 
 #include "05-drmem.h"
+#include "08-loading1.h"
 #include "10-loading2.h"
 #include "18-graphics2.h"
 #include "30-opponent.h"
+#include "41-utility.h"
+#include "52-errors.h"
 #include "57-drone.h"
+#include "68-timer.h"
+#include "globvars.h"
+#include "globvrme.h"
+#include "globvrpb.h"
+#include "platform.h"
+#include "rec2_macros.h"
+
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* upstream's c2_hooks.h does not define this yet (same guard as 27-powerup.c / 09-funks.h);
+   the scaffold stub for TotallySpamTheModel is the only user here */
+#ifndef C2_HOOK_FAKE_THISCALL
+#ifdef REC2_MATCHING
+#define C2_HOOK_FAKE_THISCALL __fastcall
+#else
+#define C2_HOOK_FAKE_THISCALL
+#endif
+#endif
+
+// GLOBAL: CARMA2_HW 0x0058f038
+int gFirst_drone_processing = 1;
+
+// GLOBAL: CARMA2_HW 0x0079efc4
+tU32 gFrame_period_for_this_munging;
+
+// GLOBAL: CARMA2_HW 0x0079efc0
+float gDrone_delta_time;
+
+// GLOBAL: CARMA2_HW 0x0079efbc
+float gTrack_drone_min_y;
+
+// GLOBAL: CARMA2_HW 0x00681fb4
+int gCount_active_drones;
 
 // MakeVertexAndOffsetIt
 
@@ -61,7 +99,29 @@ void C2_HOOK_FASTCALL LoadAIWorldForRace(tRace_info* pRace_info) {
     PrintMemoryDump(0, "AFTER LoadPerRaceDroneStuff()");
 }
 
-// InitialiseAIWorldForRace
+// FUNCTION: CARMA2_HW 0x004010b0
+void C2_HOOK_FASTCALL InitialiseAIWorldForRace(tRace_info* pRace_info) {
+    br_bounds3 track_bounds;
+
+    gFirst_drone_processing = 1;
+    gTime_stamp_for_this_munging = GetTotalTime();
+    if (gTime_stamp_for_this_munging == 0) {
+        gTime_stamp_for_this_munging = PDGetTotalTime();
+    }
+    gFrame_period_for_this_munging = 100;
+    gDrone_delta_time = 0.1f;
+    BrActorToBounds(&track_bounds, gTrack_actor);
+    if (track_bounds.min.v[1] < track_bounds.max.v[1]) {
+        gTrack_drone_min_y = track_bounds.min.v[1];
+    } else {
+        gTrack_drone_min_y = track_bounds.max.v[1];
+    }
+    PrintMemoryDump(0, "BEFORE InitOpponents()");
+    InitOpponents(pRace_info);
+    PrintMemoryDump(0, "AFTER InitOpponents(), BEFORE InitDrones()");
+    InitDrones(pRace_info);
+    PrintMemoryDump(0, "AFTER InitDrones()");
+}
 
 // FUNCTION: CARMA2_HW 0x00401160
 // FUNCTION: CARMA2_SW 0x00401160
@@ -120,25 +180,57 @@ br_material* C2_HOOK_FASTCALL CreateSimpleMaterial(int pIndex) {
 
 // MakeAISimpleEditSectionHere
 
-// STUB: CARMA2_HW 0x00435d40
-void C2_HOOK_FASTCALL DeleteFarCrushes(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+extern void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar);
+extern int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar);
 
 // STUB: CARMA2_HW 0x0043f930
 void C2_HOOK_FASTCALL DoDamage(tCar_spec* pCar, tDamage_type pDamage_type, int pMagnitude) { NOT_IMPLEMENTED(); }
 
+// LoadFunksAndGrooves
+
+// MineExplode
+
 // STUB: CARMA2_HW 0x0044cfc0
 void C2_HOOK_CDECL DoNotDprintf_drone(const char* pMessage, ...) { NOT_IMPLEMENTED(); }
 
-#ifndef C2_HOOK_FAKE_THISCALL
-#ifdef REC2_MATCHING
-#define C2_HOOK_FAKE_THISCALL __fastcall
-#else
-#define C2_HOOK_FAKE_THISCALL
-#endif
-#endif
+// StopProcessingThisDrone
 
-// STUB: CARMA2_HW 0x00431610
-void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, float pDamage) { NOT_IMPLEMENTED(); }
+// FUN_00452f40
+// GLOBAL: CARMA2_HW 0x00594790
+const char* gDrone_axis_names[4] = {
+    "x",
+    "y",
+    "z",
+    NULL,
+};
+
+// GLOBAL: CARMA2_HW 0x005947a0
+const char* gFunk_speed_control_names[2] = {
+    "controller",
+    "dronespeed",
+};
+
+// GLOBAL: CARMA2_HW 0x005947a8
+const char* gReverseness_type_names[2] = {
+    "forward",
+    "reverse",
+};
+
+// STUB: CARMA2_HW 0x00435d40
+void C2_HOOK_FASTCALL DeleteFarCrushes(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
 
 // GLOBAL: CARMA2_HW 0x0065a3c8
 int gChallenger_index__opponent;
+
+// STUB: CARMA2_HW 0x0044f700
+void C2_HOOK_FASTCALL InitDrones(tRace_info* pRace_info) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004add50
+void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00431610
+void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, float pDamage) { NOT_IMPLEMENTED(); }
