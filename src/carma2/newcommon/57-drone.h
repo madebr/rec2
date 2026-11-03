@@ -179,7 +179,7 @@ extern void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec* pDrone);
 
 // MoveMyDroneBaby
 
-// DroneLookWhereYoureGoingYouBlindCunt
+extern void C2_HOOK_FASTCALL DroneLookWhereYoureGoingYouBlindCunt(void);
 
 extern void C2_HOOK_FASTCALL SelectNextDrone(void);
 
