@@ -679,7 +679,53 @@ void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar) {
 
 // CheckOtherRacingKeys
 
-// CheckRecoverCost
+// FUNCTION: CARMA2_HW 0x00442750
+int C2_HOOK_FASTCALL CheckRecoverCost(void) {
+    int recovery_cost;
+    int remaining_cost;
+    int which;
+    int part_value;
+
+    if (gNet_mode != eNet_mode_none) {
+    if (gProgram_state.current_car.knackered
+        || gRecovery_voucher_count != 0
+        || (NetPlayerFromCar(&gProgram_state.current_car) != NULL && NetPlayerFromCar(&gProgram_state.current_car)->field_0x80 != 0)) {
+        gINT_0067c470 = 1;
+    } else {
+    gINT_0067c470 = 0;
+    if (gProgram_state.credits < (gNet_mode ? gRecovery_cost.initial_network[gCurrent_net_game->type] : gRecovery_cost.initial[gProgram_state.skill_level])) {
+        recovery_cost = (int)(gNet_mode ? gRecovery_cost.initial_network[gCurrent_net_game->type] : gRecovery_cost.initial[gProgram_state.skill_level]);
+        remaining_cost = recovery_cost;
+        while (remaining_cost > 0
+            && (gProgram_state.current_car.power_up_levels[0] != 0
+                || gProgram_state.current_car.power_up_levels[1] != 0
+                || gProgram_state.current_car.power_up_levels[2] != 0)) {
+            which = IRandomBetween(0, 2);
+            if (gProgram_state.current_car.power_up_levels[which] != 0) {
+                gProgram_state.current_car.power_up_levels[which] -= 1;
+                if (gNet_mode) {
+                    part_value = gTrade_in_value_APO.initial_network[gCurrent_net_game->type];
+                } else {
+                    part_value = gTrade_in_value_APO.initial[gProgram_state.skill_level];
+                }
+                remaining_cost -= part_value;
+                gProgram_state.credits += gNet_mode ? gTrade_in_value_APO.initial_network[gCurrent_net_game->type] : gTrade_in_value_APO.initial[gProgram_state.skill_level];
+            }
+        }
+    }
+    if (gProgram_state.credits < (gNet_mode ? gRecovery_cost.initial_network[gCurrent_net_game->type] : gRecovery_cost.initial[gProgram_state.skill_level])) {
+        gToo_poor_for_recovery_timeout = PDGetTotalTime() + 2000;
+        NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_press_return_to_commit_suicide));
+        return 0;
+    }
+    SpendCredits((int)(gNet_mode ? gRecovery_cost.initial_network[gCurrent_net_game->type] : gRecovery_cost.initial[gProgram_state.skill_level]));
+    return 1;
+    }
+    }
+    return 1;
+}
+
+// SortOutRecover
 
 // SetFlipUpCar
 
