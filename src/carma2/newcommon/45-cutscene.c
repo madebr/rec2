@@ -92,7 +92,25 @@ void C2_HOOK_FASTCALL StartLoadingScreen(void) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// FUN_00461980
+// FUNCTION: CARMA2_HW 0x00461980
+void C2_HOOK_FASTCALL FUN_00461980(int pSound_ID, tU32 pSound_time) {
+    extern int gSound_ID;
+    extern tU32 gSound_time;
+
+    gSound_ID = pSound_ID;
+    gSound_time = pSound_time;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// Lives here (not in 32-spark.c) on purpose: its string literal in a TU before
+// 36-trig.c shifts gFloat_sine_table and drops FastFloatCos 0x511440 to 97.22.
 // DustRotate
 
 // DoFeatureUnavailableInDemo
