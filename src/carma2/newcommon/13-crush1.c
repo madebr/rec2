@@ -2017,7 +2017,24 @@ typedef struct tUnbend_model_context_local {
 extern void C2_HOOK_FASTCALL BendPoint(br_vector3* pPoint, const tBend_point_context_local* pContext);
 extern void C2_HOOK_FASTCALL FUN_0043a5b0(br_model* pModel, br_vector3* pTranslation, void* pContext);
 
-// UnBendActorCB
+// FUNCTION: CARMA2_HW 0x0043a560
+intptr_t C2_HOOK_FASTCALL UnBendActorCB(br_actor* pActor, br_vector3* pDelta, void* pData) {
+    tUser_crush_data* user_crush;
+    const tUnbend_model_context_local* context;
+    int i;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 0;
+    }
+    if (user_crush->crush_data != NULL) {
+        context = pData;
+        for (i = 0; i < context->car->count_detail_levels; i++) {
+            FUN_0043a5b0(user_crush->models[i], pDelta, pData);
+        }
+    }
+    return 0;
+}
 
 // UnBendCollisionShape
 
