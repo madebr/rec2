@@ -1971,7 +1971,103 @@ static br_model* SetChangingPowerup_DupModel(br_model* pModel, const char* pName
     return copy;
 }
 
-// SetChangingPowerup
+// FUNCTION: CARMA2_HW 0x004df6c0
+void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor) {
+    tPath_name path;
+    char s[256];
+    char s2[256];
+    FILE* f;
+    int i;
+    br_actor* actor;
+
+    if (pActor == NULL) {
+        return;
+    }
+    if (gModel_powerup_armor == NULL || gModel_powerup_power == NULL || gModel_powerup_offence == NULL) {
+        gModel_powerup_armor = SetChangingPowerup_DupModel(BrModelFind("&68powerup1.ACT"), "PowArm");
+        gModel_powerup_armor->flags |= BR_MODF_CUSTOM;
+        gModel_powerup_armor->custom = RenderChangingPowerup;
+        BrModelAdd(gModel_powerup_armor);
+
+        gModel_powerup_power = SetChangingPowerup_DupModel(BrModelFind("&70powerup1.ACT"), "PowPow");
+        gModel_powerup_power->flags |= BR_MODF_CUSTOM;
+        gModel_powerup_power->custom = RenderChangingPowerup;
+        BrModelAdd(gModel_powerup_power);
+
+        gModel_powerup_offence = SetChangingPowerup_DupModel(BrModelFind("&69powerup1.ACT"), "PowOff");
+        gModel_powerup_offence->flags |= BR_MODF_CUSTOM;
+        gModel_powerup_offence->custom = RenderChangingPowerup;
+        BrModelAdd(gModel_powerup_offence);
+    }
+
+    if (gModel_powerup_armor == NULL) {
+        BrModelFind("&77powerup.ACT");
+        PathCat(path, gApplication_path, "POWRSHIT.TXT");
+        f = DRfopen(path, "rt");
+        if (f == NULL) {
+            sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            PDFatalError(s);
+        }
+        for (i = 0; i < 67; i++) {
+            GetAString(f, s2);
+        }
+        actor = LoadActor(s2);
+        if (actor != NULL && actor->model != NULL) {
+            gModel_powerup_armor = SetChangingPowerup_DupModel(actor->model, "PowArm");
+            gModel_powerup_armor->flags |= BR_MODF_CUSTOM;
+            gModel_powerup_armor->custom = RenderChangingPowerup;
+            BrModelAdd(gModel_powerup_armor);
+            BrActorFree(actor);
+        }
+        PFfclose(f);
+    }
+
+    if (gModel_powerup_power == NULL) {
+        PathCat(path, gApplication_path, "POWRSHIT.TXT");
+        f = DRfopen(path, "rt");
+        if (f == NULL) {
+            sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            PDFatalError(s);
+        }
+        for (i = 0; i < 68; i++) {
+            GetAString(f, s2);
+        }
+        actor = LoadActor(s2);
+        if (actor != NULL && actor->model != NULL) {
+            gModel_powerup_power = SetChangingPowerup_DupModel(actor->model, "PowPow");
+            gModel_powerup_power->flags |= BR_MODF_CUSTOM;
+            gModel_powerup_power->custom = RenderChangingPowerup;
+            BrModelAdd(gModel_powerup_power);
+            BrActorFree(actor);
+        }
+        PFfclose(f);
+    }
+
+    if (gModel_powerup_offence == NULL) {
+        PathCat(path, gApplication_path, "POWRSHIT.TXT");
+        f = DRfopen(path, "rt");
+        if (f == NULL) {
+            sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            PDFatalError(s);
+        }
+        for (i = 0; i < 69; i++) {
+            GetAString(f, s2);
+        }
+        actor = LoadActor(s2);
+        if (actor != NULL && actor->model != NULL) {
+            gModel_powerup_offence = SetChangingPowerup_DupModel(actor->model, "PowOff");
+            gModel_powerup_offence->flags |= BR_MODF_CUSTOM;
+            gModel_powerup_offence->custom = RenderChangingPowerup;
+            BrModelAdd(gModel_powerup_offence);
+            BrActorFree(actor);
+        }
+        PFfclose(f);
+    }
+    BrMatrix34PreTranslate(&pActor->t.t.mat, .0f, .1f, .0f);
+    pActor->model = gModel_powerup_armor;
+    pActor->model->flags |= BR_MODF_CUSTOM;
+    pActor->model->custom = RenderChangingPowerup;
+}
 
 // PedValium
 
