@@ -43,6 +43,9 @@ typedef struct {
     float random_spin_rate_max;
 } tSmashable_initial_speed_spec;
 
+// GLOBAL: CARMA2_HW 0x0065d79c
+int gGib_shower_id = -1;
+
 // GLOBAL: CARMA2_HW 0x00655df0
 br_vector3 gY_unit_vector = { { 0.f, 1.f, 0.f } };
 
@@ -296,6 +299,16 @@ void C2_HOOK_FASTCALL DisposePedForm(tPed_form* pForm);
 void C2_HOOK_FASTCALL DisposePedPersonality(tPed_personality* pPersonality);
 tPhysics_object* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance* pPed);
 void C2_HOOK_FASTCALL DRVector3SafeCross(br_vector3* pDest, const br_vector3* pA, const br_vector3* pB);
+
+// STUB: CARMA2_HW 0x004c8ce0
+void C2_HOOK_FASTCALL PipeSingleGibShower(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, undefined4 pArg5, br_vector3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ccb10
+void C2_HOOK_FASTCALL DoGibShower(volatile int pId, volatile int pTime, int pSeed, float pForce, int pSize_index, br_vector3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
+    NOT_IMPLEMENTED();
+}
 
 // STUB: CARMA2_HW 0x004eb120
 void C2_HOOK_FASTCALL InitFragmentSpeed(tSmash_vertex* pFragment, tSmashable_initial_speed_spec* pSpeed, br_vector3* pArg3, float pArg4, int* pArg5, int pArg6, br_vector3* pArg7, int pArg8, int pArg9) {
@@ -993,7 +1006,34 @@ void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType)
 
 // PedUndoGibShower
 
-// DoGiblets
+// FUNCTION: CARMA2_HW 0x004ccff0
+void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tPhysics_object* pObject, tPhysics_object* pOpt_speed_object, float pArg4, br_vector3* pArg5, int pArg6) {
+    tU32 time;
+    int seed;
+    br_vector3 vec;
+
+    if (gGoreLevel <= 0) {
+        return;
+    }
+    time = GetTotalTime();
+    if (pArg4 > 0.5) {
+        Explode(&gPed_large_blood_cloud, GetCharacterActorPtr(pPed->character), &pPed->character->personality->bb, &pObject->cmpos);
+    } else if (pArg4 > 0.25) {
+        Explode(&gPed_medium_blood_cloud, GetCharacterActorPtr(pPed->character), &pPed->character->personality->bb, &pObject->cmpos);
+    } else if (pArg4 > 0.05) {
+        Explode(&gPed_explosion_small_blood_cloud, GetCharacterActorPtr(pPed->character), &pPed->character->personality->bb, &pObject->cmpos);
+    }
+    seed = (int)pArg5->v[2] ^ (int)pArg5->v[1] ^ time ^ (int)pOpt_speed_object ^ (int)pPed ^ (int)pArg5->v[0];
+    if (pOpt_speed_object == NULL) {
+        pOpt_speed_object = pObject;
+    }
+    vec.v[0] = pOpt_speed_object->v.v[0] * 6.9;
+    vec.v[1] = pOpt_speed_object->v.v[1] * 6.9;
+    vec.v[2] = pOpt_speed_object->v.v[2] * 6.9;
+    DoGibShower(gGib_shower_id, time, seed, pArg4, pArg6, &pPed->pos, pArg5, &vec);
+    PipeSingleGibShower(gGib_shower_id, time, seed, *(int*)&pArg4, pArg6, &pPed->pos, pArg5, &vec);
+    gGib_shower_id--;
+}
 
 // FUNCTION: CARMA2_HW 0x004cccc0
 void C2_HOOK_FASTCALL DoBloodSpurt(uintptr_t pArg1, int pArg2, int pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6) {
