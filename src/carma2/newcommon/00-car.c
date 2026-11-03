@@ -1151,7 +1151,16 @@ int C2_HOOK_FASTCALL APTCPassiveActivated(tPhysics_object* pObject, undefined4 p
     return 1;
 }
 
-// APTCChangedObjects
+// FUNCTION: CARMA2_HW 0x00416300
+void C2_HOOK_FASTCALL APTCChangedObjects(tPhysics_object* pObject, undefined4 pArg2) {
+
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 2) {
+        BonerPedMovedByPhysics((tPed_character_instance*)pObject->owner, pArg2);
+    }
+    if (pObject != NULL && pObject->flags_0x238 == 0x10) {
+        MoveMyDroneBaby(pObject, pArg2);
+    }
+}
 
 // ApplyPhysicsToCars
 

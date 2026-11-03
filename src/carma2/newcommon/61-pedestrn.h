@@ -582,3 +582,5 @@ void C2_HOOK_FASTCALL PedPreCollisionStuff(void);
 int C2_HOOK_FASTCALL BonerActiveHalted(tPed_character_instance* pCharacter);
 
 int C2_HOOK_FASTCALL BonerPassiveCollision(tPed_character_instance* pCharacter, undefined4 pArg2);
+
+void C2_HOOK_FASTCALL BonerPedMovedByPhysics(tPed_character_instance* pCharacter, undefined4 pArg2);
