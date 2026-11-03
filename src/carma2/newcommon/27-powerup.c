@@ -993,7 +993,32 @@ void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* pPowerup, tU32 pPeriod) {
     ResetPalette();
 }
 
-// SetOpponentsSpeed
+// FUNCTION: CARMA2_HW 0x004dcca0
+int C2_HOOK_FASTCALL SetOpponentsSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
+    tCar_spec* opponent_car;
+    tPowerup* afterburner;
+    int i;
+
+    for (i = 0; i < gCurrent_race.number_of_racers && gCurrent_race.opponent_list[i].index != 0x1d; i++) {
+    }
+    if (i < gCurrent_race.number_of_racers) {
+        opponent_car = gCurrent_race.opponent_list[i].car_spec;
+        afterburner = gPowerup_array + 5;
+        if (afterburner->initial_value > 0) {
+            PlayExclusiveFFBEffect("Afterburner", 1);
+        }
+        opponent_car->field_0x4d4 = afterburner->float_params[0];
+        opponent_car->grip_multiplier = afterburner->float_params[1];
+        SetCarSuspGiveAndHeight(opponent_car,
+                                ((volatile float*)afterburner->float_params)[2],
+                                ((volatile float*)afterburner->float_params)[3],
+                                ((volatile float*)afterburner->float_params)[6],
+                                ((volatile float*)afterburner->float_params)[4],
+                                ((volatile float*)afterburner->float_params)[5]);
+    }
+    gOpponent_speed_factor = pPowerup->float_params[0];
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dcd70
 // FUNCTION: CARMA2_SW 0x004d9270
