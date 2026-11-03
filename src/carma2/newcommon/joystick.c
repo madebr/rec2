@@ -520,7 +520,23 @@ void C2_HOOK_FASTCALL SetJoystickXAxis(float pValue) {
     }
 }
 
-// SetJoystickYAxis
+// FUNCTION: CARMA2_HW 0x0045c4f0
+void C2_HOOK_FASTCALL SetJoystickYAxis(float pValue) {
+
+    tButtonJoystickInfo* joystick;
+
+    joystick = PDGetCurrentJoystickData();
+    if (joystick != NULL) {
+        joystick->field_0xdc = pValue;
+        if (joystick->field_0xdc > 2.0) {
+            joystick->field_0xdc = 2.0f;
+        }
+        if (joystick->field_0xdc < 0.0) {
+            joystick->field_0xdc = 0.0f;
+        }
+        gJoystick_y_throttle = joystick->field_0xdc;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0045c570
 // FUNCTION: CARMA2_SW 0x0045bfb0
