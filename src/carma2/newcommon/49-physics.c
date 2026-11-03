@@ -456,7 +456,30 @@ void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_objec
 
 // GroupLimitOmega
 
-// PositionWorldJointedObject
+// FUNCTION: CARMA2_HW 0x004b8fe0
+void C2_HOOK_FASTCALL PositionWorldJointedObject(tPhysics_object* pObject, br_scalar pDelta_time) {
+    br_vector3 axis;
+    br_vector3 tv;
+    br_scalar ts;
+
+    if (pObject->physics_joint2->type == eJoint_translation) {
+        BrMatrix34ApplyV(&axis, &pObject->physics_joint2->hinge_axis, &pObject->transform_matrix);
+        ts = BrVector3Dot(&pObject->actor->t.t.translate.t, &axis);
+        BrMatrix34ApplyP(&tv, &pObject->physics_joint2->field_0x08, &pObject->actor->t.t.mat);
+        BrVector3Sub(&tv, &pObject->field_0x17c, &tv);
+        BrVector3Accumulate(&pObject->actor->t.t.translate.t, &tv);
+        ts -= BrVector3Dot(&pObject->actor->t.t.translate.t, &axis);
+        BrVector3Scale(&tv, &axis, ts);
+        BrVector3Accumulate(&pObject->actor->t.t.translate.t, &tv);
+        ts = BrVector3Dot(&pObject->v, &axis);
+        BrVector3Scale(&pObject->v, &axis, ts);
+        TranslateObject(pObject, pDelta_time);
+    } else {
+        BrMatrix34ApplyP(&tv, &pObject->physics_joint2->field_0x08, &pObject->actor->t.t.mat);
+        BrVector3Sub(&tv, &pObject->field_0x17c, &tv);
+        BrVector3Accumulate(&pObject->actor->t.t.translate.t, &tv);
+    }
+}
 
 // TranslateAndRotatePartialObject
 
@@ -772,7 +795,11 @@ void C2_HOOK_FASTCALL RotateObjectFirstOrder(tPhysics_object* pObject, br_scalar
 
 // RotateObject
 
-// TranslateObject
+void C2_HOOK_FASTCALL TranslateObject(tPhysics_object* pObject, br_scalar pDelta_time) {
+    pObject->actor->t.t.translate.t.v[0] += pDelta_time * pObject->v.v[0];
+    pObject->actor->t.t.translate.t.v[1] += pDelta_time * pObject->v.v[1];
+    pObject->actor->t.t.translate.t.v[2] += pDelta_time * pObject->v.v[2];
+}
 
 // GetFacesNearObject
 
