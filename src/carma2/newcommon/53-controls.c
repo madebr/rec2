@@ -1191,7 +1191,16 @@ void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
     }
 }
 
-// ChangeCameraTypeInGame
+// FUNCTION: CARMA2_HW 0x00444ed0
+void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void) {
+
+    if (!gAction_replay_mode) {
+        ChangeCameraType();
+        NewTextHeadupSlot2(4, 0, 1000, -4, GetMiscString(eMiscString_standard_cam + gAction_replay_camera_mode), 0);
+    }
+}
+
+// SteelBollock
 
 // RichardsSphere
 
