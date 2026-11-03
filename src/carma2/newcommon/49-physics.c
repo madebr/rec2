@@ -457,6 +457,7 @@ void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_objec
 // GroupLimitOmega
 
 // FUNCTION: CARMA2_HW 0x004b8fe0
+// FUNCTION: CARMA2_SW 0x004b5700
 void C2_HOOK_FASTCALL PositionWorldJointedObject(tPhysics_object* pObject, br_scalar pDelta_time) {
     br_vector3 axis;
     br_vector3 tv;
