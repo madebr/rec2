@@ -2227,7 +2227,12 @@ void C2_HOOK_FASTCALL ApplyGrooveOnOff(tPipe_chunk** pChunk) {
 }
 
 #ifdef REC2_HW
-// ApplyPowerupGot
+// FUNCTION: CARMA2_HW 0x004c9c00
+void C2_HOOK_FASTCALL ApplyPowerupGot(tPipe_chunk** pChunk) {
+    tPipe_chunk_powerup* chunk = (tPipe_chunk_powerup*)*pChunk;
+
+    return WorkerPowerupGot((tPowerup*)chunk->field_0x0, (tCar_spec*)chunk->field_0x4);
+}
 
 // ApplyPowerupLose
 
