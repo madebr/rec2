@@ -1218,7 +1218,13 @@ tPed_remap* C2_HOOK_FASTCALL FindOrOpenRemap(const char* pName) {
 
 // DisposeAllLoadedForms
 
-// DisposeCharacterInstance
+// FUNCTION: CARMA2_HW 0x00406a30
+void C2_HOOK_FASTCALL DisposeCharacterInstance(tPed_character_instance* pCharacter) {
+
+    if (pCharacter != NULL) {
+        BrMemFree(pCharacter);
+    }
+}
 
 // FindOrOpenForm
 
