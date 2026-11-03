@@ -327,7 +327,13 @@ void C2_HOOK_FASTCALL InitDroneSpec(tDrone_spec* pDrone_spec, int pNode) {
 
 // DroneyObjectInSensiblePlace
 
-// DoDefaultDroneStateAction
+// FUNCTION: CARMA2_HW 0x004516b0
+void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec) {
+
+    if (gDrone_state_functions[pDrone_spec->current_state] != NULL) {
+        gDrone_state_functions[pDrone_spec->current_state](pDrone_spec, eDrone_state_DEFAULT);
+    }
+}
 
 // StopRenderingThisDrone
 
