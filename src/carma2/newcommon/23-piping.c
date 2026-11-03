@@ -317,12 +317,10 @@ void C2_HOOK_FASTCALL WorkerSmudge(tPipe_chunk** pChunk, int pScale) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004d6180
 void C2_HOOK_FASTCALL WorkerProxRay(int field_0x0, tU16 field_0x6, tU16 field_0x4, int field_0x8) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004e0710
 void C2_HOOK_FASTCALL WorkerSpecial(void) {
     NOT_IMPLEMENTED();
 }
@@ -337,7 +335,6 @@ void C2_HOOK_FASTCALL WorkerShrapnel(int field_0x0, void* pField_0x4, tU16 field
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004fba00
 void C2_HOOK_FASTCALL WorkerFlame(int index, int flag, float f1, float f2, float f3, float f4) {
     NOT_IMPLEMENTED();
 }
@@ -367,7 +364,6 @@ void C2_HOOK_FASTCALL WorkerPedStatusUndo(int field_0x0, tU8 field_0x4, tU8 fiel
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004ca4d0
 void C2_HOOK_FASTCALL WorkerPedDir(int field_0x0, br_vector3* pDir) {
     NOT_IMPLEMENTED();
 }
@@ -392,7 +388,6 @@ void C2_HOOK_FASTCALL WorkerPedDismember(int field_0x0, int field_0x4, int field
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004ca980
 void C2_HOOK_FASTCALL WorkerPedDismemberUndo(int field_0x0, int field_0x4, int field_0x6) {
     NOT_IMPLEMENTED();
 }
@@ -432,17 +427,14 @@ void C2_HOOK_FASTCALL WorkerGibShowerUndo(int field_0xc, int prev_0x0, int prev_
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004df200
 void C2_HOOK_FASTCALL WorkerPowerupGot(int field_0x0, int field_0x4) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004e07d0
 void C2_HOOK_FASTCALL WorkerPowerupRespawn(int field_0x0, int field_0x4) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004df210
 void C2_HOOK_FASTCALL WorkerPowerupLose(int field_0x0, int field_0x4) {
     NOT_IMPLEMENTED();
 }

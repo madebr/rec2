@@ -42,7 +42,6 @@ void C2_HOOK_FASTCALL FUN_004c86b0(uintptr_t pId, br_actor* pActor) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004c6410
 void C2_HOOK_FASTCALL PHILRemoveFromParentChain(tPhysics_object* pObject) {
     NOT_IMPLEMENTED();
 }
@@ -71,7 +70,6 @@ const br_scalar gFLOAT_00589aa0 = 0.007246376946568489f;
 // GLOBAL: CARMA2_HW 0x0058f860
 tU16 gNext_crush_actor_id = 10000;
 
-// GLOBAL: CARMA2_HW 0x0074a5f8
 int gCrush_deferred;
 
 extern int gNum_active_non_cars;

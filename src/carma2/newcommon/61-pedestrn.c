@@ -57,7 +57,6 @@ double gPed_face_normal_threshold = 0.99;
 
 #define RECACHE_FACE_BOUNDS(cache__) ((br_bounds3*)&(cache__)->field_0x18)
 
-// GLOBAL: CARMA2_HW 0x00694124
 int gPed_face_cache_flags;
 
 // GLOBAL: CARMA2_HW 0x0058aaf0
