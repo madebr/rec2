@@ -71,10 +71,65 @@ void C2_HOOK_CDECL HostRealBlockWrite(br_uint_16 offset, br_uint_16 seg, void *b
 #endif
 }
 
-// STUB: CARMA2_HW 0x005400c6
+#if defined(__I86__) || defined(_M_IX86)
+C2_NAKED
+#endif
+// FUNCTION: CARMA2_HW 0x005400c6
 // STUB: CARMA2_SW 0x0053b766
 void C2_HOOK_CDECL HostRealBlockFill(br_uint_16 offset, br_uint_16 seg, br_uint_8 value, br_uint_32 count) {
+#if defined(__I86__) || defined(_M_IX86)
+#if defined(_MSC_VER)
+    __asm {
+        push ebp
+        mov ebp, esp
+        push es
+        push esi
+        push edi
+        mov es, word ptr [_RealSelector]
+        mov edi, dword ptr [ebp+0xc]
+        shl edi, 4
+        add edi, dword ptr [ebp+8]
+        mov al, byte ptr [ebp+0x10]
+        mov ecx, dword ptr [ebp+0x14]
+        mov ah, al
+        shr ecx, 1
+        rep stosw
+        adc ecx, ecx
+        rep stosb
+        pop edi
+        pop esi
+        pop es
+        leave
+        ret
+    }
+#else
+    __asm__(
+        "push %ebp\n"
+        "mov %esp, %ebp\n"
+        "push %es\n"
+        "push %esi\n"
+        "push %edi\n"
+        "mov __RealSelector, %es\n"
+        "mov 0xc(%ebp), %edi\n"
+        "shl $4, %edi\n"
+        "add 8(%ebp), %edi\n"
+        "mov 0x10(%ebp), %al\n"
+        "mov 0x14(%ebp), %ecx\n"
+        "mov %al, %ah\n"
+        "shr $1, %ecx\n"
+        "rep stosw\n"
+        "adc %ecx, %ecx\n"
+        "rep stosb\n"
+        "pop %edi\n"
+        "pop %esi\n"
+        "pop %es\n"
+        "leave\n"
+        "ret\n"
+    );
+#endif
+#else
     abort();
+#endif
 }
 
 // STUB: CARMA2_HW 0x005400f2
