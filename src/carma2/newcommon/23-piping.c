@@ -982,7 +982,31 @@ int C2_HOOK_FASTCALL CarTimeout(tU32 pTime) {
     return 1;
 }
 
-// ScanCarsPositions
+// FUNCTION: CARMA2_HW 0x004c6920
+void C2_HOOK_FASTCALL ScanCarsPositions(tCar_spec* pCar, br_vector3* pSource_pos, br_scalar pMax_distance_sqr, tU32 pOffset_time, tU32 pTime_period, br_vector3* pCar_pos, tU32* pTime_returned) {
+    tU8* temp_ptr;
+
+    temp_ptr = ARGetPipePlayPtr();
+    gTrigger_time = 0;
+    gMax_distance = pMax_distance_sqr;
+    BrVector3Copy(&gReference_pos, pSource_pos);
+    gCar_ptr = pCar;
+
+    if (ARReplayForwards()) {
+        gOldest_time = GetTotalTime() + pOffset_time;
+        gYoungest_time = gOldest_time + pTime_period;
+    } else {
+        gOldest_time = GetTotalTime() - pOffset_time;
+        gYoungest_time = gOldest_time - pTime_period;
+    }
+
+    ARScanBuffer(&temp_ptr, ePipe_chunk_car, GetTotalTime(), CheckCar, CarTimeout);
+    *pCar_pos = gCar_pos;
+    if (pCar_pos->v[0] > 500.f) {
+        BrVector3Sub(pCar_pos, pCar_pos, &gInitial_position);
+    }
+    *pTime_returned = gTrigger_time;
+}
 // InitialiseActionReplay
 
 // STUB: CARMA2_HW 0x004c6c60
