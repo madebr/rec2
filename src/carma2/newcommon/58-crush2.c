@@ -118,13 +118,13 @@ int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar) {
 
     if (gNet_mode == eNet_mode_client
             || pCar->knackered
-            || (pCar->damage_units[eDamage_engine].damage_level < 99
+            || ((pCar->damage_units[eDamage_engine].damage_level < 99
                 && (pCar->damage_units[eDamage_transmission].damage_level < 99)
                 && pCar->damage_units[eDamage_driver].damage_level < 99)
                 && (pCar->damage_units[eDamage_lf_wheel].damage_level < 99
                     || pCar->damage_units[eDamage_rf_wheel].damage_level < 99
                     || pCar->damage_units[eDamage_lr_wheel].damage_level < 99
-                    || pCar->damage_units[eDamage_rr_wheel].damage_level < 99)) {
+                    || pCar->damage_units[eDamage_rr_wheel].damage_level < 99))) {
         return 0;
     }
     ExplodeMeCarUpMeOldMatey(pCar);
