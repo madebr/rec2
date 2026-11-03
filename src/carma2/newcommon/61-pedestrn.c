@@ -1846,7 +1846,11 @@ int C2_HOOK_FASTCALL MorphCharacterBonePositions(tPed_character_instance* pPed, 
 
 // ResetAnimation
 
-// SetCharacterMove
+// STUB: CARMA2_HW 0x0040a050
+int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, int pArg4, int pArg5, int pArg6) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
 
 // DRMatrix34RotateCos
 
@@ -2262,4 +2266,127 @@ int C2_HOOK_FASTCALL FUN_004093e0(tPed_character_instance* pCharacter) {
     }
     BonerActiveHalted2(pCharacter, 1);
     return 0;
+}
+
+
+// FUNCTION: CARMA2_HW 0x00409ca0
+void C2_HOOK_FASTCALL MungeCharacterAnimationBody(tPed_character_instance* pCharacter, tU32 pTime, undefined4 pArg3) {
+    tPed_move* model;
+    br_matrix34* work;
+    float kx;
+    float ky;
+    float kz;
+    double t;
+    tS32 loop_count = 0;
+    int i;
+
+    if (pCharacter->field_0x7 < 0) {
+        return;
+    }
+    if ((pCharacter->field_0x14 & 0x4) && (pCharacter->field_0x14 & 0x2) && pCharacter->field_0xe8 == NULL) {
+        return;
+    }
+    if (pCharacter->field_0xbc != NULL) {
+        if (MorphCharacterBonePositions(pCharacter, pTime - pCharacter->field_0x24)) {
+            pCharacter->field_0x24 = pTime;
+            return;
+        }
+        pCharacter->field_0x24 = pTime - (tS16)pCharacter->field_0x1e;
+    }
+    model = pCharacter->personality->form->moves[pCharacter->field_0x7].move;
+    if (pCharacter->field_0x4 < 0) {
+        work = &pCharacter->field_0x2c;
+    } else if (pCharacter->field_0xe8 != NULL) {
+        work = pCharacter->field_0xe8;
+    } else {
+        work = &pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+    }
+    kx = work->m[3][0];
+    ky = work->m[3][1];
+    kz = work->m[3][2];
+    if ((tS16)pCharacter->field_0x1e != 0) {
+        if (pCharacter->field_0x24 == 0) {
+            SetCharacterBonePositions(pCharacter, 0, 0);
+        } else {
+            float rate;
+
+            rate = (float)(tS32)(pTime - pCharacter->field_0x24) / (tS32)(tS16)pCharacter->field_0x1e;
+            if (rate > 10.0f) {
+                rate = 10.0f;
+            } else if (rate < -10.0f) {
+                rate = -10.0f;
+            }
+            t = rate + (double)*(float*)&pCharacter->field_0x18 + (tS32)(tS16)pCharacter->field_0x1c;
+            *(float*)&pCharacter->field_0x18 = (float)(t - floor(t));
+            loop_count = (tS32)(floor(t) - (double)(tS32)(tS16)pCharacter->field_0x1c);
+            if (loop_count > 0) {
+                for (i = 0; i < loop_count; i++) {
+                    pCharacter->field_0x1c++;
+                    if ((tS16)pCharacter->field_0x1c >= model->count_frames) {
+                        if (gAction_replay_mode == 0) {
+                            pCharacter->field_0x1c = (undefined2)(model->count_frames - 1);
+                            if (pCharacter->field_0x9 & 0x2) {
+                                pCharacter->field_0x9 &= (tU8)~0x2;
+                                gPed_vtable->move_completed((undefined4*)pCharacter);
+                            }
+                            if (pCharacter->field_0x8 >= 0) {
+                                SetCharacterMove(pCharacter, pCharacter->field_0x8, (float)(tS32)(tS16)pCharacter->field_0x20, 0, (pCharacter->field_0x9 & 0x4) >> 2, pTime);
+                                SetCharacterBonePositions(pCharacter, 0, 0);
+                                break;
+                            }
+                            pCharacter->field_0x1c = 0;
+                        } else if (model->move_flags & 0x1) {
+                            pCharacter->field_0x1c--;
+                            i = loop_count - 1;
+                        } else {
+                            pCharacter->field_0x1c = 0;
+                        }
+                    }
+                    SetCharacterBonePositions(pCharacter, i != loop_count - 1 ? 2 : 0, 1);
+                }
+            }
+            if (loop_count == 0) {
+                if ((pCharacter->field_0x14 & 0x4) || gAction_replay_mode != 0) {
+                    SetCharacterBonePositions(pCharacter, 0, 0);
+                }
+            }
+            if (loop_count < 0) {
+                for (i = loop_count; i < 0; i++) {
+                    SetCharacterBonePositions(pCharacter, i < -1 ? 2 : 0, 1);
+                    pCharacter->field_0x1c--;
+                    if ((tS16)pCharacter->field_0x1c < 0) {
+                        if (model->move_flags & 0x1) {
+                            pCharacter->field_0x1c++;
+                            SetCharacterBonePositions(pCharacter, 3, 1);
+                            i = 0;
+                        } else {
+                            pCharacter->field_0x1c = (undefined2)(model->count_frames - 1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    pCharacter->field_0x24 = pTime;
+    if (loop_count != 0) {
+        float dx;
+        float dy;
+        float dz;
+        double x;
+
+        dx = work->m[3][0] - kx;
+        dy = work->m[3][1] - ky;
+        dz = work->m[3][2] - kz;
+        pCharacter->field_0xd8.v[0] = dx;
+        pCharacter->field_0xd8.v[1] = dy;
+        pCharacter->field_0xd8.v[2] = dz;
+        x = (double)(tS32)loop_count * 0.001 * (tS16)pCharacter->field_0x1e;
+        pCharacter->field_0xd8.v[0] = (float)(pCharacter->field_0xd8.v[0] / x);
+        pCharacter->field_0xd8.v[1] = (float)(pCharacter->field_0xd8.v[1] / x);
+        pCharacter->field_0xd8.v[2] = (float)(pCharacter->field_0xd8.v[2] / x);
+    } else if ((tS16)pCharacter->field_0x1e == 0) {
+        pCharacter->field_0xd8.v[0] = 0.0f;
+        pCharacter->field_0xd8.v[1] = 0.0f;
+        pCharacter->field_0xd8.v[2] = 0.0f;
+    }
 }
