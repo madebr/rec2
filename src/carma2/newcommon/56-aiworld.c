@@ -406,7 +406,52 @@ extern tS3_outlet* gCar_outlet;
 extern br_vector3 gZero_v__car;
 extern tShit_mine gShit_mines[20];
 
-// MineExplode
+// FUNCTION: CARMA2_HW 0x004ddab0
+int C2_HOOK_FASTCALL MineExplode(tShit_mine* pMine) {
+    tNet_message* message;
+    br_vector3 offset;
+    int hierarchy_size;
+
+    if (pMine->flags & 0x2) {
+        return 0;
+    }
+    pMine->flags |= 0x2;
+    if (gNet_mode == eNet_mode_host) {
+        hierarchy_size = GetHierarchyNetworkSize(pMine->collision_info);
+        message = NetBuildGuaranteedMessage(0x31, hierarchy_size + 12);
+        message->contents.mine_explode.mine_index = pMine - gShit_mines;
+        message->contents.mine_explode.field_0x3 = pMine->field_0x35;
+        message->contents.mine_explode.field_0x4 = pMine->field_0x34;
+        message->contents.mine_explode.field_0x5 = NetPlayerFromCar(pMine->field_0x30) - gNet_players;
+        message->contents.mine_explode.field_0x8 = -1;
+        GetHierarchyNetworkStuff(pMine->collision_info, message->contents.mine_explode.object_hierarchy, 0x48);
+        NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, message, NULL);
+    }
+    PHILRemoveObject(pMine->collision_info);
+    pMine->next_think_time = GetTotalTime() + 1600;
+    BrVector3Negate(&offset, &gExplosion_pix_animation_groups.groups[0].offset);
+    Explode(&gExplosion_pix_animation_groups, pMine->collision_info->actor, &pMine->collision_info->actor->model->bounds, &offset);
+    DRS3StartSound3D(gCar_outlet, eSoundId_Explosion, &pMine->collision_info->actor->t.t.translate.t, &gZero_v__car, 1, 255, 0x10000, 0x10000);
+    PipeSingleEndShitMine(pMine->collision_info->actor);
+    if (pMine->collision_info->actor->parent != NULL) {
+        BrActorRemove(pMine->collision_info->actor);
+    }
+    pMine->collision_info->actor->render_style = BR_RSTYLE_NONE;
+    return 1;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+/* local declarations for StopProcessingThisDrone (no new includes/externs in headers) */
+extern void C2_HOOK_FASTCALL PipeSingleDroneRender(tDrone_spec* pDrone_spec, int pRender);
+extern int gCount_rendered_drones;
+extern tDrone_state_function* gDrone_state_functions[6];
 
 // STUB: CARMA2_HW 0x0044cfc0
 void C2_HOOK_CDECL DoNotDprintf_drone(const char* pMessage, ...) { NOT_IMPLEMENTED(); }
