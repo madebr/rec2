@@ -273,7 +273,17 @@ void C2_HOOK_FASTCALL FUN_00403cc0(int pUnused, void (C2_HOOK_FASTCALL * pBetwee
     }
 }
 
-// DoActionReplay
+// FUNCTION: CARMA2_HW 0x004e68e0
+void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period) {
+    extern tU32 gTime_of_last_zappy_headups;
+    extern void C2_HOOK_FASTCALL DoZappyActionReplayHeadups(int pFrame_number);
+    extern tPreprocess_AR_callback PreProcess;
+    extern tPostProcess_AR_callback PostProcess;
+    extern void C2_HOOK_FASTCALL FUN_00403cc0(int pUnused, void (C2_HOOK_FASTCALL * pBetween_sessions)(int), tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
+
+    gTime_of_last_zappy_headups = 0;
+    FUN_00403cc0(pFrame_period, DoZappyActionReplayHeadups, PreProcess, PostProcess);
+}
 
 // PollActionReplayControls
 
