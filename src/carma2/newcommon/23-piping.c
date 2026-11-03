@@ -2627,7 +2627,12 @@ void C2_HOOK_FASTCALL UndoPedFPChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_c
     return WorkerPedFPChange(chunk->field_0x0, *(tPipe_stack_word*)&chunk->field_0x4);
 }
 
-// UndoPedPos
+// FUNCTION: CARMA2_HW 0x004ca240
+void C2_HOOK_FASTCALL UndoPedPos(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_ped_pos* chunk = (tPipe_chunk_ped_pos*)*pChunk;
+
+    return WorkerPedPos(chunk->field_0x0, (br_vector3*)&chunk->field_0x4);
+}
 
 // UndoPedModelChange
 
