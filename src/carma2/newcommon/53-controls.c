@@ -865,7 +865,27 @@ void C2_HOOK_FASTCALL CheckForCheatingGits(void) {
 
 // PollCarControls
 
-// PollCameraControls
+// FUNCTION: CARMA2_HW 0x00444270
+void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
+    int down0;
+    int down1;
+
+    down0 = PDKeyDown(0);
+    down1 = PDKeyDown(1);
+    if (down0 || down1) {
+        CheckMapMoveKeys(down0, down1);
+        gCamera_key_flags.field_0x0_bit1 = 0;
+        gCamera_key_flags.field_0x0_bit2 = 0;
+        gCamera_key_flags.field_0x0_bit3 = 0;
+        gCamera_key_flags.field_0x0_bit4 = 0;
+    } else {
+        gCamera_key_flags.field_0x0_bit1 = KeyIsDownNoMouldiness(31);
+        gCamera_key_flags.field_0x0_bit2 = KeyIsDownNoMouldiness(32);
+        gCamera_key_flags.field_0x0_bit3 = KeyIsDownNoMouldiness(33);
+        gCamera_key_flags.field_0x0_bit4 = KeyIsDownNoMouldiness(34);
+        gCamera_key_flags.field_0x0_bit0 = PDKeyDown(2);
+    }
+}
 
 // SetFlag2
 
