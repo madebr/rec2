@@ -582,7 +582,73 @@ float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pProp
 
 // FlushQueuedAddsAndRemoves
 
-// ChangedObjectsCallbacks
+// FUNCTION: CARMA2_HW 0x004b6be0
+void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tPhysics_object* pObjects, tPhysics_callbacks* pCallbacks, tU32 pPeriod) {
+    tPhysics_object* pObject;
+    tCollision_info_owner* owner;
+    tPhysics_object* child;
+    tU32 val;
+
+    for (pObject = pObjects; pObject != NULL; pObject = pObject->next) {
+        if (!gPHIL_disabled) {
+            if (pObject->field_0x239 == 2) {
+                val = ((tCollision_info_owner*)pObject->field_0x240)->field_0x08;
+            } else if (pObject->field_0x240 != NULL) {
+                val = ((tCollision_info_owner*)pObject->field_0x240)->field_0x08;
+            } else {
+                val = 0;
+            }
+        } else {
+            val = 0;
+        }
+        if (val != 2) {
+            continue;
+        }
+        if (pObject->disable_move_rotate) {
+            owner = pObject->field_0x240;
+            if (owner == NULL) {
+                continue;
+            }
+            if (!(owner->field_0x04 & 0x2)) {
+                continue;
+            }
+            if (pCallbacks->active_halted != NULL && !pCallbacks->active_halted(pObject)) {
+                continue;
+            }
+            if (gPHIL_disabled) {
+                continue;
+            }
+            if (pObject->field_0x239 == 2) {
+                ((tCollision_info_owner*)pObject->field_0x240)->field_0x08 = 1;
+            } else {
+                owner = pObject->field_0x240;
+                if (owner == NULL) {
+                    continue;
+                }
+                owner->field_0x08 = 1;
+                pObject->flags |= 0x20;
+            }
+        } else {
+            if (pCallbacks->changed_objects != NULL) {
+                pCallbacks->changed_objects(pObject, pPeriod);
+            }
+            owner = pObject->field_0x240;
+            if (owner == NULL) {
+                continue;
+            }
+            if (!(owner->field_0x04 & 0x4)) {
+                continue;
+            }
+            for (child = pObject; child != NULL; child = child->child) {
+                PipeSinglePHILObject(child);
+            }
+        }
+    }
+}
+
+// ProcessDrag2
+
+// ProcessDrag
 
 // FUNCTION: CARMA2_HW 0x004b6e90
 void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tPhysics_object* pObject) {
