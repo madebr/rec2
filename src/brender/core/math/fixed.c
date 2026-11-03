@@ -985,9 +985,35 @@ static int16_t fixed_lut_interpolate(uint16_t *table, uint32_t value) {
 }
 
 // FUNCTION: CARMA2_HW 0x005374e5
-br_fixed_ls C2_HOOK_CDECL BrFixedSin(br_angle a) {
-
+br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedSin(br_angle a) {
+#ifndef REC2_MATCHING
     return 2 * fixed_lut_interpolate(fixed_sin_table, a);
+#else
+    __asm {
+        push ebp
+        mov ebp, esp
+        push ebx
+        push ecx
+        push edx
+        mov ax, word ptr [ebp + 8]
+        xor ebx, ebx
+        xchg bl, ah
+        mov cx, word ptr [ebx*2 + fixed_sin_table]
+        mov dx, word ptr [ebx*2 + fixed_sin_table + 2]
+        sub edx, ecx
+        imul dx
+        mov al, ah
+        mov ah, dl
+        add eax, ecx
+        cwde
+        add eax, eax
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00537516
