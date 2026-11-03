@@ -24,6 +24,15 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x0058b008
+const br_scalar gFLOAT_0058b008 = 0.0f;
+
+// GLOBAL: CARMA2_HW 0x006aa574
+int gReplay_splash_flags;
+
+// GLOBAL: CARMA2_HW 0x006aa388
+tReplay_splash gReplay_splashes[10];
+
 // GLOBAL: CARMA2_HW 0x006aa568
 int gDust_rotate;
 
@@ -997,7 +1006,41 @@ void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
     return NULL;
 }
 
-// ClearSplashes
+// FUNCTION: CARMA2_HW 0x004fee70
+void C2_HOOK_FASTCALL ClearSplashes(tPhysics_object* pObject) {
+    extern float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pCollision_info, int pParam);
+    extern void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pCollision, void* pArg2);
+    extern int gReplay_splash_flags;
+    extern tReplay_splash gReplay_splashes[10];
+    extern const br_scalar gFLOAT_0058b008;
+    void* object;
+    int i;
+
+    if (pObject->water_d == 10000.f) {
+        return;
+    }
+    pObject->water_d = 10000.f;
+    if (PHILGetObjectProperty(pObject, 6) != gFLOAT_0058b008) {
+        object = pObject;
+    } else if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        object = pObject->actor;
+    } else if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 >= 2 && pObject->flags_0x238 <= 4) {
+        object = pObject->owner;
+    } else {
+        object = NULL;
+    }
+    if (object == NULL) {
+        return;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gReplay_splashes); i++) {
+        if ((gReplay_splash_flags & (1 << i)) && object == gReplay_splashes[i].object.actor) {
+            ARStartPipingSession((tPipe_chunk_type)0x3b);
+            AddExtendedSplashToPipingSession(pObject, object);
+            AREndPipingSession();
+            return;
+        }
+    }
+}
 
 // AdjustSplashReplay
 
