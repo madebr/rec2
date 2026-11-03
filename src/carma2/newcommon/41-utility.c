@@ -1968,7 +1968,16 @@ void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2)
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// CycleJoystick
+// FUNCTION: CARMA2_HW 0x00511270
+void C2_HOOK_FASTCALL CycleJoystick(void) {
+    extern int C2_HOOK_FASTCALL SaveJoystickPreferences(void);
+    extern void C2_HOOK_FASTCALL FUN_0045c420(void);
+    extern int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
+
+    SaveJoystickPreferences();
+    FUN_0045c420();
+    LoadJoystickPreferences();
+}
 
 // STUB: CARMA2_HW 0x0045c420
 void C2_HOOK_FASTCALL FUN_0045c420(void) {
