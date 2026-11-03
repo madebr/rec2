@@ -25,6 +25,9 @@
 
 #include <math.h>
 
+// GLOBAL: CARMA2_HW 0x00705b70
+tU32 gINT_00705b70;
+
 // GLOBAL: CARMA2_HW 0x006820c0
 // GLOBAL: CARMA2_SW 0x0067c800
 br_vector3 gRender_bounds_centre;
@@ -69,9 +72,39 @@ int gINT_00681fb0;
 // GLOBAL: CARMA2_SW 0x0067ec54
 int gFrame;
 
+// GLOBAL: CARMA2_HW 0x006820d8
+tDrone_crush_data gDrone_crush_data;
+
+
+// GLOBAL: CARMA2_HW 0x0068452c
+int gShow_drone_paths;
+
+// GLOBAL: CARMA2_HW 0x005947c0
+br_vector3 gDefault_drone_direction = {{ 0.f, 0.f, -1.f }};
+
+
+/* separate 0.0f in .rdata used only here (not the shared 0x0058a988 literal) */
+// GLOBAL: CARMA2_HW 0x00589dc4
+float gDrone_render_zero = 0.0f;
+
+extern void C2_HOOK_CDECL DoNotDprintf_drone(const char* pMessage, ...);
+extern tDrone_state_function* gDrone_state_functions[6];
+extern int C2_HOOK_FASTCALL PHILAddObject(tPhysics_object* pObject);
+extern int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...);
+extern void C2_HOOK_FASTCALL PipeSingleDroneRender(tDrone_spec* pDrone_spec, int pRender);
+extern void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state);
+extern void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone);
+extern void C2_HOOK_FASTCALL MoveThisDronePlane(tDrone_spec* pDrone);
+extern void C2_HOOK_FASTCALL MoveThisDroneCar(tDrone_spec* pDrone);
+extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
+extern void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, undefined4 pSection, tU16 pSpeed, tU16 pDistance);
+
 // DoNotDprintf
 
-// CrappyLittleVector3DPrintf
+// FUNCTION: CARMA2_HW 0x00451620
+void C2_HOOK_FASTCALL CrappyLittleVector3DPrintf(const char* pMessage, br_vector3* pPosition) {
+    DoNotDprintf_drone("%d: %s: %3.3f, %3.3f, %3.3f", gFrame, pMessage, pPosition->v[0], pPosition->v[1], pPosition->v[2]);
+}
 
 // CrappyLittleDrivingStateInfoDprintf
 
@@ -108,8 +141,6 @@ void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone) {
 // InitDroneCollisionObject
 
 // ReallyAddDroneToPHIL
-
-// AddDroneToPHIL
 
 // PreprocessDronePaths
 
@@ -222,21 +253,11 @@ int C2_HOOK_FASTCALL DroneTrainWithinRenderingDistance(const br_vector3* pPos) {
 
 // InitDroneSpec
 
-// ChooseNextNode
-
-// DroneOrientationChanged
-
-// DroneyObjectInSensiblePlace
+// DoDefaultDroneStateAction
 
 // StopRenderingThisDrone
 
-// StopProcessingThisDrone
-
 // StartRenderingThisDrone
-
-// CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing
-
-// StartProcessingThisDrone
 
 // FUNCTION: CARMA2_HW 0x0044cb80
 // FUNCTION: CARMA2_SW 0x0044c930
@@ -285,27 +306,15 @@ int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3* pPos) 
 
 // ProcessThisDrone
 
-// DroneStateFuncReset
-
 // InitDroneDrivingInfo
-
-// MoveThisDronePlane
-
-// MoveThisDroneCar
-
-// PipeDroneMatrix
 
 // PossiblyPipeDroneMovement
 
 // DroneStateFuncControlledMovement
 
-// DoDroneHaltingStuff
-
 // DroneStateFuncPhysicsActive
 
 // DroneStateFuncStationaryPassive
-
-// GetNewCrushyModelForDrone
 
 // FUNCTION: CARMA2_HW 0x0044ecf0
 // FUNCTION: CARMA2_SW 0x0044ea90
@@ -391,8 +400,6 @@ void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
 
 // GetDroneCrushData
 
-// AllocateAndInitDrones
-
 // STUB: CARMA2_HW 0x00450bf0
 // STUB: CARMA2_SW 0x00450980
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
@@ -422,13 +429,16 @@ void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec* pDrone) {
 #pragma auto_inline(on)
 #endif
 
+extern int C2_HOOK_FASTCALL PHILMakeObjectActive(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, int pFlag);
+extern int gMutant_tail_state;
+
 // MyDroneHathCollideth
 
 // MyDroneHathHalteth
 
 // MoveMyDroneBaby
 
-// DroneLookWhereYoureGoingYouBlindCunt
+// DroneNoOp
 
 // FUNCTION: CARMA2_HW 0x004525d0
 // FUNCTION: CARMA2_SW 0x00452360
@@ -459,6 +469,7 @@ br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void) {
 
 // STUB: CARMA2_HW 0x00452810
 void C2_HOOK_FASTCALL ApplyDroneRender2(int pIndex, int pRender) { NOT_IMPLEMENTED(); }
+
 // FUNCTION: CARMA2_HW 0x00452880
 // FUNCTION: CARMA2_SW 0x00452610
 void C2_HOOK_FASTCALL ApplyDroneStraightPos2(int pDrone_id, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance) {
@@ -526,5 +537,11 @@ tDrone_state_function* gDrone_state_functions[6];
 // GLOBAL: CARMA2_HW 0x00594780
 const char* gGroove_funk_type_names[4];
 
-// GLOBAL: CARMA2_HW 0x00705b70
-tU32 gINT_00705b70;
+// STUB: CARMA2_HW 0x0044e540
+void C2_HOOK_FASTCALL MoveThisDroneCar(tDrone_spec* pDrone) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x0044d2a0
+void C2_HOOK_FASTCALL MoveThisDronePlane(tDrone_spec* pDrone) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x0044cfd0
+void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone) { NOT_IMPLEMENTED(); }
