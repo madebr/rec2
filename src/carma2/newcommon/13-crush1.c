@@ -2148,7 +2148,72 @@ typedef struct {
     br_actor* actor;
 } tFind_crush_actor_arg;
 
-// FindActorByCrushEntryID
+// FUNCTION: CARMA2_HW 0x0043cac0
+int C2_HOOK_CDECL FindActorByCrushEntryID(br_actor* pActor, void* pArg) {
+    tFind_crush_actor_arg* arg = pArg;
+    tUser_crush_data* user_crush_data;
+
+    user_crush_data = pActor->user;
+    if (user_crush_data != NULL && user_crush_data->crush_data != NULL && user_crush_data->crush_data->id == arg->id) {
+        arg->actor = pActor;
+        return 1;
+    }
+    return 0;
+}
+
+// ARApplyFlap
+
+// ARApplySplitWeld
+
+// ARUndoSplitWeld
+
+// ReceivedCrush
+
+// FindBitWithID
+
+// AttachedBitFromID
+
+// ReceivedSemiDetachBit
+
+// ReceivedDetachBit
+
+// SemiDetachedBitObjectFromID
+
+// ReceivedFullyDetachBit
+
+// DetachedBitFromID
+
+// SemiDetachedBitFromID
+
+// ReceivedReAttachBit
+
+// ReceivedReAttachAllBits
+
+// DoQueuedNetDetaching
+
+// DBNonCarOwner
+
+// SendDBNonCar
+
+// ReceivedDBNonCar
+
+// SendAllDBNonCars
+
+// ReceivedDBNonCarPosition
+
+// ReceivedToggleFlaps
+
+// SHNonCarOwner
+
+// SendSHNonCar
+
+// SendAllSHNonCars
+
+// ReceivedSHNonCar
+
+// GetNetShapeDataLengthFromShape
+
+// GetNetShapeDataLengthFromData
 
 // FUNCTION: CARMA2_HW 0x0043d9c0
 // FUNCTION: CARMA2_SW 0x0043da10
