@@ -2152,7 +2152,12 @@ void C2_HOOK_FASTCALL ApplyPedMove(tPipe_chunk** pChunk) {
     return WorkerPedMove((tPedestrian*)chunk->field_0x0, chunk->field_0x4, chunk->field_0xc, chunk->field_0x8 & 1, chunk->field_0x14, 0, &chunk->field_0x24, chunk->field_0x34, &chunk->field_0x38);
 }
 
-// ApplyPedPhysics
+// FUNCTION: CARMA2_HW 0x004c9b10
+void C2_HOOK_FASTCALL ApplyPedPhysics(tPipe_chunk** pChunk) {
+    tPipe_chunk_ped_physics* chunk = (tPipe_chunk_ped_physics*)*pChunk;
+
+    return WorkerPedPhysics(chunk->field_0x0, &chunk->field_0x4);
+}
 
 // ApplyPedDismember
 
