@@ -1801,7 +1801,12 @@ void C2_HOOK_FASTCALL ApplySmudge(tPipe_chunk** pChunk) {
     return WorkerSmudge(pChunk, 1);
 }
 
-// ApplySpark
+// FUNCTION: CARMA2_HW 0x004c9140
+void C2_HOOK_FASTCALL ApplySpark(tPipe_chunk** pChunk) {
+    tPipe_chunk_spark_replay* chunk = (tPipe_chunk_spark_replay*)*pChunk;
+
+    return WorkerSpark(chunk->field_0x0, &chunk->field_0x4[0], &chunk->field_0x4[0xc]);
+}
 
 // ApplyShrapnel
 
