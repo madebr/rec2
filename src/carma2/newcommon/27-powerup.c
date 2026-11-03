@@ -1187,7 +1187,55 @@ void C2_HOOK_FASTCALL ConfigureShitMine(tShit_mine* pMine, tPowerup* pPowerup, t
     pMine->collision_info->water_normal.v[2] = pCar->collision_info->water_normal.v[2];
 }
 
-// InitializeMineMotion
+// FUNCTION: CARMA2_HW 0x004dd590
+void C2_HOOK_FASTCALL InitializeMineMotion(tShit_mine* pMine, tCar_spec* pCar) {
+    extern const double gConst_minus_0p15;
+    br_matrix34 car_transform;
+    br_vector3 impulse;
+    double d;
+
+    if (pMine->flags & 0x40) {
+        BrMatrix34Translate(&pMine->collision_info->actor->t.t.mat,
+                            0.f,
+                            (pCar->collision_info->bb1.max.v[1] - pCar->collision_info->bb1.min.v[1]) * gConst_0p5,
+                            pCar->collision_info->bb1.min.v[2] - 0.15);
+    } else {
+        BrMatrix34Translate(&pMine->collision_info->actor->t.t.mat,
+                            0.f,
+                            (pCar->collision_info->bb1.max.v[1] - pCar->collision_info->bb1.min.v[1]) * gConst_0p5,
+                            pCar->collision_info->bb1.max.v[2] - gConst_minus_0p15);
+    }
+    BrMatrix34Copy(&car_transform, &pCar->collision_info->transform_matrix);
+    BrMatrix34Post(&pMine->collision_info->actor->t.t.mat, &car_transform);
+    BrMatrix34Copy(&pMine->collision_info->transform_matrix, &pMine->collision_info->actor->t.t.mat);
+    impulse.v[0] = 0.f;
+    impulse.v[1] = (float)(d = ((float*)pMine->field_0x1c)[1]);
+    impulse.v[2] = (float)(d = ((float*)pMine->field_0x1c)[2]);
+    BrMatrix34ApplyV(&pMine->collision_info->v, &impulse, &car_transform);
+    pMine->collision_info->v.v[0] = pCar->collision_info->v.v[0] + pMine->collision_info->v.v[0];
+    pMine->collision_info->v.v[1] = pCar->collision_info->v.v[1] + pMine->collision_info->v.v[1];
+    pMine->collision_info->v.v[2] = pCar->collision_info->v.v[2] + pMine->collision_info->v.v[2];
+    if (pMine->flags & 0x40) {
+        pMine->collision_info->v.v[0] = pCar->collision_info->v.v[0] + pMine->collision_info->v.v[0];
+        pMine->collision_info->v.v[1] = pCar->collision_info->v.v[1] + pMine->collision_info->v.v[1];
+        pMine->collision_info->v.v[2] = pCar->collision_info->v.v[2] + pMine->collision_info->v.v[2];
+    }
+    pMine->collision_info->omega.v[0] = 0.f;
+    pMine->collision_info->omega.v[1] = 0.f;
+    pMine->collision_info->omega.v[2] = 0.f;
+}
+
+// ActivateMine
+
+// PositionMine
+
+// MineSound
+
+// ReceivedMine
+
+// ShitMine
+
+// MineExplode
 
 // FUNCTION: CARMA2_HW 0x004ddc10
 // FUNCTION: CARMA2_SW 0x004da110
