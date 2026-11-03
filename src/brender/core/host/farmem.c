@@ -211,13 +211,27 @@ void C2_HOOK_CDECL HostFarByteWrite(br_uint_32 offset, br_uint_16 sel, br_uint_8
 }
 #endif
 
-// STUB: CARMA2_HW 0x00540463
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x00540463
 // STUB: CARMA2_SW 0x0053bb03
+__declspec(naked) br_uint_8 C2_HOOK_CDECL HostFarByteRead(br_uint_32 offset, br_uint_16 sel) {
+    __asm {
+        push ebp
+        mov ebp, esp
+        push ds
+        lds eax, fword ptr [ebp+8]
+        mov al, [eax]
+        pop ds
+        leave
+        ret
+    }
+}
+#else
 br_uint_8 C2_HOOK_CDECL HostFarByteRead(br_uint_32 offset, br_uint_16 sel) {
-
-    NOT_IMPLEMENTED();
+    abort();
     return 0;
 }
+#endif
 
 // STUB: CARMA2_HW 0x0054046f
 // STUB: CARMA2_SW 0x0053bb0f
