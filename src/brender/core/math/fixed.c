@@ -12,6 +12,14 @@
 
 #define fixed_cos_table ((unsigned short*)&fixed_sin_table[64])
 
+// The hand-written bodies below reproduce the original machine code exactly;
+// other builds get the equivalent plain C.
+#ifdef REC2_MATCHING
+#define BR_NAKED __declspec(naked)
+#else
+#define BR_NAKED
+#endif
+
 // GLOBAL: CARMA2_HW 0x0066cc2c
 unsigned short fixed_sin_table[322] = {
     // start sin table
@@ -242,9 +250,32 @@ br_fixed_ls C2_HOOK_FASTCALL BrFixedMul(br_fixed_ls a, br_fixed_ls b) {
 }
 
 // FUNCTION: CARMA2_HW 0x00537131
-br_fixed_ls C2_HOOK_CDECL BrFixedMac2(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
-
+br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedMac2(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
+#ifndef REC2_MATCHING
     return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d) >> 16;
+#else
+    __asm {
+        push ebp
+        mov ebp, esp
+        push edx
+        push ebx
+        push ecx
+        mov eax, dword ptr [ebp + 8]
+        imul dword ptr [ebp + 0xc]
+        mov ebx, eax
+        mov ecx, edx
+        mov eax, dword ptr [ebp + 0x10]
+        imul dword ptr [ebp + 0x14]
+        add eax, ebx
+        adc edx, ecx
+        shrd eax, edx, 16
+        pop ecx
+        pop ebx
+        pop edx
+        leave
+        ret
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00537154
