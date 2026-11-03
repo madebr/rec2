@@ -761,7 +761,15 @@ int C2_HOOK_FASTCALL MyDroneHathHalteth(tPhysics_object* pObject) {
     return 1;
 }
 
-// MoveMyDroneBaby
+// FUNCTION: CARMA2_HW 0x00452410
+void C2_HOOK_FASTCALL MoveMyDroneBaby(tPhysics_object* pObject, undefined4 pArg2) {
+    tDrone_spec* pDrone;
+
+    pDrone = (tDrone_spec*)pObject->owner;
+    DoNotDprintf_drone("MoveMyDroneBaby(): Drone %d, State %d", pDrone->id, pDrone->current_state);
+}
+
+// DroneLookWhereYoureGoingYouBlindCunt
 
 // DroneNoOp
 
