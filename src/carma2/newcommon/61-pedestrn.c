@@ -2386,7 +2386,44 @@ static tPhysics_object* C2_HOOK_FASTCALL PedGetRootObjectInlineMW(tPed_character
     return NULL;
 }
 
-// MakeCharacterPhysicworthy
+// FUNCTION: CARMA2_HW 0x004091e0
+int C2_HOOK_FASTCALL MakeCharacterPhysicworthy(tPed_character_instance* pCharacter) {
+    tPhysics_object* obj;
+    tPhysics_object* child;
+    br_vector3* velocity;
+    tU32 flags;
+
+    flags = pCharacter->field_0x14;
+    if (flags & 4) {
+        return 0x17;
+    }
+    if (flags == 0) {
+        return 0x15;
+    }
+    if (flags & 1) {
+        obj = pCharacter->personality->form->simple_physicing[pCharacter->field_0x5].collision_info;
+    } else {
+        obj = PedGetRootObjectInlineMW(pCharacter);
+    }
+    obj->disable_move_rotate = 0;
+    velocity = &pCharacter->field_0xd8;
+    if (velocity != NULL) {
+        obj->v.v[0] = velocity->v[0];
+        obj->v.v[1] = velocity->v[1];
+        obj->v.v[2] = velocity->v[2];
+        for (child = obj->child; child != NULL; child = child->next) {
+            SetObjectV(child, velocity);
+        }
+    }
+    PHILMakeObjectActive(obj, NULL, NULL, 1);
+    obj->field_0xed = 1;
+    PHILSetObjectProperty(obj, 0, 1.0);
+    PHILSetObjectProperty(obj, 3, 0);
+    PHILSetObjectProperty(obj, 4, 0);
+    PHILSetObjectProperty(obj, 5, 0);
+    pCharacter->field_0x14 |= 4;
+    return 0;
+}
 
 // STUB: CARMA2_HW 0x00409340
 void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pPed) { NOT_IMPLEMENTED(); }
