@@ -618,7 +618,61 @@ void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pT
 // GLOBAL: CARMA2_HW 0x0068d8c0
 br_actor* gLit_op_stat_actor;
 
-// AllocateOppoBarActor
+// FUNCTION: CARMA2_HW 0x00494f40
+void C2_HOOK_FASTCALL AllocateOppoBarActor(int pX, int pY) {
+    br_material* material;
+    br_model* model;
+    br_actor* actor;
+    int x;
+
+    x = pX;
+    material = BrMaterialAllocate("OppoBar Material");
+    if (material == NULL) {
+        return;
+    }
+    material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE;
+    model = BrModelAllocate("OppoBar Model", 4, 2);
+    if (model == NULL) {
+        return;
+    }
+    model->faces[0].vertices[0] = 0;
+    model->faces[0].vertices[1] = 1;
+    model->faces[0].vertices[2] = 2;
+    model->faces[1].vertices[0] = 1;
+    model->faces[1].vertices[1] = 3;
+    model->faces[1].vertices[2] = 2;
+    model->vertices[0].p.v[0] = (br_scalar)x;
+    model->vertices[0].p.v[1] = (br_scalar)-pY;
+    model->vertices[0].p.v[2] = -1.5f;
+    model->vertices[1].p.v[0] = (br_scalar)(x + 20);
+    model->vertices[1].p.v[1] = (br_scalar)-pY;
+    model->vertices[1].p.v[2] = -1.5f;
+    model->vertices[2].p.v[0] = (br_scalar)x;
+    model->vertices[2].p.v[1] = (br_scalar)(-7 - pY);
+    model->vertices[2].p.v[2] = -1.5f;
+    model->vertices[3].p.v[0] = (br_scalar)(x + 20);
+    model->vertices[3].p.v[1] = (br_scalar)(-7 - pY);
+    model->vertices[3].p.v[2] = -1.5f;
+    model->vertices[0].red = 0xff;
+    model->vertices[0].grn = 0;
+    model->vertices[0].blu = 0;
+    model->vertices[2].red = 0xff;
+    model->vertices[2].grn = 0;
+    model->vertices[2].blu = 0;
+    model->flags |= BR_MODF_KEEP_ORIGINAL;
+    BrModelAdd(model);
+    BrMaterialAdd(material);
+    actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    gLit_op_stat_actor = actor;
+    if (actor != NULL) {
+        actor->material = material;
+        gLit_op_stat_actor->model = model;
+    }
+}
+
+// DoNearestOpponentRelativeHeightMarkerStuff
+
+// InitNearestCar
 
 // GLOBAL: CARMA2_HW 0x00659b20
 int gPrevious_opponent_status = -1;
