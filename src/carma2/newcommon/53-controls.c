@@ -517,8 +517,5 @@ void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
 
 // ToggleHeadupLevel
 
-// GLOBAL: CARMA2_HW 0x0067c474
-int gEntering_message;
-
 // GLOBAL: CARMA2_HW 0x0067c47c
 tU32 gToo_poor_for_recovery_timeout;
