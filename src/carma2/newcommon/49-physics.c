@@ -132,7 +132,36 @@ int C2_HOOK_FASTCALL FUN_00422030(br_model* pModel, int pCount_vertices, int* pV
     NOT_IMPLEMENTED();
 }
 
-// FUN_00422400
+// FUNCTION: CARMA2_HW 0x00422400
+tPhysicsError C2_HOOK_FASTCALL FUN_00422400(tCollision_shape_polyhedron_data* pPolyhedron, int* pVertex_indices, br_model* pModel, int pCount_vertices) {
+    int i;
+    int result;
+
+    if (pModel->nvertices > pCount_vertices) {
+        result = FUN_00422030(pModel, pCount_vertices, pVertex_indices);
+        if (result != ePhysicsError_Ok) {
+            return result;
+        }
+        pPolyhedron->count_points = pCount_vertices;
+        if (pCount_vertices > 0) {
+            for (i = 0; i < pCount_vertices; i++) {
+                pPolyhedron->points[i].v[0] = pModel->vertices[pVertex_indices[i]].p.v[0];
+                pPolyhedron->points[i].v[1] = pModel->vertices[pVertex_indices[i]].p.v[1];
+                pPolyhedron->points[i].v[2] = pModel->vertices[pVertex_indices[i]].p.v[2];
+            }
+            return ConvexHull3D(pPolyhedron);
+        }
+    } else {
+        pPolyhedron->count_points = pModel->nvertices;
+        for (i = 0; i < pModel->nvertices; i++) {
+            pVertex_indices[i] = i;
+            pPolyhedron->points[i].v[0] = pModel->vertices[i].p.v[0];
+            pPolyhedron->points[i].v[1] = pModel->vertices[i].p.v[1];
+            pPolyhedron->points[i].v[2] = pModel->vertices[i].p.v[2];
+        }
+    }
+    return ConvexHull3D(pPolyhedron);
+}
 
 // FUN_00422500
 
