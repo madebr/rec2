@@ -588,3 +588,5 @@ intptr_t C2_HOOK_CDECL InitPhysCrushDataCB(br_actor* actor, void* data);
 intptr_t C2_HOOK_CDECL InitVertexDataCB(br_actor* pActor, void* data);
 
 void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec);
+
+void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);

@@ -2179,7 +2179,99 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* pData) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x0042ad10
+// FUNCTION: CARMA2_HW 0x0042ad10
 void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec) {
+    tCar_crush_spec* car_crush;
+    tPhysics_object* collision_info;
+    int i;
+
+    car_crush = pCar_spec->car_crush_spec;
+    collision_info = pCar_spec->collision_info;
+    if (car_crush == NULL || collision_info == NULL) {
+        return;
+    }
+    for (i = 0; i < 3; i++) {
+        car_crush->limits.limits[i][0].values[car_crush->count_limits.counts[i][0]] = collision_info->bb1.min.v[i] - 0.02898551f;
+        car_crush->limits.limits[i][1].values[car_crush->count_limits.counts[i][1]] = collision_info->bb1.max.v[i] + 0.02898551f;
+        car_crush->count_limits.counts[i][0] += 1;
+        car_crush->count_limits.counts[i][1] += 1;
+    }
+    {
+        tPhysics_shape* shape;
+        int j;
+
+        car_crush->count_shapes = 0;
+        for (shape = collision_info->shape; shape != NULL; shape = shape->common.next) {
+            car_crush->count_shapes += 1;
+        }
+        car_crush->field_0x4 = BrMemAllocate(car_crush->count_shapes * sizeof(tCar_crush_shape_info), kMem_crush_data);
+        for (i = 0, shape = collision_info->shape; shape != NULL; shape = shape->common.next, i++) {
+            tCar_crush_shape_info* crush_shape_info = &car_crush->field_0x4[i];
+            tCollision_shape_polyhedron* dest;
+
+            crush_shape_info->count_points = shape->polyhedron.polyhedron.count_points;
+            crush_shape_info->count_points_add_8 = crush_shape_info->count_points + 8;
+            crush_shape_info->field_0x0 = AllocateShapePolyhedron(crush_shape_info->count_points_add_8, kMem_crush_data);
+            dest = crush_shape_info->field_0x0;
+            dest->common.type = kCollisionShapeType_Polyhedron;
+            dest->polyhedron.count_points = shape->polyhedron.polyhedron.count_points;
+            for (j = 0; j < shape->polyhedron.polyhedron.count_points; j++) {
+                BrVector3Copy(&dest->polyhedron.points[j], &shape->polyhedron.polyhedron.points[j]);
+            }
+            FillInShape((tPhysics_shape*)dest);
+            crush_shape_info->field_0x4 = AllocateShapePolyhedron(crush_shape_info->count_points_add_8, kMem_crush_data);
+            crush_shape_info->field_0x18 = BrMemAllocate(crush_shape_info->count_points_add_8 * sizeof(tCar_crush_reordered_shape_info), kMem_crush_data);
+            for (j = 0; j < crush_shape_info->count_points; j++) {
+                BrVector3Copy(&crush_shape_info->field_0x18[j].field_0x0, &shape->polyhedron.polyhedron.points[j]);
+                BrVector3Copy(&crush_shape_info->field_0x18[j].field_0xc, &crush_shape_info->field_0x18[j].field_0x0);
+                BrVector3Copy(&crush_shape_info->field_0x18[j].field_0x18, &crush_shape_info->field_0x18[j].field_0x0);
+            }
+            crush_shape_info->field_0x8 = 0;
+        }
+        car_crush->field_0xc = collision_info->shape;
+        collision_info->shape = (tPhysics_shape*)car_crush->field_0x4->field_0x0;
+        for (i = 0; i < car_crush->count_shapes - 1; i++) {
+            car_crush->field_0x4[i].field_0x0->common.next = (tPhysics_shape*)car_crush->field_0x4[i + 1].field_0x0;
+        }
+        car_crush->field_0x4[car_crush->count_shapes - 1].field_0x0->common.next = NULL;
+        car_crush->expand_bounding_box = 0;
+        SetUpShapeLimitingStuff(car_crush, pCar_spec);
+        if (gNet_mode != eNet_mode_none) {
+            car_crush->field_0x24 = 0;
+            car_crush->field_0x26 = 0;
+            if (gNet_mode == eNet_mode_host) {
+                car_crush->network_stuff = BrMemAllocate(sizeof(tCar_crush_network_shapes), kMem_crush_data);
+                for (i = 1; i < gNumber_of_net_players; i++) {
+                    car_crush->network_stuff->items[i - 1].network_id = gNet_players[i].ID;
+                    car_crush->network_stuff->items[i - 1].field_0x4 = 0;
+                }
+            }
+        }
+    }
+    for (i = 0; i < 4; i++) {
+        car_crush->field_0x564[i] = AllocateShapeWireFrame(2, 1, kMem_crush_data);
+        BrVector3InvScale(&car_crush->field_0x564[i]->wireframe.points[0], &pCar_spec->wpos[i], WORLD_SCALE);
+        BrVector3InvScale(&car_crush->field_0x564[i]->wireframe.points[1], &pCar_spec->wpos[i], WORLD_SCALE);
+        car_crush->field_0x564[i]->wireframe.points[1].v[1] = 0.f;
+        car_crush->field_0x564[i]->wireframe.lines[0].index1 = 0;
+        car_crush->field_0x564[i]->wireframe.lines[0].index2 = 1;
+
+        FillInShape((tPhysics_shape*)car_crush->field_0x564[i]);
+    }
+    car_crush->actor->user = pCar_spec;
+    car_crush->field_0x574 = 0;
+    for (i = 0; ; i++) {
+        int c = tolower(pCar_spec->name[i]);
+        if (c == 0) {
+            break;
+        }
+        car_crush->field_0x574 *= 2;
+        car_crush->field_0x574 += c;
+        car_crush->field_0x574 &= 0xffff;
+    }
+}
+
+// STUB: CARMA2_HW 0x0042b0e0
+void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec) {
     NOT_IMPLEMENTED();
 }
