@@ -1705,7 +1705,80 @@ void C2_HOOK_FASTCALL UpdateCrushVertices(tCar_spec* pCar, tU8* pData) {
     pCar->car_crush_spec->expand_bounding_box = 0;
 }
 
-// WeldCarByNetwork
+// FUNCTION: CARMA2_HW 0x0043dce0
+void C2_HOOK_FASTCALL WeldCarByNetwork(tCar_spec* pCar) {
+    extern br_scalar gFLOAT_00589a2c;
+    extern void C2_HOOK_FASTCALL BendCar(tCar_spec* pCar, br_angle pAngle_x, br_angle pAngle_y, br_angle pAngle_z, const br_vector3* pArg5, float pArg6, int pArg7);
+    tCar_crush_spec* spec;
+    tPhysics_object* info;
+    br_scalar temp;
+    br_scalar m1;
+    tU8 f;
+    int flag;
+    tU16 id_a;
+    tU16 id_b;
+    tU16 id_c;
+    br_vector3 v;
+    int c2;
+    int c1;
+
+    spec = pCar->car_crush_spec;
+    if (spec->field_0x144 != 0) {
+        info = pCar->collision_info;
+        f = *(tU8*)((tU8*)info + 0x481);
+        c1 = (((f & 1) != 0 && spec->field_0x174 == spec->bend_z_min)
+                || ((f & 1) == 0 && spec->field_0x174 == spec->bend_z_max)) & 1;
+        c2 = ((f & 2) != 0 && *(tU16*)((tU8*)spec + 0x190) == *(tU16*)((tU8*)info + 0x482))
+            || ((f & 4) != 0 && *(tU16*)((tU8*)spec + 0x192) == *(tU16*)((tU8*)info + 0x482))
+            || ((f & 8) != 0 && *(tU16*)((tU8*)spec + 0x194) == *(tU16*)((tU8*)info + 0x482));
+        if (c1 & c2) {
+            return;
+        }
+        UnBendCar(pCar, 2000, &temp);
+    }
+    info = pCar->collision_info;
+    id_a = 0;
+    v.v[0] = 0.f;
+    v.v[1] = 0.f;
+    v.v[2] = 0.f;
+    id_c = 0;
+    id_b = 0;
+    if ((*(tU8*)((tU8*)info + 0x481) & 1) != 0) {
+        v.v[2] = spec->bend_z_min;
+        temp = info->bb1.max.v[2];
+        flag = 1;
+    } else {
+        v.v[2] = spec->bend_z_max;
+        temp = info->bb1.min.v[2];
+        flag = 0;
+    }
+    switch (*(tU8*)((tU8*)info + 0x481) >> 1) {
+    case 1:
+        id_a = *(tU16*)((tU8*)info + 0x482);
+        if ((id_a < 0x7ff8 && flag) || (id_a > 0x7ff8 && !flag)) {
+            v.v[1] = info->bb1.min.v[1];
+        } else {
+            v.v[1] = info->bb1.max.v[1];
+        }
+        break;
+    case 2:
+        id_b = *(tU16*)((tU8*)info + 0x482);
+        if ((id_b > 0x7ff8 && flag) || (id_b < 0x7ff8 && !flag)) {
+            v.v[0] = info->bb1.min.v[0];
+        } else {
+            v.v[0] = info->bb1.max.v[0];
+        }
+        break;
+    case 4:
+        id_c = *(tU16*)((tU8*)info + 0x482);
+        m1 = info->bb1.max.v[0];
+        v.v[0] = (m1 + info->bb1.min.v[0]) * gFLOAT_00589a2c;
+        m1 = info->bb1.min.v[1];
+        v.v[1] = (m1 + info->bb1.max.v[1]) * gFLOAT_00589a2c;
+        break;
+    }
+    BendCar(pCar, id_a, id_b, id_c, &v, temp, 0);
+}
 
 // SetJoystickFFBCollisionForce
 
