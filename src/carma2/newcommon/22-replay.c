@@ -999,7 +999,14 @@ void C2_HOOK_FASTCALL WorkerProxRay(int field_0x0, tU16 field_0x6, tU16 field_0x
     gProximity_rays[field_0x0].start_time = field_0x8;
 }
 
-// WorkerRepulseRay
+// FUNCTION: CARMA2_HW 0x004da960
+void C2_HOOK_FASTCALL WorkerRepulseRay(int field_0x0, int field_0x4, int field_0x8, int field_0xc) {
+    extern tRepulse_link gRepulse_links[6];
+
+    gRepulse_links[field_0x0].pos_origin = (br_vector3*)field_0x4;
+    gRepulse_links[field_0x0].pos_victim = (br_vector3*)field_0x8;
+    gRepulse_links[field_0x0].time = (tU32)field_0xc;
+}
 
 // FUNCTION: CARMA2_HW 0x004e0710
 void C2_HOOK_FASTCALL WorkerSpecial(void) {
