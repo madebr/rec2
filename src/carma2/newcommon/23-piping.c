@@ -488,8 +488,18 @@ static void StartPipingSession2(tPipe_chunk_type pType, int pMunge_reentrancy) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// STUB: CARMA2_HW 0x004025e0
-void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004025e0
+void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) {
+
+    StartPipingSession2(pType, 1);
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // STUB: CARMA2_HW 0x00402660
 // STUB: CARMA2_SW 0x00402660
