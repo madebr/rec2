@@ -61,9 +61,18 @@ float gWobble_spam_z[8] = { 0.4f, -0.25f, 0.0f, 0.25f, 0.0f, 0.15f, -0.4f, -0.15
 
 // GLOBAL: CARMA2_HW 0x00590060
 // GLOBAL: CARMA2_SW 0x0058b058
-float gWheel_circ_to_width = .16f;
+float gWheel_circ_to_width = 0.16f;
 
-// CheckLastCar
+void C2_HOOK_FASTCALL CheckLastCar(void) {
+    if (gNet_mode == eNet_mode_none && GetCarCount(eVehicle_opponent) != 0 && NumberOfOpponentsLeft() == 0) {
+        if (gCurrent_race.race_spec->race_type == kRaceType_Carma1 || gCurrent_race.race_spec->race_type == kRaceType_Cars) {
+            if (gCurrent_race.race_spec->race_type == kRaceType_Carma1) {
+                NewTextHeadupSlot(4, 0, 5000, -4, GetMiscString(eMiscString_every_opponent_wasted));
+            }
+            RaceCompleted(eRace_over_2);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0043f5f0
 // FUNCTION: CARMA2_SW 0x0043f6d0
@@ -80,14 +89,7 @@ void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
     }
     pCar->knackered = 1;
     QueueWastedMassage(pCar->index);
-    if (gNet_mode == eNet_mode_none && GetCarCount(eVehicle_opponent) != 0 && NumberOfOpponentsLeft() == 0) {
-        if (gCurrent_race.race_spec->race_type == kRaceType_Carma1 || gCurrent_race.race_spec->race_type == kRaceType_Cars) {
-            if (gCurrent_race.race_spec->race_type == kRaceType_Carma1) {
-                NewTextHeadupSlot(4, 0, 5000, -4, GetMiscString(10));
-            }
-            RaceCompleted(eRace_over_2);
-        }
-    }
+    CheckLastCar();
     QueueOilSpill(pCar);
     if (gNet_mode == eNet_mode_none) {
         KillGroovadelic(pCar->index);

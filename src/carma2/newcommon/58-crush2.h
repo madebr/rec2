@@ -23,7 +23,7 @@ extern float gWobble_spam_y[8];
 extern float gWobble_spam_z[8];
 extern float gWheel_circ_to_width;
 
-// CheckLastCar
+extern void C2_HOOK_FASTCALL CheckLastCar(void);
 
 extern void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar);
 
