@@ -15,6 +15,8 @@
 
 #define REC2_ASIZE(ARR)  ((sizeof(ARR))/sizeof(*(ARR)))
 
+#define REC2_THISCALL_UNUSED(VAR) do { (void)VAR; } while (0)
+
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define REC2_SQR(A) ((A) * (A))

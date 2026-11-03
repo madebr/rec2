@@ -24,6 +24,12 @@
 #include "c2_math.h"
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x00744820
+tFace_ref gFace_list__car[300];
+
+// GLOBAL: CARMA2_HW 0x00679438
+int gSensible_place_collect_active;
+
 // GLOBAL: CARMA2_HW 0x00679698
 // GLOBAL: CARMA2_SW 0x00673e08
 br_scalar gDistortion_factor;

@@ -1119,7 +1119,21 @@ void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
 
 // DRVector3SafeCrossXZ
 
-// ScaleModelXYZ
+// FUNCTION: CARMA2_HW 0x00404290
+void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, float pY, float pZ) {
+    int i;
+    br_vertex* v;
+
+    REC2_THISCALL_UNUSED(pArg2);
+
+    v = pModel->vertices;
+    for (i = 0; i < pModel->nvertices; i++, v++) {
+        v->p.v[0] = pX * v->p.v[0];
+        v->p.v[1] = pY * v->p.v[1];
+        v->p.v[2] = pZ * v->p.v[2];
+    }
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+}
 
 // ScaleModel
 
