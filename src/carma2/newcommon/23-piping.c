@@ -2441,7 +2441,12 @@ void C2_HOOK_FASTCALL UndoFlap(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
     return WorkerFlap(*(int*)(chunk + 4), -*(tU16*)(chunk + 8));
 }
 
-// UndoModelMash
+// FUNCTION: CARMA2_HW 0x004c9f80
+void C2_HOOK_FASTCALL UndoModelMash(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_model_mash* chunk = (tPipe_chunk_model_mash*)*pChunk;
+
+    return WorkerModelMashUndo(chunk->field_0x4, chunk->field_0x8);
+}
 
 // UndoRelink
 
