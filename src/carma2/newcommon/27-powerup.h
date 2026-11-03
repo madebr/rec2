@@ -441,3 +441,5 @@ extern void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* pPowerup, tCar_spec* pCar
 // PeriodicCloaking
 
 #endif // GUARD_27_POWERUP_H
+
+void C2_HOOK_FASTCALL MinePreCollisionStuff(void);

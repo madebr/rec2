@@ -240,4 +240,10 @@ extern void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex);
 
 extern void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex);
 
+void C2_HOOK_FASTCALL DragChildren(tCar_spec* pCar, tPhysics_object* pChild);
+
+void C2_HOOK_FASTCALL MoveAndCollideNonCar(tNon_car_spec* pNon_car, br_scalar pDt);
+
+void C2_HOOK_FASTCALL MoveAndCollideCar(tCar_spec* pCar, br_scalar pDt);
+
 #endif // GUARD_00_CAR_H

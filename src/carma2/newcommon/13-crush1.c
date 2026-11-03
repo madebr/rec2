@@ -1537,3 +1537,35 @@ void C2_HOOK_FASTCALL SetAllShapeStatusFlags(tCar_crush_network_shapes* pShapes)
     }
 }
 
+
+extern int C2_HOOK_FASTCALL ProcessForcesCallback(void* pContacts, float* pImpulses, int pCount);
+extern int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 param_2, undefined4 param_3);
+extern void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefined4* arg2);
+extern int C2_HOOK_FASTCALL FindFacesInBox(tBounds* pBounds, tFace_ref* pFace_list, int pMax_face, tWorld_callbacks* pWorld_callbacks);
+extern tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor);
+extern void C2_HOOK_FASTCALL StopGroovidelic(br_actor* pActor);
+extern float C2_HOOK_FASTCALL GetFrictionFromFace(const tFace_ref* pFace);
+
+// GLOBAL: CARMA2_HW 0x0065cf78
+tWorld_callbacks gWorld_callbacks = {
+    ProcessForcesCallback,
+    ProcessJointForcesCallback,
+    NewFacesListCallback,
+    FindFacesInBox,
+    PullActorFromWorld,
+    StopGroovidelic,
+    GetFrictionFromFace,
+    NULL,
+};
+
+// STUB: CARMA2_HW 0x0041c1b0
+int C2_HOOK_FASTCALL ProcessForcesCallback(void* pContacts, float* pImpulses, int pCount) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
+
+// STUB: CARMA2_HW 0x0041e310
+int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 param_2, undefined4 param_3) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

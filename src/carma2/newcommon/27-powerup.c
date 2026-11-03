@@ -1424,3 +1424,8 @@ void C2_HOOK_FASTCALL PeriodicCloaking(void) {
         }
     }
 }
+
+// STUB: CARMA2_HW 0x004dd1b0
+void C2_HOOK_FASTCALL MinePreCollisionStuff(void) {
+    NOT_IMPLEMENTED();
+}

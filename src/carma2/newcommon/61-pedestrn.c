@@ -1420,3 +1420,8 @@ void C2_HOOK_FASTCALL DisableRetainRootMode(void) {
     gPed_retain_root_mode = 0;
 }
 
+
+// STUB: CARMA2_HW 0x004d6880
+void C2_HOOK_FASTCALL PedPreCollisionStuff(void) {
+    NOT_IMPLEMENTED();
+}

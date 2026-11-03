@@ -434,3 +434,9 @@ extern void C2_HOOK_FASTCALL InitPhysics(void);
 #endif // GUARD_49_PHYSICS_H
 
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild);
+
+void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tPhysics_object *pCollision_info, tU32 pDisable);
+
+void C2_HOOK_FASTCALL GetFacesInBox(tPhysics_object* pCollision, tWorld_callbacks* pWorld_callbacks);
+
+void C2_HOOK_FASTCALL PhysicsObjectMoveVelocityList(tPhysics_object* pObject);

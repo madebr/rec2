@@ -28,6 +28,9 @@
 
 #include <stdio.h>
 
+// GLOBAL: CARMA2_HW 0x0067c478
+tU32 gPalette_fade_time;
+
 // GLOBAL: CARMA2_HW 0x00659b28
 // GLOBAL: CARMA2_SW 0x00654510
 int gCheckpoint_finder_enabled = 1;

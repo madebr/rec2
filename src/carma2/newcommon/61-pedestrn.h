@@ -576,3 +576,5 @@ extern void C2_HOOK_FASTCALL EnableRetainRootMode(void);
 extern void C2_HOOK_FASTCALL DisableRetainRootMode(void);
 
 #endif // GUARD_61_PEDESTRN_H
+
+void C2_HOOK_FASTCALL PedPreCollisionStuff(void);

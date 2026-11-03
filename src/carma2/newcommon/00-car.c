@@ -1,3 +1,5 @@
+#define PO_U8(o, off) (*(tU8*)((char*)(o) + (off)))
+#define PO_U16(o, off) (*(tU16*)((char*)(o) + (off)))
 /*
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,8 +42,25 @@
 
 #include <math.h>
 
+#define PO_U32(o, off) (*(tU32*)((char*)(o) + (off)))
+#define PO_F32(o, off) (*(float*)((char*)(o) + (off)))
 #define CAR_GEAR(c) (*(int*)&(c)->gear)
 
+
+extern tU32 gPalette_fade_time;
+extern tWorld_callbacks gWorld_callbacks;
+
+// GLOBAL: CARMA2_HW 0x0079ed88
+tU32 gDrivable_on_count;
+
+// GLOBAL: CARMA2_HW 0x0079ecc0
+tPhysics_object* gDrivable_on_list[50];
+
+// GLOBAL: CARMA2_HW 0x00589694
+float gFneg1000 = -1000.0f;
+
+// GLOBAL: CARMA2_HW 0x00679390
+br_vector3 gCar_to_view_original_v;
 
 // GLOBAL: CARMA2_HW 0x005895f0
 double gZero = 1.0;
@@ -882,7 +901,139 @@ void C2_HOOK_FASTCALL AddDrag(tCar_spec* pCar, tPhysics_object* pObject, br_scal
 
 // GetDrivableOnList
 
-// APTCPreCollision
+// FUNCTION: CARMA2_HW 0x00415890
+void C2_HOOK_FASTCALL APTCPreCollision(void) {
+    tPhysics_object* obj;
+    tCar_spec* car;
+    tNon_car_spec* non_car;
+    tPhysics_object* node;
+    void** wp;
+    int i;
+    float x;
+    float f;
+
+    gDrivable_on_count = 0;
+    for (obj = gPHIL_list_collision_infos; obj != NULL && gDrivable_on_count < 50; obj = obj->next) {
+        if (obj->drivable_on) {
+            gDrivable_on_list[gDrivable_on_count] = obj;
+            gDrivable_on_count += 1;
+        }
+    }
+
+    gCar_to_view_original_v.v[0] = gCar_to_view->collision_info->v.v[0];
+    gCar_to_view_original_v.v[1] = gCar_to_view->collision_info->v.v[1];
+    gCar_to_view_original_v.v[2] = gCar_to_view->collision_info->v.v[2];
+
+    i = 0;
+    if (i < gNum_active_cars) {
+        wp = (void**)gActive_car_list;
+        do {
+            if (*wp != NULL && ((tCar_spec*)*wp)->driver > 5) {
+                car = (tCar_spec*)*wp;
+                BrMatrix34Copy(&car->car_master_actor->t.t.mat, &car->collision_info->transform_matrix);
+                if (PO_U8(car->collision_info, 0x261) == 0x10
+                        && car->collision_info->message_time == gPHIL_last_physics_tick) {
+                    if (car == NULL || car->driver != eDriver_local_human) {
+                        car->curvature = (float)(tS16)PO_U16(car->collision_info, 0x278) * car->maxcurve * 0.000030518509f;
+                    }
+                    if (gNet_mode == eNet_mode_host) {
+                        car->collision_info->field_0xf0 = 1;
+                    }
+                    SetCollisionFlagsAndStuff(car);
+                }
+                if (car->disabled == 0) {
+                    if (!(car->collision_info->disable_move_rotate != 0
+                            && gPalette_fade_time != 0
+                            && car != NULL
+                            && car->driver == eDriver_local_human)) {
+                        if (car->collision_info->box_face_ref != gFace_num__car
+                                && (car->collision_info->box_face_ref != gFace_num__car - 1
+                                    || car->collision_info->box_face_start <= gFace_count)) {
+                            GetFacesInBox(car->collision_info, &gWorld_callbacks);
+                        }
+                        if (car->dt != 0.f) {
+                            MoveAndCollideCar(car, 0.04f);
+                        }
+                        if (car->collision_info->child != NULL) {
+                            PhysicsObjectMoveVelocityList(car->collision_info->child);
+                            for (node = car->collision_info->child; node != NULL; node = node->next) {
+                                AddDrag(car, node, 0.04f);
+                                if (node->child != NULL) {
+                                    DragChildren(car, node->child);
+                                }
+                            }
+                            PositionChildren(car->collision_info);
+                        }
+                    }
+                }
+            }
+            i++;
+            wp++;
+        } while (i < gNum_active_cars);
+    }
+
+    i = 0;
+    if (i < gNum_active_non_cars) {
+        wp = (void**)gActive_non_car_list;
+        do {
+            non_car = (tNon_car_spec*)*wp;
+            if (PO_U8(non_car->collision_info, 0x261) != 0
+                    && non_car->collision_info->message_time == gPHIL_last_physics_tick) {
+                SetCollisionFlagsAndStuff((tCar_spec*)non_car);
+            }
+            if (non_car->flags & 0x10000) {
+                if (PO_U32(non_car, 0xf8) != 0 && PO_U32(non_car, 0xf8) < GetRaceTime()) {
+                    PO_U32(non_car, 0xf8) = 0;
+                    non_car->flags = (non_car->flags & 0xffff0100) | 0x100;
+                    non_car->collision_info->disable_move_rotate = 0;
+                }
+            }
+            if (non_car->collision_info->disable_move_rotate == 0
+                    || (non_car->flags & 0xff) != 0
+                    || (non_car->flags & 0xff00) != 0) {
+                non_car->collision_info->disable_move_rotate = 0;
+                if (PO_F32(non_car, 0xc4) != 0.f) {
+                    MoveAndCollideNonCar(non_car, 0.04f);
+                }
+                if (non_car->collision_info->child != NULL) {
+                    PhysicsObjectMoveVelocityList(non_car->collision_info->child);
+                    PositionChildren(non_car->collision_info);
+                }
+            }
+            i++;
+            wp++;
+        } while (i < gNum_active_non_cars);
+    }
+
+    i = 0;
+    if (i < gNum_active_cars) {
+        wp = (void**)gActive_car_list;
+        do {
+            car = (tCar_spec*)*wp;
+            if (car->field_0x4c8 != gZero) {
+                x = car->field_0x4c8;
+                f = car->collision_info->M; f *= x; car->collision_info->M = f;
+                f = car->collision_info->I.v[0]; f *= x; car->collision_info->I.v[0] = f;
+                f = car->collision_info->I.v[1]; f *= x; car->collision_info->I.v[1] = f;
+                f = car->collision_info->I.v[2]; f *= x; car->collision_info->I.v[2] = f;
+            }
+            i++;
+            wp++;
+        } while (i < gNum_active_cars);
+    }
+
+    if (gCar_flying) {
+        tCar_spec* c = gCar_to_view;
+
+        c->collision_info->transform_matrix.m[3][1] -= gFneg1000;
+        BrMatrix34Copy(&c->car_master_actor->t.t.mat, &c->collision_info->transform_matrix);
+        PositionChildren(c->collision_info);
+        SetCollisionInfoChildsDoNothing(c->collision_info, 1);
+    }
+    MinePreCollisionStuff();
+    PedPreCollisionStuff();
+    DronePreCollisionStuff();
+}
 
 // FUNCTION: CARMA2_HW 0x004161a0
 // FUNCTION: CARMA2_SW 0x004161d0
@@ -1569,5 +1720,20 @@ void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefine
 
 // STUB: CARMA2_HW 0x0041f4f0
 void C2_HOOK_FASTCALL FlyCar(tCar_spec* c, br_scalar dt) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x00416030
+void C2_HOOK_FASTCALL DragChildren(tCar_spec* pCar, tPhysics_object* pChild) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x00417030
+void C2_HOOK_FASTCALL MoveAndCollideNonCar(tNon_car_spec* pNon_car, br_scalar pDt) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004168c0
+void C2_HOOK_FASTCALL MoveAndCollideCar(tCar_spec* pCar, br_scalar pDt) {
     NOT_IMPLEMENTED();
 }
