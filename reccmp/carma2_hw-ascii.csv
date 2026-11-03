@@ -3184,7 +3184,7 @@ address,type,x-text
 0x666e7c,string,"Default-Format"
 0x666e8c,string,"softform"
 0x666e98,string,"Default-Format"
-0x666ea8,string,"SCRATCH"
+0x666ea8,global,scratchString
 0x6670a8,string,"Scratchpad not available"
 0x6670c4,string,"Scratchpad cannot be flushed while in use"
 0x667178,string,"FILE_TYPE_NONE"
