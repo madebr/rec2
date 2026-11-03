@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gAllow_car_flying;
+extern int gEntering_message;
 extern int gCheckpoint_finder_enabled;
 extern float gMap_render_x;
 extern float gMap_render_y;
@@ -26,7 +28,9 @@ extern int gRecovery_voucher_count;
 
 extern float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pTotal_deflection);
 
-// CompleteRace
+extern tRace_over_reason gRace_over_reason;
+
+extern void C2_HOOK_FASTCALL CompleteRace(void);
 
 extern int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend);
 
@@ -40,7 +44,7 @@ extern void C2_HOOK_FASTCALL F4Key(void);
 
 extern void C2_HOOK_FASTCALL SetFlag(int i);
 
-extern void C2_HOOK_FASTCALL FinishRace(int i);
+extern void C2_HOOK_FASTCALL FinishRace(int pArg);
 
 extern void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void);
 
@@ -154,7 +158,7 @@ extern void C2_HOOK_FASTCALL CheckForCheatingGits(void);
 
 extern void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period);
 
-extern void C2_HOOK_FASTCALL SetFlag2(int i);
+extern void C2_HOOK_FASTCALL SetFlag2(int pArg);
 
 extern void C2_HOOK_FASTCALL ToggleFlying(void);
 

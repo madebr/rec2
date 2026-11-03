@@ -21,6 +21,7 @@
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
@@ -90,9 +91,6 @@ static int old_indent;
 
 // GLOBAL: CARMA2_HW 0x0067c468
 int gWhich_edit_mode;
-
-// GLOBAL: CARMA2_HW 0x0067c46c
-int gAllow_car_flying;
 
 // GLOBAL: CARMA2_HW 0x0067c470
 int gINT_0067c470;
@@ -214,7 +212,22 @@ float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pT
 #pragma auto_inline(on)
 #endif
 
-// CompleteRace
+// GLOBAL: CARMA2_HW 0x0067c46c
+// GLOBAL: CARMA2_SW 0x00676be4
+int gAllow_car_flying;
+
+// GLOBAL: CARMA2_HW 0x0067c474
+// GLOBAL: CARMA2_SW 0x00676bec
+int gEntering_message;
+
+// GLOBAL: CARMA2_HW 0x006b781c
+// GLOBAL: CARMA2_SW 0x006ae4fc
+tRace_over_reason gRace_over_reason;
+
+void C2_HOOK_FASTCALL CompleteRace(void) {
+    gRace_over_reason = eRace_over_0;
+    gAbandon_game = 2;
+}
 
 // FUNCTION: CARMA2_HW 0x00441490
 // FUNCTION: CARMA2_SW 0x00441570
@@ -319,9 +332,10 @@ void C2_HOOK_FASTCALL SetFlag(int i) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x004415c0
-void C2_HOOK_FASTCALL FinishRace(int i) {
-    gRace_over_reason = eRace_over_0;
-    gAbandon_game = 2;
+// FUNCTION: CARMA2_SW 0x004416a0
+void C2_HOOK_FASTCALL FinishRace(int pArg) {
+    (void)pArg;
+    CompleteRace();
 }
 
 // FUNCTION: CARMA2_HW 0x004415e0
@@ -888,25 +902,17 @@ void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
 }
 
 // FUNCTION: CARMA2_HW 0x00444350
-void C2_HOOK_FASTCALL SetFlag2(int i) {
-
+// FUNCTION: CARMA2_SW 0x00444430
+void C2_HOOK_FASTCALL SetFlag2(int pArg) {
+    (void)pArg;
     gAllow_car_flying = 1;
-    if (gNet_mode == eNet_mode_none) {
-        gCar_flying = !gCar_flying;
-        if (gCar_flying) {
-            NewTextHeadupSlot(4, 0, 500, -4, "We have lift off!!");
-        } else {
-            NewTextHeadupSlot(4, 0, 500, -4, "Back down to Earth");
-        }
-    } else {
-        gCar_flying = 0;
-    }
+    ToggleFlying();
     gAllow_car_flying = gCar_flying;
 }
 
 // FUNCTION: CARMA2_HW 0x004443c0
+// FUNCTION: CARMA2_SW 0x004444a0
 void C2_HOOK_FASTCALL ToggleFlying(void) {
-
     if (gAllow_car_flying && gNet_mode == eNet_mode_none) {
         gCar_flying = !gCar_flying;
         if (gCar_flying) {
@@ -1096,7 +1102,10 @@ void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004448f0
+// FUNCTION: CARMA2_SW 0x004449d0
 void C2_HOOK_FASTCALL UserSendMessage(void) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_details, options, 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_options, enable_text_messages, 0x4);
 
     if (gNet_mode != eNet_mode_none && gCurrent_net_game->options.enable_text_messages) {
         gEntering_message = 1;
@@ -1504,9 +1513,6 @@ select_new:
 
 // STUB: CARMA2_HW 0x0045a920
 int C2_HOOK_FASTCALL FUN_0045a920(tHeadup_text_buffer* pBuffer, tHeadup_text* pText, int pArg3) { NOT_IMPLEMENTED(); }
-
-// GLOBAL: CARMA2_HW 0x0067c474
-int gEntering_message;
 
 // GLOBAL: CARMA2_HW 0x0067c47c
 tU32 gToo_poor_for_recovery_timeout;
