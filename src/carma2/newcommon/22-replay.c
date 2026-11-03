@@ -881,7 +881,36 @@ void C2_HOOK_FASTCALL WorkerPedMove(tPedestrian* pPed, int field_0x4, int field_
     }
 }
 
-// WorkerPedMoveUndo
+// FUNCTION: CARMA2_HW 0x004ca5a0
+void C2_HOOK_FASTCALL WorkerPedMoveUndo(tPedestrian* pPed, int field_0x6, int field_0x10, int zero, int zero2, int field_0xa, br_vector3* pField_0x18, int field_0x30, br_vector3* pField_0x38) {
+    extern int gBOOL_00744804;
+    extern int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, int pArg4, int pArg5, int pArg6);
+    extern void C2_HOOK_FASTCALL SetCharacterPosition(tPed_character_instance* pCharacter, br_vector3* pPos, int pArg3);
+    extern void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, int pArg2, int pArg3);
+    int old_move_id;
+
+    if (gBOOL_00744804 != 0) {
+        return;
+    }
+    if (field_0x6 != -1) {
+        old_move_id = pPed->character->personality->form->moves[pPed->character->field_0x7].id;
+        BrMatrix34Copy(&pPed->character->field_0x8c, (br_matrix34*)pField_0x38);
+        SetCharacterMove(pPed->character, field_0x6, *(float*)&field_0x10, zero2, zero, GetTotalTime());
+        if ((pPed->character->field_0x14 & 4) == 0) {
+            SetCharacterPosition(pPed->character, pField_0x18, -1);
+        }
+        if (old_move_id != field_0x6) {
+            pPed->character->field_0x1c = (tU16)field_0xa;
+            SetCharacterBonePositions(pPed->character, 0, 0);
+            pPed->character->field_0x24 = GetTotalTime();
+        }
+    }
+    if (field_0x30 != -1) {
+        pPed->action = (tPed_action)field_0x30;
+    }
+}
+
+// adapted from the disassembly
 // WorkerPedFPChange
 
 // WorkerPedPhysics
