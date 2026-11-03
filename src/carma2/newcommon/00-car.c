@@ -3963,3 +3963,9 @@ void C2_HOOK_FASTCALL CompressCarDataChunk(tNet_message_chunk* pMessage, int pPl
     *(int*)(chunk + 4) = gNet_players[pPlayer_index].ID;
     *(int*)(chunk + 0x10) = *(int*)((tU8*)car + 0x18a4);
 }
+
+
+// STUB: CARMA2_HW 0x004d2320
+void C2_HOOK_FASTCALL FUN_004d2320(tPhysics_object* pObject1, tPhysics_object* pObject2, tFace_ref* pFace, float pImpulse, br_vector3* pPoint) {
+    (void)pObject1; (void)pObject2; (void)pFace; (void)pImpulse; (void)pPoint;
+}
