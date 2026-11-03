@@ -1582,7 +1582,29 @@ typedef struct tNet_message_chunk_semi_detach_bit {
     tCompressed_vector3 field_0x24;
 } tNet_message_chunk_semi_detach_bit;
 
-// SendFullyDetachBit
+// FUNCTION: CARMA2_HW 0x004314b0
+void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) {
+    tNet_message* message;
+    tNet_message_chunk_semi_detach_bit* chunk;
+    br_vector3 p1;
+    br_vector3 p2;
+    br_vector3 p3;
+    br_bounds3 bnds;
+
+    message = NetBuildGuaranteedMessage(0x25, 0);
+    chunk = (tNet_message_chunk_semi_detach_bit*)&message->guaranteed.contents.detach_bit;
+    chunk->ID = NetPlayerFromCar(pCar)->ID;
+    chunk->field_0x4 = pObject->uid;
+    chunk->field_0x8 = gPHIL_last_physics_tick + 120;
+    if (!GetSDBJointPosAndBounds(&p1, &p2, &p3, &bnds, pObject->actor)) {
+        CompressVector3(&chunk->field_0xc, &p1, -10.f, 10.f);
+        CompressVector3(&chunk->field_0x12, &p2, -10.f, 10.f);
+        CompressVector3(&chunk->field_0x18, &p3, -10.f, 10.f);
+        CompressVector3(&chunk->field_0x1e, &bnds.min, -10.f, 10.f);
+        CompressVector3(&chunk->field_0x24, &bnds.max, -10.f, 10.f);
+        NetGuaranteedSendMessageToEverybody(gCurrent_net_game, message, 0);
+    }
+}
 
 // DoFullyDetaching
 
