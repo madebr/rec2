@@ -64,6 +64,8 @@ extern void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* pCar, tU32 pTime);
 
 extern int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime);
 
+extern int C2_HOOK_FASTCALL GetPipeCarStateAtTime(tS32 pOffset, tS32* pMode, br_scalar* pTowards, undefined4* pData, tS32* pTime);
+
 // MoveCamToIncident
 
 // PanningExternalCamera
@@ -96,7 +98,7 @@ extern void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex);
 
 // CollideCamera2
 
-// CollideCameraWithOtherCars
+extern int C2_HOOK_FASTCALL CollideCameraWithOtherCars(br_vector3* pPos, br_vector3* pCamera_pos);
 
 extern void C2_HOOK_FASTCALL InitialiseExternalCamera(void);
 

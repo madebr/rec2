@@ -381,13 +381,81 @@ int C2_HOOK_FASTCALL IncidentCam(tCar_spec* pCar, tU32 pTime) {
 #pragma auto_inline(on)
 #endif
 
-// MoveCamToIncident
+extern tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void);
+extern int C2_HOOK_FASTCALL ARReplayForwards(void);
+extern int C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDefault_time, void* pCallback, void* pTime_check);
+extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
+extern br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(const tPed_character_instance* pCharacter);
+extern tU32 C2_HOOK_FASTCALL GetTotalTime(void);
+extern tU32 gOldest_time;
+extern tU32 gTrigger_time;
+static int C2_HOOK_FASTCALL CheckPipeCarState(tPipe_chunk* pChunk, int pChunk_count, tU32 pTime);
 
-// PanningExternalCamera
+// GLOBAL: CARMA2_HW 0x006940fc
+tU8* gPipe_car_state_chunk;
 
-// CheckForWall
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// SetUpPanningCamera
+// FUNCTION: CARMA2_HW 0x004c6c90
+int C2_HOOK_FASTCALL GetPipeCarStateAtTime(tS32 pOffset, tS32* pMode, br_scalar* pTowards, undefined4* pData, tS32* pTime) {
+    tU8* temp_ptr;
+
+    temp_ptr = ARGetPipePlayPtr();
+    gTrigger_time = 0;
+    if (ARReplayForwards()) {
+        gOldest_time = GetTotalTime() + pOffset;
+    } else {
+        gOldest_time = GetTotalTime() - pOffset;
+    }
+    ARScanBuffer(&temp_ptr, ePipe_chunk_ped_incident, GetTotalTime(), CheckPipeCarState, NULL);
+    if (gTrigger_time != 0) {
+        *pTime = gTrigger_time - GetTotalTime();
+        *pMode = *(tS32*)gPipe_car_state_chunk;
+        *pTowards = *(br_scalar*)(gPipe_car_state_chunk + 4);
+        switch (*pMode) {
+        case 0:
+            {
+                tPedestrian* ped = *(tPedestrian**)(gPipe_car_state_chunk + 8);
+                br_actor* actor = GetCharacterActorPtr(ped->character);
+
+                pData[0] = (undefined4)(uintptr_t)actor;
+                if (actor == NULL) {
+                    gTrigger_time = 0;
+                }
+                pData[1] = *(undefined4*)(gPipe_car_state_chunk + 0xc);
+            }
+            break;
+        case 1:
+            {
+                tU32 car_id = *(tU16*)(gPipe_car_state_chunk + 8);
+                tCar_spec* car;
+
+                if ((car_id & 0xffffff00) == 0) {
+                    car = &gProgram_state.current_car;
+                } else {
+                    car = GetCarSpec(car_id >> 8, car_id & 0xff);
+                }
+                pData[0] = (undefined4)(uintptr_t)car;
+                pData[1] = *(undefined4*)(gPipe_car_state_chunk + 0xc);
+                pData[2] = *(undefined4*)(gPipe_car_state_chunk + 0x10);
+                pData[3] = *(undefined4*)(gPipe_car_state_chunk + 0x14);
+            }
+            break;
+        case 2:
+            pData[0] = *(undefined4*)(gPipe_car_state_chunk + 8);
+            pData[1] = *(undefined4*)(gPipe_car_state_chunk + 0xc);
+            pData[2] = *(undefined4*)(gPipe_car_state_chunk + 0x10);
+            break;
+        default:
+            break;
+        }
+    }
+    return gTrigger_time;
+}
+
+// CheckPipeCarState
 
 // FUNCTION: CARMA2_HW 0x00410be0
 // FUNCTION: CARMA2_SW 0x00410bc0
@@ -434,10 +502,6 @@ void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex) {
 // CollideCamera2
 
 // CollideCameraWithOtherCars
-
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
 
 // STUB: CARMA2_HW 0x00413580
 // STUB: CARMA2_SW 0x004135b0
