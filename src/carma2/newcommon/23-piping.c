@@ -2704,7 +2704,13 @@ void C2_HOOK_FASTCALL UndoFunkEnable(tPipe_chunk** pChunk, tPipe_chunk* pPrev_ch
     return AdjustFunkEnable(chunk->field_0x0, chunk->field_0x4 == 0);
 }
 
-// UndoVanishDismembered
+// FUNCTION: CARMA2_HW 0x004ca330
+void C2_HOOK_FASTCALL UndoVanishDismembered(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_vanish* chunk = (tPipe_chunk_vanish*)*pChunk;
+
+    DoVanishDismembered(chunk->field_0x0, chunk->field_0x4);
+}
+#endif
 
 // FUNCTION: CARMA2_HW 0x004ca360
 // FUNCTION: CARMA2_SW 0x004c6a90
