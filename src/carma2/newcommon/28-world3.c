@@ -1051,7 +1051,30 @@ int C2_HOOK_FASTCALL OrientationChanged(const br_matrix34* pOrientation_1, const
         || BrVector3Dot((br_vector3*)pOrientation_1->m[2], (br_vector3*)pOrientation_2->m[2]) < pCos_angle;
 }
 
-// MungeSmashMaterialNames
+// FUNCTION: CARMA2_HW 0x004f0bc0
+void C2_HOOK_FASTCALL MungeSmashMaterialNames(void) {
+    extern tSmashable_item_spec* gTrack_smashable_environment_specs;
+    extern int gCount_track_smashable_environment_specs;
+    int i;
+    tSmashable_item_spec* item_spec;
+
+    i = 0;
+    if (i < gCount_track_smashable_environment_specs) {
+        item_spec = gTrack_smashable_environment_specs;
+        do {
+            if (item_spec->trigger_type == kSmashableTrigger_Material) {
+                SplondificatalizeIdentifier(
+                    (br_actor*)item_spec->trigger_object.material,
+                    &item_spec->trigger_object.material->identifier,
+                    i);
+            }
+            i++;
+            item_spec++;
+        } while (i < gCount_track_smashable_environment_specs);
+    }
+}
+
+tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const char* pLooping_reset_flags, const br_vector3* pMovement_direction, tU32 pFlags) { NOT_IMPLEMENTED(); }
 
 // STUB: CARMA2_HW 0x00406ab0
 tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) { NOT_IMPLEMENTED(); }
