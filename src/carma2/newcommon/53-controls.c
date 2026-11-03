@@ -372,7 +372,11 @@ void C2_HOOK_FASTCALL F7Key(void) {
     DoEditModeKey(2);
 }
 
-// F8Key
+// FUNCTION: CARMA2_HW 0x00441780
+void C2_HOOK_FASTCALL F8Key(void) {
+
+    DoEditModeKey(3);
+}
 
 // F10Key
 
