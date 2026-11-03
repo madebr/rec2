@@ -2207,7 +2207,58 @@ int C2_HOOK_FASTCALL MakeCharacterRenderable(tPed_character_instance* pCharacter
     return MakeCharacterRenderable2(pCharacter, i);
 }
 
-// CharacterNoLongerRenderable
+// FUNCTION: CARMA2_HW 0x00408400
+int C2_HOOK_FASTCALL CharacterNoLongerRenderable(tPed_character_instance* pCharacter) {
+    tPed_form* form;
+    tPed_form_actor_set* actor_set;
+    br_matrix34* matrix;
+    int i;
+    int j;
+
+    if (pCharacter->field_0x4 < 0) {
+        return 0xb;
+    }
+    if (gAction_replay_mode == 0) {
+        CharacterNoLongerCollideworthy(pCharacter);
+    }
+    form = pCharacter->personality->form;
+    actor_set = &form->actor_sets[pCharacter->field_0x4];
+    if (gAction_replay_mode == 0) {
+        actor_set->field_0x0 = 0;
+    }
+    if (pCharacter->field_0x4 < 0) {
+        matrix = &pCharacter->field_0x2c;
+    } else if (pCharacter->field_0xe8 != NULL) {
+        matrix = pCharacter->field_0xe8;
+    } else {
+        matrix = &pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+    }
+    BrMatrix34Copy(&pCharacter->field_0x2c, matrix);
+
+    if (pCharacter->field_0xc != 0) {
+        for (i = 0; i < form->max_stored_dismembered_characters; i++) {
+            if (*(float*)form->stored_dismembered_characters[i] == gFloat_00589358) {
+                break;
+            }
+        }
+        if (i == form->max_stored_dismembered_characters) {
+            pCharacter->field_0x28 = 0;
+        } else {
+            *(float*)form->stored_dismembered_characters[i] = 1.f;
+            pCharacter->field_0x28 = (undefined4)form->stored_dismembered_characters[i];
+            for (j = 1; j < form->count_bones; j++) {
+                if (pCharacter->field_0xc & gPow2_array[j]) {
+                    BrMatrix34Copy((br_matrix34*)((char*)pCharacter->field_0x28 + j * 0x30), GetBoneMatrixPtr(pCharacter, j));
+                }
+            }
+        }
+    }
+    for (i = 0; i < form->count_bones; i++) {
+        StopActorBeingRenderable(actor_set->actors[i]);
+    }
+    pCharacter->field_0x4 = -1;
+    return 0;
+}
 
 // MakeCharacterPhysics
 
