@@ -2620,7 +2620,12 @@ void C2_HOOK_FASTCALL UndoPedDismember(tPipe_chunk** pChunk, tPipe_chunk* pPrev_
 }
 
 #ifdef REC2_HW
-// UndoPedFPChange
+// FUNCTION: CARMA2_HW 0x004ca230
+void C2_HOOK_FASTCALL UndoPedFPChange(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_ped_fp_change* chunk = (tPipe_chunk_ped_fp_change*)*pChunk;
+
+    return WorkerPedFPChange(chunk->field_0x0, *(tPipe_stack_word*)&chunk->field_0x4);
+}
 
 // UndoPedPos
 
