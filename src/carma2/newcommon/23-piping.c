@@ -1136,7 +1136,16 @@ void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar 
         2, 0, pFrame, 4, 4, bits, 4, 8, bits, 4, 12, bits, 4, 16, bits);
 }
 
-// AddSplashToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7130
+void C2_HOOK_FASTCALL AddSplashToPipingSession(tPhysics_object* pCollision) {
+    br_scalar water_d;
+
+    water_d = pCollision->water_d;
+    *(volatile br_scalar*)&gUNK_0069410c = water_d;
+    ARAddVariedDataToSession((tPipe_chunk_type)0x14, (uintptr_t)pCollision, 2,
+        4, 0, *(tU32*)&gUNK_0069410c,
+        0xc, 4, &pCollision->water_normal);
+}
 
 // STUB: CARMA2_HW 0x004c7160
 void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pCollision, void* pArg2) { NOT_IMPLEMENTED(); }
