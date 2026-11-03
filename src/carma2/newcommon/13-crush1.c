@@ -1049,7 +1049,48 @@ float C2_HOOK_FASTCALL PointTriangleDistSq(const br_vector3* pP, const br_vector
     return distance * distance;
 }
 
-// PointRectDistSq
+// FUNCTION: CARMA2_HW 0x0042ce00
+float C2_HOOK_FASTCALL PointRectDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB, const br_vector3* pC) {
+    // based on ApexWorm/rec2 08141eedd
+    br_vector3 u;
+    br_vector3 v;
+    br_vector3 offset;
+    br_vector3 projected;
+    br_vector3 residual;
+    float u_scale;
+    float v_scale;
+
+    BrVector3Sub(&u, pC, pA);
+    BrVector3Sub(&v, pB, pA);
+    if ((float)fabs(BrVector3Dot(&u, &v)) > 0.001f) {
+        BrVector3Sub(&u, pC, pB);
+        BrVector3Sub(&v, pA, pB);
+        pA = pB;
+        if ((float)fabs(BrVector3Dot(&u, &v)) > 0.001f) {
+            BrVector3Sub(&u, pB, pC);
+            BrVector3Sub(&v, pA, pC);
+            pA = pC;
+        }
+    }
+    BrVector3Sub(&offset, pP, pA);
+    v_scale = BrVector3Dot(&offset, &v) / BrVector3LengthSquared(&v);
+    u_scale = BrVector3Dot(&offset, &u) / BrVector3LengthSquared(&u);
+    if (!(v_scale >= 0.0f)) {
+        v_scale = 0.0f;
+    } else if (v_scale > 1.0f) {
+        v_scale = 1.0f;
+    }
+    if (!(u_scale >= 0.0f)) {
+        u_scale = 0.0f;
+    } else if (u_scale > 1.0f) {
+        u_scale = 1.0f;
+    }
+    projected.v[0] = u_scale * u.v[0] + v_scale * v.v[0] + pA->v[0];
+    projected.v[1] = u_scale * u.v[1] + v_scale * v.v[1] + pA->v[1];
+    projected.v[2] = u_scale * u.v[2] + v_scale * v.v[2] + pA->v[2];
+    BrVector3Sub(&residual, &projected, pP);
+    return BrVector3LengthSquared(&residual);
+}
 
 // PointSimplexDistSq
 
