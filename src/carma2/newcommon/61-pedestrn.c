@@ -1135,7 +1135,19 @@ void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, 
     BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
 }
 
-// ScaleModel
+// FUNCTION: CARMA2_HW 0x004042f0
+void C2_HOOK_FAKE_THISCALL ScaleModel(br_model* pModel, int pArg2, float pScale) {
+    int i;
+    br_vertex* v;
+
+    REC2_THISCALL_UNUSED(pArg2);
+
+    v = pModel->vertices;
+    for (i = 0; i < pModel->nvertices; i++, v++) {
+        BrVector3Scale(&v->p, &v->p, pScale);
+    }
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+}
 
 // DisposeMove
 
