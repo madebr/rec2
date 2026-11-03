@@ -2075,7 +2075,33 @@ void C2_HOOK_FASTCALL DisposeAllPedPersonalities(void) {
     } while ((int)p < (int)&gPed_personalities[REC2_ASIZE(gPed_personalities)]);
 }
 
-// FindOrOpenForm
+// FUNCTION: CARMA2_HW 0x00406a40
+tPed_form* C2_HOOK_FASTCALL FindOrOpenForm(const char* pName) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gPed_forms); i++) {
+        if (gPed_forms[i] != NULL) {
+            if (strcmp(pName, gPed_forms[i]->name) == 0) {
+                return gPed_forms[i];
+            }
+        }
+    }
+    return SetUpCharacterForm(pName);
+}
+
+// MakeRotationMatrix
+
+// SetBoner
+
+// CalcBoundsRadius
+
+// BonerCloneModel
+
+// ReadPersonality
+
+// DisposePersonality
+
+// DisposeAllLoadedPersonalities
 
 // FindOrOpenPersonality
 
