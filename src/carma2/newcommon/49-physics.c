@@ -1648,3 +1648,37 @@ tPhysicsError C2_HOOK_FASTCALL FUN_00422400(tCollision_shape_polyhedron_data* pP
     }
     return ConvexHull3D(pPolyhedron);
 }
+
+
+// FUNCTION: CARMA2_HW 0x00422500
+int C2_HOOK_FASTCALL FUN_00422500(tCollision_shape_polyhedron_data* pPolyhedron, br_model* pModel, int pMin_point_count, int pMax_point_count, int* pVertex_indices) {
+    int result;
+    int count_points;
+    int point_count;
+
+    if (pModel == NULL) {
+        return 5;
+    }
+    if (pMax_point_count < 3) {
+        return 6;
+    }
+    if (pMax_point_count > (int)pModel->nvertices) {
+        pMax_point_count = pModel->nvertices;
+    }
+    if (pMin_point_count < 3) {
+        pMin_point_count = 3;
+    } else if (pMin_point_count > pMax_point_count) {
+        pMin_point_count = pMax_point_count;
+    }
+    point_count = pMax_point_count;
+    result = FUN_00422400(pPolyhedron, pVertex_indices, pModel, point_count);
+    count_points = pPolyhedron->count_points;
+    while (count_points != 0
+            && ((result == 0 || result == 2)
+                && (point_count = point_count * pMin_point_count / count_points, count_points != pMin_point_count))
+            && point_count < pMax_point_count) {
+        result = FUN_00422400(pPolyhedron, pVertex_indices, pModel, point_count);
+        count_points = pPolyhedron->count_points;
+    }
+    return result;
+}
