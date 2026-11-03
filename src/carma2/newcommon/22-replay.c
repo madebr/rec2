@@ -802,7 +802,14 @@ void C2_HOOK_FASTCALL WorkerSplitWeldUndo(void* roadMachine) {
     DRActorEnumRecurse(car->car_model_actor, MakeCarModelsMaterialsSingleSided, car);
 }
 
-// WorkerPHILObject
+// FUNCTION: CARMA2_HW 0x004b7220
+void C2_HOOK_FASTCALL WorkerPHILObject(int field_0x0, br_matrix34* pField_0x4) {
+    tPhysics_object* object;
+
+    object = (tPhysics_object*)field_0x0;
+    BrMatrix34Copy(&object->transform_matrix, pField_0x4);
+    BrMatrix34Copy(&object->actor->t.t.mat, pField_0x4);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9070
 void C2_HOOK_FASTCALL WorkerSmudge(tPipe_chunk** pChunk, int pScale) {
