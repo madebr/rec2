@@ -1258,7 +1258,17 @@ void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y) {
         SIZE_OFFSET_PIPING(tPipe_chunk_screen_wobble, wobble_y), pWobble_y);
 }
 
-// PipeSingleGrooveStop
+// FUNCTION: CARMA2_HW 0x004c80b0
+void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption) {
+
+    gUNK_0069410c = *(tU32*)&pPath_resumption;
+    ARDoSingleVariedSession(0xd, pGroove_index, 5,
+        4, 0, pObject_interrupt,
+        4, 4, pObject_interrupt,
+        4, 8, *(tU32*)&pPath_resumption,
+        4, 0xc, *(tU32*)&pPath_resumption,
+        0x30, 0x10, pMatrix);
+}
 
 // FUNCTION: CARMA2_HW 0x004c80f0
 // FUNCTION: CARMA2_SW 0x004c3720
