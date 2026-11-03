@@ -1814,7 +1814,28 @@ int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_ob
 
 // SplitCarCollisionShapes
 
-// QuantizeWithinBounds
+// FUNCTION: CARMA2_HW 0x00430d80
+int C2_HOOK_FASTCALL QuantizeWithinBounds(br_scalar* pValue, br_scalar pQuant, br_scalar pMin, br_scalar pMax) {
+    br_scalar range = pMax - pMin;
+    br_scalar t;
+    int count;
+    int index;
+
+    t = range / pQuant;
+    count = (int)(t > gCrushZero ? t - -0.5f : t - 0.5f);
+    if (count == 0) {
+        count = 1;
+    }
+    /* step reuses the dead pQuant argument home slot, as in the original */
+    pQuant = range / (br_scalar)count;
+    t = (*pValue - pMin) / pQuant;
+    index = (int)(t > gCrushZero ? t - -0.5f : t - 0.5f);
+    if (index >= 0 && index <= count) {
+        *pValue = (br_scalar)index * pQuant + pMin;
+        return 1;
+    }
+    return 0;
+}
 
 // SaveVitalBitsOfObject
 
