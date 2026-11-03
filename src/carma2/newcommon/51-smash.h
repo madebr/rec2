@@ -25,6 +25,12 @@ extern int gCount_track_smashable_environment_specs;
 extern tStored_smash* gNet_host_smashes;
 
 extern tExplosion gExplosions[50];
+
+extern tSmash_explosion gSmash_explosions[20];
+
+extern int gCount_host_smashes;
+
+extern tSmashable_item_spec gPowerup_respawn_smashable;
 extern br_vector3 gZero_vector__smash;
 extern tDecal gDecals[50];
 extern int gCount_queued_smashes;
@@ -45,7 +51,7 @@ extern void C2_HOOK_FASTCALL RemoveMaterialFromFogification(br_material* pMateri
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
-// ResetExplosions
+extern void C2_HOOK_FASTCALL ResetExplosions(void);
 
 extern void C2_HOOK_FASTCALL RemoveAllExplosionettes(void);
 
