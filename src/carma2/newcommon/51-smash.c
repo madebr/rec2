@@ -1044,7 +1044,28 @@ void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_a
     }
 }
 
-// MungeSmashMaterialNames
+// FUNCTION: CARMA2_HW 0x004f0bc0
+void C2_HOOK_FASTCALL MungeSmashMaterialNames(void) {
+    extern tSmashable_item_spec* gTrack_smashable_environment_specs;
+    extern int gCount_track_smashable_environment_specs;
+    int i;
+    tSmashable_item_spec* item_spec;
+
+    i = 0;
+    if (i < gCount_track_smashable_environment_specs) {
+        item_spec = gTrack_smashable_environment_specs;
+        do {
+            if (item_spec->trigger_type == kSmashableTrigger_Material) {
+                SplondificatalizeIdentifier(
+                    item_spec->trigger_object.material,
+                    &item_spec->trigger_object.material->identifier,
+                    i);
+            }
+            i++;
+            item_spec++;
+        } while (i < gCount_track_smashable_environment_specs);
+    }
+}
 
 // ExtrapolateTextureCoordinates
 

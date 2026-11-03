@@ -241,7 +241,7 @@ extern void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash);
 
 extern void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_actors);
 
-// MungeSmashMaterialNames
+extern void C2_HOOK_FASTCALL MungeSmashMaterialNames(void);
 
 // ExtrapolateTextureCoordinates
 
