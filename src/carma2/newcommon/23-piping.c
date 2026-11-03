@@ -17,6 +17,8 @@
 #include "51-smash.h"
 #include "61-pedestrn.h"
 #include "69-sound.h"
+#include "20-skidmark.h"
+#include "39-oil.h"
 #include "globvars.h"
 #include "platform.h"
 
@@ -2001,7 +2003,17 @@ void C2_HOOK_FASTCALL ApplyExtendedSplash(tPipe_chunk** pChunk) {
     return WorkerExtendedSplash(chunk->field_0x0, (tU8)chunk->field_0x4, chunk->field_0x8, &chunk->field_0xc, &chunk->field_0x18);
 }
 
-// ApplyOilSpill
+// FUNCTION: CARMA2_HW 0x004c9330
+void C2_HOOK_FASTCALL ApplyOilSpill(tPipe_chunk** pChunk) {
+    tPipe_chunk_oil_spill* chunk = (tPipe_chunk_oil_spill*)*pChunk;
+
+#ifdef REC2_MATCHING
+    /* the original passes the raw ints as arguments */
+    ((void (C2_HOOK_FASTCALL*)(int, br_matrix34*, int, int, int, int, int, br_vector3*, int))(void*)AdjustOilSpill)(chunk->field_0x0, (br_matrix34*)&chunk->field_0x4, chunk->field_0x34, chunk->field_0x38, chunk->field_0x3c, 0, chunk->field_0x44, &chunk->field_0x48, chunk->field_0x54);
+#else
+    AdjustOilSpill(chunk->field_0x0, (br_matrix34*)&chunk->field_0x4, *(float*)&chunk->field_0x34, *(float*)&chunk->field_0x38, chunk->field_0x3c, 0, (tCar_spec*)chunk->field_0x44, &chunk->field_0x48, (br_pixelmap*)(intptr_t)chunk->field_0x54);
+#endif
+}
 
 // ApplyFrameBoundary
 
