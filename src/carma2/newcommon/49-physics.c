@@ -1026,7 +1026,30 @@ void C2_HOOK_FASTCALL SetGroup(tPhysics_object* pObject, int pGroup) {
 #pragma auto_inline(off)
 #endif
 
-// SetCollisionInfoDoNothingChain
+// FUNCTION: CARMA2_HW 0x004b9e40
+void C2_HOOK_FASTCALL SetCollisionInfoDoNothingChain(tPhysics_object* pCollision_info, tU32 pDisable) {
+    tPhysics_object* cur;
+    tPhysics_object* sibling;
+
+    pCollision_info->disable_move_rotate = pDisable;
+    cur = pCollision_info;
+    do {
+        cur->disable_move_rotate = pDisable;
+        cur->field_0x1df = 0;
+        if (cur->child != NULL) {
+            sibling = cur->child;
+            while (sibling != NULL) {
+                sibling->disable_move_rotate = pDisable;
+                sibling->field_0x1df = 0;
+                if (sibling->child != NULL) {
+                    SetListDoingNothingFlag(sibling->child, pDisable);
+                }
+                sibling = sibling->next;
+            }
+        }
+        cur = (tPhysics_object*)cur->field183_0x1d8;
+    } while (cur != NULL && cur != pCollision_info);
+}
 
 // FUNCTION: CARMA2_HW 0x004b9f40
 void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
