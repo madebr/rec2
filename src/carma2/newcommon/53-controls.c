@@ -244,7 +244,29 @@ void C2_HOOK_FASTCALL FUN_00511200(void) {
     FUN_0045acf0();
 }
 
-// ToggleJoystickHeadup
+// FUNCTION: CARMA2_HW 0x00511240
+void C2_HOOK_FASTCALL ToggleJoystickHeadup(void) {
+    extern int gINT_0068b8e8;
+    extern int C2_HOOK_FASTCALL SaveJoystickPreferences(void);
+    extern int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
+    extern void C2_HOOK_FASTCALL FUN_0045c240(void);
+
+    if (gINT_0068b8e8 != 0) {
+        SaveJoystickPreferences();
+    }
+    FUN_0045c240();
+    if (gINT_0068b8e8 == 0) {
+        LoadJoystickPreferences();
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // F4Key
 
