@@ -1278,7 +1278,19 @@ int GetRegisterSourceLocation(char* pSource_location) {
 void C2_HOOK_FASTCALL LoadingNoOp(void) {
 }
 
-// DecimalDigitsToBitmask
+// FUNCTION: CARMA2_HW 0x0048fb50
+tU32 C2_HOOK_FASTCALL DecimalDigitsToBitmask(tU32 pValue) {
+    tU32 result;
+    tU32 v;
+
+    result = 0;
+    for (v = pValue; v != 0; v /= 10) {
+        result = (v % 10) | (result + result);
+    }
+    return result;
+}
+
+void C2_HOOK_FASTCALL EncodeFileWrapper(char* pThe_path);
 
 // EncodeAllFilesInDirectory
 
