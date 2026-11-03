@@ -172,7 +172,13 @@ void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
     PFfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
 }
 
-// WriteS32L
+// FUNCTION: CARMA2_HW 0x0048f980
+void C2_HOOK_FASTCALL WriteS32L(FILE* pF, tS32 pNumber) {
+    tS32 raw_long;
+
+    raw_long = pNumber;
+    PFfwrite(&raw_long, sizeof(raw_long), 1, pF);
+}
 
 // WriteS16L
 
