@@ -94,8 +94,15 @@ extern void C2_HOOK_FASTCALL CachePedestrianFaces(tPedestrian* pPed, br_vector3*
 
 #define GET_PED_COLLISION_OBJECT(PED) ( ((PED)->character->field_0x14 & 1) ? (PED)->character->personality->form->simple_physicing[(PED)->character->field_0x5].collision_info : GetRootObject((PED)->character))
 #define MUNGE_PED_COLLISION_OBJECT(PED) ( ((PED)->character->field_0x14 & 1) ? (PED)->character->personality->form->simple_physicing[(PED)->character->field_0x5].collision_info : GetRootObject((PED)->character))
+/* the rebuild tree names 0x4d6be0 UnmakeMaterialBlendy and 0x4d6ba0 ModelUpdatePrimitiveMaterials */
+#define DeetherealiseMaterial1 ((void (C2_HOOK_FASTCALL *)(void*))UnmakeMaterialBlendy)
+#define EtherealiseMaterial2 ((void (C2_HOOK_FASTCALL *)(void*))ModelUpdatePrimitiveMaterials)
 extern void C2_HOOK_FASTCALL ApplyNonCarTumble(tPhysics_object* pObject, br_vector3* pV, br_scalar pTumbleFactor, br_scalar pTumbleThreshold);
 extern void C2_HOOK_FASTCALL StopCharacterMorphing(tPed_character_instance* pCharacter);
+extern void C2_HOOK_FASTCALL MungeAllCharacterMaterials(void (C2_HOOK_FASTCALL* pCallback)(void*));
+extern void C2_HOOK_FASTCALL MungeAllCharacterObjects(void (C2_HOOK_FASTCALL* pCallback)(void*));
+extern void C2_HOOK_FASTCALL MungeAllCharacterModels(void (C2_HOOK_FASTCALL* pCallback)(void*));
+extern void C2_HOOK_FASTCALL DeetherealiseCharacter1(void* pCharacter);
 
 extern tS3_outlet* gCar_outlet;
 
@@ -3863,7 +3870,14 @@ void C2_HOOK_FASTCALL AdjustPedDiagnostics(tU32 pSubject_index, void* pUnused2, 
     (void)pUnused4;
 }
 
-// MakePedsNotEthereal
+// FUNCTION: CARMA2_HW 0x004d6bb0
+void C2_HOOK_FASTCALL MakePedsNotEthereal(void) {
+
+    MungeAllCharacterMaterials(DeetherealiseMaterial1);
+    MungeAllCharacterObjects(DeetherealiseCharacter1);
+    MungeAllCharacterModels(EtherealiseMaterial2);
+    gEthereal_pedestrians = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004d6c00
 void C2_HOOK_FASTCALL DeetherealiseCharacter1(void* pCharacter) {
