@@ -431,7 +431,26 @@ void C2_HOOK_FASTCALL NoOp_004e1c30(void) {
 
 // QuickTime dispatcher trampoline (selector 0x3000b).
 #ifdef REC2_MATCHING
-// FUN_0056d8c0
+// FUNCTION: CARMA2_HW 0x0056d8c0
+__declspec(naked) short C2_HOOK_CDECL FUN_0056d8c0(int pSequence, void* pFrame_pixmap, void* pFrame_rect, int pFlags, void* pCompressed_frame, int* pFrame_size, void* pCodec_info, void* pUnused8) {
+    __asm {
+        mov     eax, dword ptr [gQuickTime_dispatcher]
+        or      eax, eax
+        je      quicktime_trap_d8c0
+        call    dword ptr [gQuickTime_dispatcher]
+    quicktime_trap_d8c0:
+        mov     eax, 0x3000b
+        jmp     dword ptr [gQuickTime_dispatch]
+    }
+}
+#else
+short C2_HOOK_CDECL FUN_0056d8c0(int pSequence, void* pFrame_pixmap, void* pFrame_rect, int pFlags, void* pCompressed_frame, int* pFrame_size, void* pCodec_info, void* pUnused8) {
+    return 1;
+}
+#endif
+
+// QuickTime dispatcher trampoline (selector 0x2007c).
+#ifdef REC2_MATCHING
 // FUN_0056b440
 // FUN_0056fde0
 // FUN_0056c640
