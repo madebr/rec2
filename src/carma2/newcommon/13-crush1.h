@@ -14,6 +14,13 @@
 
 #include <stdio.h>
 
+typedef struct {
+    undefined field_0x0[0x2c];
+    br_vector3 normal;
+    undefined field_0x38[0x28];
+} tSensible_place_contact;
+
+
 extern undefined4 gCrush_array_0067a190[10];
 extern undefined4 gDAT_00679440;
 extern tCrush_info_buffer gDetached_bit_crush_info_buffer;
