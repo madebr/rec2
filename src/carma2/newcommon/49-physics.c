@@ -211,14 +211,40 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, br_vecto
 
 // GetObjectCornerToObjectFacePoints
 
+static int notfinite(const float* f) {
+    if (f != NULL) {
+        return ((~*(tU32*)f) & 0x7f800000) == 0;
+    } else {
+        return 0;
+    }
+}
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
 
-// STUB: CARMA2_HW 0x00425ba0
+// FUNCTION: CARMA2_HW 0x00425ba0
 // STUB: CARMA2_SW 0x00425c40
-int C2_HOOK_FASTCALL BoundsOverlapTest(br_bounds3* pBounds_1, br_bounds3* pBounds_2) {
-    NOT_IMPLEMENTED();
+int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2) {
+    int i;
+
+    if (b1->min.v[2] > b2->max.v[2]
+           || b2->min.v[2] > b1->max.v[2]
+           || b1->min.v[1] > b2->max.v[1]
+           || b2->min.v[1] > b1->max.v[1]
+           || b1->min.v[0] > b2->max.v[0]
+           || b2->min.v[0] > b1->max.v[0]) {
+
+        return 0;
+    }
+
+    for (i = 0; i < 3; i++) {
+        if (notfinite(&b1->min.v[i]) || notfinite(&b1->max.v[i])
+                || notfinite(&b2->min.v[i]) || notfinite(&b2->max.v[i])) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 #ifdef REC2_MATCHING
@@ -284,7 +310,7 @@ int C2_HOOK_FASTCALL TestObjectOverlap(tPhysics_object* pCollision_1, tPhysics_o
     shape1 = pCollision_1->shape;
     shape2 = pCollision_2->shape;
     if (FlagsAreGo(pCollision_1, pCollision_2)
-        && BoundsOverlapTest(&pCollision_1->field_0xf4, &pCollision_2->field_0xf4)) {
+        && BoundsOverlapTest__finteray(&pCollision_1->field_0xf4, &pCollision_2->field_0xf4)) {
         while (shape1 != NULL) {
             while (shape2 != NULL) {
                 if (TestShapeEdgeIntersection(pCollision_1, pCollision_2, shape1, shape2)

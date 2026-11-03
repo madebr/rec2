@@ -81,7 +81,7 @@ extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, b
 
 // GetObjectCornerToObjectFacePoints
 
-extern int C2_HOOK_FASTCALL BoundsOverlapTest(br_bounds3* pBounds_1, br_bounds3* pBounds_2);
+extern int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* pBounds_1, br_bounds* pBounds_2);
 
 // GetObjectObjectEdgePoints
 
