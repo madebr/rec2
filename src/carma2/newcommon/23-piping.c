@@ -1575,5 +1575,8 @@ int C2_HOOK_FASTCALL ARReplayPlaying(void) {
 }
 
 
-// SetPipeUndoFlag
+// FUNCTION: CARMA2_HW 0x004030d0
+void C2_HOOK_FASTCALL SetPipeUndoFlag(void) {
+    gPipe_undo_enabled = 1;
+}
 // ClearPipeUndoFlag
