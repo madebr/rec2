@@ -1361,7 +1361,13 @@ int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelma
     return 0;
 }
 
-// RunFlicAt
+// FUNCTION: CARMA2_HW 0x00462bb0
+void C2_HOOK_FASTCALL RunFlicAt(int pIndex, int pX, int pY) {
+
+    LoadFlic(pIndex);
+    PlayFlic(pIndex, gMain_flic_list[pIndex].the_size, gMain_flic_list[pIndex].data_ptr, gBack_screen, pX, pY, SwapScreen, 0, 0);
+    UnlockFlic(pIndex);
+}
 
 // GLOBAL: CARMA2_HW 0x00686300
 int gSound_ID;
