@@ -282,7 +282,40 @@ void C2_HOOK_FASTCALL RevealStoredTransparentTextures(tBrender_storage* pStorage
     }
 }
 
-// HideStoredTextures
+// FUNCTION: CARMA2_HW 0x00447be0
+void C2_HOOK_FASTCALL HideStoredTextures(tBrender_storage* pStorage) {
+    int i;
+
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_pixelmap* colour_map;
+
+        colour_map = pStorage->materials[i]->colour_map;
+
+        if (colour_map != NULL && StorageContainsPixelmap(pStorage, colour_map)) {
+            pStorage->materialProps[i] = colour_map;
+            pStorage->materials[i]->colour_map = NULL;
+            pStorage->materials[i]->flags &= ~BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL RevealStoredTextures(tBrender_storage* pStorage) {
+    int i;
+    br_pixelmap* colour_map;
+
+    for (i = 0; i < pStorage->materials_count; i++) {
+
+        colour_map = pStorage->materialProps[i];
+
+        if (colour_map != NULL) {
+            pStorage->materials[i]->colour_map = colour_map;
+            pStorage->materialProps[i] = NULL;
+            pStorage->materials[i]->flags |= BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00447350
 // FUNCTION: CARMA2_SW 0x00447770
