@@ -299,7 +299,33 @@ int C2_HOOK_FASTCALL DroneTrainWithinRenderingDistance(const br_vector3* pPos) {
 
 // SemiInitDroneSpec
 
-// InitDroneSpec
+// FUNCTION: CARMA2_HW 0x00451210
+void C2_HOOK_FASTCALL InitDroneSpec(tDrone_spec* pDrone_spec, int pNode) {
+
+    C2_HOOK_BUG_ON(sizeof(*pDrone_spec) != 0x5d8);
+
+    DoNotDprintf_drone("InitDroneSpec() - INITIALISING DRONE SPEC");
+    memset(pDrone_spec, 0, sizeof(*pDrone_spec));
+    pDrone_spec->field_0xa_pathnode_id = pNode;
+    pDrone_spec->field_0x8_pathnode_id = pNode;
+    pDrone_spec->field_0xe = -1;
+    pDrone_spec->field_0xc = -1;
+    BrVector3Set(&pDrone_spec->field_0x18, 0.f, 0.f, 0.f);
+    BrVector3Copy(&pDrone_spec->pos, &gDrone_path_nodes[pNode].position);
+    pDrone_spec->field_0xdc = 0;
+    pDrone_spec->form = &gDrone_forms[gDrone_path_nodes[pNode].type];
+    pDrone_spec->field_0xf4 = -1;
+    pDrone_spec->current_state = 0;
+    pDrone_spec->field_0x5d4 = 0;
+    pDrone_spec->field_0xe4 = 1.0f;
+    pDrone_spec->field_0x48 = 1.0f;
+}
+
+// ChooseNextNode
+
+// DroneOrientationChanged
+
+// DroneyObjectInSensiblePlace
 
 // DoDefaultDroneStateAction
 
