@@ -1312,8 +1312,48 @@ void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
 
 // AdjustSplashReplay
 
-// STUB: CARMA2_HW 0x004ff030
-void C2_HOOK_FASTCALL InitReplaySplashes(void) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004ff030
+void C2_HOOK_FASTCALL InitReplaySplashes(void) {
+    extern const br_scalar gFLOAT_0058b008;
+    tPhysics_object* object;
+
+    object = gPHIL_list_collision_infos;
+    gReplay_splash_flags = 0;
+    if (object != NULL) {
+        do {
+            if (object->water_d != 10000.0f) {
+                void* replay_object;
+                tU8 splash_type;
+                tCollision_info_owner* owner;
+
+                replay_object = NULL;
+                if (PHILGetObjectProperty(object, 6) != gFLOAT_0058b008) {
+                    replay_object = object;
+                    splash_type = 0xff;
+                } else if (object != NULL && object->owner != NULL && object->flags_0x238 == 1) {
+                    owner = (tCollision_info_owner*)object->owner;
+                    if (owner == NULL || *(int*)&owner->field_0x0c <= 5) {
+                        replay_object = object->actor;
+                        splash_type = 1;
+                    }
+                } else if (object != NULL && object->owner != NULL && object->flags_0x238 >= 2 && object->flags_0x238 <= 4) {
+                    replay_object = object->owner;
+                    splash_type = object->flags_0x238;
+                }
+                if (replay_object != NULL) {
+                    WorkerExtendedSplash((int)replay_object, splash_type, *(int*)&object->water_d, (br_vector3*)&object->water_normal, (br_vector3*)&object->bb1);
+                }
+            }
+            object = object->next;
+        } while (object != NULL);
+    }
+}
+
+extern void C2_HOOK_CDECL AFEModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pArg4, br_uint_8 pArg5, int pArg6);
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // SetModelAFEUpdateCB
 
