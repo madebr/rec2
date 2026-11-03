@@ -887,7 +887,22 @@ void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
     }
 }
 
-// SetFlag2
+// FUNCTION: CARMA2_HW 0x00444350
+void C2_HOOK_FASTCALL SetFlag2(int i) {
+
+    gAllow_car_flying = 1;
+    if (gNet_mode == eNet_mode_none) {
+        gCar_flying = !gCar_flying;
+        if (gCar_flying) {
+            NewTextHeadupSlot(4, 0, 500, -4, "We have lift off!!");
+        } else {
+            NewTextHeadupSlot(4, 0, 500, -4, "Back down to Earth");
+        }
+    } else {
+        gCar_flying = 0;
+    }
+    gAllow_car_flying = gCar_flying;
+}
 
 // ToggleFlying
 
