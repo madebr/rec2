@@ -372,7 +372,29 @@ tU32 gLast_synch_time;
 extern tU32 C2_HOOK_FASTCALL PDGetTotalTime(void);
 extern void C2_HOOK_FASTCALL ServiceGameInRace(void);
 
-// SynchronizeActionReplay
+// FUNCTION: CARMA2_HW 0x004e7110
+void C2_HOOK_FASTCALL SynchronizeActionReplay(void) {
+
+    while (ARGetReplayRate() != 0.f && (double)(tU32)(PDGetTotalTime() - gLast_synch_time) < (double)gFrame_period / fabs(ARGetReplayRate())) {
+        ServiceGameInRace();
+    }
+    gLast_synch_time = PDGetTotalTime();
+    if (gSingle_frame_mode) {
+        ARSetReplayRate(0.f);
+        gSingle_frame_mode = 0;
+    }
+}
+
+extern void C2_HOOK_FASTCALL SavePedStuff(void);
+extern void C2_HOOK_FASTCALL ToggleMap(void);
+extern void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
+extern void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race);
+extern void C2_HOOK_FASTCALL SaveCameraPosition(int pIndex);
+extern void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos);
+extern void C2_HOOK_FASTCALL InitReplaySplashes(void);
+extern tActionReplayCameraMode gAction_replay_camera_mode;
+extern tNet_mode gNet_mode;
+extern int gCamera_type;
 
 // STUB: CARMA2_HW 0x004e71c0
 void C2_HOOK_FASTCALL TurnOnActionReplay(void) { NOT_IMPLEMENTED(); }
