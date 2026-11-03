@@ -1788,7 +1788,16 @@ void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar
     }
 }
 
-// DoNetSmash
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// STUB: CARMA2_HW 0x004f6130
+void C2_HOOK_FASTCALL DoNetSmash(tQueued_net_smash* pSmash) {
+    NOT_IMPLEMENTED();
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // ReceivedSmashEnvironment
 
@@ -2065,3 +2074,23 @@ void C2_HOOK_FASTCALL FUN_004f36c0(const void* pMap, br_vector2* pUV, br_vector3
 #ifdef REC2_MATCHING
 #pragma auto_inline(on)
 #endif
+
+
+// FUNCTION: CARMA2_HW 0x004f62e0
+void C2_HOOK_FASTCALL UpdateCrushTimers(void) {
+    tQueued_net_smash* smash;
+    int count;
+
+    if (gNet_mode == eNet_mode_none) {
+        return;
+    }
+    smash = gQueued_net_smashes;
+    count = REC2_ASIZE(gQueued_net_smashes);
+    while (count-- != 0) {
+        if (smash->field_0x4 != 0 && gPHIL_last_physics_tick >= smash->field_0x4) {
+            smash->field_0x4 = 0;
+            DoNetSmash(smash);
+        }
+        smash++;
+    }
+}
