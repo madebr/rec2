@@ -455,7 +455,34 @@ int C2_HOOK_FASTCALL GetPipeCarStateAtTime(tS32 pOffset, tS32* pMode, br_scalar*
     return gTrigger_time;
 }
 
-// CheckPipeCarState
+// FUNCTION: CARMA2_HW 0x004c6e00
+static int C2_HOOK_FASTCALL CheckPipeCarState(tPipe_chunk* pChunk, int pChunk_count, tU32 pTime) {
+
+    if (ARReplayForwards()) {
+        if (pTime <= gOldest_time) {
+            return 0;
+        }
+    } else {
+        if (pTime >= gOldest_time) {
+            return 0;
+        }
+    }
+    gTrigger_time = pTime;
+    gPipe_car_state_chunk = (tU8*)pChunk;
+    return 1;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// MoveCamToIncident
+
+// PanningExternalCamera
+
+// CheckForWall
+
+// SetUpPanningCamera
 
 // FUNCTION: CARMA2_HW 0x00410be0
 // FUNCTION: CARMA2_SW 0x00410bc0
