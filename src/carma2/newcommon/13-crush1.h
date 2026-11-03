@@ -14,12 +14,13 @@
 
 #include <stdio.h>
 
+extern br_scalar gCrushZero;
+
 typedef struct {
     undefined field_0x0[0x2c];
     br_vector3 normal;
     undefined field_0x38[0x28];
 } tSensible_place_contact;
-
 
 extern undefined4 gCrush_array_0067a190[10];
 extern undefined4 gDAT_00679440;
@@ -77,6 +78,7 @@ extern tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tC
 extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* pCallback, void* pContext);
 
 // SoftnessOfNearestPoint
+float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* pPoint);
 
 // SetUpShapeLimitingStuff
 
@@ -581,3 +583,23 @@ int C2_HOOK_FASTCALL GetCornerToFacePoints(tPhysics_object* pObject, int pEdx, t
 int C2_HOOK_FASTCALL FUN_004236a0(tPhysics_object* pObject, tPhysics_shape* pShape, tSensible_place_contact* pContacts, int pCount, int pMax, br_vector3* pPoints, br_matrix34* pScratch, int* pHas_collision);
 
 int C2_HOOK_FASTCALL FUN_00424140(tPhysics_object* pObject, tPhysics_shape* pBounds_shape, tPhysics_shape* pRay_shape, int pCollision_count, undefined4 pArg5, tU8* pPolyhedron_data, undefined4 pArg7);
+
+int C2_HOOK_FASTCALL FUN_00424270(float* pStart, float* pEnd, int* pObject, int pBounds_shape, undefined4 pRay_shape, int pCollision_count, int pFace, int pPolyhedron_data);
+
+intptr_t C2_HOOK_CDECL InitPhysCrushDataCB(br_actor* actor, void* data);
+
+intptr_t C2_HOOK_CDECL InitVertexDataCB(br_actor* pActor, void* data);
+
+void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec);
+
+void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);
+
+void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data);
+
+void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data* pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data);
+
+float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB);
+
+void C2_HOOK_FASTCALL FUN_004c7f40(br_model* pModel, br_vector3* pSrc, const float* pScalars);
+
+int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3* pA, const br_vector3* pDirection, const br_vector3* pInside);
