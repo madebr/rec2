@@ -906,7 +906,8 @@ void C2_HOOK_FASTCALL AwardTime5(tU32 pTime) {
 char gHeadup_oppo_ped_text[64];
 
 #ifdef REC2_HW
-// DoTestHeadup
+// FUNCTION: CARMA2_HW 0x0044b6a0
+void C2_HOOK_FASTCALL DoTestHeadup(void) {
     // GLOBAL: CARMA2_HW 0x006815c0
     static int do_headup_material;
 
