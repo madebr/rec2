@@ -1102,7 +1102,36 @@ void C2_HOOK_FASTCALL WorkerShrapnelShowerUndo(tU32 chunk_0x48, tU32 prev_0x4, t
     }
 }
 
-// WorkerSpark
+// FUNCTION: CARMA2_HW 0x004f8630
+void C2_HOOK_FASTCALL WorkerSpark(int field_0x0, void* pField_0x4, void* pField_0x10) {
+    extern int gSpark_flags;
+    extern tSpark gSparks[32];
+    br_vector3* pPos;
+    br_vector3* pLength;
+    int i;
+    br_actor* actor;
+    br_vector3 delta;
+
+    pPos = (br_vector3*)pField_0x4;
+    pLength = (br_vector3*)pField_0x10;
+    i = field_0x0 & 0xff;
+    gSpark_flags |= 1 << field_0x0;
+    if (gSparks[i].car != NULL) {
+        actor = gSparks[i].car->car_master_actor;
+        delta.v[0] = pPos->v[0] - actor->t.t.translate.t.v[0];
+        delta.v[1] = pPos->v[1] - actor->t.t.translate.t.v[1];
+        delta.v[2] = pPos->v[2] - actor->t.t.translate.t.v[2];
+        BrMatrix34TApplyV(&gSparks[i].pos, &delta, &actor->t.t.mat);
+    } else {
+        gSparks[i].pos.v[0] = pPos->v[0];
+        gSparks[i].pos.v[1] = pPos->v[1];
+        gSparks[i].pos.v[2] = pPos->v[2];
+    }
+    gSparks[i].length.v[0] = pLength->v[0];
+    gSparks[i].length.v[1] = pLength->v[1];
+    gSparks[i].length.v[2] = pLength->v[2];
+    gSparks[i].colour = field_0x0 >> 8;
+}
 
 // WorkerShrapnel
 
