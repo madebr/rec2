@@ -282,7 +282,7 @@ void C2_HOOK_CDECL BrVector4Copy(br_vector4* v1, const br_vector4* v2) {
 
 // FUNCTION: CARMA2_HW 0x00534900
 // FUNCTION: CARMA2_SW 0x0052ffa0
-br_scalar C2_HOOK_CDECL BrFVector2Dot(const br_fvector2* v1, const br_vector2* v2) {
+br_scalar C2_HOOK_STDCALL BrFVector2Dot(const br_fvector2* v1, const br_vector2* v2) {
 
     return BR_MAC2(v1->v[0], v2->v[0], v1->v[1], v2->v[1]);
 }
