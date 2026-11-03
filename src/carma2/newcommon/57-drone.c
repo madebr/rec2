@@ -771,7 +771,9 @@ void C2_HOOK_FASTCALL MoveMyDroneBaby(tPhysics_object* pObject, undefined4 pArg2
 
 // DroneLookWhereYoureGoingYouBlindCunt
 
-// DroneNoOp
+// FUNCTION: CARMA2_HW 0x004525c0
+void C2_HOOK_FASTCALL DroneNoOp(void) {
+}
 
 // FUNCTION: CARMA2_HW 0x004525d0
 // FUNCTION: CARMA2_SW 0x00452360
