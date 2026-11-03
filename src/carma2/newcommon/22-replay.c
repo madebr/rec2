@@ -745,7 +745,39 @@ void C2_HOOK_FASTCALL WorkerCrushUndo(int field_0x4, void* pField_0x8, void* pFi
     pModel->flags |= BR_MODF_CUSTOM;
 }
 
-// WorkerFlap
+// FUNCTION: CARMA2_HW 0x0043c0e0
+void C2_HOOK_FASTCALL WorkerFlap(int field_0x4, tU16 field_0x8) {
+    br_actor* actor;
+    tUser_crush_data* user;
+    tUser_crush_data* parent_user;
+    br_model* parent_model;
+    tCar_crush_flap_data* flap;
+    const br_vector3* hinge;
+    br_vector3 axis;
+    br_scalar nx, ny, nz;
+
+    actor = (br_actor*)field_0x4;
+    user = actor->user;
+    if (user == NULL || user->crush_data == NULL) {
+        return;
+    }
+    flap = user->crush_data->flap_data;
+    if (flap == NULL) {
+        return;
+    }
+    flap->field_0x4 = (tU16)(flap->field_0x4 + field_0x8);
+    hinge = &user->models[0]->vertices[flap->hinge0].p;
+    BrVector3Sub(&axis, &user->models[0]->vertices[flap->hinge1].p, hinge);
+    BrVector3Normalise(&axis, &axis);
+    nx = -hinge->v[0];
+    ny = -hinge->v[1];
+    nz = -hinge->v[2];
+    BrMatrix34Translate(&actor->t.t.mat, nx, ny, nz);
+    BrMatrix34PostRotate(&actor->t.t.mat, flap->field_0x4, &axis);
+    parent_user = (tUser_crush_data*)actor->parent->user;
+    parent_model = parent_user->models[0];
+    BrMatrix34PostTranslate(&actor->t.t.mat, parent_model->vertices[flap->field_0xc].p.v[0], parent_model->vertices[flap->field_0xc].p.v[1], parent_model->vertices[flap->field_0xc].p.v[2]);
+}
 
 // WorkerSplitWeldUndo
 
