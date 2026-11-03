@@ -2744,7 +2744,20 @@ void C2_HOOK_FASTCALL BonerPedMovedByPhysics(tPed_character_instance* pCharacter
     }
 }
 
-// SetPhysicsObjectOmegaRecursive
+// FUNCTION: CARMA2_HW 0x0040ba80
+void C2_HOOK_FASTCALL SetPhysicsObjectOmegaRecursive(tPhysics_object* pObject, br_vector3* pOmega) {
+    tPhysics_object* child;
+
+    child = pObject->child;
+    pObject->omega.v[0] = pOmega->v[0];
+    pObject->omega.v[1] = pOmega->v[1];
+    pObject->omega.v[2] = pOmega->v[2];
+    for (; child != NULL; child = child->next) {
+        SetPhysicsObjectOmegaRecursive(child, pOmega);
+    }
+}
+
+// DismemberCharacter
 
 // FUNCTION: CARMA2_HW 0x0040bae0
 // FUNCTION: CARMA2_SW 0x0040bad0
