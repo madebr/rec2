@@ -300,7 +300,27 @@ void C2_HOOK_FASTCALL ARResetPiping(void) {
 #pragma auto_inline(off)
 #endif
 
-// ARInitialise
+// FUNCTION: CARMA2_HW 0x00402410
+void C2_HOOK_FASTCALL ARInitialise(int pEnable, int pCount_callbacks, const tReplay_callback* pCallbacks) {
+
+    if (!pEnable) {
+        gPipe_buffer_start = NULL;
+        gLocal_buffer = NULL;
+    } else {
+        gPipe_callbacks = pCallbacks;
+        gPipe_count_callbacks = pCount_callbacks;
+        PDAllocateActionReplayBuffer(&gPipe_buffer_start, &gPipe_buffer_size);
+        gPipe_buffer_phys_end = gPipe_buffer_start + gPipe_buffer_size;
+        gLocal_buffer = BrMemAllocate(15000, kMem_pipe_model_geometry);
+    }
+    ARResetPiping();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// ARDispose
 
 // DisposePiping
 
