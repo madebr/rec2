@@ -40,6 +40,12 @@
 
 #include <math.h>
 
+#define CAR_GEAR(c) (*(int*)&(c)->gear)
+
+
+// GLOBAL: CARMA2_HW 0x005895f0
+double gZero = 1.0;
+
 // GLOBAL: CARMA2_HW 0x006793ec
 tU32 gSafe_position_time_count = 0;
 
@@ -715,7 +721,101 @@ void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
     }
 }
 
-// CalcEngineForce
+// FUNCTION: CARMA2_HW 0x00415300
+void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
+    br_scalar speed;
+    br_scalar factor;
+    tS32 joy;
+
+    speed = -pCar->collision_info->velocity_car_space.v[2] * 6.9;
+    pCar->acc_force = 0.f;
+    if (pCar->revs == 0.f) {
+        CAR_GEAR(pCar) = 0;
+    }
+    if ((!pCar->keys.backwards && CAR_GEAR(pCar) < 0) ||
+        (CAR_GEAR(pCar) == 0 && speed < -0.5 && !pCar->keys.backwards)) {
+        pCar->keys.backwards = !pCar->keys.backwards;
+        pCar->keys.acc ^= pCar->keys.dec;
+        pCar->keys.dec ^= pCar->keys.acc;
+        pCar->keys.acc ^= pCar->keys.dec;
+        joy = pCar->joystick.acc;
+        pCar->joystick.acc = pCar->joystick.dec;
+        pCar->joystick.dec = joy;
+    }
+    if ((pCar->keys.backwards && CAR_GEAR(pCar) > 0) ||
+        (CAR_GEAR(pCar) == 0 && speed > 0.5 && pCar->keys.backwards)) {
+        pCar->keys.backwards = !pCar->keys.backwards;
+        pCar->keys.acc ^= pCar->keys.dec;
+        pCar->keys.dec ^= pCar->keys.acc;
+        pCar->keys.acc ^= pCar->keys.dec;
+        joy = pCar->joystick.acc;
+        pCar->joystick.acc = pCar->joystick.dec;
+        pCar->joystick.dec = joy;
+    }
+    if (CAR_GEAR(pCar) == 0 && !pCar->keys.acc && pCar->joystick.acc <= 0 &&
+        (pCar->keys.dec || pCar->joystick.dec > 0) && !pCar->keys.backwards &&
+        (float)fabs(speed) < 1.f) {
+        pCar->keys.backwards = 1;
+        pCar->keys.acc = pCar->keys.dec;
+        pCar->keys.dec = 0;
+        joy = pCar->joystick.acc;
+        pCar->joystick.acc = pCar->joystick.dec;
+        pCar->joystick.dec = joy;
+    }
+
+    pCar->torque = pCar->revs * pCar->revs * -1e-08f - 0.2;
+    if (pCar->keys.acc || pCar->joystick.acc >= 0) {
+        if (fabs(pCar->curvature) > pCar->maxcurve * 0.5f && CAR_GEAR(pCar) < 2 &&
+            CAR_GEAR(pCar) != 0 && pCar->traction_control && pCar->joystick.acc < 0) {
+            factor = 0.7f;
+        } else if (pCar->joystick.acc >= 0) {
+            factor = pCar->joystick.acc * (1.0 / 54613.0);
+        } else {
+            factor = 1.2f;
+        }
+        factor = factor * pCar->field_0x4d4;
+        factor = factor * gPower_starting_value[pCar->power_up_levels[1]];
+        if (pCar->damage_units[0].damage_level > 10) {
+            factor = factor * (1.f - (pCar->damage_units[0].damage_level - 10) * 0.01f);
+        }
+        pCar->torque = pCar->torque + factor;
+    } else {
+        pCar->traction_control = 1;
+    }
+
+    if (pCar->keys.dec || (pCar->keys.acc && CAR_GEAR(pCar) == 0) ||
+        pCar->joystick.dec > 0 || (pCar->joystick.acc > 0 && CAR_GEAR(pCar) == 0)) {
+        if (pCar->joystick.dec > 0) {
+            br_scalar bi = pCar->brake_increase;
+            br_scalar q = (pCar->joystick.dec) / 65536;
+            pCar->brake_force = pCar->initial_brake + bi * q;
+        }
+        if (pCar->brake_force == 0.f) {
+            pCar->brake_force = pCar->initial_brake;
+        } else {
+            br_scalar bi = pCar->brake_increase;
+            pCar->brake_force = pCar->brake_force + bi * pDt;
+            if (pCar->brake_force > pCar->initial_brake + pCar->brake_increase) {
+                pCar->brake_force = pCar->initial_brake + pCar->brake_increase;
+            }
+        }
+    } else {
+        pCar->brake_force = 0.f;
+    }
+
+    if (CAR_GEAR(pCar) == 0) {
+        return;
+    }
+    pCar->acc_force = pCar->force_torque_ratio * pCar->torque / (float)CAR_GEAR(pCar);
+    if (pCar->brake_force != 0.f) {
+        pCar->revs = pCar->target_revs;
+    } else if (pCar->revs - 1.f > pCar->target_revs || pCar->revs + 1.f < pCar->target_revs) {
+        br_scalar lt = gZero / (pCar->speed_revs_ratio * pCar->collision_info->M) / (float)CAR_GEAR(pCar);
+        pCar->acc_force = pCar->acc_force +
+            (pCar->torque * pDt * 5000.0 + (pCar->revs - pCar->target_revs)) /
+            ((lt + (float)CAR_GEAR(pCar) * (gZero / (pCar->force_torque_ratio * 0.0002))) * pDt);
+    }
+}
 
 // PrepareCars
 
