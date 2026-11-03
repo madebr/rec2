@@ -2661,8 +2661,23 @@ void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data* pFlap_data, con
     }
 }
 
-// STUB: CARMA2_HW 0x0042c300
+// FUNCTION: CARMA2_HW 0x0042c300
 float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB) {
-    NOT_IMPLEMENTED();
-    return 0;
+    br_vector3 pAB;
+    br_vector3 pAP;
+    br_vector3 pProj;
+    float proj;
+
+    BrVector3Sub(&pAP, pP, pA);
+    BrVector3Sub(&pAB, pB, pA);
+    proj = BrVector3Dot(&pAP, &pAB) / BrVector3Dot(&pAB, &pAB);
+    if (!(proj >= gCrushZero)) {
+        proj = gCrushZero;
+    } else if (proj > 1.0f) {
+        proj = 1.0f;
+    }
+    BrVector3Scale(&pProj, &pAB, proj);
+    BrVector3Add(&pProj, &pProj, pA);
+    BrVector3Sub(&pProj, pP, &pProj);
+    return BrVector3LengthSquared(&pProj);
 }

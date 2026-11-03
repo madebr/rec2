@@ -14,6 +14,8 @@
 
 #include <stdio.h>
 
+extern br_scalar gCrushZero;
+
 typedef struct {
     undefined field_0x0[0x2c];
     br_vector3 normal;
