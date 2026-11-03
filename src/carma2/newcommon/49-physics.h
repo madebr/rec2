@@ -314,9 +314,9 @@ extern void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects);
 
 // SimpleRotate
 
-// InterpolateSingleObject
+extern void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* pObject, br_scalar pDt);
 
-// InterpolateObjects
+extern void C2_HOOK_FAKE_THISCALL InterpolateObjects(tPhysics_object* pObject, float pDt);
 
 // ApplyGravitySingleObject
 
