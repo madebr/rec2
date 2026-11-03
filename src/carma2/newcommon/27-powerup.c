@@ -2122,7 +2122,58 @@ int C2_HOOK_FASTCALL GrowATail(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// CutOffTail
+// FUNCTION: CARMA2_HW 0x004e04c0
+int C2_HOOK_FASTCALL CutOffTail(tPowerup* pPowerup, tCar_spec* pCar) {
+    int i;
+    int message_address;
+    tU32 total_time;
+    int* picked_up_powerup;
+    tPowerup* tailp;
+
+    if (gMutant_tail_state == 2) {
+        PHILRemoveFromParentChain(gMutant_tail_object);
+        gMutant_tail_object->physics_joint1 = NULL;
+        PHILAddActiveObject(gMutant_tail_object, NULL, NULL, NULL);
+        PHILSetObjectProperty(gMutant_tail_object, 0, 1.0);
+        PHILSetObjectProperty(gMutant_tail_object, 1, 1);
+        PHILSetObjectProperty(gMutant_tail_object, 7, 1);
+        PHILSetObjectProperty(gMutant_tail_object, 6, 1);
+        tailp = &gPowerup_array[94];
+        if (tailp->got_time != 0 && tailp->lose_proc != NULL) {
+            tailp->lose_proc(tailp, tailp->car);
+        }
+        if (tailp->net_type & 0x80) {
+            ARPowerupLose(tailp, tailp->car);
+        }
+        if (gNet_mode != 0) {
+            message_address = (int)NetBuildGuaranteedMessage(0x16, 0);
+            *(int*)(message_address + 0x28) = 2;
+            *(tPlayer_ID*)(message_address + 0x1c) = gLocal_net_ID;
+            *(int*)(message_address + 0x20) = tailp - gPowerup_array;
+            NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, (tNet_message*)message_address, 0);
+        }
+        gProgram_state.current_car.powerups[tailp - gPowerup_array] = 0;
+        if (tailp->initial_value == 0 && (i = 0, 0 < gNumber_of_icons)) {
+            picked_up_powerup = (int*)&gPickedup_powerups[0].powerup;
+            while (i < gNumber_of_icons) {
+                if (tailp == (tPowerup*)*picked_up_powerup) {
+                    gPickedup_powerups[i].fizzle_stage = 3;
+                    gPickedup_powerups[i].fizzle_direction = -1;
+                    total_time = GetTotalTime();
+                    gPickedup_powerups[i].fizzle_start = total_time;
+                    break;
+                }
+                i++;
+                picked_up_powerup += 5;
+            }
+        }
+        tailp->got_time = 0;
+        gMutant_tail_state = 1;
+        DRS3StartSound2(gCar_outlet, 0xf3e, 1, 0xff, 0xff, -1, -1);
+        gINT_00705b70 = GetTotalTime();
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004e06a0
 // FUNCTION: CARMA2_SW 0x004dcba0
