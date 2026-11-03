@@ -36,6 +36,15 @@ int gINT_00692dc8;
 // GLOBAL: CARMA2_HW 0x0058a768
 br_scalar gFLOAT_0058a768 = 0.0f;
 
+// GLOBAL: CARMA2_HW 0x00692dd0
+float gFLOAT_00692dd0;
+
+// GLOBAL: CARMA2_HW 0x00692dd4
+float gFLOAT_00692dd4;
+
+// GLOBAL: CARMA2_HW 0x0058a798
+double gDOUBLE_0058a798 = 0.01;
+
 // GLOBAL: CARMA2_HW 0x006940c0
 // GLOBAL: CARMA2_SW 0x0068e118
 tPhysicsError_cbfn* gPhysics_error_cb;
@@ -1890,6 +1899,56 @@ void C2_HOOK_FASTCALL FUN_004b8cf0(tPhysics_object* pObject) {
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma inline_depth()
 #endif
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// FUNCTION: CARMA2_HW 0x004b9ce0
+void C2_HOOK_FASTCALL MergeBoundsIntoParent(tPhysics_object* pObject, br_bounds3* pBox) {
+    br_bounds3 local_box;
+    float* pSrc;
+    tPhysics_object* child;
+    int i;
+
+    GetNewBoundingBox(&pObject->field_0xf4, &pObject->bb1, &pObject->transform_matrix);
+    GetNewBoundingBox(&local_box, &pObject->bb1, &pObject->actor->t.t.mat);
+    for (i = 0; i < 3; i++) {
+        if (pObject->field_0xf4.min.v[i] > local_box.min.v[i]) {
+            pObject->field_0xf4.min.v[i] = local_box.min.v[i];
+        }
+        if (pObject->field_0xf4.max.v[i] < local_box.max.v[i]) {
+            pObject->field_0xf4.max.v[i] = local_box.max.v[i];
+        }
+        pObject->field_0xf4.min.v[i] = pObject->field_0xf4.min.v[i] - 0.0025;
+        pObject->field_0xf4.max.v[i] = pObject->field_0xf4.max.v[i] - -0.0025;
+    }
+    pObject->field_0x10c = pObject->field_0xf4;
+    for (child = pObject->child; child != NULL; child = child->next) {
+        MergeBoundsIntoParent(child, &pObject->field_0x10c);
+    }
+    if (pBox != NULL) {
+        pSrc = &pObject->field_0x10c.min.v[0];
+        for (i = 0; i < 3; i++) {
+            if (pSrc[i] < pBox->min.v[i]) {
+                pBox->min.v[i] = pSrc[i];
+            }
+            if (pSrc[i + 3] > pBox->max.v[i]) {
+                pBox->max.v[i] = pSrc[i + 3];
+            }
+        }
+    } else {
+        if (gFLOAT_00692dd0 <= pObject->field_0x10c.max.v[0] - pObject->transform_matrix.m[3][0]) {
+            gFLOAT_00692dd0 = pObject->field_0x10c.max.v[0] - pObject->transform_matrix.m[3][0];
+        }
+        if (gFLOAT_00692dd4 >= pObject->field_0x10c.min.v[0] - pObject->transform_matrix.m[3][0]) {
+            gFLOAT_00692dd4 = pObject->field_0x10c.min.v[0] - pObject->transform_matrix.m[3][0];
+        }
+    }
+}
 #ifdef REC2_MATCHING
 #pragma auto_inline(on)
 #endif

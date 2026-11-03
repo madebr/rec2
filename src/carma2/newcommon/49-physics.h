@@ -453,6 +453,8 @@ extern void C2_HOOK_FASTCALL FUN_004be350(float* pDestination, const float* pSou
 
 extern void C2_HOOK_FASTCALL FUN_004b8cf0(tPhysics_object* pObject);
 
+extern void C2_HOOK_FASTCALL MergeBoundsIntoParent(tPhysics_object* pObject, br_bounds3* pBox);
+
 #endif // GUARD_49_PHYSICS_H
 
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild);
