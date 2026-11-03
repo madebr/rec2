@@ -2466,7 +2466,30 @@ void C2_HOOK_FASTCALL UndoRelink(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk)
     }
 }
 
-// UndoSplitWeld
+// FUNCTION: CARMA2_HW 0x004c9fd0
+void C2_HOOK_FASTCALL UndoSplitWeld(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tU32 fn;
+    tCar_spec* car;
+
+    if (*(int*)((tU8*)*pChunk + 0x14)) {
+        fn = *(tU32*)*pChunk;
+        if ((fn & 0xffffff00u) == 0) {
+            car = &gProgram_state.current_car;
+        } else {
+            car = GetCarSpec(fn >> 8, fn & 0xffu);
+        }
+        WorkerSplitWeldUndo(car);
+    } else {
+        fn = *(tU32*)*pChunk;
+        if ((fn & 0xffffff00u) == 0) {
+            car = &gProgram_state.current_car;
+        } else {
+            car = GetCarSpec(fn >> 8, fn & 0xffu);
+        }
+        WorkerSplitWeldApply(car, (br_vector3*)((tU8*)*pChunk + 4));
+    }
+}
+#endif
 
 // FUNCTION: CARMA2_HW 0x004ca050
 // FUNCTION: CARMA2_SW 0x004c6780
