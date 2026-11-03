@@ -39,6 +39,20 @@ int gAllow_material_adapt;
 // GLOBAL: CARMA2_HW 0x006a3340
 br_material* gMaterials_to_adapt[200];
 
+/* explicit initializers keep gQueued_net_smashes and gPowerup_queue adjacent (loop-end compare) */
+// GLOBAL: CARMA2_HW 0x006a3940
+tQueued_net_smash gQueued_net_smashes[50] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a4430
+tPowerup_queue_item gPowerup_queue[50] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a55bc
+int gSize_powerup_queue;
+
+/* owned by 57-drone.c; defined here because that file does not have it yet */
+// GLOBAL: CARMA2_HW 0x00705b70
+tU32 gINT_00705b70;
+
 // GLOBAL: CARMA2_HW 0x0065feb0
 const char* gRepeatability_names[4] = {
     "none",
@@ -1913,4 +1927,60 @@ void C2_HOOK_FASTCALL ReadShrapnelSideEffects(FILE* pF, tShrapnel_side_effects* 
             pShrapnel_side_effects->side_effects[i].field_0x48 = GetAScalar(pF);
         }
     }
+}
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// STUB: CARMA2_HW 0x004d9d00
+void C2_HOOK_FASTCALL FUN_004d9d00(tPhysics_object* pObject, int pMode) {
+    NOT_IMPLEMENTED();
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+extern int gMutant_tail_state;
+
+// FUNCTION: CARMA2_HW 0x004f1030
+void C2_HOOK_FASTCALL FUN_004f1030(tPhysics_object* pObject, int pMode, br_actor* pActor) {
+    void* info;
+    int type;
+
+    info = pObject->owner;
+    if (pMode == 0xe) {
+        if (pObject != NULL && info != NULL && pObject->flags_0x238 == 1) {
+            type = *(volatile int*)((tU8*)info + 0xc);
+            if ((type == 0 || (type != 2 && type != 3))
+                    && gSize_powerup_queue < 0x32
+                    && *(volatile int*)((tU8*)info + 0xc) > 5) {
+                gPowerup_queue[gSize_powerup_queue].actor = pActor;
+                gPowerup_queue[gSize_powerup_queue].car = pObject->owner;
+                gPowerup_queue[gSize_powerup_queue].powerup_index = 0xe;
+                gSize_powerup_queue = gSize_powerup_queue + 1;
+                return;
+            }
+        }
+        FUN_004d9d00(pObject, 0xe);
+        return;
+    }
+    if (pObject != NULL && info != NULL && pObject->flags_0x238 == 1) {
+        type = *(volatile int*)((tU8*)info + 0xc);
+        if ((type == 0 || (type != 2 && type != 3))
+                && gSize_powerup_queue < 0x32
+                && *(volatile int*)((tU8*)info + 0xc) == 8) {
+            goto enqueue;
+        }
+    }
+    if (pObject->flags_0x238 == 0x20
+            && (gMutant_tail_state == 2 || GetTotalTime() - gINT_00705b70 < 0x1d4c)) {
+        goto enqueue;
+    }
+    return;
+enqueue:
+    gPowerup_queue[gSize_powerup_queue].actor = pActor;
+    gPowerup_queue[gSize_powerup_queue].car = &gProgram_state.current_car;
+    gPowerup_queue[gSize_powerup_queue].powerup_index = pMode;
+    gSize_powerup_queue = gSize_powerup_queue + 1;
 }
