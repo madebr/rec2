@@ -34,7 +34,7 @@ float C2_HOOK_CDECL BrFloatSqrt(float f) {
 // FUNCTION: CARMA2_HW 0x0053f4f0
 float C2_HOOK_CDECL BrFloatPow(float a, float b) {
 
-    return powf(a, b);
+    return (float)pow(a, b);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f500
