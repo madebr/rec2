@@ -700,7 +700,80 @@ int gBack_original_base_x;
 
 extern void C2_HOOK_FASTCALL FRONTEND_Redraw(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h);
 
-// MapStuffBeforeRender
+// FUNCTION: CARMA2_HW 0x00496be0
+void C2_HOOK_FASTCALL MapStuffBeforeRender(void) {
+    extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
+
+    gINT_0068d6f4 = -1;
+    if (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_foxy) {
+        gTarget_lock_car_2 = NULL;
+    } else if (gPrevious_opponent_status == eOpponent_status_Wasted && gTarget_lock_car_1 != NULL) {
+        if (PDGetTotalTime() - gTime_oppobar_target_wasted <= 2500) {
+            gFLOAT_0074ab90 = 0.f;
+        } else {
+            gTarget_lock_car_2 = NULL;
+            gTarget_lock_car_1 = NULL;
+            if (gTarget_lock_enabled) {
+                gTarget_lock_enabled = 0;
+            }
+        }
+    } else if (gTarget_lock_enabled) {
+        gFLOAT_0074ab90 = 0.f;
+    } else {
+        gTarget_lock_car_2 = NULL;
+    }
+    if (gCurrent_race.map_image != NULL && gMap_view == 2) {
+        gBack_original_origin_x = gBack_screen->origin_x;
+        gBack_original_origin_y = gBack_screen->origin_y;
+        gBack_original_base_x = gBack_screen->base_x;
+        gBack_original_base_y = gBack_screen->base_y;
+        gBack_screen->origin_x = 0;
+        gBack_screen->origin_y = 0;
+        gBack_screen->base_x = 0;
+        gBack_screen->base_y = 0;
+        if (gCurrent_race.map_image != NULL) {
+            if (gGraf_data_index != 0) {
+                PossibleUnlock(1);
+                FRONTEND_Redraw(gBack_screen, -gBack_screen->origin_x, -gBack_screen->origin_y, gCurrent_race.map_image, gCurrent_race.map_image->origin_x, gCurrent_race.map_image->origin_y, 640, 480);
+            } else {
+                DRPixelmapCopy(gBack_screen, gCurrent_race.map_image);
+            }
+        }
+        DimRectangleClipped(gBack_screen, gMap_render_x_i - gCurrent_graf_data->map_render_x_marg, gMap_render_y_i - gCurrent_graf_data->map_render_y_marg, gMap_render_width_i + gMap_render_x_i + gCurrent_graf_data->map_render_x_marg, gMap_render_height_i + gMap_render_y_i + gCurrent_graf_data->map_render_y_marg, 1);
+    }
+}
+
+// MapStuffAfterRender
+
+static void C2_HOOK_FASTCALL ReadMoodMessages(void) {
+    tPath_name path;
+    FILE *f;
+    int mood;
+    char s[256];
+
+    PathCat(path, gApplication_path, "STATUS.TXT");
+    f = PFfopen(path, "rt");
+    if (f != NULL) {
+        for (mood = 0; mood < (int)REC2_ASIZE(gOppo_status_messages); mood += 1) {
+            int i;
+
+            C2_HOOK_ASSERT(mood < REC2_ASIZE(gOppo_status_messages));
+
+            gOppo_status_messages[mood].count = GetAnInt(f);
+            C2_HOOK_ASSERT(gOppo_status_messages[mood].count < REC2_ASIZE(gOppo_status_messages[mood].messages));
+            for (i = 0; i < gOppo_status_messages[mood].count; i++) {
+
+
+                GetALineAndDontArgue(f, s);
+                gOppo_status_messages[mood].messages[i] = (char *) BrMemAllocate(strlen(s) + 1, kMem_misc_string);
+                strcpy(gOppo_status_messages[mood].messages[i], s);
+            }
+        }
+        PFfclose(f);
+    } else {
+        FatalError(kFatalError_CantOpen_S, "STATUS.TXT");
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00496e30
 // FUNCTION: CARMA2_SW 0x00493ca0
