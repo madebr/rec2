@@ -185,7 +185,46 @@ void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender)
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// NewObjective
+// FUNCTION: CARMA2_HW 0x004aad70
+void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_objective_type pObjective_type, ...) {
+    extern void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
+    va_list ap;
+
+    if (pOpponent_spec->current_objective != eOOT_none) {
+        ProcessCurrentObjective(pOpponent_spec, ePOC_die);
+    }
+    pOpponent_spec->current_objective = pObjective_type;
+    pOpponent_spec->time_this_objective_started = gTime_stamp_for_this_munging;
+    pOpponent_spec->time_for_this_objective_to_finish = gTime_stamp_for_this_munging + IRandomBetween(20, 60) * 1000;
+    if (pObjective_type == eOOT_pursue_and_twat) {
+        pOpponent_spec->time_for_this_objective_to_finish += 90000;
+    }
+    switch (pObjective_type) {
+    case eOOT_complete_race:
+        gNum_of_opponents_completing_race += 1;
+        break;
+    case eOOT_pursue_and_twat:
+        va_start(ap, pObjective_type);
+        pOpponent_spec->pursue_car_data.pursuee = va_arg(ap, tCar_spec*);
+        va_end(ap);
+        gNum_of_opponents_pursuing += 1;
+        break;
+    case eOOT_get_near_player:
+        gNum_of_opponents_getting_near += 1;
+        break;
+    default:
+        break;
+    }
+    DoNotDprintf("%s: NewObjective() - type %d", pOpponent_spec->car_spec->driver_name, pObjective_type);
+    ProcessCurrentObjective(pOpponent_spec, ePOC_start);
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// CalcRaceRoute
+
+// TopUpRandomRoute
 
 // FUNCTION: CARMA2_HW 0x004a9550
 // FUNCTION: CARMA2_SW 0x004a56c0
