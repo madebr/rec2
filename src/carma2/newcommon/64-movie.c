@@ -729,7 +729,26 @@ short C2_HOOK_CDECL FUN_0056dac0(void* pSequence) {
 
 // QuickTime dispatcher trampoline (selector 0x150032, DisposeHandle).
 #ifdef REC2_MATCHING
-// FUN_00570ac0
+// FUNCTION: CARMA2_HW 0x00570ac0
+__declspec(naked) void C2_HOOK_CDECL FUN_00570ac0(void* pHandle) {
+    __asm {
+        mov     eax, dword ptr [gQuickTime_dispatcher]
+        or      eax, eax
+        je      quicktime_trap_0ac0
+        call    dword ptr [gQuickTime_dispatcher]
+    quicktime_trap_0ac0:
+        mov     eax, 0x150032
+        jmp     dword ptr [gQuickTime_dispatch]
+    }
+}
+#else
+void C2_HOOK_CDECL FUN_00570ac0(void* pHandle) {
+}
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x004e1810
 void C2_HOOK_FASTCALL MovieRecordButtonPressed(void) { NOT_IMPLEMENTED(); }
