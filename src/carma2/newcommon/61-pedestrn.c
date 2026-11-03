@@ -1758,3 +1758,18 @@ void C2_HOOK_FASTCALL DisposePedPersonality(tPed_personality* pPersonality) {
         BrMemFree(pPersonality);
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x00407900
+void C2_HOOK_FASTCALL DisposeAllPedPersonalities(void) {
+    tPed_personality** p;
+
+    p = gPed_personalities;
+    do {
+        if (*p != NULL) {
+            DisposePedPersonality(*p);
+            *p = NULL;
+        }
+        p++;
+    } while ((int)p < (int)&gPed_personalities[REC2_ASIZE(gPed_personalities)]);
+}
