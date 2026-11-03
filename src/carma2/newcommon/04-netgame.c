@@ -208,7 +208,20 @@ void C2_HOOK_FASTCALL ReceivedCopInfo(void) {
 
 // SendAllNonCarPositions
 
-// ReceivedNonCarPosition
+// FUNCTION: CARMA2_HW 0x00498bc0
+void C2_HOOK_FASTCALL ReceivedNonCarPosition(tNet_message_chunk_non_car_position* pContents) {
+    br_actor* actor;
+
+    actor = gProgram_state.track_spec.non_car_list[pContents->ID];
+    if (actor != NULL && gNet_mode != eNet_mode_host) {
+        BrMatrix34Copy(&actor->t.t.mat, &pContents->mat);
+        if (pContents->flags != 0) {
+            actor->identifier[3] = '!';
+        }
+    }
+}
+
+// ReceivedNonCar
 
 // FUNCTION: CARMA2_HW 0x00498e70
 // FUNCTION: CARMA2_SW 0x00495aa0
