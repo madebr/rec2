@@ -187,8 +187,129 @@ br_material* C2_HOOK_FASTCALL CreateSimpleMaterial(int pIndex) {
 extern void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar);
 extern int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar);
 
-// STUB: CARMA2_HW 0x0043f930
-void C2_HOOK_FASTCALL DoDamage(tCar_spec* pCar, tDamage_type pDamage_type, int pMagnitude) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x0043f930
+void C2_HOOK_FASTCALL DoDamage(tCar_spec* pCar, tDamage_type pDamage_type, int pMagnitude) {
+    tDamage_unit* damage_unit;
+    int old_level;
+    int new_level;
+
+    if (pCar != NULL && pCar->driver >= eDriver_net_human && pDamage_type == eDamage_driver) {
+        return;
+    }
+    if (pCar->invulnerable_no_damage || pMagnitude < 5) {
+        return;
+    }
+    damage_unit = &pCar->damage_units[pDamage_type];
+    old_level = damage_unit->damage_level;
+    new_level = pMagnitude + damage_unit->damage_level;
+    damage_unit->damage_level = new_level;
+    if (new_level >= 99) {
+        if (pMagnitude < 10) {
+            damage_unit->damage_level = old_level;
+        }
+        else {
+            damage_unit->damage_level = 99;
+        }
+    }
+    if (SetKnackeredFlag(pCar)) {
+        return;
+    }
+    if (pCar == NULL || pCar->driver != eDriver_oppo) {
+        if (gNet_mode == eNet_mode_none
+                && ((pCar->damage_units[eDamage_engine].damage_level >= 99
+                        && pCar->damage_units[eDamage_engine].last_level < 99
+                        && pCar->damage_units[eDamage_transmission].last_level < 99)
+                    || (pCar->damage_units[eDamage_transmission].damage_level >= 99
+                        && pCar->damage_units[eDamage_engine].last_level < 99
+                        && pCar->damage_units[eDamage_transmission].last_level < 99))) {
+            QueueOilSpill(pCar);
+        }
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+extern int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
+extern const char* gGroove_funk_type_names[4];
+extern const char* gDrone_axis_names[4];
+extern const char* gFunk_speed_control_names[2];
+extern const char* gReverseness_type_names[2];
+
+/* helpers that the original inlines into LoadFunksAndGrooves */
+static int ReadPastThisLine(FILE* pF, const char* pLine) {
+    char s[256];
+
+    for (;;) {
+        if (PFfeof(pF)) {
+            return 0;
+        }
+        GetALineAndDontArgue(pF, s);
+        if (strcmp(s, pLine) == 0) {
+            return 1;
+        }
+    }
+}
+
+static int MatchGrooveFunkType(const char* pS) {
+    const char** ppName;
+    int i;
+
+    i = 0;
+    for (ppName = gGroove_funk_type_names; ppName < &gGroove_funk_type_names[3]; ppName++) {
+        if (strcmp(pS, *ppName) == 0) {
+            return i;
+        }
+        i += 1;
+    }
+    return -1;
+}
+
+static int GrooveAxisFromString(const char* pS) {
+    const char** ppName;
+    int i;
+
+    i = 0;
+    for (ppName = gDrone_axis_names; ppName < &gDrone_axis_names[3]; ppName++) {
+        if (strcmp(pS, *ppName) == 0) {
+            return i;
+        }
+        i += 1;
+    }
+    return -1;
+}
+
+static int GrooveSpeedControlFromString(const char* pS) {
+    const char** ppName;
+    int i;
+
+    i = 0;
+    for (ppName = gFunk_speed_control_names; ppName < &gFunk_speed_control_names[2]; ppName++) {
+        if (strcmp(pS, *ppName) == 0) {
+            return i;
+        }
+        i += 1;
+    }
+    return -1;
+}
+
+static int GrooveReversenessFromString(const char* pS) {
+    const char** ppName;
+    int i;
+
+    i = 0;
+    for (ppName = gReverseness_type_names; ppName < &gReverseness_type_names[2]; ppName++) {
+        if (strcmp(pS, *ppName) == 0) {
+            return i;
+        }
+        i += 1;
+    }
+    return -1;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // LoadFunksAndGrooves
 
