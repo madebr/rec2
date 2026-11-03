@@ -32,6 +32,9 @@ extern int gPaused;
 
 extern void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 
+// GLOBAL: CARMA2_HW 0x006768b0
+tU32 gPipe_UNK_006768b0 = 0;
+
 // GLOBAL: CARMA2_HW 0x0058f1e8
 int gPipe_session_search_limit = 1000;
 
@@ -512,7 +515,143 @@ int C2_HOOK_FASTCALL SoundTimeout(tU32 pTime) {
         || gPipe_sound_start_time - pTime < gPipe_sound_time_window;
 }
 
-// ScanAndPlaySoundsToBe
+// FUNCTION: CARMA2_HW 0x00403990
+void C2_HOOK_FASTCALL ScanAndPlaySoundsToBe(tU8* pFirst_session, tU32 pStart_time, tU32 pEnd_time) {
+    tU32 time;
+    int forwards;
+    int total;
+    tU32 i;
+    int length;
+    tU8* the_chunk;
+    tU8* old_chunk;
+    int count;
+    int duration;
+    const tReplay_callback* callbacks;
+    tU32 type;
+    int more;
+
+#define chunk (*(tU8**)&pEnd_time)
+    if (gDisable_piped_sounds != 0) {
+        return;
+    }
+    gPipe_sound_start_time = pEnd_time;
+    gPipe_UNK_006768b0 = pStart_time;
+    gPipe_sound_time_window = (tU32)(fabs(gReplay_rate) * 1500.0);
+    time = pStart_time;
+    do {
+        if (gPipe_play_ptr == gPipe_record_ptr) {
+            forwards = 0;
+        } else if (gPipe_play_ptr == gPipe_buffer_oldest) {
+            forwards = 1;
+        } else if (gReplay_rate != 0.f) {
+            if (gReplay_rate > 0.f) {
+                forwards = 1;
+            } else {
+                forwards = 0;
+            }
+        } else {
+            forwards = gPlay_direction > 0;
+        }
+        if (forwards) {
+            total = 0;
+            i = 0;
+            if (i < ((tU32*)pFirst_session)[1]) {
+                do {
+                    total += LengthOfChunk((tPipe_chunk*)(pFirst_session + 8 + total), ((tU32*)pFirst_session)[0]);
+                    i++;
+                } while (i < ((tU32*)pFirst_session)[1]);
+            }
+            total += 10;
+            if ((total & 1) != 0) {
+                FatalError(0x62);
+            }
+            pFirst_session += total;
+            if (pFirst_session >= gPipe_buffer_working_end) {
+                if (pFirst_session == gPipe_record_ptr) {
+                    return;
+                }
+                pFirst_session = gPipe_buffer_start;
+            }
+            if (pFirst_session == gPipe_record_ptr) {
+                return;
+            }
+        } else {
+            if (pFirst_session == gPipe_buffer_oldest && pFirst_session != gPipe_record_ptr) {
+                return;
+            }
+            if (pFirst_session == gPipe_buffer_start) {
+                pFirst_session = gPipe_buffer_working_end;
+            }
+            pFirst_session -= 2;
+            pFirst_session -= *(tU16*)pFirst_session;
+        }
+        total = 0;
+        i = 0;
+        callbacks = gPipe_callbacks;
+        if (i < ((tU32*)pFirst_session)[1]) {
+            do {
+                type = ((tU32*)pFirst_session)[0];
+                the_chunk = pFirst_session + 8 + total;
+                if (callbacks[type].calc_length != NULL) {
+                    length = callbacks[type].calc_length((tPipe_chunk*)the_chunk);
+                    callbacks = gPipe_callbacks;
+                    length += callbacks[type].length + 4;
+                } else {
+                    length = callbacks[type].length + 4;
+                }
+                total += length;
+                i++;
+            } while (i < ((tU32*)pFirst_session)[1]);
+        }
+        total += 10;
+        if ((total & 1) != 0) {
+            FatalError(0x62);
+        }
+        gPipe_buffer_end_marker = pFirst_session + total - 2;
+        if (((tU32*)pFirst_session)[0] == 0) {
+            time = ((tU32*)pFirst_session)[3];
+        } else if (((tU32*)pFirst_session)[0] == 2) {
+            chunk = pFirst_session + 8;
+            if (((int*)pFirst_session)[1] > 0) {
+                count = ((int*)pFirst_session)[1];
+                do {
+                    duration = FUN_00564e5e(*(int*)chunk);
+                    if (((int*)chunk)[1] > 1) {
+                        duration = (int)((double)duration / ((double)((int*)chunk)[1] * 0.0000152587890625));
+                    }
+                    duration += time;
+                    if ((tU32)duration < gPipe_sound_start_time || (tU32)duration >= gPipe_UNK_006768b0) {
+                        old_chunk = chunk;
+                        if (gPipe_undo_enabled == 0) {
+                            if (gPipe_callbacks[2].calc_length != NULL) {
+                                length = gPipe_callbacks[2].calc_length((tPipe_chunk*)chunk) + 4 + gPipe_callbacks[2].length;
+                            } else {
+                                length = gPipe_callbacks[2].length + 4;
+                            }
+                            chunk += length;
+                            if (chunk == gPipe_buffer_end_marker || (int)chunk > (int)gPipe_buffer_end_marker) {
+                                chunk = old_chunk;
+                            }
+                        }
+                    } else if (gPipe_callbacks[2].apply != NULL) {
+                        gPipe_callbacks[2].apply((tPipe_chunk**)&chunk);
+                    }
+                    count--;
+                } while (count != 0);
+            }
+        }
+#ifdef REC2_MATCHING
+        if (SoundTimeout == NULL) {
+            more = 1;
+        } else
+#endif
+        if (gPipe_sound_start_time < time || gPipe_sound_start_time - time < gPipe_sound_time_window) {
+            more = 1;
+        } else {
+            more = 0;
+        }
+    } while (more);
+}
 // ARGetStartTime
 
 // ARDisableAdvance
