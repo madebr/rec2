@@ -279,9 +279,36 @@ br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedMac2(br_fixed_ls a, br_fixed_ls b, br_
 }
 
 // FUNCTION: CARMA2_HW 0x00537154
-br_fixed_ls C2_HOOK_CDECL BrFixedMac3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f) {
-
+br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedMac3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f) {
+#ifndef REC2_MATCHING
     return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d + (br_int_64)e * (br_int_64)f) >> 16;
+#else
+    __asm {
+        push ebp
+        mov ebp, esp
+        push edx
+        push ebx
+        push ecx
+        mov eax, dword ptr [ebp + 8]
+        imul dword ptr [ebp + 0xc]
+        mov ebx, eax
+        mov ecx, edx
+        mov eax, dword ptr [ebp + 0x10]
+        imul dword ptr [ebp + 0x14]
+        add ebx, eax
+        adc ecx, edx
+        mov eax, dword ptr [ebp + 0x18]
+        imul dword ptr [ebp + 0x1c]
+        add eax, ebx
+        adc edx, ecx
+        shrd eax, edx, 16
+        pop ecx
+        pop ebx
+        pop edx
+        leave
+        ret
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00537181
