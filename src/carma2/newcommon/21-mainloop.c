@@ -581,7 +581,58 @@ void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime) {
     gLast_munge_smash_edge_triggers = gPHIL_last_physics_tick;
 }
 
-// AdjustHeadupTextBuffer
+// FUNCTION: CARMA2_HW 0x0045b0a0
+void C2_HOOK_FASTCALL AdjustHeadupTextBuffer(tHeadup_text_buffer* pBuffer) {
+    tHeadup_text* node;
+    tHeadup_text* current;
+    int index;
+    int i;
+
+    node = pBuffer->texts;
+    if (node == NULL) {
+        return;
+    }
+    if (pBuffer->field_0x4 == NULL) {
+        pBuffer->field_0x4 = pBuffer->texts;
+        if (pBuffer->count - pBuffer->pos_last_add < pBuffer->field_0x10) {
+            i = pBuffer->count - pBuffer->field_0x10;
+            node = pBuffer->texts;
+            for (; i > 0; i--) {
+                node = node->next;
+            }
+            pBuffer->field_0x4 = node;
+            return;
+        }
+    }
+    current = pBuffer->field_0x4;
+    index = 0;
+    for (node = pBuffer->texts; node != current; node = node->next) {
+        index++;
+    }
+    if (pBuffer->pos_last_add >= index + pBuffer->field_0x10
+            || pBuffer->pos_last_add <= index) {
+        if (pBuffer->pos_last_add == index + pBuffer->field_0x10) {
+            if (pBuffer->count - index < pBuffer->field_0x10) {
+                return;
+            }
+            pBuffer->field_0x4 = current->next;
+            return;
+        }
+        if (pBuffer->count - pBuffer->pos_last_add < pBuffer->field_0x10) {
+            node = pBuffer->texts;
+            for (i = pBuffer->count - pBuffer->field_0x10; i > 0; i--) {
+                node = node->next;
+            }
+            pBuffer->field_0x4 = node;
+            return;
+        }
+        pBuffer->field_0x4 = pBuffer->text_last_add;
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x00403210
 void C2_HOOK_FASTCALL FUN_00403210(tZappy_AR_callback* pZappy, tPreprocess_AR_callback* pPre, tPostProcess_AR_callback* pPost) { NOT_IMPLEMENTED(); }
