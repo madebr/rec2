@@ -1244,9 +1244,36 @@ tPed_form* C2_HOOK_FASTCALL FindOrOpenForm(const char* pName) {
     return SetUpCharacterForm(pName);
 }
 
-// STUB: CARMA2_HW 0x004080d0
+// FUNCTION: CARMA2_HW 0x004080d0
 void C2_HOOK_FASTCALL MakeRotationMatrix(br_matrix34* pMat, tU8 pAngle_x, tU32 pAngle_y, tU32 pAngle_z) {
-    NOT_IMPLEMENTED();
+    float fVar1;
+    float fVar2;
+    float fVar3;
+    float fVar4;
+    float fVar5;
+    float fVar6;
+    tU32 local_4;
+
+    local_4 = (tU32)pAngle_x;
+    fVar4 = gPed_cos_table[pAngle_z & 0xff];
+    fVar5 = gPed_sin_table[pAngle_z & 0xff];
+    fVar6 = gPed_sin_table[local_4];
+    fVar1 = gPed_cos_table[local_4];
+    fVar2 = gPed_sin_table[pAngle_y & 0xff];
+    fVar3 = gPed_cos_table[pAngle_y & 0xff];
+
+    pMat->m[0][0] = fVar4 * fVar3;
+    pMat->m[3][2] = 0.0f;
+    pMat->m[3][1] = 0.0f;
+    pMat->m[1][0] = fVar6 * fVar4 * fVar2 - fVar5 * fVar1;
+    pMat->m[3][0] = 0.0f;
+    pMat->m[2][0] = fVar4 * fVar1 * fVar2 + fVar5 * fVar6;
+    pMat->m[0][1] = fVar5 * fVar3;
+    pMat->m[1][1] = fVar5 * fVar6 * fVar2 + fVar4 * fVar1;
+    pMat->m[2][1] = fVar5 * fVar1 * fVar2 - fVar6 * fVar4;
+    pMat->m[0][2] = -fVar2;
+    pMat->m[1][2] = fVar6 * fVar3;
+    pMat->m[2][2] = fVar3 * fVar1;
 }
 
 // FUNCTION: CARMA2_HW 0x00407e70
