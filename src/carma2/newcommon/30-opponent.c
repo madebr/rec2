@@ -508,7 +508,18 @@ void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec) {
 
 extern int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* pInfo, br_matrix34* pMatrix, const br_vector3* pArg3, const br_vector3* pArg4);
 
-// AddIfNotInList
+// FUNCTION: CARMA2_HW 0x004a7ea0
+void C2_HOOK_FASTCALL AddIfNotInList(tPhysics_object* pObject, tPhysics_object** pList, int pCount) {
+    int i;
+
+    for (i = 0; i < pCount; i++) {
+        if (pList[i] == pObject) {
+            pList[i] = NULL;
+            return;
+        }
+    }
+    PHILAddActiveObject(pObject, NULL, NULL, NULL);
+}
 
 // FUNCTION: CARMA2_HW 0x004a7ef0
 // FUNCTION: CARMA2_SW 0x004a4060
