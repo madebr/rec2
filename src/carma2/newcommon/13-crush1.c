@@ -2302,7 +2302,28 @@ void C2_HOOK_FASTCALL SetAllShapeStatusFlags(tCar_crush_network_shapes* pShapes)
 
 extern void C2_HOOK_FASTCALL DoDamage(tCar_spec* pCar, tDamage_type pDamage_type, int pDamage);
 
-// ApplyRandomDamageToCar
+// FUNCTION: CARMA2_HW 0x00441420
+void C2_HOOK_FASTCALL ApplyRandomDamageToCar(tCar_spec* pCar_spec, int pMin_damage, int pMax_damage) {
+    int damage_type;
+    int damage_count;
+
+    damage_type = 0;
+    damage_count = 0;
+    for (;;) {
+        DoDamage(pCar_spec, (tDamage_type)damage_type, IRandomBetween(pMin_damage, pMax_damage));
+        if (damage_type == eDamage_engine && pCar_spec->damage_units[eDamage_engine].damage_level < 0x50) {
+            damage_count++;
+            if (damage_count < 0x1e) {
+                continue;
+            }
+        }
+        damage_type++;
+        if (damage_type >= 0xc) {
+            pCar_spec->damage_magnitude_accumulator -= gFloat_00589c40;
+            return;
+        }
+    }
+}
 
 // PHILDetachObjectState
 
