@@ -2083,7 +2083,26 @@ void C2_HOOK_FASTCALL ApplyGWS(tPipe_chunk** pChunk) {
     *(float*)((tU8*)car + 0x4a0) = (float)((double)(int)((tPipe_chunk_graphpical_wheel_stuff*)*pChunk)->field_0x4 * 0.001831110569);
 }
 
-// ApplyDamage
+// FUNCTION: CARMA2_HW 0x004c9770
+void C2_HOOK_FASTCALL ApplyDamage(tPipe_chunk** pChunk) {
+    tCar_spec* car;
+    tU32 code = ((tPipe_chunk_damage*)*pChunk)->field_0x0;
+    int* p;
+    int i;
+
+    if ((code & 0xffffff00u) == 0) {
+        car = &gProgram_state.current_car;
+    } else {
+        car = GetCarSpec(code >> 8, code & 0xffu);
+    }
+
+    p = (int*)((tU8*)car + 0x4e0);
+
+    for (i = 0; i < 12; i++) {
+        *p += ((tPipe_chunk_damage*)*pChunk)->field_0x4[i];
+        p = (int*)((tU8*)p + 0x2c);
+    }
+}
 
 // ApplySpecial
 
