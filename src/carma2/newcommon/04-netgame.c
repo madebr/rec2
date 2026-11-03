@@ -969,7 +969,39 @@ void C2_HOOK_FASTCALL FUN_43d7d0(tNet_game_player_info* pRecipient) {
     }
 }
 
-// StopCarBeingIt
+// FUNCTION: CARMA2_HW 0x004fe570
+void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar) {
+    tUser_crush_data* user_crush_data;
+    tCar_crush_spec* crush_spec;
+    br_model* model;
+    int i;
+
+    if (gAFE == 0) {
+        return;
+    }
+    crush_spec = pCar->car_crush_spec;
+    model = pCar->shell_model;
+    model->custom = NULL;
+    model->flags &= ~BR_MODF_CUSTOM;
+    user_crush_data = pCar->car_model_actor->user;
+    model = user_crush_data->models[1];
+    if (model != NULL) {
+        model->flags &= ~BR_MODF_CUSTOM;
+        model->custom = NULL;
+    }
+    DRActorEnumRecurse(pCar->car_model_actor, ForEveryActorModelNoGrooves, (void*)ResetFoxModelCallback);
+    for (i = 0; i < crush_spec->field_0x270; i++) {
+        model = crush_spec->field_0x274[i].field_0x0->model;
+        model->flags &= ~BR_MODF_CUSTOM;
+        model->custom = NULL;
+    }
+    for (i = 0; i < crush_spec->field_0x2b0; i++) {
+        model = crush_spec->field_0x2b4[i].field_0x0->model;
+        model->flags &= ~BR_MODF_CUSTOM;
+        model->custom = NULL;
+    }
+    ForEveryCarMaterial(pCar, ResetFoxLighting, 1);
+}
 
 // STUB: CARMA2_HW 0x004def00
 void C2_HOOK_FASTCALL CloseDownPowerUpsForCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
