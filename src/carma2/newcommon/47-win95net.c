@@ -46,7 +46,29 @@ int C2_HOOK_FASTCALL PDNetHostGame(tNet_game_details* pDetails, char* pHost_name
 
 // PDNetHostFinishGame
 
-// PDNetExtractGameID
+// FUNCTION: CARMA2_HW 0x0051a0d0
+tU32 C2_HOOK_FASTCALL PDNetExtractGameID(tNet_game_details* pDetails) {
+    dr_dprintf("PDNetExtractGameID()");
+    dr_dprintf("...returning %8.8x",
+        ((((tU8*)pDetails->pd_net_info.addr)[8] << 8
+          | ((tU8*)pDetails->pd_net_info.addr)[9]) << 8
+         | ((tU8*)pDetails->pd_net_info.addr)[10]) << 8
+        | ((tU8*)pDetails->pd_net_info.addr)[11]);
+    return ((((tU8*)pDetails->pd_net_info.addr)[8] << 8
+             | ((tU8*)pDetails->pd_net_info.addr)[9]) << 8
+            | ((tU8*)pDetails->pd_net_info.addr)[10]) << 8
+           | ((tU8*)pDetails->pd_net_info.addr)[11];
+}
+
+// PDNetExtractPlayerID
+
+// PDNetObtainSystemUserName
+
+// PDNetSendMessageToAddress
+
+// PDNetGetNextMessage
+
+// SetForRecieve
 
 // FUNCTION: CARMA2_HW 0x0051a5f0
 // FUNCTION: CARMA2_SW 0x005140d0
