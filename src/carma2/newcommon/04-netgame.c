@@ -150,7 +150,56 @@ void C2_HOOK_FASTCALL ReceivedRecover(tNet_message_chunk_recover* pContents) {
     }
 }
 
-// ReceivedCrushSync
+// FUNCTION: CARMA2_HW 0x004983f0
+void C2_HOOK_FASTCALL ReceivedCrushSync(tNet_message_chunk_car_crush_sync* pContents) {
+    int i;
+    int j;
+    int player_id;
+    tCar_spec* car;
+    tCar_crush_network_shapes* network_stuff;
+    tU16* pCrush_state;
+    int* network_id;
+
+    i = 0;
+    if (pContents->count > 0) {
+        pCrush_state = &pContents->players[0].crush_state;
+        do {
+            car = NetCarFromPlayerID(*((tPlayer_ID*)pCrush_state - 1));
+            if (car != NULL && *pCrush_state == car->car_crush_spec->field_0x24) {
+                network_stuff = car->car_crush_spec->network_stuff;
+                player_id = pContents->player_id;
+                if (network_stuff != NULL) {
+                    j = 0;
+                    network_id = (int*)network_stuff;
+                    while (j < 12) {
+                        if (*network_id == player_id) {
+                            goto clear_network_flag;
+                        }
+                        j++;
+                        network_id += 2;
+                    }
+                    goto next_crush_state;
+clear_network_flag:
+                    network_stuff->items[j].field_0x4 = 0;
+next_crush_state:
+                    ;
+                }
+            }
+            i++;
+            pCrush_state += 4;
+        } while (i < pContents->count);
+    }
+}
+
+// CopyMechanics
+
+// ReceivedShapeNumbers
+
+// FillInSimpleCarPos
+
+// ReceivedSimpleCarPos
+
+// ReceivedMechanics
 
 // FUNCTION: CARMA2_HW 0x00498bb0
 // FUNCTION: CARMA2_SW 0x004957e0
