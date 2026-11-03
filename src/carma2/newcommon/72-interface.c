@@ -2904,7 +2904,93 @@ int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected
     return pConnected->field_0x8 + offset;
 }
 
-// Generic_FindNextActiveItem
+// FUNCTION: CARMA2_HW 0x00471dd0
+int C2_HOOK_FASTCALL Generic_FindNextActiveItem(tFrontend_spec* pFrontend, int pItem) {
+    int start_item_group;
+    tConnected_items* connected;
+    tFrontend_slider* start_active_slider;
+    tStruct_00686508* start_up_down;
+    tStruct_00686508* up_down;
+    int i;
+    int j;
+    int item;
+    int original_selected_item_index;
+
+    original_selected_item_index = gFrontend_selected_item_index;
+    gFrontend_selected_item_index = pItem;
+    start_active_slider = GetAnyActiveSlider();
+    start_item_group = pFrontend->items[pItem].group;
+    start_up_down = GetUpdown(pItem);
+
+    for (connected = gConnected_items; connected != NULL; connected = connected->next) {
+        for (j = 0; j < connected->count_ranges; j++) {
+            if (pItem == connected->range_starts[j] + connected->range_length - 1) {
+                break;
+            }
+        }
+        if (j < connected->count_ranges) {
+            break;
+        }
+    }
+    if (connected != NULL) {
+        item = ScrollSet_TranslateItemToIndex(connected, pItem);
+        if (item == connected->field_0x8 + connected->range_length - 1 && connected->field_0x8 + connected->range_length < connected->field_0x0) {
+            connected->field_0x8 += 1;
+            RefreshScrollSet(pFrontend);
+            return pItem;
+        }
+    }
+
+    for (i = 1; i < pFrontend->count_items; i++) {
+        tFrontend_slider* next_active_slider;
+        int next_item;
+
+        next_item = (pItem + i) % pFrontend->count_items;
+        if (pFrontend->items[next_item].enabled < 1) {
+            continue;
+        }
+        if (!pFrontend->items[next_item].visible) {
+            continue;
+        }
+        gFrontend_selected_item_index = next_item;
+        next_active_slider = GetAnyActiveSlider();
+        if (start_active_slider != NULL && next_active_slider == start_active_slider) {
+            continue;
+        }
+        if (next_active_slider != NULL && (next_active_slider->flags & 0x1)) {
+            continue;
+        }
+        if (pFrontend->count_groups != 0 && start_item_group != 0 && start_item_group == pFrontend->items[next_item].group) {
+            continue;
+        }
+        if (connected != NULL && GetScrollSet(next_item) == connected) {
+            continue;
+        }
+        if (start_up_down != NULL) {
+            up_down = GetUpdown(next_item);
+            if (start_up_down == up_down) {
+                continue;
+            }
+            if (up_down != NULL && up_down->field_0x0 != next_item) {
+                continue;
+            }
+        }
+        gFrontend_selected_item_index = original_selected_item_index;
+        return next_item;
+    }
+    gFrontend_selected_item_index = original_selected_item_index;
+    return 0;
+}
+
+// Generic_FindPrevActiveItem
+
+// Generic_MungeActiveItems
+
+// Generic_UnMungeActiveItems
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // STUB: CARMA2_HW 0x00470c20
 // STUB: CARMA2_SW 0x004701b0
