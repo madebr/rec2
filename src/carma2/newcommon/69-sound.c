@@ -358,6 +358,7 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id 
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004556f0
 int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound) {
 
     if (gSound_enabled) {
@@ -690,6 +691,10 @@ int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const 
     }
 }
 
+extern tS3_sound_tag C2_HOOK_FASTCALL S3StartSoundFromSource3(tS3_sound_id pSound, tS3_sound_source* pSource, tS3_repeats pRepeats, tS3_volume pVolume, tS3_pitch pPitch, tS3_speed pSpeed);
+
+// DRS3StartSoundFromSource3
+
 // FUNCTION: CARMA2_HW 0x00456070
 // FUNCTION: CARMA2_SW 0x00455e00
 void C2_HOOK_FASTCALL MungeEngineNoise(void) {
@@ -985,26 +990,11 @@ void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpe
 
 // FoundSoundSource
 
-// MungeSoundGenerators
+extern int gFaded_palette;
+extern tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
+extern void C2_HOOK_FASTCALL MungeSoundGenerators(void);
 
 // MungeEnvironmentalSound
-
-void C2_HOOK_FASTCALL BuggerModelName(tTrack_spec* pTrack_spec, const char* pName, int pIndex) {
-    br_model* model;
-    char identifier[4];
-
-    sprintf(identifier, "%c%02d", ')', pIndex);
-    model = BrModelFind(identifier);
-    if (model == NULL || model->identifier == NULL) {
-#ifdef REC2_FIX_BUGS
-        FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S, identifier);
-#else
-        FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S);
-#endif
-    } else {
-        memcpy(model->identifier, identifier, sizeof(identifier));
-    }
-}
 
 // FUNCTION: CARMA2_HW 0x004572f0
 // FUNCTION: CARMA2_SW 0x00457080
@@ -1104,3 +1094,6 @@ void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void) {
 void C2_HOOK_FASTCALL ConfigureAlienPedSoundPath(void) {
     gPed_sound_path = "ALSOUND";
 }
+
+// STUB: CARMA2_HW 0x00456ea0
+void C2_HOOK_FASTCALL MungeSoundGenerators(void) { NOT_IMPLEMENTED(); }

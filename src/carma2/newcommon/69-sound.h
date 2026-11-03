@@ -69,6 +69,8 @@ extern void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
 extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
 
+extern tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSoundFromSource3(tS3_sound_source* pSource, tS3_sound_id pSound, tS3_repeats pRepeats, tS3_volume pVolume, tS3_pitch pPitch, tS3_speed pSpeed);
+
 extern void C2_HOOK_FASTCALL MungeEngineNoise(void);
 
 extern void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio);
@@ -105,7 +107,7 @@ extern void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_dat
 
 // MungeSoundGenerators
 
-// MungeEnvironmentalSound
+extern void C2_HOOK_FASTCALL MungeEnvironmentalSound(void);
 
 extern void C2_HOOK_FASTCALL BuggerModelName(tTrack_spec* pTrack_spec, const char* pName, int pIndex);
 
