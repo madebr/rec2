@@ -2399,7 +2399,10 @@ void C2_HOOK_FASTCALL FUN_004ee250(tCar_spec* pCar, tPhysics_object* pCollision_
 
 extern intptr_t C2_HOOK_CDECL FUN_004f5a70(br_actor* pActor, void* pContext);
 
-// FUN_004f5a60
+// FUNCTION: CARMA2_HW 0x004f5a60
+void C2_HOOK_FASTCALL FUN_004f5a60(tCar_spec* pCar_spec) {
+    DRActorEnumRecurse(pCar_spec->car_master_actor, FUN_004f5a70, pCar_spec);
+}
 
 // STUB: CARMA2_HW 0x00434f60
 void C2_HOOK_FASTCALL BendPoint(br_vector3* pPoint, const tBend_point_context_local* pContext) { NOT_IMPLEMENTED(); }
