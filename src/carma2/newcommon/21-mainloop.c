@@ -285,7 +285,214 @@ void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period) {
     FUN_00403cc0(pFrame_period, DoZappyActionReplayHeadups, PreProcess, PostProcess);
 }
 
-// PollActionReplayControls
+// FUNCTION: CARMA2_HW 0x004e69b0
+void C2_HOOK_FASTCALL PollActionReplayControls(tU32* pFrame_period, tU32* pAverage_frame_period) {
+    extern void C2_HOOK_FASTCALL TurnOnActionReplay(void);
+    extern void C2_HOOK_FASTCALL TurnOffActionReplay(void);
+    extern void C2_HOOK_FASTCALL AfterActionReplay(void);
+    extern void C2_HOOK_FASTCALL DoZappyActionReplayHeadups(int pFrame_number);
+    extern void C2_HOOK_FASTCALL PreProcess(int pFrame_period);
+    extern void C2_HOOK_FASTCALL PostProcess(int pFrame_period);
+    extern tU32 C2_HOOK_FASTCALL PDGetTotalTime(void);
+    extern int C2_HOOK_FASTCALL PDAnyKeyDown(void);
+    extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
+    extern void C2_HOOK_FASTCALL ARSetReplayRate(float pRate);
+    extern int C2_HOOK_FASTCALL ARGetReplayDirection(void);
+    extern void C2_HOOK_FASTCALL ARSetReplayDirection(float pDirection);
+    extern int C2_HOOK_FASTCALL ARReplayPauseState(void);
+    extern void C2_HOOK_FASTCALL ARSetPause(int pPause);
+    extern int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_off_AR_callback* pTurn_off_AR_cb, tAfter_AR_callback* pAfter_AR_cb, tZappy_AR_callback* pZappy_AR_cb, tPreprocess_AR_callback* pPreprocess_cb, tPostProcess_AR_callback* pPostProcess_cb, int* pArg7, int* pArg8);
+    extern int C2_HOOK_FASTCALL EitherMouseButtonDown(void);
+    extern void C2_HOOK_FASTCALL GetMousePosition(int* pX, int* pY);
+    extern int C2_HOOK_FASTCALL MovieRecording(void);
+    extern void C2_HOOK_FASTCALL MovieRecordButtonPressed(void);
+    extern void C2_HOOK_FASTCALL ChangeCameraType(void);
+    extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
+    extern int gMouse_in_use;
+    extern int gReal_graf_data_index;
+    extern int gSingle_frame_mode;
+    extern tU32 gTime_of_last_zappy_headups;
+    extern int gRecording_mouse_disabled;
+    extern int gNoTransients;
+    extern tU32 gUnk_006a23c8;
+    extern int gUnk_006a2378;
+    extern int gKey_down;
+    int i;
+    int* rect;
+    int mouse_y;
+    int mouse_x;
+    int prev_key;
+    tU32 time;
+    float old_rate;
+
+    EdgeTriggerModeOff();
+    time = PDGetTotalTime();
+    old_rate = ARGetReplayRate();
+    prev_key = gKey_down;
+    gKey_down = PDAnyKeyDown();
+    if ((prev_key == -1 || prev_key == 4) && KeyIsDown(0x3a)) {
+        DRS3StopAllOutletSoundsExceptCDA();
+        if (gAction_replay_mode) {
+            RenderAFrame(1);
+            RenderAFrame(1);
+        }
+        if (!ARToggleReplay(TurnOnActionReplay, TurnOffActionReplay, AfterActionReplay,
+                (tZappy_AR_callback*)DoZappyActionReplayHeadups, PreProcess, PostProcess, (int*)pFrame_period, (int*)pAverage_frame_period)) {
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(0x25));
+        }
+        return;
+    }
+    if (gKey_down != -1) {
+        gMouse_in_use = 0;
+    } else {
+        if ((prev_key == -1 || prev_key == 4 || prev_key == 0x55 || prev_key == 0x57 || prev_key == 0x4c) && EitherMouseButtonDown()) {
+            GetMousePosition(&mouse_x, &mouse_y);
+            i = 0;
+            rect = &gReplay_button_rects[gReal_graf_data_index][0][1];
+            for (; i < 9; i++, rect += 4) {
+                if (mouse_x >= rect[-1] && mouse_y >= rect[0] && mouse_x < rect[1] && mouse_y < rect[2]) {
+                    gKey_down = gReplay_button_keys[i];
+                    break;
+                }
+            }
+            if (i == 9 && !gUnk_006a23cc) {
+                PickActionReplayManualCameraTarget(mouse_x, mouse_y, 0);
+            }
+            gUnk_006a23cc = 1;
+        } else {
+            gUnk_006a23cc = 0;
+        }
+    }
+    if (gKey_down == 0x4b && (prev_key == -1 || prev_key == 4)) {
+        MovieRecordButtonPressed();
+    } else if (gKey_down == 0x4c) {
+        gReplay_show_controls = 1;
+        if (prev_key != 0x4c) {
+            ChangeCameraType();
+            gUnk_006a23c8 = PDGetTotalTime();
+        }
+    } else {
+        gReplay_show_controls = 0;
+    }
+    if ((gKey_down == 0x56 || gKey_down == 0x6a) && (prev_key == -1 || prev_key == 4)) {
+        ARSetPause(!ARReplayPauseState());
+    } else if ((gKey_down == 0x51 || gKey_down == 0x32) && (prev_key == -1 || prev_key == 4)) {
+        ARSetReplayDirection((float)-ARGetReplayDirection());
+        if (ARReplayPauseState()) {
+            ARSetPause(0);
+        }
+    }
+    if (gKey_down == 0x52 && (prev_key == -1 || prev_key == 4)) {
+        ARSetReplayRate(-1.0f);
+        ARSetReplayDirection(-1.0f);
+        gSingle_frame_mode = 1;
+    } else if (gKey_down == 0x54 && (prev_key == -1 || prev_key == 4)) {
+        ARSetReplayRate(1.0f);
+        ARSetReplayDirection(1.0f);
+        gSingle_frame_mode = 1;
+    } else if (gKey_down == 0x55 || gKey_down == 0x44) {
+        if (ARGetReplayRate() > -1.2) {
+            ARSetReplayRate(-1.2f);
+        }
+        if (gUnk_006a23d0) {
+            ARSetReplayRate((float)(ARGetReplayRate() - (double)(tU32)(time - gUnk_006a23d0) * 0.002));
+        }
+        if (ARGetReplayRate() < -8.0f) {
+            ARSetReplayRate(-8.0f);
+        }
+    } else if (gKey_down == 0x57 || gKey_down == 0x45) {
+        if (ARGetReplayRate() < 1.2) {
+            ARSetReplayRate(1.2f);
+        }
+        if (gUnk_006a23d0) {
+            ARSetReplayRate((float)(ARGetReplayRate() - (double)(tU32)(time - gUnk_006a23d0) * -0.002));
+        }
+        if (ARGetReplayRate() > 8.0f) {
+            ARSetReplayRate(8.0f);
+        }
+    } else if (gKey_down == 0x3b) {
+        ARSetReplayRate(-1.0f);
+        ARSetReplayDirection(-1.0f);
+        ARSetPause(0);
+    } else if (gKey_down == 0x3a) {
+        ARSetReplayRate(1.0f);
+        ARSetReplayDirection(1.0f);
+        ARSetPause(0);
+    } else {
+        if (ARReplayPauseState()) {
+            ARSetReplayRate(0.0f);
+        } else {
+            ARSetReplayRate((float)ARGetReplayDirection());
+        }
+    }
+    if ((gKey_down == 0x58 || gKey_down == 0x42) && (prev_key == -1 || prev_key == 4)) {
+        gTime_of_last_zappy_headups = 0;
+        if (gNoTransients) {
+            gRecording_mouse_disabled = 1;
+        }
+        RenderAFrame(1);
+        RenderAFrame(1);
+        FUN_00403c70((tZappy_AR_callback*)DoZappyActionReplayHeadups, PreProcess, PostProcess);
+        if (gNoTransients) {
+            gRecording_mouse_disabled = 0;
+        }
+        ARSetReplayRate(1.0f);
+        MungeCarGraphics(gFrame_period);
+        GrooveThoseDelics();
+        ARSetReplayRate(0.0f);
+        ARSetReplayDirection(1.0f);
+        ARSetPause(1);
+    } else if ((gKey_down == 0x5a || gKey_down == 0x43) && (prev_key == -1 || prev_key == 4)) {
+        gTime_of_last_zappy_headups = 0;
+        if (gNoTransients) {
+            gRecording_mouse_disabled = 1;
+        }
+        RenderAFrame(1);
+        RenderAFrame(1);
+        FUN_00403210((tZappy_AR_callback*)DoZappyActionReplayHeadups, PreProcess, PostProcess);
+        if (gNoTransients && !MovieRecording()) {
+            gRecording_mouse_disabled = 0;
+        }
+        ARSetReplayRate(-1.0f);
+        MungeCarGraphics(gFrame_period);
+        GrooveThoseDelics();
+        ARSetReplayRate(0.0f);
+        ARSetReplayDirection(-1.0f);
+        ARSetPause(1);
+    }
+    if (*(float*)&gUnk_006a2378 != 0.0f) {
+        ARSetReplayRate(*(float*)&gUnk_006a2378);
+        *(float*)&gUnk_006a2378 = 0.0f;
+    }
+    if (ARGetReplayRate() * old_rate < 0.0f) {
+        *(float*)&gUnk_006a2378 = ARGetReplayRate();
+        ARSetReplayRate(0.0f);
+    } else {
+        *(float*)&gUnk_006a2378 = 0.0f;
+    }
+    if (old_rate != 0.0f) {
+        gFrame_period = (tU32)(ARGetReplayRate() / old_rate * gFrame_period);
+    }
+    if (fabs(ARGetReplayRate()) < 1.2) {
+        gUnk_006a23d0 = 0;
+    } else {
+        gUnk_006a23d0 = time;
+    }
+    if (old_rate <= 0.0f && ARGetReplayRate() > 0.0f) {
+        ARGoForwards();
+        return;
+    }
+    if (old_rate >= 0.0f && ARGetReplayRate() < 0.0f) {
+        ARGoBackwards();
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+
+/* ---- queued headups, headup text buffer and smash edge triggers ---- */
 
 // GLOBAL: CARMA2_HW 0x006a82a4
 tU32 gLast_munge_smash_edge_triggers;
