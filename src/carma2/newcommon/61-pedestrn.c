@@ -43,6 +43,10 @@ extern int C2_HOOK_FASTCALL DoPedAnnihilator(tPedestrian* pPed, tCar_spec* pCar,
 
 extern int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback);
 
+extern void C2_HOOK_FASTCALL RepulseIt(tPedestrian* pPed, tCar_spec* pCar, float pDist_sq, tU32 pNow, void* pData);
+
+extern tS3_outlet* gCar_outlet;
+
 typedef struct {
     float min_speed;
     float max_speed;
@@ -1457,9 +1461,45 @@ int C2_HOOK_FASTCALL DoPedAnnihilator(tPedestrian* pPed, tCar_spec* pCar, float 
     return 0;
 }
 
-// RepulseIt
+// STUB: CARMA2_HW 0x004cd640
+int C2_HOOK_FASTCALL SetPedFall(tPedestrian* pPed, int pSpeed, int pMove1, int pMove2, tPhysics_object* pCollision_info) { NOT_IMPLEMENTED(); return 0; }
 
-// DoPedestrianRepulsifictor
+// FUNCTION: CARMA2_HW 0x004ce330
+void C2_HOOK_FASTCALL RepulseIt(tPedestrian* pPed, tCar_spec* pCar, float pDist_sq, tU32 pNow, void* pData) {
+    int speed;
+
+    (void)pDist_sq;
+    (void)pNow;
+    (void)pData;
+    speed = IRandomBetween(0x4b, 0xc8);
+    SetPedFall(pPed, speed, 0x5b, 0x5b, NULL);
+}
+
+// FUNCTION: CARMA2_HW 0x004ce280
+int C2_HOOK_FASTCALL DoPedestrianRepulsifictor(tCar_spec* pCar, float pF0, float pF1, float pF2, float pF3) {
+    struct {
+        float f0;
+        float f1;
+        float f2;
+        float f3;
+    } data;
+    int res;
+
+    data.f0 = pF0;
+    data.f1 = pF1;
+    data.f2 = pF2;
+    data.f3 = pF3;
+    res = DoToPeds(pCar, 1, pF3, 1, &data, (tForEachPedestrian_cbfn*)RepulseIt);
+    if (res != 0) {
+        if (pCar != NULL && pCar->driver == eDriver_local_human) {
+            DRS3StartSound(gCar_outlet, 0x1324);
+            return 1;
+        }
+        DRS3StartSound3D(gCar_outlet, 0x1324, &pCar->pos, &gZero_v__car, 1, 0xff, 0x10000, 0x10000);
+        return 1;
+    }
+    return 0;
+}
 
 // CompileBurnableList
 
