@@ -477,7 +477,19 @@ void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian, tU32 p
 
 // SetCharacterPositionAR
 
-// SetCharacterBoneModelAR
+// FUNCTION: CARMA2_HW 0x004cfa30
+void C2_HOOK_FASTCALL SetCharacterBoneModelAR(tPed_character_instance* pCharacter, int pBone_index, undefined4 pArg3, int pArg4) {
+
+    if (pCharacter->field_0x4 >= 0) {
+        if (pBone_index < 0) {
+            PipeSinglePedModelChange(pCharacter->ped, pBone_index, NULL, -1, GetCharacterModelSet(pCharacter), pArg4);
+            SetCharacterAllBonesModel(pCharacter, pArg3, pArg4);
+        } else {
+            PipeSinglePedModelChange(pCharacter->ped, pBone_index, GetCharacterBoneModel(pCharacter, pBone_index), pArg3, GetCharacterModelSet(pCharacter), pArg4);
+            SetCharacterBoneModel(pCharacter, pBone_index, pArg3, pArg4);
+        }
+    }
+}
 
 // PedApplyPedModelChangeP
 
