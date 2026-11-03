@@ -139,7 +139,39 @@ void C2_HOOK_FASTCALL ProcessTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, b
     }
 }
 
-// AnimateSky
+// FUNCTION: CARMA2_HW 0x00506e80
+void C2_HOOK_FASTCALL AnimateSky(void) {
+    int now;
+    int now2;
+    int frame_increment;
+
+    now2 = GetTotalTime();
+    if (gTrack_flic_buffer == NULL) {
+        return;
+    }
+    now = now2;
+    if (now < (int)prev_sky_animation) {
+        now2 = 2 * prev_sky_animation - now;
+    }
+    if (prev_sky_animation != 0) {
+        frame_increment = ((now2 - prev_sky_animation) / gTrack_flic_descriptor.frame_period) % (gTrack_flic_descriptor.frames_left + gTrack_flic_descriptor.current_frame);
+    } else {
+        frame_increment = 1;
+    }
+    for (; frame_increment > 0; frame_increment--) {
+        if (PlayNextFlicFrame(&gTrack_flic_descriptor)) {
+            EndFlic(&gTrack_flic_descriptor);
+            StartFlic(gTrack_flic_descriptor.file_name, -1, &gTrack_flic_descriptor, gTrack_flic_buffer_size, (tS8*)gTrack_flic_buffer, NULL, 0, 0, 0);
+            AssertFlicPixelmap(&gTrack_flic_descriptor, gProgram_state.default_depth_effect.sky_texture);
+        }
+        prev_sky_animation = now;
+        SkyTextureChanged();
+    }
+}
+
+// CombineBounds
+
+// CheckNonCarModelBounds
 
 // FUNCTION: CARMA2_HW 0x00500d50
 // FUNCTION: CARMA2_SW 0x004fc6b0
