@@ -1268,7 +1268,15 @@ void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor) {
     pActor->render_style = BR_RSTYLE_NONE;
 }
 
-// PissOutOil
+// FUNCTION: CARMA2_HW 0x004de040
+int C2_HOOK_FASTCALL PissOutOil(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    PlayExclusiveFFBEffect("Oil_Slick", 0);
+    QueueOilSpill2(NULL, pCar->car_master_actor, pCar->car_actor->model, 0,
+                   0.35f, 0.6f, 9.0e-05f, 0.0003f, 0.2f, 1.5f, 2.5f, 0.01f, 0.15f,
+                   oily_material, NULL);
+    return pPowerup - gPowerup_array;
+}
 
 // KangerooJump
 
