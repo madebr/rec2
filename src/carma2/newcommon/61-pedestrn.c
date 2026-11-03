@@ -32,6 +32,9 @@
 #include "c2_stdio.h"
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x00676d68
+br_material* gPedestrian_character_cloned_materials[50] = { 0 };
+
 // GLOBAL: CARMA2_HW 0x007447fc
 float gPed_buoyancy_factor;
 
@@ -183,6 +186,9 @@ int gPed_cache_notify_flags;
 
 // SetCharacterDirectionAR
 
+void C2_HOOK_FASTCALL DisposePedForm(tPed_form* pForm);
+void C2_HOOK_FASTCALL DisposePedPersonality(tPed_personality* pPersonality);
+
 // STUB: CARMA2_HW 0x004b63b0
 int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) {
     NOT_IMPLEMENTED();
@@ -298,7 +304,67 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
 
 // DisposePedSpawnSpec
 
-// DisposeCharacterInstances
+// FUNCTION: CARMA2_HW 0x0040b2e0
+void C2_HOOK_FASTCALL DisposeCharacterInstances(void) {
+    tPed_remap* remap;
+    tPed_personality* personality;
+    tPed_move* move;
+    tPed_form* form;
+    int i;
+    int j;
+
+    for (i = 0; i < 10; i++) {
+        remap = gPed_remaps[i];
+        if (remap != NULL) {
+            if (remap->bones != NULL) {
+                BrMemFree(remap->bones);
+            }
+            BrMemFree(remap);
+            gPed_remaps[i] = NULL;
+        }
+    }
+    for (i = 0; i < 50; i++) {
+        personality = gPed_personalities[i];
+        if (personality != NULL) {
+            DisposePedPersonality(personality);
+            gPed_personalities[i] = NULL;
+        }
+    }
+    for (i = 0; i < 250; i++) {
+        if (gPed_moves[i] != NULL) {
+            move = gPed_moves[i];
+            for (j = 0; j < move->count_frames; j++) {
+                if (move->frames[j].axis != NULL) {
+                    BrMemFree(move->frames[j].axis);
+                }
+            }
+            if (move->frames != NULL) {
+                BrMemFree(move->frames);
+            }
+            if (move != NULL) {
+                BrMemFree(move);
+            }
+            gPed_moves[i] = NULL;
+        }
+    }
+    for (i = 0; i < 20; i++) {
+        form = gPed_forms[i];
+        if (form != NULL) {
+            DisposePedForm(form);
+            gPed_forms[i] = NULL;
+        }
+    }
+    for (i = 0; i < 20; i++) {
+        gPed_morph_slots[i].field_0x0 = 0;
+    }
+
+    for (i = 0; i < gCount_pedestrian_personality_cloned_materials; i++) {
+        BrMaterialRemove(gPedestrian_character_cloned_materials[i]);
+        BrMaterialFree(gPedestrian_character_cloned_materials[i]);
+    }
+    gCount_pedestrian_personality_cloned_materials = 0;
+    gPed_overall_movement_disabled = 0;
+}
 
 // STUB: CARMA2_HW 0x004cb8d0
 // STUB: CARMA2_SW 0x004c7fd0
