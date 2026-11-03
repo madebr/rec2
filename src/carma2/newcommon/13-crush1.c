@@ -51,6 +51,15 @@ void C2_HOOK_FASTCALL PHILRemoveFromParentChain(tPhysics_object* pObject) {
 #pragma auto_inline(on)
 #endif
 
+// GLOBAL: CARMA2_HW 0x00589a54
+const br_scalar gFLOAT_00589a54 = 1.0f;
+// GLOBAL: CARMA2_HW 0x00589a98
+const br_scalar gFLOAT_00589a98 = 0.0001f;
+// GLOBAL: CARMA2_HW 0x00589a9c
+const br_scalar gFLOAT_00589a9c = 0.9999f;
+// GLOBAL: CARMA2_HW 0x00589aa0
+const br_scalar gFLOAT_00589aa0 = 0.007246376946568489f;
+
 // GLOBAL: CARMA2_HW 0x0058f860
 tU16 gNext_crush_actor_id = 10000;
 
@@ -3391,9 +3400,54 @@ br_face* gSplit_polyhedron_source_faces;
 #pragma auto_inline(off)
 #endif
 
-// STUB: CARMA2_HW 0x00430150
+// FUNCTION: CARMA2_HW 0x00430150
 void C2_HOOK_FASTCALL FUN_00430150(tU16 pVertex_a, tU16 pVertex_b, tU16* pOutput_a, tU16* pOutput_b, float* pDistances) {
-    NOT_IMPLEMENTED();
+    tU16* edge_slot;
+    float* target;
+    float* source;
+    float ratio;
+    float other;
+    int offset_a;
+    int offset_b;
+
+    edge_slot = gSplit_polyhedron_edge_map;
+    if (gSplit_polyhedron_edge_map[2] == 0) {
+        return;
+    }
+    while (edge_slot[0] != pVertex_a || edge_slot[1] != pVertex_b) {
+        edge_slot += 5;
+        if (edge_slot[2] == 0) {
+            return;
+        }
+    }
+    *pOutput_a = edge_slot[2];
+    *pOutput_b = edge_slot[3];
+    if (((tU8*)edge_slot)[8] != 0) {
+        target = gSplit_polyhedron_positive_vertices + *pOutput_a * 10;
+        ratio = (float)fabs((pDistances[pVertex_b] + SRandomBetween(-0.028985507786273956f, 0.028985507786273956f)) / (pDistances[pVertex_a] - pDistances[pVertex_b]));
+        if (ratio > gCrushZero) {
+            if (ratio >= gFLOAT_00589a54) {
+                ratio = gFLOAT_00589a9c;
+            }
+        } else {
+            ratio = gFLOAT_00589a98;
+        }
+        other = gFLOAT_00589a54 - ratio;
+        source = gSplit_polyhedron_source_vertices;
+        offset_b = pVertex_b * 0x28;
+        offset_a = pVertex_a * 0x28;
+        target[1] = *(float*)((tU8*)source + 4 + offset_b) * other + *(float*)((tU8*)source + 4 + offset_a) * ratio;
+        target[2] = *(float*)((tU8*)source + 8 + offset_b) * other + *(float*)((tU8*)source + 8 + offset_a) * ratio;
+        target[0] = *(float*)((tU8*)source + offset_b) * other + *(float*)((tU8*)source + offset_a) * ratio;
+        target[4] = *(float*)((tU8*)source + 0x10 + offset_b) * other + *(float*)((tU8*)source + 0x10 + offset_a) * ratio;
+        target[3] = *(float*)((tU8*)source + 0xc + offset_b) * other + *(float*)((tU8*)source + 0xc + offset_a) * ratio;
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 0] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 0];
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 1] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 1];
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 2] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 2];
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 3] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 3];
+        gSplit_polyhedron_negative_vertices[*pOutput_b * 10 + 4] = gSplit_polyhedron_positive_vertices[*pOutput_a * 10 + 4];
+        ((tU8*)edge_slot)[8] = 0;
+    }
 }
 
 #ifdef REC2_MATCHING
