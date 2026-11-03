@@ -23,6 +23,12 @@ extern int gFlic_bunch7[7];
 extern int gFlic_bunch8[16];
 extern tFlic_bunch gFlic_bunch[9];
 
+extern int gPanel_flic_left[2];
+extern int gPanel_flic_top[2];
+extern int gSound_ID;
+extern tU32 gSound_time;
+extern char gLast_flic_name[14];
+
 extern float gFlic_sound_delay_pre_smack;
 extern float gFlic_sound_delay_post_smack;
 extern float gFlic_sound_delay_not_in_demo;
@@ -68,11 +74,15 @@ extern int C2_HOOK_FASTCALL GetPanelFlicFrameIndex(int pIndex);
 
 extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
-// AssertFlicPixelmap
+extern void C2_HOOK_FASTCALL AssertFlicPixelmap(tFlic_descriptor_ptr pFlic_info, br_pixelmap* pDest_pixelmap);
 
-// StartFlic
+extern int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_ptr pFlic_info, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, int pFrame_rate);
 
 extern int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
+
+extern int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, tPlayFlic_DoPerFrame DoPerFrame, int pInterruptable, int pFrame_rate);
+
+extern void C2_HOOK_FASTCALL RunFlicAt(int pIndex, int pX, int pY);
 
 // DoColourMap
 
@@ -94,7 +104,7 @@ extern void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, t
 
 // DoMini
 
-// DrawTranslations
+extern void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info);
 
 extern int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info);
 
@@ -125,6 +135,8 @@ extern int C2_HOOK_FASTCALL FlicQueueFinished(void);
 extern void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval);
 
 extern void C2_HOOK_FASTCALL FlushFlicQueue(void);
+
+extern void C2_HOOK_FASTCALL InitialiseFlicPanel(int pIndex, int pLeft, int pTop, int pWidth, int pHeight);
 
 extern void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex);
 

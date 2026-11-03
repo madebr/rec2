@@ -9,9 +9,13 @@
 #include "38-flicplay.h"
 
 #include "08-loading1.h"
+#include "18-graphics2.h"
 #include "19-font.h"
+#include "40-main.h"
 #include "41-utility.h"
+#include "42-input.h"
 #include "52-errors.h"
+#include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
@@ -142,6 +146,17 @@ br_pixelmap* gPanel_buffer[2];
 // GLOBAL: CARMA2_HW 0x006861e0
 // GLOBAL: CARMA2_SW 0x00680920
 tDR_font* gTrans_fonts[2];
+
+// GLOBAL: CARMA2_HW 0x006861f0
+int gPanel_flic_left[2];
+
+// GLOBAL: CARMA2_HW 0x00686200
+int gPanel_flic_top[2];
+
+
+
+// GLOBAL: CARMA2_HW 0x00686330
+char gLast_flic_name[14];
 
 // GLOBAL: CARMA2_HW 0x00686308
 // GLOBAL: CARMA2_SW 0x00680a48
@@ -591,9 +606,107 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
     gPalette = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, gPalette_pixels, 0);
 }
 
-// AssertFlicPixelmap
+// FUNCTION: CARMA2_HW 0x00461aa0
+void C2_HOOK_FASTCALL AssertFlicPixelmap(tFlic_descriptor_ptr pFlic_info, br_pixelmap* pDest_pixelmap) {
+    if (pDest_pixelmap != NULL) {
+        pFlic_info->first_pixel = (tU8*)pDest_pixelmap->pixels
+            + (pFlic_info->x_offset + pFlic_info->y_offset * pDest_pixelmap->row_bytes);
+    }
+    pFlic_info->the_pixelmap = pDest_pixelmap;
+}
 
-// StartFlic
+// FUNCTION: CARMA2_HW 0x00461ad0
+int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_ptr pFlic_info, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, int pFrame_rate) {
+    tU16 claimed_speed;
+    tU16 magic_number;
+    tPath_name the_path;
+    int total_size;
+
+    if (gPlay_from_disk) {
+        PathCat(the_path, gApplication_path, "ANIM");
+        PathCat(the_path, the_path, pFile_name);
+        pFlic_info->f = DRfopen(the_path, "rb");
+
+        if (pFlic_info->f == NULL) {
+            FatalError(kFatalError_CouldNotOpenFlicFile_S, pFile_name);
+        }
+        total_size = GetFileLength(pFlic_info->f);
+        if (total_size < 75000) {
+            pFlic_info->bytes_in_buffer = total_size;
+        } else {
+            pFlic_info->bytes_in_buffer = 75000;
+        }
+        if (pFlic_info->data_start == NULL) {
+            pFlic_info->data_start = BrMemAllocate(pFlic_info->bytes_in_buffer, kMem_misc);
+        }
+
+        pFlic_info->data = pFlic_info->data_start;
+        PFfread(pFlic_info->data_start, 1, pFlic_info->bytes_in_buffer, pFlic_info->f);
+        strcpy(gLast_flic_name, pFile_name);
+        pFlic_info->bytes_still_to_be_read = total_size - pFlic_info->bytes_in_buffer;
+    } else {
+        pFlic_info->data = (char*)pData_ptr;
+        pFlic_info->f = NULL;
+    }
+    pFlic_info->bytes_remaining = MemReadU32(&pFlic_info->data);
+    magic_number = MemReadU16(&pFlic_info->data);
+    if (magic_number == 0xaf11) {
+        pFlic_info->new_format = 0;
+    } else if (magic_number == 0xaf12) {
+        pFlic_info->new_format = 1;
+    } else {
+        return -1;
+    }
+
+    pFlic_info->frames_left = MemReadU16(&pFlic_info->data);
+    pFlic_info->current_frame = 0;
+    pFlic_info->width = MemReadU16(&pFlic_info->data);
+    pFlic_info->height = MemReadU16(&pFlic_info->data);
+    if (MemReadU16(&pFlic_info->data) != 8) {
+        FatalError(kFatalError_FlicFileWasNot8BitsDeep_S, gLast_flic_name);
+    }
+    MemSkipBytes(&pFlic_info->data, 2);
+    claimed_speed = MemReadU16(&pFlic_info->data);
+    MemSkipBytes(&pFlic_info->data, 0x6e);
+    pFlic_info->the_pixelmap = pDest_pixelmap;
+
+    if (pX_offset == -1) {
+        if (pDest_pixelmap != NULL) {
+            pFlic_info->x_offset = (pDest_pixelmap->width - pFlic_info->width) / 2;
+        } else {
+            pFlic_info->x_offset = 0;
+        }
+    } else {
+        pFlic_info->x_offset = pX_offset;
+    }
+    if (pY_offset == -1) {
+        if (pDest_pixelmap != NULL) {
+            pFlic_info->y_offset = (pDest_pixelmap->height - pFlic_info->height) / 2;
+        } else {
+            pFlic_info->y_offset = 0;
+        }
+    } else {
+        pFlic_info->y_offset = pY_offset;
+    }
+
+    if (pFrame_rate != 0) {
+        pFlic_info->frame_period = 1000 / pFrame_rate;
+    } else {
+        if (claimed_speed == 0) {
+            FatalError(kFatalError_CouldNotAscertainFrameRateForFlicFile, gLast_flic_name);
+        } else if (pFlic_info->new_format != 0) {
+            pFlic_info->frame_period = claimed_speed;
+        } else {
+            pFlic_info->frame_period = 14 * claimed_speed;
+        }
+    }
+    pFlic_info->the_index = pIndex;
+    if (pDest_pixelmap != NULL) {
+        pFlic_info->first_pixel = (tU8*)pDest_pixelmap->pixels + pFlic_info->x_offset + pFlic_info->y_offset * pDest_pixelmap->row_bytes;
+    }
+    pFlic_info->the_pixelmap = pDest_pixelmap;
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00461d60
 // FUNCTION: CARMA2_SW 0x004617f0
@@ -845,10 +958,6 @@ void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 pCh
 
 // DrawTranslations
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
 // STUB: CARMA2_HW 0x00461da0
 int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info) {
     NOT_IMPLEMENTED();
@@ -1046,6 +1155,8 @@ void C2_HOOK_FASTCALL FlushFlicQueue(void) {
     NOT_IMPLEMENTED();
 }
 
+// InitialiseFlicPanel
+
 // FUNCTION: CARMA2_HW 0x004630b0
 // FUNCTION: CARMA2_SW 0x00462b40
 void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex) {
@@ -1150,6 +1261,12 @@ void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
 void C2_HOOK_FASTCALL ResumePendingFlic(void) {
     gPending_flic = gPending_pending_flic;
 }
+
+extern void C2_HOOK_FASTCALL EnsurePaletteUp(void);
+
+// PlayFlic
+
+// RunFlicAt
 
 // GLOBAL: CARMA2_HW 0x00686300
 int gSound_ID;
