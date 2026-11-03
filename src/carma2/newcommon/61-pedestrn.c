@@ -43,6 +43,12 @@ typedef struct {
     float random_spin_rate_max;
 } tSmashable_initial_speed_spec;
 
+// GLOBAL: CARMA2_HW 0x007447cc
+int gCount_killed_peds;
+
+// GLOBAL: CARMA2_HW 0x0074480c
+int gTotal_count_smash_peds;
+
 // GLOBAL: CARMA2_HW 0x0065d79c
 int gGib_shower_id = -1;
 
@@ -1061,7 +1067,39 @@ void C2_HOOK_FASTCALL DoBloodSpurt(uintptr_t pArg1, int pArg2, int pArg3, br_vec
 
 // PedUndoBloodSpurt
 
-// OneLessPed
+// FUNCTION: CARMA2_HW 0x004cd160
+void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed) {
+
+    if ((tS16)pPed->flags & 0x100) {
+        return;
+    }
+    pPed->flags |= 0x100;
+    if (gCurrent_race.race_spec->race_type == kRaceType_Carma1) {
+        gCount_killed_peds++;
+        if (gCount_killed_peds >= gPed_count) {
+            NewTextHeadupSlot(4, 0, 0x1388, -4, GetMiscString(0x1a));
+            RaceCompleted(eRace_over_1);
+            return;
+        }
+    }
+    if (gCurrent_race.race_spec->race_type == kRaceType_Peds) {
+        if ((tS16)pPed->flags & 0x200) {
+            gCount_killed_peds++;
+            if (gCount_killed_peds >= gTotal_count_smash_peds) {
+                RaceCompleted(eRace_over_1);
+                return;
+            }
+        }
+    }
+    if (gCurrent_race.race_spec->race_type == kRaceType_SmashNPed) {
+        if ((tS16)pPed->flags & 0x200) {
+            AccumulateRuntimeVariable(gCurrent_race.race_spec->options.smash_and_peds.var_smash_number, 1);
+            if (GetRuntimeVariable(gCurrent_race.race_spec->options.smash_and_peds.var_smash_number) >= gCurrent_race.race_spec->options.smash_and_peds.var_smash_target) {
+                RaceCompleted(eRace_over_3);
+            }
+        }
+    }
+}
 
 // ScoreForKilledPedestrian
 
