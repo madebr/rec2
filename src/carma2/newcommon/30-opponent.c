@@ -153,7 +153,24 @@ void C2_HOOK_FASTCALL TurnOpponentPhysicsOn(tOpponent_spec* pOpponent_spec) {
     }
 }
 
-// TurnOpponentPhysicsOff
+// FUNCTION: CARMA2_HW 0x004a79a0
+void C2_HOOK_FASTCALL TurnOpponentPhysicsOff(tOpponent_spec* pOpponent_spec) {
+    tCar_spec* car = pOpponent_spec->car_spec;
+
+    car->acc_force = 0.f;
+    car->brake_force = 0.f;
+    car->curvature = 0.f;
+    car->gear = 0.f;
+    car->revs = 0.f;
+    BrVector3Set(&car->collision_info->omega, 0.f, 0.f, 0.f);
+    BrVector3Set(&car->collision_info->v, 0.f, 0.f, 0.f);
+    if (pOpponent_spec->physics_me) {
+        pOpponent_spec->physics_me = 0;
+        pOpponent_spec->car_spec->car_master_actor->render_style = BR_RSTYLE_NONE;
+        PipeSingleOppoRenderage(pOpponent_spec, 0);
+        gActive_car_list_rebuild_required = 1;
+    }
+}
 
 // STUB: CARMA2_HW 0x004a7a20
 void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender) { NOT_IMPLEMENTED(); }
