@@ -2434,7 +2434,12 @@ void C2_HOOK_FASTCALL UndoSkidAdjustment(tPipe_chunk** pChunk, tPipe_chunk* pPre
     ClearPipeUndoFlag();
 }
 
-// UndoFlap
+// FUNCTION: CARMA2_HW 0x004c9f60
+void C2_HOOK_FASTCALL UndoFlap(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tU8* chunk = (tU8*)*pChunk;
+
+    return WorkerFlap(*(int*)(chunk + 4), -*(tU16*)(chunk + 8));
+}
 
 // UndoModelMash
 
