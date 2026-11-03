@@ -2336,7 +2336,12 @@ void C2_HOOK_FASTCALL ApplyShitMine(tPipe_chunk** pChunk) {
     return WorkerShitMine(chunk->field_0x0, &chunk->field_0x4);
 }
 
-// ApplyEndShitMine
+// FUNCTION: CARMA2_HW 0x004c9d60
+void C2_HOOK_FASTCALL ApplyEndShitMine(tPipe_chunk** pChunk) {
+    tPipe_chunk_shit_mine* chunk = (tPipe_chunk_shit_mine*)*pChunk;
+
+    return WorkerEndShitMine(chunk->field_0x0, &chunk->field_0x4);
+}
 
 // ApplyTransformType
 
