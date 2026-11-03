@@ -686,7 +686,42 @@ int C2_HOOK_FASTCALL CollectJointLimitsOfTree(tPhysics_object* pObject, tPhysics
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// ClampObjectSpinTree
+// FUNCTION: CARMA2_HW 0x004bd7f0
+int C2_HOOK_FASTCALL ClampObjectSpinTree(tPhysics_object* pObject) {
+    int count;
+
+    count = 0;
+    for (; pObject != NULL; pObject = pObject->next) {
+        count += ClampObjectSpin(pObject);
+        if (pObject->child != NULL) {
+            count += ClampObjectSpinTree(pObject->child);
+        }
+    }
+    return count;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// GetGroupJointLimits
+
+// LimitOmega
+
+// CapOmega
+
+// ListLimitOmega
+
+// GroupLimitOmega
+
+// PositionWorldJointedObject
+
+// TranslateAndRotatePartialObject
+
+// TranslateAndRotateJointedObject
+
+// CountJointForces
+
+// MoveJointedObject
 
 // STUB: CARMA2_HW 0x004b7510
 void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, float pDelta_time) {
