@@ -5430,6 +5430,7 @@ enum {
     eMiscString_repairing_for_free = 4,
     eMiscString_repair_cost_colon = 5,
     eMiscString_recovery_cost_colon = 7,
+    eMiscString_every_opponent_wasted = 10,
     eMiscString_credits = 12,
     eMiscString_credit = 13,
     eMiscString_lost_credits_prefix = 14,
