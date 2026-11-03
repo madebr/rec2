@@ -124,6 +124,15 @@ int C2_HOOK_FASTCALL NetOptions_Ok(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// NetOptions_Cancel
+// FUNCTION: CARMA2_HW 0x00473550
+int C2_HOOK_FASTCALL NetOptions_Cancel(tFrontend_spec* pFrontend) {
+
+    RestoreNetworkOptions();
+    return 0;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // NetOptions_Infunc
