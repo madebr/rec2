@@ -208,6 +208,16 @@ void C2_HOOK_CDECL RelinkActorKeepWorldTransform(br_actor* pParent, br_actor* pA
     NOT_IMPLEMENTED();
 }
 
+// STUB: CARMA2_HW 0x0043c240
+void C2_HOOK_FASTCALL WorkerSplitWeldApply(void* roadMachine, br_vector3* pVector) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x0043c3d0
+void C2_HOOK_FASTCALL WorkerSplitWeldUndo(void* roadMachine) {
+    NOT_IMPLEMENTED();
+}
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(on)
 #endif
@@ -2186,7 +2196,24 @@ void C2_HOOK_FASTCALL ApplyIdentity(tPipe_chunk** pChunk) {
     BrMatrix34Identity(&chunk->data.identity.actor->t.t.mat);
 }
 
-// ApplySplitWeld
+// FUNCTION: CARMA2_HW 0x004c98b0
+void C2_HOOK_FASTCALL ApplySplitWeld(tPipe_chunk** pChunk) {
+    tU32 fn = *(tU32*)*pChunk;
+
+    if (*(int*)((tU8*)*pChunk + 0x14)) {
+        if ((fn & 0xffffff00u) == 0) {
+            return WorkerSplitWeldApply(&gProgram_state.current_car, (br_vector3*)((tU8*)*pChunk + 4));
+        }
+
+        return WorkerSplitWeldApply(GetCarSpec(fn >> 8, fn & 0xffu), (br_vector3*)((tU8*)*pChunk + 4));
+    }
+
+    if ((fn & 0xffffff00u) == 0) {
+        return WorkerSplitWeldUndo(&gProgram_state.current_car);
+    }
+
+    return WorkerSplitWeldUndo(GetCarSpec(fn >> 8, fn & 0xffu));
+}
 
 // FUNCTION: CARMA2_HW 0x004c9930
 // FUNCTION: CARMA2_SW 0x004c6060
