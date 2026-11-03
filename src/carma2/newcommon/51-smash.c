@@ -1984,3 +1984,49 @@ enqueue:
     gPowerup_queue[gSize_powerup_queue].powerup_index = pMode;
     gSize_powerup_queue = gSize_powerup_queue + 1;
 }
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// FUNCTION: CARMA2_HW 0x004f3740
+void C2_HOOK_FASTCALL FUN_004f3740(const int* pIndices, const float* pTransform, const float* pPoint, float* pResult) {
+    const float* pData = (const float*)pIndices;
+
+    pResult[pIndices[0]] = ((pTransform[7] * pTransform[pIndices[0]] + (pPoint[0] - pTransform[3])) * pTransform[10]
+        - ((pPoint[1] - pTransform[4]) + pTransform[9] * pTransform[pIndices[0]]) * pTransform[8])
+        / (pTransform[10] * pTransform[7] - pTransform[9] * pTransform[8]);
+    pResult[pIndices[1]] = ((pTransform[pIndices[1]] * pTransform[8] + (pPoint[0] - pTransform[3])) * pTransform[9]
+        - ((pPoint[1] - pTransform[4]) + pTransform[10] * pTransform[pIndices[1]]) * pTransform[7])
+        / (pTransform[9] * pTransform[8] - pTransform[10] * pTransform[7]);
+    pResult[pIndices[2]] = (pData[6] - pResult[pIndices[0]] * pData[pIndices[0] + 3]
+        - pResult[pIndices[1]] * pData[pIndices[1] + 3])
+        / pData[pIndices[2] + 3];
+}
+
+// FUNCTION: CARMA2_HW 0x004f36c0
+void C2_HOOK_FASTCALL FUN_004f36c0(const void* pMap, br_vector2* pUV, br_vector3* pOut) {
+    const float* pData;
+    float dy1;
+    float dx1;
+    float dy0;
+    float dx0;
+    float distance1;
+    float distance0;
+
+    pData = (const float*)pMap;
+    dy1 = pData[27] - pUV->v[1];
+    dx1 = pData[26] - pUV->v[0];
+    dy0 = pData[15] - pUV->v[1];
+    dx0 = pData[14] - pUV->v[0];
+    distance1 = dy1 * dy1 + dx1 * dx1;
+    distance0 = dy0 * dy0 + dx0 * dx0;
+    if (distance1 < distance0) {
+        FUN_004f3740(pMap, (const float*)((const tU8*)pMap + 0x54), (const float*)pUV, (float*)pOut);
+    } else {
+        FUN_004f3740(pMap, (const float*)((const tU8*)pMap + 0x24), (const float*)pUV, (float*)pOut);
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
