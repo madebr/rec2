@@ -335,7 +335,17 @@ void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec) {
     }
 }
 
-// StopRenderingThisDrone
+// FUNCTION: CARMA2_HW 0x004516d0
+void C2_HOOK_FASTCALL StopRenderingThisDrone(tDrone_spec* pDrone_spec) {
+    if (pDrone_spec->actor->render_style == BR_RSTYLE_FACES) {
+        DoNotDprintf_drone("STOP RENDERING: %d", pDrone_spec->id);
+        gCount_rendered_drones -= 1;
+        pDrone_spec->actor->render_style = BR_RSTYLE_NONE;
+        PipeSingleDroneRender(pDrone_spec, 0);
+    }
+}
+
+// StopProcessingThisDrone
 
 // StartRenderingThisDrone
 
