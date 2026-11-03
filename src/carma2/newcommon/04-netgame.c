@@ -870,7 +870,58 @@ void C2_HOOK_FASTCALL RemovePlayerFromShapeStatusLists(tPlayer_ID pPlayer_id, in
     }
 }
 
-// SendDetachedNonCarData
+// FUNCTION: CARMA2_HW 0x0043d1d0
+void C2_HOOK_FASTCALL SendDetachedNonCarData(tNon_car_spec* pNon_car, undefined4 pArg2, tNet_game_player_info* pRecipient) {
+    int hierarchy_size;
+    int contents_size;
+    int message;
+    int written_size;
+    undefined4 car;
+    tNet_message* guaranteed_message;
+
+    guaranteed_message = NULL;
+    hierarchy_size = GetHierarchyNetworkSize(pNon_car->collision_info);
+    contents_size = hierarchy_size + 0x22;
+    if (pRecipient == NULL) {
+        if (pNon_car->collision_info->disable_move_rotate == 0 || (pNon_car->flags & 0x100000) == 0) {
+            message = (int)NetStartBroadcastContents(0x27, contents_size);
+        } else {
+            guaranteed_message = NetBuildGuaranteedMessage(0x27, contents_size);
+            message = (int)guaranteed_message + 0x18;
+            pNon_car->flags &= ~0x100000;
+        }
+    } else {
+        message = (int)NetGetToPlayerContents(0x27, contents_size, pRecipient->ID);
+    }
+    if (message != 0) {
+        *(undefined4*)(message + 0x18) = pArg2;
+        *(tU16*)(message + 0x20) = (tU16)((pNon_car->actor->identifier[3] == '!') | (pNon_car->collision_info->disable_move_rotate << 1));
+        written_size = GetHierarchyNetworkStuff(pNon_car->collision_info, (tU8*)(message + 0x22), 0x48);
+        if (written_size != hierarchy_size) {
+            FatalError(0x72, "in detached bit non_car object data");
+        }
+        if (pNon_car->driver == 2
+                && pNon_car->actor != NULL
+                && (car = *(undefined4*)((tU8*)pNon_car->actor + 0x60)) != 0
+                && (car = *(undefined4*)((tU8*)car + 8)) != 0
+                && (car = *(undefined4*)((tU8*)car + 0x34)) != 0) {
+            car = *(undefined4*)((tU8*)car + 0x2c);
+        } else {
+            car = 0;
+        }
+        *(tPlayer_ID*)(message + 4) = NetPlayerFromCar((tCar_spec*)car)->ID;
+        *(tU8*)(message + 8) = *(tU8*)((tU8*)*(void**)((tU8*)*(void**)((tU8*)pNon_car->actor + 0x60) + 8) + 0x20);
+        CompressVector3((tCompressed_vector3*)(message + 0xa), (br_vector3*)((tU8*)pNon_car->collision_info + 0x24), -10.f, 10.f);
+        CompressVector3((tCompressed_vector3*)(message + 0x10), (br_vector3*)((tU8*)pNon_car->collision_info + 0x30), -10.f, 10.f);
+        if (pRecipient == NULL) {
+            if (guaranteed_message == NULL) {
+                NetBroadcastContents((tNet_message_chunk*)message);
+                return;
+            }
+            NetGuaranteedSendMessageToEverybody(gCurrent_net_game, guaranteed_message, 0);
+        }
+    }
+}
 
 // SendDetachedNonCarDataToPlayer
 
