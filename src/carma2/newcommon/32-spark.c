@@ -1149,7 +1149,28 @@ static void C2_HOOK_FASTCALL ForEveryModelMaterial(br_model* pModel, tMaterialMa
 #pragma auto_inline(off)
 #endif
 
-// ForEveryActorMaterial
+// FUNCTION: CARMA2_HW 0x004fe8a0
+intptr_t C2_HOOK_CDECL ForEveryActorMaterial(br_actor* pActor, void* pContext) {
+    tUser_crush_data* user_crush_data;
+    tMaterialMaybeUpdate_cbfn* callback;
+
+    callback = pContext;
+    if (pActor->type != BR_ACTOR_MODEL) {
+        return 0;
+    }
+    if (pActor->model == NULL) {
+        return 0;
+    }
+    user_crush_data = pActor->user;
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    if (pActor->material != NULL) {
+        callback(pActor->material);
+    }
+    ForEveryModelMaterial(pActor->model, callback);
+    return 0;
+}
 
 // ForEveryActorMaterialNoGrooves
 
