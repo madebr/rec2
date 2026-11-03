@@ -1773,10 +1773,19 @@ void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex) {
     BrActorRemove(gDecals[pIndex].actor);
 }
 
-// STUB: CARMA2_HW 0x004f6060
-// STUB: CARMA2_SW 0x004f1ca0
+// FUNCTION: CARMA2_HW 0x004f6060
+// FUNCTION: CARMA2_SW 0x004f1ca0
 void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture) {
-    NOT_IMPLEMENTED();
+    (void)pOld_texture;
+    if (pCar_spec != NULL && pCar_spec->field_0x1960 != NULL) {
+        pMaterial->user = pNew_texture;
+    } else {
+        pMaterial->colour_map = pNew_texture;
+    }
+    BrMaterialUpdate(pMaterial, BR_MATU_COLOURMAP);
+    if (pCar_spec == &gProgram_state.current_car && gAction_replay_camera_mode == kActionReplayCameraMode_Internal) {
+        MungeCarMaterials(pCar_spec, 1);
+    }
 }
 
 // DoNetSmash
