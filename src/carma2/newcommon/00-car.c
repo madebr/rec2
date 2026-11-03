@@ -525,7 +525,36 @@ void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar) {
 
 // MungeCarsMass
 
-// AddDrag
+extern void C2_HOOK_FASTCALL ApplyWaterOmegaBrake(tPhysics_object* pObject, const br_vector3* pV);
+
+// FUNCTION: CARMA2_HW 0x00415ef0
+void C2_HOOK_FASTCALL AddDrag(tCar_spec* pCar, tPhysics_object* pObject, br_scalar pDt) {
+    br_scalar drag;
+    br_scalar k;
+    br_vector3 v;
+
+    drag = pDt * 0.0005f;
+    if (pObject->last_special_volume != NULL) {
+        k = pObject->last_special_volume->viscosity_multiplier;
+        if (pCar->underwater_ability != 0) {
+            k *= 0.6;
+        }
+        drag *= k;
+        drag *= pObject->water_depth_factor;
+    }
+
+    k = BrVector3Length(&pObject->v) * drag * 6.9 / pObject->M;
+    v.v[0] = pObject->v.v[0] * k;
+    v.v[1] = pObject->v.v[1] * k;
+    v.v[2] = pObject->v.v[2] * k;
+    DRVector3Diminish(&pObject->v, &v);
+
+    k = BrVector3Length(&pObject->omega) * drag;
+    v.v[0] = pObject->omega.v[0] * k;
+    v.v[1] = pObject->omega.v[1] * k;
+    v.v[2] = pObject->omega.v[2] * k;
+    ApplyWaterOmegaBrake(pObject, &v);
+}
 
 // DragChildren
 
