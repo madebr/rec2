@@ -58,7 +58,7 @@ extern void C2_HOOK_FASTCALL SaveShadeTables(void);
 
 extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
-// ShadowMode
+extern void C2_HOOK_FASTCALL ShadowMode(void);
 
 // LollipopizeActor
 
@@ -80,7 +80,7 @@ extern void C2_HOOK_FASTCALL ClearWobbles(void);
 
 extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
-// NewScreenWobble
+extern void C2_HOOK_STDCALL NewScreenWobble(double pAmplitude_x, double pAmplitude_y, double pPeriod);
 
 extern void C2_HOOK_FASTCALL SetScreenWobble(int pX, int pY);
 

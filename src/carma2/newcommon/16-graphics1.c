@@ -307,7 +307,16 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
     }
 }
 
-// ShadowMode
+// FUNCTION: CARMA2_HW 0x004e9b90
+void C2_HOOK_FASTCALL ShadowMode(void) {
+
+    gFancy_shadow = !gFancy_shadow;
+    if (gFancy_shadow) {
+        NewTextHeadupSlot(4, 0, 2000, -4, "Translucent shadow");
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, "Solid shadow");
+    }
+}
 
 // LollipopizeActor
 
@@ -317,7 +326,10 @@ void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
     gNumber_of_lollipops = 0;
 }
 
-// RenderLollipops
+// GLOBAL: CARMA2_HW 0x006a2128
+void* gLollipop_queue[100] = { 0 };
+
+// AddToLollipopQueue
 
 // FUNCTION: CARMA2_HW 0x004e4940
 // FUNCTION: CARMA2_SW 0x004e0cd0
@@ -582,3 +594,18 @@ void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {
     }
     gCount_polyfont_glyph_actors = 0;
 }
+
+extern int gBack_original_origin_x;
+extern int gBack_original_origin_y;
+extern int gBack_original_base_x;
+extern int gBack_original_base_y;
+extern int gThis_net_player_index;
+extern tNet_mode gNet_mode;
+extern int gIt_or_fox;
+extern void C2_HOOK_FASTCALL DoMapOverlays(br_pixelmap* pScreen);
+extern void C2_HOOK_FASTCALL MapOverlay(void);
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// MapStuffAfterRender
