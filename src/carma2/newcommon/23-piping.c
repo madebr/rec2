@@ -2807,7 +2807,10 @@ int C2_HOOK_FASTCALL CalcModelMashLength(tPipe_chunk* pChunk) {
     return 4 + 6 * model->nvertices;
 }
 
-// CalcEndMyBendLength
+// FUNCTION: CARMA2_HW 0x004ca450
+int C2_HOOK_FASTCALL CalcEndMyBendLength(tPipe_chunk* pChunk) {
+    return *(int*)((tU8*)pChunk + 4);
+}
 
 // CalcRemoveFacesLength
 // DoBloodSpurtUndo
