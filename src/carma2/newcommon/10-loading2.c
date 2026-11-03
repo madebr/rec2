@@ -1438,7 +1438,14 @@ void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void) {
     gPedTextTxtPath = "ALTEXT.TXT";
 }
 
-// LoadingNoOp2
+// FUNCTION: CARMA2_HW 0x0048c920
+void C2_HOOK_FASTCALL LoadingNoOp2(void) {
+}
+
+extern br_scalar gNormal_force_to_detach;
+extern tU8 gCrush_data_entry_counter;
+extern void C2_HOOK_FASTCALL StringTransformToLower(char* pStr);
+extern void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage);
 
 // GLOBAL: CARMA2_HW 0x0058f808
 const char* gSoftness_names[6] = {
