@@ -23,6 +23,18 @@
 
 #include "rec2_macros.h"
 
+/* Declarations for symbols implemented in other translation units of this port. */
+extern int gExplosion_sound_id;
+extern br_vector3 gZero_v__car;
+extern tS3_outlet* gCar_outlet;
+extern void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos);
+extern tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
+extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
+extern void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar);
+extern void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec* pCar, int pType, int pRandom, int pLifetime);
+extern void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
+extern intptr_t C2_HOOK_CDECL FUN_00434320(br_actor* pActor, int pArg2);
+
 // GLOBAL: CARMA2_HW 0x0074d3b0
 // GLOBAL: CARMA2_SW 0x00743910
 int gCredits_wasting_car[3];
@@ -95,15 +107,20 @@ void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
     }
 }
 
-// ExplodeMeCarUpMeOldMatey
+// FUNCTION: CARMA2_HW 0x0043f6c0
+void C2_HOOK_FASTCALL ExplodeMeCarUpMeOldMatey(tCar_spec* pCar) {
+    extern void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos);
+
+    Explode(&gExplosion_pix_animation_groups, pCar->car_master_actor, &pCar->car_actor->model->bounds, NULL);
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        DRS3StartSound(gCar_outlet, gExplosion_sound_id);
+    } else {
+        DRS3StartSound3D(gCar_outlet, gExplosion_sound_id, &pCar->pos, &gZero_v__car, 1, 255, 0x10000, 0x10000);
+    }
+}
 
 // STUB: CARMA2_HW 0x0043f730
 int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
-// DamageUnit2
-
-// RecordLastDamage
-
-// DoDamage
 
 // FUNCTION: CARMA2_HW 0x0043f9f0
 void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar) {
@@ -161,7 +178,17 @@ void C2_HOOK_FASTCALL DoPratcamHit(br_vector3* pVelocity) {
 
 // DamageSystems
 
-// GetDirection
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+typedef struct {
+    tCar_spec* car;
+    float step;
+    float* total_displacement;
+    float displacement;
+} tCrush_displacement_context_local;
+
+// FUN_0043b2e0
 
 // FUNCTION: CARMA2_HW 0x00440210
 void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
@@ -296,4 +323,21 @@ void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
 // PercentageCarHealth
 
 // ChristmasLights
+
+typedef struct {
+    tCar_spec* car;
+    float step;
+    float displacement;
+    float* total_displacement;
+} tModel_mash_context_local;
+
+/* The original walks the model hierarchy with FUN_0043b470 (0x0043b470); that callback is not
+   implemented in this port yet, so an inert one keeps the build linkable. */
+// STUB: CARMA2_HW 0x0043b470
+intptr_t C2_HOOK_CDECL FUN_0043b470(br_actor* pActor, tModel_mash_context_local* pContext) {
+    (void)pActor; (void)pContext;
+    return 0;
+}
+
+// FUN_0043b400
 

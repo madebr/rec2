@@ -27,9 +27,9 @@ extern float gWheel_circ_to_width;
 
 extern void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar);
 
-// ExplodeMeCarUpMeOldMatey
+extern void C2_HOOK_FASTCALL ExplodeMeCarUpMeOldMatey(tCar_spec* pCar);
 
-// SetKnackeredFlag
+extern int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar);
 
 // DamageUnit2
 
