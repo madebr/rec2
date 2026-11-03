@@ -252,5 +252,16 @@ void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar) {
     }
 }
 
-// SkidsPerFrame
+// FUNCTION: CARMA2_HW 0x004ea720
+void C2_HOOK_FASTCALL SkidsPerFrame(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSkids); i++) {
+        tSkid *skid = &gSkids[i];
+
+        if (skid->actor->render_style != BR_RSTYLE_NONE) {
+            skid->actor->t.t.translate.t = skid->pos;
+        }
+    }
+}
 

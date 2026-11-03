@@ -50,6 +50,6 @@ extern void C2_HOOK_FASTCALL SkidMark(tCar_spec* pCar_spec, int pWheel_num);
 
 extern void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar);
 
-// SkidsPerFrame
+extern void C2_HOOK_FASTCALL SkidsPerFrame(void);
 
 #endif // GUARD_20_SKIDMARK_H
