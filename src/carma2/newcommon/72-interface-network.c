@@ -132,7 +132,33 @@ int C2_HOOK_FASTCALL NetToggleMode(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// NetCancel
+// FUNCTION: CARMA2_HW 0x00469280
+int C2_HOOK_FASTCALL NetCancel(tFrontend_spec* pFrontend) {
+    int i;
+    int selected;
+
+    NetEndJoinList();
+    selected = gLast_graph_sel;
+    for (i = 0; i < (int)REC2_ASIZE(gGames_to_join); i++) {
+        if (i != selected && gGames_to_join[i].game != NULL) {
+            NetDisposeGameDetails(gGames_to_join[i].game);
+            gGames_to_join[i].game = NULL;
+        }
+    }
+    ShutdownNetIfRequired();
+    gNet_mode = eNet_mode_none;
+    LoadRaces(gRace_list, &gNumber_of_races, -1);
+    InitGame(gDev_initial_race);
+    /* MaybeRestoreSavedGame / RestoreSinglePlayerState, inlined in the original */
+    if (gValid_stashed_save_game) {
+        LoadRaces(gRace_list, &gNumber_of_races, -1);
+        DoLoadGame2(&gStashed_save_game);
+        gValid_stashed_save_game = 0;
+    }
+    return 0;
+}
+
+// ScrollUp and RefreshNetRacesScroller are inlined in the original.
 // NetRaceUp
 
 // NetHostChooseThisRace
