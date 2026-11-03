@@ -701,6 +701,18 @@ void C2_HOOK_FASTCALL ToggleJoystickEnable(void) {
     NewTextHeadupSlot(4, 0, 3000, -4, buffer);
 }
 
-// ToggleJoystickDPad
+// FUNCTION: CARMA2_HW 0x00511330
+void C2_HOOK_FASTCALL ToggleJoystickDPad(void) {
+    char buffer[256];
+
+    if (PDIsJoystickDPadEnabled()) {
+        SetJoystickDPadEnabled(0);
+        sprintf(buffer, "D-Pad Mode Disabled");
+    } else {
+        SetJoystickDPadEnabled(1);
+        sprintf(buffer, "D-Pad Mode Enabled");
+    }
+    NewTextHeadupSlot(4, 0, 3000, -4, buffer);
+}
 
 // IncreaseJoystickFFB
