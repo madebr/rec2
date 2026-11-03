@@ -425,7 +425,12 @@ short C2_HOOK_FASTCALL GenerateOneMovieFrame(br_pixelmap* pScreen) {
     return 0;
 }
 
-// NoOp_004e1c30
+// FUNCTION: CARMA2_HW 0x004e1c30
+void C2_HOOK_FASTCALL NoOp_004e1c30(void) {
+}
+
+// QuickTime dispatcher trampoline (selector 0x3000b).
+#ifdef REC2_MATCHING
 // FUN_0056d8c0
 // FUN_0056b440
 // FUN_0056fde0
