@@ -2611,7 +2611,20 @@ void C2_HOOK_FASTCALL PlayExclusiveFFBEffect(const char* pEffect_name, int pArg2
 #pragma auto_inline(off)
 #endif
 // based on the original disassembly (tail call into StopDinputEffect)
-// FUN_0045c760
+// FUNCTION: CARMA2_HW 0x0045c760
+void C2_HOOK_FASTCALL FUN_0045c760(void) {
+
+    if (gCurrent_ffb_effect_index != -1) {
+        StopDinputEffect(gCurrent_ffb_effect_index);
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // GetJoystickEffect
 // MakePedsEthereal
 // PipeSingleMatrix34Type66
