@@ -341,7 +341,10 @@ void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* 
 
 extern tSpecial_volume* gLast_camera_special_volume;
 
-// DoSpecialCameraEffect
+// FUNCTION: CARMA2_HW 0x00446340
+void C2_HOOK_FASTCALL DoSpecialCameraEffect(br_actor* pCamera, br_matrix34* pCamera_to_world) {
+    float f_time;
+    int r;
     // GLOBAL: CARMA2_HW 0x005911d0
     static float mag00 = 0.03f;
     // GLOBAL: CARMA2_HW 0x005911d4
