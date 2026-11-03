@@ -2987,6 +2987,10 @@ void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed) {
 
 // SetRandomOmega
 
+// FUNCTION: CARMA2_HW 0x004d3600
+void C2_HOOK_FASTCALL FUN_004d3600(void) {
+}
+
 // FUNCTION: CARMA2_HW 0x004d3610
 // FUNCTION: CARMA2_SW 0x004cfd00
 void C2_HOOK_FASTCALL RenderLimbs(void) {
