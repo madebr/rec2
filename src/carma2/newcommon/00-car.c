@@ -65,6 +65,9 @@ typedef struct {
     tU32 time;
 } tUpdate_crush_reattach_item;
 
+// GLOBAL: CARMA2_HW 0x006a7fc8
+tRepair_animation gRepair_animations[25] = { 0 };
+
 // GLOBAL: CARMA2_HW 0x00655e58
 float gForce_feedback_upper_limit = 2.7f;
 
@@ -3968,4 +3971,83 @@ void C2_HOOK_FASTCALL CompressCarDataChunk(tNet_message_chunk* pMessage, int pPl
 // STUB: CARMA2_HW 0x004d2320
 void C2_HOOK_FASTCALL FUN_004d2320(tPhysics_object* pObject1, tPhysics_object* pObject2, tFace_ref* pFace, float pImpulse, br_vector3* pPoint) {
     (void)pObject1; (void)pObject2; (void)pFace; (void)pImpulse; (void)pPoint;
+}
+
+
+// FUNCTION: CARMA2_HW 0x004ed2b0
+void C2_HOOK_FASTCALL ActuallySmashCarPart(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel) {
+    br_pixelmap* texture;
+    br_pixelmap** pixelmaps;
+    int i;
+    unsigned int flags;
+    float fVar1;
+    tU32 uVar5;
+
+    texture = NULL;
+    if (pCar_spec != NULL) {
+        for (i = 0; i < (int)REC2_ASIZE(gRepair_animations); i++) {
+            if (gRepair_animations[i].field_0x0 == (void*)pSmashable) {
+                gRepair_animations[i].field_0x0 = NULL;
+                break;
+            }
+        }
+    }
+    i = pSmashable->levels[pLevel].count_pixelmaps;
+    if (i != 0) {
+        i = IRandomBetween(0, i - 1);
+        pixelmaps = (br_pixelmap**)pSmashable->levels;
+        texture = pixelmaps[pLevel * 0xb1 + i];
+    }
+    PipeSingleSmashTextureChange(pCar_spec, pSmashable->funk_material, texture);
+    pSmashable->funk_material->user = texture;
+    if (pCar_spec == NULL || pCar_spec->field_0x1960 == NULL) {
+        pSmashable->funk_material->colour_map = texture;
+    }
+    pSmashable->field_0x4c = pLevel;
+    flags = pSmashable->levels[pLevel].flags;
+    if (pCar_spec == NULL || (flags & 0x1c) != 0) {
+        if ((flags & 0x4) != 0 && PercentageChance(0x32)) {
+            pSmashable->funk_material->map_transform.m[0][0] *= -1.0f;
+        }
+        if ((flags & 0x8) != 0 && PercentageChance(0x32)) {
+            pSmashable->funk_material->map_transform.m[1][1] *= -1.0f;
+        }
+        if ((flags & 0x10) != 0) {
+            switch (IRandomBetween(0, 3)) {
+            case 0:
+                pSmashable->funk_material->map_transform.m[0][0] *= -1.0f;
+                fVar1 = pSmashable->funk_material->map_transform.m[1][1] * -1.0f;
+                break;
+            case 1:
+                uVar5 = *(tU32*)&pSmashable->funk_material->map_transform.m[0][0];
+                *(tU32*)&pSmashable->funk_material->map_transform.m[0][0] = *(tU32*)&pSmashable->funk_material->map_transform.m[0][1];
+                *(tU32*)&pSmashable->funk_material->map_transform.m[0][1] = uVar5;
+                fVar1 = pSmashable->funk_material->map_transform.m[1][0];
+                pSmashable->funk_material->map_transform.m[1][0] = -pSmashable->funk_material->map_transform.m[0][1];
+                fVar1 = -fVar1;
+                break;
+            case 2:
+                fVar1 = pSmashable->funk_material->map_transform.m[0][0];
+                pSmashable->funk_material->map_transform.m[0][0] = -pSmashable->funk_material->map_transform.m[0][1];
+                pSmashable->funk_material->map_transform.m[0][1] = -fVar1;
+                fVar1 = pSmashable->funk_material->map_transform.m[1][0];
+                *(tU32*)&pSmashable->funk_material->map_transform.m[1][0] = *(tU32*)&pSmashable->funk_material->map_transform.m[0][1];
+                break;
+            default:
+                goto no_transform;
+            }
+            pSmashable->funk_material->map_transform.m[1][1] = fVar1;
+        }
+no_transform:
+        ;
+    } else {
+        BrMatrix23Identity(&pSmashable->funk_material->map_transform);
+    }
+    BrMaterialUpdate(pSmashable->funk_material, BR_MATU_ALL);
+    if (pCar_spec == &gProgram_state.current_car && gAction_replay_camera_mode == kActionReplayCameraMode_Internal) {
+        MungeCarMaterials(pCar_spec, 1);
+    }
+    if (pSmashable->funk >= 0) {
+        DisableFunkotronic(pSmashable->funk);
+    }
 }
