@@ -2853,7 +2853,20 @@ void C2_HOOK_FASTCALL DoBloodSpurtUndo(int pCurrent_time, uintptr_t pOwner, int 
     } while (i != 0);
 }
 
-// DisposeReplayPixelmaps
+// FUNCTION: CARMA2_HW 0x004e70d0
+void C2_HOOK_FASTCALL DisposeReplayPixelmaps(void) {
+    br_pixelmap** pp;
+
+    pp = gReplay_pixelmaps;
+    do {
+        if (*pp != NULL) {
+            BrMapRemove(*pp);
+            BrPixelmapFree(*pp);
+            *pp = NULL;
+        }
+        pp++;
+    } while ((int)pp < (int)&gUNK_006a23b4);
+}
 
 // FUN_00564e5e
 
