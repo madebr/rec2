@@ -58,6 +58,18 @@ static br_scalar slide_dist;
 
 extern float C2_HOOK_FASTCALL SmashEnvironment(tPhysics_object* pObject, undefined4* pArg2, float pMagnitude, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce, int pSnap, int pNetwork);
 
+typedef struct {
+    br_actor* actor;
+    tCar_spec* car;
+    tU32 time;
+} tUpdate_crush_reattach_item;
+
+// GLOBAL: CARMA2_HW 0x0067be10
+tUpdate_crush_reattach_item gNet_crush_reattach_bit_list[8];
+
+// GLOBAL: CARMA2_HW 0x0067b7c8
+int gCount_net_crush_reattach_bit_list;
+
 // GLOBAL: CARMA2_HW 0x00589a40
 br_scalar gCrushZero = 0.0f;
 
@@ -3619,4 +3631,36 @@ void C2_HOOK_FASTCALL SmoothCarCrushShapePoints(tCar_spec* pCar, float pStep) {
         }
     }
     pCar->car_crush_spec->expand_bounding_box = 3;
+}
+
+
+typedef struct {
+    tNet_message_chunk_header header;
+    undefined field_0x2[2];
+    tPlayer_ID player_id;
+    tU32 field_0x8;
+} tNet_message_chunk_crush_reattach_bit;
+
+// FUNCTION: CARMA2_HW 0x0043ce60
+void C2_HOOK_FASTCALL ReceivedCrushReattachBit(tNet_message_chunk_crush_reattach_bit* pContents) {
+    extern tCar_spec* C2_HOOK_FASTCALL NetCarFromPlayerID(tPlayer_ID pPlayer);
+    tCar_spec* car;
+    int item_offset;
+    int count;
+    tU32 bit_index;
+
+    if (gCount_net_crush_reattach_bit_list != 8) {
+        car = NetCarFromPlayerID(pContents->player_id);
+        if (car != NULL) {
+            count = gCount_net_crush_reattach_bit_list;
+            item_offset = count * 3;
+            item_offset <<= 2;
+            count++;
+            *(tCar_spec**)((tU8*)&gNet_crush_reattach_bit_list[0].car + item_offset) = car;
+            *(tU32*)((tU8*)&gNet_crush_reattach_bit_list[0].actor + item_offset) = 0;
+            bit_index = pContents->field_0x8;
+            gCount_net_crush_reattach_bit_list = count;
+            *(tU32*)((tU8*)&gNet_crush_reattach_bit_list[0].time + item_offset) = bit_index;
+        }
+    }
 }
