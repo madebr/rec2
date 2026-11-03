@@ -938,13 +938,14 @@ void C2_HOOK_FASTCALL RestoreListOmega(tPhysics_object* pObject) {
 // RotateObjectSecondOrder
 
 // FUNCTION: CARMA2_HW 0x004c1f10
-void C2_HOOK_FASTCALL RotateObjectFirstOrder(tPhysics_object* pObject, br_scalar pTime) {
+void C2_HOOK_FAKE_THISCALL RotateObjectFirstOrder(tPhysics_object* pObject, undefined4 pUnused, br_scalar pTime) {
     br_matrix34 rotation;
     br_vector3 axis;
     br_vector3 momentum;
     br_vector3 rotated;
     br_scalar length;
     br_scalar angle;
+    br_scalar m1;
 
     length = BrVector3Length(&pObject->omega);
     angle = length * pTime;
@@ -955,7 +956,8 @@ void C2_HOOK_FASTCALL RotateObjectFirstOrder(tPhysics_object* pObject, br_scalar
     axis.v[1] = pObject->omega.v[1] / length;
     axis.v[2] = pObject->omega.v[2] / length;
     momentum.v[0] = pObject->I.v[0] * pObject->omega.v[0];
-    momentum.v[1] = pObject->I.v[1] * pObject->omega.v[1];
+    m1 = pObject->omega.v[1];
+    momentum.v[1] = m1 * pObject->I.v[1];
     momentum.v[2] = pObject->I.v[2] * pObject->omega.v[2];
     BrMatrix34Rotate(&rotation, BrRadianToAngle(angle), &axis);
     BrMatrix34TApplyV(&rotated, &momentum, &rotation);
