@@ -197,7 +197,41 @@ int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType) {
     }
 }
 
-// LengthOfSession
+// FUNCTION: CARMA2_HW 0x00403750
+tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession) {
+    tU32 size;
+    tU32 i;
+    tU32 length;
+    tU32 type;
+    tU32* session;
+    tU8* the_chunk;
+    const tReplay_callback* callbacks;
+
+    session = (tU32*)pSession;
+    size = 0;
+    i = 0;
+    if (i < session[1]) {
+        callbacks = gPipe_callbacks;
+        do {
+            type = session[0];
+            the_chunk = (tU8*)(session + 2) + size;
+            if (callbacks[type].calc_length != NULL) {
+                length = callbacks[type].calc_length((tPipe_chunk*)the_chunk);
+                callbacks = gPipe_callbacks;
+                length += callbacks[type].length + 4;
+            } else {
+                length = callbacks[type].length + 4;
+            }
+            size += length;
+            i++;
+        } while (i < session[1]);
+    }
+    size += 10;
+    if ((size & 1) != 0) {
+        FatalError(0x62);
+    }
+    return size;
+}
 // FUNCTION: CARMA2_HW 0x004024e0
 void C2_HOOK_FASTCALL ARAdvanceChunkPtr(tPipe_chunk** pChunk_ptr, tPipe_chunk_type pType) {
     tU8* cur;
