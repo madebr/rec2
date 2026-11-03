@@ -2045,7 +2045,14 @@ br_actor* C2_HOOK_FASTCALL CreateBoundsActor(br_actor* pParent, const br_bounds*
     return actor;
 }
 
-// DisposeActorAndModel
+// FUNCTION: CARMA2_HW 0x00518660
+void C2_HOOK_FASTCALL DisposeActorAndModel(br_actor* pActor) {
+
+    BrModelRemove(pActor->model);
+    BrModelFree(pActor->model);
+    BrActorRemove(pActor);
+    BrActorFree(pActor);
+}
 
 // FUN_005192a0
 
