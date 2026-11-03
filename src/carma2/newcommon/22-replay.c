@@ -938,7 +938,18 @@ void C2_HOOK_FASTCALL WorkerPedPhysics(int field_0x0, br_matrix34* pMatrix) {
     SetCharacterBonePositions(ped->character, 3, 0);
 }
 
-// WorkerPedModelChangeUndo
+// FUNCTION: CARMA2_HW 0x004ca8a0
+void C2_HOOK_FASTCALL WorkerPedModelChangeUndo(int field_0x0, int field_0x4, int field_0xc, int field_0xa) {
+    extern void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pModel_index, int pModel_set);
+    tPedestrian* ped;
+
+    ped = (tPedestrian*)field_0x0;
+    if (field_0x4 < 0) {
+        SetCharacterAllBonesModel(ped->character, -1, field_0xa);
+    } else {
+        FUN_0040b500(ped->character, field_0x4, field_0xc, field_0xa);
+    }
+}
 
 // WorkerPedModelChange
 
