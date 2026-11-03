@@ -121,7 +121,89 @@ void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject) {
     pObject->water_depth_factor = 1.f;
 }
 
-// TestAutoSpecialVolume
+// FUNCTION: CARMA2_HW 0x004ff5d0
+void C2_HOOK_FASTCALL TestAutoSpecialVolume(tPhysics_object* pObject) {
+    br_scalar t1;
+    br_scalar t2;
+    tSpecial_volume* def_vol;
+    br_vector3 edge;
+    br_vector3 low;
+    br_vector3 high;
+    br_vector3 dir;
+    br_scalar d;
+    br_scalar d_neg;
+    br_scalar d_pos;
+    int k;
+
+    d = 0.0f;
+    for (k = 0; k < 3; k++) {
+        d += BR_MAC3(pObject->transform_matrix.m[k][1], pObject->water_normal.v[1],
+                         pObject->transform_matrix.m[k][0], pObject->water_normal.v[0],
+                         pObject->transform_matrix.m[k][2], pObject->water_normal.v[2]) * pObject->bb2.min.v[k];
+    }
+    d += BR_MAC3(pObject->transform_matrix.m[3][0], pObject->water_normal.v[0],
+                 pObject->transform_matrix.m[3][1], pObject->water_normal.v[1],
+                 pObject->transform_matrix.m[3][2], pObject->water_normal.v[2]);
+    d_pos = d;
+    d_neg = d;
+    for (k = 0; k < 3; k++) {
+        t1 = BR_MAC3(pObject->transform_matrix.m[k][1], pObject->water_normal.v[1],
+                     pObject->transform_matrix.m[k][2], pObject->water_normal.v[2],
+                     pObject->transform_matrix.m[k][0], pObject->water_normal.v[0]) * (pObject->bb2.max.v[k] - pObject->bb2.min.v[k]);
+        if (t1 < 0.0f) {
+            d_neg += t1;
+        } else {
+            d_pos += t1;
+        }
+    }
+    if (d_neg >= pObject->water_d) {
+        pObject->auto_special_volume = NULL;
+        pObject->water_depth_factor = 1.0f;
+        return;
+    }
+    if (d_pos - 0.001 > pObject->water_d) {
+        pObject->water_depth_factor = (pObject->water_d - d_neg) / (d_pos - d_neg);
+    } else {
+        pObject->water_depth_factor = 1.0f;
+    }
+    if (pObject->auto_special_volume != NULL) {
+        return;
+    }
+    def_vol = gDefault_water_spec_vol_real;
+    if (def_vol != NULL) {
+        BrMatrix34ApplyP(&low, &pObject->bb2.min, &pObject->transform_matrix);
+        high.v[0] = low.v[0];
+        high.v[1] = low.v[1];
+        high.v[2] = low.v[2];
+        for (k = 0; k < 3; k++) {
+            edge.v[0] = (pObject->bb2.max.v[k] - pObject->bb2.min.v[k]) * pObject->transform_matrix.m[k][0];
+            edge.v[2] = (pObject->bb2.max.v[k] - pObject->bb2.min.v[k]) * pObject->transform_matrix.m[k][2];
+            edge.v[1] = (pObject->bb2.max.v[k] - pObject->bb2.min.v[k]) * pObject->transform_matrix.m[k][1];
+            if (BrVector3Dot(&pObject->water_normal, &edge) > 0.0f) {
+                high.v[0] += edge.v[0];
+                high.v[1] += edge.v[1];
+                high.v[2] += edge.v[2];
+            } else {
+                low.v[0] += edge.v[0];
+                low.v[1] += edge.v[1];
+                low.v[2] += edge.v[2];
+            }
+        }
+        dir.v[0] = low.v[0] - high.v[0];
+        dir.v[1] = low.v[1] - high.v[1];
+        dir.v[2] = low.v[2] - high.v[2];
+        DisablePlingMaterials();
+        RayCastInBox(&high, &dir, &edge, &t1, pObject);
+        EnablePlingMaterials();
+        RayCastInBox(&high, &dir, &edge, &t2, pObject);
+        if (t1 < t2) {
+            pObject->auto_special_volume = def_vol;
+            return;
+        }
+    }
+    pObject->water_depth_factor = 1.0f;
+    pObject->auto_special_volume = NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x004ff8d0
 // FUNCTION: CARMA2_SW 0x004fb1b0
