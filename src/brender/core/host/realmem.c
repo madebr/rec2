@@ -353,10 +353,47 @@ br_uint_32 C2_HOOK_CDECL HostRealStringRead(br_uint_16 offset, br_uint_16 seg, b
 #endif
 }
 
-// STUB: CARMA2_HW 0x00540191
+#if defined(__I86__) || defined(_M_IX86)
+C2_NAKED
+#endif
+// FUNCTION: CARMA2_HW 0x00540191
 // STUB: CARMA2_SW 0x0053b831
 void C2_HOOK_CDECL HostRealByteWrite(br_uint_16 offset, br_uint_16 seg, br_uint_8 value) {
+#if defined(__I86__) || defined(_M_IX86)
+#if defined(_MSC_VER)
+    __asm {
+        push ebp
+        mov ebp, esp
+        push ds
+        mov ds, word ptr [_RealSelector]
+        mov edx, dword ptr [ebp+0xc]
+        shl edx, 4
+        add edx, dword ptr [ebp+8]
+        mov al, byte ptr [ebp+0x10]
+        mov byte ptr [edx], al
+        pop ds
+        leave
+        ret
+    }
+#else
+    __asm__(
+        "push %ebp\n"
+        "mov %esp, %ebp\n"
+        "push %ds\n"
+        "mov __RealSelector, %ds\n"
+        "mov 0xc(%ebp), %edx\n"
+        "shl $4, %edx\n"
+        "add 8(%ebp), %edx\n"
+        "mov 0x10(%ebp), %al\n"
+        "mov %al, (%edx)\n"
+        "pop %ds\n"
+        "leave\n"
+        "ret\n"
+    );
+#endif
+#else
     abort();
+#endif
 }
 
 // STUB: CARMA2_HW 0x005401ad
