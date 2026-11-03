@@ -383,7 +383,47 @@ void C2_HOOK_FASTCALL FUN_004e1400(void* pFrame_pixmap_handle, br_pixelmap* pScr
     PossibleUnlock(1);
 }
 
-// GenerateOneMovieFrame
+// FUNCTION: CARMA2_HW 0x004e1c70
+short C2_HOOK_FASTCALL GenerateOneMovieFrame(br_pixelmap* pScreen) {
+    int frame_flags;
+    int pixmap_width;
+    int frame_size;
+    char codec_info;
+    short result;
+
+    if (gQuicktime_frame_flags != 0) {
+        frame_flags = 0xc0;
+        gQuicktime_frame_flags = 0;
+    } else {
+        frame_flags = 0x40;
+    }
+    PossibleLock(1);
+    *(void**)(*gQuicktime_frame_pixmap_handle) = gQuicktime_frame_pixels;
+    if (gNbPixelBits == 16) {
+        pixmap_width = gCurrent_graf_data->width / 2;
+    } else {
+        pixmap_width = gCurrent_graf_data->width;
+    }
+    *(short*)(*gQuicktime_frame_pixmap_handle + 4) = pixmap_width * 2;
+    FUN_004e1400(gQuicktime_frame_pixmap_handle, pScreen);
+    result = FUN_0056d8c0(gQuicktime_image_sequence, gQuicktime_frame_pixmap_handle,
+            &gQuicktime_rect, frame_flags, *gQuicktime_compressed_frame_handle,
+            &frame_size, &codec_info, 0);
+    if (result != 0) {
+        PossibleUnlock(1);
+        return result;
+    }
+    *(int*)(*gQuicktime_image_description_handle + 0x2c) = frame_size;
+    result = FUN_0056b440(gQuicktime_media, gQuicktime_compressed_frame_handle, 0,
+            *(int*)(*gQuicktime_image_description_handle + 0x2c),
+            0x37, gQuicktime_image_description_handle, 1, 0, 0);
+    if (result != 0) {
+        PossibleUnlock(1);
+        return result;
+    }
+    PossibleUnlock(1);
+    return 0;
+}
 
 // NoOp_004e1c30
 // FUN_0056d8c0
