@@ -48,6 +48,62 @@ extern void C2_HOOK_FASTCALL RepulseIt(tPedestrian* pPed, tCar_spec* pCar, float
 extern tS3_outlet* gCar_outlet;
 
 typedef struct {
+    undefined field_0x00[0x0c];
+    void* field_0x0c;
+    tU16 field_0x10;
+    tU16 field_0x12;
+    undefined field_0x14[0x38];
+    void* field_0x4c;
+} tPed_prox_adjacency;
+
+typedef struct {
+    undefined field_0x00[0x18];
+    tPed_prox_adjacency* field_0x18;
+} tPed_prox_face_block;
+
+typedef struct {
+    undefined field_0x00[0x08];
+    tU16 field_0x08;
+    undefined field_0x0a[0x0e];
+    void* field_0x18;
+} tPed_prox_level;
+
+typedef struct {
+    undefined field_0x00[0x04];
+    void* field_0x04;
+    undefined field_0x08[0x08];
+    void* field_0x10;
+    undefined field_0x14[0x08];
+    tU16 field_0x1c;
+    undefined field_0x1e[0x06];
+} tPed_prox_row;
+
+typedef struct {
+    br_vector3 point;
+    undefined field_0x0c[0x14];
+} tPed_prox_vertex;
+
+typedef struct {
+    br_material* material;
+    br_vector3 normal1;
+    br_vector3 normal2;
+    br_vector3 normal3;
+    undefined field_0x28[0x0c];
+    br_vector3 plane;
+    undefined field_0x40[0x04];
+    float d;
+    void* field_0x48;
+    tS16 index;
+    tU16 field_0x4e;
+} tPed_prox_entry;
+
+typedef struct {
+    void* field_0x00;
+    int field_0x04;
+    tU16 flags[0x200];
+} tPed_prox_flag_cell;
+
+typedef struct {
     float min_speed;
     float max_speed;
     float impactee_velocity_factor;
@@ -102,6 +158,31 @@ int gEthereal_pedestrians = 0;
 
 // GLOBAL: CARMA2_HW 0x007447b4
 tPedestrian* gPedestrians_in_sight;
+
+// GLOBAL: CARMA2_HW 0x00694464
+float gPed_cos_max_slope;
+
+// GLOBAL: CARMA2_HW 0x0069bd08
+tPed_prox_flag_cell gPed_prox_flag_cells[16];
+
+/* One triangle-vertex side test with the original's memoisation (it is inlined there): a cached
+   entry returns the stored result, a miss evaluates and caches test/result bits. */
+static int C2_HOOK_FASTCALL PedProxSideTest(tPed_prox_flag_cell* pCell, int pIndex, br_vector3* pPoint, br_vector3* pNormal, br_scalar pD, tU16 pTest_flag, tU16 pResult_flag) {
+    int side;
+
+    if (pCell != NULL && pIndex < 0x200) {
+        if ((pCell->flags[pIndex] & pTest_flag) != 0) {
+            return pCell->flags[pIndex] & pResult_flag;
+        }
+        side = NormalSideOfPlane(pPoint, pNormal, pD);
+        pCell->flags[pIndex] |= pTest_flag;
+        if (side != 0) {
+            pCell->flags[pIndex] |= pResult_flag;
+        }
+        return side;
+    }
+    return NormalSideOfPlane(pPoint, pNormal, pD);
+}
 
 // GLOBAL: CARMA2_HW 0x007447cc
 int gCount_killed_peds;
@@ -1686,7 +1767,390 @@ void C2_HOOK_FASTCALL MungeNapalm(void) {
 
 // OutsideFaceXZ
 
-// RescanPedProximity
+// FUNCTION: CARMA2_HW 0x004cfab0
+float C2_HOOK_FASTCALL RescanPedProximity(tPedestrian* pPed, br_vector3* pArg2) {
+    tPed_cache_006944c0* cache;
+    tPed_face_cache_0x34* head;
+    tFace_ref* face;
+    tPed_prox_entry* entry;
+    tPed_prox_face_block* adj;
+    tPed_prox_adjacency* adj2;
+    tPed_prox_level* level;
+    tPed_prox_row* row;
+    tPed_prox_vertex* verts;
+    tPed_prox_vertex* v0;
+    tPed_prox_vertex* v1;
+    tPed_prox_vertex* v2;
+    tPed_prox_flag_cell* cell;
+    tRace_ped_exclusion_spec* spec;
+    br_vector3* pPos;
+    br_vector3* pSrc;
+    br_vector3 dir;
+    br_vector3 n;
+    br_vector3 neg;
+    br_vector3 neg_normal;
+    br_vector3 v;
+    br_vector3 w;
+    tU16* rec;
+    br_scalar best;
+    br_scalar result = 0.f;
+    br_scalar len;
+    br_scalar scale;
+    br_scalar nx;
+    br_scalar nz;
+    br_scalar dot1;
+    br_scalar dot2;
+    br_scalar d0;
+    br_scalar d1;
+    br_scalar denom;
+    br_scalar e1x;
+    br_scalar e1z;
+    br_scalar e2x;
+    br_scalar e2z;
+    br_scalar e3x;
+    br_scalar e3z;
+    br_scalar c1;
+    br_scalar c2;
+    br_scalar c3;
+    br_scalar t1;
+    br_scalar t2;
+    br_scalar t3;
+    br_scalar ex;
+    br_scalar ez;
+    br_scalar k;
+    int is_running;
+    int matched;
+    int done;
+    int cell_count;
+    int entry_count;
+    int i;
+    int j;
+    int idx;
+    int idx0;
+    int idx1;
+    int idx2;
+    tU16 id;
+
+    cache = pPed->field_0x0c;
+    head = cache->field_0xb0;
+    if (head == NULL) {
+        return 10000.f;
+    }
+    face = head->field_0x30;
+    if (face == NULL) {
+        return 10000.f;
+    }
+    cache->field_0x00 = face->normal;
+
+    pSrc = pArg2 != NULL ? pArg2 : &pPed->character->field_0xc0;
+    len = (br_scalar)sqrt(pSrc->v[0] * pSrc->v[0] + pSrc->v[1] * pSrc->v[1] + pSrc->v[2] * pSrc->v[2]);
+    if (len > 2.3841858e-7f) {
+        scale = (br_scalar)(1.0 / len);
+        dir.v[0] = pSrc->v[0] * scale;
+        dir.v[1] = pSrc->v[1] * scale;
+        dir.v[2] = pSrc->v[2] * scale;
+    } else {
+        dir.v[0] = 1.f;
+        dir.v[1] = 0.f;
+        dir.v[2] = 0.f;
+    }
+    cache->field_0x0c = dir;
+
+    best = 10000.f;
+    cache->field_0x18 &= 0xf4;
+
+    len = (br_scalar)sqrt(dir.v[0] * dir.v[0] + dir.v[2] * dir.v[2]);
+    nx = dir.v[0] / len;
+    nz = dir.v[2] / len;
+
+    is_running = pPed->action == ePed_action_running;
+    pPos = (br_vector3*)GetCharacterMatrixPtr(pPed->character)->m[3];
+
+    entry = (tPed_prox_entry*)head->field_0x0;
+    entry_count = ((tU8*)head)[0x4];
+    if (entry_count == 0) {
+        return best;
+    }
+
+    done = 0;
+    cell_count = 0;
+    for (i = 0; i < entry_count; i++, entry++) {
+        matched = 0;
+        if (entry->plane.v[1] > gPed_cos_max_slope) {
+            if (gPeds_suicidal) {
+                continue;
+            }
+            spec = pPed->exclusion_spec;
+            if (spec == NULL) {
+                continue;
+            }
+            if (is_running && spec->exclusions_ok_when_scared) {
+                continue;
+            }
+            for (j = 0; j < spec->count_exclusion_materials; j++) {
+                if (spec->exclusion_materials[j].material == entry->material
+                        && (!is_running || spec->exclusion_materials[j].flags == 0)) {
+                    break;
+                }
+            }
+            if (j == spec->count_exclusion_materials) {
+                continue;
+            }
+            matched = 1;
+        } else {
+            spec = pPed->exclusion_spec;
+            if (spec != NULL) {
+                for (j = 0; j < spec->count_exception_materials; j++) {
+                    if (spec->exception_materials[j] == entry->material) {
+                        break;
+                    }
+                }
+                if (j != spec->count_exception_materials) {
+                    continue;
+                }
+            }
+        }
+
+        if (!matched) {
+            denom = BrVector3Dot(&dir, &entry->plane);
+            if (fabs(denom) < 0.001) {
+                result = 20.f;
+            } else {
+                result = (entry->d - BrVector3Dot(pPos, &entry->plane)) / denom;
+            }
+            if (result < 0.f) {
+                continue;
+            }
+            if (result > 20.f) {
+                continue;
+            }
+            if (result > best) {
+                continue;
+            }
+        }
+
+        if (!done) {
+            DRVector3SafeCross(&n, &gY_unit_vector, &dir);
+            len = (br_scalar)sqrt(n.v[0] * n.v[0] + n.v[1] * n.v[1] + n.v[2] * n.v[2]);
+            if (len > 2.3841858e-7f) {
+                scale = (br_scalar)(1.0 / len);
+                n.v[0] *= scale;
+                n.v[1] *= scale;
+                n.v[2] *= scale;
+            } else {
+                n.v[0] = 1.f;
+                n.v[1] = 0.f;
+                n.v[2] = 0.f;
+            }
+            neg.v[0] = -n.v[0];
+            neg.v[1] = -n.v[1];
+            neg.v[2] = -n.v[2];
+            scale = (br_scalar)((double)pPed->character->personality->bb.max.v[0] * 1.3);
+            v.v[0] = pPos->v[0] + neg.v[0] * scale;
+            v.v[1] = pPos->v[1] + neg.v[1] * scale;
+            v.v[2] = pPos->v[2] + neg.v[2] * scale;
+            dot1 = BrVector3Dot(&v, &n);
+            w.v[0] = pPos->v[0] + n.v[0] * scale;
+            w.v[1] = pPos->v[1] + n.v[1] * scale;
+            w.v[2] = pPos->v[2] + n.v[2] * scale;
+            dot2 = BrVector3Dot(&w, &neg);
+            d0 = BrVector3Dot(pPos, &dir);
+            neg_normal.v[0] = -face->normal.v[0];
+            neg_normal.v[1] = -face->normal.v[1];
+            neg_normal.v[2] = -face->normal.v[2];
+            d1 = BrVector3Dot(pPos, &neg_normal);
+            done = 1;
+        }
+
+        adj = (tPed_prox_face_block*)entry->field_0x48;
+        idx = entry->index;
+        adj2 = adj->field_0x18;
+        if (idx < 0) {
+            id = entry->field_0x4e;
+            if (id >= *(tU16*)((char*)adj2 + 0x12)) {
+                continue;
+            }
+            rec = (tU16*)((char*)adj2->field_0x0c + id * 0x28);
+        } else {
+            level = (tPed_prox_level*)adj2->field_0x4c;
+            if (idx >= level->field_0x08) {
+                continue;
+            }
+            row = (tPed_prox_row*)((char*)level->field_0x18 + idx * 0x24);
+            id = entry->field_0x4e;
+            if (id >= row->field_0x1c) {
+                continue;
+            }
+            rec = (tU16*)((char*)row->field_0x04 + id * 0x1c);
+        }
+        idx0 = rec[0];
+        idx1 = rec[1];
+        idx2 = rec[2];
+
+        cell = NULL;
+        for (j = 0; j < cell_count; j++) {
+            if (gPed_prox_flag_cells[j].field_0x00 == adj2 && gPed_prox_flag_cells[j].field_0x04 == idx) {
+                cell = &gPed_prox_flag_cells[j];
+                break;
+            }
+        }
+        if (cell == NULL && cell_count < 16) {
+            cell = &gPed_prox_flag_cells[cell_count++];
+            for (j = 0; j < 0x200; j++) {
+                cell->flags[j] = 0;
+            }
+            cell->field_0x00 = adj2;
+            cell->field_0x04 = idx;
+        }
+
+        /* The three movement half-spaces: along the direction, then the two extra planes of the
+           pedestrian's breadth; the side test uses the three triangle-face normals. */
+        if (!PedProxSideTest(cell, idx0, &entry->normal1, &dir, d0, 0x8, 0x800)
+                && !PedProxSideTest(cell, idx1, &entry->normal2, &dir, d0, 0x8, 0x800)
+                && !PedProxSideTest(cell, idx2, &entry->normal3, &dir, d0, 0x8, 0x800)) {
+            continue;
+        }
+        if (!PedProxSideTest(cell, idx0, &entry->normal1, &n, dot1, 0x2, 0x200)
+                && !PedProxSideTest(cell, idx1, &entry->normal2, &n, dot1, 0x2, 0x200)
+                && !PedProxSideTest(cell, idx2, &entry->normal3, &n, dot1, 0x2, 0x200)) {
+            continue;
+        }
+        if (!PedProxSideTest(cell, idx0, &entry->normal1, &neg, dot2, 0x4, 0x400)
+                && !PedProxSideTest(cell, idx1, &entry->normal2, &neg, dot2, 0x4, 0x400)
+                && !PedProxSideTest(cell, idx2, &entry->normal3, &neg, dot2, 0x4, 0x400)) {
+            continue;
+        }
+
+        if (matched) {
+            /* Sliced face: shoot the direction through the triangle in the XZ plane. The original
+               keeps the v0/v1 cross term as the constant base term for all three edges. */
+            /* The original re-walks level->rows here (it does not reuse the row above, so this
+               also happens for a negative index). */
+            level = (tPed_prox_level*)adj2->field_0x4c;
+            row = (tPed_prox_row*)((char*)level->field_0x18 + idx * 0x24);
+            verts = (tPed_prox_vertex*)row->field_0x10;
+            v0 = &verts[idx0];
+            v1 = &verts[idx1];
+            v2 = &verts[idx2];
+            k = v0->point.v[0] * v1->point.v[2] - v1->point.v[0] * v0->point.v[2];
+
+            e1x = v1->point.v[0] - v0->point.v[0];
+            e1z = v1->point.v[2] - v0->point.v[2];
+            c1 = e1z * nx - e1x * nz;
+            if (fabs(c1) <= 0.0001) {
+                t1 = 3.402823466e+38f;
+            } else {
+                t1 = (k + pPos->v[2] * e1x - e1z * pPos->v[0]) / c1;
+                if (t1 < 0.f) {
+                    t1 = 3.402823466e+38f;
+                }
+            }
+            e2x = v2->point.v[0] - v1->point.v[0];
+            e2z = v2->point.v[2] - v1->point.v[2];
+            c2 = e2z * nx - e2x * nz;
+            if (fabs(c2) <= 0.0001) {
+                t2 = 3.402823466e+38f;
+            } else {
+                t2 = (k + pPos->v[2] * e2x - e2z * pPos->v[0]) / c2;
+                if (t2 < 0.f) {
+                    t2 = 3.402823466e+38f;
+                }
+            }
+            e3x = v0->point.v[0] - v2->point.v[0];
+            e3z = v0->point.v[2] - v2->point.v[2];
+            c3 = e3z * nx - e3x * nz;
+            if (fabs(c3) <= 0.0001) {
+                t3 = 3.402823466e+38f;
+            } else {
+                t3 = (k + pPos->v[2] * e3x - e3z * pPos->v[0]) / c3;
+                if (t3 < 0.f) {
+                    t3 = 3.402823466e+38f;
+                }
+            }
+            if (t1 < t2 && t1 < t3 && t1 < best) {
+                best = t1;
+                ex = e1x;
+                ez = e1z;
+            } else if (t2 < t1 && t2 < t3 && t2 < best) {
+                best = t2;
+                ex = e2x;
+                ez = e2z;
+            } else if (t3 < best) {
+                best = t3;
+                ex = e3x;
+                ez = e3z;
+            } else {
+                continue;
+            }
+            cache->field_0xa4.v[0] = ex;
+            cache->field_0xa4.v[1] = 0.f;
+            cache->field_0xa4.v[2] = -ez;
+            if (best > 20.f) {
+                continue;
+            }
+            *(float*)cache->field_0xbc = best * best;
+            cache->field_0x30.v[0] = 0.f;
+            cache->field_0x30.v[1] = 0.f;
+            cache->field_0x30.v[2] = 0.f;
+            cache->field_0x3c.v[0] = pPos->v[0] + nx * best;
+            cache->field_0x3c.v[1] = pPos->v[1];
+            cache->field_0x3c.v[2] = pPos->v[2] + nz * best;
+            len = (br_scalar)sqrt(cache->field_0xa4.v[0] * cache->field_0xa4.v[0]
+                    + cache->field_0xa4.v[1] * cache->field_0xa4.v[1]
+                    + cache->field_0xa4.v[2] * cache->field_0xa4.v[2]);
+            if (len > 2.3841858e-7f) {
+                scale = (br_scalar)(1.0 / len);
+                cache->field_0xa4.v[0] *= scale;
+                cache->field_0xa4.v[1] *= scale;
+                cache->field_0xa4.v[2] *= scale;
+            } else {
+                cache->field_0xa4.v[0] = 1.f;
+                cache->field_0xa4.v[1] = 0.f;
+                cache->field_0xa4.v[2] = 0.f;
+            }
+            cache->field_0x18 |= 0x8;
+            continue;
+        }
+
+        /* Not a sliced face: the material decides whether the entry plane is flipped before the
+           last two half-space tests (the face plane and its opposite). */
+        denom = BrVector3Dot(&entry->plane, &dir);
+        if (denom > 0.f) {
+            if ((((tU8*)entry->material)[0x21] & 0x10) != 0) {
+                entry->plane.v[0] = -entry->plane.v[0];
+                entry->plane.v[1] = -entry->plane.v[1];
+                entry->plane.v[2] = -entry->plane.v[2];
+                entry->d = -entry->d;
+            } else {
+                if (PedProxSideTest(cell, idx0, &entry->normal1, &neg_normal, d1, 0x10, 0x1000)
+                        || PedProxSideTest(cell, idx1, &entry->normal2, &neg_normal, d1, 0x10, 0x1000)
+                        || PedProxSideTest(cell, idx2, &entry->normal3, &neg_normal, d1, 0x10, 0x1000)) {
+                    cache->field_0x18 |= 0x1;
+                }
+                goto ped_prox_final;
+            }
+        }
+        if (PedProxSideTest(cell, idx0, &entry->normal1, &face->normal, face->d, 0x1, 0x100)
+                || PedProxSideTest(cell, idx1, &entry->normal2, &face->normal, face->d, 0x1, 0x100)
+                || PedProxSideTest(cell, idx2, &entry->normal3, &face->normal, face->d, 0x1, 0x100)) {
+            cache->field_0x18 |= 0x2;
+        }
+    ped_prox_final:
+        if (cache->field_0x18 == 0) {
+            continue;
+        }
+        *(float*)cache->field_0xbc = result * result;
+        cache->field_0x30.v[0] = 0.f;
+        cache->field_0x30.v[1] = 0.f;
+        cache->field_0x30.v[2] = 0.f;
+        cache->field_0x3c.v[0] = pPos->v[0] + result * dir.v[0];
+        cache->field_0x3c.v[1] = pPos->v[1] + result * dir.v[1];
+        cache->field_0x3c.v[2] = pPos->v[2] + result * dir.v[2];
+        best = result;
+        cache->field_0xa4 = entry->plane;
+    }
+    return best;
+}
 
 // RecacheAndSetFace
 
