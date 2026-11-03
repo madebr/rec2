@@ -993,7 +993,18 @@ void C2_HOOK_FASTCALL ScanCarsPositions(tCar_spec* pCar, br_vector3* pSource_pos
     *pTime_returned = gTrigger_time;
 }
 
-// InitialiseActionReplay
+// FUNCTION: CARMA2_HW 0x004c6bf0
+void C2_HOOK_FASTCALL InitialiseActionReplay(void) {
+
+    ARInitialise(!gAusterity_mode && gNet_mode == eNet_mode_none, 70, gReplay_callbacks);
+    if (!gAusterity_mode && gNet_mode == eNet_mode_none) {
+        gCrush_space = BrMemAllocate(0x4000, kMem_pipe_model_geometry);
+        gSmudge_space = (tPipe_smudge_data*)gCrush_space;
+    } else {
+        gCrush_space = NULL;
+        gSmudge_space = NULL;
+    }
+}
 
 // STUB: CARMA2_HW 0x004c6c60
 // STUB: CARMA2_SW 0x004c3390
