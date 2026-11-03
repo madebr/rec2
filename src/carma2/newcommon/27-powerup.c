@@ -914,7 +914,22 @@ void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* pPowerup, tCar_spec* pCar) {
     gPed_dismemberfest = 0;
 }
 
-// SetEngineFactor
+// FUNCTION: CARMA2_HW 0x004dca30
+int C2_HOOK_FASTCALL SetEngineFactor(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pPowerup->initial_value > 0) {
+        PlayExclusiveFFBEffect("Afterburner", 1);
+    }
+    pCar->field_0x4d4 = pPowerup->float_params[0];
+    pCar->grip_multiplier = pPowerup->float_params[1];
+    SetCarSuspGiveAndHeight(pCar,
+                            ((volatile float*)pPowerup->float_params)[2],
+                            ((volatile float*)pPowerup->float_params)[3],
+                            ((volatile float*)pPowerup->float_params)[6],
+                            ((volatile float*)pPowerup->float_params)[4],
+                            ((volatile float*)pPowerup->float_params)[5]);
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dcab0
 // FUNCTION: CARMA2_SW 0x004d8fb0
