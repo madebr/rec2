@@ -138,6 +138,14 @@ tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF) {
     return raw_short;
 }
 
+// FUNCTION: CARMA2_HW 0x0048f8f0
+tS8 C2_HOOK_FASTCALL ReadS8(FILE* pF) {
+    tS8 raw_byte;
+
+    PFfread(&raw_byte, sizeof(raw_byte), 1, pF);
+    return raw_byte;
+}
+
 // FUNCTION: CARMA2_HW 0x0048f910
 void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
     tU32 raw_long;
@@ -163,6 +171,14 @@ void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
     raw_byte = pNumber;
     PFfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
 }
+
+// WriteS32L
+
+// WriteS16L
+
+// WriteS8L
+
+// SkipBytes
 
 // FUNCTION: CARMA2_HW 0x0048fa00
 // FUNCTION: CARMA2_SW 0x0048cc70
@@ -1235,3 +1251,13 @@ int GetRegisterSourceLocation(char* pSource_location) {
     return 1;
 #endif
 }
+
+// LoadingNoOp
+
+// DecimalDigitsToBitmask
+
+// EncodeAllFilesInDirectory
+
+// EncodeFileWrapper
+
+// DisposeKevStuff

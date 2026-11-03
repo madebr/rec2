@@ -31,11 +31,21 @@ extern tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF);
 
 extern tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF);
 
+extern tS8 C2_HOOK_FASTCALL ReadS8(FILE* pF);
+
 extern void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber);
 
 extern void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber);
 
 extern void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber);
+
+extern void C2_HOOK_FASTCALL WriteS32L(FILE* pF, tS32 pNumber);
+
+extern void C2_HOOK_FASTCALL WriteS16L(FILE* pF, tS16 pNumber);
+
+extern void C2_HOOK_FASTCALL WriteS8L(FILE* pF, tS8 pNumber);
+
+extern void C2_HOOK_FASTCALL SkipBytes(FILE* pF, int pBytes_to_skip);
 
 extern tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr);
 
@@ -93,6 +103,8 @@ extern void C2_HOOK_FASTCALL EncodeLine_DEMO(char* pS);
 
 extern void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
 
+extern void C2_HOOK_FASTCALL EncodeAllFilesInDirectory(char* pThe_path);
+
 extern void C2_HOOK_FASTCALL SkipNLines(FILE* pF);
 
 extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
@@ -128,5 +140,11 @@ extern void C2_HOOK_FASTCALL DisposeGameIfNecessary(void);
 extern void C2_HOOK_FASTCALL DisposeTrack(void);
 
 extern int GetRegisterSourceLocation(char* pSource_location);
+
+extern void C2_HOOK_FASTCALL LoadingNoOp(void);
+
+extern tU32 C2_HOOK_FASTCALL DecimalDigitsToBitmask(tU32 pValue);
+
+extern void C2_HOOK_FASTCALL DisposeKevStuff(void);
 
 #endif // GUARD_08_LOADING1_H
