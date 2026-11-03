@@ -12,6 +12,7 @@
 #include "41-utility.h"
 #include "globvars.h"
 #include "platform.h"
+#include "15-displays.h"
 
 #include "c2_stdio.h"
 #include "c2_stdlib.h"
@@ -54,6 +55,75 @@ typedef struct tJoystick_preference_node {
 // FUNCTION: CARMA2_SW 0x00459e80
 int C2_HOOK_FASTCALL HasCurrentJoystick(void) {
     return gJoystick_index != -1;
+}
+
+/* DirectInput 5 type subset, declared locally: the DirectX SDK include directory
+   is only visible to the platform target, not to newcommon.  Layouts match the
+   SDK headers (DIEFFECT is 0x34 bytes, matching tJoystick_force_effect in
+   win32_types.h, whose name field sits at 0x68). */
+typedef struct {
+    tU32 dwSize;
+    tU32 dwFlags;
+    tU32 dwDuration;
+    tU32 dwSamplePeriod;
+    tU32 dwGain;
+    tU32 dwTriggerButton;
+    tU32 dwTriggerRepeatInterval;
+    tU32 cAxes;
+    tU32* rgdwAxes;
+    tS32* rglDirection;
+    void* lpEnvelope;
+    tU32 cbTypeSpecificParams;
+    void* lpvTypeSpecificParams;
+} tDIEFFECT;
+
+typedef struct {
+    tU32 Data1;
+    tU16 Data2;
+    tU16 Data3;
+    tU8 Data4[8];
+} tGUID;
+
+typedef struct {
+    tDIEFFECT di_effect;
+    tU8 type_specific_params[24];
+    tU8 field_0x4c[20];
+    tS32 field_0x60;
+    tU32 field_0x64;
+    char name[128];
+} tJoystickForceEffect;
+
+typedef struct tJoystick_effect_spec {
+    tGUID guid;
+    const tDIEFFECT* effect;
+} tJoystick_effect_spec;
+
+typedef struct tDirectInputEffect tDirectInputEffect;
+
+typedef struct tDirectInputDeviceVtbl {
+    void* vtbl_0x00[18];
+    int (C2_HOOK_STDCALL* CreateEffect)(void* pDevice, const tGUID* pGuid, tDIEFFECT* pEffect, tDirectInputEffect** ppEffect, void* pUnkOuter);
+} tDirectInputDeviceVtbl;
+
+typedef struct tDirectInputDevice2A {
+    tDirectInputDeviceVtbl* lpVtbl;
+} tDirectInputDevice2A;
+
+extern tJoystickForceEffect gJoystick_effects[30];
+extern int gCount_joystick_effects;
+extern tDirectInputEffect* gDirectInputEffects[30];
+extern tDirectInputDevice2A* gDirectInputJoystickDevices[16];
+
+// FUNCTION: CARMA2_HW 0x0045a100
+int C2_HOOK_FASTCALL CreateDinputEffectFromSpec(int pJoystickIndex, const tJoystick_effect_spec* pEffectSpec, const char* pName) {
+    tDirectInputDevice2A* device;
+
+    memcpy(&gJoystick_effects[gCount_joystick_effects].di_effect, pEffectSpec->effect, sizeof(tDIEFFECT));
+    device = gDirectInputJoystickDevices[pJoystickIndex];
+    device->lpVtbl->CreateEffect(device, &pEffectSpec->guid, &gJoystick_effects[gCount_joystick_effects].di_effect, &gDirectInputEffects[gCount_joystick_effects], NULL);
+    strcpy(gJoystick_effects[gCount_joystick_effects].name, pName);
+    gCount_joystick_effects += 1;
+    return gCount_joystick_effects - 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0045a2e0
@@ -432,6 +502,10 @@ int C2_HOOK_FASTCALL ToggleJoystickThrottle(void) {
     return 0;
 }
 
+// SetJoystickXAxis
+
+// SetJoystickYAxis
+
 // FUNCTION: CARMA2_HW 0x0045c570
 // FUNCTION: CARMA2_SW 0x0045bfb0
 void C2_HOOK_FASTCALL SetJoystickDPadEnabled(int pEnabled) {
@@ -442,6 +516,15 @@ void C2_HOOK_FASTCALL SetJoystickDPadEnabled(int pEnabled) {
         info->field_0xe0 = pEnabled;
     }
 }
+
+typedef struct {
+    const char* text;
+    int key;
+} tJoystick_headup_text;
+
+extern tJoystick_headup_text gJoystick_headup_texts[21];
+
+// GetJoystickButtonIndexForKey
 
 // FUNCTION: CARMA2_HW 0x0045c780
 // FUNCTION: CARMA2_SW 0x0045c1c0
@@ -545,3 +628,11 @@ float C2_HOOK_FASTCALL GetJoystickY(void) {
     }
     return gJoystick_y_throttle;
 }
+
+// ToggleJoystickYAxis
+
+// ToggleJoystickEnable
+
+// ToggleJoystickDPad
+
+// IncreaseJoystickFFB

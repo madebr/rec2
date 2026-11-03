@@ -46,7 +46,13 @@ extern int C2_HOOK_FASTCALL CountJoystickPreferences(FILE* pF);
 
 extern int C2_HOOK_FASTCALL ToggleJoystickThrottle(void);
 
+extern void C2_HOOK_FASTCALL SetJoystickXAxis(float pValue);
+
+extern void C2_HOOK_FASTCALL SetJoystickYAxis(float pValue);
+
 extern void C2_HOOK_FASTCALL SetJoystickDPadEnabled(int pEnabled);
+
+extern unsigned int C2_HOOK_FASTCALL GetJoystickButtonIndexForKey(int pKey);
 
 extern int C2_HOOK_FASTCALL CycleJoystickFFBGain(void);
 
@@ -61,5 +67,13 @@ extern void C2_HOOK_FASTCALL SetJoystickY(float pValue);
 extern float C2_HOOK_FASTCALL GetJoystickX(void);
 
 extern float C2_HOOK_FASTCALL GetJoystickY(void);
+
+extern void C2_HOOK_FASTCALL ToggleJoystickYAxis(void);
+
+extern void C2_HOOK_FASTCALL ToggleJoystickEnable(void);
+
+extern void C2_HOOK_FASTCALL ToggleJoystickDPad(void);
+
+extern void C2_HOOK_FASTCALL IncreaseJoystickFFB(void);
 
 #endif /* REC2_JOYSTICK_H */
