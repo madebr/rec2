@@ -2359,7 +2359,29 @@ void C2_HOOK_FASTCALL MungeAllCharacterObjects(void (C2_HOOK_FASTCALL* pCallback
     }
 }
 
-// MungeAllCharacterModels
+// FUNCTION: CARMA2_HW 0x0040c560
+void C2_HOOK_FASTCALL MungeAllCharacterModels(void (C2_HOOK_FASTCALL* pCallback)(void*)) {
+    int i;
+    int j;
+    int k;
+    int l;
+
+    for (i = 0; i < (int)REC2_ASIZE(gPed_personalities); i++) {
+        if (gPed_personalities[i] == NULL) {
+            continue;
+        }
+        for (j = 0; j < gPed_personalities[i]->form->count_bones; j++) {
+            tPed_personality_bone* bone = &gPed_personalities[i]->bones[j];
+            for (k = 0; k < 2; k++) {
+                for (l = 0; l < 4; l++) {
+                    if (bone->models[l].models[k] != NULL) {
+                        pCallback(bone->models[l].models[k]);
+                    }
+                }
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0040c600
 // FUNCTION: CARMA2_SW 0x0040c5f0
