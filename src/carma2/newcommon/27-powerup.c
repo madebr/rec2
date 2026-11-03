@@ -2082,7 +2082,45 @@ int C2_HOOK_FASTCALL PedValium(tPowerup* powerup, tCar_spec* car) {
 
 // PowerupCancel
 
-// GrowATail
+// FUNCTION: CARMA2_HW 0x004e02b0
+int C2_HOOK_FASTCALL GrowATail(tPowerup* pPowerup, tCar_spec* pCar) {
+    tPhysics_object* node;
+    br_matrix34 tmp;
+    br_vector3 tmp_v;
+
+    if (gMutant_tail_state == 2) {
+        return -1;
+    }
+    if (gMutant_tail_state == 1) {
+        PHILRemoveObject(gMutant_tail_object);
+        gMutant_tail_object->physics_joint1 = gMutant_tail_first_joint;
+    } else {
+        PipeSingleSpecial(1);
+    }
+    BrVector3SetFloat(&gMutant_tail_object->physics_joint1->field_0x14, 0.0f, (pCar->collision_info->bb1.max.v[1] - pCar->collision_info->bb1.min.v[1]) * gConst_0p5, pCar->collision_info->bb1.max.v[2] * gConst_0p95);
+    PhysicsAddObject(pCar->collision_info, gMutant_tail_object);
+    node = gMutant_tail_object;
+    while (node != NULL) {
+        if (node->actor->parent == NULL) {
+            BrActorAdd(gNon_track_actor, node->actor);
+        }
+        node->owner = (void*)pCar;
+        BrMatrix34Translate(&node->actor->t.t.mat, -node->physics_joint1->field_0x08.v[0], -node->physics_joint1->field_0x08.v[1], -node->physics_joint1->field_0x08.v[2]);
+        BrMatrix34Copy(&tmp, &pCar->collision_info->actor->t.t.mat);
+        BrMatrix34Post(&node->actor->t.t.mat, &tmp);
+        BrMatrix34Rotate(&tmp, 0xf8d4, (br_vector3*)&node->actor->t.t.mat);
+        BrMatrix34Post(&node->actor->t.t.mat, &tmp);
+        BrMatrix34ApplyP(&tmp_v, &node->physics_joint1->field_0x14, &node->parent->actor->t.t.mat);
+        BrMatrix34PostTranslate(&node->actor->t.t.mat, tmp_v.v[0], tmp_v.v[1], tmp_v.v[2]);
+        BrMatrix34Copy(&node->transform_matrix, &node->actor->t.t.mat);
+        node->field_0xed = 1;
+        node = node->child;
+    }
+    GotPowerupEarwig(pCar, 0x5f, 0, 1);
+    gMutant_tail_state = 2;
+    DRS3StartSound2(gCar_outlet, 0xf3d, 1, 0xff, 0xff, -1, -1);
+    return pPowerup - gPowerup_array;
+}
 
 // CutOffTail
 
