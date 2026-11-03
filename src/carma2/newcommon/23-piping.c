@@ -181,6 +181,19 @@ typedef struct {
     tU32 count;
 } tPipe_chunk_remove_faces;
 
+typedef struct {
+    tU8 pad[0x50];
+    br_scalar x;
+    br_scalar y;
+    br_scalar z;
+} tReplay_actor_trans_effect;
+
+typedef struct {
+    tU32 field_0x0;
+    uintptr_t field_0x4;
+    br_vector3 delta;
+} tPipe_chunk_actor_trans;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -2359,7 +2372,12 @@ void C2_HOOK_FASTCALL ApplyRepulseRay(tPipe_chunk** pChunk) {
     return WorkerRepulseRay(*(int*)*pChunk, *(int*)((tU8*)*pChunk + 4), *(int*)((tU8*)*pChunk + 8), *(int*)((tU8*)*pChunk + 0xc));
 }
 
-// ApplyActorTrans
+// FUNCTION: CARMA2_HW 0x004c9a70
+void C2_HOOK_FASTCALL ApplyActorTrans(tPipe_chunk** pChunk) {
+    ((tReplay_actor_trans_effect*)((tPipe_chunk_actor_trans*)*pChunk)->field_0x4)->x += ((tPipe_chunk_actor_trans*)*pChunk)->delta.v[0];
+    ((tReplay_actor_trans_effect*)((tPipe_chunk_actor_trans*)*pChunk)->field_0x4)->y += ((tPipe_chunk_actor_trans*)*pChunk)->delta.v[1];
+    ((tReplay_actor_trans_effect*)((tPipe_chunk_actor_trans*)*pChunk)->field_0x4)->z += ((tPipe_chunk_actor_trans*)*pChunk)->delta.v[2];
+}
 
 // ApplyPedStatus
 
