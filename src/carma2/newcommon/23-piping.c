@@ -1812,7 +1812,11 @@ void C2_HOOK_FASTCALL ApplyCrush(tPipe_chunk** pChunk) {
     return WorkerCrush(chunk->field_0x4, &chunk->field_0x8[0], &chunk->field_0x8[6]);
 }
 
-// ApplySmudge
+// FUNCTION: CARMA2_HW 0x004c9060
+void C2_HOOK_FASTCALL ApplySmudge(tPipe_chunk** pChunk) {
+
+    return WorkerSmudge(pChunk, 1);
+}
 
 // ApplySpark
 
