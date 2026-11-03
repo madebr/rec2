@@ -431,6 +431,8 @@ extern void C2_HOOK_FASTCALL InitPhysics(void);
 
 // GetCollObjFromID
 
+extern tCollision_shape_polyhedron_data* C2_HOOK_FASTCALL FUN_00421fd0(int pCount_points);
+
 #endif // GUARD_49_PHYSICS_H
 
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild);
