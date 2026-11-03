@@ -1581,3 +1581,21 @@ void C2_HOOK_FASTCALL DisposePedMoves(void) {
         }
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x00404700
+void C2_HOOK_FASTCALL DisposeAllRemaps(void) {
+    tPed_remap** remap;
+    tPed_remap* the_remap;
+
+    for (remap = gPed_remaps; (int)remap < (int)&gPed_remaps[10]; remap++) {
+        the_remap = *remap;
+        if (the_remap != NULL) {
+            if (the_remap->bones != NULL) {
+                BrMemFree(the_remap->bones);
+            }
+            BrMemFree(the_remap);
+            *remap = NULL;
+        }
+    }
+}
