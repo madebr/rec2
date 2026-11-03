@@ -2846,3 +2846,25 @@ int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3*
     NOT_IMPLEMENTED();
     return 0;
 }
+
+
+// STUB: CARMA2_HW 0x00429070
+int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
+
+extern int gTesting_car_for_sensible_place;
+
+// FUNCTION: CARMA2_HW 0x0041fe50
+int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec* pCar_spec, br_vector3* pVec3) {
+    int r;
+
+    if (!gProgram_state.racing) {
+        return 1;
+    }
+    gTesting_car_for_sensible_place = 1;
+    r = TestForObjectInSensiblePlace(pCar_spec->collision_info, gPHIL_list_collision_infos, pVec3, &gWorld_callbacks);
+    gTesting_car_for_sensible_place = 0;
+    return r;
+}
