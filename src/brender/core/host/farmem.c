@@ -75,11 +75,35 @@ void C2_HOOK_CDECL HostFarBlockFill(br_uint_32 offset, br_uint_16 sel, br_uint_8
 }
 #endif
 
-// STUB: CARMA2_HW 0x005403dc
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x005403dc
 // STUB: CARMA2_SW 0x0053ba7c
-void C2_HOOK_CDECL HostFarBlockRead(br_uint_32 offset, br_uint_16 sel, void *block, br_uint_32 count) {
-    NOT_IMPLEMENTED();
+__declspec(naked) void C2_HOOK_CDECL HostFarBlockRead(br_uint_32 offset, br_uint_16 sel, void *block, br_uint_32 count) {
+    __asm {
+        push ebp
+        mov ebp, esp
+        push ds
+        push esi
+        push edi
+        lds esi, fword ptr [ebp+8]
+        mov edi, [ebp+0x10]
+        mov ecx, [ebp+0x14]
+        shr ecx, 1
+        rep movsw
+        adc ecx, ecx
+        rep movsb
+        pop edi
+        pop esi
+        pop ds
+        leave
+        ret
+    }
 }
+#else
+void C2_HOOK_CDECL HostFarBlockRead(br_uint_32 offset, br_uint_16 sel, void *block, br_uint_32 count) {
+    abort();
+}
+#endif
 
 // STUB: CARMA2_HW 0x005403f9
 // STUB: CARMA2_SW 0x0053ba99
