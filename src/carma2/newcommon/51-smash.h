@@ -45,7 +45,7 @@ extern void C2_HOOK_FASTCALL RemoveMaterialFromFogification(br_material* pMateri
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
-// ResetExplosions
+extern void C2_HOOK_FASTCALL ResetExplosions(void);
 
 extern void C2_HOOK_FASTCALL RemoveAllExplosionettes(void);
 
@@ -115,7 +115,7 @@ extern void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor);
 
 // DoConnotations
 
-// DoPowerupRespawnSmash
+extern void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor* pActor);
 
 // DoConnotationsMultiLevel
 
@@ -187,7 +187,7 @@ extern void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crus
 
 // AddRepairAnimationToQueue
 
-// RepairSmash
+extern void C2_HOOK_FASTCALL RepairSmash(tCar_spec* pCar_spec, tCar_crush_buffer_entry* pSmash_data);
 
 extern void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer_entry* pSmash_data);
 
@@ -209,7 +209,7 @@ extern void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race);
 
 // MungeAnimationRepairs
 
-// MungeGlassFragments
+extern void C2_HOOK_FASTCALL MungeGlassFragments(void);
 
 // KillAllGlassFragments
 
@@ -219,7 +219,7 @@ extern void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_da
 
 // DoBackwardShrapnel
 
-// InitRepairAnimations
+extern void C2_HOOK_FASTCALL InitRepairAnimations(void);
 
 extern void C2_HOOK_FASTCALL SplondificatalizeIdentifier(br_actor* pActor, char **pIdentifier, int pIndex);
 
@@ -289,7 +289,7 @@ extern intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* pData);
 
 extern void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_material* pMaterial_1, br_material* pMaterial_2, int pCapacity_indices, tU16* pIndices, int* pCount_indices, int pCapacity_vertices, tCar_crush_vertex_data* pVertices, int* pCount_vertices, br_vector3* pNormal);
 
-// ReinitSmashing
+extern void C2_HOOK_FASTCALL ReinitSmashing(void);
 
 // LinkSmashies
 
@@ -325,7 +325,9 @@ extern void C2_HOOK_FASTCALL TurnOffSmashDecal(int pIndex);
 
 extern void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar_spec, br_pixelmap* pOld_texture, br_pixelmap* pNew_texture);
 
-// DoNetSmash
+extern void C2_HOOK_FASTCALL DoNetSmash(tQueued_net_smash* pSmash);
+
+extern void C2_HOOK_FASTCALL UpdateCrushTimers(void);
 
 // ReceivedSmashEnvironment
 

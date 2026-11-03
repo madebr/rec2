@@ -29,6 +29,20 @@
 
 #include <stdio.h>
 
+/* not in this tree's rec2_types.h: the InitFragmentSpeed stub names it */
+typedef struct {
+    float min_speed;
+    float max_speed;
+    float impactee_velocity_factor;
+    float random_velocity_max;
+    float random_up_velocity_max;
+    float random_normal_velocity_max;
+    float random_spin_rate_max;
+} tSmashable_initial_speed_spec;
+
+/* declared here rather than through 69-sound.h: that header belongs to another feature area */
+extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
+
 // GLOBAL: CARMA2_HW 0x006a6d38
 // GLOBAL: CARMA2_SW 0x006a0d98
 int gMaterials_to_adapt_count;
@@ -83,6 +97,49 @@ int gCount_queued_smashes;
 // GLOBAL: CARMA2_HW 0x006abee8
 // GLOBAL: CARMA2_SW 0x006a5438
 br_vector3 gZero_vector__smash;
+
+// GLOBAL: CARMA2_HW 0x006a6d3c
+int gCount_host_smashes = 0;
+
+// GLOBAL: CARMA2_HW 0x006a6d40
+tSmash_explosion gSmash_explosions[20] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a7ce0
+tSmashable_item_spec gPowerup_respawn_smashable = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a7fc8
+tRepair_animation gRepair_animations[25] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a3940
+tQueued_net_smash gQueued_net_smashes[50] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a4430
+tPowerup_queue_item gPowerup_queue[50] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a55bc
+int gSize_powerup_queue;
+
+// GLOBAL: CARMA2_HW 0x0065ff00
+const char* gPosition_type_names[2] = {
+    "relative",
+    "absolute",
+};
+
+// GLOBAL: CARMA2_HW 0x00762100
+/* owned by 09-funks.c; defined here because that file does not have it yet */
+float gYon_squared = 0.f;
+
+extern void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
+extern void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos);
+extern int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, br_scalar pMax_distance);
+extern void C2_HOOK_FASTCALL FUN_004d9d00(tPhysics_object* pObject, int pMode);
+extern void C2_HOOK_FASTCALL FUN_004f3740(const int* pIndices, const float* pTransform, const float* pPoint, float* pResult);
+extern void C2_HOOK_FASTCALL DoNetSmash(tQueued_net_smash* pSmash);
+extern int gMutant_tail_state;
+extern tU32 gINT_00705b70;
+extern tS3_outlet* gCar_outlet;
+extern br_vector3 gZero_v__car;
+extern void* C2_HOOK_CDECL BrMemAllocate(br_size_t size, br_uint_8 type);
 
 // FUNCTION: CARMA2_HW 0x004ea760
 // FUNCTION: CARMA2_SW 0x004e6500
@@ -194,7 +251,23 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
     }
 }
 
-// ResetExplosions
+// FUNCTION: CARMA2_HW 0x004eaac0
+void C2_HOOK_FASTCALL ResetExplosions(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gExplosions) != 50);
+    C2_HOOK_BUG_ON(sizeof(gExplosions[0]) != 0x78);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmash_explosions) != 20);
+    C2_HOOK_BUG_ON(sizeof(gSmash_explosions[0]) != 0xc8);
+
+    for (i = 0; i < (int)REC2_ASIZE(gExplosions); i++) {
+        gExplosions[i].start = 0;
+        gExplosions[i].finished = 0;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gSmash_explosions); i++) {
+        gSmash_explosions[i].active = 0;
+    }
+}
 
 void C2_HOOK_FASTCALL RemoveAllExplosionettes(void) {
     int i;
@@ -220,7 +293,10 @@ void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion) {
 // DoExplosionette
 
 // STUB: CARMA2_HW 0x004ead00
-void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos) { NOT_IMPLEMENTED(); }
+void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos) {
+    NOT_IMPLEMENTED();
+}
+
 // FUNCTION: CARMA2_HW 0x004eb020
 // FUNCTION: CARMA2_SW 0x004e6d00
 void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec) {
@@ -363,10 +439,6 @@ void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor) {
 // DoConnotations
 
 // DoPowerupRespawnSmash
-
-// DoConnotationsMultiLevel
-
-// SmashItIntoVerySmallPiecesIndeed
 
 // FUNCTION: CARMA2_HW 0x004ecfa0
 // FUNCTION: CARMA2_SW 0x004e8c70
@@ -766,9 +838,10 @@ void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smash
 #pragma auto_inline(on)
 #endif
 
-// KillFragment
-
-// AddRepairAnimationToQueue
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// ActuallyRepairSmashThunk
 
 // RepairSmash
 
@@ -854,8 +927,6 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 
 // VerySimpleRotate
 
-// STUB: CARMA2_HW 0x004eff30
-void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float pDelta_time) { NOT_IMPLEMENTED(); }
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -873,10 +944,6 @@ void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
 // MungeAnimationRepairs
 
 // MungeGlassFragments
-
-void C2_HOOK_FASTCALL KillAllGlassFragments(void) {
-    MungeGlassFragments2(1);
-}
 
 // FUNCTION: CARMA2_HW 0x004f02b0
 // FUNCTION: CARMA2_SW 0x004ebf10
@@ -1199,8 +1266,6 @@ void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_materia
 
 // ReinitSmashing
 
-// LinkSmashies
-
 // FUNCTION: CARMA2_HW 0x004f5a00
 // FUNCTION: CARMA2_SW 0x004f1660
 intptr_t C2_HOOK_FASTCALL RepairAllSmashes(tCar_spec* pCar_spec) {
@@ -1404,7 +1469,10 @@ void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar
     NOT_IMPLEMENTED();
 }
 
-// DoNetSmash
+// STUB: CARMA2_HW 0x004f6130
+void C2_HOOK_FASTCALL DoNetSmash(tQueued_net_smash* pSmash) {
+    NOT_IMPLEMENTED();
+}
 
 // ReceivedSmashEnvironment
 
@@ -1416,18 +1484,61 @@ void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar
 
 // MungeSmashEdgeTriggers
 
+// STUB: CARMA2_HW 0x004d9d00
+void C2_HOOK_FASTCALL FUN_004d9d00(tPhysics_object* pObject, int pMode) {
+    NOT_IMPLEMENTED();
+}
+
+/* context filled by the DRActorEnumRecurse callback FUN_004edb20 */
 typedef struct {
-    float min_speed;
-    float max_speed;
-    float impactee_velocity_factor;
-    float random_velocity_max;
-    float random_up_velocity_max;
-    float random_normal_velocity_max;
-    float random_spin_rate_max;
-} tSmashable_initial_speed_spec;
+    br_bounds3* bounds;
+    tU8 field_0x4;
+    tS8 count;
+    undefined field_0x6[2];
+    br_actor* actors[20];
+} tNon_car_search_context;
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// FUN_004edb20
+
+// ReadNonCarCuboidActivation
+
+// FUNCTION: CARMA2_HW 0x004f3740
+void C2_HOOK_FASTCALL FUN_004f3740(const int* pIndices, const float* pTransform, const float* pPoint, float* pResult) {
+    const float* pData = (const float*)pIndices;
+
+    pResult[pIndices[0]] = ((pTransform[7] * pTransform[pIndices[0]] + (pPoint[0] - pTransform[3])) * pTransform[10]
+        - ((pPoint[1] - pTransform[4]) + pTransform[9] * pTransform[pIndices[0]]) * pTransform[8])
+        / (pTransform[10] * pTransform[7] - pTransform[9] * pTransform[8]);
+    pResult[pIndices[1]] = ((pTransform[pIndices[1]] * pTransform[8] + (pPoint[0] - pTransform[3])) * pTransform[9]
+        - ((pPoint[1] - pTransform[4]) + pTransform[10] * pTransform[pIndices[1]]) * pTransform[7])
+        / (pTransform[9] * pTransform[8] - pTransform[10] * pTransform[7]);
+    pResult[pIndices[2]] = (pData[6] - pResult[pIndices[0]] * pData[pIndices[0] + 3]
+        - pResult[pIndices[1]] * pData[pIndices[1] + 3])
+        / pData[pIndices[2] + 3];
+}
+
+// FUN_004f36c0
+
+// FUN_004f1030
+
+// UpdateCrushTimers
+
+// PipeSingleShrapnelShower
+
+// PipeSingleBloodSpurt
 
 // STUB: CARMA2_HW 0x004eb120
 void C2_HOOK_FASTCALL InitFragmentSpeed(tSmash_vertex* pFragment, tSmashable_initial_speed_spec* pSpeed, br_vector3* pArg3, float pArg4, int* pArg5, int pArg6, br_vector3* pArg7, int pArg8, int pArg9) { NOT_IMPLEMENTED(); }
 
 // STUB: CARMA2_HW 0x004ee990
 void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x006a3334
+int gINT_006a3334;
+
+// STUB: CARMA2_HW 0x004eff30
+void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float pDelta_time) { NOT_IMPLEMENTED(); }
