@@ -38,6 +38,11 @@ typedef struct {
 
 typedef struct {
     int field_0x0;
+    tU16 field_0x4;
+} tPipe_chunk_funk_enable;
+
+typedef struct {
+    int field_0x0;
     int field_0x4;
     tU8 field_0x8[0x10];
 } tPipe_chunk_crush;
@@ -2676,7 +2681,12 @@ void C2_HOOK_FASTCALL ApplyPowerupLose(tPipe_chunk** pChunk) {
     return WorkerPowerupLose(chunk->field_0x0, chunk->field_0x4);
 }
 
-// ApplyFunkEnable
+// FUNCTION: CARMA2_HW 0x004c9c20
+void C2_HOOK_FASTCALL ApplyFunkEnable(tPipe_chunk** pChunk) {
+    tPipe_chunk_funk_enable* chunk = (tPipe_chunk_funk_enable*)*pChunk;
+
+    return AdjustFunkEnable(chunk->field_0x0, chunk->field_0x4);
+}
 
 // ApplyVanishDismembered
 
