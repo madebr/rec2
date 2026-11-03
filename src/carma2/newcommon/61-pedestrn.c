@@ -1170,7 +1170,16 @@ void C2_HOOK_FASTCALL DisposeMove(tPed_move* pMove) {
 
 // ReadRemap
 
-// DisposeRemap
+// FUNCTION: CARMA2_HW 0x004046d0
+void C2_HOOK_FASTCALL DisposeRemap(tPed_remap* pRemap) {
+
+    if (pRemap != NULL) {
+        if (pRemap->bones != NULL) {
+            BrMemFree(pRemap->bones);
+        }
+        BrMemFree(pRemap);
+    }
+}
 
 // DisposeAllLoadedRemaps
 
