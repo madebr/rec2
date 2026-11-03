@@ -2796,7 +2796,10 @@ int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
 }
 
 #ifdef REC2_HW
-// CalcSmudgeLength
+// FUNCTION: CARMA2_HW 0x004ca420
+int C2_HOOK_FASTCALL CalcSmudgeLength(tPipe_chunk* pChunk) {
+    return 8 + *(tU16*)((tU8*)pChunk + 4) * 4;
+}
 
 // CalcModelMashLength
 
