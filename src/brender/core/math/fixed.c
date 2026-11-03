@@ -623,9 +623,22 @@ br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedDivF(br_fixed_ls a, br_fixed_ls b) {
 }
 
 // FUNCTION: CARMA2_HW 0x00537322
-br_fixed_ls C2_HOOK_CDECL BrFixedMulDiv(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
-
+br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedMulDiv(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
+#ifndef REC2_MATCHING
     return ((br_int_64)a * (br_int_64)b) / (br_int_64)c;
+#else
+    __asm {
+        push ebp
+        mov ebp, esp
+        push edx
+        mov eax, dword ptr [ebp + 8]
+        imul dword ptr [ebp + 0xc]
+        idiv dword ptr [ebp + 0x10]
+        pop edx
+        leave
+        ret
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00537332
