@@ -334,7 +334,10 @@ void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
     }
 }
 
-// DoNetworkHeadups
+// FUNCTION: CARMA2_HW 0x00499360
+void C2_HOOK_FASTCALL DoNetworkHeadups(int pCredits) {
+    char s[256];
+    char s2[256];
     // GLOBAL: CARMA2_HW 0x0068d944
     static tU32 last_flash;
     // GLOBAL: CARMA2_HW 0x0068d948
