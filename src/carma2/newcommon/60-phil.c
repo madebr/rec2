@@ -306,7 +306,21 @@ tPhysics_object* C2_HOOK_FASTCALL PHILGetNextObject(tPhysics_object* pObject) {
     }
 }
 
-// PHILReturnObjectStatus
+// FUNCTION: CARMA2_HW 0x004b6010
+tU32 C2_HOOK_FASTCALL PHILReturnObjectStatus(tPhysics_object* pObject) {
+    tCollision_info_owner* owner;
+
+    if (!gPHIL_disabled) {
+        if (pObject->field_0x239 == 2) {
+            return ((tCollision_info_owner*)pObject->field_0x240)->field_0x08;
+        }
+        owner = pObject->field_0x240;
+        if (owner != NULL) {
+            return owner->field_0x08;
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004b6040
 // FUNCTION: CARMA2_SW 0x004b2760
