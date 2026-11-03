@@ -437,6 +437,11 @@ void C2_HOOK_FASTCALL WorkerPowerupRespawn(int field_0x0, int field_0x4) {
     NOT_IMPLEMENTED();
 }
 
+// STUB: CARMA2_HW 0x004df210
+void C2_HOOK_FASTCALL WorkerPowerupLose(int field_0x0, int field_0x4) {
+    NOT_IMPLEMENTED();
+}
+
 // STUB: CARMA2_HW 0x004f0380
 void C2_HOOK_FASTCALL WorkerShrapnelShowerUndo(tU32 chunk_0x48, tU32 prev_0x4, tU32 prev_0x84, tU32 prev_0x44, br_vector3* prev_0x8, br_vector3* prev_0x20, br_vector3* prev_0x2c, tU32 prev_0x50, tU32 prev_0x48, tU32 prev_0x0, br_vector3* prev_0x54, br_vector3* prev_0x88, br_vector3* prev_0x14, tU32 prev_0xa0, br_vector3* prev_0x38) {
     NOT_IMPLEMENTED();
@@ -2664,7 +2669,12 @@ void C2_HOOK_FASTCALL ApplyPowerupGot(tPipe_chunk** pChunk) {
     return WorkerPowerupGot(chunk->field_0x0, chunk->field_0x4);
 }
 
-// ApplyPowerupLose
+// FUNCTION: CARMA2_HW 0x004c9c10
+void C2_HOOK_FASTCALL ApplyPowerupLose(tPipe_chunk** pChunk) {
+    tPipe_chunk_powerup* chunk = (tPipe_chunk_powerup*)*pChunk;
+
+    return WorkerPowerupLose(chunk->field_0x0, chunk->field_0x4);
+}
 
 // ApplyFunkEnable
 
