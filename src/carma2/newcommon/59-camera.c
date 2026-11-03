@@ -528,7 +528,15 @@ void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex) {
 
 // CollideCamera2
 
-// CollideCameraWithOtherCars
+// FUNCTION: CARMA2_HW 0x00413570
+int C2_HOOK_FASTCALL CollideCameraWithOtherCars(br_vector3* pPos, br_vector3* pCamera_pos) {
+
+    return 0;
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // STUB: CARMA2_HW 0x00413580
 // STUB: CARMA2_SW 0x004135b0
