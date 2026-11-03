@@ -41,4 +41,6 @@ extern int C2_HOOK_FASTCALL DRstrrcasestr(int* pOffset, const char* pHaystack, i
 
 extern int C2_HOOK_FASTCALL FindPaletteColour(br_colour pRgb, br_pixelmap *pPalette);
 
+extern void C2_HOOK_FASTCALL LoadAllTiffTexturesInDirectory(const char* directory, br_pixelmap* pPalette, int loadFlags, int* errorCode);
+
 #endif // GUARD_LOADTIF_H

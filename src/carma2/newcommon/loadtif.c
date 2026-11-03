@@ -708,3 +708,41 @@ int C2_HOOK_FASTCALL FindPaletteColour(br_colour pColour, br_pixelmap *pPalette)
         return FindPaletteColourXRGB8888(pColour, pPalette);
     }
 }
+
+extern int C2_HOOK_FASTCALL LoadTiffTextureCB(const char* filePath, tLoadDirectoryStructureCBData* data);
+
+// FUNCTION: CARMA2_HW 0x00486760
+void C2_HOOK_FASTCALL LoadAllTiffTexturesInDirectory(const char* directory, br_pixelmap* pPalette, int loadFlags, int* errorCode) {
+    tLoadDirectoryStructureCBData data;
+    tLoadDirectoryStructureCBResult* nextItem;
+    tPath_name pathBuffer;
+
+    data.directory = directory;
+    data.pPalette = pPalette;
+    data.loadFlags = loadFlags | kLoadTextureFlags_SaveBrenderTexture;
+    data.errorCode = errorCode;
+    data.results = NULL;
+    if (!(loadFlags & kLoadTextureFlags_16bbp)) {
+        sprintf(pathBuffer, "%s%s%s", directory, gDir_separator, "TIFFX");
+        data.isTiffx = 0x1;
+        PDEnumPath(pathBuffer, (tEnumPathCallback)LoadTiffTextureCB, &data);
+    }
+    if (*errorCode != 0) {
+        return;
+    }
+    sprintf(pathBuffer, "%s%s%s", directory, gDir_separator, "TIFFRGB");
+    data.isTiffx = 0x0;
+    PDEnumPath(pathBuffer, (tEnumPathCallback)LoadTiffTextureCB, &data);
+
+    while (data.results != NULL) {
+        nextItem = data.results->next;
+        if (data.results->name != NULL) {
+            BrMemFree(data.results->name);
+        }
+        BrMemFree(data.results);
+        data.results = nextItem;
+    }
+}
+
+// STUB: CARMA2_HW 0x00486860
+int C2_HOOK_FASTCALL LoadTiffTextureCB(const char* filePath, tLoadDirectoryStructureCBData* data) { NOT_IMPLEMENTED(); }
