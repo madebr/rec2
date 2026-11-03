@@ -222,6 +222,8 @@ extern void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tPhysics_o
 
 // GetReducedList
 
+extern tPhysics_object** C2_HOOK_FASTCALL AppendOverlappingObjects(tPhysics_object* pObject, tPhysics_object* pList, tPhysics_object** pObjects);
+
 // ReduceReducedList
 
 extern void C2_HOOK_FASTCALL SetObjectTrialPositionType(tPhysics_object* pObject, int pType);
