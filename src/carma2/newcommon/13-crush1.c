@@ -3877,7 +3877,9 @@ void C2_HOOK_FASTCALL FUN_004321d0(tCar_spec* pCar, br_actor* pActor, br_vector3
 
 // STUB: CARMA2_HW 0x00432b80
 void C2_HOOK_FASTCALL FUN_00432b80(br_model* pModel, int pCount, br_vector3* pPoints, br_vector3* pDirection, float pForce, const tCar_crush_limits* pLimits, int pAxis, int pFound, float* pMax_bend, float* pMax_distance, tU32* pMax_vertex) {
-    NOT_IMPLEMENTED();
+    *pMax_bend = 0.f;
+    *pMax_distance = 0.f;
+    *pMax_vertex = 0;
 }
 
 // STUB: CARMA2_HW 0x004ee250
