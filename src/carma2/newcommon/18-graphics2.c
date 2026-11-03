@@ -45,6 +45,10 @@ int gCursor_line_width = 5;
 // GLOBAL: CARMA2_SW 0x00676608
 tTransient_bm gTransient_bitmaps[50];
 
+// GLOBAL: CARMA2_HW 0x0067c348
+// GLOBAL: CARMA2_SW 0x00676ab8
+int gNext_transient;
+
 // GLOBAL: CARMA2_HW 0x0067c390
 // GLOBAL: CARMA2_SW 0x00676b04
 int gMouse_started;
@@ -58,6 +62,7 @@ tU32 gLast_palette_change;
 int gPalette_index;
 
 // GLOBAL: CARMA2_HW 0x0074ca28
+// GLOBAL: CARMA2_SW 0x007430bc
 int gNoTransients;
 
 // GLOBAL: CARMA2_HW 0x0074a674
@@ -435,10 +440,32 @@ void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void) {
 #pragma auto_inline(off)
 #endif
 
-// STUB: CARMA2_HW 0x0043e010
-// STUB: CARMA2_SW 0x0043e060
+// FUNCTION: CARMA2_HW 0x0043e010
+// FUNCTION: CARMA2_SW 0x0043e060
 void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them) {
-    NOT_IMPLEMENTED();
+    int i;
+    int order_number;
+
+    if (!gNoTransients && pGraphically_remove_them) {
+        for (order_number = gNext_transient - 1; order_number >= 0; order_number--) {
+            for (i = 0; i < (int)REC2_ASIZE(gTransient_bitmaps); i++) {
+                if (gTransient_bitmaps[i].pixmap != NULL && order_number == gTransient_bitmaps[i].order_number) {
+                    if (gTransient_bitmaps[i].in_use) {
+                        BrPixelmapRectangleCopy(gBack_screen,
+                            gTransient_bitmaps[i].x_coord,
+                            gTransient_bitmaps[i].y_coord,
+                            gTransient_bitmaps[i].pixmap,
+                            0,
+                            0,
+                            gTransient_bitmaps[i].pixmap->width,
+                            gTransient_bitmaps[i].pixmap->height);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    gNext_transient = 0;
 }
 
 #ifdef REC2_MATCHING
