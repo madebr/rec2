@@ -1677,7 +1677,46 @@ void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* pPowerup, tCar_spec* pCar) {
     gMutant_speed = 0.f;
 }
 
-// ReceivedPowerup
+// FUNCTION: CARMA2_HW 0x004dece0
+void C2_HOOK_FASTCALL ReceivedPowerup(tNet_message_chunk_powerup* pMessage) {
+    tPowerup* powerup;
+    tCar_spec* car;
+
+    if (!gProgram_state.racing || pMessage->powerup_index >= gNumber_of_powerups || pMessage->powerup_index < 0) {
+        return;
+    }
+    powerup = &gPowerup_array[pMessage->powerup_index];
+    if (pMessage->field_0x10 != 0 && pMessage->field_0x10 != 1) {
+        if ((powerup->net_type & 1) == 0 && powerup->lose_proc != NULL) {
+            car = NetCarFromPlayerID(pMessage->player_id);
+            if (car != NULL) {
+                powerup->lose_proc(powerup, car);
+                car->powerups[pMessage->powerup_index] = 0;
+            }
+        }
+        return;
+    }
+    if ((powerup->net_type & 1) != 0) {
+        GotPowerupX(&gProgram_state.current_car, pMessage->powerup_index, 0, pMessage->field_0x10 == 0, pMessage->time_remaining);
+    } else if (pMessage->player_id != gLocal_net_ID && powerup->got_proc != NULL) {
+        car = NetCarFromPlayerID(pMessage->player_id);
+        if (car != NULL) {
+            powerup->got_proc(powerup, car);
+            switch (powerup->type) {
+            case ePowerup_instantaneous:
+                break;
+            case ePowerup_timed:
+                car->powerups[pMessage->powerup_index] = GetTotalTime() + pMessage->time_remaining;
+                break;
+            case ePowerup_whole_race:
+                car->powerups[pMessage->powerup_index] = -1;
+                return;
+            default:
+                break;
+            }
+        }
+    }
+}
 
 // STUB: CARMA2_HW 0x004dedf0
 // STUB: CARMA2_SW 0x004db2f0
