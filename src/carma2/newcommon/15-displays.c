@@ -814,7 +814,11 @@ void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
     EarnCredits2(pAmount, "");
 }
 
-// EarnCredits100
+// FUNCTION: CARMA2_HW 0x0044b450
+void C2_HOOK_FASTCALL EarnCredits100(int pAmount) {
+
+    EarnCredits(pAmount - (pAmount + 50) % 100 + 50);
+}
 
 // FUNCTION: CARMA2_HW 0x0044b470
 // FUNCTION: CARMA2_SW 0x0044b600
