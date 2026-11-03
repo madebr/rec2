@@ -546,7 +546,26 @@ void C2_HOOK_FASTCALL TDamageLFWheel(void) {
     DamageLFWheel(21);
 }
 
-// ToggleMiniMap
+// FUNCTION: CARMA2_HW 0x004420e0
+void C2_HOOK_FASTCALL ToggleMiniMap(void) {
+
+    if (gMap_view == 2) {
+        return;
+    }
+    gMini_map_visible = !gMini_map_visible;
+    if (gMini_map_visible) {
+        NewTextHeadupSlot(4, 0, 500, -4, GetMiscString(eMiscString_minimap_on));
+    } else {
+        NewTextHeadupSlot(4, 0, 500, -4, GetMiscString(eMiscString_minimap_off));
+    }
+    UpdateMapAndSaveOptions();
+}
+
+// CheckToggles
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // CarWorldOffFallenCheckThingy
 
 // HasCarFallenOffWorld
