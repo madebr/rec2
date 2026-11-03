@@ -1559,3 +1559,16 @@ void C2_HOOK_FASTCALL FUN_00402dd0(void) {
 
     gPipe_play_ptr = gPipe_record_ptr;
 }
+
+
+// FUNCTION: CARMA2_HW 0x004043a0
+void C2_HOOK_FASTCALL DisposePedMoves(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gPed_moves); i++) {
+        if (gPed_moves[i] != NULL) {
+            DisposeMove(gPed_moves[i]);
+            gPed_moves[i] = NULL;
+        }
+    }
+}
