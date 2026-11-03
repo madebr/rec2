@@ -552,3 +552,9 @@ void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL SplitCar(tCar_spec* pCar, br_vector4* pPlane, int pFlag);
 
 int C2_HOOK_FASTCALL SplitCheck(tCar_spec* pCar, int pMode, const br_vector3* pLine, br_scalar pHeight, br_vector4* pPlane);
+
+void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject);
+
+void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush);
+
+void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject);

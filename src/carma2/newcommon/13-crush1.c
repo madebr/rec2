@@ -1585,3 +1585,18 @@ int C2_HOOK_FASTCALL SplitCheck(tCar_spec* pCar, int pMode, const br_vector3* pL
     NOT_IMPLEMENTED();
     return 0;
 }
+
+// STUB: CARMA2_HW 0x0042f4e0
+void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x0042f3d0
+void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004314b0
+void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
