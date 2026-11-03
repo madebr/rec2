@@ -1461,7 +1461,85 @@ int C2_HOOK_FASTCALL InterfaceReturnTrue(void) {
     return 1;
 }
 
-// FRONTEND_ChangeCarMenuHandler
+// FUNCTION: CARMA2_HW 0x0046ba80
+int C2_HOOK_FASTCALL FRONTEND_ChangeCarMenuHandler(tFrontend_spec* pFrontend) {
+    tU32 now;
+    tU32 diff;
+
+    if (gFrontend_car_image_outdated || gFrontend_opponent_profile_pic_needs_update) {
+        UpdateCarInfo(pFrontend);
+    }
+    PollKeys();
+
+    now = PDGetTotalTime();
+    diff = now - gFrontend_scroll_last_update;
+    gFrontend_scroll_last_update = now;
+    gFrontend_scroll_time_left -= diff;
+    if (gFrontend_scroll_time_left < 0) {
+        gFrontend_scroll_time_left = 0;
+    }
+    gFrontend_scroll_time_increment = 50;
+
+    if (gMouse_in_use) {
+        int mouse_x;
+        int mouse_y;
+
+        gFrontend_time_last_input = PDGetTotalTime();
+        GetMousePosition(&mouse_x, &mouse_y);
+        gFrontend_selected_item_index = GetItemAtMousePos(pFrontend, mouse_x, mouse_y);
+        if (gFrontend_selected_item_index == -1) {
+            gFrontend_selected_item_index = 2;
+        }
+        gPrev_frontend_mouse_down = gFrontend_mouse_down;
+        gFrontend_mouse_down = EitherMouseButtonDown();
+        if (gFrontend_mouse_down && !gPrev_frontend_mouse_down) {
+            gFrontend_scroll_time_increment = 300;
+        } else {
+            gFrontend_scroll_time_increment = 100;
+        }
+    }
+
+    if (PDKeyDown(51) || PDKeyDown(52) || gFrontend_mouse_down) {
+
+        ToggleSelection(pFrontend);
+        if (pFrontend->items[gFrontend_selected_item_index].field_0xc == 2) {
+            return 2;
+        } else if (pFrontend->items[gFrontend_selected_item_index].field_0xc == 1) {
+            gFrontend_leave_current_menu = 1;
+        }
+        if (pFrontend->items[gFrontend_selected_item_index].action != NULL) {
+            pFrontend->items[gFrontend_selected_item_index].action(pFrontend);
+        }
+        if (pFrontend->items[gFrontend_selected_item_index].menuInfo != NULL) {
+            int i;
+
+            gCurrent_frontend_spec->default_item = gFrontend_selected_item_index;
+            FRONTEND_DestroyMenu(pFrontend);
+            gCurrent_frontend_spec = pFrontend->items[gFrontend_selected_item_index].menuInfo;
+            FRONTEND_CreateMenu(gCurrent_frontend_spec);
+            if (gCurrent_frontend_spec != pFrontend->previous) {
+                gCurrent_frontend_spec->previous = pFrontend;
+            }
+#ifdef REC2_HW
+            Morph_Initialise(pFrontend, gCurrent_frontend_spec);
+#endif
+            if (gCurrent_frontend_spec == &gFrontend_QUIT) {
+                gFrontend_selected_item_index = 0;
+            } else {
+                gFrontend_selected_item_index = gCurrent_frontend_spec->default_item;
+            }
+            for (i = 0; i < gCurrent_frontend_spec->count_scrollers; i++) {
+                gCurrent_frontend_spec->scrollers[i].indexTopItem = gCurrent_frontend_spec->scrollers[i].indexOfItemAtTop;
+            }
+            UpdateScrollPositions(gCurrent_frontend_spec);
+        }
+    }
+    if (gFrontend_leave_current_menu) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0046bcb0
 // FUNCTION: CARMA2_SW 0x0046b9e0
