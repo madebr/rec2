@@ -453,3 +453,9 @@ int C2_HOOK_FASTCALL SelectCrushNetwork(undefined4* pField, tPhysics_object* pOb
     NOT_IMPLEMENTED();
     return 0;
 }
+
+// STUB: CARMA2_HW 0x004978d0
+int C2_HOOK_FASTCALL TimeToSendData(void) {
+    NOT_IMPLEMENTED();
+    return 0;
+}

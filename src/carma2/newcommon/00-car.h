@@ -108,6 +108,17 @@ extern void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL APTCPostCollisionTree(tPhysics_object* pObject);
 
+extern void C2_HOOK_FASTCALL APTCPreCollision(void);
+
+extern void C2_HOOK_FASTCALL APTCPostCollision(void);
+
+extern void C2_HOOK_FASTCALL APTCChangedObjects(tPhysics_object* pObject, undefined4 pArg2);
+
+extern int C2_HOOK_FASTCALL APTCActiveHalted(tPhysics_object* pObject);
+
+extern int C2_HOOK_FASTCALL APTCPassiveActivated(tPhysics_object* pObject, undefined4 pArg2);
+
+
 extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL WeldCarPartial(tCar_spec* pCar);
@@ -259,3 +270,11 @@ void C2_HOOK_FASTCALL UpdateCrushVertices(tCar_spec* pCar, tU8* pData);
 void C2_HOOK_FASTCALL WeldCarByNetwork(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL UpdateCrushPainList(void);
+
+void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime);
+
+void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime);
+
+void C2_HOOK_FASTCALL SendCarData(tU32 pNext_frame_time);
+
+void C2_HOOK_FASTCALL SendMines(tU32 pNext_frame_time);
