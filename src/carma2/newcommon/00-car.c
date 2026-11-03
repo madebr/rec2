@@ -58,6 +58,9 @@ static br_scalar slide_dist;
 
 extern float C2_HOOK_FASTCALL SmashEnvironment(tPhysics_object* pObject, undefined4* pArg2, float pMagnitude, br_vector3* pPosition, br_vector3* pNormal, br_vector3* pForce, int pSnap, int pNetwork);
 
+// GLOBAL: CARMA2_HW 0x0058f680
+int gMetal_crunch_sound_id[5] = { 5000, 5001, 5002, 5003, 5004 };
+
 // GLOBAL: CARMA2_HW 0x0074cf98
 int gUNK_0074cf98;
 
@@ -2289,7 +2292,39 @@ steer_centre:
 
 // StopSkid
 
-// CrashNoise
+// FUNCTION: CARMA2_HW 0x0041ddc0
+void C2_HOOK_FASTCALL CrashNoise(br_vector3* pForce, br_vector3* pPosition, int pMaterial) {
+    // GLOBAL: CARMA2_HW 0x00679410
+    static tS3_sound_tag crunch_tag;
+    // GLOBAL: CARMA2_HW 0x0067935c
+    static tS3_volume last_crunch_vol;
+    tS3_volume vol;
+    br_vector3 velocity;
+
+    extern tS3_outlet* gCar_outlet;
+    extern int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
+    extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
+
+    vol = 60.0 * BrVector3Length(pForce);
+    if (gCurrent_race.material_modifiers[pMaterial].crash_noise_index == -1) {
+    } else {
+        if (vol > 255) {
+            vol = 255;
+        }
+        if (crunch_tag == 0 || !DRS3SoundStillPlaying(crunch_tag)) {
+            if (vol > 30) {
+                last_crunch_vol = vol;
+                (void)last_crunch_vol;
+                velocity.v[0] = 0.f;
+                velocity.v[1] = 0.f;
+                velocity.v[2] = 0.f;
+                crunch_tag = DRS3StartSound3D(gCar_outlet,
+                    gMetal_crunch_sound_id[IRandomBetween(0, 4)],
+                    pPosition, &velocity, 1, vol, IRandomBetween(49152, 81920), 0x10000);
+            }
+        }
+    }
+}
 
 // CrushAndDamageCar
 
