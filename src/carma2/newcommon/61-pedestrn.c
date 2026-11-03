@@ -1168,7 +1168,11 @@ void C2_HOOK_FASTCALL DisposeMove(tPed_move* pMove) {
 
 // DisposeAllLoadedMoves
 
-// ReadRemap
+// STUB: CARMA2_HW 0x00404410
+tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char* pName) {
+    NOT_IMPLEMENTED();
+    return NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x004046d0
 void C2_HOOK_FASTCALL DisposeRemap(tPed_remap* pRemap) {
@@ -1183,7 +1187,18 @@ void C2_HOOK_FASTCALL DisposeRemap(tPed_remap* pRemap) {
 
 // DisposeAllLoadedRemaps
 
-// FindOrOpenRemap
+// FUNCTION: CARMA2_HW 0x00404740
+tPed_remap* C2_HOOK_FASTCALL FindOrOpenRemap(const char* pName) {
+    int i;
+    tPed_remap** remap;
+
+    for (i = 0, remap = gPed_remaps; (int)remap < (int)&gPed_remaps[10]; remap++, i++) {
+        if (*remap != NULL && strcmp(pName, (*remap)->name) == 0) {
+            return gPed_remaps[i];
+        }
+    }
+    return ReadRemap(pName);
+}
 
 // Flip3DStoBRaxes
 
