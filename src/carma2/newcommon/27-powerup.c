@@ -2576,7 +2576,41 @@ void C2_HOOK_STDCALL ScalePedHeads(float pHead_scale) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// PlayExclusiveFFBEffect
+// FUNCTION: CARMA2_HW 0x0045c6b0
+void C2_HOOK_FASTCALL PlayExclusiveFFBEffect(const char* pEffect_name, int pArg2) {
+    int index;
+    int* effect;
+
+    if (!gForceFeedbackAvailable) {
+        return;
+    }
+    index = PDFindJoystickEffect(pEffect_name);
+    if (index == -1) {
+        return;
+    }
+    if (gCurrent_ffb_effect_index != -1 && gCurrent_ffb_effect_index != index) {
+        StopDinputEffect(gCurrent_ffb_effect_index);
+        UnloadDinputFFBEffectAtIndex(gCurrent_ffb_effect_index);
+        gCurrent_ffb_effect_index = -1;
+    }
+    if (gCurrent_ffb_effect_index != -1) {
+        effect = GetJoystickEffect(gCurrent_ffb_effect_index);
+        if (pArg2 == 0 && effect != NULL && effect[2] == -1) {
+            return;
+        }
+    }
+    gCurrent_ffb_effect_index = index;
+    StartDinputEffect(index);
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// based on the original disassembly (tail call into StopDinputEffect)
 // FUN_0045c760
 // GetJoystickEffect
 // MakePedsEthereal
