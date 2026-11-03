@@ -541,6 +541,11 @@ void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysics_objec
 
 // MoveJointedObject
 
+// STUB: CARMA2_HW 0x004b7510
+void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, float pDelta_time) {
+    NOT_IMPLEMENTED();
+}
+
 // TellPhysicsJointsHaveChanged
 
 // CombineBounds
@@ -637,8 +642,8 @@ void C2_HOOK_FASTCALL SetGroup(tPhysics_object* pObject, int pGroup) {
 void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
     while (pObject != NULL) {
         if (pObject->disable_move_rotate) {
-            pObject->disable_move_rotate = 0;
             pObject->box_face_ref = gFace_num__car - 2;
+            pObject->disable_move_rotate = 0;
         }
         if (pObject->child != NULL) {
             MakeObjectListDoSomething(pObject->child);
@@ -653,7 +658,111 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 
 // CheckForObjectHierachyTouchingAnotherObject
 
-// CheckForObjectHierachyTouchingObjectList
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth(0)
+#endif
+// FUNCTION: CARMA2_HW 0x004ba190
+void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tPhysics_object* pObject, tPhysics_object* pList, tPhysics_object* pList_original) {
+    tPhysics_object* list_cur;
+    tPhysics_object* obj;
+    tPhysics_object* child;
+
+    for (list_cur = pList; list_cur != NULL; list_cur = list_cur->next) {
+        if (list_cur->disable_move_rotate != 0) {
+            if (pObject->field_0xf4.min.v[0] - list_cur->field_0xf4.max.v[0] <= gDOUBLE_0058a798
+                    && pObject->field_0xf4.min.v[1] - list_cur->field_0xf4.max.v[1] <= gDOUBLE_0058a798
+                    && pObject->field_0xf4.min.v[2] - list_cur->field_0xf4.max.v[2] <= gDOUBLE_0058a798
+                    && list_cur->field_0xf4.min.v[0] - pObject->field_0xf4.max.v[0] <= gDOUBLE_0058a798
+                    && list_cur->field_0xf4.min.v[1] - pObject->field_0xf4.max.v[1] <= gDOUBLE_0058a798
+                    && list_cur->field_0xf4.min.v[2] - pObject->field_0xf4.max.v[2] <= gDOUBLE_0058a798) {
+                obj = list_cur;
+                while (obj->parent != NULL) {
+                    if (obj->physics_joint1 == NULL || obj->physics_joint1->type == eJoint_none) {
+                        break;
+                    }
+                    obj = obj->parent;
+                }
+                obj->box_face_ref = gFace_num__car - 2;
+                obj->disable_move_rotate = 0;
+                if (obj->child != NULL || obj->physics_joint1 != NULL || obj->physics_joint2 != NULL) {
+                    if (obj->field_0x218 == 0) {
+                        MoveJointedObject(obj, 0.f);
+                    }
+                    child = obj->child;
+                    while (child != NULL) {
+                        if (child->disable_move_rotate) {
+                            child->box_face_ref = gFace_num__car - 2;
+                            child->disable_move_rotate = 0;
+                        }
+                        if (child->child != NULL) {
+                            MakeObjectListDoSomething(child->child);
+                        }
+                        child = child->next;
+                    }
+                }
+                CheckForObjectHierachyTouchingObjectList(obj, pList_original, pList_original);
+            }
+            child = pObject->child;
+            if (child != NULL && list_cur->disable_move_rotate != 0) {
+                child = pObject->child;
+                while (child != NULL) {
+                    if (child->field_0xf4.min.v[0] - list_cur->field_0xf4.max.v[0] > gDOUBLE_0058a798
+                            || child->field_0xf4.min.v[1] - list_cur->field_0xf4.max.v[1] > gDOUBLE_0058a798
+                            || child->field_0xf4.min.v[2] - list_cur->field_0xf4.max.v[2] > gDOUBLE_0058a798
+                            || list_cur->field_0xf4.min.v[0] - child->field_0xf4.max.v[0] > gDOUBLE_0058a798
+                            || list_cur->field_0xf4.min.v[1] - child->field_0xf4.max.v[1] > gDOUBLE_0058a798
+                            || list_cur->field_0xf4.min.v[2] - child->field_0xf4.max.v[2] > gDOUBLE_0058a798) {
+                        child = child->next;
+                        if (child == NULL) {
+                            break;
+                        }
+                        continue;
+                    }
+                    obj = list_cur;
+                    while (obj->parent != NULL) {
+                        if (obj->physics_joint1 == NULL || obj->physics_joint1->type == eJoint_none) {
+                            break;
+                        }
+                        obj = obj->parent;
+                    }
+                    obj->box_face_ref = gFace_num__car - 2;
+                    child = obj->child;
+                    obj->disable_move_rotate = 0;
+                    if (child != NULL || obj->physics_joint1 != NULL || obj->physics_joint2 != NULL) {
+                        if (obj->field_0x218 == 0) {
+                            MoveJointedObject(obj, 0.f);
+                        }
+                        child = obj->child;
+                        while (child != NULL) {
+                            if (child->disable_move_rotate) {
+                                child->box_face_ref = gFace_num__car - 2;
+                                child->disable_move_rotate = 0;
+                            }
+                            if (child->child != NULL) {
+                                MakeObjectListDoSomething(child->child);
+                            }
+                            child = child->next;
+                        }
+                    }
+                    CheckForObjectHierachyTouchingObjectList(obj, pList_original, pList_original);
+                    break;
+                }
+            }
+            if (list_cur->child != NULL) {
+                CheckForObjectHierachyTouchingObjectList(pObject, list_cur->child, pList_original);
+            }
+        }
+    }
+}
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth()
+#endif
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // MakeObjectDoSomething
 
