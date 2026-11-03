@@ -3885,7 +3885,34 @@ void C2_HOOK_FASTCALL DeetherealiseCharacter1(void* pCharacter) {
     *(tU32*)((char*)pCharacter + 0x19c) &= ~4;
 }
 
-// CalmDownAllPeds
+/* SetPedHeadAnim: inlined into its callers in the original */
+static void C2_HOOK_FASTCALL SetPedHeadAnim(tPedestrian* pPed, const tPed_anim_seq* pSeq, tU32 pTime) {
+
+    if (pPed->hit_points > 0 && pPed->field_0x0c != NULL) {
+        pPed->field_0x0c->field_0x1c = pSeq;
+        pPed->field_0x0c->field_0x78 = pTime;
+        pPed->field_0x0c->field_0x1a = 0;
+        SetCharacterBoneModelAR(pPed->character, pPed->character->personality->form->index_head_bone, pPed->field_0x0c->field_0x1c->poses[0], 0);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004d6dc0
+int C2_HOOK_FASTCALL CalmDownAllPeds(void) {
+    tU32 now;
+    int i;
+    tPedestrian* ped;
+
+    now = GetTotalTime();
+    ped = gPedestrian_array;
+    for (i = 0; i < gPed_count; i++, ped++) {
+        if (ped->field_0x0c != NULL && ped->hit_points > 0 && ped->action == ePed_action_running) {
+            SetPedMove(ped, 30, IRandomBetween(ped->movement_spec->min_walk_speed_factor, ped->movement_spec->max_walk_speed_factor), 0, 1, now, ePed_action_walking);
+            SetPedHeadAnim(ped, (const tPed_anim_seq*)&gCalm_ped_anim_sequence, now);
+        }
+    }
+    gPed_valium_left = 5000;
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x004d6f10
 // FUNCTION: CARMA2_SW 0x004d3510
