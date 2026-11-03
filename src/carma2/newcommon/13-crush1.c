@@ -943,7 +943,41 @@ void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_cru
 extern void C2_HOOK_FASTCALL SimpleCrushModel(br_model* pModel, int pCount, float* pPoints, float* pDir, float* pBounds);
 extern void C2_HOOK_FASTCALL FUN_00435960(br_model* pModel, const br_vector3* pOffset, tCar_spec** ppCar, br_actor* pActor);
 
-// CrushCarModelCbfn
+// FUNCTION: CARMA2_HW 0x00433260
+intptr_t C2_HOOK_FASTCALL CrushCarModelCbfn(br_actor* pActor, br_matrix34* pMat, void* pContext) {
+    struct {
+        tCar_spec* car;
+        tCar_crush* crush;
+        float force;
+    }* context;
+    tUser_crush_data* user;
+    tCar_crush_buffer_entry* crush_data;
+    br_vector3 points[4];
+    br_vector3 direction;
+    float scale;
+    int i;
+
+    context = pContext;
+    if (pActor->type == 1 && pActor->user != NULL) {
+        user = pActor->user;
+        crush_data = user->crush_data;
+        if (crush_data != NULL) {
+            for (i = 0; i < context->crush->count; i++) {
+                DrMatrix34ApplyLPInverse(&points[i], &context->crush->vectors[i], pMat);
+            }
+            BrMatrix34TApplyV(&direction, &context->crush->field_0x44, pMat);
+            scale = context->force * crush_data->softness_factor;
+            direction.v[0] = direction.v[0] * scale;
+            direction.v[1] = direction.v[1] * scale;
+            direction.v[2] = direction.v[2] * scale;
+            for (i = 0; i < context->car->count_detail_levels; i++) {
+                SimpleCrushModel(user->models[i], context->crush->count, points[0].v, direction.v,
+                    (float*)&context->car->car_crush_spec->field_0x11c);
+            }
+        }
+    }
+    return 0;
+}
 
 // FUN_004358a0
 
