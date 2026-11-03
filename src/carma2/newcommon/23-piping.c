@@ -28,6 +28,9 @@
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
+// GLOBAL: CARMA2_HW 0x0069410c
+volatile undefined4 gUNK_0069410c;
+
 // GLOBAL: CARMA2_HW 0x006768c8
 tU8* gPipe_buffer_end_marker = NULL;
 
@@ -698,7 +701,32 @@ void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir) {
         SIZE_OFFSET_PIPING(tPipe_ped_dir_data, direction), pDir);
 }
 
-// PipeSinglePedMove
+// FUNCTION: CARMA2_HW 0x004c8b30
+void C2_HOOK_FASTCALL PipeSinglePedMove(tPedestrian* pPed, tS16 pArg2, tS16 pOriginal_move_id, tS16 pMove_id, float pArg5, float pArg6, int pArg7, int pArg8, br_vector3* pOriginal_pos, br_vector3* pPos, int pOriginal_action, int pAction, br_matrix34* pArg13) {
+    tU32 bits;
+    int flag;
+
+    (void)pArg6;
+    flag = 0;
+    if (pArg7) {
+        flag = 1;
+    }
+    memcpy(&bits, &pArg5, sizeof(bits));
+    gUNK_0069410c = bits;
+    ARDoSingleVariedSession(ePipe_chunk_ped_move, (uintptr_t)pPed, 12,
+        2, 2, pOriginal_move_id,
+        2, 0, pMove_id,
+        2, 6, pArg2,
+        4, 12, gUNK_0069410c,
+        4, 8, gUNK_0069410c,
+        2, 4, flag,
+        4, 16, pArg8,
+        12, 20, pOriginal_pos,
+        12, 32, pPos,
+        4, 44, pOriginal_action,
+        4, 48, pAction,
+        48, 52, pArg13);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8bd0
 // FUNCTION: CARMA2_SW 0x004c5300
