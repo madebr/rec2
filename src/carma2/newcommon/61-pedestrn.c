@@ -1688,3 +1688,16 @@ void C2_HOOK_FASTCALL DisposePedForm(tPed_form* pForm) {
         BrMemFree(pForm);
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x00406a00
+void C2_HOOK_FASTCALL DisposePedForms(void) {
+    int i;
+
+    for (i = 0; i < 20; i++) {
+        if (gPed_forms[i] != NULL) {
+            DisposePedForm(gPed_forms[i]);
+            gPed_forms[i] = NULL;
+        }
+    }
+}
