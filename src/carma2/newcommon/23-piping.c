@@ -1405,3 +1405,17 @@ void C2_HOOK_FASTCALL PipeSingleCarIncident(tCar_spec* pCar, br_vector3* pPositi
 void C2_HOOK_FASTCALL PipeSingleLocalCarIncident(br_vector3* pPosition, float pForce) {
     NOT_IMPLEMENTED();
 }
+
+
+// FUNCTION: CARMA2_HW 0x004024a0
+void C2_HOOK_FASTCALL DisposePiping(void) {
+
+    if (gPipe_buffer_start != NULL) {
+        PDDisposeActionReplayBuffer(gPipe_buffer_start);
+    }
+    gPipe_buffer_start = NULL;
+    if (gLocal_buffer != NULL) {
+        BrMemFree(gLocal_buffer);
+        gLocal_buffer = NULL;
+    }
+}
