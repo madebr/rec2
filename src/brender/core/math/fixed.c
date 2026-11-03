@@ -940,9 +940,40 @@ br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedSqr3(br_fixed_ls a, br_fixed_ls b, br_
 }
 
 // FUNCTION: CARMA2_HW 0x005374b2
-br_fixed_ls C2_HOOK_CDECL BrFixedSqr4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
-
+br_fixed_ls BR_NAKED C2_HOOK_CDECL BrFixedSqr4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
+#ifndef REC2_MATCHING
     return ((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b + (br_int_64)c * (br_int_64)c + (br_int_64)d * (br_int_64)d) >> 16;
+#else
+    __asm {
+        push ebp
+        mov ebp, esp
+        push edx
+        push ebx
+        push ecx
+        mov eax, dword ptr [ebp + 8]
+        imul eax
+        mov ebx, eax
+        mov ecx, edx
+        mov eax, dword ptr [ebp + 0xc]
+        imul eax
+        add ebx, eax
+        adc ecx, edx
+        mov eax, dword ptr [ebp + 0x10]
+        imul eax
+        add ebx, eax
+        adc ecx, edx
+        mov eax, dword ptr [ebp + 0x14]
+        imul eax
+        add eax, ebx
+        adc edx, ecx
+        shrd eax, edx, 16
+        pop ecx
+        pop ebx
+        pop edx
+        leave
+        ret
+    }
+#endif
 }
 
 static int16_t fixed_lut_interpolate(uint16_t *table, uint32_t value) {
