@@ -8,6 +8,7 @@
 
 #include "58-crush2.h"
 
+#include "00-car.h"
 #include "07-structur.h"
 #include "09-funks.h"
 #include "15-displays.h"
@@ -15,9 +16,12 @@
 #include "21-mainloop.h"
 #include "23-piping.h"
 #include "30-opponent.h"
+#include "32-spark.h"
 #include "39-oil.h"
 #include "41-utility.h"
 #include "43-pratcam.h"
+#include "51-smash.h"
+#include "69-sound.h"
 #include "globvars.h"
 #include "globvrpb.h"
 
@@ -95,9 +99,45 @@ void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
     }
 }
 
-// ExplodeMeCarUpMeOldMatey
+// FUNCTION: CARMA2_HW 0x0043f6c0
+// FUNCTION: CARMA2_SW 0x0043f7a0
+void C2_HOOK_FASTCALL ExplodeMeCarUpMeOldMatey(tCar_spec* pCar) {
 
-// SetKnackeredFlag
+    Explode(&gExplosion_pix_animation_groups, pCar->car_master_actor,
+        &pCar->car_actor->model->bounds, NULL);
+    if ((pCar != NULL && pCar->driver ==  eDriver_local_human)) {
+        DRS3StartSound(gCar_outlet, gExplosion_sound_id);
+    } else {
+        DRS3StartSound3D(gCar_outlet, gExplosion_sound_id, &pCar->pos, &gZero_v__car, 1, 255, BR_FIXED_INT(1), BR_FIXED_INT(1));
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0043f730
+// FUNCTION: CARMA2_SW 0x0043f810
+int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar) {
+
+    if (gNet_mode == eNet_mode_client
+            || pCar->knackered
+            || (pCar->damage_units[eDamage_engine].damage_level < 99
+                && (pCar->damage_units[eDamage_transmission].damage_level < 99)
+                && pCar->damage_units[eDamage_driver].damage_level < 99)
+                && (pCar->damage_units[eDamage_lf_wheel].damage_level < 99
+                    || pCar->damage_units[eDamage_rf_wheel].damage_level < 99
+                    || pCar->damage_units[eDamage_lr_wheel].damage_level < 99
+                    || pCar->damage_units[eDamage_rr_wheel].damage_level < 99)) {
+        return 0;
+    }
+    ExplodeMeCarUpMeOldMatey(pCar);
+    KnackerThisCar(pCar);
+    if (gNet_mode == eNet_mode_none) {
+        if (IRandomBetween(0,1) && gNet_mode == eNet_mode_none) {
+            StopCarSmoking(pCar);
+            CreateSmokeColumn(pCar, 0, IRandomBetween(0,  11), 20000);
+        }
+        CreateSmokeColumn(pCar, 0, IRandomBetween(0, 11), 180000);
+    }
+    return 1;
+}
 
 // DamageUnit2
 

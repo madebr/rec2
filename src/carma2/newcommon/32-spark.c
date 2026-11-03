@@ -522,7 +522,11 @@ void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pC
 
 // CreateSmokeColumn2
 
-// CreateSmokeColumn
+// STUB: CARMA2_HW 0x004fb890
+// STUB: CARMA2_SW 0x004f6dd0
+void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec *pCar, br_colour pColour, int pVertex_index, tU32 pLifetime) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004fb910
 // FUNCTION: CARMA2_SW 0x004f6e50
