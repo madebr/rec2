@@ -236,8 +236,20 @@ float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar_spec) {
     return min_value;
 }
 
-// STUB: CARMA2_HW 0x0041fe50
-int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec* pCar_spec, br_vector3* pVec3) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x0041fe50
+int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec* pCar_spec, br_vector3* pVec3) {
+    int r;
+
+    if (!gProgram_state.racing) {
+        return 1;
+    }
+    gTesting_car_for_sensible_place = 1;
+    r = TestForObjectInSensiblePlace(pCar_spec->collision_info, gPHIL_list_collision_infos, pVec3, &gWorld_callbacks);
+    gTesting_car_for_sensible_place = 0;
+    return r;
+}
+
+extern int C2_HOOK_FASTCALL FUN_00424270(float* pStart, float* pEnd, int* pObject, int pBounds_shape, undefined4 pRay_shape, int pCollision_count, int pFace, int pPolyhedron_data);
 
 // FUN_00424140
 
