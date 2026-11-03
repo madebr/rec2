@@ -134,9 +134,17 @@ void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar) {
 
 // OKToSpillOil
 
-// MungeOilsHeightAboveGround
+/* MungeOilsHeightAboveGround: inlined into its callers in the original */
+static void C2_HOOK_FASTCALL MungeOilsHeightAboveGround(tOil_spill_info* pOil) {
 
-// MungeIndexedOilsHeightAboveGround
+    pOil->actor->t.t.translate.t = pOil->position;
+}
+
+// FUNCTION: CARMA2_HW 0x004a6e20
+void C2_HOOK_FASTCALL MungeIndexedOilsHeightAboveGround(int pIndex) {
+
+    MungeOilsHeightAboveGround(&gOily_spills[pIndex]);
+}
 
 // FUNCTION: CARMA2_HW 0x004a7460
 void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel) {
@@ -154,8 +162,6 @@ void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel
     BrModelUpdate(pModel, BR_MODU_ALL);
 }
 
-// STUB: CARMA2_HW 0x004a6e50
-void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004a74e0
 // FUNCTION: CARMA2_SW 0x004a3650
 int C2_HOOK_FASTCALL GetOilSpillCount(void) {
@@ -173,7 +179,11 @@ void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scala
     }
 }
 
-// PointInSpill
+// STUB: CARMA2_HW 0x004a77d0
+int C2_HOOK_FASTCALL PointInSpill(br_vector3* pPoint, int pIndex) {
+    NOT_IMPLEMENTED();
+    return 0;
+}
 
 // GetOilFrictionFactors
 
@@ -206,3 +216,7 @@ void C2_HOOK_FASTCALL ReceivedOilSpill(tNet_message_chunk* pContents) {
 
 // RemoveCarsOilSlicks
 
+// PipeSingleOilSpill
+
+// STUB: CARMA2_HW 0x004a6e50
+void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) { NOT_IMPLEMENTED(); }
