@@ -2194,7 +2194,12 @@ void C2_HOOK_FASTCALL ApplyPHILObject(tPipe_chunk** pChunk) {
     return WorkerPHILObject(chunk->field_0x0, &chunk->field_0x4);
 }
 
-// ApplyGibShower
+// FUNCTION: CARMA2_HW 0x004c9b90
+void C2_HOOK_FASTCALL ApplyGibShower(tPipe_chunk** pChunk) {
+    tPipe_chunk_gib_shower* chunk = (tPipe_chunk_gib_shower*)*pChunk;
+
+    return WorkerGibShower(chunk->field_0x0, chunk->field_0xc, chunk->field_0x8, chunk->field_0x10, chunk->field_0x4, &chunk->field_0x14, &chunk->field_0x20, &chunk->field_0x2c);
+}
 
 // ApplyBloodSpurt
 
