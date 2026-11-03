@@ -36,6 +36,110 @@ typedef struct {
     tU8 field_0x8[0x10];
 } tPipe_chunk_crush;
 
+typedef struct {
+    int field_0x0;
+    int field_0x4;
+    tU8 field_0x8[4];
+} tPipe_chunk_model_mash;
+
+typedef struct {
+    int skid_num;
+    br_matrix34 matrix;
+    br_material* material;
+} tPipe_chunk_skid_adjust;
+
+typedef struct {
+    int field_0x0;
+    tU16 field_0x4;
+    tU16 field_0x6;
+    int field_0x8;
+} tPipe_chunk_prox_ray_replay;
+
+typedef struct {
+    int field_0x0;
+    tS8 field_0x4[12];
+} tPipe_chunk_damage;
+
+typedef struct {
+    int field_0x0;
+    tS16 field_0x4;
+    tS8 field_0x6;
+    tS8 field_0x7;
+    tS8 field_0x8;
+    tS8 field_0x9;
+} tPipe_chunk_graphpical_wheel_stuff;
+
+typedef struct {
+    int field_0x0;
+    tS32 field_0x4;
+    float field_0x8;
+    float field_0xc;
+    float field_0x10;
+    tU16 field_0x14;
+    tU16 field_0x16;
+} tPipe_chunk_sound;
+
+typedef struct {
+    int field_0x0;
+    br_vector3 field_0x4;
+    tU8 field_0x10[0x24];
+    int field_0x34;
+    int field_0x38;
+    int field_0x3c;
+    tU8 field_0x40[4];
+    int field_0x44;
+    br_vector3 field_0x48;
+    int field_0x54;
+} tPipe_chunk_oil_spill;
+
+typedef struct {
+    int field_0x0;
+    tU8 field_0x4;
+    int field_0x8;
+    br_vector3 field_0xc;
+    br_vector3 field_0x18;
+} tPipe_chunk_extended_splash;
+
+typedef struct {
+    uintptr_t pOwner;
+    float v[4];
+} tPipe_chunk_splash;
+
+typedef struct {
+    tU8 pad[0x244];
+    br_scalar x;
+    br_scalar y;
+    br_scalar z;
+    br_scalar size;
+} tReplay_splash_effect;
+
+typedef struct {
+    tU32 field_0x0;
+    tU8 pad[0x10];
+    tU16 field_0x14;
+} tPipe_chunk_smoke_column_replay;
+
+typedef struct {
+    int field_0x0;
+    int field_0x4;
+    int field_0x8;
+    int field_0xc;
+    int field_0x10;
+    br_vector3 field_0x14;
+} tPipe_chunk_groove_stop;
+
+typedef struct {
+    int field_0x0;
+    tU8 field_0x4[0xc];
+    tU16 field_0x10;
+    int field_0x14;
+} tPipe_chunk_shrapnel_replay;
+
+typedef struct {
+    int field_0x0;
+    tU8 field_0x4[0x10];
+} tPipe_chunk_spark_replay;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -1818,7 +1922,12 @@ void C2_HOOK_FASTCALL ApplySmudge(tPipe_chunk** pChunk) {
     return WorkerSmudge(pChunk, 1);
 }
 
-// ApplySpark
+// FUNCTION: CARMA2_HW 0x004c9140
+void C2_HOOK_FASTCALL ApplySpark(tPipe_chunk** pChunk) {
+    tPipe_chunk_spark_replay* chunk = (tPipe_chunk_spark_replay*)*pChunk;
+
+    return WorkerSpark(chunk->field_0x0, &chunk->field_0x4[0], &chunk->field_0x4[0xc]);
+}
 
 // ApplyShrapnel
 
