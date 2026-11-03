@@ -2655,7 +2655,21 @@ int C2_HOOK_CDECL NapalmPedDistanceCompare(const void* pValue1, const void* pVal
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// MakePedsEthereal
+// FUNCTION: CARMA2_HW 0x004d6b40
+void C2_HOOK_FASTCALL MakePedsEthereal(void) {
+
+    MungeAllCharacterMaterials(EtherealiseMaterial1);
+    MungeAllCharacterObjects(EtherealiseCharacter1);
+    MungeAllCharacterModels(EtherealiseMaterial2);
+    gEthereal_pedestrians = 1;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // PipeSingleMatrix34Type66
 // STUB: CARMA2_HW 0x0040bb20
 void C2_HOOK_FASTCALL ScalePedPersonality(tPed_personality* pPersonality, int pIndex, br_scalar* pScale, int pMode) {
