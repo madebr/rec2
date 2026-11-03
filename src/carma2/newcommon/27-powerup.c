@@ -1398,7 +1398,29 @@ void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* pPowerup, tCar_spec* pCar) {
     }
 }
 
-// ResetOpponentsSpeed
+// FUNCTION: CARMA2_HW 0x004de6b0
+void C2_HOOK_FASTCALL ResetOpponentsSpeed(tPowerup* pPowerup, tCar_spec* pCar) {
+    tCar_spec* opponent_car;
+    int count;
+    int i;
+    float f;
+
+    count = gCurrent_race.number_of_racers;
+    for (i = 0; i < count; i++) {
+        if (gCurrent_race.opponent_list[i].index == 0x1d) {
+            break;
+        }
+    }
+    if (i < count) {
+        opponent_car = gCurrent_race.opponent_list[i].car_spec;
+        f = 1.0f;
+        FUN_0045c760();
+        opponent_car->field_0x4d4 = f;
+        opponent_car->grip_multiplier = f;
+        SetCarSuspGiveAndHeight(opponent_car, f, f, f, 0.0f, 0.0f);
+    }
+    gOpponent_speed_factor = 1.0f;
+}
 
 // FUNCTION: CARMA2_HW 0x004de710
 // FUNCTION: CARMA2_SW 0x004dac10
