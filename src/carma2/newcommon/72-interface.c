@@ -3436,7 +3436,70 @@ int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// Controls_Ok
+// FUNCTION: CARMA2_HW 0x00472d80
+int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend) {
+    int i;
+    int prev_item;
+
+    gINT_00688748 = -1;
+    WaitForNoKeys();
+
+    for (i = 28; i <= 76; i++) {
+
+        if (gKey_mapping[i] == -2) {
+            gINT_00688748 = i;
+            break;
+        }
+    }
+    if (gJoystick_index == -1) {
+
+        for (i = 28; i <= 76; i++) {
+
+            if (gKey_mapping[i] >= 107 && gKey_mapping[i] < 139) {
+                gINT_00688748 = i;
+            } else if (gKey_mapping[i] >= 139 && gKey_mapping[i] < 143) {
+                gINT_00688748 = i;
+            }
+        }
+    }
+    if (gINT_00688748 != -1) {
+    for (i = 0; i < gFrontend_controls_count_keys; i++) {
+        if (gControls_frontend_to_key_mapping_lut[i] == gINT_00688748) {
+            break;
+        }
+    }
+    if (i < gControls_scroller.field_0x8 || i >= gControls_scroller.field_0x8 + gControls_scroller.range_length) {
+        gControls_scroller.field_0x8 = i;
+        if (i >= gControls_scroller.field_0x0 - gControls_scroller.range_length) {
+            gControls_scroller.field_0x8 = gControls_scroller.field_0x0 - gControls_scroller.range_length;
+        }
+    }
+    RefreshScrollSet(pFrontend);
+    prev_item = gFrontend_selected_item_index;
+    if (i < gControls_scroller.field_0x8 || i > gControls_scroller.field_0x8 + gControls_scroller.range_length) {
+        gFrontend_selected_item_index = -1;
+    } else {
+        gFrontend_selected_item_index = i - gControls_scroller.field_0x8 + gControls_scroller.range_starts[0];
+    }
+    if (gFrontend_selected_item_index == -1) {
+        PDFatalError("Screwed up in Controls_Ok().");
+        return 0;
+    }
+    Controls_SlotActivated(pFrontend);
+    gFrontend_selected_item_index = prev_item;
+    return 4;
+    }
+    SaveJoystickPreferences();
+    return 0;
+}
+
+// DisplayNetworkOptions
+
+// BackupNetworkOptions
+
+// RestoreNetworkOptions
+
+// NetOptions_Infunc
 
 // FUNCTION: CARMA2_HW 0x00473210
 // FUNCTION: CARMA2_SW 0x00472780
