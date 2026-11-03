@@ -2234,7 +2234,30 @@ void C2_HOOK_FASTCALL MayQueuePowerupRespawn(int pPowerup_index, br_actor* actor
     }
 }
 
-// DisposeBillBoard
+// FUNCTION: CARMA2_HW 0x004e0ba0
+void C2_HOOK_FASTCALL DisposeBillBoard(br_actor* pActor) {
+    extern br_material* C2_HOOK_CDECL BrMaterialRemove(br_material* pMaterial);
+    extern void C2_HOOK_CDECL BrMaterialFree(br_material* pMaterial);
+    extern br_model* C2_HOOK_CDECL BrModelRemove(br_model* pModel);
+    extern void C2_HOOK_CDECL BrModelFree(br_model* pModel);
+    extern br_actor* C2_HOOK_CDECL BrActorRemove(br_actor* pActor);
+    extern void C2_HOOK_CDECL BrActorFree(br_actor* pActor);
+
+    if (pActor != NULL) {
+        if (pActor->material != NULL) {
+            BrMaterialRemove(pActor->material);
+            BrMaterialFree(pActor->material);
+        }
+        if (pActor->model != NULL) {
+            BrModelRemove(pActor->model);
+            BrModelFree(pActor->model);
+        }
+        if (pActor->parent != NULL) {
+            BrActorRemove(pActor);
+        }
+        BrActorFree(pActor);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e07d0
 // FUNCTION: CARMA2_SW 0x004dccd0
