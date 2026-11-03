@@ -2848,19 +2848,113 @@ int C2_HOOK_FASTCALL OutsideEdgeLine(const br_vector3* pPoint, const br_vector3*
 }
 
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
+// GLOBAL: CARMA2_HW 0x0079ecbc
+tPhysics_object* gUNK_0079ecbc;
 
-// STUB: CARMA2_HW 0x00429070
+// FUNCTION: CARMA2_HW 0x00429070
 int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
-    NOT_IMPLEMENTED();
-    return 0;
-}
+    tSensible_place_contact contacts[8];
+    tPhysics_object* p1;
+    tPhysics_object* p2;
+    tPhysics_object* child;
+    tPhysics_shape* shape1;
+    tPhysics_shape* shape2;
+    int count;
+    int i;
+    int found;
+    br_vector3 dir;
+    float len;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    gUNK_0079ecbc = NULL;
+    p1 = pCollision_info_1;
+    p2 = pCollision_info_2;
+    GetNewBoundingBox(&p1->field_0xf4, &p1->bb1, &p1->transform_matrix);
+    GetFacesInBox(p1, pCar_callbacks);
+    gSensible_place_collect_active = 1;
+    count = FUN_004228b0(p1, contacts, 0);
+    gSensible_place_collect_active = 0;
+    if (count != 0) {
+        dir.v[0] = contacts[0].normal.v[0];
+        dir.v[1] = contacts[0].normal.v[1];
+        dir.v[2] = contacts[0].normal.v[2];
+        if (count > 1) {
+            for (i = 1; i < count; i++) {
+                dir.v[0] += contacts[i].normal.v[0];
+                dir.v[1] += contacts[i].normal.v[1];
+                dir.v[2] += contacts[i].normal.v[2];
+            }
+            len = (float)sqrt(dir.v[0] * dir.v[0] + dir.v[1] * dir.v[1] + dir.v[2] * dir.v[2]);
+            if (len > 2.3841858e-07f) {
+                len = 1.0 / len;
+                dir.v[0] *= len;
+                dir.v[1] *= len;
+                dir.v[2] *= len;
+            } else {
+                dir.v[0] = 1.f;
+                dir.v[1] = 0.f;
+                dir.v[2] = 0.f;
+            }
+        }
+        BrMatrix34ApplyV(pVec3, &dir, &p1->transform_matrix);
+        return 0;
+    }
+    if (p2 == NULL) {
+        return -1;
+    }
+    do {
+        found = 0;
+        if (p2 != p1 && p1->parent != p2 && p2->parent != p1) {
+            shape1 = p1->shape;
+            shape2 = p2->shape;
+            if (FlagsAreGo(p1, p2) && BoundsOverlapTest__finteray(&p1->field_0xf4, &p2->field_0xf4)) {
+                while (shape1 != NULL) {
+                    while (shape2 != NULL) {
+                        if (TestShapeEdgeIntersection(p1, p2, shape1, shape2) || TestShapeEdgeIntersection(p2, p1, shape2, shape1)) {
+                            found = 1;
+                            goto found_body;
+                        }
+                        shape2 = shape2->common.next;
+                    }
+                    shape1 = shape1->common.next;
+                }
+            }
+        }
+        if (found != 0) {
+            goto found_body;
+        }
+        for (child = p2->child; child != NULL; child = child->next) {
+            if (TestPairOverlap(p1, child)) {
+                goto found_body;
+            }
+        }
+    } while ((p2 = p2->next) != NULL);
+    return -1;
+found_body:
+    {
+        pVec3->v[0] = p1->field_0x10c.min.v[0] + p1->field_0x10c.max.v[0];
+        pVec3->v[1] = p1->field_0x10c.min.v[1] + p1->field_0x10c.max.v[1];
+        pVec3->v[2] = p1->field_0x10c.min.v[2] + p1->field_0x10c.max.v[2];
+        pVec3->v[0] -= p2->field_0x10c.min.v[0];
+        pVec3->v[1] -= p2->field_0x10c.min.v[1];
+        pVec3->v[2] -= p2->field_0x10c.min.v[2];
+        pVec3->v[0] -= p2->field_0x10c.max.v[0];
+        pVec3->v[1] -= p2->field_0x10c.max.v[1];
+        pVec3->v[2] -= p2->field_0x10c.max.v[2];
+        len = (float)sqrt(pVec3->v[0] * pVec3->v[0] + pVec3->v[1] * pVec3->v[1] + pVec3->v[2] * pVec3->v[2]);
+        if (len > 2.3841858e-07f) {
+            len = 1.0 / len;
+            pVec3->v[0] *= len;
+            pVec3->v[1] *= len;
+            pVec3->v[2] *= len;
+        } else {
+            pVec3->v[0] = 1.f;
+            pVec3->v[1] = 0.f;
+            pVec3->v[2] = 0.f;
+        }
+        gUNK_0079ecbc = p2;
+        return 0;
+    }
+}
 
 extern int gTesting_car_for_sensible_place;
 
