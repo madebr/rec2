@@ -556,7 +556,21 @@ typedef struct {
 
 extern tJoystick_headup_text gJoystick_headup_texts[21];
 
-// GetJoystickButtonIndexForKey
+// FUNCTION: CARMA2_HW 0x0045c590
+unsigned int C2_HOOK_FASTCALL GetJoystickButtonIndexForKey(int pKey) {
+    tButtonJoystickInfo* joystick_info;
+    unsigned int i;
+
+    joystick_info = PDGetCurrentJoystickData();
+    if (joystick_info != NULL) {
+        for (i = 0; i < joystick_info->count_buttons; i++) {
+            if (gJoystick_headup_texts[joystick_info->buttons[i]].key == pKey) {
+                return i;
+            }
+        }
+    }
+    return -1;
+}
 
 // FUNCTION: CARMA2_HW 0x0045c780
 // FUNCTION: CARMA2_SW 0x0045c1c0
