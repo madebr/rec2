@@ -689,7 +689,26 @@ int C2_HOOK_CDECL FUN_0056d8a0(void* pImage_sequence, void* pFrame_pixmap_handle
 
 // QuickTime dispatcher trampoline (selector 0x20002, GetMoviesError).
 #ifdef REC2_MATCHING
-// FUN_0056a900
+// FUNCTION: CARMA2_HW 0x0056a900
+__declspec(naked) int C2_HOOK_CDECL FUN_0056a900(void) {
+    __asm {
+        mov     eax, dword ptr [gQuickTime_dispatcher]
+        or      eax, eax
+        je      quicktime_trap_a900
+        call    dword ptr [gQuickTime_dispatcher]
+    quicktime_trap_a900:
+        mov     eax, 0x20002
+        jmp     dword ptr [gQuickTime_dispatch]
+    }
+}
+#else
+int C2_HOOK_CDECL FUN_0056a900(void) {
+    return 1;
+}
+#endif
+
+// QuickTime dispatcher trampoline (selector 0x3001b, CDSequenceEnd).
+#ifdef REC2_MATCHING
 // FUN_0056dac0
 // FUN_00570ac0
 
