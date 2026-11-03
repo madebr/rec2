@@ -17,6 +17,8 @@
 
 #include <stdio.h>
 
+extern tS3_outlet* gCar_outlet;
+
 extern int gSound_detail_level;
 
 extern tS3_outlet* gEffects_outlet;

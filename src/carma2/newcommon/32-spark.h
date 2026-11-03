@@ -153,7 +153,7 @@ extern void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_c
 
 // CreateSmokeColumn2
 
-// CreateSmokeColumn
+extern void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec *pCar, br_colour pColour, int pVertex_index, tU32 pLifetime);
 
 extern void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 

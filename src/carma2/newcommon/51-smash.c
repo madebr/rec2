@@ -219,7 +219,11 @@ void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion) {
 
 // DoExplosionette
 
-// Explode
+// STUB: CARMA2_HW 0x004ead00
+// STUB: CARMA2_SW 0x004e69e0
+void C2_HOOK_FASTCALL Explode(tExplosion_animation *pExplosion_animation,br_actor *pActor, const br_bounds3* pBounds, const br_vector3* pPos) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004eb020
 // FUNCTION: CARMA2_SW 0x004e6d00
