@@ -436,7 +436,62 @@ void C2_HOOK_FASTCALL DRMatrix34RotateY(br_matrix34* mat, br_angle ry) {
     mat->m[3][2] = 0.0f;
 }
 
-// DRMatrix34RotateZ
+// FUNCTION: CARMA2_HW 0x005122b0
+void C2_HOOK_FASTCALL DRMatrix34RotateZ(br_matrix34* mat, br_angle rz) {
+    int angle_in_degrees;
+    int angle;
+    br_scalar s;
+    br_scalar c;
+
+    angle_in_degrees = (int)((double)rz * (360.0 / 65536.0));
+    angle = angle_in_degrees;
+    if (angle < 0) {
+        angle = 360 - -angle % 360;
+    } else {
+        angle = angle % 360;
+    }
+    if (angle > 270) {
+        s = -*(gFloat_sine_table + 360 - angle);
+    } else if (angle > 180) {
+        s = -gFloat_sine_table[angle - 180];
+    } else if (angle > 90) {
+        s = *(gFloat_sine_table + 180 - angle);
+    } else {
+        s = gFloat_sine_table[angle];
+    }
+    angle = angle_in_degrees;
+    if (angle < 0) {
+        angle = 360 - -angle % 360;
+    } else {
+        angle = angle % 360;
+    }
+    if (angle > 270) {
+        c = gFloat_sine_table[angle - 270];
+    } else if (angle > 180) {
+        c = -*(gFloat_sine_table + 270 - angle);
+    } else if (angle > 90) {
+        c = -gFloat_sine_table[angle - 90];
+    } else {
+        c = *(gFloat_sine_table + 90 - angle);
+    }
+    mat->m[0][0] = c;
+    mat->m[0][1] = s;
+    mat->m[0][2] = 0.0f;
+    mat->m[1][0] = -s;
+    mat->m[1][1] = c;
+    mat->m[1][2] = 0.0f;
+    mat->m[2][0] = 0.0f;
+    mat->m[2][1] = 0.0f;
+    mat->m[2][2] = 1.0f;
+    mat->m[3][0] = 0.0f;
+    mat->m[3][1] = 0.0f;
+    mat->m[3][2] = 0.0f;
+}
+
+// Needed by DRMatrix34PreRotate/DRMatrix34PostRotate; 36-trig.c owns it.
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // FUNCTION: CARMA2_HW 0x005123f0
 void C2_HOOK_FASTCALL DRMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3* a) {
     br_scalar sz;
