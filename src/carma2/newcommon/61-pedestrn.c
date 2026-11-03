@@ -2053,7 +2053,13 @@ void C2_HOOK_FASTCALL DisposePedForms(void) {
     }
 }
 
-// DisposeCharacterInstance
+// FUNCTION: CARMA2_HW 0x00406a30
+void C2_HOOK_FASTCALL DisposeCharacterInstance(tPed_character_instance* pCharacter) {
+
+    if (pCharacter != NULL) {
+        BrMemFree(pCharacter);
+    }
+}
 
 // DisposeAllPedPersonalities
 
