@@ -2103,7 +2103,26 @@ tPed_form* C2_HOOK_FASTCALL FindOrOpenForm(const char* pName) {
 
 // DisposeAllLoadedPersonalities
 
-// FindOrOpenPersonality
+// FUNCTION: CARMA2_HW 0x00407930
+tPed_personality* C2_HOOK_FASTCALL FindOrOpenPersonality(const char* pName) {
+    int i;
+    tPed_personality** ppersonality;
+
+    i = 0;
+    ppersonality = gPed_personalities;
+    while ((int)ppersonality < (int)(gPed_personalities + REC2_ASIZE(gPed_personalities))) {
+        if (*ppersonality != NULL) {
+            if (strcmp(pName, (*ppersonality)->name) == 0) {
+                return gPed_personalities[i];
+            }
+        }
+        ppersonality++;
+        i++;
+    }
+    return ReadPersonality(pName);
+}
+
+// BuildCharacterInstance
 
 // FUNCTION: CARMA2_HW 0x00407aa0
 // FUNCTION: CARMA2_SW 0x00407a90
