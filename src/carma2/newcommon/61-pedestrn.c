@@ -189,9 +189,17 @@ int gPed_cache_notify_flags;
 void C2_HOOK_FASTCALL DisposePedForm(tPed_form* pForm);
 void C2_HOOK_FASTCALL DisposePedPersonality(tPed_personality* pPersonality);
 
-// STUB: CARMA2_HW 0x0040ba80
+// FUNCTION: CARMA2_HW 0x0040ba80
 void C2_HOOK_FASTCALL SetPhysicsObjectOmegaRecursive(tPhysics_object* pObject, br_vector3* pOmega) {
-    NOT_IMPLEMENTED();
+    tPhysics_object* child;
+
+    child = pObject->child;
+    pObject->omega.v[0] = pOmega->v[0];
+    pObject->omega.v[1] = pOmega->v[1];
+    pObject->omega.v[2] = pOmega->v[2];
+    for (; child != NULL; child = child->next) {
+        SetPhysicsObjectOmegaRecursive(child, pOmega);
+    }
 }
 
 // STUB: CARMA2_HW 0x004b63b0
