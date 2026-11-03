@@ -874,7 +874,53 @@ tPhysics_object** C2_HOOK_FASTCALL AppendOverlappingObjects(tPhysics_object* pOb
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma inline_depth(0)
 #endif
-// FUN_004b73a0
+// FUNCTION: CARMA2_HW 0x004b73a0
+void C2_HOOK_FASTCALL FUN_004b73a0(tPhysics_object* pObject, const br_matrix34* pParent_matrix, const br_matrix34* pRoot_matrix) {
+    br_matrix34 inverse;
+    br_matrix34 normalised;
+    br_vector3 transformed;
+    tPhysics_joint* joint;
+    int i;
+
+    for (; pObject != NULL; pObject = pObject->next) {
+        if ((pObject->flags & 0x400) != 0) {
+            BrMatrix34LPInverse(&inverse, &pObject->parent->transform_matrix);
+            BrMatrix34LPNormalise(&normalised, &inverse);
+            BrMatrix34Mul(&inverse, &pObject->transform_matrix, &normalised);
+            BrMatrix34Mul(&pObject->field_0x1e8, &inverse, &pObject->parent->field_0x1e8);
+        }
+        joint = pObject->physics_joint1;
+        if (joint != NULL) {
+            if ((pObject->flags & 0x400) != 0) {
+                FUN_004b73a0(pObject->child, pParent_matrix, pRoot_matrix);
+            } else {
+                BrMatrix34ApplyP(&transformed, &joint->field_0x14, pParent_matrix);
+                DrMatrix34ApplyLPInverse(&joint->field_0x14, &transformed, pRoot_matrix);
+                if (joint->type == 1 || joint->type == 4) {
+                    BrMatrix34ApplyV(&transformed, &joint->parent_bone_axis, pParent_matrix);
+                    BrMatrix34TApplyV(&joint->parent_bone_axis, &transformed, pRoot_matrix);
+                }
+            }
+            for (i = 0; i < joint->count_limits; i++) {
+                BrMatrix34ApplyV(&transformed, &joint->limits[i].parent, pParent_matrix);
+                BrMatrix34TApplyV(&joint->limits[i].parent, &transformed, pRoot_matrix);
+            }
+        }
+    }
+}
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth()
+#endif
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth(0)
+#endif
 // FUN_004b7310
 
 // FUNCTION: CARMA2_HW 0x004c2a10
