@@ -50,6 +50,12 @@
 extern tU32 gPalette_fade_time;
 extern tWorld_callbacks gWorld_callbacks;
 
+// GLOBAL: CARMA2_HW 0x0079ef2c
+int gNum_cars_and_non_cars;
+
+// GLOBAL: CARMA2_HW 0x005896a8
+float gF1000 = 1000.0f;
+
 // GLOBAL: CARMA2_HW 0x0079ed88
 tU32 gDrivable_on_count;
 
@@ -1063,7 +1069,63 @@ void C2_HOOK_FASTCALL APTCPostCollisionTree(tPhysics_object* pObject) {
     }
 }
 
-// APTCPostCollision
+// FUNCTION: CARMA2_HW 0x00416070
+void C2_HOOK_FASTCALL APTCPostCollision(void) {
+    void** wp;
+    tCar_spec* car;
+    int i;
+
+    if (gCar_flying) {
+        tCar_spec* c = gCar_to_view;
+
+        c->collision_info->transform_matrix.m[3][1] -= gF1000;
+        BrMatrix34Copy(&c->car_master_actor->t.t.mat, &c->collision_info->transform_matrix);
+        PositionChildren(c->collision_info);
+        SetCollisionInfoChildsDoNothing(c->collision_info, 0);
+    }
+
+    i = 0;
+    if (i < gNum_active_cars) {
+        wp = (void**)gActive_car_list;
+        do {
+            float x;
+            float fac;
+            float f;
+
+            car = (tCar_spec*)*wp;
+            if (car->field_0x4c8 != gZero) {
+                x = car->field_0x4c8;
+                fac = (float)(gZero / x);
+                f = car->collision_info->M; f *= fac; car->collision_info->M = f;
+                f = car->collision_info->I.v[0]; f *= fac; car->collision_info->I.v[0] = f;
+                f = car->collision_info->I.v[1]; f *= fac; car->collision_info->I.v[1] = f;
+                f = car->collision_info->I.v[2]; f *= fac; car->collision_info->I.v[2] = f;
+            }
+            if (((tCar_spec*)*wp)->number_of_wheels_on_ground != 0) {
+                SetCollisionInfoChildsDoNothing(((tCar_spec*)*wp)->collision_info, 0);
+            }
+            i++;
+            wp++;
+        } while (i < gNum_active_cars);
+    }
+
+    i = 0;
+    if (i < gNum_cars_and_non_cars) {
+        wp = (void**)gActive_car_list;
+        do {
+            car = (tCar_spec*)*wp;
+            car->frame_collision_flag |= (int)(signed char)car->collision_info->collision_flag;
+            i++;
+            wp++;
+        } while (i < gNum_cars_and_non_cars);
+    }
+
+    UpdateCrushTimers();
+    if (gNet_mode) {
+        UpdateCrushPainList();
+    }
+    APTCPostCollisionTree(gPHIL_list_collision_infos);
+}
 
 // APTCActiveHalted
 
@@ -1851,5 +1913,10 @@ void C2_HOOK_FASTCALL WeldCarByNetwork(tCar_spec* pCar) {
 
 // STUB: CARMA2_HW 0x0043df10
 void C2_HOOK_FASTCALL WeldCarPartial(tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x0043ceb0
+void C2_HOOK_FASTCALL UpdateCrushPainList(void) {
     NOT_IMPLEMENTED();
 }

@@ -1416,3 +1416,8 @@ void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar
 
 // MungeSmashEdgeTriggers
 
+
+// STUB: CARMA2_HW 0x004f62e0
+void C2_HOOK_FASTCALL UpdateCrushTimers(void) {
+    NOT_IMPLEMENTED();
+}

@@ -338,3 +338,5 @@ extern void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spe
 // MungeSmashEdgeTriggers
 
 #endif // GUARD_51_SMASH_H
+
+void C2_HOOK_FASTCALL UpdateCrushTimers(void);

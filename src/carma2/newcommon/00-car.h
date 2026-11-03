@@ -257,3 +257,5 @@ float C2_HOOK_FASTCALL ComputeCarImpact(tCar_spec* pCar, tU32 pDelta, float* pOu
 void C2_HOOK_FASTCALL UpdateCrushVertices(tCar_spec* pCar, tU8* pData);
 
 void C2_HOOK_FASTCALL WeldCarByNetwork(tCar_spec* pCar);
+
+void C2_HOOK_FASTCALL UpdateCrushPainList(void);
