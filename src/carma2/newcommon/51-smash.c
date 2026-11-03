@@ -1154,7 +1154,29 @@ void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
 
 // MungeAnimationRepairs
 
-// MungeGlassFragments
+// FUNCTION: CARMA2_HW 0x004f00f0
+void C2_HOOK_FASTCALL MungeGlassFragments(void) {
+    tU32 the_time;
+    tRepair_animation* animation;
+    tCar_crush_smashable_part* smashable;
+    int i;
+
+    MungeGlassFragments2(0);
+    the_time = GetTotalTime();
+    for (i = 0; i < (int)REC2_ASIZE(gRepair_animations); i++) {
+        animation = &gRepair_animations[i];
+        if (animation->field_0x0 != NULL && the_time - animation->field_0x4 >= 150) {
+            smashable = (tCar_crush_smashable_part*)animation->field_0x0;
+            if (smashable->field_0x4c != 0) {
+                ActuallyRepairSmash((tCar_spec*)animation->field_0x8, smashable, smashable->field_0x4c - 1);
+                animation->field_0x4 += 150;
+            }
+            if (smashable->field_0x4c == 0) {
+                animation->field_0x0 = NULL;
+            }
+        }
+    }
+}
 
 void C2_HOOK_FASTCALL KillAllGlassFragments(void) {
     MungeGlassFragments2(1);
