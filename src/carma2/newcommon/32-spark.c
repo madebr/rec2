@@ -12,6 +12,7 @@
 #include "08-loading1.h"
 #include "10-loading2.h"
 #include "18-graphics2.h"
+#include "22-replay.h"
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
@@ -23,6 +24,27 @@
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+
+/* splash/shrapnel tables are defined in carma2/common/spark.c, which upstream does not compile */
+extern int gSplash_flags;
+extern br_model* gSplash_model;
+extern int gNum_splash_types;
+extern br_material* gSplash_material[20];
+extern tSplash gSplash[32];
+extern tShrapnel gShrapnel[30];
+extern int gReplay_splash_flags;
+extern tReplay_splash gReplay_splashes[10];
+extern int gShrapnel_flags;
+
+/* declared here rather than through 23-piping.h / 22-replay.h / 32-spark.h / carma2/common:
+   those belong to other feature areas or are still unported comment stubs, and this file must
+   compile in a branch that does not carry their upgraded form */
+extern void C2_HOOK_FASTCALL InitSplash(FILE* pF); /* signature taken from the single call site */
+extern void C2_HOOK_FASTCALL WorkerExtendedSplash(int field_0x0, int field_0x4, int field_0x8, br_vector3* pField_0xc, br_vector3* pField_0x18);
+extern void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
+extern void C2_HOOK_FASTCALL AREndPipingSession(void);
+extern void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_column_core* pCore, int pVertex, int pColour);
+extern void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z);
 
 // GLOBAL: CARMA2_HW 0x00660110
 // GLOBAL: CARMA2_SW 0x0065aa58
@@ -124,6 +146,20 @@ br_pixelmap* gFog_shade_table;
 
 // GLOBAL: CARMA2_SW 0x00795184
 br_pixelmap* gAcid_shade_table;
+
+
+
+
+
+
+
+
+
+// GLOBAL: CARMA2_HW 0x006aa5a0
+int gColumn_next;
+
+
+
 
 // DrawDot
 
@@ -234,14 +270,25 @@ void C2_HOOK_FASTCALL ResetSparks(void) {
     gSpark_flags = 0;
 }
 
-// ResetShrapnel
+// FUNCTION: CARMA2_HW 0x004f87b0
+void C2_HOOK_FASTCALL ResetShrapnel(void) {
+    int i;
+
+    if (gShrapnel_flags == 0) {
+        return;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gShrapnel); i++) {
+        if (((1 << i) & gShrapnel_flags) != 0 && gShrapnel[i].actor->parent != NULL) {
+            BrActorRemove(gShrapnel[i].actor);
+        }
+    }
+    gShrapnel_flags = 0;
+}
 
 // CreateShrapnelShower2
 
 // CreateShrapnelShowerWorld
 
-// STUB: CARMA2_HW 0x004f8800
-void C2_HOOK_FASTCALL CreateShrapnelShower(const br_vector3* pPosition, const br_vector3* pVelocity, const br_vector3* pDirection, br_scalar pStrength, tCar_spec* pCar1, tCar_spec* pCar2, int pMaterialCount, br_material** pMaterials) { NOT_IMPLEMENTED(); }
 // random
 
 // InitShrapnel
@@ -519,10 +566,15 @@ void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pC
     }
 }
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // CreateSmokeColumn2
 
 // STUB: CARMA2_HW 0x004fb890
 void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec* pCar, int pType, int pRandom, int pLifetime) { NOT_IMPLEMENTED(); }
+
 // FUNCTION: CARMA2_HW 0x004fb910
 // FUNCTION: CARMA2_SW 0x004f6e50
 void C2_HOOK_FASTCALL GenerateSmokeShades(void) {
@@ -635,6 +687,7 @@ void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale
 
 // STUB: CARMA2_HW 0x004fc2e0
 void C2_HOOK_FASTCALL DisposeFlame(void) { NOT_IMPLEMENTED(); }
+
 // FUNCTION: CARMA2_HW 0x004fc3a0
 // FUNCTION: CARMA2_SW 0x004f7900
 void C2_HOOK_FASTCALL InitFlame(void) {
@@ -691,13 +744,7 @@ void C2_HOOK_FASTCALL InitFlame(void) {
     BrModelAdd(gLollipop_model);
 }
 
-// InitSplash
-
 // DisposeSplash
-
-// DrawTheGlow
-
-// PipeInstantUnSmudge
 
 // FUNCTION: CARMA2_HW 0x004fc9c0
 void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int pFire_point) {
@@ -756,12 +803,6 @@ void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject) {
 }
 
 // ConditionalSmokeColumn
-
-// SingleSplash
-
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
 
 // STUB: CARMA2_HW 0x004fcbb0
 void C2_HOOK_FASTCALL GeneralCreateSplash(tPhysics_object* pObject, const br_vector3* pVelocity, const br_vector3* pOmega, const br_vector3* pNormal, br_scalar pWater_distance, const br_bounds3* pBounds, const br_matrix34* pMatrix, tU32 pTime) {
@@ -824,25 +865,14 @@ void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 #endif
 }
 
+extern void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void);
+extern void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void);
+
 // LoadInKevStuff
-
-// DisposeKevStuff
-
-// STUB: CARMA2_HW 0x004fe360
-void C2_HOOK_FASTCALL DisposeKevStuffCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
-// MakeCarIt
-
-// StopCarBeingIt
-
-// ForEveryModelMaterial
 
 // ForEveryActorMaterial
 
 // ForEveryActorMaterialNoGrooves
-
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
 
 // STUB: CARMA2_HW 0x004fe640
 // STUB: CARMA2_SW 0x004f9f20
@@ -920,6 +950,7 @@ int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar) {
 
 // STUB: CARMA2_HW 0x004fedd0
 void C2_HOOK_FASTCALL ClearSplashReplay(uintptr_t pObject) { NOT_IMPLEMENTED(); }
+
 // FUNCTION: CARMA2_HW 0x004fee10
 // FUNCTION: CARMA2_SW 0x004fa6f0
 void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
@@ -942,8 +973,24 @@ void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
 
 // STUB: CARMA2_HW 0x004ff030
 void C2_HOOK_FASTCALL InitReplaySplashes(void) { NOT_IMPLEMENTED(); }
+
+// SetModelAFEUpdateCB
+
+// SetMaterialPrelitCB
+
+// FindNextChunk
+
+// STUB: CARMA2_HW 0x004fe360
+void C2_HOOK_FASTCALL DisposeKevStuffCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+
 // STUB: CARMA2_HW 0x004fec30
 intptr_t C2_HOOK_CDECL ForEveryActorModelNoGrooves(br_actor* pActor, void* pContext) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004f9180
+void C2_HOOK_CDECL AFEModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pArg4, br_uint_8 pArg5, int pArg6) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004f8800
+void C2_HOOK_FASTCALL CreateShrapnelShower(const br_vector3* pPosition, const br_vector3* pVelocity, const br_vector3* pDirection, br_scalar pStrength, tCar_spec* pCar1, tCar_spec* pCar2, int pMaterialCount, br_material** pMaterials) { NOT_IMPLEMENTED(); }
 
 // GLOBAL: CARMA2_HW 0x006aa568
 int gDust_rotate;
@@ -980,3 +1027,6 @@ br_material* gSplash_material[20];
 
 // GLOBAL: CARMA2_HW 0x006a8758
 br_model* gSplash_model;
+
+// STUB: CARMA2_HW 0x004fdde0
+void C2_HOOK_FASTCALL InitSplash(FILE* pF) { NOT_IMPLEMENTED(); }

@@ -71,7 +71,7 @@ extern void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol);
 
 extern void C2_HOOK_FASTCALL ResetSparks(void);
 
-// ResetShrapnel
+extern void C2_HOOK_FASTCALL ResetShrapnel(void);
 
 // CreateShrapnelShower2
 
@@ -91,7 +91,7 @@ extern void C2_HOOK_FASTCALL LoadInShrapnel(void);
 
 // ReplayShrapnel
 
-// ActorFunks
+extern intptr_t C2_HOOK_CDECL ActorFunks(br_actor* pActor, void* pContext);
 
 extern void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar);
 
@@ -171,13 +171,13 @@ extern void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar
 
 // MungeSmokeColumn
 
-// DisposeFlame
+extern void C2_HOOK_FASTCALL DisposeFlame(void);
 
 extern void C2_HOOK_FASTCALL InitFlame(void);
 
 // InitSplash
 
-// DisposeSplash
+extern void C2_HOOK_FASTCALL DisposeSplash(void);
 
 // DrawTheGlow
 
@@ -195,7 +195,7 @@ extern void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject);
 
-// ConditionalSmokeColumn
+extern void C2_HOOK_FASTCALL ConditionalSmokeColumn(tCar_spec* pCar, int pFire_point, int pLevel);
 
 // SingleSplash
 
@@ -247,7 +247,7 @@ extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
 extern int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar);
 
-// ClearSplashReplay
+extern void C2_HOOK_FASTCALL ClearSplashReplay(uintptr_t pObject);
 
 extern void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject);
 
@@ -255,6 +255,6 @@ extern void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject);
 
 // AdjustSplashReplay
 
-// InitReplaySplashes
+extern void C2_HOOK_FASTCALL InitReplaySplashes(void);
 
 #endif // GUARD_32_SPARK_H
