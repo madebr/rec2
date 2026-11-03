@@ -3947,3 +3947,19 @@ void C2_HOOK_FASTCALL SendLocalCarData(tU32 pNext_frame_time) {
         }
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x00498460
+void C2_HOOK_FASTCALL CompressCarDataChunk(tNet_message_chunk* pMessage, int pPlayer_index) {
+    tU8* chunk;
+    tCar_spec* car;
+    br_actor* actor;
+
+    chunk = (tU8*)pMessage;
+    car = gNet_players[pPlayer_index].car;
+    CompressVector3((tCompressed_vector3*)(chunk + 8), &car->car_master_actor->t.t.translate.t, -500.f, 500.f);
+    actor = car->car_master_actor;
+    *(tS16*)(chunk + 2) = (tS16)BrRadianToAngle(atan2(actor->t.t.mat.m[2][0], actor->t.t.mat.m[2][2]));
+    *(int*)(chunk + 4) = gNet_players[pPlayer_index].ID;
+    *(int*)(chunk + 0x10) = *(int*)((tU8*)car + 0x18a4);
+}
