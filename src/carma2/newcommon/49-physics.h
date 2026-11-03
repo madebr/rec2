@@ -230,6 +230,10 @@ extern int C2_HOOK_FASTCALL CollectJointLimitsIntoBuffer(tPhysics_object* pObjec
 
 extern int C2_HOOK_FASTCALL CollectJointLimitsOfTree(tPhysics_object* pObject, tPhysics_joint_force* pContacts, int pCount, int pMax_count);
 
+extern int C2_HOOK_FASTCALL ClampObjectSpin(tPhysics_object* pObject);
+
+extern int C2_HOOK_FASTCALL ClampObjectSpinTree(tPhysics_object* pObject);
+
 extern void C2_HOOK_FASTCALL SetObjectTrialPositionType(tPhysics_object* pObject, int pType);
 
 // FillInTrialWorkspace

@@ -2183,3 +2183,37 @@ int C2_HOOK_FASTCALL CollectJointLimitsOfTree(tPhysics_object* pObject, tPhysics
 #ifdef REC2_MATCHING
 #pragma auto_inline(on)
 #endif
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004bd720
+int C2_HOOK_FASTCALL ClampObjectSpin(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+// FUNCTION: CARMA2_HW 0x004bd7f0
+int C2_HOOK_FASTCALL ClampObjectSpinTree(tPhysics_object* pObject) {
+    int count;
+
+    count = 0;
+    for (; pObject != NULL; pObject = pObject->next) {
+        count += ClampObjectSpin(pObject);
+        if (pObject->child != NULL) {
+            count += ClampObjectSpinTree(pObject->child);
+        }
+    }
+    return count;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
