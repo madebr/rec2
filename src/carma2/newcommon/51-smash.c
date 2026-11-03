@@ -1806,7 +1806,28 @@ enqueue:
 
 extern tU32 gPHIL_last_physics_tick;
 
-// UpdateCrushTimers
+// FUNCTION: CARMA2_HW 0x004f62e0
+void C2_HOOK_FASTCALL UpdateCrushTimers(void) {
+    tQueued_net_smash* smash;
+    int count;
+
+    if (gNet_mode == eNet_mode_none) {
+        return;
+    }
+    smash = gQueued_net_smashes;
+    count = REC2_ASIZE(gQueued_net_smashes);
+    while (count-- != 0) {
+        if (smash->field_0x4 != 0 && gPHIL_last_physics_tick >= smash->field_0x4) {
+            smash->field_0x4 = 0;
+            DoNetSmash(smash);
+        }
+        smash++;
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
 // PipeSingleShrapnelShower
 
