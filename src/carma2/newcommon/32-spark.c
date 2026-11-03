@@ -791,8 +791,31 @@ void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale
 
 // MungeSmokeColumn
 
-// STUB: CARMA2_HW 0x004fc2e0
-void C2_HOOK_FASTCALL DisposeFlame(void) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004fc2e0
+void C2_HOOK_FASTCALL DisposeFlame(void) {
+    int i;
+    int j;
+    br_actor* child;
+
+    for (i = 0; i < (int)REC2_ASIZE(gFlame_map); i++) {
+        BrMapRemove(gFlame_map[i]);
+        BrPixelmapFree(gFlame_map[i]);
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if ((gColumn_flags & (1u << i)) != 0 && gSmoke_column[i].colour == 0) {
+            BrActorRemove(gSmoke_column[i].flame_actor);
+        }
+        child = gSmoke_column[i].flame_actor->children;
+        for (j = 0; j < 3; j++) {
+            BrMaterialRemove(child->material);
+            BrMaterialFree(child->material);
+            child = child->next;
+        }
+        BrActorFree(gSmoke_column[i].flame_actor);
+    }
+    BrModelRemove(gLollipop_model);
+    BrModelFree(gLollipop_model);
+}
 
 // FUNCTION: CARMA2_HW 0x004fc3a0
 // FUNCTION: CARMA2_SW 0x004f7900
