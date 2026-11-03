@@ -423,7 +423,37 @@ void C2_HOOK_FASTCALL ResetCrushSystems(void) {
     gCount_car_damage_crush_list = 0;
 }
 
-// InitLastDamageArrayEtc
+// FUNCTION: CARMA2_HW 0x004c6580
+void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void) {
+    int cat;
+    int car_count;
+    int i;
+
+    for (cat = eVehicle_self; cat <= eVehicle_not_really; cat++) {
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (i = 0; i < car_count; i++) {
+            tCar_spec* car;
+
+            car = cat == eVehicle_self ? &gProgram_state.current_car : GetCarSpec(cat, i);
+            if (cat != eVehicle_not_really) {
+                int j;
+
+                for (j = 0; j < 12; j++) {
+                    car->frame_start_damage[j] = 0;
+                }
+            }
+            car->car_ID = (tU16)((cat << 8) + i);
+        }
+    }
+}
+
+extern int gIt_or_fox;
+extern tU32 gTime_for_punishment;
+extern int gNot_shown_race_type_headup;
 
 // GLOBAL: CARMA2_HW 0x0068d938
 int gWinner_declared = 0;
