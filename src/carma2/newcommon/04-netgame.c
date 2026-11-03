@@ -137,7 +137,18 @@ int C2_HOOK_FASTCALL TimeToSendData(void) {
 
 // SendCarData
 
-// ReceivedRecover
+// FUNCTION: CARMA2_HW 0x00498390
+void C2_HOOK_FASTCALL ReceivedRecover(tNet_message_chunk_recover* pContents) {
+    int i;
+
+    if (gNet_players[gThis_net_player_index].ID != pContents->player) {
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            if (gNet_players[i].ID == pContents->player) {
+                gNet_players[i].car->time_to_recover = pContents->time;
+            }
+        }
+    }
+}
 
 // ReceivedCrushSync
 
