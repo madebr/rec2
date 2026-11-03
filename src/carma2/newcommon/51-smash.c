@@ -39,6 +39,20 @@ int gAllow_material_adapt;
 // GLOBAL: CARMA2_HW 0x006a3340
 br_material* gMaterials_to_adapt[200];
 
+// GLOBAL: CARMA2_HW 0x0065feb0
+const char* gRepeatability_names[4] = {
+    "none",
+    "singleshot",
+    "repeated",
+    "doitregardless",
+};
+
+// GLOBAL: CARMA2_HW 0x006a3660
+tSmashable_item_spec gUnknown_smashable_006a3660 = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a52d0
+tSmashable_item_spec gPowerup_pickup_smashable = { 0 };
+
 // GLOBAL: CARMA2_HW 0x0065fef0
 const char* gSmash_side_effect_direction_names[3] = {
     "parallel",
@@ -1065,10 +1079,51 @@ void C2_HOOK_FASTCALL RemoveAllDecals(void) {
     }
 }
 
-// STUB: CARMA2_HW 0x004efa00
-// STUB: CARMA2_SW 0x004eb660
+/* (ReadPowerupSmashable); manually expanded as the original inlines it twice */
+#define READ_POWERUP_SMASHABLE(SPEC, A, B) do { \
+    int i; \
+    int d1, d2; \
+    memset((SPEC), 0, sizeof(tSmashable_item_spec)); \
+    (SPEC)->mode_data.shrapnel.connotations.count_sounds = GetAnInt(pF); \
+    for (i = 0; i < (SPEC)->mode_data.shrapnel.connotations.count_sounds; i++) { \
+        (SPEC)->mode_data.shrapnel.connotations.sounds[i] = LoadSingleSound(&gTrack_storage_space, GetAnInt(pF)); \
+    } \
+    ReadShrapnelSpec(pF, (SPEC)->mode_data.shrapnel.connotations.shrapnel, &(SPEC)->mode_data.shrapnel.connotations.count_shrapnel); \
+    ReadExplosion(pF, &(SPEC)->mode_data.shrapnel.connotations.special_effects.explosion_animation); \
+    ReadSpillData(pF, &(SPEC)->mode_data.shrapnel.connotations.special_effects.slick); \
+    ReadNonCarCuboidActivation(pF, &(SPEC)->mode_data.shrapnel.connotations.side_effects.activations); \
+    ReadShrapnelSideEffects(pF, &(SPEC)->mode_data.shrapnel.connotations.side_effects.side_effects); \
+    (SPEC)->mode_data.shrapnel.connotations.side_effects.extension_flags = GetAnInt(pF); \
+    if ((SPEC)->mode_data.shrapnel.connotations.side_effects.extension_flags & 0x1) { \
+        (SPEC)->mode_data.shrapnel.connotations.side_effects.extension_arg = GetAnInt(pF); \
+    } \
+    (SPEC)->mode_data.shrapnel.connotations.side_effects.room_turn_on_code = GetAnInt(pF); \
+    (SPEC)->mode_data.shrapnel.connotations.award.frequency = GetALineAndInterpretCommand(pF, gRepeatability_names, REC2_ASIZE(gRepeatability_names)); \
+    if ((SPEC)->mode_data.shrapnel.connotations.award.frequency != kRepeatability_None) { \
+        (SPEC)->mode_data.shrapnel.connotations.award.field_0x4 = GetAScalar(pF); \
+        (SPEC)->mode_data.shrapnel.connotations.award.field_0x8 = GetAScalar(pF); \
+        (SPEC)->mode_data.shrapnel.connotations.award.field_0xc = GetAnInt(pF); \
+        (SPEC)->mode_data.shrapnel.connotations.award.field_0x10 = GetAnInt(pF); \
+    } \
+    (SPEC)->mode_data.shrapnel.connotations.variable_changes.count = GetAnInt(pF); \
+    for (i = 0; i < (SPEC)->mode_data.shrapnel.connotations.variable_changes.count; i++) { \
+        GetPairOfInts(pF, &(A), &(B)); \
+        (SPEC)->mode_data.shrapnel.connotations.variable_changes.runtime_changes[i].field_0x2 = (A); \
+        (SPEC)->mode_data.shrapnel.connotations.variable_changes.runtime_changes[i].field_0x0 = (B); \
+    } \
+    (SPEC)->trigger_type = kSmashableTrigger_Model | kSmashableTrigger_Number; \
+    (SPEC)->mode = kSmashableMode_Remove; \
+} while (0)
+
+// FUNCTION: CARMA2_HW 0x004efa00
+// FUNCTION: CARMA2_SW 0x004eb660
 void C2_HOOK_FASTCALL ReadPowerupSmash(FILE* pF) {
-    NOT_IMPLEMENTED();
+    READ_POWERUP_SMASHABLE(&gPowerup_pickup_smashable, d1, d2);
+    READ_POWERUP_SMASHABLE(&gPowerup_respawn_smashable, d2, d1);
+
+    memset(&gUnknown_smashable_006a3660, 0, sizeof(gUnknown_smashable_006a3660));
+    gUnknown_smashable_006a3660.trigger_type = kSmashableTrigger_Model | kSmashableTrigger_Number;
+    gUnknown_smashable_006a3660.mode = kSmashableMode_Remove;
 }
 
 // FUNCTION: CARMA2_HW 0x004efe00

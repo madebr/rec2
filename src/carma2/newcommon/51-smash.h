@@ -15,6 +15,7 @@
 extern int gAllow_material_adapt;
 extern br_material* gMaterials_to_adapt[200];
 
+extern const char* gRepeatability_names[4];
 extern const char* gPosition_type_names[2];
 extern int gMaterials_to_adapt_count;
 extern int gShrapnel_child_count;
@@ -33,6 +34,8 @@ extern tSmash_explosion gSmash_explosions[20];
 extern int gCount_host_smashes;
 
 extern tSmashable_item_spec gPowerup_respawn_smashable;
+extern tSmashable_item_spec gPowerup_pickup_smashable;
+extern tSmashable_item_spec gUnknown_smashable_006a3660;
 extern br_vector3 gZero_vector__smash;
 extern tDecal gDecals[50];
 extern int gCount_queued_smashes;
