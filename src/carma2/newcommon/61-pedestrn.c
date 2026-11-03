@@ -2838,7 +2838,9 @@ void C2_HOOK_FASTCALL MungeAllCharacterModels(void (C2_HOOK_FASTCALL* pCallback)
     }
 }
 
-// PedNoOp
+// FUNCTION: CARMA2_HW 0x0040c640
+void C2_HOOK_FASTCALL PedNoOp(void) {
+}
 
 // FUNCTION: CARMA2_HW 0x0040c600
 // FUNCTION: CARMA2_SW 0x0040c5f0
