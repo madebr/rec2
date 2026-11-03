@@ -2187,7 +2187,12 @@ void C2_HOOK_FASTCALL ApplyPedModelChange(tPipe_chunk** pChunk) {
     return WorkerPedModelChange(chunk->field_0x0, (int)chunk->field_0x4, (int)chunk->field_0x6, (int)chunk->field_0x8);
 }
 
-// ApplyPHILObject
+// FUNCTION: CARMA2_HW 0x004c9b80
+void C2_HOOK_FASTCALL ApplyPHILObject(tPipe_chunk** pChunk) {
+    tPipe_chunk_phil_object* chunk = (tPipe_chunk_phil_object*)*pChunk;
+
+    return WorkerPHILObject(chunk->field_0x0, &chunk->field_0x4);
+}
 
 // ApplyGibShower
 
