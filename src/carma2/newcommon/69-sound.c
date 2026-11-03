@@ -693,7 +693,13 @@ int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const 
 
 extern tS3_sound_tag C2_HOOK_FASTCALL S3StartSoundFromSource3(tS3_sound_id pSound, tS3_sound_source* pSource, tS3_repeats pRepeats, tS3_volume pVolume, tS3_pitch pPitch, tS3_speed pSpeed);
 
-// DRS3StartSoundFromSource3
+// FUNCTION: CARMA2_HW 0x00456010
+tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSoundFromSource3(tS3_sound_source* pSource, tS3_sound_id pSound, tS3_repeats pRepeats, tS3_volume pVolume, tS3_pitch pPitch, tS3_speed pSpeed) {
+    if (gSound_enabled) {
+        return S3StartSoundFromSource3(pSound, pSource, pRepeats, pVolume, pPitch, pSpeed);
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00456070
 // FUNCTION: CARMA2_SW 0x00455e00
