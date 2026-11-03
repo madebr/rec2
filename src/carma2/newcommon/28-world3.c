@@ -9,6 +9,9 @@
 #include "28-world3.h"
 
 #include "08-loading1.h"
+#include "33-depth.h"
+#include "37-brucetrk.h"
+#include "38-flicplay.h"
 #include "41-utility.h"
 #include "51-smash.h"
 #include "52-errors.h"
@@ -17,9 +20,22 @@
 #include "70-packfile.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include <string.h>
+
+// GLOBAL: CARMA2_HW 0x006aaf40
+tU8* gTrack_flic_buffer;
+
+// GLOBAL: CARMA2_HW 0x006aaf48
+tU32 gTrack_flic_buffer_size;
+
+// GLOBAL: CARMA2_HW 0x006aaf50
+tFlic_descriptor gTrack_flic_descriptor;
+
+// GLOBAL: CARMA2_HW 0x006aafc0
+static tU32 prev_sky_animation;
 
 // GLOBAL: CARMA2_HW 0x006b75c0
 // GLOBAL: CARMA2_SW 0x006ae2a0
@@ -96,7 +112,15 @@ void C2_HOOK_FASTCALL InitTreeSurgery(void) {
 
 // LoadTrack
 
-// RemoveBounds
+// FUNCTION: CARMA2_HW 0x00506e20
+intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg) {
+
+    if (pActor->type == BR_ACTOR_BOUNDS || pActor->type == BR_ACTOR_BOUNDS_CORRECT) {
+        BrResFree(pActor->type_data);
+        pActor->type_data = NULL;
+    }
+    return 0;
+}
 
 // RemoveBoundsStructures
 
@@ -109,10 +133,6 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
 // ProcessTrack
 
 // AnimateSky
-
-// CombineBounds
-
-// CheckNonCarModelBounds
 
 // FUNCTION: CARMA2_HW 0x00500d50
 // FUNCTION: CARMA2_SW 0x004fc6b0
@@ -803,11 +823,36 @@ void C2_HOOK_FASTCALL AllowDuplicates(void) {
     gDisallow_duplicates = 0;
 }
 
-// STUB: CARMA2_HW 0x00406ab0
-tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) { NOT_IMPLEMENTED(); }
+// SwapPixelmapInStorage
+
+// GLOBAL: CARMA2_HW 0x0058f290
+const char* gPed_remap_axis_choices[6] = {
+    "+X",
+    "+Y",
+    "+Z",
+    "-X",
+    "-Y",
+    "-Z",
+};
 
 // STUB: CARMA2_HW 0x00404410
 tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char* pFile_name) { NOT_IMPLEMENTED(); }
 
+// FindOrOpenMove
+
+// MungeFaces
+
+// FinishUpLoadingPeds
+
+// OrientationChanged
+
+// MungeSmashMaterialNames
+
+// STUB: CARMA2_HW 0x00406ab0
+tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) { NOT_IMPLEMENTED(); }
+
 // STUB: CARMA2_HW 0x00404f60
 tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004d2cc0
+void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face* pFace, br_model* pModel) { NOT_IMPLEMENTED(); }
