@@ -584,7 +584,33 @@ void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
 
 // ApplyPipedSession
 
-// MoveSessionPointerBackOne
+// FUNCTION: CARMA2_HW 0x004037c0
+int C2_HOOK_FASTCALL MoveSessionPointerBackOne(tU8** pSession) {
+    tU8* footer;
+    tU16 length;
+
+    if (*pSession == gPipe_buffer_oldest && *pSession != gPipe_record_ptr) {
+        return 1;
+    }
+    if (*pSession == gPipe_buffer_start) {
+        *pSession = gPipe_buffer_working_end;
+    }
+    *pSession -= sizeof(tU16);
+    footer = *pSession;
+    memcpy(&length, footer, sizeof(length));
+    *pSession = footer - length;
+    return 0;
+}
+
+// MoveSessionPointerForwardOne
+
+// FindPreviousChunk
+
+// UndoPipedSession
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // FUNCTION: CARMA2_HW 0x00402e10
 int C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDefault_time, void* pCallback, void* pTime_check) {
     tU32* session;
