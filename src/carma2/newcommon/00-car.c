@@ -3664,3 +3664,33 @@ void C2_HOOK_FASTCALL ReceivedCrushReattachBit(tNet_message_chunk_crush_reattach
         }
     }
 }
+
+
+// FUNCTION: CARMA2_HW 0x0043d900
+int C2_HOOK_FASTCALL FUN_0043d900(tCar_spec* pCar) {
+    tCar_crush_spec* crush;
+    int* node;
+    int i;
+    int total;
+    int result;
+
+    crush = pCar->car_crush_spec;
+    if (crush->field_0x4b8 != 0) {
+        result = 1;
+        node = *(int**)(*(int*)((tU8*)pCar + 8) + 0x20);
+        if (node != NULL) {
+            do {
+                if (node[0] == 1 || node[0] == 3) {
+                    result = result + 1 + node[0xe] * 6;
+                }
+                node = (int*)node[0xd];
+            } while (node != NULL);
+        }
+        return result;
+    }
+    total = 0;
+    for (i = 0; i < crush->count_shapes; i++) {
+        total += crush->field_0x4[i].count_points;
+    }
+    return total * 6 + 1;
+}
