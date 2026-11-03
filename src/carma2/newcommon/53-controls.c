@@ -1210,7 +1210,22 @@ void C2_HOOK_FASTCALL RichardsSphere(int pNum) {
     NewTextHeadupSlot(4, 0, 2000, -4, "STEEL GONAD O' DEATH");
 }
 
-// ToggleHeadupLevel
+// FUNCTION: CARMA2_HW 0x00444f40
+void C2_HOOK_FASTCALL ToggleHeadupLevel(void) {
+
+    if (PDKeyDown(0)) {
+        gHeadup_detail_level -= 1;
+        if (gHeadup_detail_level < 0) {
+            gHeadup_detail_level = kMax_headup_detail_level;
+        }
+    } else {
+        gHeadup_detail_level += 1;
+        if (gHeadup_detail_level > kMax_headup_detail_level) {
+            gHeadup_detail_level = 0;
+        }
+    }
+    NewTextHeadupSlot2(4, 0, 250, -4, GetMiscString(eMiscString_no_HUD + (gHeadup_detail_level % 3)), 0);
+}
 
 // ToggleShellModel
 // FUN_0045a7f0
