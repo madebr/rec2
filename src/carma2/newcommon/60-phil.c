@@ -497,8 +497,82 @@ int C2_HOOK_FASTCALL PHILAddActiveObjectImmediately(tPhysics_object* pInfo, br_m
 extern int gFace_num__car;
 extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
-// STUB: CARMA2_HW 0x004b63b0
-int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004b63b0
+int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) {
+    va_list va;
+    tPHIL_queued_header* owner;
+    int value;
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    if (pObject->field_0x239 != 2) {
+        owner = pObject->field_0x240;
+    } else {
+        owner = pObject->field_0x240;
+    }
+    if (owner != NULL) {
+    if (pProperty < 0 || pProperty >= 9) {
+        return 5;
+    }
+    va_start(va, pProperty);
+    switch (pProperty) {
+    case 0:
+        owner->field_0x10 = (float)va_arg(va, double);
+        break;
+    case 1:
+        if (va_arg(va, int)) {
+            owner->field_0x4 |= 1;
+            PositionChildren(pObject);
+        } else {
+            owner->field_0x4 &= 1;
+        }
+        break;
+    case 2:
+        owner->field_0xc = (float)va_arg(va, double);
+        break;
+    case 3:
+        value = (va_arg(va, int) != 0) & 1;
+        pObject->flags = (pObject->flags & ~0x40) | (value << 6);
+        if (!(pObject->flags & 0x40)) {
+            pObject->box_face_ref = (tU16)((tU32)gFace_num__car - 2u);
+        }
+        break;
+    case 4:
+        value = (va_arg(va, int) != 0) & 1;
+        pObject->flags = (pObject->flags & ~8) | (value << 3);
+        break;
+    case 5:
+        value = (va_arg(va, int) != 0) & 1;
+        pObject->flags = (pObject->flags & ~0x10) | (value << 4);
+        break;
+    case 6:
+        if (va_arg(va, int)) {
+            owner->field_0x4 |= 4;
+        } else {
+            owner->field_0x4 &= 4;
+        }
+        break;
+    case 7:
+        if (va_arg(va, int)) {
+            owner->field_0x4 |= 8;
+            pObject->water_d = 10000.f;
+        } else {
+            owner->field_0x4 &= 8;
+        }
+        break;
+    case 8:
+        owner->field_0x14 = (float)va_arg(va, double);
+        break;
+    }
+    va_end(va);
+    return 0;
+    }
+    return 3;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x004b6530
 // STUB: CARMA2_SW 0x004b2c50
