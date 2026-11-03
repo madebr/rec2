@@ -847,7 +847,23 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum) {
     GotPowerup(&gProgram_state.current_car, pNum);
 }
 
-// CheckForCheatingGits
+// FUNCTION: CARMA2_HW 0x00443c50
+void C2_HOOK_FASTCALL CheckForCheatingGits(void) {
+    tU32* keys;
+
+    keys = KevKeyService();
+    if (keys[0] == 0x616fb8e4 && keys[1] == 0x7c6100a8) {
+        ToggleSoundEnable();
+        gProgram_state.game_completed = 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_FlaskGone);
+    }
+}
+
+// CheckKevKeys
+
+// BrakeInstantly
+
+// PollCarControls
 
 // PollCameraControls
 
