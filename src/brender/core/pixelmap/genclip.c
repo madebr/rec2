@@ -145,6 +145,7 @@ br_clip_result C2_HOOK_CDECL PixelmapRectangleClip(br_rectangle* out, br_rectang
 
     if (out->x < 0) {
         out->w += out->x;
+        out->x = 0;
     }
     if (out->y < 0) {
         out->h += out->y;
