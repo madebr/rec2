@@ -49,7 +49,7 @@ br_matrix34* C2_HOOK_CDECL BrBoundsToMatrix34(br_matrix34* mat, const br_bounds*
 
 void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, const br_matrix4* B);
 
-void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C);
+void C2_HOOK_STDCALL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C);
 
 void C2_HOOK_CDECL BrMatrix34Apply(br_vector3* A, const br_vector4* B, const br_matrix34* C);
 

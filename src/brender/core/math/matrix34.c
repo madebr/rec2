@@ -496,7 +496,7 @@ void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, const br_matrix4* B) {
 
 // FUNCTION: CARMA2_HW 0x005333a0
 // FUNCTION: CARMA2_SW 0x0052ea40
-void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C) {
+void C2_HOOK_STDCALL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
     A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
