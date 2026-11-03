@@ -2002,7 +2002,15 @@ void C2_HOOK_FASTCALL CopyBrMaterial(br_material* pDestination, const br_materia
     pDestination->identifier = pSource->identifier;
 }
 
-// DRVector4TestForNan
+// FUNCTION: CARMA2_HW 0x005161c0
+int C2_HOOK_FASTCALL DRVector4TestForNan(const float* pV) {
+
+    if (pV != NULL) {
+        return TestForNan(&pV[0]) || TestForNan(&pV[1]) || TestForNan(&pV[2]) || TestForNan(&pV[3]);
+    } else {
+        return 0;
+    }
+}
 
 // FUN_005162d0
 
