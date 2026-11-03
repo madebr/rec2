@@ -919,7 +919,29 @@ void C2_HOOK_FASTCALL ToggleFlying(void) {
     }
 }
 
-// CycleInvulnerability
+// FUNCTION: CARMA2_HW 0x00444420
+void C2_HOOK_FASTCALL CycleInvulnerability(void) {
+    char message[256];
+
+    gInvulnerability = (gInvulnerability + 1) % 8;
+    gCar_to_view->invulnerable_no_damage = gInvulnerability & 1;
+    gCar_to_view->invulnerable_no_crushage = gInvulnerability & 2;
+    gCar_to_view->invulnerable_no_wastage = gInvulnerability & 4;
+    message[0] = '\0';
+    if (gInvulnerability == 0) {
+        strcpy(message, "FULLY VULNERABLE");
+    }
+    if (gCar_to_view->invulnerable_no_damage) {
+        strcat(message, " NO DAMAGE");
+    }
+    if (gCar_to_view->invulnerable_no_crushage != 0) {
+        strcat(message, " NO CRUSHAGE");
+    }
+    if (gCar_to_view->invulnerable_no_wastage != 0) {
+        strcat(message, " NO WASTAGE");
+    }
+    NewTextHeadupSlot(4, 0, 1000, -4, message);
+}
 
 // FUNCTION: CARMA2_HW 0x00444590
 void C2_HOOK_FASTCALL ToggleTimerFreeze(void) {
