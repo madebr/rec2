@@ -3176,7 +3176,15 @@ static void C2_HOOK_FASTCALL ChangeKeyMapIndex_(int pKey_map_index) {
     LoadKeyMapping_();
 }
 
-// Controls_SwitchKeymapSet
+// FUNCTION: CARMA2_HW 0x00472440
+int C2_HOOK_FASTCALL Controls_SwitchKeymapSet(tFrontend_spec* pFrontend) {
+
+    ChangeKeyMapIndex_(gFrontend_selected_item_index - 39);
+    SelectThisItemIn(pFrontend, 2, gKey_map_index + 39);
+    RefreshScrollSet(pFrontend);
+    FuckWithWidths(pFrontend);
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004725a0
 // FUNCTION: CARMA2_SW 0x00471b30
