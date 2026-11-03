@@ -185,7 +185,65 @@ int C2_HOOK_FASTCALL PointInSpill(br_vector3* pPoint, int pIndex) {
     return 0;
 }
 
-// GetOilFrictionFactors
+// FUNCTION: CARMA2_HW 0x004a7530
+void C2_HOOK_FASTCALL GetOilFrictionFactors(tCar_spec* pCar, br_scalar* pFl, br_scalar* pFr, br_scalar* pRl, br_scalar* pRr) {
+    int i;
+    br_vector3 v;
+    br_scalar a, b, c, d;
+
+    *pFl = 1.f;
+    *pFr = 1.f;
+    *pRl = 1.f;
+    *pRr = 1.f;
+    if (pCar != NULL && (int)pCar->driver > 5) {
+        if (pCar->shadow_intersection_flags != 0) {
+            for (i = 0; i < (int)REC2_ASIZE(gOily_spills); i++) {
+                c = gOily_spills[i].field_0x48;
+                d = gOily_spills[i].field_0x4c;
+                if (d != 0.f && (pCar->shadow_intersection_flags & (1 << i))) {
+                    a = gOily_spills[i].field_0x40;
+                    b = gOily_spills[i].field_0x44;
+                    BrMatrix34ApplyP(&v, &pCar->wpos[2], &pCar->car_master_actor->t.t.mat);
+                    if (PointInSpill(&v, i)) {
+                        pCar->oil_remaining[2] = SRandomBetween(c, d);
+                        pCar->maybe_blood_remaining[2] = SRandomBetween(a, b);
+                        pCar->field_0x16fc[2] = (br_material*)gOily_spills[i].field_0x50;
+                    }
+                    BrMatrix34ApplyP(&v, &pCar->wpos[3], &pCar->car_master_actor->t.t.mat);
+                    if (PointInSpill(&v, i)) {
+                        pCar->oil_remaining[3] = SRandomBetween(c, d);
+                        pCar->maybe_blood_remaining[3] = SRandomBetween(a, b);
+                        pCar->field_0x16fc[3] = (br_material*)gOily_spills[i].field_0x50;
+                    }
+                    BrMatrix34ApplyP(&v, &pCar->wpos[0], &pCar->car_master_actor->t.t.mat);
+                    if (PointInSpill(&v, i)) {
+                        pCar->oil_remaining[0] = SRandomBetween(c, d);
+                        pCar->maybe_blood_remaining[0] = SRandomBetween(a, b);
+                        pCar->field_0x16fc[0] = (br_material*)gOily_spills[i].field_0x50;
+                    }
+                    BrMatrix34ApplyP(&v, &pCar->wpos[1], &pCar->car_master_actor->t.t.mat);
+                    if (PointInSpill(&v, i)) {
+                        pCar->oil_remaining[1] = SRandomBetween(c, d);
+                        pCar->maybe_blood_remaining[1] = SRandomBetween(a, b);
+                        pCar->field_0x16fc[1] = (br_material*)gOily_spills[i].field_0x50;
+                    }
+                }
+            }
+        }
+        if (pCar->oil_remaining[2] != 0.f) {
+            *pFl = pCar->maybe_blood_remaining[2];
+        }
+        if (pCar->oil_remaining[3] != 0.f) {
+            *pFr = pCar->maybe_blood_remaining[3];
+        }
+        if (pCar->oil_remaining[0] != 0.f) {
+            *pRl = pCar->maybe_blood_remaining[0];
+        }
+        if (pCar->oil_remaining[1] != 0.f) {
+            *pRr = pCar->maybe_blood_remaining[1];
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004a7860
 void C2_HOOK_FASTCALL AdjustOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap) {
