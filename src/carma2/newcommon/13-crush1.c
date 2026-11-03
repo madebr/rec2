@@ -3373,3 +3373,276 @@ tCrush_info* C2_HOOK_FASTCALL FUN_0042f170(tCrush_info_buffer* pInfo_buffer, br_
     info->collision_object->field_0x1a4 = 0;
     return info;
 }
+
+
+// Global start of the split-polyhedron tables used by the model splitter.
+// GLOBAL: CARMA2_HW 0x0067a3b0
+tU16 gSplit_polyhedron_edge_map[2560];
+// GLOBAL: CARMA2_HW 0x00679444
+float* gSplit_polyhedron_source_vertices;
+// GLOBAL: CARMA2_HW 0x006796c0
+float* gSplit_polyhedron_positive_vertices;
+// GLOBAL: CARMA2_HW 0x006796c4
+float* gSplit_polyhedron_negative_vertices;
+// GLOBAL: CARMA2_HW 0x0067be70
+br_face* gSplit_polyhedron_source_faces;
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00430150
+void C2_HOOK_FASTCALL FUN_00430150(tU16 pVertex_a, tU16 pVertex_b, tU16* pOutput_a, tU16* pOutput_b, float* pDistances) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+#define RECORD_SPLIT_EDGE(pEdge_a, pEdge_b) \
+    do { \
+        tU16* edge_slot = gSplit_polyhedron_edge_map; \
+        while (edge_slot[2] != 0 && (edge_slot[0] != (pEdge_a) || edge_slot[1] != (pEdge_b))) { \
+            edge_slot += 5; \
+        } \
+        if (edge_slot[2] == 0) { \
+            edge_slot[0] = (pEdge_a); \
+            edge_slot[1] = (pEdge_b); \
+            edge_slot[2] = positive_vertex_count; \
+            edge_slot[3] = negative_vertex_count; \
+            ((tU8*)edge_slot)[8] = 1; \
+            positive_vertex_count++; \
+            negative_vertex_count++; \
+        } \
+    } while (0)
+
+#define WRITE_SPLIT_FACE(pOutput_face, pInput_face, pFace_a, pFace_b, pFace_c) \
+    do { \
+        br_face* split_output_face = (pOutput_face); \
+        split_output_face->vertices[0] = (pFace_a); \
+        split_output_face->vertices[1] = (pFace_b); \
+        split_output_face->vertices[2] = (pFace_c); \
+        split_output_face->smoothing = (pInput_face)->smoothing; \
+        split_output_face->material = (pInput_face)->material; \
+    } while (0)
+
+// FUNCTION: CARMA2_HW 0x0042f5d0
+void C2_HOOK_FASTCALL FUN_0042f5d0(br_model* pSource_model, br_model** pModels, br_model** pModel_out, br_scalar* pPlane, int pFlag) {
+    br_vertex* source_vertices;
+    br_face* source_faces;
+    br_model* positive_model;
+    br_model* negative_model;
+    br_face* positive_faces;
+    br_face* negative_faces;
+    br_face* input_face;
+    br_vertex* vertex;
+    tU16 positive_vertex_count;
+    tU16 negative_vertex_count;
+    tU16 positive_vertex_index;
+    tU16 negative_vertex_index;
+    tS16 positive_face_count;
+    tS16 negative_face_count;
+    tU16 positive_face_index;
+    tU16 negative_face_index;
+    tU16 nvertices;
+    tU16 nfaces;
+    tU16 i;
+    tU16 v0;
+    tU16 v1;
+    tU16 v2;
+    tU16 positive01;
+    tU16 negative01;
+    tU16 positive02;
+    tU16 negative02;
+    tU16 positive12;
+    tU16 negative12;
+    tU8 side;
+    tU8 face_sides[1024];
+    tS16 output_vertex_indices[1024];
+    float distances[1024];
+    tU8 vertex_sides[1024];
+
+    if (pSource_model->nvertices > 0x400) {
+        PDFatalError("By the death spanners of Mars, there's a lot of vertices on that model.");
+    }
+    source_vertices = pSource_model->vertices;
+    source_faces = pSource_model->faces;
+    nvertices = pSource_model->nvertices;
+    nfaces = pSource_model->nfaces;
+    gSplit_polyhedron_source_vertices = (float*)source_vertices;
+    gSplit_polyhedron_source_faces = source_faces;
+    positive_vertex_count = 0;
+    negative_vertex_count = 0;
+    for (i = 0; i < nvertices; i++) {
+        float distance;
+
+        vertex = &source_vertices[i];
+        distance = vertex->p.v[1] * pPlane[1];
+        distance += vertex->p.v[2] * pPlane[2];
+        distance += vertex->p.v[0] * pPlane[0];
+        distance -= pPlane[3];
+        distances[i] = distance;
+        if (distance <= gCrushZero) {
+            vertex_sides[i] = 1;
+            negative_vertex_count++;
+        } else {
+            vertex_sides[i] = 0;
+            positive_vertex_count++;
+        }
+    }
+    for (i = 0; i < 512; i++) {
+        gSplit_polyhedron_edge_map[i * 5 + 2] = 0;
+    }
+    positive_face_count = 0;
+    negative_face_count = 0;
+    for (i = 0; i < nfaces; i++) {
+        input_face = &source_faces[i];
+        v0 = input_face->vertices[0];
+        v1 = input_face->vertices[1];
+        v2 = input_face->vertices[2];
+        side = (tU8)((vertex_sides[v2] << 2) | (vertex_sides[v1] << 1) | vertex_sides[v0]);
+        face_sides[i] = side;
+        switch (side) {
+        case 0:
+            positive_face_count++;
+            break;
+        case 1:
+            RECORD_SPLIT_EDGE(v1, v0);
+            RECORD_SPLIT_EDGE(v2, v0);
+            positive_face_count += 2;
+            negative_face_count++;
+            break;
+        case 2:
+            RECORD_SPLIT_EDGE(v0, v1);
+            RECORD_SPLIT_EDGE(v2, v1);
+            positive_face_count += 2;
+            negative_face_count++;
+            break;
+        case 3:
+            RECORD_SPLIT_EDGE(v2, v0);
+            RECORD_SPLIT_EDGE(v2, v1);
+            positive_face_count++;
+            negative_face_count += 2;
+            break;
+        case 4:
+            RECORD_SPLIT_EDGE(v0, v2);
+            RECORD_SPLIT_EDGE(v1, v2);
+            positive_face_count += 2;
+            negative_face_count++;
+            break;
+        case 5:
+            RECORD_SPLIT_EDGE(v1, v0);
+            RECORD_SPLIT_EDGE(v1, v2);
+            positive_face_count++;
+            negative_face_count += 2;
+            break;
+        case 6:
+            RECORD_SPLIT_EDGE(v0, v1);
+            RECORD_SPLIT_EDGE(v0, v2);
+            positive_face_count++;
+            negative_face_count += 2;
+            break;
+        case 7:
+            negative_face_count++;
+            break;
+        }
+        gSplit_polyhedron_source_faces++;
+    }
+    *pModels = BrModelAllocate(pSource_model->identifier, positive_vertex_count, positive_face_count);
+    *pModel_out = BrModelAllocate(pSource_model->identifier, negative_vertex_count, negative_face_count);
+    positive_model = *pModels;
+    negative_model = *pModel_out;
+    positive_model->flags |= 0x880;
+    negative_model->flags |= 0x880;
+    gSplit_polyhedron_positive_vertices = (float*)positive_model->vertices;
+    gSplit_polyhedron_negative_vertices = (float*)negative_model->vertices;
+    positive_vertex_index = 0;
+    negative_vertex_index = 0;
+    for (i = 0; i < nvertices; i++) {
+        if (vertex_sides[i] == 0) {
+            output_vertex_indices[i] = positive_vertex_index;
+            positive_model->vertices[positive_vertex_index].p = source_vertices[i].p;
+            positive_model->vertices[positive_vertex_index].map = source_vertices[i].map;
+            positive_vertex_index++;
+        } else {
+            output_vertex_indices[i] = negative_vertex_index;
+            negative_model->vertices[negative_vertex_index].p = source_vertices[i].p;
+            negative_model->vertices[negative_vertex_index].map = source_vertices[i].map;
+            negative_vertex_index++;
+        }
+    }
+    positive_faces = positive_model->faces;
+    negative_faces = negative_model->faces;
+    positive_face_index = 0;
+    negative_face_index = 0;
+    gSplit_polyhedron_source_faces = source_faces;
+    for (i = 0; i < nfaces; i++) {
+        input_face = gSplit_polyhedron_source_faces;
+        v0 = input_face->vertices[0];
+        v1 = input_face->vertices[1];
+        v2 = input_face->vertices[2];
+        switch (face_sides[i]) {
+        case 0:
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v0], output_vertex_indices[v1], output_vertex_indices[v2]);
+            break;
+        case 1:
+            FUN_00430150(v1, v0, &positive01, &negative01, distances);
+            FUN_00430150(v2, v0, &positive02, &negative02, distances);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v0], negative01, negative02);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v1], output_vertex_indices[v2], positive01);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v2], positive02, positive01);
+            break;
+        case 2:
+            FUN_00430150(v0, v1, &positive01, &negative01, distances);
+            FUN_00430150(v2, v1, &positive12, &negative12, distances);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v0], positive01, positive12);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v1], negative12, negative01);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v2], output_vertex_indices[v0], positive12);
+            break;
+        case 3:
+            FUN_00430150(v2, v0, &positive02, &negative02, distances);
+            FUN_00430150(v2, v1, &positive12, &negative12, distances);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v2], positive02, positive12);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v0], negative12, negative02);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v1], negative12, output_vertex_indices[v0]);
+            break;
+        case 4:
+            FUN_00430150(v0, v2, &positive02, &negative02, distances);
+            FUN_00430150(v1, v2, &positive12, &negative12, distances);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v0], positive12, positive02);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v1], positive12, output_vertex_indices[v0]);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v2], negative02, negative12);
+            break;
+        case 5:
+            FUN_00430150(v1, v0, &positive01, &negative01, distances);
+            FUN_00430150(v1, v2, &positive12, &negative12, distances);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v0], negative01, negative12);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v1], positive12, positive01);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v2], output_vertex_indices[v0], negative12);
+            break;
+        case 6:
+            FUN_00430150(v0, v1, &positive01, &negative01, distances);
+            FUN_00430150(v0, v2, &positive02, &negative02, distances);
+            WRITE_SPLIT_FACE(&positive_faces[positive_face_index++], input_face, output_vertex_indices[v0], positive01, positive02);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v1], output_vertex_indices[v2], negative01);
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v2], negative02, negative01);
+            break;
+        case 7:
+            WRITE_SPLIT_FACE(&negative_faces[negative_face_index++], input_face, output_vertex_indices[v0], output_vertex_indices[v1], output_vertex_indices[v2]);
+            break;
+        }
+        gSplit_polyhedron_source_faces++;
+    }
+    WhitenVertexRGB(pModels, 1);
+    BrModelAdd(*pModels);
+    if (pFlag != 0) {
+        BrModelFree(*pModel_out);
+        return;
+    }
+    WhitenVertexRGB(pModel_out, 1);
+    BrModelAdd(*pModel_out);
+}
+
+#undef WRITE_SPLIT_FACE
+#undef RECORD_SPLIT_EDGE
