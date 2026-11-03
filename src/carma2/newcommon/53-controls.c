@@ -640,7 +640,44 @@ int C2_HOOK_FASTCALL HasCarFallenOffWorld(tCar_spec* pCar) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// CheckHorn3D
+// FUNCTION: CARMA2_HW 0x00443ba0
+void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar) {
+
+    if (pCar->keys.horn && pCar->horn_sound_tag == 0) {
+        pCar->horn_sound_tag = DRS3StartSound3D(gEffects_outlet, eSoundId_Horn,
+                                                &pCar->car_master_actor->t.t.translate.t, &pCar->vel,
+                                                0, 0xff, ((pCar->car_ID & 0x7) + 0xc) << 12, 0x10000);
+    } else if (!pCar->keys.horn && pCar->horn_sound_tag != 0) {
+        while (S3SoundStillPlaying(pCar->horn_sound_tag) != 0) {
+            DRS3StopSound(pCar->horn_sound_tag);
+            DRS3StopOutletSound(gEffects_outlet);
+        }
+        if (!S3SoundStillPlaying(pCar->horn_sound_tag)) {
+            pCar->horn_sound_tag = 0;
+        }
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// CheckHorns
+
+// SetQuickRecovery
+
+// SetRecovery
+
+// RecoverCar
+
+// CheckMapRenderMove
+
+// ExplodeCar
+
+// CheckRecoveryOfCars
+
+// TradeInAPO
+
+// CheckOtherRacingKeys
 
 // CheckRecoverCost
 
