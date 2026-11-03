@@ -3340,7 +3340,17 @@ static void C2_HOOK_FASTCALL SaveKeyMapping(void) {
     PFfclose(f);
 }
 
-// Controls_Outfunc
+// FUNCTION: CARMA2_HW 0x00472a30
+int C2_HOOK_FASTCALL Controls_Outfunc(tFrontend_spec* pFrontend) {
+    int i;
+
+    Generic_Outfunc(pFrontend);
+    for (i = 0; i < (int)REC2_ASIZE(gKey_names); i++) {
+        BrMemFree(gKey_names[i]);
+    }
+    SaveKeyMapping();
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00472b00
 int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend) {
