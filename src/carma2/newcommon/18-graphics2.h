@@ -53,7 +53,7 @@ extern void C2_HOOK_FASTCALL SwitchToPalette(char* pPal_name);
 
 extern void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
-// RevertPalette
+extern void C2_HOOK_FASTCALL RevertPalette(void);
 
 extern void C2_HOOK_FASTCALL MungePalette(void);
 
@@ -92,6 +92,10 @@ extern void C2_HOOK_FASTCALL StartMouseCursor(void);
 extern void C2_HOOK_FASTCALL EndMouseCursor(void);
 
 extern void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2, int pY2, int pColour);
+
+extern void C2_HOOK_FASTCALL PoshDrawLine(br_pixelmap* pDestn, int pX1, float pAngle, int pY1, int pX2, int pY2, int pColour);
+
+extern void C2_HOOK_FASTCALL DrawRectangleOutlineWithPalette(br_pixelmap* pMap, int pLeft, int pTop, int pRight, int pBottom, br_uint_32 pColour);
 
 extern void C2_HOOK_FASTCALL ClearEntireScreen(void);
 

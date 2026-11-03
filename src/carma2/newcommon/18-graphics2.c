@@ -346,7 +346,12 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
     gPalette_index = 0;
 }
 
-// RevertPalette
+// FUNCTION: CARMA2_HW 0x004b52b0
+void C2_HOOK_FASTCALL RevertPalette(void) {
+
+    memcpy(gRender_palette->pixels, gOrig_render_palette->pixels, 256 * sizeof(br_colour));
+    DRSetPalette3(gRender_palette, 1);
+}
 
 // FUNCTION: CARMA2_HW 0x004b5320
 // FUNCTION: CARMA2_SW 0x004b1a70
@@ -383,8 +388,6 @@ void C2_HOOK_FASTCALL FadePaletteUp(void) {
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma auto_inline(on)
 #endif
-
-// EnsurePaletteUp
 
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma auto_inline(off)
@@ -508,6 +511,10 @@ void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2,
     }
     BrPixelmapLine(pDestn, pX1, pY1, pX2, pY2, pColour);
 }
+
+// PoshDrawLine
+
+// DrawRectangleOutlineWithPalette
 
 // FUNCTION: CARMA2_HW 0x0047b880
 // FUNCTION: CARMA2_SW 0x0047aba0
@@ -724,3 +731,6 @@ void C2_HOOK_FASTCALL DRMaskedStamp(br_int_16 pDest_x, br_int_16 pDest_y, br_pix
 
     DRPixelmapRectangleMaskedCopy(gBack_screen, pDest_x, pDest_y, pSource, 0, 0, pSource->width, pSource->height);
 }
+
+// STUB: CARMA2_HW 0x004b55f0
+void C2_HOOK_FASTCALL EnsurePaletteUp(void) { NOT_IMPLEMENTED(); }
