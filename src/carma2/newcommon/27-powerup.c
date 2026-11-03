@@ -1368,7 +1368,15 @@ int C2_HOOK_FASTCALL ReceivedRepulseOpponents(tNet_message_chunk_powerup* pMessa
 
 // ReceivedRepulse
 
-// ResetEngineFactor
+// FUNCTION: CARMA2_HW 0x004de5d0
+void C2_HOOK_FASTCALL ResetEngineFactor(tPowerup* pPowerup, tCar_spec* pCar) {
+    float f = 1.0f;
+
+    FUN_0045c760();
+    pCar->field_0x4d4 = f;
+    pCar->grip_multiplier = f;
+    SetCarSuspGiveAndHeight(pCar, f, f, f, 0.0f, 0.0f);
+}
 
 // FUNCTION: CARMA2_HW 0x004de600
 // FUNCTION: CARMA2_SW 0x004dab00
