@@ -1952,7 +1952,20 @@ void C2_HOOK_FASTCALL ApplyGWS(tPipe_chunk** pChunk) {
 
 // ApplyDamage
 
-// ApplySpecial
+// FUNCTION: CARMA2_HW 0x004c97c0
+void C2_HOOK_FASTCALL ApplySpecial(tPipe_chunk** pChunk) {
+    tU32 type = *(tU32*)*pChunk;
+
+    switch (type) {
+        case 0:
+            if (fabs(ARGetReplayRate()) <= 1.0) {
+                return FadePaletteDown();
+            }
+            return;
+        case 1:
+            return WorkerSpecial();
+    }
+}
 
 // ApplyProxRay
 
