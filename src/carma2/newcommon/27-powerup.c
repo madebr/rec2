@@ -1607,7 +1607,15 @@ void C2_HOOK_FASTCALL ResetGhostPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // HitMine
 
-// SetMassMultiplier
+// FUNCTION: CARMA2_HW 0x004debb0
+int C2_HOOK_FASTCALL SetMassMultiplier(tPowerup* powerup, tCar_spec* car) {
+
+    car->field_0x4c8 = powerup->float_params[0];
+    if (gNet_mode) {
+        RecalculateCarMassMomentOfInertia(car);
+    }
+    return powerup - gPowerup_array;
+}
 
 // ResetMassMultiplier
 
