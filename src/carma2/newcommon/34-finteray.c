@@ -415,7 +415,22 @@ int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, co
     }
 }
 
-// ShapeRayCastWithSphere
+// FUNCTION: CARMA2_HW 0x00461850
+int C2_HOOK_FASTCALL ShapeRayCastWithSphere(br_vector3* pStart, br_vector3* pEnd, tPhysics_shape* pShape, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        return LineBoxCollWithSphere(pStart, pEnd, &pShape->common.bb, pPoint, pNormal, pT);
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        return LinePolyCollWithSphere(pStart, pEnd, &pShape->polyhedron, pPoint, pNormal, pT);
+    case kCollisionShapeType_Sphere:
+        return LineSphereCollWithSphere(pStart, pEnd, &pShape->sphere.sphere, pPoint, pNormal, pT);
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType, "");
+    case kCollisionShapeType_Wireframe:
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004618e0
 // FUNCTION: CARMA2_SW 0x00461380
