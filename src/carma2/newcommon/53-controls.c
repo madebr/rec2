@@ -268,7 +268,39 @@ void C2_HOOK_FASTCALL ToggleJoystickHeadup(void) {
 #pragma auto_inline(off)
 #endif
 
-// F4Key
+// FUNCTION: CARMA2_HW 0x004414b0
+void C2_HOOK_FASTCALL F4Key(void) {
+
+    if (gI_am_cheating != 0xa11ee75d && (gI_am_cheating != 0x564e78b9 || gNet_mode != eNet_mode_none)) {
+        gWhich_edit_mode = 0;
+    } else {
+        char s[256];
+
+        if (gINT_0068b8e4 == 1) {
+            FUN_00511210();
+        }
+        if (gINT_0068b8e4 == 2) {
+            FUN_00511200();
+        }
+        if (gINT_0068b8e8) {
+            ToggleJoystickHeadup();
+        }
+        if (PDKeyDown(0)) {
+            if (gWhich_edit_mode == 0) {
+                gWhich_edit_mode = 1;
+            } else {
+                gWhich_edit_mode -= 1;
+            }
+        } else {
+            gWhich_edit_mode += 1;
+            if (gWhich_edit_mode >= 2) {
+                gWhich_edit_mode = 0;
+            }
+        }
+        sprintf(s, "Edit mode: %s", gUNK_005904c0[gWhich_edit_mode]);
+        NewTextHeadupSlot2(4, 0, 2000, -4, s, 0);
+    }
+}
 
 // SetFlag
 
