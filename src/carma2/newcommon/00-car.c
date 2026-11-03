@@ -614,7 +614,29 @@ void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar) {
 
 // AddDrag
 
-// DragChildren
+// FUNCTION: CARMA2_HW 0x00416030
+void C2_HOOK_FASTCALL DragChildren(tCar_spec* pCar, tPhysics_object* pChild) {
+
+    while (pChild != NULL) {
+        AddDrag(pCar, pChild, 0.04f);
+        if (pChild->child != NULL) {
+            DragChildren(pCar, pChild->child);
+        }
+        pChild = pChild->next;
+    }
+}
+
+// DoCarStuff
+
+// DoNonCarStuff
+
+// RemoveFlyingCar
+
+// RestoreFlyingCar
+
+// GetDrivableOnList
+
+// APTCPreCollision
 
 // FUNCTION: CARMA2_HW 0x004161a0
 // FUNCTION: CARMA2_SW 0x004161d0
