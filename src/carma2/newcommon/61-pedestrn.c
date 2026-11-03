@@ -2051,7 +2051,98 @@ void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const
 #pragma auto_inline(on)
 #endif
 
-// SetCharacterPosition
+// FUNCTION: CARMA2_HW 0x0040b0a0
+void C2_HOOK_FASTCALL SetCharacterPosition(tPed_character_instance* pChar, br_vector3* pPosition, int pMode) {
+    register tPed_character_instance* pCharacter = pChar;
+    register br_vector3* pPos = pPosition;
+    extern br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point);
+    tPed_personality* personality;
+    tPed_move* move;
+    br_matrix34* mat;
+    br_vector3 target;
+    float dx;
+    float dz;
+    float dy;
+    int mode;
+    int n;
+    tPed_move_frame* frame;
+
+    if ((pCharacter->field_0x14 & 4) && gAction_replay_mode == 0) {
+        return;
+    }
+    personality = pCharacter->personality;
+    if (pCharacter->field_0x7 < 0) {
+        move = NULL;
+    } else {
+        move = personality->form->moves[pCharacter->field_0x7].move;
+    }
+    if ((tS16)pCharacter->field_0x1c < 0) {
+        mode = -1;
+    } else {
+        mode = pMode;
+    }
+    if (mode == -1) {
+        target.v[0] = pPos->v[0];
+        target.v[1] = pPos->v[1];
+        target.v[2] = pPos->v[2];
+    } else if (mode == 0) {
+        float below = FindYVerticallyBelow2(pPos);
+        target.v[0] = pPos->v[0];
+        target.v[2] = pPos->v[2];
+        target.v[1] = personality->moves[pCharacter->field_0x7].grounding_offset + below;
+    } else if (mode == 1) {
+        target.v[2] = pPos->v[2];
+        target.v[0] = pPos->v[0];
+        target.v[1] = personality->moves[pCharacter->field_0x7].grounding_offset + pPos->v[1];
+    }
+    if (pCharacter->field_0x4 < 0) {
+        mat = &pCharacter->field_0x2c;
+    } else if (pCharacter->field_0xe8 != NULL) {
+        mat = pCharacter->field_0xe8;
+    } else {
+        mat = &personality->form->actor_sets[pCharacter->field_0x4].actors[0]->t.t.mat;
+    }
+    dx = 0.0f;
+    dy = 0.0f;
+    dz = 0.0f;
+    if (move != NULL && move->field_0x2a == 0) {
+        n = (tS16)pCharacter->field_0x1c;
+        if (n > 0) {
+            frame = &move->frames[n];
+            do {
+                dx = frame->mat.m[3][0] + dx;
+                dy = dy + frame->mat.m[3][1];
+                dz = frame->mat.m[3][2] + dz;
+                frame--;
+                n--;
+            } while (n != 0);
+        }
+        if (!(move->looping_reset_flags & 1)) {
+            dx = 0.0f;
+        }
+        if (!(move->looping_reset_flags & 2)) {
+            dy = 0.0f;
+        }
+        if (!(move->looping_reset_flags & 4)) {
+            dz = 0.0f;
+        }
+    } else {
+        dz = 0.0f;
+    }
+    mat->m[3][0] = target.v[0];
+    mat->m[3][1] = target.v[1];
+    mat->m[3][2] = target.v[2];
+    if (gAction_replay_mode == 0) {
+        float scale = personality->moves[pCharacter->field_0x7].scale_factor;
+        mat->m[3][1] = scale * dy + mat->m[3][1];
+        mat->m[3][2] = scale * dz + mat->m[3][2];
+        mat->m[3][0] = scale * dx + mat->m[3][0];
+    }
+    if ((pCharacter->field_0x14 & 1) && gAction_replay_mode == 0) {
+        BrMatrix34Copy((br_matrix34*)((char*)pCharacter->personality->form->simple_physicing[pCharacter->field_0x5].collision_info + 0x8c), mat);
+    }
+    SetCharacterBonePositions(pCharacter, 0, 0);
+}
 
 // DisposeClonedMaterials
 
