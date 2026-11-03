@@ -224,6 +224,11 @@ typedef struct {
     br_vector3 field_0x38;
 } tPipe_chunk_ped_move;
 
+typedef struct {
+    int field_0x0;
+    br_matrix34 field_0x4;
+} tPipe_chunk_ped_physics;
+
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -305,6 +310,11 @@ void C2_HOOK_FASTCALL WorkerPedMove(tPedestrian* pPed, int field_0x4, int field_
 
 // STUB: CARMA2_HW 0x004ca5a0
 void C2_HOOK_FASTCALL WorkerPedMoveUndo(tPedestrian* pPed, int field_0x6, int field_0x10, int zero, int zero2, int field_0xa, br_vector3* pField_0x18, int field_0x30, br_vector3* pField_0x38) {
+    NOT_IMPLEMENTED();
+}
+
+// STUB: CARMA2_HW 0x004ca7d0
+void C2_HOOK_FASTCALL WorkerPedPhysics(int field_0x0, br_matrix34* pMatrix) {
     NOT_IMPLEMENTED();
 }
 
@@ -2455,7 +2465,12 @@ void C2_HOOK_FASTCALL ApplyPedMove(tPipe_chunk** pChunk) {
     return WorkerPedMove((tPedestrian*)chunk->field_0x0, chunk->field_0x4, chunk->field_0xc, chunk->field_0x8 & 1, chunk->field_0x14, 0, &chunk->field_0x24, chunk->field_0x34, &chunk->field_0x38);
 }
 
-// ApplyPedPhysics
+// FUNCTION: CARMA2_HW 0x004c9b10
+void C2_HOOK_FASTCALL ApplyPedPhysics(tPipe_chunk** pChunk) {
+    tPipe_chunk_ped_physics* chunk = (tPipe_chunk_ped_physics*)*pChunk;
+
+    return WorkerPedPhysics(chunk->field_0x0, &chunk->field_0x4);
+}
 
 // ApplyPedDismember
 
