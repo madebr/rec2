@@ -775,7 +775,14 @@ int C2_HOOK_FASTCALL SetPedSize(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// SetPedHeadSize
+// FUNCTION: CARMA2_HW 0x004dc7a0
+int C2_HOOK_FASTCALL SetPedHeadSize(tPowerup* pPowerup, tCar_spec* pCar) {
+    br_scalar head_scale;
+
+    head_scale = pPowerup->float_params[0];
+    ScalePedHeads(head_scale);
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc7d0
 // FUNCTION: CARMA2_SW 0x004d8cd0
