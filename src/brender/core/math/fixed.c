@@ -1170,7 +1170,8 @@ br_angle C2_HOOK_CDECL BrFixedATan2(br_fixed_ls x, br_fixed_ls y) {
 }
 
 // FUNCTION: CARMA2_HW 0x005377b3
-br_angle C2_HOOK_CDECL BrFixedATan2Fast(br_fixed_ls x, br_fixed_ls y) {
+br_angle BR_NAKED C2_HOOK_CDECL BrFixedATan2Fast(br_fixed_ls x, br_fixed_ls y) {
+#ifndef REC2_MATCHING
     if (y > 0) {
         if (x >= 0) {
             if (x > y) {
@@ -1218,6 +1219,178 @@ br_angle C2_HOOK_CDECL BrFixedATan2Fast(br_fixed_ls x, br_fixed_ls y) {
         }
     }
     return 0;
+#else
+    __asm {
+        push ebp
+        mov ebp, esp
+        push ebx
+        push ecx
+        push edx
+        mov ebx, dword ptr [ebp + 0xc]
+        mov ecx, dword ptr [ebp + 8]
+        xor eax, eax
+        cmp ecx, 0
+        jl at2f_x_neg
+        je at2f_x_zero
+        cmp ebx, 0
+        jl at2f_y_neg
+        cmp ebx, ecx
+        jl at2f_y_lt_x
+        je at2f_y_eq_x
+        mov edx, ecx
+        div ebx
+        shr eax, 19
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_lt_x:
+        mov edx, ebx
+        div ecx
+        shr eax, 19
+        neg eax
+        add eax, 0x4000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_eq_x:
+        mov eax, 0x2000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_neg:
+        neg ebx
+        cmp ebx, ecx
+        jg at2f_y_gt_x
+        je at2f_y_eq_x2
+        mov edx, ebx
+        div ecx
+        shr eax, 19
+        add eax, 0x4000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_eq_x2:
+        mov eax, 0x6000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_gt_x:
+        mov edx, ecx
+        div ebx
+        shr eax, 19
+        neg eax
+        add eax, 0x8000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_x_neg:
+        neg ecx
+        cmp ebx, 0
+        jg at2f_y_pos
+        je at2f_y_zero
+        neg ebx
+        cmp ebx, ecx
+        jl at2f_b_lt_c
+        mov edx, ecx
+        div ebx
+        shr eax, 19
+        add eax, 0x8000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_zero:
+        mov eax, 0xa000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_b_lt_c:
+        mov edx, ebx
+        div ecx
+        shr eax, 19
+        neg eax
+        add eax, 0xc000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_pos:
+        cmp ebx, ecx
+        jg at2f_y_gt_c2
+        je at2f_y_eq_c2
+        mov edx, ebx
+        div ecx
+        shr eax, 19
+        add eax, 0xc000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_eq_c2:
+        mov eax, 0xe000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_y_gt_c2:
+        mov edx, ecx
+        div ebx
+        shr eax, 19
+        neg eax
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_x_zero:
+        cmp ebx, 0
+        jl at2f_x_zero_neg
+        mov eax, 0
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+
+    at2f_x_zero_neg:
+        mov eax, 0x8000
+        pop edx
+        pop ecx
+        pop ebx
+        leave
+        ret
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005378bb
