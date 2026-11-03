@@ -3577,3 +3577,46 @@ int C2_HOOK_FASTCALL FullyDetachSnappedBits(tCollision_contact* pContacts, float
     }
     return 0;
 }
+
+
+// FUNCTION: CARMA2_HW 0x0043b740
+void C2_HOOK_FASTCALL SmoothCarCrushShapePoints(tCar_spec* pCar, float pStep) {
+    tCar_crush_spec* crush;
+    tCar_crush_shape_info* shape_info;
+    tCar_crush_reordered_shape_info* point;
+    br_vector3* pCurrent;
+    float* pTarget;
+    float value;
+    int shape_index;
+    int point_index;
+    int axis;
+
+    crush = pCar->car_crush_spec;
+    for (shape_index = 0; shape_index < crush->count_shapes; shape_index++) {
+        shape_info = &crush->field_0x4[shape_index];
+        for (point_index = 0; point_index < shape_info->count_points; point_index++) {
+            point = &shape_info->field_0x18[point_index];
+            pCurrent = &point->field_0x18;
+            pTarget = point->field_0x0.v;
+            for (axis = 0; axis < 3; axis++) {
+                if (pCurrent->v[axis] > pTarget[axis]) {
+                    value = pCurrent->v[axis] - pStep;
+                    pCurrent->v[axis] = value;
+                    if (value < pTarget[axis]) {
+                        pCurrent->v[axis] = pTarget[axis];
+                    }
+                } else if (pCurrent->v[axis] < pTarget[axis]) {
+                    value = pCurrent->v[axis];
+                    pCurrent->v[axis] = value + pStep;
+                    if (pTarget[axis] < value + pStep) {
+                        pCurrent->v[axis] = pTarget[axis];
+                    }
+                }
+            }
+            if (DRVector3TestForNan(pCurrent)) {
+                PDEnterDebugger("NaN");
+            }
+        }
+    }
+    pCar->car_crush_spec->expand_bounding_box = 3;
+}
