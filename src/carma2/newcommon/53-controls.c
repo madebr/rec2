@@ -904,7 +904,20 @@ void C2_HOOK_FASTCALL SetFlag2(int i) {
     gAllow_car_flying = gCar_flying;
 }
 
-// ToggleFlying
+// FUNCTION: CARMA2_HW 0x004443c0
+void C2_HOOK_FASTCALL ToggleFlying(void) {
+
+    if (gAllow_car_flying && gNet_mode == eNet_mode_none) {
+        gCar_flying = !gCar_flying;
+        if (gCar_flying) {
+            NewTextHeadupSlot(4, 0, 500, -4, "We have lift off!!");
+        } else {
+            NewTextHeadupSlot(4, 0, 500, -4, "Back down to Earth");
+        }
+    } else {
+        gCar_flying = 0;
+    }
+}
 
 // CycleInvulnerability
 
