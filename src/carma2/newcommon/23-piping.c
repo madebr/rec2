@@ -2087,7 +2087,12 @@ void C2_HOOK_FASTCALL ApplySmashModelChange(tPipe_chunk** pChunk) {
     }
 }
 
-// ApplySmashRemoveFaces
+// FUNCTION: CARMA2_HW 0x004c9a10
+void C2_HOOK_FASTCALL ApplySmashRemoveFaces(tPipe_chunk** pChunk) {
+    tPipe_chunk_remove_faces* chunk = (tPipe_chunk_remove_faces*)*pChunk;
+
+    return SmashRemoveSomeFaces((br_model*)(intptr_t)chunk->field_0x0, (int)chunk->count);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9a20
 // FUNCTION: CARMA2_SW 0x004c6150
