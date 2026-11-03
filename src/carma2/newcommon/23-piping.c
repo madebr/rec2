@@ -2378,7 +2378,18 @@ void C2_HOOK_FASTCALL ApplyReplayFrameTime(tPipe_chunk** pChunk) {
     return ApplyTime(((tPipe_chunk_frame_bound*)*pChunk)->field_0x4);
 }
 
-// UndoScreenWobble
+// FUNCTION: CARMA2_HW 0x004c9e50
+void C2_HOOK_FASTCALL UndoScreenWobble(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+
+    SetPipeUndoFlag();
+    if (pPrev_chunk != NULL) {
+        tPipe_chunk_screen_wobble* wobble = (tPipe_chunk_screen_wobble*)((tU8*)pPrev_chunk + 4);
+        SetScreenWobble(wobble->wobble_x, wobble->wobble_y);
+    } else {
+        SetScreenWobble(0, 0);
+    }
+    ClearPipeUndoFlag();
+}
 
 // UndoSplash
 
