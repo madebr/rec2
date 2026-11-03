@@ -633,7 +633,14 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br
     br_actor* a;
 
     if (pDelta != NULL) {
-        BrVector3Add(&delta, &pActor->t.t.translate.t, pDelta);
+        br_scalar m1;
+
+        m1 = ((br_vector3*)pActor->t.t.mat.m[3])->v[0];
+        delta.v[0] = m1 + pDelta->v[0];
+        m1 = ((br_vector3*)pActor->t.t.mat.m[3])->v[1];
+        delta.v[1] = m1 + pDelta->v[1];
+        m1 = ((br_vector3*)pActor->t.t.mat.m[3])->v[2];
+        delta.v[2] = m1 + pDelta->v[2];
     } else {
         BrVector3Set(&delta, 0.0f, 0.0f, 0.0f);
     }
