@@ -1275,8 +1275,22 @@ int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x004fedd0
-void C2_HOOK_FASTCALL ClearSplashReplay(uintptr_t pObject) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004fedd0
+void C2_HOOK_FASTCALL ClearSplashReplay(uintptr_t pObject) {
+    int flags;
+    int i;
+
+    flags = gReplay_splash_flags;
+    for (i = 0; i < (int)REC2_ASIZE(gReplay_splashes); i++) {
+        uintptr_t object;
+
+        memcpy(&object, &gReplay_splashes[i].object, sizeof(object));
+        if (pObject == object) {
+            flags &= ~(1 << i);
+        }
+    }
+    gReplay_splash_flags = flags;
+}
 
 // FUNCTION: CARMA2_HW 0x004fee10
 // FUNCTION: CARMA2_SW 0x004fa6f0
