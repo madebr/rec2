@@ -12,6 +12,15 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+/* upstream's c2_hooks.h does not define this yet (see 61-pedestrn.h for the same guard) */
+#ifndef C2_HOOK_FAKE_THISCALL
+#ifdef REC2_MATCHING
+#define C2_HOOK_FAKE_THISCALL __fastcall
+#else
+#define C2_HOOK_FAKE_THISCALL
+#endif
+#endif
+
 extern int gINT_00692dc8;
 
 extern tPhysicsError_cbfn* gPhysics_error_cb;
@@ -30,6 +39,12 @@ extern void* gPhysics_scratch_ptr;
 extern int gFace_count;
 
 // count
+
+extern tCollision_shape_polyhedron_data* C2_HOOK_FASTCALL FUN_00421fd0(int pCount_points);
+
+extern tPhysicsError C2_HOOK_FASTCALL FUN_00422400(tCollision_shape_polyhedron_data* pPolyhedron, int* pVertex_indices, br_model* pModel, int pCount_vertices);
+
+extern int C2_HOOK_FASTCALL FUN_00422500(tCollision_shape_polyhedron_data* pPolyhedron, br_model* pModel, int pMin_point_count, int pMax_point_count, int* pVertex_indices);
 
 void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* dest, const br_vector3* source, const br_matrix34* matrix);
 
@@ -59,9 +74,9 @@ extern tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, b
 
 // GetSphereToFacePoints
 
-// CheckSingleEdgeWithSphere
+extern int C2_HOOK_FASTCALL CheckSingleEdgeWithSphere(br_vector3* pEdgeStart, br_vector3* pEdgeEnd, tPhysics_object* pObject, float* pSphere, float* pWalls, int pCount, br_vector3* pStart, br_vector3* pEnd, tFace_ref* pFace);
 
-// GetSphereToEdgePoints
+extern int C2_HOOK_FASTCALL GetSphereToEdgePoints(tPhysics_object* pObject, int pEdx, int pParam1, int pParam2, int pParam3, int pParam4, int pParam5, int pParam6);
 
 // GetCornerToFacePoints
 
@@ -163,7 +178,7 @@ extern void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysic
 
 // CountJointForces
 
-// MoveJointedObject
+extern void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, float pDelta_time);
 
 // TellPhysicsJointsHaveChanged
 
@@ -181,11 +196,19 @@ extern void C2_HOOK_FASTCALL CreateJointTorque(tPhysics_object* pObject, tPhysic
 
 // PrepareForCollisions
 
+extern void C2_HOOK_FASTCALL PhysicsObjectMoveVelocity(tPhysics_object* pObject);
+
+extern void C2_HOOK_FASTCALL PhysicsObjectMoveVelocityList(tPhysics_object* pObject);
+
+extern void C2_HOOK_FASTCALL PhysicsObjectSetImpulse(tPhysics_object* pObject, br_vector3* pImpulse);
+
 // CheckPointVelocities
 
 extern void C2_HOOK_FASTCALL WriteNewPositions(tPhysics_object* pObject);
 
 extern void C2_HOOK_FASTCALL SetListDoingNothingFlag(tPhysics_object* pObject, int pFlag);
+
+extern void C2_HOOK_FASTCALL SetCollisionInfoDoNothingChain(tPhysics_object* pCollision_info, tU32 pDisable);
 
 // SetGroupDoingNothingFlag
 
@@ -207,7 +230,7 @@ extern void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject)
 
 // CheckForObjectHierachyTouchingAnotherObject
 
-// CheckForObjectHierachyTouchingObjectList
+extern void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tPhysics_object* pObject, tPhysics_object* pList, tPhysics_object* pList_original);
 
 // MakeObjectDoSomething
 
@@ -289,13 +312,17 @@ extern void C2_HOOK_FASTCALL ResetObjectAndChildren(tPhysics_object* pObject);
 
 extern void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects);
 
+extern int C2_HOOK_FASTCALL CollectJointLimitsOfTree(tPhysics_object* pObject, tPhysics_joint_force* pContacts, int pCount, int pMax_count);
+
+extern int C2_HOOK_FASTCALL ClampObjectSpinTree(tPhysics_object* pObject);
+
 // RepositionObjectGroup
 
 // SimpleRotate
 
-// InterpolateSingleObject
+extern void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* pObject, br_scalar pDt);
 
-// InterpolateObjects
+extern void C2_HOOK_FAKE_THISCALL InterpolateObjects(tPhysics_object* pObject, float pDt);
 
 // ApplyGravitySingleObject
 
@@ -387,7 +414,7 @@ extern void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape);
 
 extern void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char* pMessage);
 
-// PhysicsWarning
+extern void C2_HOOK_FASTCALL PhysicsWarning(const char* pMessage);
 
 extern void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn);
 
@@ -411,7 +438,7 @@ extern float C2_HOOK_FASTCALL GetFrictionFromFace(const tFace_ref* pFace);
 
 extern void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage);
 
-// ResetMan2
+extern void C2_HOOK_FASTCALL ResetMan2(tPhysics_object* pObject);
 
 extern void C2_HOOK_FASTCALL SetUpTestObjects(void);
 
