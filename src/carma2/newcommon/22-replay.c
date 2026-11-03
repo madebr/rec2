@@ -1021,7 +1021,40 @@ void C2_HOOK_FASTCALL WorkerSpecial(void) {
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// DrawStatusMessage
+// FUNCTION: CARMA2_HW 0x004e7350
+void C2_HOOK_FASTCALL DrawStatusMessage(int pReplay_only) {
+    extern void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge);
+    extern void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText);
+    extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
+    extern tGraf_data* gCurrent_graf_data;
+    extern tDR_font gFonts[24];
+    extern int gShow_status_message;
+    extern int gNext_replay_record_state;
+    extern int gStatus_message_1;
+    extern int gStatus_message_2;
+    int x;
+    int y;
+
+    if (gShow_status_message != 0) {
+        if (gNext_replay_record_state == 4) {
+            x = gCurrent_graf_data->field_0x350;
+            y = gCurrent_graf_data->field_0x354;
+            if (pReplay_only == 0) {
+                DRPixelmapText(gBack_screen, x, y, &gFonts[1], GetMiscString(gStatus_message_1), gBack_screen->width);
+            }
+        } else {
+            x = gCurrent_graf_data->width / 2;
+            y = gCurrent_graf_data->height / 2;
+            DRPixelmapCentredText(gBack_screen, x, y - 0x40, &gFonts[4], GetMiscString(gStatus_message_1));
+            if (gStatus_message_2 != 0) {
+                DRPixelmapCentredText(gBack_screen, x, y - 0x20, &gFonts[6], GetMiscString(gStatus_message_2));
+            }
+        }
+    }
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // WorkerUndoSmashRemoveFaces
 
