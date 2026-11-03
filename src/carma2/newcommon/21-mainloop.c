@@ -262,7 +262,16 @@ extern int C2_HOOK_FASTCALL ARGoBackwards(void);
 extern void C2_HOOK_FASTCALL FUN_00403c70(tZappy_AR_callback* pZappy, tPreprocess_AR_callback* pPre, tPostProcess_AR_callback* pPost);
 extern void C2_HOOK_FASTCALL FUN_00403210(tZappy_AR_callback* pZappy, tPreprocess_AR_callback* pPre, tPostProcess_AR_callback* pPost);
 
-// FUN_00403cc0
+// FUNCTION: CARMA2_HW 0x00403cc0
+void C2_HOOK_FASTCALL FUN_00403cc0(int pUnused, void (C2_HOOK_FASTCALL * pBetween_sessions)(int), tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame) {
+    typedef void (C2_HOOK_FASTCALL * tReplay_between_sessions_callback)(int pFrames);
+    extern float gReplay_rate;
+    extern void C2_HOOK_FASTCALL MoveReplayBuffer(int pFrames, tReplay_between_sessions_callback pBetween_sessions, tPreprocess_AR_callback* pBefore_frame, tPostProcess_AR_callback* pAfter_frame);
+
+    if (gReplay_rate != 0.0f) {
+        MoveReplayBuffer((int)gReplay_rate, (tReplay_between_sessions_callback)pBetween_sessions, pBefore_frame, pAfter_frame);
+    }
+}
 
 // DoActionReplay
 
