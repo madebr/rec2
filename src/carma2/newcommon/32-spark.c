@@ -240,8 +240,8 @@ void C2_HOOK_FASTCALL ResetSparks(void) {
 
 // CreateShrapnelShowerWorld
 
-// CreateShrapnelShower
-
+// STUB: CARMA2_HW 0x004f8800
+void C2_HOOK_FASTCALL CreateShrapnelShower(const br_vector3* pPosition, const br_vector3* pVelocity, const br_vector3* pDirection, br_scalar pStrength, tCar_spec* pCar1, tCar_spec* pCar2, int pMaterialCount, br_material** pMaterials) { NOT_IMPLEMENTED(); }
 // random
 
 // InitShrapnel
@@ -521,8 +521,8 @@ void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pC
 
 // CreateSmokeColumn2
 
-// CreateSmokeColumn
-
+// STUB: CARMA2_HW 0x004fb890
+void C2_HOOK_FASTCALL CreateSmokeColumn(tCar_spec* pCar, int pType, int pRandom, int pLifetime) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004fb910
 // FUNCTION: CARMA2_SW 0x004f6e50
 void C2_HOOK_FASTCALL GenerateSmokeShades(void) {
@@ -633,8 +633,8 @@ void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale
 
 // MungeSmokeColumn
 
-// DisposeFlame
-
+// STUB: CARMA2_HW 0x004fc2e0
+void C2_HOOK_FASTCALL DisposeFlame(void) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004fc3a0
 // FUNCTION: CARMA2_SW 0x004f7900
 void C2_HOOK_FASTCALL InitFlame(void) {
@@ -828,8 +828,8 @@ void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 
 // DisposeKevStuff
 
-// DisposeKevStuffCar
-
+// STUB: CARMA2_HW 0x004fe360
+void C2_HOOK_FASTCALL DisposeKevStuffCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
 // MakeCarIt
 
 // StopCarBeingIt
@@ -918,8 +918,8 @@ int C2_HOOK_FASTCALL IsCarSmoking(tCar_spec* pCar) {
     return 0;
 }
 
-// ClearSplashReplay
-
+// STUB: CARMA2_HW 0x004fedd0
+void C2_HOOK_FASTCALL ClearSplashReplay(uintptr_t pObject) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004fee10
 // FUNCTION: CARMA2_SW 0x004fa6f0
 void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
@@ -940,4 +940,43 @@ void* C2_HOOK_FASTCALL GetSplashIndex(tPhysics_object* pObject) {
 
 // AdjustSplashReplay
 
-// InitReplaySplashes
+// STUB: CARMA2_HW 0x004ff030
+void C2_HOOK_FASTCALL InitReplaySplashes(void) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004fec30
+intptr_t C2_HOOK_CDECL ForEveryActorModelNoGrooves(br_actor* pActor, void* pContext) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x006aa568
+int gDust_rotate;
+
+// GLOBAL: CARMA2_HW 0x0058b008
+const br_scalar gFLOAT_0058b008;
+
+// GLOBAL: CARMA2_HW 0x006aa5a4
+int gNum_splash_types;
+
+// GLOBAL: CARMA2_HW 0x006aa574
+int gReplay_splash_flags;
+
+// GLOBAL: CARMA2_HW 0x006aa388
+tReplay_splash gReplay_splashes[10];
+
+// GLOBAL: CARMA2_HW 0x006a9180
+tShrapnel gShrapnel[30];
+
+// GLOBAL: CARMA2_HW 0x006aa584
+int gShrapnel_flags;
+
+// GLOBAL: CARMA2_HW 0x006a9b80
+tSpark gSparks[32];
+
+// GLOBAL: CARMA2_HW 0x006a82b8
+tSplash gSplash[32];
+
+// GLOBAL: CARMA2_HW 0x006aa570
+int gSplash_flags;
+
+// GLOBAL: CARMA2_HW 0x006a9130
+br_material* gSplash_material[20];
+
+// GLOBAL: CARMA2_HW 0x006a8758
+br_model* gSplash_model;

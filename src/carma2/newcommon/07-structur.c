@@ -360,3 +360,26 @@ void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void) {
     }
 }
 
+// GLOBAL: CARMA2_HW 0x0067b7cc
+int gCount_car_damage_crush_list;
+
+// GLOBAL: CARMA2_HW 0x0067bdf0
+int gCount_net_crush_detach_list;
+
+// GLOBAL: CARMA2_HW 0x0067bd60
+int gCount_net_crush_full_detach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067b7c8
+int gCount_net_crush_reattach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067b838
+int gCount_net_crush_semi_detach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067bd58
+int gCount_toggled_doors;
+
+// GLOBAL: CARMA2_HW 0x0079ec44
+tSpecial_volume* gLast_camera_special_volume;
+
+// GLOBAL: CARMA2_HW 0x006a0944
+int gNumber_of_icons;

@@ -1509,3 +1509,11 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 
 // GetCollObjFromID
 
+// STUB: CARMA2_HW 0x004c63d0
+void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004c6410
+void C2_HOOK_FASTCALL PHILRemoveFromParentChain(tPhysics_object* pObject) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004b9ef0
+void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tPhysics_object *pCollision_info, tU32 pDisable) { NOT_IMPLEMENTED(); }

@@ -14,10 +14,10 @@
 // GLOBAL: CARMA2_SW 0x006b1320
 tS8 gRace_memory[1000];
 
-// GetRuntimeVariable
-
-// AccumulateRuntimeVariable
-
+// STUB: CARMA2_HW 0x004e7440
+int C2_HOOK_FASTCALL GetRuntimeVariable(int pAddress) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004e7460
+int C2_HOOK_FASTCALL AccumulateRuntimeVariable(int pAddress, int pDelta) { NOT_IMPLEMENTED(); }
 // ToggleRuntimeVariable
 
 // FUNCTION: CARMA2_HW 0x004e74b0

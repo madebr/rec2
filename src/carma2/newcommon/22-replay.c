@@ -72,14 +72,14 @@ void C2_HOOK_FASTCALL DoActionReplayPostSwap(void) {
     RemoveTransientBitmaps(1);
 }
 
-// DoZappyActionReplayHeadups
-
+// STUB: CARMA2_HW 0x004e6900
+void C2_HOOK_FASTCALL DoZappyActionReplayHeadups(int pFrame_number) { NOT_IMPLEMENTED(); }
 // DoActionReplayHeadups
 
-// PreProcess
-
-// PostProcess
-
+// STUB: CARMA2_HW 0x004e6950
+void C2_HOOK_FASTCALL PreProcess(int pFrame_period) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004e6980
+void C2_HOOK_FASTCALL PostProcess(int pFrame_period) { NOT_IMPLEMENTED(); }
 // DoActionReplay
 
 // MoveToEndOfReplay
@@ -96,18 +96,18 @@ void C2_HOOK_FASTCALL DoActionReplayPostSwap(void) {
 
 // SynchronizeActionReplay
 
-// TurnOnActionReplay
-
-// TurnOffActionReplay
-
+// STUB: CARMA2_HW 0x004e71c0
+void C2_HOOK_FASTCALL TurnOnActionReplay(void) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004e7270
+void C2_HOOK_FASTCALL TurnOffActionReplay(void) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004e72d0
 // FUNCTION: CARMA2_SW 0x004e3110
 void C2_HOOK_FASTCALL AfterActionReplay(void) {
     ForceRebuildActiveCarList();
 }
 
-// ToggleReplay
-
+// STUB: CARMA2_HW 0x004e72e0
+void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) { NOT_IMPLEMENTED(); }
 // DisplayMovieStatusPanel
 
 // FUNCTION: CARMA2_HW 0x004022e0
@@ -122,3 +122,20 @@ void C2_HOOK_FASTCALL ARSetPause(int pPause) {
     gPaused = pPause;
 }
 
+// STUB: CARMA2_HW 0x004fef40
+void C2_HOOK_FASTCALL WorkerExtendedSplash(int field_0x0, int field_0x4, int field_0x8, br_vector3* pField_0xc, br_vector3* pField_0x18) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x006a2374
+int gKey_down;
+
+// GLOBAL: CARMA2_HW 0x006a23c4
+int gSingle_frame_mode;
+
+// GLOBAL: CARMA2_HW 0x006a2380
+tU32 gTime_of_last_zappy_headups;
+
+// GLOBAL: CARMA2_HW 0x006a2378
+int gUnk_006a2378;
+
+// GLOBAL: CARMA2_HW 0x006a23c8
+tU32 gUnk_006a23c8;

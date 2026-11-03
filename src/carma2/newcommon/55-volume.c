@@ -40,8 +40,8 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
     return gDefault_water_spec_vol_real;
 }
 
-// FindSpecialVolume
-
+// STUB: CARMA2_HW 0x004ff120
+tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) { NOT_IMPLEMENTED(); }
 // MungeSpecialVolume
 
 // FUNCTION: CARMA2_HW 0x004ff530

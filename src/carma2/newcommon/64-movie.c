@@ -121,8 +121,8 @@ void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
     }
 }
 
-// MovieRecordButtonPressed
-
+// STUB: CARMA2_HW 0x004e1810
+void C2_HOOK_FASTCALL MovieRecordButtonPressed(void) { NOT_IMPLEMENTED(); }
 // STUB: CARMA2_HW 0x004e1a20
 // STUB: CARMA2_SW 0x004ddd20
 void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
@@ -193,3 +193,5 @@ void C2_HOOK_FASTCALL TidyMovieARDisplay(void) {
 
 // FreeS3SoundOutput
 
+// GLOBAL: CARMA2_HW 0x006baa28
+int gRecording_mouse_disabled;

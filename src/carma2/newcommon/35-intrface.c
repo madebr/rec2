@@ -412,3 +412,6 @@ void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, in
         pFrontend->items[i].radioButton_selected = i == pValue;
     }
 }
+
+// STUB: CARMA2_HW 0x00484640
+void C2_HOOK_FASTCALL OriginalResetInterfaceTimeout(void) { NOT_IMPLEMENTED(); }

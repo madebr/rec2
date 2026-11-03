@@ -219,8 +219,8 @@ void C2_HOOK_FASTCALL CopyExplosionData(int pIndex, tExplosion* pExplosion) {
 
 // DoExplosionette
 
-// Explode
-
+// STUB: CARMA2_HW 0x004ead00
+void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004eb020
 // FUNCTION: CARMA2_SW 0x004e6d00
 void C2_HOOK_FASTCALL RemoveExplosions(tCar_spec* pCar_spec) {
@@ -854,8 +854,8 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 
 // VerySimpleRotate
 
-// DoFragMovement
-
+// STUB: CARMA2_HW 0x004eff30
+void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float pDelta_time) { NOT_IMPLEMENTED(); }
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -1416,3 +1416,18 @@ void C2_HOOK_FASTCALL ChangeSmashTexture(br_material* pMaterial, tCar_spec* pCar
 
 // MungeSmashEdgeTriggers
 
+typedef struct {
+    float min_speed;
+    float max_speed;
+    float impactee_velocity_factor;
+    float random_velocity_max;
+    float random_up_velocity_max;
+    float random_normal_velocity_max;
+    float random_spin_rate_max;
+} tSmashable_initial_speed_spec;
+
+// STUB: CARMA2_HW 0x004eb120
+void C2_HOOK_FASTCALL InitFragmentSpeed(tSmash_vertex* pFragment, tSmashable_initial_speed_spec* pSpeed, br_vector3* pArg3, float pArg4, int* pArg5, int pArg6, br_vector3* pArg7, int pArg8, int pArg9) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004ee990
+void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage) { NOT_IMPLEMENTED(); }

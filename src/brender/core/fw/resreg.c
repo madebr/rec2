@@ -93,3 +93,6 @@ br_uint_32 C2_HOOK_CDECL BrResClassEnum(char* pattern, br_resclass_enum_cbfn* ca
 
     return BrRegistryEnum(&fw.reg_resource_classes, pattern, (br_enum_cbfn*)callback, arg);
 }
+
+// STUB: CARMA2_HW 0x00528130
+void C2_HOOK_CDECL FUN_00528130(br_uint_32* pDestination, br_uint_32 pValue, int pCount) { NOT_IMPLEMENTED(); }

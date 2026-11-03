@@ -120,3 +120,25 @@ br_material* C2_HOOK_FASTCALL CreateSimpleMaterial(int pIndex) {
 
 // MakeAISimpleEditSectionHere
 
+// STUB: CARMA2_HW 0x00435d40
+void C2_HOOK_FASTCALL DeleteFarCrushes(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x0043f930
+void C2_HOOK_FASTCALL DoDamage(tCar_spec* pCar, tDamage_type pDamage_type, int pMagnitude) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x0044cfc0
+void C2_HOOK_CDECL DoNotDprintf_drone(const char* pMessage, ...) { NOT_IMPLEMENTED(); }
+
+#ifndef C2_HOOK_FAKE_THISCALL
+#ifdef REC2_MATCHING
+#define C2_HOOK_FAKE_THISCALL __fastcall
+#else
+#define C2_HOOK_FAKE_THISCALL
+#endif
+#endif
+
+// STUB: CARMA2_HW 0x00431610
+void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, float pDamage) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x0065a3c8
+int gChallenger_index__opponent;

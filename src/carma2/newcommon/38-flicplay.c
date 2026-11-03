@@ -1151,3 +1151,8 @@ void C2_HOOK_FASTCALL ResumePendingFlic(void) {
     gPending_flic = gPending_pending_flic;
 }
 
+// GLOBAL: CARMA2_HW 0x00686300
+int gSound_ID;
+
+// GLOBAL: CARMA2_HW 0x00686328
+tU32 gSound_time;

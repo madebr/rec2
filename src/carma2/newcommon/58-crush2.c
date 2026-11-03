@@ -97,8 +97,8 @@ void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
 
 // ExplodeMeCarUpMeOldMatey
 
-// SetKnackeredFlag
-
+// STUB: CARMA2_HW 0x0043f730
+int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
 // DamageUnit2
 
 // RecordLastDamage

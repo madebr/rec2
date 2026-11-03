@@ -307,8 +307,8 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum) {
     GotPowerup(&gProgram_state.current_car, pNum);
 }
 
-// CheckSystemKeys
-
+// STUB: CARMA2_HW 0x00442e90
+void C2_HOOK_FASTCALL CheckSystemKeys(int pRacing) { NOT_IMPLEMENTED(); }
 // CheckForCheatingGits
 
 // CheckKevKeys
@@ -356,8 +356,8 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 // HackyMapFixForMac3dfx
 
-// ToggleMap
-
+// STUB: CARMA2_HW 0x00444610
+void C2_HOOK_FASTCALL ToggleMap(void) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004446f0
 // FUNCTION: CARMA2_SW 0x004447d0
 int C2_HOOK_FASTCALL GetRecoverVoucherCount(void) {
@@ -517,3 +517,8 @@ void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
 
 // ToggleHeadupLevel
 
+// GLOBAL: CARMA2_HW 0x0067c474
+int gEntering_message;
+
+// GLOBAL: CARMA2_HW 0x0067c47c
+tU32 gToo_poor_for_recovery_timeout;

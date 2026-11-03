@@ -791,3 +791,6 @@ void C2_HOOK_FASTCALL TwoCarsHitEachOther(tCar_spec* pA_car, tCar_spec* pAnother
 // RecordOpponentTwattageOccurrence
 
 // GetOpponentMood
+
+// STUB: CARMA2_HW 0x004a7a20
+void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender) { NOT_IMPLEMENTED(); }

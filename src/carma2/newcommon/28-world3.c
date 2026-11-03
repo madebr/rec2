@@ -802,3 +802,12 @@ void C2_HOOK_FASTCALL AllowDuplicates(void) {
 
     gDisallow_duplicates = 0;
 }
+
+// STUB: CARMA2_HW 0x00406ab0
+tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00404410
+tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char* pFile_name) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00404f60
+tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) { NOT_IMPLEMENTED(); }

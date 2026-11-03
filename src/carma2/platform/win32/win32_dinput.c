@@ -1555,3 +1555,9 @@ int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void) {
     }
     return joystick_info->field_0xe0;
 }
+
+// STUB: CARMA2_HW 0x00457eb0
+void C2_HOOK_FASTCALL StartDinputEffect(int pIndex) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00457ed0
+void C2_HOOK_FASTCALL StopDinputEffect(int pIndex) { NOT_IMPLEMENTED(); }

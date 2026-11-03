@@ -1932,3 +1932,16 @@ void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2)
 
 }
 
+// STUB: CARMA2_HW 0x00515910
+void C2_HOOK_FASTCALL StringTransformToLower(char* pStr) { NOT_IMPLEMENTED(); }
+
+#ifdef REC2_SW
+/* direct surface locking is hardware-only; the ported HW callers still name the pair */
+void C2_HOOK_FASTCALL PossibleLock(int pValue) {
+    NOT_IMPLEMENTED();
+}
+
+int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
+    NOT_IMPLEMENTED();
+}
+#endif

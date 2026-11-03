@@ -808,12 +808,12 @@ void C2_HOOK_FASTCALL MakeModelMaterialsSingleSided(br_model* pModel) {
     }
 }
 
-// ReAttachBit
-
+// STUB: CARMA2_HW 0x00434010
+void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar_spec, br_actor* pParent_actor, br_actor* pActor, tPhysics_object* pObject) { NOT_IMPLEMENTED(); }
 // CentreModelOnPoint
 
-// SemiDetachBit
-
+// STUB: CARMA2_HW 0x00436d60
+tPhysics_object* C2_HOOK_FASTCALL SemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, int* pArg4, br_vector3* pArg5, br_bounds3* pArg6, br_vector3* pArg7, br_vector3* pArg8) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x0042dbd0
 // FUNCTION: CARMA2_SW 0x0042dc40
 int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, br_vector3* pP3, br_bounds3* pBounds, br_actor* pActor) {
@@ -892,8 +892,8 @@ void C2_HOOK_FASTCALL SendAllSemiDetachedBits(tNet_game_player_info* pPlayer) {
 
 // AddNonCar
 
-// DetachBit
-
+// STUB: CARMA2_HW 0x00433350
+tPhysics_object* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds) { NOT_IMPLEMENTED(); }
 // DoDetaching
 
 // FlapBit
@@ -902,8 +902,8 @@ void C2_HOOK_FASTCALL SendAllSemiDetachedBits(tNet_game_player_info* pPlayer) {
 
 // StartFlapping
 
-// MungeDetachLists
-
+// STUB: CARMA2_HW 0x0042f3d0
+void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x0043b250
 // FUNCTION: CARMA2_SW 0x0043b2a0
 void C2_HOOK_FASTCALL SendReAttachBit(tCar_spec* pCar, tPhysics_object* pObject) {
@@ -939,8 +939,8 @@ void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec) {
 
 // ToggleFlapsCB2
 
-// ToggleFlapsCB
-
+// STUB: CARMA2_HW 0x0042ddb0
+int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, void* data) { NOT_IMPLEMENTED(); }
 // SendToggleFlaps
 
 // ToggleFlaps
@@ -966,8 +966,8 @@ int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_ob
     return 0;
 }
 
-// FullyDetachBit
-
+// STUB: CARMA2_HW 0x0042f4e0
+void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) { NOT_IMPLEMENTED(); }
 // SendFullyDetachBit
 
 // DoFullyDetaching
@@ -1090,8 +1090,8 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 
 // ReAttachOrFullyDetachDifficultBits
 
-// BendCar
-
+// STUB: CARMA2_HW 0x00433c70
+void C2_HOOK_FASTCALL BendCar(tCar_spec* pCar, br_angle pAngle_x, br_angle pAngle_y, br_angle pAngle_z, const br_vector3* pArg5, float pArg6, int pArg7) { NOT_IMPLEMENTED(); }
 // QuantizeAngle
 
 // BendCarOneForce
@@ -1158,8 +1158,8 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, br_actor
 
 // SphericizePhysics
 
-// SphericizeCar
-
+// STUB: CARMA2_HW 0x004391d0
+void C2_HOOK_FASTCALL SphericizeCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004398d0
 // FUNCTION: CARMA2_SW 0x00439910
 intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
@@ -1364,8 +1364,8 @@ void C2_HOOK_FASTCALL CompletelyUnBendCar(tCar_spec* pCar_spec) {
 
 // RestoreVitalBitsOfObject
 
-// WeldCar
-
+// STUB: CARMA2_HW 0x0043b8a0
+void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec) { NOT_IMPLEMENTED(); }
 // ARCompressCrush
 
 // ARApplyCrush
@@ -1537,3 +1537,32 @@ void C2_HOOK_FASTCALL SetAllShapeStatusFlags(tCar_crush_network_shapes* pShapes)
     }
 }
 
+// STUB: CARMA2_HW 0x0041fbe0
+float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar_spec) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x0041fe50
+int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec* pCar_spec, br_vector3* pVec3) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x0067bad0
+int gCount_crush_detach_list;
+
+// GLOBAL: CARMA2_HW 0x00589a2c
+br_scalar gFLOAT_00589a2c;
+
+// GLOBAL: CARMA2_HW 0x0067a290
+tCrush_net_detach_list_item gNet_crush_detach_list[8];
+
+// GLOBAL: CARMA2_HW 0x0067b7d8
+tCrush_net_full_detach_bit_list_item gNet_crush_full_detach_bit_list[8];
+
+typedef struct tCrush_net_reattach_list_item_local {
+    tCar_spec* actor;
+    tCar_spec* car;
+    undefined4 field_0x8;
+} tCrush_net_reattach_list_item_local;
+
+// GLOBAL: CARMA2_HW 0x0067be10
+tCrush_net_reattach_list_item_local gNet_crush_reattach_bit_list[8];
+
+// GLOBAL: CARMA2_HW 0x0067b840
+tCrush_net_semi_detach_bit_list_item gNet_crush_semi_detach_bit_list[8];

@@ -159,8 +159,8 @@ int C2_HOOK_FASTCALL ActorPick2D(br_actor* pActor, br_model* pModel, br_material
     return r;
 }
 
-// DRScenePick2DXY
-
+// STUB: CARMA2_HW 0x004e36f0
+int C2_HOOK_FASTCALL DRScenePick2DXY(br_actor* world, br_actor* camera, br_pixelmap* viewport, int pick_x, int pick_y, dr_pick2d_cbfn* callback, void* arg) { NOT_IMPLEMENTED(); }
 // DRScenePick2D
 
 #ifdef REC2_MATCHING

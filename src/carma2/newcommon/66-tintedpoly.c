@@ -925,3 +925,6 @@ int C2_HOOK_FASTCALL TintedPolyIsOn(int pIndex) {
 
   return gTintedPolys[pIndex].visible;
 }
+
+// GLOBAL: CARMA2_HW 0x007447a0
+int gEthereal_pedestrians;

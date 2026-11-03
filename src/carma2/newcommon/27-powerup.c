@@ -306,8 +306,8 @@ void C2_HOOK_FASTCALL ToggleInventory(void) {
 
 // CheckRespawnQueue
 
-// MungePowerupStuff
-
+// STUB: CARMA2_HW 0x004db880
+void C2_HOOK_FASTCALL MungePowerupStuff(tU32 pArg1) { NOT_IMPLEMENTED(); }
 void C2_HOOK_FASTCALL GotPowerupN(int pN) {
     int modifiers;
 
@@ -1412,3 +1412,15 @@ void C2_HOOK_FASTCALL PeriodicCloaking(void) {
         }
     }
 }
+
+// STUB: CARMA2_HW 0x004c60a0
+void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x004df200
+void C2_HOOK_FASTCALL WorkerPowerupGot(tPowerup* pPowerup, tCar_spec* pCar) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x006a0960
+tRepulse_link gRepulse_links[6];
+
+// GLOBAL: CARMA2_HW 0x00705560
+tShit_mine gShit_mines[20];

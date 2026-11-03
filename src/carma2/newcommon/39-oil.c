@@ -154,8 +154,8 @@ void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel
     BrModelUpdate(pModel, BR_MODU_ALL);
 }
 
-// ProcessOilSpills
-
+// STUB: CARMA2_HW 0x004a6e50
+void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004a74e0
 // FUNCTION: CARMA2_SW 0x004a3650
 int C2_HOOK_FASTCALL GetOilSpillCount(void) {

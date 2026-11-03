@@ -214,8 +214,8 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 
 // InitialiseCar2
 
-// InitialiseCar
-
+// STUB: CARMA2_HW 0x00414400
+void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar) { NOT_IMPLEMENTED(); }
 // InitialiseCarsEtc
 
 // FUNCTION: CARMA2_HW 0x00414510
@@ -950,3 +950,30 @@ void C2_HOOK_FASTCALL TurnOnNonCar(int pIndex) {
 void C2_HOOK_FASTCALL TurnOffNonCar(int pIndex) {
     gProgram_state.track_spec.non_car_list[pIndex]->render_style = BR_RSTYLE_NONE;
 }
+
+// STUB: CARMA2_HW 0x0043ace0
+float C2_HOOK_FASTCALL ComputeCarImpact(tCar_spec* pCar, tU32 pDelta, float* pOut) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x00414910
+void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefined4* arg2) { NOT_IMPLEMENTED(); }
+
+typedef struct tCollision_contact {
+    float impulse;
+    tPhysics_object* object1;
+    tPhysics_object* object2;
+    void* field_0xc;
+    float field_0x10;
+    br_vector3 r1;
+    br_vector3 r2;
+    br_vector3 normal;
+    br_vector3 field_0x38;
+    br_vector3 impulse1;
+    br_vector3 impulse2;
+    int type;
+} tCollision_contact;
+
+// STUB: CARMA2_HW 0x0041c1b0
+int C2_HOOK_FASTCALL ProcessForcesCallback(tCollision_contact* pContacts, float* pImpulses, int pCount) { NOT_IMPLEMENTED(); }
+
+// STUB: CARMA2_HW 0x0041e310
+int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 param_2, undefined4 param_3) { NOT_IMPLEMENTED(); }

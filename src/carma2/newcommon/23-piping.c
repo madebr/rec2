@@ -88,16 +88,16 @@ tU32 gPipe_sound_start_time;
 // GLOBAL: CARMA2_SW 0x00671018
 tU32 gPipe_sound_time_window;
 
-// ARReplayForwards
-
+// STUB: CARMA2_HW 0x00402300
+int C2_HOOK_FASTCALL ARReplayForwards(void) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x00402360
 // FUNCTION: CARMA2_SW 0x00402360
 int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
     return gReplay_rate == 0.f;
 }
 
-// ARReplayPauseState
-
+// STUB: CARMA2_HW 0x00402380
+int C2_HOOK_FASTCALL ARReplayPauseState(void) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x00402390
 // FUNCTION: CARMA2_SW 0x00402390
 float C2_HOOK_FASTCALL ARGetReplayRate(void) {
@@ -169,8 +169,8 @@ int C2_HOOK_FASTCALL ARSomeReplayLeft(void) {
 
 // StartPipingSession2
 
-// ARStartPipingSession
-
+// STUB: CARMA2_HW 0x004025e0
+void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) { NOT_IMPLEMENTED(); }
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
@@ -266,8 +266,8 @@ void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr) {
 
 // UndoPipedSession
 
-// ARScanBuffer
-
+// STUB: CARMA2_HW 0x00402e10
+int C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDefault_time, void* pCallback, void* pTime_check) { NOT_IMPLEMENTED(); }
 // CheckSound
 
 // FUNCTION: CARMA2_HW 0x00403c50
@@ -359,8 +359,8 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
     gLast_replay_frame_time = PDGetTotalTime();
 }
 
-// ARToggleReplay
-
+// STUB: CARMA2_HW 0x00403d60
+int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_off_AR_callback* pTurn_off_AR_cb, tAfter_AR_callback* pAfter_AR_cb, tZappy_AR_callback* pZappy_AR_cb, tPreprocess_AR_callback* pPreprocess_cb, tPostProcess_AR_callback* pPostProcess_cb, int* pArg7, int* pArg8) { NOT_IMPLEMENTED(); }
 // GetReducedPos
 
 // SaveReducedPos
@@ -457,12 +457,12 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
         SIZE_OFFSET_PIPING(tPipe_chunk_smoke_column, vertex), pVertex);
 }
 
-// AddFlameToPipingSession
-
+// STUB: CARMA2_HW 0x004c70f0
+void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z) { NOT_IMPLEMENTED(); }
 // AddSplashToPipingSession
 
-// AddExtendedSplashToPipingSession
-
+// STUB: CARMA2_HW 0x004c7160
+void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pCollision, void* pArg2) { NOT_IMPLEMENTED(); }
 // AddCarToPipingSession
 
 // AddDamageToPipingSession
@@ -709,8 +709,8 @@ void C2_HOOK_FASTCALL PipeSinglePedDismember(tPedestrian* pPed, tU8 pBone_index,
         SIZE_OFFSET_PIPING(tPipe_single_ped_dismember, new_value), pNew_value);
 }
 
-// PipeSinglePedFPChange
-
+// STUB: CARMA2_HW 0x004c8c30
+void C2_HOOK_FASTCALL PipeSinglePedFPChange(tPedestrian* pPed, float pValue, float pUnused) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004c8c60
 // FUNCTION: CARMA2_SW 0x004c5390
 void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3* pPos, const br_vector3* pVelocity) {
@@ -723,8 +723,8 @@ void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3
         SIZE_OFFSET_PIPING(tPipe_single_ped_pos, v), pVelocity);
 }
 
-// PipeSinglePedModelChange
-
+// STUB: CARMA2_HW 0x004c8c80
+void C2_HOOK_FASTCALL PipeSinglePedModelChange(tPedestrian* pPed, undefined4 pArg2, br_model* pModel, undefined4 pArg4, undefined4 pArg5, undefined4 pArg6) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x004c8cc0
 // FUNCTION: CARMA2_SW 0x004c53f0
 void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* pObject) {
@@ -1331,3 +1331,17 @@ int C2_HOOK_FASTCALL CalcShrapnelLength(tPipe_chunk* pChunk) {
 
 // CalcRemoveFacesLength
 
+// GLOBAL: CARMA2_HW 0x00694104
+undefined4* gCrush_space;
+
+// GLOBAL: CARMA2_HW 0x006940d0
+tU32 gOldest_time;
+
+// GLOBAL: CARMA2_HW 0x006940d4
+tPipe_smudge_data* gSmudge_space;
+
+// GLOBAL: CARMA2_HW 0x00694110
+tU32 gTrigger_time;
+
+// GLOBAL: CARMA2_HW 0x0069410c
+volatile undefined4 gUNK_0069410c;

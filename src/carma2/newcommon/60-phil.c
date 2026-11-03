@@ -326,14 +326,14 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const
     }
 }
 
-// PHILAddActiveObject
-
-// PHILAddObjectImmediately
-
-// PHILAddActiveObjectImmediately
-
-// PHILSetObjectProperty
-
+// STUB: CARMA2_HW 0x004b6210
+int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* pInfo, br_matrix34* pMatrix, const br_vector3* pArg3, const br_vector3* pArg4) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004b62b0
+int C2_HOOK_FASTCALL PHILAddObjectImmediately(tPhysics_object* pObject) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004b62e0
+int C2_HOOK_FASTCALL PHILAddActiveObjectImmediately(tPhysics_object* pInfo, br_matrix34* pMatrix, const br_vector3* pArg3, const br_vector3* pArg4) { NOT_IMPLEMENTED(); }
+// STUB: CARMA2_HW 0x004b63b0
+int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) { NOT_IMPLEMENTED(); }
 // STUB: CARMA2_HW 0x004b6530
 // STUB: CARMA2_SW 0x004b2c50
 float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object* pObject, int pProperty) {
@@ -376,3 +376,5 @@ void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tPhysics_object* pObject) {
 
 // PHILApplyPHILObject
 
+// GLOBAL: CARMA2_HW 0x0074a5f8
+int gCrush_deferred;

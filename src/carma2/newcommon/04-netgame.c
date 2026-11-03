@@ -447,3 +447,11 @@ void C2_HOOK_FASTCALL AddPlayerToShapeStatusLists(int pPlayer_id, int pCount, tN
 
 // RemovePlayerFromShapeStatusLists
 
+// STUB: CARMA2_HW 0x0049cd90
+int C2_HOOK_FASTCALL SelectCrushNetwork(undefined4* pField, tPhysics_object* pObj, int pMode) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x0068d934
+int gNot_shown_race_type_headup;
+
+// GLOBAL: CARMA2_HW 0x0068d92c
+tU32 gTime_for_punishment;

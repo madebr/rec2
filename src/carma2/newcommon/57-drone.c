@@ -457,8 +457,8 @@ br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void) {
 
 // GetCurrentViewDroneDirection
 
-// ApplyDroneRender2
-
+// STUB: CARMA2_HW 0x00452810
+void C2_HOOK_FASTCALL ApplyDroneRender2(int pIndex, int pRender) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x00452880
 // FUNCTION: CARMA2_SW 0x00452610
 void C2_HOOK_FASTCALL ApplyDroneStraightPos2(int pDrone_id, tDrone_path_node_section* pSection, tU16 pSpeed, tU16 pDistance) {
@@ -517,3 +517,14 @@ void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU16 pFie
 
 // WriteOutDronePaths
 
+// GLOBAL: CARMA2_HW 0x00684500
+int gCount_rendered_drones;
+
+// GLOBAL: CARMA2_HW 0x00594738
+tDrone_state_function* gDrone_state_functions[6];
+
+// GLOBAL: CARMA2_HW 0x00594780
+const char* gGroove_funk_type_names[4];
+
+// GLOBAL: CARMA2_HW 0x00705b70
+tU32 gINT_00705b70;

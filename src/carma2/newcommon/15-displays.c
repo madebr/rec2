@@ -938,3 +938,8 @@ void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY) {
 #endif
 }
 
+// STUB: CARMA2_HW 0x0044a860
+void C2_HOOK_FASTCALL MoveHeadupKeepOffset(int pHeadup_index, int pX, int pY) { NOT_IMPLEMENTED(); }
+
+// GLOBAL: CARMA2_HW 0x0067f890
+tQueued_headup gQueued_headups[4];

@@ -3033,3 +3033,6 @@ void C2_HOOK_FASTCALL FrontEndHideMouse(void) {
 
     gFrontend_suppress_mouse = 1;
 }
+
+// GLOBAL: CARMA2_HW 0x00688780
+tSave_game gStashed_save_game;

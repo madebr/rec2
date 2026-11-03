@@ -196,3 +196,9 @@ tRace_result C2_HOOK_FASTCALL DoRace(void) {
     result = MainGameLoop();
     return result;
 }
+
+// GLOBAL: CARMA2_HW 0x0079d8a0
+tHeadup_text_buffer gJoystick_headup_buffer_0079d8a0;
+
+// GLOBAL: CARMA2_HW 0x006a2368
+int gReplay_show_controls;

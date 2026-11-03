@@ -65,3 +65,6 @@ tFrontend_spec gFrontend_NETWORK = {
     0
 #endif
 };
+
+// GLOBAL: CARMA2_HW 0x00688748
+int gINT_00688748;

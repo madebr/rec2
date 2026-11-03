@@ -1755,3 +1755,6 @@ int C2_HOOK_FASTCALL S3UpdateCDAVolume(tS3_channel* pChannel, int pVolume) {
     }
     return 0;
 }
+
+// STUB: CARMA2_HW 0x00566dc1
+tS3_sound_tag C2_HOOK_FASTCALL S3StartSoundFromSource3(tS3_sound_id pSound, tS3_sound_source* pSource, tS3_repeats pRepeats, tS3_volume pVolume, tS3_pitch pPitch, tS3_speed pSpeed) { NOT_IMPLEMENTED(); }

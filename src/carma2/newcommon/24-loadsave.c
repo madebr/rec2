@@ -40,8 +40,8 @@ void C2_HOOK_FASTCALL DoSaveGame(void) {
     NOT_IMPLEMENTED();
 }
 
-// StartSavedGamesList
-
+// STUB: CARMA2_HW 0x00491bb0
+int C2_HOOK_FASTCALL StartSavedGamesList(void) { NOT_IMPLEMENTED(); }
 // FUNCTION: CARMA2_HW 0x00491c90
 // FUNCTION: CARMA2_SW 0x0048ef00
 void C2_HOOK_FASTCALL EndSavedGamesList(void) {
