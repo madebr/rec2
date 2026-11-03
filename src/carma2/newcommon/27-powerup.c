@@ -1134,7 +1134,24 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SendMines
 
-// MinePreCollisionStuff
+// FUNCTION: CARMA2_HW 0x004dd1b0
+void C2_HOOK_FASTCALL MinePreCollisionStuff(void) {
+    int i;
+    tPhysics_object* obj;
+
+    for (i = 0; i < (int)REC2_ASIZE(gShit_mines); i++) {
+        if (!(gShit_mines[i].flags & 0x1)) {
+            continue;
+        }
+        obj = gShit_mines[i].collision_info;
+        if (obj->field_0x261 != 0x31 || obj->message_time != gPHIL_last_physics_tick) {
+            continue;
+        }
+        obj->field_0xf0 = 1;
+        SelectCrushNetwork((undefined4*)((char*)obj + 0x294), obj, 2);
+        obj->field_0x261 = 0;
+    }
+}
 
 // ConfigureShitMine
 
