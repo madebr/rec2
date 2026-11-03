@@ -111,7 +111,18 @@ void C2_HOOK_FASTCALL FUN_00461980(int pSound_ID, tU32 pSound_time) {
 
 // Lives here (not in 32-spark.c) on purpose: its string literal in a TU before
 // 36-trig.c shifts gFloat_sine_table and drops FastFloatCos 0x511440 to 97.22.
-// DustRotate
+// FUNCTION: CARMA2_HW 0x004fa8d0
+void C2_HOOK_FASTCALL DustRotate(void) {
+    extern int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText);
+    extern int gDust_rotate;
+    extern int gNum_dust_tables;
+
+    gDust_rotate++;
+    if (gDust_rotate >= gNum_dust_tables) {
+        gDust_rotate = 0;
+    }
+    NewTextHeadupSlot(4, 0, 1000, -4, "Dust colour rotated");
+}
 
 // DoFeatureUnavailableInDemo
 
