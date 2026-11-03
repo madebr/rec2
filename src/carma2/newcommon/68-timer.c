@@ -231,6 +231,3 @@ void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen) {
         tolerance_str,
         0);
 }
-
-// GLOBAL: CARMA2_HW 0x006b781c
-tRace_over_reason gRace_over_reason;
