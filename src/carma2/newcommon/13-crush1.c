@@ -3141,3 +3141,24 @@ int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec* pCar_spec, br_vector3*
     gTesting_car_for_sensible_place = 0;
     return r;
 }
+
+
+// FUNCTION: CARMA2_HW 0x0042d8f0
+void C2_HOOK_FASTCALL AddToggledDoor(br_actor* pActor, tCar_spec* pCar, int pFlag, float pDelay) {
+    extern tToggled_door gToggled_doors[16];
+    extern int gCount_toggled_doors;
+    int i;
+
+    if (gCount_toggled_doors != 16) {
+        for (i = 0; i < gCount_toggled_doors; i++) {
+            if (gToggled_doors[i].actor == pActor) {
+                return;
+            }
+        }
+        gToggled_doors[gCount_toggled_doors].actor = pActor;
+        gToggled_doors[gCount_toggled_doors].car = pCar;
+        gToggled_doors[gCount_toggled_doors].field_0x8 = pFlag;
+        gToggled_doors[gCount_toggled_doors].field_0xc = pDelay;
+        gCount_toggled_doors = gCount_toggled_doors + 1;
+    }
+}
