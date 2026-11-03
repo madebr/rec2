@@ -172,8 +172,19 @@ void C2_HOOK_FASTCALL TurnOpponentPhysicsOff(tOpponent_spec* pOpponent_spec) {
     }
 }
 
-// STUB: CARMA2_HW 0x004a7a20
-void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender) { NOT_IMPLEMENTED(); }
+// FUNCTION: CARMA2_HW 0x004a7a20
+void C2_HOOK_FASTCALL SetOppoRender(tOpponent_spec* pOpponent_spec, int pRender) {
+    if (gAction_replay_mode && ARGetReplayRate() < gOppo_render_zero) {
+        pRender = (pRender == 0);
+    }
+    pOpponent_spec->car_spec->car_master_actor->render_style = (pRender == 0) ? BR_RSTYLE_NONE : BR_RSTYLE_DEFAULT;
+}
+
+// ApplyOppoRenderage2
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 // NewObjective
 
 // FUNCTION: CARMA2_HW 0x004a9550
