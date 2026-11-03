@@ -862,7 +862,29 @@ void C2_HOOK_FASTCALL AllowDuplicates(void) {
     gDisallow_duplicates = 0;
 }
 
-// SwapPixelmapInStorage
+// FUNCTION: CARMA2_HW 0x00502d80
+br_pixelmap* C2_HOOK_FASTCALL SwapPixelmapInStorage(br_pixelmap* pNew, br_pixelmap* pOriginal, tBrender_storage* pStorage) {
+    int i;
+
+    for (i = 0; i < pStorage->pixelmaps_count; i++) {
+        if (pOriginal == pStorage->pixelmaps[i]) {
+            BrMapRemove(pOriginal);
+            BrPixelmapFree(pOriginal);
+            pStorage->pixelmaps[i] = pNew;
+            BrMapAdd(pNew);
+            return pNew;
+        }
+    }
+    PDFatalError("Can't swap in pixelmap");
+    return NULL;
+}
+
+extern FILE* C2_HOOK_FASTCALL BonerOpenRemaps(const char* pFile_name);
+extern tPed_remap* gPed_remaps[10];
+extern tPed_move* gPed_moves[250];
+extern tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const char* pLooping_reset_flags, const br_vector3* pMovement_direction, tU32 pFlags);
+extern br_actor* gMr_blendy;
+extern void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face* pFace, br_model* pModel);
 
 // GLOBAL: CARMA2_HW 0x0058f290
 const char* gPed_remap_axis_choices[6] = {
