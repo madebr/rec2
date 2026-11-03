@@ -1095,7 +1095,15 @@ void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
     }
 }
 
-// UserSendMessage
+// FUNCTION: CARMA2_HW 0x004448f0
+void C2_HOOK_FASTCALL UserSendMessage(void) {
+
+    if (gNet_mode != eNet_mode_none && gCurrent_net_game->options.enable_text_messages) {
+        gEntering_message = 1;
+    }
+}
+
+// EnterUserMessage
 
 // DisplayUserMessage
 
