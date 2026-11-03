@@ -19,6 +19,10 @@ extern int gASCII_shift_table[151];
 extern int gScan_code[256];
 extern int gJoystick_deadzone;
 
+extern void C2_HOOK_FASTCALL StartDinputEffect(int pIndex);
+
+extern int C2_HOOK_FASTCALL SetJoystickFFBCollisionForce(int pMagnitude, int pDirection);
+
 extern void C2_HOOK_FASTCALL KeyBegin(void);
 
 extern void C2_HOOK_FASTCALL Win32InitInputDevice(void);

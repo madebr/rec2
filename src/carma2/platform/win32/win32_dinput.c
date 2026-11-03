@@ -1567,3 +1567,27 @@ int C2_HOOK_FASTCALL SetJoystickFFBSteeringForce(int pMagnitude) {
     NOT_IMPLEMENTED();
     return 0;
 }
+
+// FUNCTION: CARMA2_HW 0x00458720
+int C2_HOOK_FASTCALL SetJoystickFFBCollisionForce(int pMagnitude, int pDirection) {
+    /* This SDK spells DIEP_TYPESPECIFICPARAMS and DIEP_DIRECTION 0x100 and 0x40. */
+    if (!gForceFeedbackAvailable) {
+        return 0;
+    }
+    if (pMagnitude > 10000) {
+        pMagnitude = 10000;
+    }
+    *(tS32*)&gJoystick_effects[gCollision_force_joystick_effect_index].type_specific_params = pMagnitude;
+    gJoystick_effects[gCollision_force_joystick_effect_index].field_0x60 = pDirection;
+    if (gDirectInputEffects[gCollision_force_joystick_effect_index] != NULL) {
+        gDirectInputEffects[gCollision_force_joystick_effect_index]->lpVtbl->SetParameters(gDirectInputEffects[gCollision_force_joystick_effect_index], &gJoystick_effects[gCollision_force_joystick_effect_index].di_effect, 0x100);
+        gDirectInputEffects[gCollision_force_joystick_effect_index]->lpVtbl->SetParameters(gDirectInputEffects[gCollision_force_joystick_effect_index], &gJoystick_effects[gCollision_force_joystick_effect_index].di_effect, 0x40);
+    }
+    StartDinputEffect(gCollision_force_joystick_effect_index);
+    return 1;
+}
+
+// STUB: CARMA2_HW 0x00457eb0
+void C2_HOOK_FASTCALL StartDinputEffect(int pIndex) {
+    NOT_IMPLEMENTED();
+}
