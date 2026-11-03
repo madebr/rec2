@@ -559,6 +559,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
         tPipe_single_ped_dismember ped_dismember;
+        tPipe_chunk_repulse_ray repulse_ray;
         tPipe_phil_object phil_object;
         tPipe_chunk_shrapnel shrapnel;
         tPipe_chunk_identity identity;
