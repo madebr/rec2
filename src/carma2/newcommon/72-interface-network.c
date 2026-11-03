@@ -199,7 +199,60 @@ static int NetHostRaceIndex(const char* pName) {
     return index;
 }
 
-// NetHostChooseThisRace
+// FUNCTION: CARMA2_HW 0x004691a0
+int C2_HOOK_FASTCALL NetHostChooseThisRace(tFrontend_spec* pFrontend) {
+    int race_index;
+
+    pFrontend->items[17].enabled = kFrontendItemEnabled_enabled;
+    pFrontend->items[29].enabled = kFrontendItemEnabled_disabled;
+    race_index = NetHostRaceIndex(pFrontend->items[gFrontend_selected_item_index].text);
+    gProgram_state.current_race_index = race_index;
+    strcpy(pFrontend->items[30].text, gRace_list[race_index].description);
+    MungeMetaCharactersChar(pFrontend->items[30].text, 'R', '\r');
+    MungeMetaCharactersNum(pFrontend->items[30].text, 'O', gRace_list[race_index].count_explicit_opponents);
+    MungeMetaCharactersNum(pFrontend->items[30].text, 'L', gRace_list[race_index].count_laps);
+    FuckWithWidths(pFrontend);
+    return 0;
+}
+
+// ScrollDn of the join list and NetworkUpdateSelectedGameInfo are inlined in the original:
+// the game-info text is built with sprintf into a local buffer and copied to items[30].
+static void NetJoinDisposeGame(int netgame_idx) {
+    NetDisposeGameDetails(gGames_to_join[netgame_idx].game);
+    gGames_to_join[netgame_idx].game = NULL;
+}
+
+static void NetJoinUpdateSelectedGameInfo(tFrontend_spec* pFrontend) {
+    int netgame_idx;
+
+    netgame_idx = 0;
+    if (gFrontend_selected_item_index >= pFrontend->scrollers[2].indexFirstScrollableItem
+            && gFrontend_selected_item_index <= pFrontend->scrollers[2].indexLastScrollableItem) {
+        netgame_idx = gFrontend_selected_item_index - pFrontend->scrollers[2].indexFirstScrollableItem;
+    }
+    if (gGames_to_join[netgame_idx].game != NULL
+            && gGames_to_join[netgame_idx].game->type >= 0
+            && gGames_to_join[netgame_idx].game->type <= 7) {
+        size_t len;
+        const char* status_str;
+        const char* open_str;
+        char s[256];
+
+        if (PDGetTotalTime() - gGames_to_join[netgame_idx].time >= 15000) {
+            NetJoinDisposeGame(netgame_idx);
+            return;
+        }
+        len = 0;
+        len += sprintf(s + len, "Game: %s @R", gGames_to_join[netgame_idx].game->pd_net_info.addr + 14);
+        len += sprintf(s + len, "Type: %s @R", GetMiscString(eMiscString_network_type_start + gGames_to_join[netgame_idx].game->type));
+        len += sprintf(s + len, "Players: %d @R", gGames_to_join[netgame_idx].game->num_players);
+        status_str = GetMiscString(eMiscString_netgame_stage_start + gGames_to_join[netgame_idx].game->status.stage);
+        open_str = GetMiscString(eMiscString_closed + gGames_to_join[netgame_idx].game->options.open_game);
+        sprintf(s + len, "Status: %s, %s ", status_str, open_str);
+        sprintf(pFrontend->items[30].text, "%s", s);
+        MungeMetaCharactersChar(pFrontend->items[30].text, 'R', '\r');
+    }
+}
 
 // NetJoinChooseThisGame
 
