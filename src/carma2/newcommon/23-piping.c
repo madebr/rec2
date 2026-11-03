@@ -1462,7 +1462,22 @@ void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_mate
         SIZE_OFFSET_PIPING(tPipe_smash_texture_change, texture2), pTexture);
 }
 
-// PipeSinglePedStatus
+// FUNCTION: CARMA2_HW 0x004c8a90
+void C2_HOOK_FASTCALL PipeSinglePedStatus(const tPedestrian* pPed, tS8 pArg2, tS8 pArg3, tS8 pArg4, tS8 pArg5, tS8 pArg6, tS8 pArg7, tS8 pArg8, tS8 pArg9, const br_vector3* pArg10, const br_vector3* pArg11, const br_matrix34* pArg12) {
+
+    ARDoSingleVariedSession(ePipe_chunk_single_ped_status, (uintptr_t)pPed, 11,
+        1, 0, pArg2,
+        1, 1, pArg3,
+        1, 2, pArg4,
+        1, 3, pArg5,
+        1, 4, pArg6,
+        1, 5, pArg7,
+        1, 6, pArg8,
+        1, 7, pArg9,
+        12, 8, pArg10,
+        12, 20, pArg11,
+        48, 32, pArg12);
+}
 
 // FUNCTION: CARMA2_HW 0x004c8b10
 // FUNCTION: CARMA2_SW 0x004c5240
