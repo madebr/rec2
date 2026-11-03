@@ -1056,7 +1056,14 @@ void C2_HOOK_FASTCALL ChangeHeadupImage(int pHeadup_index, int pImage_index) {
     }
 }
 
-// DisplayTimedMessage
+// FUNCTION: CARMA2_HW 0x0044ba10
+void C2_HOOK_FASTCALL DisplayTimedMessage(char* pText) {
+    LoadFont(1);
+    ClearEntireScreen();
+    DRPixelmapText(gBack_screen, 20, 50, &gFonts[1], pText, 600);
+    PDScreenBufferSwap(0);
+    WaitFor(500);
+}
 
 // GLOBAL: CARMA2_HW 0x0067f890
 tQueued_headup gQueued_headups[4];
