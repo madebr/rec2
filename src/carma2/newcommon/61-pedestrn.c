@@ -92,6 +92,9 @@ extern tWorld_callbacks gWorld_callbacks;
 
 extern void C2_HOOK_FASTCALL CachePedestrianFaces(tPedestrian* pPed, br_vector3* pHit_pos, tU32 pCache_key);
 
+#define GET_PED_COLLISION_OBJECT(PED) ( ((PED)->character->field_0x14 & 1) ? (PED)->character->personality->form->simple_physicing[(PED)->character->field_0x5].collision_info : GetRootObject((PED)->character))
+extern void C2_HOOK_FASTCALL ApplyNonCarTumble(tPhysics_object* pObject, br_vector3* pV, br_scalar pTumbleFactor, br_scalar pTumbleThreshold);
+
 extern tS3_outlet* gCar_outlet;
 
 typedef struct {
@@ -2860,7 +2863,64 @@ int C2_HOOK_FASTCALL CBActiveHalted(tPed_character_instance* pCharacter, tPhysic
 
 // PedProcessForces
 
-// CBMovedByPhysics
+// FUNCTION: CARMA2_HW 0x004d2930
+void C2_HOOK_FASTCALL CBMovedByPhysics(tPed_character_instance* pCharacter, tPhysics_object* pPhysics, undefined4 pArg3) {
+    tPedestrian* ped;
+    br_scalar speed;
+    int move_speed;
+    int move_id;
+
+    ped = pCharacter->ped;
+    ped->pos.v[0] = pPhysics->actor->t.t.mat.m[3][0];
+    ped->pos.v[1] = pPhysics->actor->t.t.mat.m[3][1];
+    ped->pos.v[2] = pPhysics->actor->t.t.mat.m[3][2];
+    pCharacter->field_0xd8.v[0] = pPhysics->v.v[0];
+    pCharacter->field_0xd8.v[1] = pPhysics->v.v[1];
+    pCharacter->field_0xd8.v[2] = pPhysics->v.v[2];
+    speed = BrVector3Length(&pPhysics->v);
+    ApplyNonCarTumble(pPhysics, &pPhysics->v, 1.39f, 0.1f);
+
+    move_id = pCharacter->personality->form->moves[pCharacter->field_0x7].id;
+    if (move_id == 0x5d || move_id == 0x5e || move_id == 0x61) {
+        if (speed != 0.0f) {
+            move_speed = (int)(FRandomBetween(0.6f, 1.4f) * (25.0 / speed));
+            if (move_speed < 20) {
+                move_speed = 20;
+            } else if (move_speed > 150) {
+                move_speed = 150;
+            }
+            if (GET_PED_COLLISION_OBJECT(ped)->last_special_volume != NULL) {
+                if (GET_PED_COLLISION_OBJECT(ped)->last_special_volume->gravity_multiplier < 1.0f) {
+                    move_speed = (int)(move_speed * 1.5);
+                }
+            }
+        } else {
+            move_speed = 0;
+        }
+        SetCharacterMoveAR(pCharacter, -1, (float)move_speed, 0, 0, GetTotalTime());
+    }
+
+    if (GET_PED_COLLISION_OBJECT(ped)->last_special_volume != NULL) {
+        if (GET_PED_COLLISION_OBJECT(ped)->last_special_volume->gravity_multiplier < 1.0f) {
+            if (ped->hit_points > 0) {
+                if (BrVector3Length(&pPhysics->omega) < 1.0) {
+                    pPhysics->omega.v[0] += SRandomPosNeg(5.f);
+                    pPhysics->omega.v[1] += SRandomPosNeg(5.f);
+                    pPhysics->omega.v[2] += SRandomPosNeg(5.f);
+                }
+                if (pPhysics->water_depth_factor <= 1.0 && pPhysics->v.v[1] > -0.02) {
+                    if (pPhysics->water_depth_factor < 1.0) {
+                        pPhysics->v.v[1] += FRandomBetween(0.f, -0.3f);
+                    }
+                }
+            }
+        }
+    }
+
+    if (!gAction_replay_mode) {
+        PipeSinglePedPhysics((((tS16)ped->field_0x06) << 16) | (ped - gPedestrian_array), GetCharacterMatrixPtr(pCharacter));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004d2c40
 // FUNCTION: CARMA2_SW 0x004cf330
