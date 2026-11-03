@@ -799,7 +799,81 @@ void C2_HOOK_FASTCALL MergeBoundsIntoParent(tPhysics_object* pObject, br_bounds3
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
 #endif
-// AppendOverlappingObjects
+// FUNCTION: CARMA2_HW 0x004bd830
+tPhysics_object** C2_HOOK_FASTCALL AppendOverlappingObjects(tPhysics_object* pObject, tPhysics_object* pList, tPhysics_object** pObjects) {
+    tPhysics_object** pLink;
+    tPhysics_object** pChild_link;
+    tPhysics_object* pCurrent;
+    tPhysics_object* child_head;
+    float x;
+
+    pLink = pObjects;
+    if (pList->parent != NULL) {
+        for (pCurrent = pList; pCurrent != NULL; pCurrent = pCurrent->next) {
+            if ((pCurrent == pObject && (pObject->flags & 8) == 0)
+                    || BoundsOverlapTest(&pObject->field_0x10c, &pCurrent->field_0x10c)) {
+                *pLink = pCurrent;
+                pLink = (tPhysics_object**)&pCurrent->field_0x234;
+            }
+        }
+    } else {
+        x = pObject->field_0x10c.min.v[0] - gFLOAT_00692dd0;
+        for (pCurrent = pObject->prev; pCurrent != NULL && pCurrent->transform_matrix.m[3][0] >= x; pCurrent = pCurrent->prev) {
+            if (BoundsOverlapTest(&pObject->field_0x10c, &pCurrent->field_0x10c)) {
+                *pLink = pCurrent;
+                pLink = (tPhysics_object**)&pCurrent->field_0x234;
+            }
+        }
+        x = pObject->field_0x10c.max.v[0] - gFLOAT_00692dd4;
+        for (pCurrent = pObject->next; pCurrent != NULL && pCurrent->transform_matrix.m[3][0] <= x; pCurrent = pCurrent->next) {
+            if (BoundsOverlapTest(&pObject->field_0x10c, &pCurrent->field_0x10c)) {
+                *pLink = pCurrent;
+                pLink = (tPhysics_object**)&pCurrent->field_0x234;
+            }
+        }
+        if ((pObject->flags & 8) == 0) {
+            *pLink = pObject;
+            pLink = (tPhysics_object**)&pObject->field_0x234;
+        }
+    }
+    *pLink = NULL;
+
+    child_head = NULL;
+    pCurrent = *pObjects;
+    pChild_link = &child_head;
+    while (pCurrent != NULL) {
+        if (pCurrent->child != NULL) {
+            pChild_link = AppendOverlappingObjects(pObject, pCurrent->child, pChild_link);
+        }
+        pCurrent = (tPhysics_object*)pCurrent->field_0x234;
+    }
+    if (child_head != NULL) {
+        *pChild_link = NULL;
+        *pLink = child_head;
+        return pChild_link;
+    }
+    return pLink;
+}
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// GetWorldBoundingBoxForObjects
+
+// GetWorldBoundingBoxForObject
+
+// MatricesAreIdentical
+
+// InternalPrepareObject
+
+// PrepareObject
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth(0)
+#endif
 // FUN_004b73a0
 // FUN_004b7310
 
