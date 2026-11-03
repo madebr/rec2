@@ -276,6 +276,11 @@ void C2_HOOK_FASTCALL WorkerPedStatusUndo(int field_0x0, tU8 field_0x4, tU8 fiel
     NOT_IMPLEMENTED();
 }
 
+// STUB: CARMA2_HW 0x004ca4d0
+void C2_HOOK_FASTCALL WorkerPedDir(int field_0x0, br_vector3* pDir) {
+    NOT_IMPLEMENTED();
+}
+
 // STUB: CARMA2_HW 0x004f0380
 void C2_HOOK_FASTCALL WorkerShrapnelShowerUndo(tU32 chunk_0x48, tU32 prev_0x4, tU32 prev_0x84, tU32 prev_0x44, br_vector3* prev_0x8, br_vector3* prev_0x20, br_vector3* prev_0x2c, tU32 prev_0x50, tU32 prev_0x48, tU32 prev_0x0, br_vector3* prev_0x54, br_vector3* prev_0x88, br_vector3* prev_0x14, tU32 prev_0xa0, br_vector3* prev_0x38) {
     NOT_IMPLEMENTED();
@@ -2409,7 +2414,12 @@ void C2_HOOK_FASTCALL ApplyPedStatus(tPipe_chunk** pChunk) {
     return WorkerPedStatus(chunk->field_0x0, chunk->field_0x4[0], chunk->field_0x4[1], chunk->field_0x4[2], chunk->field_0x4[3], chunk->field_0x4[5], chunk->field_0x4[7], &chunk->field_0xc, &chunk->field_0x18, &chunk->field_0x24);
 }
 
-// ApplyPedDir
+// FUNCTION: CARMA2_HW 0x004c9ad0
+void C2_HOOK_FASTCALL ApplyPedDir(tPipe_chunk** pChunk) {
+    tPipe_chunk_ped_dir* chunk = (tPipe_chunk_ped_dir*)*pChunk;
+
+    return WorkerPedDir(chunk->field_0x0, &chunk->field_0x4);
+}
 
 // ApplyPedMove
 
