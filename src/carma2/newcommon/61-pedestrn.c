@@ -189,6 +189,11 @@ int gPed_cache_notify_flags;
 void C2_HOOK_FASTCALL DisposePedForm(tPed_form* pForm);
 void C2_HOOK_FASTCALL DisposePedPersonality(tPed_personality* pPersonality);
 
+// STUB: CARMA2_HW 0x0040ba80
+void C2_HOOK_FASTCALL SetPhysicsObjectOmegaRecursive(tPhysics_object* pObject, br_vector3* pOmega) {
+    NOT_IMPLEMENTED();
+}
+
 // STUB: CARMA2_HW 0x004b63b0
 int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...) {
     NOT_IMPLEMENTED();
@@ -2746,4 +2751,94 @@ int C2_HOOK_FASTCALL GetCharacterBoneIndexByName(tPed_character_instance* pChara
         }
     }
     return -1;
+}
+
+
+// FUNCTION: CARMA2_HW 0x0040b860
+int C2_HOOK_FASTCALL MakeCharacterBonePhysicworthy(tPed_character_instance* pCharacter, int pBone_index, br_vector3* pVelocity, br_vector3* pOmega) {
+    extern int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pObject, int pProperty, ...);
+    tPed_form* form;
+    tPed_form_boned_phys* boned_physicing;
+    tPed_form_actor_set* actor_set;
+    tPhysics_object* obj;
+    tPhysics_object* child;
+    br_actor* actor;
+    br_vector3 omega;
+    int i;
+
+    if ((pCharacter->field_0xc & gPow2_array[pBone_index]) == 0) {
+        if ((tS8)pCharacter->field_0x6 < 0) {
+            form = pCharacter->personality->form;
+            boned_physicing = form->boned_physicing;
+            for (i = 0; i < form->max_boned_physicing_at_once; i++, boned_physicing++) {
+                if (boned_physicing->field_0x0 == 0) {
+                    break;
+                }
+            }
+            if (i == form->max_boned_physicing_at_once) {
+                goto done;
+            }
+            pCharacter->field_0x6 = (tU8)i;
+            boned_physicing->field_0x0 = 1;
+        }
+
+        if (pOmega == NULL) {
+            omega.v[0] = SRandomPosNeg(1.f);
+            omega.v[1] = SRandomPosNeg(1.f);
+            omega.v[2] = SRandomPosNeg(1.f);
+        } else {
+            omega = *pOmega;
+        }
+
+        form = pCharacter->personality->form;
+        boned_physicing = &form->boned_physicing[(tS8)pCharacter->field_0x6];
+        actor_set = &form->actor_sets[(tS8)pCharacter->field_0x4];
+        actor = actor_set->actors[pBone_index];
+        if (MakeCharacterPhysics(pCharacter, boned_physicing->collision_infos[pBone_index], actor, (tU8*)actor->model + 0x34, NULL, 3, 1, 1, 0, NULL, NULL) != 0) {
+            obj = boned_physicing->collision_infos[pBone_index];
+        } else {
+            obj = NULL;
+        }
+        if (obj != NULL) {
+            pCharacter->field_0xc |= gPow2_array[pBone_index];
+            if (obj->parent != NULL) {
+                obj->parent->child = NULL;
+                obj->parent = NULL;
+            }
+            obj->child = NULL;
+            obj->physics_joint1 = NULL;
+
+            if (pCharacter->field_0x14 & 4) {
+                if (pVelocity == NULL) {
+                    pVelocity = &pCharacter->field_0xd8;
+                }
+                obj->disable_move_rotate = 0;
+                if (pVelocity != NULL) {
+                    obj->v.v[0] = pVelocity->v[0];
+                    obj->v.v[1] = pVelocity->v[1];
+                    obj->v.v[2] = pVelocity->v[2];
+                    for (child = obj->child; child != NULL; child = child->next) {
+                        SetObjectV(child, pVelocity);
+                    }
+                }
+                if ((int)&omega != 0) {
+                    obj->omega.v[0] = omega.v[0];
+                    obj->omega.v[1] = omega.v[1];
+                    obj->omega.v[2] = omega.v[2];
+                    for (child = obj->child; child != NULL; child = child->next) {
+                        SetPhysicsObjectOmegaRecursive(child, &omega);
+                    }
+                }
+                PHILMakeObjectActive(obj, NULL, NULL, 0);
+                obj->field_0xed = 1;
+                PHILSetObjectProperty(obj, 0, 1.0);
+                PHILSetObjectProperty(obj, 3, 0);
+                PHILSetObjectProperty(obj, 4, 0);
+                PHILSetObjectProperty(obj, 5, 0);
+            }
+            return 1;
+        }
+    }
+done:
+    return 0;
 }
