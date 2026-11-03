@@ -348,3 +348,8 @@ int gOffence_dim_x = 0x1c0;
 // GLOBAL: CARMA2_HW 0x00655f38
 int gOffence_dim_y = 0x31;
 #endif
+
+#ifdef REC2_SW
+/* ported HW bodies still name it; the software edition leaves it NULL */
+br_actor* g2d_camera;
+#endif
