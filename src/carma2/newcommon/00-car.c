@@ -376,13 +376,13 @@ void C2_HOOK_FASTCALL AddDrag(const tCar_spec* pCar, tPhysics_object* pObject, b
     if (pObject->last_special_volume != NULL) {
         k = pObject->last_special_volume->viscosity_multiplier;
         if (pCar->underwater_ability) {
-            k *= 0.6;
+            k = (br_scalar)(k * 0.6);
         }
         drag *= k;
         drag *= pObject->water_depth_factor;
     }
 
-    k = BrVector3Length(&pObject->v) * drag * WORLD_SCALE_D / pObject->M;
+    k = (br_scalar)(BrVector3Length(&pObject->v) * drag * WORLD_SCALE_D / pObject->M);
     BrVector3Scale(&v, &pObject->v, k);
     DRVector3Diminish(&pObject->v, &v);
 
