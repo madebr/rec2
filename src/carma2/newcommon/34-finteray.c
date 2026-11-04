@@ -302,7 +302,7 @@ void C2_HOOK_FASTCALL FillInBounds(tBounds* pBounds) {
         pBounds->real_bounds.min.v[i] += c[0].v[i] * (float)(c[0].v[i] < 0.0f)
             + c[1].v[i] * (float)(c[1].v[i] < 0.0f)
             + c[2].v[i] * (float)(c[2].v[i] < 0.0f);
-        pBounds->real_bounds.max.v[i] += (float)(c[0].v[i] > 0.0f)
+        pBounds->real_bounds.max.v[i] += c[0].v[i] * (float)(c[0].v[i] > 0.0f)
             + c[1].v[i] * (float)(c[1].v[i] > 0.0f)
             + c[2].v[i] * (float)(c[2].v[i] > 0.0f);
     }
