@@ -9,21 +9,23 @@
 #include "00-car.h"
 
 #include "01-network.h"
+#include "02-init.h"
 #include "04-netgame.h"
 #include "13-crush1.h"
 #include "15-displays.h"
 #include "17-world2.h"
 #include "18-graphics2.h"
-
+#include "20-skidmark.h"
 #include "22-replay.h"
 #include "23-piping.h"
+#include "27-powerup.h"
 #include "29-raycast.h"
-
 #include "30-opponent.h"
 #include "34-finteray.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "49-physics.h"
+#include "53-controls.h"
 #include "58-crush2.h"
 #include "60-phil.h"
 #include "brender/brender.h"
@@ -213,7 +215,156 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
     pCar->field_0xe18 = pIndex;
 }
 
-// InitialiseCar2
+// FUNCTION: CARMA2_HW 0x00413f70
+// FUNCTION: CARMA2_SW 0x00413fa0
+void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag) {
+    int index;
+    int j;
+    br_matrix34 safe_position;
+    tNet_game_player_info* net_player;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x261, 0x261);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, message_time, 0x268);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x49c, 0x49c);
+
+    PossibleService();
+    if (pCar->disabled && pClear_disabled_flag) {
+        if (gNet_mode == eNet_mode_none) {
+            EnableCar(pCar);
+        } else {
+            net_player = NetPlayerFromCar(pCar);
+            if (net_player->player_status == ePlayer_status_ready || net_player->player_status == ePlayer_status_racing) {
+                EnableCar(pCar);
+            }
+        }
+    }
+    InitCarSkidStuff(pCar);
+    pCar->car_model_actor->render_style = BR_RSTYLE_DEFAULT;
+    SwitchCarModels(pCar, 0);
+    pCar->collision_info->last_special_volume = NULL;
+    pCar->collision_info->auto_special_volume = NULL;
+    pCar->field_0xc8 = NULL;
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        ResetRecoveryVouchers();
+    }
+    BrVector3SetFloat(&pCar->collision_info->v, 0.0f, 0.0f, 0.0f);
+    BrVector3SetFloat(&pCar->collision_info->omega, 0.0f, 0.0f, 0.0f);
+    pCar->curvature = 0.0f;
+    pCar->field_0x1260 = 0.0f;
+    BrMatrix34Copy(&safe_position, &pCar->car_master_actor->t.t.mat);
+    if (safe_position.m[3][0] > 500.0f) {
+        BrVector3Sub((br_vector3*)safe_position.m[3], (br_vector3*)safe_position.m[3], &gInitial_position);
+    }
+    BrMatrix34Copy(&pCar->old_frame_mat, &safe_position);
+    BrMatrix34Copy(&pCar->collision_info->transform_matrix, &safe_position);
+    BrMatrix34ApplyP(&pCar->pos, &pCar->collision_info->cmpos, &pCar->collision_info->transform_matrix);
+    for (j = 0; j < REC2_ASIZE(pCar->oldd); j++) {
+        pCar->oldd[j] = pCar->ride_height;
+    }
+    pCar->gear = 0;
+    pCar->revs = 0.0f;
+    pCar->traction_control = 1;
+    BrVector3Negate(&pCar->direction, (br_vector3*)pCar->car_master_actor->t.t.mat.m[2]);
+    for (j = 0; j < REC2_ASIZE(pCar->last_safe_positions); j++) {
+        BrMatrix34Copy(&pCar->last_safe_positions[j], &safe_position);
+    }
+    pCar->collision_info->field_0x261 = 0;
+    pCar->collision_info->message_time = 0;
+    pCar->dt = -1.0f;
+    pCar->collision_info->field_0x49c = 1;
+    pCar->time_to_recover = 0;
+    pCar->repair_time  = 0;
+    pCar->collision_info->water_d  = 10000.0f;
+
+    switch (pCar->driver) {
+    case eDriver_oppo:
+        index = 0;
+        for (j = 0; j < gCurrent_race.number_of_racers; j++) {
+            if (gCurrent_race.opponent_list[j].car_spec != NULL
+                    && gCurrent_race.opponent_list[j].car_spec->driver == eDriver_oppo) {
+                if (pCar == gCurrent_race.opponent_list[j].car_spec) {
+                    pCar->car_ID = (eVehicle_opponent << 8) + index;
+                }
+                index++;
+            }
+        }
+        break;
+    case eDriver_net_human:
+        index = 0;
+        for (j = 0; j < gCurrent_race.number_of_racers; j++) {
+            if (gCurrent_race.opponent_list[j].car_spec != NULL
+                    && gCurrent_race.opponent_list[j].car_spec->driver == eDriver_net_human) {
+                if (pCar == gCurrent_race.opponent_list[j].car_spec) {
+                    pCar->car_ID = (eVehicle_net_player << 8) + index;
+                }
+                index++;
+            }
+        }
+        break;
+    case eDriver_local_human:
+        pCar->car_ID = 0;
+        break;
+#ifndef REC2_MATCHING
+    default:
+        break;
+#endif
+    }
+    PossibleService();
+    pCar->collision_info->box_face_ref = gFace_num__car - 2;
+    pCar->collision_info->box_face_end = 0;
+    pCar->collision_info->box_face_start = 0;
+    pCar->collision_info->disable_move_rotate = 0;
+    pCar->end_steering_damage_effect = 0;
+    pCar->end_trans_damage_effect = 0;
+    pCar->wheel_dam_offset[0] = 0.0f;
+    pCar->wheel_dam_offset[1] = 0.0f;
+    pCar->wheel_dam_offset[2] = 0.0f;
+    pCar->wheel_dam_offset[3] = 0.0f;
+    pCar->shadow_intersection_flags = 0;
+    pCar->underwater_ability = 0;
+
+    if (gNet_mode == eNet_mode_none) {
+        net_player = NULL;
+    } else {
+        net_player = NetPlayerFromCar(pCar);
+    }
+    if (net_player != NULL && net_player->field_0x80) {
+        pCar->invulnerable_no_crushage = 1;
+        pCar->invulnerable_no_damage = 1;
+        pCar->invulnerable_no_wastage = 1;
+    } else {
+        pCar->invulnerable_no_crushage = 0;
+        pCar->invulnerable_no_damage = 0;
+        pCar->invulnerable_no_wastage = 0;
+    }
+    pCar->wall_climber_mode = 0;
+    pCar->grip_multiplier = 1.0f;
+    pCar->damage_multiplier = 1.0f;
+    pCar->field_0x4c8 = 1.0f;
+    pCar->field_0x4d4 = 1.0f;
+    pCar->bounce_rate = 0.0f;
+    pCar->bounce_amount = 0.0f;
+    pCar->knackered = 0;
+    pCar->collision_info->last_special_volume = NULL;
+    pCar->collision_info->auto_special_volume = NULL;
+    RemoveFromCloakingList(pCar);
+    TurnOffCloaking(NULL, pCar);
+    if (pCar == NULL || pCar->driver != eDriver_local_human) {
+        pCar->joystick.left = -1;
+        pCar->joystick.right = -1;
+    }
+    TotallyRepairACar(pCar);
+    SetCarSuspGiveAndHeight(pCar, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
+    for (j = 0; j < REC2_ASIZE(pCar->powerups); j++) {
+        pCar->powerups[j] = 0;
+    }
+    if (gNet_mode != eNet_mode_none && (net_player == NULL || !net_player->field_0x80)) {
+        for (j = 0; j < (int)REC2_ASIZE(pCar->power_up_levels); j++) {
+            pCar->power_up_levels[j] = gNet_mode != eNet_mode_none ? gInitial_APO[j].initial_network[gCurrent_net_game->type] : gInitial_APO[j].initial[gProgram_state.skill_level];
+            pCar->power_up_slots[j] = gNet_mode != eNet_mode_none ? gInitial_APO_potential[j].initial_network[gCurrent_net_game->type] : gInitial_APO_potential[j].initial[gProgram_state.skill_level];
+        }
+    }
+}
 
 // InitialiseCar
 
@@ -869,11 +1020,19 @@ void C2_HOOK_FASTCALL FreezeMechanics(void) {
 
 // GetCarOverallBoundsMinY
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // STUB: CARMA2_HW 0x0041fc60
 // STUB: CARMA2_SW 0x0041fce0
 void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height) {
     NOT_IMPLEMENTED();
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // TestForCarInSensiblePlace
 

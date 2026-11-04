@@ -1368,6 +1368,7 @@ int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* pPowerup, tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e0cb0
+// FUNCTION: CARMA2_SW 0x004dcfd0
 void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar) {
     int i;
 
@@ -1403,6 +1404,7 @@ int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e0d50
+// FUNCTION: CARMA2_SW 0x004dd070
 void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* pPowerup, tCar_spec* pCar) {
 
     if (gNet_mode != eNet_mode_none) {

@@ -273,6 +273,7 @@ void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar) {
 }
 
 // STUB: CARMA2_HW 0x004f8e10
+// STUB: CARMA2_SW 0x004f4490
 void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar) {
     NOT_IMPLEMENTED();
 }
