@@ -370,7 +370,7 @@ extern void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* pPowerup, tCar_spec* p
 
 extern void C2_HOOK_FASTCALL SendCurrentPowerups(void);
 
-// LoseAllLocalPowerups
+extern void C2_HOOK_FASTCALL LoseAllLocalPowerups(tCar_spec* pCar);
 
 // LoseDodgyPowerups
 

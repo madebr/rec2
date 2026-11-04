@@ -27,6 +27,7 @@ extern int gEliminate_faces;
 extern int gIn_the_sea;
 extern int gFace_num__car;
 extern tFace_ref gFace_list__car[300];
+extern br_scalar gMin_world_y;
 
 extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount);
 
@@ -54,11 +55,11 @@ extern intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 
 extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
-// InitialiseCar2
+extern void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag);
 
-// InitialiseCar
+extern void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar);
 
-// InitialiseCarsEtc
+extern void C2_HOOK_FASTCALL InitialiseCarsEtc(tRace_info* pThe_race);
 
 extern void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, tU32 pGrid_index);
 
