@@ -797,9 +797,10 @@ void C2_HOOK_FASTCALL RotateObjectFirstOrder(tPhysics_object* pObject, br_scalar
 // RotateObject
 
 void C2_HOOK_FASTCALL TranslateObject(tPhysics_object* pObject, br_scalar pDelta_time) {
-    pObject->actor->t.t.translate.t.v[0] += pDelta_time * pObject->v.v[0];
-    pObject->actor->t.t.translate.t.v[1] += pDelta_time * pObject->v.v[1];
-    pObject->actor->t.t.translate.t.v[2] += pDelta_time * pObject->v.v[2];
+    br_vector3 tv;
+
+    BrVector3Scale(&tv, &pObject->v, pDelta_time);
+    BrVector3Accumulate(&pObject->actor->t.t.translate.t, &tv);
 }
 
 // GetFacesNearObject
