@@ -8,10 +8,13 @@
 
 #include "04-netgame.h"
 
+#include "00-car.h"
 #include "01-network.h"
 #include "07-structur.h"
+#include "13-crush1.h"
 #include "27-powerup.h"
 #include "30-opponent.h"
+#include "32-spark.h"
 #include "41-utility.h"
 #include "63-loading3.h"
 #include "72-interface.h"
@@ -31,6 +34,10 @@ tNet_game_player_info* gLast_lepper;
 // GLOBAL: CARMA2_HW 0x0068d928
 // GLOBAL: CARMA2_SW 0x00687980
 int gLast_it_change;
+
+// GLOBAL: CARMA2_HW 0x0068d92c
+// GLOBAL: CARMA2_SW 0x00687984
+tU32 gTime_for_punishment;
 
 // SendShapeNumbers
 
@@ -164,7 +171,19 @@ void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
     NOT_IMPLEMENTED();
 }
 
-// ReinitialiseCar
+// FUNCTION: CARMA2_HW 0x00499220
+// FUNCTION: CARMA2_SW 0x00495e50
+void C2_HOOK_FASTCALL ReinitialiseCar(tCar_spec* pCar) {
+
+    StopCarSmokingInstantly(pCar);
+    LoseAllLocalPowerups(pCar);
+    InitialiseCar(pCar);
+    TotallyRepairACar(pCar);
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        gTime_for_punishment = PDGetTotalTime() + 2000;
+        EmptyInventory();
+    }
+}
 
 // RepositionPlayer
 

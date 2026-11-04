@@ -1037,7 +1037,11 @@ void C2_HOOK_FASTCALL SendCurrentPowerups(void) {
     NOT_IMPLEMENTED();
 }
 
-// LoseAllLocalPowerups
+// STUB: CARMA2_HW 0x004def00
+// STUB: CARMA2_SW 0x004db400
+void C2_HOOK_FASTCALL LoseAllLocalPowerups(tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
 
 // LoseDodgyPowerups
 
