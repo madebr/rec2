@@ -25,6 +25,7 @@
 #include "41-utility.h"
 #include "49-physics.h"
 #include "58-crush2.h"
+#include "59-camera.h"
 #include "60-phil.h"
 #include "brender/brender.h"
 #include "globvars.h"

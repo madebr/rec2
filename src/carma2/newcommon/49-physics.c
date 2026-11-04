@@ -869,11 +869,14 @@ void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pT
 void C2_HOOK_FASTCALL ApplyDiminishingTorque(tPhysics_object* pObject, const br_vector3* pV) {
     br_vector3 original_omega;
     br_vector3 tv;
+    br_vector3 inertia;
 
-    BrVector3Copy(&original_omega, &pObject->omega);
-    BrVector3Scale(&tv, pV, 1 / REC2_SQR(WORLD_SCALE));
-    Vector3Div(&tv, &tv, &pObject->I);
-    BrVector3Sub(&pObject->omega, &pObject->omega, &tv);
+    original_omega = pObject->omega;
+    BrVector3Scale(&tv, pV, (br_scalar)(1.0 / REC2_SQR(WORLD_SCALE_D)));
+    BrVector3Copy(&inertia, &pObject->I);
+    pObject->omega.v[0] -= tv.v[0] / inertia.v[0];
+    pObject->omega.v[1] -= tv.v[1] / inertia.v[1];
+    pObject->omega.v[2] -= tv.v[2] / inertia.v[2];
     if (original_omega.v[0] * pObject->omega.v[0] <= 0.0f) {
         pObject->omega.v[0] = 0.0f;
     }
