@@ -90,7 +90,7 @@ extern void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 // MungeCarsMass
 
-// AddDrag
+extern void C2_HOOK_FASTCALL AddDrag(const tCar_spec* pCar, tPhysics_object* pObject, br_scalar pDelta_time);
 
 // DragChildren
 
