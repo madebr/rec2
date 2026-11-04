@@ -276,13 +276,36 @@ void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_
 // MultiRayCheckSingleFace
 
 // STUB: CARMA2_HW 0x0045f5b0
+// STUB: CARMA2_SW 0x0045f020
 void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x0045f690
-void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x0045f690
+// FUNCTION: CARMA2_SW 0x0045f100
+void C2_HOOK_FASTCALL FillInBounds(tBounds* pBounds) {
+    br_vector3 tv;
+    br_vector3 c[3];
+    int i;
+
+    BrVector3Add(&tv, &pBounds->original_bounds.min, &pBounds->original_bounds.max);
+    BrVector3InvScale(&tv, &tv, 2.0f);
+    BrMatrix34ApplyP(&pBounds->box_centre, &tv, pBounds->mat);
+    BrVector3Sub(&tv, &pBounds->original_bounds.max, &pBounds->original_bounds.min);
+    pBounds->radius = BrVector3Length(&tv) / 2.0f;
+    BrMatrix34ApplyP(&pBounds->real_bounds.min, &pBounds->original_bounds.min, pBounds->mat);
+    BrVector3Copy(&pBounds->real_bounds.max, &pBounds->real_bounds.min);
+    for (i = 0; i < 3; ++i) {
+        BrVector3Scale(&c[i], (br_vector3*)pBounds->mat->m[i], tv.v[i]);
+    }
+    for (i = 0; i < 3; ++i) {
+        pBounds->real_bounds.min.v[i] += c[0].v[i] * (float)(c[0].v[i] < 0.0f)
+            + c[1].v[i] * (float)(c[1].v[i] < 0.0f)
+            + c[2].v[i] * (float)(c[2].v[i] < 0.0f);
+        pBounds->real_bounds.max.v[i] += c[0].v[i] * (float)(c[0].v[i] > 0.0f)
+            + c[1].v[i] * (float)(c[1].v[i] > 0.0f)
+            + c[2].v[i] * (float)(c[2].v[i] > 0.0f);
+    }
 }
 
 // STUB: CARMA2_HW 0x0045f8c0

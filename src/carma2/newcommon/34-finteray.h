@@ -66,7 +66,7 @@ extern void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_p
 
 extern void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m);
 
-extern void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds);
+extern void C2_HOOK_FASTCALL FillInBounds(tBounds* pBounds);
 
 extern int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, br_material* material, tFace_ref* face_list, int max_face, br_matrix34* pMat, tWorld_callbacks* pWorld_callbacks);
 
