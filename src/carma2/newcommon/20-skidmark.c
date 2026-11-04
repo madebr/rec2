@@ -51,7 +51,6 @@ tSkid gSkids[100];
 // GLOBAL: CARMA2_SW 0x0069c840
 int gCurrent_skid;
 
-// FUNCTION: CARMA2_SW 0x004e6060
 // FUNCTION: CARMA2_HW 0x004ea2c0
 void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* pTo, br_scalar pTexture_start, br_scalar pTexture_step) {
     br_vector3 temp;
