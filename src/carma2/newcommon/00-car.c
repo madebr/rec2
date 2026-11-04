@@ -92,7 +92,7 @@ int gEliminate_faces;
 
 // GLOBAL: CARMA2_HW 0x00679364
 // GLOBAL: CARMA2_SW 0x00673ad4
-int gInTheSea;
+int gIn_the_sea;
 
 // GLOBAL: CARMA2_HW 0x0065d010
 // GLOBAL: CARMA2_SW 0x00657948
@@ -101,6 +101,18 @@ int gFace_num__car = 1;
 // GLOBAL: CARMA2_HW 0x00744820
 // GLOBAL: CARMA2_SW 0x0073b2e0
 tFace_ref gFace_list__car[300];
+
+// GLOBAL: CARMA2_HW 0x00679360
+// GLOBAL: CARMA2_SW 0x00673ad0
+br_scalar gMin_world_y;
+
+// GLOBAL: CARMA2_HW 0x006793e4
+// GLOBAL: CARMA2_SW 0x00673b54
+tPhysics_object* gUnknown_car_collision_info;
+
+// GLOBAL: CARMA2_HW 0x006793d4
+// GLOBAL: CARMA2_SW 0x00673b44
+int gDouble_pling_water;
 
 // FUNCTION: CARMA2_HW 0x00413cc0
 // FUNCTION: CARMA2_SW 0x00413cf0
@@ -326,13 +338,95 @@ void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
 
 // InitialiseNonCar
 
-// NewFaceListCallBack
+// FUNCTION: CARMA2_HW 0x00414910
+// FUNCTION: CARMA2_SW 0x00414940
+void C2_HOOK_FASTCALL NewFaceListCallback(tPhysics_object* pObject, tFace_ref* pFace) {
+    br_bounds3 current_bounds;
+    br_scalar old_d;
+    float prop7;
+
+    old_d = pObject->water_d;
+    if (pObject->owner == NULL) {
+        return;
+    }
+    prop7 = PHILGetObjectProperty(pObject, 7);
+    if (pObject->flags_0x238 != 1 && prop7 == 0.0f) {
+        return;
+    }
+    if (pObject != NULL
+            && pObject->owner != NULL
+            && pObject->flags_0x238 == 1
+            && ((tCar_spec*)pObject->owner)->driver == eDriver_local_human
+            && pObject->water_d != 10000.0f
+            && gDouble_pling_water
+            && BrVector3Dot(&pObject->water_normal, &pObject->field_0xf4.max) - pObject->water_d <= 0.0f) {
+        gIn_the_sea = 1;
+        FreezeCamera();
+    }
+    if (pFace != NULL && (float)fabs(pFace->normal.v[1]) > 0.9f) {
+        BrVector3Copy(&pObject->water_normal, &pFace->normal);
+        if (pObject->water_normal.v[1] < 0.0f) {
+            BrVector3Negate(&pObject->water_normal, &pObject->water_normal);
+        }
+        pObject->water_d = BrVector3Dot(&pFace->v[0], &pObject->water_normal);
+        if (pObject != NULL
+            && pObject->owner != NULL
+            && pObject->flags_0x238 == 1
+            && ((tCar_spec*)pObject->owner)->driver == eDriver_local_human) {
+            if (pFace->material->identifier[1] == '!') {
+                if (BrVector3Dot(&pObject->field_0xf4.min, &pObject->water_normal) - pObject->water_d < 0.0f) {
+                    GetNewBoundingBox(&current_bounds, &pObject->bb1, &pObject->actor->t.t.mat);
+                    if (BrVector3Dot(&current_bounds.min, &pObject->water_normal) - pObject->water_d < 0.0f) {
+                        gIn_the_sea = 1;
+                        FreezeCamera();
+                    }
+                }
+                gDouble_pling_water = 1;
+            } else {
+                gDouble_pling_water = 0;
+            }
+        }
+    } else {
+        pObject->water_d = 10000.f;
+        if (pObject != NULL
+                && pObject->owner != NULL
+                && pObject->flags_0x238 == 1
+                && ((tCar_spec*)pObject->owner)->driver == eDriver_local_human) {
+            gIn_the_sea = gIn_the_sea == 1 ? 2 : 0;
+        }
+    }
+    if (fabs(old_d - pObject->water_d) > 1e-05) {
+        if (PHILGetObjectProperty(pObject, 6) != 0.f) {
+            ARStartPipingSession(ePipe_extended_splash);
+            AddExtendedSplashToPipingSession(pObject, pObject);
+            AREndPipingSession();
+        }
+        if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+            tCar_spec* owner = (tCar_spec*)pObject->owner;
+            if (owner != NULL && owner->driver > 5) {
+                ARStartPipingSession(ePipe_chunk_splash);
+                AddSplashToPipingSession(pObject);
+                AREndPipingSession();
+                return;
+            }
+            ARStartPipingSession(ePipe_extended_splash);
+            AddExtendedSplashToPipingSession(pObject, pObject->actor);
+            AREndPipingSession();
+            return;
+        }
+        if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 >= 2 && pObject->flags_0x238 <= 4) {
+            ARStartPipingSession(ePipe_extended_splash);
+            AddExtendedSplashToPipingSession(pObject, pObject->owner);
+            AREndPipingSession();
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00414ca0
 // FUNCTION: CARMA2_SW 0x00414cd0
 int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
-    return gInTheSea;
+    return gIn_the_sea;
 }
 
 // RememberSafePosition

@@ -72,7 +72,7 @@ extern int C2_HOOK_FASTCALL ARSomeReplayLeft(void);
 
 // StartPipingSession2
 
-// ARStartPipingSession
+extern void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
 
 extern void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
@@ -182,9 +182,9 @@ extern void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSm
 
 // AddFlameToPipingSession
 
-// AddSplashToPipingSession
+extern void C2_HOOK_FASTCALL AddSplashToPipingSession(tPhysics_object* pObject);
 
-// AddExtendedSplashToPipingSession
+extern void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pObject, void* pSubject);
 
 // AddCarToPipingSession
 

@@ -24,7 +24,7 @@ extern int gFreeze_mechanics;
 extern int gNum_active_non_cars;
 extern tNon_car_spec* gActive_non_car_list[99];
 extern int gEliminate_faces;
-extern int gInTheSea;
+extern int gIn_the_sea;
 extern int gFace_num__car;
 extern tFace_ref gFace_list__car[300];
 
@@ -66,7 +66,7 @@ extern void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
 
 // InitialiseNonCar
 
-// NewFaceListCallBack
+extern void C2_HOOK_FASTCALL NewFaceListCallback(tPhysics_object* pObject, tFace_ref* pFace);
 
 extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
