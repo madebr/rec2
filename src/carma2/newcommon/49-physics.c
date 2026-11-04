@@ -857,14 +857,33 @@ void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pT
     br_vector3 torque;
     br_vector3 inertia;
 
-    BrVector3Scale(&torque, pTorque, 1.0f / (WORLD_SCALE * WORLD_SCALE));
+    BrVector3Scale(&torque, pTorque, 1.0f / REC2_SQR(WORLD_SCALE));
     BrVector3Copy(&inertia, &pObject->I);
     pObject->omega.v[0] += torque.v[0] / inertia.v[0];
     pObject->omega.v[1] += torque.v[1] / inertia.v[1];
     pObject->omega.v[2] += torque.v[2] / inertia.v[2];
 }
 
-// ApplyDiminishingTorque
+// FUNCTION: CARMA2_HW 0x004c2c90
+// FUNCTION: CARMA2_SW 0x004bf3c0
+void C2_HOOK_FASTCALL ApplyDiminishingTorque(tPhysics_object* pObject, const br_vector3* pV) {
+    br_vector3 original_omega;
+    br_vector3 tv;
+
+    BrVector3Copy(&original_omega, &pObject->omega);
+    BrVector3Scale(&tv, pV, 1 / REC2_SQR(WORLD_SCALE));
+    Vector3Div(&tv, &tv, &pObject->I);
+    BrVector3Sub(&pObject->omega, &pObject->omega, &tv);
+    if (original_omega.v[0] * pObject->omega.v[0] <= 0.0f) {
+        pObject->omega.v[0] = 0.0f;
+    }
+    if (original_omega.v[1] * pObject->omega.v[1] <= 0.0f) {
+        pObject->omega.v[1] = 0.0f;
+    }
+    if (original_omega.v[2] * pObject->omega.v[2] <= 0.0f) {
+        pObject->omega.v[2] = 0.0f;
+    }
+}
 
 // OrderObjectListOnX
 
