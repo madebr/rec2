@@ -19,6 +19,8 @@ foreach(edition ${REC2_EDITIONS})
 
         core/fw/assocarr.c
         core/fw/assocarr.h
+        core/fw/blockops.c
+        core/fw/blockops.h
         core/fw/brbegin.c
         core/fw/brbegin.h
         core/fw/brbhook.c

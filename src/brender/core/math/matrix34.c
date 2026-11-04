@@ -496,7 +496,7 @@ void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, const br_matrix4* B) {
 
 // FUNCTION: CARMA2_HW 0x005333a0
 // FUNCTION: CARMA2_SW 0x0052ea40
-void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C) {
+void C2_HOOK_STDCALL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
     A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
@@ -679,9 +679,9 @@ void C2_HOOK_CDECL BrMatrix34PreScale(br_matrix34* mat, br_scalar sx, br_scalar 
 // FUNCTION: CARMA2_SW 0x0052f5d0
 void C2_HOOK_CDECL BrMatrix34PostScale(br_matrix34* mat, br_scalar sx, br_scalar sy, br_scalar sz) {
 
-    BrMatrix34Scale(&mattmp1, sx, sy, sz);
-    BrMatrix34Mul(&mattmp2, mat, &mattmp1);
-    BrMatrix34Copy(mat, &mattmp2);
+    BrMatrix34Scale(&mattmp2, sx, sy, sz);
+    BrMatrix34Mul(&mattmp1, mat, &mattmp2);
+    BrMatrix34Copy(mat, &mattmp1);
 }
 
 // FUNCTION: CARMA2_HW 0x00533fd0

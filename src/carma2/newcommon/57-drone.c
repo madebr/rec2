@@ -510,7 +510,11 @@ void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU16 pFie
     DoDroneFunkyGroovyThings(drone);
 }
 
-// ReallocModelFacesAndVertices
+// STUB: CARMA2_HW 0x00452f40
+void C2_HOOK_FASTCALL ReallocModelFacesAndVertices(br_model* pModel, int pCount_faces, int pCount_vertices) {
+    BrBlockFill(NULL, 0, 0);
+    NOT_IMPLEMENTED();
+}
 
 // CalcNFacesAndVerticesInEditModel
 

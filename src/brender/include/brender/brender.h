@@ -270,6 +270,11 @@ extern void C2_HOOK_CDECL _BrEndHook(void);
 extern br_error C2_HOOK_CDECL BrDevFind(br_device** pdev, const char* pattern);
 extern br_error C2_HOOK_CDECL BrDevRemove(br_device* dev);
 
+// memops
+extern void C2_HOOK_CDECL BrBlockFill(void* pDestination, int pValue, int pCount_dwords);
+extern void C2_HOOK_CDECL BrBlockCopy(void* pDestination, const void* pSource, int pCount_dwords);
+extern void C2_HOOK_CDECL BrFarBlockCopy(void *pDestination, const void *pSource, int pCount_dwords);
+
 // Carmageddon 2 adaptation
 extern void C2_HOOK_CDECL BrSetScreenZOffset(br_uint_32 pOffset);
 

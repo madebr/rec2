@@ -17,10 +17,10 @@
 #include <ddraw.h>
 #include <d3d.h>
 
-#define QUEUE_RENDER_STATE(TYPE, VALUE) do {                                            \
+#define QUEUE_RENDER_STATE(TYPE, VALUE) do {                                  \
         gQueued_render_states[gCount_queued_render_states].type = (TYPE);     \
         gQueued_render_states[gCount_queued_render_states].value = (VALUE);   \
-        gCount_queued_render_states += 1;                                          \
+        gCount_queued_render_states += 1;                                     \
     } while (0)
 
 typedef struct {

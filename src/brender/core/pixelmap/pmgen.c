@@ -252,7 +252,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_rectangle2(br_device_pixelmap* 
     br_error e;
 
     tl.x = bl.x = rect->x;
-    tr.y = tl.y = rect->y;
+    tl.y = tr.y = rect->y;
     tr.x = br.x = rect->x + rect->w - 1;
     bl.y = br.y = rect->y + rect->h - 1;
 

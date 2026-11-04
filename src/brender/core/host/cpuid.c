@@ -32,7 +32,7 @@ const br_token cpu_types[] = {
 
 // FUNCTION: CARMA2_HW 0x005404b0
 // FUNCTION: CARMA2_SW 0x0053bb50
-C2_NAKED void C2_HOOK_CDECL CPUInfo(br_token* cpu_type, br_uint_32* features) {
+C2_MATCHING_NAKED void C2_HOOK_CDECL CPUInfo(br_token* cpu_type, br_uint_32* features) {
     __asm {
         push              ebp
         mov               ebp,esp

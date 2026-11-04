@@ -42,7 +42,7 @@ extern void PDNonFatalError(const char* pThe_str);
 
 extern int PDIsWindowInactive(void);
 
-extern int PDConvertToASCIILessThan128(char pChar);
+extern char PDConvertToASCIILessThan128(char pChar);
 
 extern int PDGetKeyboardCharacter(void);
 

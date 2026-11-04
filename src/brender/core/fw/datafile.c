@@ -249,7 +249,6 @@ const char* ChunkNames[CHUNKNAMES_NB] = {
     PIXELMAP_NEW_STR
 };
 
-
 // GLOBAL: CARMA2_HW 0x006b09b0
 // GLOBAL: CARMA2_SW 0x006aa138
 int DatafileStackTop;
@@ -258,12 +257,12 @@ int DatafileStackTop;
 // FUNCTION: CARMA2_SW 0x00524b80
 void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count) {
 
-    if (DatafileStackTop >= BR_ASIZE(DatafileStack)) {
+    if (DatafileStackTop >= (int)BR_ASIZE(DatafileStack)) {
         BrFailure("DatafileStack Overflow");
     }
     DatafileStack[DatafileStackTop].type = type;
-    DatafileStack[DatafileStackTop].count = count;
     DatafileStack[DatafileStackTop].value = value;
+    DatafileStack[DatafileStackTop].count = count;
     DatafileStackTop++;
 }
 
@@ -1573,8 +1572,9 @@ int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics) {
 // FUNCTION: CARMA2_SW 0x005275e0
 br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar_type) {
     int mode;
-    br_datafile* df;
     void* h;
+    br_datafile* df;
+    br_file_primitives* prims;
 
     mode = fw.open_mode;
     if (write != 0) {
@@ -1586,23 +1586,35 @@ br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar
         return NULL;
     }
     df = BrResAllocate(fw.res, sizeof(br_datafile), BR_MEMORY_DATAFILE);
-    df->prims = &_BrFilePrimsNull;
     df->h = h;
+    df->prims = &_BrFilePrimsNull;
     df->scalar_type = scalar_type;
 
-    if (mode == BR_FS_MODE_BINARY) {
-        if (write != 0) {
-            df->prims = &_BrFilePrimsWriteBinary;
+    switch (mode) {
+    case BR_FS_MODE_BINARY:
+        if (write) {
+            prims = &_BrFilePrimsWriteBinary;
         } else {
-            df->prims = &_BrFilePrimsReadBinary;
+            prims = &_BrFilePrimsReadBinary;
         }
-    } else {
-        if (write != 0)
-            df->prims = &_BrFilePrimsWriteText;
-        else
-            df->prims = &_BrFilePrimsReadText;
+        df->prims = prims;
+        break;
+    case BR_FS_MODE_TEXT:
+        if (write) {
+            prims = &_BrFilePrimsWriteText;
+        } else {
+            prims = &_BrFilePrimsReadText;
+        }
+        df->prims = prims;
+        break;
     }
-    DfPush(BR_MEMORY_FILE, df, 1); // Wrong enum -> should be DF_STACK_FILE (see comment in src/BRSRC13/CORE/V1DB/v1dbfile.c)
+    if (DatafileStackTop >= (int)BR_ASIZE(DatafileStack)) {
+        BrFailure("DatafileStack Overflow");
+    }
+    DatafileStack[DatafileStackTop].type = BR_MEMORY_FILE;
+    DatafileStack[DatafileStackTop].value = df;
+    DatafileStack[DatafileStackTop].count = 1;
+    DatafileStackTop++;
     return df;
 }
 

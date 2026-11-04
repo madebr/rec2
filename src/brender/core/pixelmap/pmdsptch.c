@@ -412,7 +412,7 @@ br_error C2_HOOK_STDCALL DispatchRectangleStretchCopy(br_device_pixelmap* self, 
     } else if(!(src->pm_flags & BR_PMF_NO_ACCESS)) {
         return ((br_device_pixelmap*)self)->dispatch->_rectangleStretchCopyTo(self, r, (br_device_pixelmap*)src, s);
     } else if(!(self->pm_flags & BR_PMF_NO_ACCESS)) {
-        return ((br_device_pixelmap*)self)->dispatch->_rectangleStretchCopyFrom(src, r, (br_device_pixelmap*)self, s);
+        return ((br_device_pixelmap*)src)->dispatch->_rectangleStretchCopyFrom(src, r, (br_device_pixelmap*)self, s);
         } else {
         return GeneralRectangleStretchCopy((br_device_pixelmap*)self, r, (br_device_pixelmap*)src, s);
     }

@@ -242,8 +242,11 @@ void C2_HOOK_STDCALL SetOrderTableRange(br_order_table* order_table) {
         if ((order_table->flags & 0x10) != 0){
             order_table->sort_z = order_table->max_z;
         } else {
-            if ((order_table->flags & 0x20) != 0)
-                order_table->sort_z = order_table->min_z + 0.5f * range;
+            if ((order_table->flags & 0x20) != 0) {
+                float scaled_range = 0.5f * range;
+
+                order_table->sort_z = order_table->min_z + scaled_range;
+            }
         }
     }
 }

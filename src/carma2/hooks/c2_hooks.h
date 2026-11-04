@@ -39,6 +39,7 @@ extern C2_NORETURN void rec2_error(const char *reason, const char *function, con
 #define C2_HOOK_FASTCALL __fastcall
 #define C2_HOOK_STDCALL __stdcall
 #define C2_HOOK_THISCALL __thiscall
+#define C2_MATCHING_NAKED C2_NAKED
 
 // FIXME: rewrite to C2_HOOK_STATIC_ASSERT
 #define C2_HOOK_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
@@ -52,6 +53,7 @@ extern C2_NORETURN void rec2_error(const char *reason, const char *function, con
 #define C2_HOOK_FASTCALL
 #define C2_HOOK_STDCALL
 #define C2_HOOK_THISCALL
+#define C2_MATCHING_NAKED
 
 #define C2_HOOK_ASSERT(condition)
 #define C2_HOOK_BUG_ON(condition)
