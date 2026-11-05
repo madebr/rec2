@@ -215,6 +215,27 @@ typedef struct {
 } tSmoke_column_core;
 
 typedef struct {
+    float opacity;
+    br_pixelmap* map;
+} tExplosion_frame;
+
+typedef struct {
+    tU32 start;
+    tU32 period;
+    undefined field_0x8;
+    tU8 count_frames;
+    tU8 finished;
+    undefined field_0xb;
+    br_actor* collision_actor;
+    br_actor* actor;
+    float field_0x14;
+    br_angle angle;
+    undefined padding[2];
+    br_vector3 field_0x1c;
+    tExplosion_frame frames[10];
+} tExplosion;
+
+typedef struct {
     tU16 v[3];
 } tCompressed_vector3;
 
@@ -496,6 +517,10 @@ typedef struct {
     br_actor* actor;
 } tPipe_chunk_identity;
 
+typedef struct {
+    tExplosion explosion;
+} tPipe_chunk_explosion;
+
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
@@ -577,6 +602,10 @@ typedef struct tPipe_chunk {
         tPipe_smudge_data smudge;
         tPipe_model_mash model_mash;
         tPipe_chunk_bend bend;
+        tPipe_chunk_screen_wobble wobble;
+        tPipe_chunk_smoke_column smoke_column;
+        tPipe_chunk_explosion explosion;
+        tPipe_single_groove_on_of groove;
         char raw_data[0];
     } data;
 } tPipe_chunk;
@@ -1942,27 +1971,6 @@ typedef struct {
     int font_index;
     char text[256];
 } tQueued_headup;
-
-typedef struct {
-    float opacity;
-    br_pixelmap* map;
-} tExplosion_frame;
-
-typedef struct {
-    tU32 start;
-    tU32 period;
-    undefined field_0x8;
-    tU8 count_frames;
-    tU8 finished;
-    undefined field_0xb;
-    br_actor* collision_actor;
-    br_actor* actor;
-    float field_0x14;
-    br_angle angle;
-    undefined padding[2];
-    br_vector3 field_0x1c;
-    tExplosion_frame frames[10];
-} tExplosion;
 
 typedef struct {
     br_actor* actor;
@@ -5761,6 +5769,7 @@ enum {
     kFatalError_ConfusedByFormatOfConditionalDamageInCarFile = 0x5c,
     kFatalError_TooManyExtraPointsForCarIndex_S = 0x5d,
     kFatalError_OOM_S = 0x5e,
+    kFatalError_SomethingInThePipingSystemWentWrong = 0x62,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
     kFatalError_CannotOpenHeadupsFile = 0x66,
