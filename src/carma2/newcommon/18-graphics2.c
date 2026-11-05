@@ -411,7 +411,14 @@ void C2_HOOK_FASTCALL FadePaletteUp(void) {
     DRSetPalette(gCurrent_palette);
 }
 
-// EnsurePaletteUp
+// FUNCTION: CARMA2_HW 0x004b55f0
+// FUNCTION: CARMA2_SW 0x004b1d20
+void C2_HOOK_FASTCALL EnsurePaletteUp(void) {
+
+    if (gFaded_palette) {
+        FadePaletteUp();
+    }
+}
 
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma auto_inline(off)
