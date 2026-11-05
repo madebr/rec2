@@ -148,7 +148,7 @@ extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 // PipeCarPositions
 
-// DoSmudge
+extern void C2_HOOK_FASTCALL DoSmudge(tPipe_chunk** pChunk, int pDir);
 
 // DoOilSpillAR
 
@@ -304,7 +304,7 @@ extern void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec* pOpponent_s
 
 // ApplyCrush
 
-// ApplySmudge
+extern void C2_HOOK_FASTCALL ApplySmudge(tPipe_chunk** pChunk);
 
 // ApplySpark
 
@@ -438,7 +438,7 @@ extern void C2_HOOK_FASTCALL ApplyPowerupRespawn(tPipe_chunk** pChunk);
 
 // UndoCrush
 
-// UndoSmudge
+extern void C2_HOOK_FASTCALL UndoSmudge(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoDamage
 
