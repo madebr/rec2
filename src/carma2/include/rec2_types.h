@@ -109,6 +109,7 @@ typedef void C2_HOOK_FASTCALL tAfter_AR_callback(void);
 typedef void C2_HOOK_FASTCALL tZappy_AR_callback(void);
 typedef void C2_HOOK_FASTCALL tPreprocess_AR_callback(int pFrame_period);
 typedef void C2_HOOK_FASTCALL tPostProcess_AR_callback(int pFrame_period);
+typedef void C2_HOOK_FASTCALL tControl_car_cbfn(tCar_spec* pCar_spec, float pT);
 
 typedef enum {
     eFPR_OK = 0,

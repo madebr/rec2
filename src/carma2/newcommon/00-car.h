@@ -28,6 +28,8 @@ extern int gInTheSea;
 extern int gFace_num__car;
 extern tFace_ref gFace_list__car[300];
 extern br_scalar gMin_world_y;
+extern tControl_car_cbfn* ControlCar[6];
+extern int gControl__car;
 
 extern void C2_HOOK_FASTCALL DamageUnit(tCar_spec* pCar, tDamage_type pUnit_type, int pDamage_amount);
 
@@ -71,7 +73,7 @@ extern void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
 
 extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
-// RememberSafePosition
+extern void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime_difference);
 
 // ControlNetCars
 
@@ -127,11 +129,11 @@ extern void C2_HOOK_FASTCALL ControlCar2(tCar_spec* pCar, br_scalar pDt);
 
 extern void C2_HOOK_FASTCALL ControlCar3(tCar_spec* pCar, br_scalar pDt);
 
-// ControlCar4
+extern void C2_HOOK_FASTCALL ControlCar4(tCar_spec* pCar, br_scalar pDt);
 
 extern void C2_HOOK_FASTCALL ControlCar5(tCar_spec* pCar, br_scalar pDt);
 
-// ControlCar1
+extern void C2_HOOK_FASTCALL ControlCar1(tCar_spec* pCar, br_scalar pDt);
 
 // SteeringSelfCentre
 
@@ -215,7 +217,7 @@ extern void C2_HOOK_FASTCALL AdjustDownForce(void);
 
 extern void C2_HOOK_FASTCALL FreezeMechanics(void);
 
-// FlyCar
+extern void C2_HOOK_FASTCALL FlyCar(tCar_spec* pCar, float pDelta_time);
 
 // GetCarOverallBoundsMinY
 
