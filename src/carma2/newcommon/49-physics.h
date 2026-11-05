@@ -28,6 +28,7 @@ extern br_actor* gPed_limbed_actors[30];
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
 extern int gFace_count;
+extern tWorld_callbacks gWorld_callbacks;
 
 // count
 
@@ -283,7 +284,7 @@ extern void C2_HOOK_FASTCALL RotateObjectFirstOrder(tPhysics_object* pObject, br
 
 extern void C2_HOOK_FASTCALL TranslateObject(tPhysics_object* pObject, br_scalar pDelta_time);
 
-// GetFacesNearObject
+extern void C2_HOOK_FASTCALL GetFacesNearObject(tPhysics_object *pObject, tWorld_callbacks *pCallbacks);
 
 extern void C2_HOOK_FASTCALL ResetObjectAndChildren(tPhysics_object* pObject);
 
@@ -297,9 +298,9 @@ extern void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects);
 
 // InterpolateObjects
 
-// ApplyGravitySingleObject
+extern void C2_HOOK_FASTCALL ApplyGravitySingleObject(tPhysics_object* pObject);
 
-// ApplyGravity
+extern void C2_HOOK_FASTCALL ApplyGravity(tPhysics_object* pObject);
 
 // SetGravityDeltaV
 
@@ -311,7 +312,7 @@ extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 extern void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pTorque);
 
-// ApplyDiminishingTorque
+extern void C2_HOOK_FASTCALL ApplyDiminishingTorque(tPhysics_object* pObject, const br_vector3 *pTorque);
 
 // OrderObjectListOnX
 

@@ -67,7 +67,7 @@ extern void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
 
 // InitialiseNonCar
 
-// NewFaceListCallBack
+extern void C2_HOOK_FASTCALL NewFaceListCallBack(tPhysics_object* pObject, undefined4 *pArg2);
 
 extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
@@ -87,25 +87,25 @@ extern void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 // GetNonCars
 
-// GetNetPos
+extern void C2_HOOK_FASTCALL GetNetPos(tCar_spec* pCar);
 
-// MungeCarsMass
+extern void C2_HOOK_FASTCALL MungeCarsMass(tCar_spec* pCar, br_scalar pFactor);
 
-// AddDrag
+extern void C2_HOOK_FASTCALL AddDrag(tCar_spec* pCar, tPhysics_object* pObject, float pDelta_time);
 
-// DragChildren
+extern void C2_HOOK_FASTCALL DragChildren(tCar_spec* pCar, tPhysics_object* pObject);
 
-// DoCarStuff
+extern void C2_HOOK_FASTCALL DoCarStuff(tCar_spec* pCar);
 
-// DoNonCarStuff
+extern void C2_HOOK_FASTCALL DoNonCarStuff(tNon_car_spec* pNon_car);
 
-// RemoveFlyingCar
+extern void C2_HOOK_FASTCALL RemoveFlyingCar(tCar_spec* pCar);
 
 // RestoreFlyingCar
 
-// GetDrivableOnList
+extern void C2_HOOK_FASTCALL GetDrivableOnList(tPhysics_object *pObjects);
 
-// APTCPreCollision
+extern void C2_HOOK_FASTCALL APTCPreCollision(void);
 
 extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject);
 
@@ -119,9 +119,9 @@ extern void C2_HOOK_FASTCALL SetCollisionFlagsAndStuff(tPhysics_object* pObject)
 
 // ApplyPhysicsToCars
 
-// MoveAndCollideCar
+extern void C2_HOOK_FASTCALL MoveAndCollideCar(tCar_spec* pCar, br_scalar pDt);
 
-// MoveAndCollideNonCar
+extern void C2_HOOK_FASTCALL MoveAndCollideNonCar(tNon_car_spec* pNon_car, br_scalar pDt);
 
 extern void C2_HOOK_FASTCALL ControlCar2(tCar_spec* pCar, br_scalar pDt);
 
@@ -145,7 +145,7 @@ extern void C2_HOOK_FASTCALL ControlCar5(tCar_spec* pCar, br_scalar pDt);
 
 extern void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car);
 
-// NonCarCalcForce
+extern void C2_HOOK_FASTCALL NonCarCalcForce(tNon_car_spec* pNon_car, br_scalar pDt);
 
 // DoBumpiness
 
@@ -173,7 +173,7 @@ extern void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car);
 
 // DoEnvironmentSmashes
 
-// ProcessForcesCallBack
+extern int C2_HOOK_FASTCALL ProcessForcesCallback(void* pArg1, float *pArg2, int pArg3);
 
 extern int C2_HOOK_FASTCALL ProcessJointForcesCallBack(void* pArg1, void* pArg2, void* pArg3);
 

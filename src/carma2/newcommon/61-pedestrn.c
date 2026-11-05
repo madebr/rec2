@@ -843,7 +843,11 @@ void C2_HOOK_FASTCALL GetPedestrianDebugInfo(char* pBuffer, int pPed_index) {
     }
 }
 
-// PedPreCollisionStuff
+// STUB: CARMA2_HW 0x004d6880
+// STUB: CARMA2_SW 0x004d2e80
+void C2_HOOK_FASTCALL PedPreCollisionStuff(void) {
+    NOT_IMPLEMENTED();
+}
 
 // UpdateIfBackwardsAR
 
@@ -1438,4 +1442,3 @@ void C2_HOOK_FASTCALL EnableRetainRootMode(void) {
 void C2_HOOK_FASTCALL DisableRetainRootMode(void) {
     gPed_retain_root_mode = 0;
 }
-

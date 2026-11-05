@@ -327,7 +327,7 @@ extern void C2_HOOK_FASTCALL ResetPedNearness(void);
 
 extern void C2_HOOK_FASTCALL GetPedestrianDebugInfo(char* pBuffer, int pPed_index);
 
-// PedPreCollisionStuff
+extern void C2_HOOK_FASTCALL PedPreCollisionStuff(void);
 
 // UpdateIfBackwardsAR
 
