@@ -506,6 +506,10 @@ typedef struct {
 
 typedef struct {
     br_matrix34 m;
+} tPipe_chunk_shit_mine;
+
+typedef struct {
+    br_matrix34 m;
 } tPipe_chunk_end_shit_mine;
 
 typedef struct {
@@ -599,6 +603,8 @@ typedef struct tPipe_chunk {
         tPipe_single_vector vector;
         tPipe_chunk_powerup_lose powerup_lose;
         tPipe_chunk_powerup_respawn powerup_respawn;
+        tPipe_chunk_shit_mine shit_mine;
+        tPipe_chunk_end_shit_mine end_shit_mine;
         tPipe_smudge_data smudge;
         tPipe_model_mash model_mash;
         tPipe_chunk_bend bend;
