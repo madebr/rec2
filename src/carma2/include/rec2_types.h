@@ -462,6 +462,11 @@ typedef struct {
 } tPipe_chunk_spark;
 
 typedef struct {
+    tU32 size; // size is size of complete chunk (including size member)
+    tU8 data[];
+} tPipe_chunk_bend;
+
+typedef struct {
     tS16 v[3];
 } tReduced_pos;
 
@@ -568,6 +573,9 @@ typedef struct tPipe_chunk {
         tPipe_single_vector vector;
         tPipe_chunk_powerup_lose powerup_lose;
         tPipe_chunk_powerup_respawn powerup_respawn;
+        tPipe_smudge_data smudge;
+        tPipe_model_mash model_mash;
+        tPipe_chunk_bend bend;
         char raw_data[0];
     } data;
 } tPipe_chunk;
