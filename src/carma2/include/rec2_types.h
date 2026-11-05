@@ -454,7 +454,7 @@ typedef struct {
 
 typedef struct {
     tU32 time;
-} tPipe_chunk_frame_finish;
+} tPipe_chunk_frame_boundary;
 
 typedef struct {
     br_vector3 p;
@@ -561,6 +561,7 @@ typedef struct {
 typedef struct tPipe_chunk {
     uintptr_t subject_index;
     union {
+        tPipe_chunk_frame_boundary frame_boundary;
         tPipe_chunk_non_car non_car;
         tPipe_ped_physics_data ped_physics;
         tPipe_single_ped_dismember ped_dismember;

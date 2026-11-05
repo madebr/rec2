@@ -1060,11 +1060,11 @@ void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y) {
 // FUNCTION: CARMA2_HW 0x004c8340
 void C2_HOOK_FASTCALL PipeSingleFrameFinish(void) {
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_frame_finish, time, 0x0);
-    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_frame_finish, time, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_frame_boundary, time, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_frame_boundary, time, 0x4);
 
     ARDoSingleVariedSession(ePipe_chunk_frame_finish, 0, 1,
-        SIZE_OFFSET_PIPING(tPipe_chunk_frame_finish, time), GetTotalTime());
+        SIZE_OFFSET_PIPING(tPipe_chunk_frame_boundary, time), GetTotalTime());
 }
 
 // FUNCTION: CARMA2_HW 0x004c6f20
