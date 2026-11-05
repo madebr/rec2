@@ -2328,7 +2328,7 @@ void C2_HOOK_FASTCALL MungeNapalm(void) {
                 actor->render_style = BR_RSTYLE_FACES;
                 BrVector3Copy(&flame_positions[j], &actor->t.t.translate.t);
             }
-            AddBurningPedToSession(i, bolt->ped, flame_positions);
+            AddNapalmBoltToPipingSession(i, bolt->ped, flame_positions);
         }
     }
     AREndPipingSession();

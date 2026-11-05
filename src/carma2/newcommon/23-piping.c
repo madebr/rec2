@@ -546,18 +546,16 @@ void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle) 
 
 // AddRepulseRayToPipingSession
 
-// AddNapalmBoltToPipingSession
-
 // FUNCTION: CARMA2_HW 0x004c7e70
 // FUNCTION: CARMA2_SW 0x004c45a0
-void C2_HOOK_FASTCALL AddBurningPedToSession(int pIndex, tPedestrian* pPed, br_vector3* pPositions) {
-    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_burning_ped, ped, 0x4);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_burning_ped, positions, 0x4);
-    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_burning_ped, positions, 0x54);
+void C2_HOOK_FASTCALL AddNapalmBoltToPipingSession(int pIndex, tPedestrian* pPed, br_vector3* pPositions) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_napalm_bolt, ped, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_napalm_bolt, positions, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_napalm_bolt, positions, 0x54);
 
     ARAddVariedDataToSession(ePipe_chunk_burning_ped, pIndex, 2,
-        SIZE_OFFSET_PIPING(tPipe_burning_ped, ped), pPed,
-        SIZE_OFFSET_PIPING(tPipe_burning_ped, positions), pPositions);
+        SIZE_OFFSET_PIPING(tPipe_chunk_napalm_bolt, ped), pPed,
+        SIZE_OFFSET_PIPING(tPipe_chunk_napalm_bolt, positions), pPositions);
 }
 
 // PipeSingleCrush
@@ -1239,7 +1237,21 @@ void C2_HOOK_FASTCALL ApplyVector3(tPipe_chunk** pChunk) {
 void C2_HOOK_FASTCALL ApplyDroneUnused(tPipe_chunk** pChunk) {
 }
 
-// ApplyNapalmBolt
+// FUNCTION: CARMA2_HW 0x004c9d20
+// FUNCTION: CARMA2_SW 0x004c6450
+void C2_HOOK_FASTCALL ApplyNapalmBolt(tPipe_chunk** pChunk) {
+    // tPipe_chunk* chunk;
+    // tPipe_chunk_napalm_bolt* data;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_napalm_bolt, positions, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_napalm_bolt, ped, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_napalm_bolt, positions, 0x54);
+
+    // chunk = *pChunk;
+    // data = (tPipe_chunk_napalm_bolt*)chunk->data.raw_data;
+    AdjustNapalmBolt((int)(*pChunk)->subject_index, (*pChunk)->data.napalm_bolt.ped, (*pChunk)->data.napalm_bolt.positions);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9d40
 // FUNCTION: CARMA2_SW 0x004c6470
@@ -1460,7 +1472,23 @@ void C2_HOOK_FASTCALL UndoVector3(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk
         &((tPipe_single_vector*)(*pChunk)->data.raw_data)->vector);
 }
 
-// UndoNapalmBolt
+// FUNCTION: CARMA2_HW 0x004ca390
+// FUNCTION: CARMA2_SW 0x004c6ac0
+void C2_HOOK_FASTCALL UndoNapalmBolt(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk_napalm_bolt* prev_bolt;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_napalm_bolt, positions, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_napalm_bolt, ped, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_napalm_bolt, positions, 0x54);
+
+    if (pPrev_chunk != NULL) {
+        prev_bolt = &pPrev_chunk->data.napalm_bolt;
+        if (prev_bolt->ped == (*pChunk)->data.napalm_bolt.ped) {
+            AdjustNapalmBolt((int)pPrev_chunk->subject_index, prev_bolt->ped, prev_bolt->positions);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004ca3b0
 // FUNCTION: CARMA2_SW 0x004c6ae0

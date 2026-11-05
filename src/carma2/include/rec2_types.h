@@ -423,7 +423,7 @@ typedef struct {
 typedef struct {
     tPedestrian* ped;
     br_vector3 positions[7];
-} tPipe_burning_ped;
+} tPipe_chunk_napalm_bolt;
 
 typedef struct {
     void (C2_HOOK_FASTCALL * reset)(void);
@@ -613,6 +613,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_explosion explosion;
         tPipe_single_groove_on_of groove;
         tPipe_single_vanished_dismembered vanished_dismembered;
+        tPipe_chunk_napalm_bolt napalm_bolt;
         char raw_data[0];
     } data;
 } tPipe_chunk;
