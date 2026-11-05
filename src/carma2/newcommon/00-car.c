@@ -554,7 +554,7 @@ void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
     br_scalar factor;
     tS32 joy;
 
-    speed = -pCar->collision_info->velocity_car_space.v[2] * WORLD_SCALE_D;
+    speed = (br_scalar)(-pCar->collision_info->velocity_car_space.v[2] * WORLD_SCALE_D);
     pCar->acc_force = 0.0f;
     if (pCar->revs == 0.0f) {
         pCar->gear = 0;
@@ -590,13 +590,13 @@ void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
         pCar->joystick.dec = joy;
     }
 
-    pCar->torque = pCar->revs * pCar->revs * -1e-08f - 0.2;
+    pCar->torque = (br_scalar)(pCar->revs * pCar->revs * -1e-08f - 0.2);
     if (pCar->keys.acc || pCar->joystick.acc >= 0) {
         if (fabs(pCar->curvature) > pCar->maxcurve * 0.5f && pCar->gear < 2 &&
             pCar->gear != 0 && pCar->traction_control && pCar->joystick.acc < 0) {
             factor = 0.7f;
         } else if (pCar->joystick.acc >= 0) {
-            factor = pCar->joystick.acc * (1.0 / 54613.0);
+            factor = (br_scalar)(pCar->joystick.acc * (1.0 / 54613.0));
         } else {
             factor = 1.2f;
         }
@@ -614,7 +614,7 @@ void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
         pCar->joystick.dec > 0 || (pCar->joystick.acc > 0 && pCar->gear == 0)) {
         if (pCar->joystick.dec > 0) {
             br_scalar bi = pCar->brake_increase;
-            br_scalar q = pCar->joystick.dec / 65536;
+            br_scalar q = (br_scalar)(pCar->joystick.dec / 65536);
             pCar->brake_force = pCar->initial_brake + bi * q;
         }
         if (pCar->brake_force == 0.0f) {
@@ -638,9 +638,9 @@ void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
         pCar->revs = pCar->target_revs;
     } else if (pCar->revs - 1.0f > pCar->target_revs || pCar->revs + 1.f < pCar->target_revs) {
         br_scalar lt = 0.0f / (pCar->speed_revs_ratio * pCar->collision_info->M) / (float)pCar->gear;
-        pCar->acc_force = pCar->acc_force +
+        pCar->acc_force = (br_scalar)(pCar->acc_force +
             (pCar->torque * pDt * 5000.0 + (pCar->revs - pCar->target_revs)) /
-            ((lt + (float)pCar->gear * (0.0f / (pCar->force_torque_ratio * 0.0002))) * pDt);
+            ((lt + (float)pCar->gear * (0.0f / (pCar->force_torque_ratio * 0.0002))) * pDt));
     }
 }
 
