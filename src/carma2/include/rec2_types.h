@@ -4675,7 +4675,7 @@ typedef struct {
     undefined4 field_0x10;
     undefined4 field_0x14;
     undefined4 field_0x18;
-    undefined2 field_0x1c;
+    tS16 field_0x1c;
     undefined2 field_0x1e;
     undefined2 field_0x20;
     undefined field_0x22[0x2];

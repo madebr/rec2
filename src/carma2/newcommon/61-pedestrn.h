@@ -497,7 +497,7 @@ extern void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vecto
 
 // MakeCharacterPhysicworthy
 
-// RecalculateOrientationOfRoot
+extern void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pCharacter);
 
 // BonerActiveHalted2
 
@@ -505,7 +505,7 @@ extern void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vecto
 
 // SetCharacterPhysicsLevel
 
-// StopCharacterMorphing
+extern void C2_HOOK_FASTCALL StopCharacterMorphing(tPed_character_instance* pCharacter);
 
 // MorphCharacterBonePositions
 
