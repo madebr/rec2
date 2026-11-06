@@ -1520,7 +1520,11 @@ void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSr
     SetModelForUpdate(pModel);
 }
 
-// ARApplyFlap
+// STUB: CARMA2_HW 0x0043c0e0
+// STUB: CARMA2_SW 0x0043c130
+void C2_HOOK_FASTCALL ARApplyFlap(br_actor* pActor, br_angle pAngle) {
+    NOT_IMPLEMENTED();
+}
 
 // ARApplySplitWeld
 
