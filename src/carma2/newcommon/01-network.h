@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int INT_00659d34;
+
 extern int gIt_or_fox;
 extern int INT_00659d34;
 extern int rr_min;
@@ -112,7 +114,7 @@ extern tNet_message_chunk* C2_HOOK_FASTCALL NetGetToHostContents(tNet_message_ty
 
 extern tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tU32 pSize_decider);
 
-// NetBroadcastContents
+extern void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage);
 
 extern void C2_HOOK_FASTCALL NetSendMessageStacks(void);
 

@@ -18,8 +18,10 @@
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+#include <stddef.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 // GLOBAL: CARMA2_HW 0x0068d95c
 // GLOBAL: CARMA2_SW 0x006879b4
@@ -527,7 +529,7 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player
         pPlayer->field_0xcc = message = NULL;
     }
     if (message == NULL) {
-        pPlayer->field_0xcc = message = NetAllocateMessage(sizeof(tMax_message) - sizeof(void*));
+        message = pPlayer->field_0xcc = NetAllocateMessage(sizeof(tMax_message) - sizeof(void*));
         message->header.field_0x16 = (tU16)sizeof(tNet_message_header);
         message->header.field_0x14 = 0;
     }
@@ -583,7 +585,20 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type
     return NULL;
 }
 
-// NetBroadcastContents
+// FUNCTION: CARMA2_HW 0x0049fb70
+// FUNCTION: CARMA2_SW 0x0049bcf0
+void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage) {
+    tNet_message_chunk* contents;
+    int i;
+
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (i != gThis_net_player_index && i != INT_00659d34) {
+            contents = NetGetToPlayerContentsSize(&gNet_players[i], pMessage->raw.header.size);
+            memcpy(contents, pMessage, pMessage->raw.header.size);
+        }
+    }
+    INT_00659d34 = -1;
+}
 
 // FUNCTION: CARMA2_HW 0x0049fcf0
 // FUNCTION: CARMA2_SW 0x0049be70
