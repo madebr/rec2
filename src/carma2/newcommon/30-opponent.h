@@ -31,10 +31,13 @@ extern int gRoute_search_target_count;
 extern float gShortest_route_length;
 extern tCar_spec* gActive_car_list[139];
 extern int gNum_active_cars;
+extern int gNum_of_opponents_pursuing;
+extern int gNum_of_opponents_getting_near;
+extern int gNum_of_opponents_completing_race;
 
 extern void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...);
 
-// ProcessCurrentObjective
+extern void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 
 // ReallocExtraPathNodes
 
@@ -56,7 +59,7 @@ extern int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* 
 
 // ApplyOppoRenderage2
 
-// NewObjective
+extern void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_objective_type pObjective_type, ...);
 
 // CalcRaceRoute
 

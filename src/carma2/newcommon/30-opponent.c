@@ -19,6 +19,7 @@
 #include "c2_stdio.h"
 #include "platform.h"
 #include "rec2_macros.h"
+#include <stdarg.h>
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x0065a3bc
@@ -103,7 +104,19 @@ void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
 
 }
 
-// ProcessCurrentObjective
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004aa900
+// STUB: CARMA2_SW 0x004a6a70
+void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // ReallocExtraPathNodes
 
@@ -144,7 +157,39 @@ int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo) {
 
 // ApplyOppoRenderage2
 
-// NewObjective
+// FUNCTION: CARMA2_HW 0x004aad70
+// FUNCTION: CARMA2_SW 0x004a6ee0
+void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_objective_type pObjective_type, ...) {
+    va_list marker;
+
+    if (pOpponent_spec->current_objective != eOOT_none) {
+        ProcessCurrentObjective(pOpponent_spec, ePOC_die);
+    }
+    pOpponent_spec->current_objective = pObjective_type;
+    pOpponent_spec->time_this_objective_started = gTime_stamp_for_this_munging;
+    pOpponent_spec->time_for_this_objective_to_finish = gTime_stamp_for_this_munging + IRandomBetween(20, 60) * 1000;
+    if (pObjective_type == eOOT_pursue_and_twat) {
+        pOpponent_spec->time_for_this_objective_to_finish += 90000;
+    }
+    va_start(marker, pObjective_type);
+    switch (pObjective_type) {
+    case eOOT_complete_race:
+        gNum_of_opponents_completing_race++;
+        break;
+    case eOOT_get_near_player:
+        gNum_of_opponents_getting_near++;
+        break;
+    case eOOT_pursue_and_twat:
+        pOpponent_spec->pursue_car_data.pursuee = va_arg(marker, tCar_spec*);
+        gNum_of_opponents_pursuing++;
+        break;
+    default:
+        break;
+    }
+    DoNotDprintf("%s: NewObjective() - type %d", pOpponent_spec->car_spec->driver_name, pObjective_type);
+    ProcessCurrentObjective(pOpponent_spec, ePOC_start);
+    va_end(marker);
+}
 
 // CalcRaceRoute
 
