@@ -99,6 +99,8 @@ extern void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
 
 extern void C2_HOOK_FASTCALL SkipNLines(FILE* pF);
 
+extern void C2_HOOK_FASTCALL EncodeFileWrapper(char* pThe_path);
+
 extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
 extern char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS);

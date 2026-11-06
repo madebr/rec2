@@ -734,6 +734,29 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     rename(new_file, pThe_path);
 }
 
+// FUNCTION: CARMA2_HW 0x00490bc0
+// FUNCTION: CARMA2_SW 0x0048de30
+void C2_HOOK_FASTCALL EncodeFileWrapper(char* pThe_path) {
+    int len;
+
+    len = strlen(pThe_path);
+    if (strcmp(pThe_path + len - 4, ".TXT") == 0
+            && strcmp(pThe_path + len - 12, "DKEYMAP0.TXT") != 0
+            && strcmp(pThe_path + len - 12, "DKEYMAP1.TXT") != 0
+            && strcmp(pThe_path + len - 12, "DKEYMAP2.TXT") != 0
+            && strcmp(pThe_path + len - 12, "DKEYMAP3.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYMAP_0.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYMAP_1.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYMAP_2.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYMAP_3.TXT") != 0
+            && strcmp(pThe_path + len - 11, "OPTIONS.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYNAMES.TXT") != 0
+            && strcmp(pThe_path + len - 10, "KEYMAP.TXT") != 0
+            && strcmp(pThe_path + len - 9, "PATHS.TXT") != 0) {
+        EncodeFile(pThe_path);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00490ec0
 // FUNCTION: CARMA2_SW 0x0048e130
 void C2_HOOK_FASTCALL SkipNLines(FILE* pF) {
