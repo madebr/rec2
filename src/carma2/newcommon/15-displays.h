@@ -22,6 +22,7 @@ extern br_pixelmap* gPowerbar;
 extern br_pixelmap* gPower_colour_map;
 extern br_pixelmap* gOffensive_colour_map;
 extern br_pixelmap* gIcon_test;
+extern int do_headup_material;
 extern br_pixelmap* gCurrent_rev;
 extern br_pixelmap* gHud_curve1;
 extern br_pixelmap* gHud_curve2;
@@ -47,6 +48,7 @@ extern int gLast_time_credit_headup;
 extern tU32 gLast_time_earn_time;
 extern tU32 gLast_time_credit_amount;
 extern int gOld_times[10];
+extern char gHeadup_oppo_ped_text[64];
 extern int gQueued_headup_count;
 
 
@@ -112,7 +114,9 @@ extern void C2_HOOK_FASTCALL AwardTime(tU32 pTime);
 
 extern void C2_HOOK_FASTCALL AwardTime5(tU32 pTime);
 
-// DoTestHeadup
+#ifdef REC2_HW
+extern void C2_HOOK_FASTCALL DoTestHeadup(void);
+#endif
 
 extern int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth);
 
