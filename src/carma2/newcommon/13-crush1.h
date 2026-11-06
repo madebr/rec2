@@ -527,7 +527,7 @@ extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vecto
 
 // ReceivedSHNonCar
 
-// GetNetShapeDataLengthFromShape
+extern int C2_HOOK_FASTCALL GetNetShapeDataLengthFromShape(tCar_spec* pCar);
 
 // GetNetShapeDataLengthFromData
 

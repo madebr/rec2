@@ -1570,7 +1570,32 @@ void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSr
 
 // ReceivedSHNonCar
 
-// GetNetShapeDataLengthFromShape
+// FUNCTION: CARMA2_HW 0x0043d900
+// FUNCTION: CARMA2_SW 0x0043d950
+int C2_HOOK_FASTCALL GetNetShapeDataLengthFromShape(tCar_spec* pCar) {
+    int i;
+    int count;
+    int length;
+    tPhysics_shape* shape;
+
+    C2_HOOK_BUG_ON(sizeof(tCompressed_vector3) != 6);
+
+    if (pCar->car_crush_spec->field_0x4b8) {
+        length = sizeof(tU8);
+        for (shape = pCar->collision_info->shape; shape != NULL; shape = shape->common.next) {
+            if (shape->common.type == kCollisionShapeType_Polyhedron || shape->common.type == kCollisionShapeType_Wireframe_Polyhedron) {
+                length += sizeof(tU8) + shape->polyhedron.polyhedron.count_points * sizeof(tCompressed_vector3);
+            }
+        }
+        return length;
+    } else {
+        count = 0;
+        for (i = 0; i < pCar->car_crush_spec->count_shapes; i++) {
+            count += pCar->car_crush_spec->field_0x4[i].count_points;
+        }
+        return sizeof(tU8) + count * sizeof(tCompressed_vector3);
+    }
+}
 
 // GetNetShapeDataLengthFromData
 
