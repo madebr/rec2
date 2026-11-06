@@ -19,6 +19,7 @@
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "43-pratcam.h"
+#include "59-camera.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
@@ -645,7 +646,15 @@ void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
     }
 }
 
-// ChangeCameraTypeInGame
+// FUNCTION: CARMA2_HW 0x00444ed0
+// FUNCTION: CARMA2_SW 0x00444fb0
+void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void) {
+
+    if (!gAction_replay_mode) {
+        ChangeCameraType();
+        NewTextHeadupSlot2(4, 0, 1000, -4, GetMiscString(eMiscString_standard_cam + gAction_replay_camera_mode), 0);
+    }
+}
 
 // SteelBollock
 

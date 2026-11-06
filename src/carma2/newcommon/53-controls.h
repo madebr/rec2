@@ -206,7 +206,7 @@ extern void C2_HOOK_FASTCALL InitAbuseomatic(void);
 
 extern void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
-// ChangeCameraTypeInGame
+extern void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void);
 
 // SteelBollock
 
