@@ -94,6 +94,10 @@ tU32 gPipe_sound_start_time;
 // GLOBAL: CARMA2_SW 0x00671018
 tU32 gPipe_sound_time_window;
 
+// GLOBAL: CARMA2_HW 0x0067690c
+// GLOBAL: CARMA2_SW 0x0067107c
+int gDisable_advance;
+
 // ARReplayForwards
 
 // FUNCTION: CARMA2_HW 0x00402360
@@ -346,7 +350,11 @@ tU32 C2_HOOK_FASTCALL ARGetStartTime(void) {
     return ((tPipe_chunk*)session->data)->data.frame_boundary.time;
 }
 
-// ARDisableAdvance
+// FUNCTION: CARMA2_HW 0x004030d0
+// FUNCTION: CARMA2_SW 0x004030d0
+void C2_HOOK_FASTCALL ARDisableAdvance(void) {
+    gDisable_advance = 1;
+}
 
 // AREnableAdvance
 
