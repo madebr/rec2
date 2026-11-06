@@ -1180,7 +1180,11 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 
 // RandomlyBendCar
 
-// TotallySpamTheCar
+// STUB: CARMA2_HW 0x00431610
+// STUB: CARMA2_SW 0x00431640
+void C2_HOOK_FASTCALL TotallySpamTheCar(tCar_spec* pCar, br_scalar pDamage) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x00435dd0
 // FUNCTION: CARMA2_SW 0x00435e00

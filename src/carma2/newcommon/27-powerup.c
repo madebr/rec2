@@ -22,6 +22,7 @@
 #include "53-controls.h"
 #include "60-phil.h"
 #include "61-pedestrn.h"
+#include "69-sound.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
@@ -571,7 +572,18 @@ int C2_HOOK_FASTCALL SetUnderwater(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// TrashBodywork
+// FUNCTION: CARMA2_HW 0x004dcae0
+// FUNCTION: CARMA2_SW 0x004d8fe0
+int C2_HOOK_FASTCALL TrashBodywork(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    TotallySpamTheCar(pCar, (br_scalar)(pCar->softness_factor * 1.4285715f * 0.1));
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        DRS3StartSound2(gCar_outlet, eSoundId_Smash1, 1, 255, 255, -1, -1);
+        DRS3StartSound2(gCar_outlet, eSoundId_Smash2, 1, 255, 255, -1, -1);
+        DRS3StartSound2(gCar_outlet, eSoundId_Smash3, 1, 255, 255, -1, -1);
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dcb90
 // FUNCTION: CARMA2_SW 0x004d9090
