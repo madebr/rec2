@@ -473,6 +473,21 @@ void C2_HOOK_FASTCALL SelectNextDrone(void) {
     NewTextHeadupSlot(4, 0, 3000, -1, s);
 }
 
+// FUNCTION: CARMA2_HW 0x00452620
+// FUNCTION: CARMA2_SW 0x004523b0
+void C2_HOOK_FASTCALL SelectPreviousDrone(void) {
+    char s[64];
+
+    if (gCount_drones != 0) {
+        gCurrent_selected_drone--;
+        if (gCurrent_selected_drone < 0) {
+            gCurrent_selected_drone = gCount_drones - 1;
+        }
+    }
+    sprintf(s, "Drone %d", gCurrent_selected_drone);
+    NewTextHeadupSlot(4, 0, 3000, -1, s);
+}
+
 // FUNCTION: CARMA2_HW 0x00452680
 // FUNCTION: CARMA2_SW 0x00452410
 int C2_HOOK_FASTCALL OKToViewDrones(void) {
