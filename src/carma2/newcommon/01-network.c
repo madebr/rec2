@@ -123,6 +123,18 @@ int INT_00659d34 = -1;
 // GLOBAL: CARMA2_SW 0x006879b0
 int gNext_guarantee;
 
+// GLOBAL: CARMA2_HW 0x00690c60
+// GLOBAL: CARMA2_SW 0x0068acb8
+int rr_min;
+
+// GLOBAL: CARMA2_HW 0x00690c64
+// GLOBAL: CARMA2_SW 0x0068acbc
+int rr_mid;
+
+// GLOBAL: CARMA2_HW 0x00690c68
+// GLOBAL: CARMA2_SW 0x0068acc0
+int rr_max;
+
 // FUNCTION: CARMA2_HW 0x0049d210
 // FUNCTION: CARMA2_SW 0x00499390
 int C2_HOOK_FASTCALL NetInitialise(void) {
@@ -587,20 +599,87 @@ void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
     }
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x0049fdb0
-// STUB: CARMA2_SW 0x0049bf30
+// FUNCTION: CARMA2_HW 0x0049fdb0
+// FUNCTION: CARMA2_SW 0x0049bf30
 tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
-    NOT_IMPLEMENTED();
-    return NULL;
-}
+    void* pointer;
+    tNet_message_memory* new_message;
+    tNet_message_memory* last_message;
+    tNet_message* message;
+    tU8* test;
+    int i;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    C2_HOOK_BUG_ON(sizeof(tMin_message) - sizeof(void*) != 0x58);
+    C2_HOOK_BUG_ON(sizeof(tMid_message) - sizeof(void*) != 0x80);
+    C2_HOOK_BUG_ON(sizeof(tMax_message) - sizeof(void*) != 0x200);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_memory, message, 0x4);
+
+    pointer = NULL;
+    if (pSize <= sizeof(tMin_message) - sizeof(void*)) {
+        for (i = 0; i < MIN_MESSAGES_CAPACITY; i++) {
+            test = gMin_messages[rr_min].buffer;
+            test += gMessage_header_size;
+            if (((tNet_message*)test)->contents.raw.header.type == eNetMsg_none) {
+                pointer = &gMin_messages[rr_min];
+                break;
+            }
+            rr_min++;
+            if (rr_min >= MIN_MESSAGES_CAPACITY) {
+                rr_min = 0;
+            }
+        }
+    }
+    if (pointer == NULL && pSize <= (int)(sizeof(tMid_message) - sizeof(void*))) {
+        for (i = 0; i < MID_MESSAGES_CAPACITY; i++) {
+            test = gMid_messages[rr_mid].buffer;
+            test += gMessage_header_size;
+            if (((tNet_message*)test)->contents.raw.header.type == eNetMsg_none) {
+                pointer = &gMid_messages[rr_mid];
+                break;
+            }
+            rr_mid++;
+            if (rr_mid >= MID_MESSAGES_CAPACITY) {
+                rr_mid = 0;
+            }
+        }
+    }
+    if (pointer == NULL && pSize <= (int)(sizeof(tMax_message) - sizeof(void*))) {
+        for (i = 0; i < MAX_MESSAGES_CAPACITY; i++) {
+            test = gMax_messages[rr_max].buffer;
+            test += gMessage_header_size;
+            if (((tNet_message*)test)->contents.raw.header.type == eNetMsg_none) {
+                pointer = &gMax_messages[rr_max];
+                break;
+            }
+            rr_max++;
+            if (rr_max >= MAX_MESSAGES_CAPACITY) {
+                rr_max = 0;
+            }
+        }
+    }
+    if (pointer == NULL) {
+        pointer = new_message = BrMemAllocate(pSize + offsetof(tNet_message_memory, message) + gMessage_header_size, kMem_dynamic_message);
+        if (new_message != NULL) {
+            new_message->next = NULL;
+            if (gDynamic_messages != NULL) {
+                for (last_message = gDynamic_messages; last_message->next != NULL; last_message = last_message->next) {
+                }
+                last_message->next = new_message;
+            } else {
+                gDynamic_messages = new_message;
+            }
+            pointer = &new_message->message;
+        }
+    }
+    if (pointer != NULL) {
+        message = (tNet_message*)((tU8*)pointer + gMessage_header_size);
+        message->header.field_0xc = 1;
+        message->header.field_0x4 = 0x763a5059;
+        return message;
+    } else {
+        return NULL;
+    }
+}
 
 void C2_HOOK_FASTCALL NetFreeExcessMemory(void) {
 

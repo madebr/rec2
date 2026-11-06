@@ -14,6 +14,9 @@
 
 extern int gIt_or_fox;
 extern int INT_00659d34;
+extern int rr_min;
+extern int rr_mid;
+extern int rr_max;
 
 extern int C2_HOOK_FASTCALL NetInitialise(void);
 
