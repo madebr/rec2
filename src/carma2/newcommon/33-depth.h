@@ -68,6 +68,8 @@ extern void C2_HOOK_FASTCALL ReduceDepthStart(void);
 
 extern void C2_HOOK_FASTCALL IncreaseDepthStart(void);
 
+extern void C2_HOOK_FASTCALL ReduceDepthEnd(void);
+
 extern void C2_HOOK_FASTCALL IncreaseDepthEnd(void);
 
 extern void C2_HOOK_FASTCALL AssertYons(void);
