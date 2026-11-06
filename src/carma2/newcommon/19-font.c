@@ -86,6 +86,10 @@ int gInitial_count_font_texture_pages;
 // GLOBAL: CARMA2_HW 0x00686494
 int gInterface_polyfont_texture_pages;
 
+// GLOBAL: CARMA2_HW 0x006864a0
+// GLOBAL: CARMA2_SW 0x00680be0
+tNet_game_options gFrontend_backup_net_options;
+
 // GLOBAL: CARMA2_HW 0x00686340
 br_material* gPoly_font_materials[80];
 

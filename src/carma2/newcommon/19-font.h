@@ -20,6 +20,7 @@ extern int gCount_polyfont_glyph_actors;
 extern tDR_font gFonts[24];
 extern int gRender_poly_text;
 extern br_actor* gString_root_actor;
+extern tNet_game_options gFrontend_backup_net_options;
 
 extern int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index);
 

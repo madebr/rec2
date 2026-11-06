@@ -228,16 +228,16 @@ void C2_HOOK_FASTCALL ToggleShadow(void) {
     }
     switch (gShadow_level) {
     case eShadow_none:
-        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowNone));
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_ShadowNone));
         break;
     case eShadow_us_only:
-        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsOnly));
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_ShadowUsOnly));
         break;
     case eShadow_us_and_opponents:
-        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsAndOpponents));
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_ShadowUsAndOpponents));
         break;
     case eShadow_everyone:
-        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowEveryone));
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_ShadowEveryone));
         break;
     }
 }
