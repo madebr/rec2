@@ -264,6 +264,18 @@ int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
     return value;
 }
 
+// FUNCTION: CARMA2_HW 0x0048fb50
+// FUNCTION: CARMA2_SW 0x0048cdc0
+unsigned int C2_HOOK_FASTCALL BinIntegerToInteger(unsigned int pValue) {
+    unsigned int result;
+
+    result = 0;
+    for (; pValue != 0; pValue /= 10) {
+        result = (result << 1) | (pValue % 10);
+    }
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x004900e0
 // FUNCTION: CARMA2_SW 0x0048d350
 float C2_HOOK_FASTCALL GetAFloat(FILE* pF) {

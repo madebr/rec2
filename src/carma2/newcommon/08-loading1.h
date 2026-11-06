@@ -55,6 +55,8 @@ extern int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** p
 
 extern int C2_HOOK_FASTCALL GetAnInt(FILE* pF);
 
+extern unsigned int C2_HOOK_FASTCALL BinIntegerToInteger(unsigned int pValue);
+
 extern float C2_HOOK_FASTCALL GetAFloat(FILE* pF);
 
 void C2_HOOK_FASTCALL GetPairOfFloats(FILE* pF, float* pF1, float* pF2);
