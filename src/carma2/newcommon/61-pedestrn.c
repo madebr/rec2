@@ -156,7 +156,14 @@ void C2_HOOK_FASTCALL PedApplyPedDir(tU32 pId, const br_vector3* pDir) {
 
 // PedUndoPedMove
 
-// PedApplyPedFPChange
+// FUNCTION: CARMA2_HW 0x004ca650
+// FUNCTION: CARMA2_SW 0x004c6d80
+void C2_HOOK_FASTCALL PedApplyPedFPChange(tPedestrian* pPed, float pSpeed) {
+
+    if (gBOOL_00744804 == 0) {
+        SetCharacterMove(pPed->character, -1, pSpeed, 0, 0, GetTotalTime());
+    }
+}
 
 // PedApplyStatus
 
@@ -1300,7 +1307,19 @@ void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vector3* pV)
 
 // ResetAnimation
 
-// SetCharacterMove
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x0040a050
+// STUB: CARMA2_SW 0x0040a050
+int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pPed, int pMove_action, float pSpeed, int pArg4, int pArg5, tU32 pTime) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // DRMatrix34RotateCos
 

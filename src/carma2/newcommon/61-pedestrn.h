@@ -57,7 +57,7 @@ extern void C2_HOOK_FASTCALL PedApplyPedDir(tU32 pId, const br_vector3* pDir);
 
 // PedUndoPedMove
 
-// PedApplyPedFPChange
+extern void C2_HOOK_FASTCALL PedApplyPedFPChange(tPedestrian* pPed, float pSpeed);
 
 // PedApplyStatus
 
@@ -517,7 +517,7 @@ extern void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vecto
 
 // ResetAnimation
 
-// SetCharacterMove
+extern int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pPed, int pMove_action, float pSpeed, int pArg4, int pArg5, tU32 pTime);
 
 // DRMatrix34RotateCos
 
