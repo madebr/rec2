@@ -31,7 +31,7 @@ extern int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shap
 
 // AddShapeStuffToMechanicsMessage
 
-// TimeToSendData
+extern int C2_HOOK_FASTCALL TimeToSendData(void);
 
 // SendCarData
 

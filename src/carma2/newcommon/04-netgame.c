@@ -16,6 +16,7 @@
 #include "30-opponent.h"
 #include "32-spark.h"
 #include "41-utility.h"
+#include "60-phil.h"
 #include "63-loading3.h"
 #include "72-interface.h"
 #include "globvars.h"
@@ -80,7 +81,19 @@ int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shapes* pSh
 
 // AddShapeStuffToMechanicsMessage
 
-// TimeToSendData
+// FUNCTION: CARMA2_HW 0x004978d0
+// FUNCTION: CARMA2_SW 0x00494500
+int C2_HOOK_FASTCALL TimeToSendData(void) {
+    // GLOBAL: CARMA2_HW 0x00659c30
+    // GLOBAL: CARMA2_SW 0x006545c8
+    static tU32 last_physics_send_time = (tU32)-1;
+
+    if (gPHIL_last_physics_tick > last_physics_send_time && gPHIL_last_physics_tick < last_physics_send_time + 80) {
+        return 0;
+    }
+    last_physics_send_time = gPHIL_last_physics_tick;
+    return 1;
+}
 
 // SendCarData
 
