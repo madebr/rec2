@@ -996,7 +996,19 @@ intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData) {
     return 0;
 }
 
-// DoComplexCarModels
+// FUNCTION: CARMA2_HW 0x0041f2a0
+// FUNCTION: CARMA2_SW 0x0041f320
+void C2_HOOK_FASTCALL DoComplexCarModels(void) {
+    int i;
+    tCar_spec* car;
+
+    for (i = 0; i < gNum_active_cars; i++) {
+        car = gActive_car_list[i];
+        if (car != NULL && car->driver > 5) {
+            SwitchCarModels(car, 0);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0041f300
 // FUNCTION: CARMA2_SW 0x0041f380

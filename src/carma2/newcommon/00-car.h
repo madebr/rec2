@@ -203,7 +203,7 @@ extern void C2_HOOK_FASTCALL DoLODCarModels(void);
 
 extern intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
 
-// DoComplexCarModels
+extern void C2_HOOK_FASTCALL DoComplexCarModels(void);
 
 extern void C2_HOOK_FASTCALL ResetCarScreens(void);
 
