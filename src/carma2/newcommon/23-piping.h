@@ -37,7 +37,7 @@ extern int gDisable_advance;
 
 extern int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void);
 
-// ARReplayPauseState
+extern int C2_HOOK_FASTCALL ARReplayPauseState(void);
 
 extern float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
@@ -63,7 +63,7 @@ extern tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_session* pSession);
 
 // ARPipeSearchForwards
 
-// ARIsActionReplayAvailable
+extern int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
 
 extern int C2_HOOK_FASTCALL ARSomeReplayLeft(void);
 
