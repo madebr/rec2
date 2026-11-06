@@ -10,6 +10,7 @@
 
 #include "00-car.h"
 #include "01-network.h"
+#include "13-crush1.h"
 
 #include "16-graphics1.h"
 #include "18-graphics2.h"
@@ -524,7 +525,15 @@ void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* pPowerup, tCar_spec* pCar) {
     }
 }
 
-// DoInstantRepair
+// FUNCTION: CARMA2_HW 0x004dc990
+// FUNCTION: CARMA2_SW 0x004d8e90
+int C2_HOOK_FASTCALL DoInstantRepair(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        TotallyRepairCar();
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004dc9c0
 // FUNCTION: CARMA2_SW 0x004d8ec0
