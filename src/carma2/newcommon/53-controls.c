@@ -263,6 +263,55 @@ void C2_HOOK_FASTCALL TDamageLFWheel(void) {
     DamageLFWheel(21);
 }
 
+// FUNCTION: CARMA2_HW 0x00442060
+// FUNCTION: CARMA2_SW 0x00442140
+void C2_HOOK_FASTCALL TDamageLFBrake(void) {
+
+    DamageLFBrake(21);
+}
+
+// FUNCTION: CARMA2_HW 0x00442070
+// FUNCTION: CARMA2_SW 0x00442150
+void C2_HOOK_FASTCALL TDamageLRBrake(void) {
+
+    DamageLRBrake(21);
+}
+
+// FUNCTION: CARMA2_HW 0x00442080
+// FUNCTION: CARMA2_SW 0x00442160
+void C2_HOOK_FASTCALL TDamageLRWheel(void) {
+
+    DamageLRWheel(21);
+}
+
+// FUNCTION: CARMA2_HW 0x00442090
+// FUNCTION: CARMA2_SW 0x00442170
+void C2_HOOK_FASTCALL TDamageRFWheel(void) {
+
+    DamageRFWheel(21);
+}
+
+// FUNCTION: CARMA2_HW 0x004420a0
+// FUNCTION: CARMA2_SW 0x00442180
+void C2_HOOK_FASTCALL TDamageRFBrake(void) {
+
+    DamageRFBrake(21);
+}
+
+// FUNCTION: CARMA2_HW 0x004420b0
+// FUNCTION: CARMA2_SW 0x00442190
+void C2_HOOK_FASTCALL TDamageRRBrake(void) {
+
+    DamageRRBrake(21);
+}
+
+// FUNCTION: CARMA2_HW 0x004420c0
+// FUNCTION: CARMA2_SW 0x004421a0
+void C2_HOOK_FASTCALL TDamageRRWheel(void) {
+
+    DamageRRWheel(21);
+}
+
 // ToggleMiniMap
 
 // CheckToggles

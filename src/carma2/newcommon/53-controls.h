@@ -94,6 +94,20 @@ extern void C2_HOOK_FASTCALL TDamageTrans(void);
 
 extern void C2_HOOK_FASTCALL TDamageLFWheel(void);
 
+extern void C2_HOOK_FASTCALL TDamageLFBrake(void);
+
+extern void C2_HOOK_FASTCALL TDamageLRBrake(void);
+
+extern void C2_HOOK_FASTCALL TDamageLRWheel(void);
+
+extern void C2_HOOK_FASTCALL TDamageRFWheel(void);
+
+extern void C2_HOOK_FASTCALL TDamageRFBrake(void);
+
+extern void C2_HOOK_FASTCALL TDamageRRBrake(void);
+
+extern void C2_HOOK_FASTCALL TDamageRRWheel(void);
+
 // ToggleMiniMap
 
 // CheckToggles
