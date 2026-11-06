@@ -117,9 +117,17 @@ tFrontend_item_spec gDefault_last_interface_item = {
 // GLOBAL: CARMA2_SW 0x00680c34
 int gFrontend_scrollbars_updated;
 
+// GLOBAL: CARMA2_HW 0x006864f8
+// GLOBAL: CARMA2_SW 0x00680c38
+int gFrontend_controls_count_keys;
+
 // GLOBAL: CARMA2_HW 0x006864fc
 // GLOBAL: CARMA2_SW 0x00680c3c
 int gFrontend_netsummary_first_iteration;
+
+// GLOBAL: CARMA2_HW 0x00688748
+// GLOBAL: CARMA2_SW 0x00682ca8
+int gINT_00688748;
 
 // GLOBAL: CARMA2_HW 0x00686850
 // GLOBAL: CARMA2_SW 0x00680f90
@@ -373,12 +381,14 @@ tFrontend_slider gOptions_sound_slider;
 int gValid_stashed_save_game; // FIXME: rename variable?
 
 // GLOBAL: CARMA2_HW 0x00688408
+// GLOBAL: CARMA2_SW 0x00682968
 tConnected_items gControls_scroller;
 
 // GLOBAL: CARMA2_HW 0x00688458
 char* gKey_names[153];
 
 // GLOBAL: CARMA2_HW 0x00604888
+// GLOBAL: CARMA2_SW 0x005ff7b8
 const int gControls_frontend_to_key_mapping_lut[29] = {
     49, 50, 47, 48, 54, 45, 60, 58, 56, 46,
     57, 67, 68, 69, 71, 61, 62, 63, 64, 74,
@@ -2582,9 +2592,24 @@ tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem) {
     return NULL;
 }
 
-// ScrollSet_DisplayEntry
+void C2_HOOK_FASTCALL ScrollSet_DisplayEntry(tConnected_items* pScroll_set, int pIndex) {
 
-// ScrollSet_GetItem
+    if (pIndex < pScroll_set->field_0x8 || pIndex >= pScroll_set->field_0x8 + pScroll_set->range_length) {
+        pScroll_set->field_0x8 = pIndex;
+        if (pIndex >= pScroll_set->field_0x0 - pScroll_set->range_length) {
+            pScroll_set->field_0x8 = pScroll_set->field_0x0 - pScroll_set->range_length;
+        }
+    }
+}
+
+int C2_HOOK_FASTCALL ScrollSet_GetItem(tConnected_items* pScroll_set, int pIndex) {
+
+    if (pIndex < pScroll_set->field_0x8 || pIndex > pScroll_set->field_0x8 + pScroll_set->range_length) {
+        return -1;
+    } else {
+        return pIndex - pScroll_set->field_0x8 + pScroll_set->range_starts[0];
+    }
+}
 
 // GetUpdown
 
@@ -2663,6 +2688,7 @@ void C2_HOOK_FASTCALL StripControls(char* pStr) {
 // DisposeKeyNames
 
 // FUNCTION: CARMA2_HW 0x004720e0
+// FUNCTION: CARMA2_SW 0x00471670
 void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
     int i;
 
@@ -2780,9 +2806,66 @@ int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend) {
 
 // Controls_Outfunc
 
-// Controls_SlotActivated
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// Controls_Ok
+// STUB: CARMA2_HW 0x00472b00
+// STUB: CARMA2_SW 0x00472090
+int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00472d80
+// FUNCTION: CARMA2_SW 0x004722f0
+int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend) {
+    int i;
+    int prev_item;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gKey_mapping) != 77);
+
+    gINT_00688748 = -1;
+    WaitForNoKeys();
+    for (i = 28; i <= (int)REC2_ASIZE(gKey_mapping) - 1; i++) {
+        if (gKey_mapping[i] == -2) {
+            gINT_00688748 = i;
+            break;
+        }
+    }
+    if (gJoystick_index == -1) {
+        for (i = 28; i <= (int)REC2_ASIZE(gKey_mapping) - 1; i++) {
+            if (gKey_mapping[i] >= 107 && gKey_mapping[i] < 139) {
+                gINT_00688748 = i;
+            } else if (gKey_mapping[i] >= 139 && gKey_mapping[i] < 143) {
+                gINT_00688748 = i;
+            }
+        }
+    }
+    if (gINT_00688748 != -1) {
+        for (i = 0; i < gFrontend_controls_count_keys; i++) {
+            if (gControls_frontend_to_key_mapping_lut[i] == gINT_00688748) {
+                break;
+            }
+        }
+        ScrollSet_DisplayEntry(&gControls_scroller, i);
+        RefreshScrollSet(pFrontend);
+        prev_item = gFrontend_selected_item_index;
+        gFrontend_selected_item_index = ScrollSet_GetItem(&gControls_scroller, i);
+        if (gFrontend_selected_item_index == -1) {
+            PDFatalError("Screwed up in Controls_Ok().");
+            return 0;
+        }
+        Controls_SlotActivated(pFrontend);
+        gFrontend_selected_item_index = prev_item;
+        return 4;
+    }
+    SaveJoystickPreferences();
+    return 0;
+}
 
 inline void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend) {
 

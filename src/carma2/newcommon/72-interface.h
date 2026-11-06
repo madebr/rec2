@@ -41,6 +41,9 @@ extern int gFrontend_wrecks_pending_hscroll;
 extern int gFrontend_wrecks_rotate_prev_x;
 extern int gFrontend_wrecks_rotate_prev_y;
 
+extern int gFrontend_controls_count_keys;
+extern int gINT_00688748;
+
 // SetGameTarget
 
 extern void C2_HOOK_FASTCALL SetOptions(tNet_game_type pGame_type, tNet_game_options* pGame_options);
@@ -349,9 +352,9 @@ extern void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
 extern tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem);
 
-// ScrollSet_DisplayEntry
+extern void C2_HOOK_FASTCALL ScrollSet_DisplayEntry(tConnected_items* pScroll_set, int pIndex);
 
-// ScrollSet_GetItem
+extern int C2_HOOK_FASTCALL ScrollSet_GetItem(tConnected_items* pScroll_set, int pIndex);
 
 // GetUpdown
 
@@ -393,7 +396,7 @@ extern void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider);
 
 extern void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec* pFrontend);
 
-// SaveAllJoystickData
+extern void C2_HOOK_FASTCALL SaveAllJoystickData(void);
 
 // Controls_SwitchKeymapSet
 
@@ -405,9 +408,9 @@ extern int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend);
 
 // Controls_Outfunc
 
-// Controls_SlotActivated
+extern int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend);
 
-// Controls_Ok
+extern int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend);
 
