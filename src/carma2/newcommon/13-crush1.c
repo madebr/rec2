@@ -18,6 +18,8 @@
 #include "51-smash.h"
 #include "60-phil.h"
 #include "globvars.h"
+#include "globvrpb.h"
+
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -350,7 +352,23 @@ intptr_t C2_HOOK_CDECL z(br_actor* pActor, void* pData) {
 
 // InitModelMasterCrushData
 
-// InitNetworkShapesStuff
+// FUNCTION: CARMA2_HW 0x0042a9b0
+// FUNCTION: CARMA2_SW 0x0042aa40
+void C2_HOOK_FASTCALL InitNetworkShapesStuff(tCar_crush_spec* pCar_crush) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_network_shapes) != 0x60);
+
+    pCar_crush->field_0x24 = 0;
+    pCar_crush->field_0x26 = 0;
+    if (gNet_mode == eNet_mode_host) {
+        pCar_crush->network_stuff = BrMemAllocate(sizeof(tCar_crush_network_shapes), kMem_crush_data);
+        for (i = 1; i < gNumber_of_net_players; i++) {
+            pCar_crush->network_stuff->items[i - 1].network_id = gNet_players[i].ID;
+            pCar_crush->network_stuff->items[i - 1].field_0x4 = 0;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0042acb0
 // FUNCTION: CARMA2_SW 0x0042ad40

@@ -57,7 +57,7 @@ extern intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* p
 
 // InitModelMasterCrushData
 
-// InitNetworkShapesStuff
+extern void C2_HOOK_FASTCALL InitNetworkShapesStuff(tCar_crush_spec* pCar_crush);
 
 extern int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2);
 
