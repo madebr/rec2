@@ -51,7 +51,7 @@ extern void C2_HOOK_FASTCALL ARResetPiping(void);
 
 // ARInitialise
 
-// ARDispose
+extern void C2_HOOK_FASTCALL ARDispose(void);
 
 extern int C2_HOOK_FASTCALL LengthOfChunk(tPipe_chunk* pChunk, int pType);
 

@@ -17,6 +17,7 @@
 #include "30-opponent.h"
 #include "32-spark.h"
 #include "41-utility.h"
+#include "46-win95sys.h"
 
 #include "13-crush1.h"
 #include "51-smash.h"
@@ -149,7 +150,19 @@ void C2_HOOK_FASTCALL ARResetPiping(void) {
 
 // ARInitialise
 
-// ARDispose
+// FUNCTION: CARMA2_HW 0x004024a0
+// FUNCTION: CARMA2_SW 0x004024a0
+void C2_HOOK_FASTCALL ARDispose(void) {
+
+    if (gPipe_buffer_start != NULL) {
+        PDDisposeActionReplayBuffer(gPipe_buffer_start);
+    }
+    gPipe_buffer_start = NULL;
+    if (gLocal_buffer != NULL) {
+        BrMemFree(gLocal_buffer);
+        gLocal_buffer = NULL;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00403720
 // FUNCTION: CARMA2_SW 0x00403720
