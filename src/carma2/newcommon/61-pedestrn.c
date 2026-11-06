@@ -15,10 +15,13 @@
 #include "27-powerup.h"
 #include "28-world3.h"
 #include "30-opponent.h"
+
 #include "41-utility.h"
 #include "42-input.h"
 #include "49-physics.h"
+#include "52-errors.h"
 #include "62-graphics3.h"
+
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "69-sound.h"
@@ -438,7 +441,47 @@ void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF) {
 void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm) {
 }
 
-// CBLoadPersonality
+// FUNCTION: CARMA2_HW 0x004cc950
+// FUNCTION: CARMA2_SW 0x004c9050
+void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pPersonality, FILE* pF) {
+    char s[256];
+    tPath_name path;
+    FILE* sound_f;
+    tPed_personality_sounds* sounds;
+    int i;
+    int j;
+
+    C2_HOOK_BUG_ON(sizeof(tPed_personality_sounds) != 0x84);
+    C2_HOOK_BUG_ON(REC2_ASIZE(sounds->sounds) != 11);
+
+    GetAString(pF, s);
+    PathCat(path, gApplication_path, gPedsFolder);
+    PathCat(path, path, "SOUND");
+    PathCat(path, path, s);
+    sound_f = DRfopen(path, "rt");
+    if (sound_f == NULL) {
+        FatalError(kFatalError_CannotOpenPedFile_S, s);
+    }
+
+    sounds = BrMemAllocate(sizeof(*sounds), kMem_misc_poly_ped);
+    pPersonality->sounds = sounds;
+    for (i = 0; i < REC2_ASIZE(sounds->sounds); i++) {
+        sounds->sounds[i].count_sounds = (tU16)GetAnInt(sound_f);
+        for (j = 0; j < sounds->sounds[i].count_sounds; j++) {
+            sounds->sounds[i].sounds[j] = (tU16)LoadSingleSound(&gPedStorage, GetAnInt(sound_f));
+        }
+    }
+    PFfclose(sound_f);
+
+    pPersonality->jump_height = 0.f;
+    if (!PFfeof(pF)) {
+        GetAString(pF, s);
+        if (DRStricmp(s, "JUMPHEIGHT") == 0) {
+            pPersonality->jump_height = GetAScalar(pF);
+        }
+    }
+    ClosePackFileAndSetTiffLoading(gTwtPeds);
+}
 
 // FUNCTION: CARMA2_HW 0x004ccaa0
 // FUNCTION: CARMA2_SW 0x004c91a0

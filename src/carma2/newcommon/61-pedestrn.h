@@ -159,7 +159,7 @@ extern void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF);
 
 extern void C2_HOOK_FASTCALL CBDisposeForm(tPed_form* pForm);
 
-// CBLoadPersonality
+extern void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pPersonality, FILE* pF);
 
 extern void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality);
 
