@@ -22,6 +22,8 @@
 #include "19-font.h"
 #include "24-loadsave.h"
 #include "28-world3.h"
+#include "30-opponent.h"
+
 #include "35-intrface.h"
 #include "40-main.h"
 #include "41-utility.h"
@@ -239,6 +241,10 @@ int gFrontend_scroll_time_increment;
 // GLOBAL: CARMA2_SW 0x0075b3fc
 int gFrontend_count_saved_games;
 
+// GLOBAL: CARMA2_HW 0x00763890
+// GLOBAL: CARMA2_SW 0x00759df0
+int gFrontend_wrecks_current;
+
 // GLOBAL: CARMA2_HW 0x00763894
 // GLOBAL: CARMA2_SW 0x00759df4
 tU32 gFrontend_scroll_last_update;
@@ -282,6 +288,10 @@ br_uint_32 gFrontend_APO_Colour_2;
 // GLOBAL: CARMA2_HW 0x00763700
 // GLOBAL: CARMA2_SW 0x00759c60
 br_uint_32 gFrontend_APO_Colour_3;
+
+// GLOBAL: CARMA2_HW 0x00763720
+// GLOBAL: CARMA2_SW 0x00759c80
+tWreck_gallery_sell_info gWreck_gallery_sell_infos[32];
 
 // GLOBAL: CARMA2_HW 0x0068650c
 // GLOBAL: CARMA2_SW 0x00680c4c
@@ -1812,7 +1822,30 @@ int C2_HOOK_FASTCALL ScrollToPrevCar(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// BuyCurrentCar
+// FUNCTION: CARMA2_HW 0x0046e780
+// FUNCTION: CARMA2_SW 0x0046de20
+int C2_HOOK_FASTCALL BuyCurrentCar(tFrontend_spec* pFrontend) {
+    tCar_spec* car;
+    tOpponent_spec* opponent;
+
+    C2_HOOK_BUG_ON(sizeof(tWreck_gallery_sell_info) != 0x8);
+
+    if (gFrontend_wreck_bought_car_dz != 0.f) {
+        return 0;
+    }
+    if (gWreck_gallery_sell_infos[gFrontend_wrecks_current].sold) {
+        return 0;
+    }
+    car = GetCarSpec(eVehicle_opponent, gFrontend_wrecks_current);
+    opponent = GetOpponentSpecFromCarSpec(car);
+    gProgram_state.cars_available[gProgram_state.number_of_cars] = car->index;
+    gProgram_state.number_of_cars += 1;
+    gProgram_state.current_car_index = car->index;
+    gProgram_state.credits -= gOpponents[opponent->index].price;
+    gFrontend_wreck_bought_car_dz = 0.001f;
+    DRS3StartSound(gEffects_outlet, eSoundId_Done);
+    return 0;
+}
 
 // WrecksInFunc
 
