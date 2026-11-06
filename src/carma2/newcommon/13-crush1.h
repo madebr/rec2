@@ -24,6 +24,8 @@ extern tCrush_info_buffer gSplit_car_crush_info_buffer;
 extern tPhysics_object* gSplit_car_collision_infos;
 extern tDriver gSplit_car_driver;
 extern tPhysics_shape* gGonad_sphere_collision_shape;
+extern int gCount_toggled_doors;
+extern tToggled_door gToggled_doors[16];
 
 extern void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF);
 
@@ -185,7 +187,7 @@ extern void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br
 
 // SetBitForDetachment
 
-// SetFlappage
+extern void C2_HOOK_FASTCALL SetFlappage(br_actor* pActor, tCar_spec* pCar, int pFlags, float pScalar);
 
 // GetUniqueID
 

@@ -146,6 +146,14 @@ tDriver gSplit_car_driver;
 // GLOBAL: CARMA2_SW 0x00673e24
 tPhysics_shape* gGonad_sphere_collision_shape;
 
+// GLOBAL: CARMA2_HW 0x0067bd58
+// GLOBAL: CARMA2_SW 0x006764c8
+int gCount_toggled_doors;
+
+// GLOBAL: CARMA2_HW 0x00679450
+// GLOBAL: CARMA2_SW 0x00673bc0
+tToggled_door gToggled_doors[16];
+
 // FUNCTION: CARMA2_HW 0x00429bb0
 // FUNCTION: CARMA2_SW 0x00429c40
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
@@ -762,7 +770,26 @@ void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br_vector
 
 // SetBitForDetachment
 
-// SetFlappage
+// FUNCTION: CARMA2_HW 0x0042d8f0
+// FUNCTION: CARMA2_SW 0x0042d960
+void C2_HOOK_FASTCALL SetFlappage(br_actor* pActor, tCar_spec* pCar, int pFlags, float pScalar) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gToggled_doors) != 16);
+
+    if (gCount_toggled_doors != REC2_ASIZE(gToggled_doors)) {
+        for (i = 0; i < gCount_toggled_doors; i++) {
+            if (gToggled_doors[i].actor == pActor) {
+                return;
+            }
+        }
+        gToggled_doors[gCount_toggled_doors].actor = pActor;
+        gToggled_doors[gCount_toggled_doors].car = pCar;
+        gToggled_doors[gCount_toggled_doors].field_0x8 = pFlags;
+        gToggled_doors[gCount_toggled_doors].field_0xc = pScalar;
+        gCount_toggled_doors += 1;
+    }
+}
 
 // GetUniqueID
 
