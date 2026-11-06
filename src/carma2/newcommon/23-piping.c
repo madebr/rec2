@@ -1213,7 +1213,16 @@ void C2_HOOK_FASTCALL ApplyPowerupLose(tPipe_chunk** pChunk) {
     ARPowerupLose((tPowerup*)(*pChunk)->subject_index, (*pChunk)->data.powerup_lose.car);
 }
 
-// ApplyFunkEnable
+// FUNCTION: CARMA2_HW 0x004c9c20
+// FUNCTION: CARMA2_SW 0x004c6350
+void C2_HOOK_FASTCALL ApplyFunkEnable(tPipe_chunk** pChunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk, subject_index, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_funk_enable, flags, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_funk_enable, flags, 0x2);
+
+    AdjustFunkEnable((int)(*pChunk)->subject_index, (tS16)(*pChunk)->data.funk_enable.flags);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9c30
 // FUNCTION: CARMA2_SW 0x004c6360
@@ -1460,7 +1469,17 @@ void C2_HOOK_FASTCALL UndoPowerupLose(tPipe_chunk** pChunk, tPipe_chunk* pPrev_c
     ARPowerupGot((tPowerup*)(*pChunk)->subject_index, (*pChunk)->data.powerup_lose.car);
 }
 
-// UndoFunkEnable
+// FUNCTION: CARMA2_HW 0x004ca310
+// FUNCTION: CARMA2_SW 0x004c6a40
+void C2_HOOK_FASTCALL UndoFunkEnable(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk, subject_index, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_funk_enable, flags, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_funk_enable, flags, 0x2);
+
+    (void)pPrev_chunk;
+    AdjustFunkEnable((int)(*pChunk)->subject_index, (*pChunk)->data.funk_enable.flags == 0);
+}
 
 // FUNCTION: CARMA2_HW 0x004ca330
 // FUNCTION: CARMA2_SW 0x004c6a60

@@ -404,7 +404,7 @@ extern void C2_HOOK_FASTCALL ApplyPowerupGot(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyPowerupLose(tPipe_chunk** pChunk);
 
-// ApplyFunkEnable
+extern void C2_HOOK_FASTCALL ApplyFunkEnable(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplyVanishDismembered(tPipe_chunk** pChunk);
 
@@ -498,7 +498,7 @@ extern void C2_HOOK_FASTCALL UndoPowerupGot(tPipe_chunk** pChunk, tPipe_chunk* p
 
 extern void C2_HOOK_FASTCALL UndoPowerupLose(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
-// UndoFunkEnable
+extern void C2_HOOK_FASTCALL UndoFunkEnable(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 extern void C2_HOOK_FASTCALL UndoVanishDismembered(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
