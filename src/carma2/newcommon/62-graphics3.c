@@ -197,6 +197,22 @@ br_pixelmap* gCheckpoint_numbers;
 // GLOBAL: CARMA2_SW 0x006878dc
 br_pixelmap* gSmashy_dot;
 
+// GLOBAL: CARMA2_HW 0x0068d88c
+// GLOBAL: CARMA2_SW 0x006878e4
+int gBack_original_base_x;
+
+// GLOBAL: CARMA2_HW 0x0068d888
+// GLOBAL: CARMA2_SW 0x006878e0
+int gBack_original_base_y;
+
+// GLOBAL: CARMA2_HW 0x0068d6ec
+// GLOBAL: CARMA2_SW 0x00687744
+int gBack_original_origin_x;
+
+// GLOBAL: CARMA2_HW 0x0068d6e8
+// GLOBAL: CARMA2_SW 0x00687740
+int gBack_original_origin_y;
+
 // GLOBAL: CARMA2_HW 0x0068c87c
 // GLOBAL: CARMA2_SW 0x006868d4
 br_pixelmap* gAlt_meter;
@@ -540,11 +556,29 @@ void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, t
     }
 }
 
-// DoMapOverlays
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00495e10
+// STUB: CARMA2_SW 0x004927b0
+void C2_HOOK_FASTCALL DoMapOverlays(br_pixelmap* pScreen) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // StartMap
 
-// FinishMap
+void C2_HOOK_FASTCALL FinishMap(void) {
+
+    gBack_screen->origin_x = (br_int_16)gBack_original_origin_x;
+    gBack_screen->origin_y = (br_int_16)gBack_original_origin_y;
+    gBack_screen->base_x = (br_uint_16)gBack_original_base_x;
+    gBack_screen->base_y = (br_uint_16)gBack_original_base_y;
+}
 
 // FUNCTION: CARMA2_HW 0x00496b10
 void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
@@ -577,13 +611,41 @@ void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pT
 
 // DoNearestOpponentRelativeHeightMarkerStuff
 
-// MapOverlay
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004950b0
+// STUB: CARMA2_SW 0x00491c00
+void C2_HOOK_FASTCALL MapOverlay(void) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // InitNearestCar
 
 // MapStuffBeforeRender
 
-// MapStuffAfterRender
+// FUNCTION: CARMA2_HW 0x00496d80
+// FUNCTION: CARMA2_SW 0x00493bf0
+void C2_HOOK_FASTCALL MapStuffAfterRender(void) {
+    if (gCurrent_race.map_image == NULL) {
+        return;
+    }
+    if (gMap_view == 2) {
+        BrVector2Set(&gOrigin_headup_map, 0.f, 0.f);
+        DoMapOverlays(gBack_screen);
+        FinishMap();
+    } else if (gMap_view == 1) {
+        if (!gAction_replay_mode
+                && !(gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_foxy && gThis_net_player_index == gIt_or_fox)) {
+            MapOverlay();
+        }
+    }
+}
 
 static void C2_HOOK_FASTCALL ReadMoodMessages(void) {
     tPath_name path;
