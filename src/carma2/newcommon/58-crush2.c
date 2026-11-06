@@ -141,19 +141,40 @@ int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar) {
     return 1;
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x0043f930
-// STUB: CARMA2_SW 0x0043fa10
+// FUNCTION: CARMA2_HW 0x0043f930
+// FUNCTION: CARMA2_SW 0x0043fa10
 void C2_HOOK_FASTCALL DamageUnit2(tCar_spec *pCar, tDamage_type pDamage_type, int pMagnitude) {
-    NOT_IMPLEMENTED();
-}
+    tDamage_unit* the_damage;
+    int last_level;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    if (pCar != NULL && pCar->driver >= eDriver_net_human && pDamage_type == eDamage_driver) {
+        return;
+    }
+
+    if (!pCar->invulnerable_no_damage && pMagnitude >= 5) {
+        the_damage = &pCar->damage_units[pDamage_type];
+        last_level = the_damage->damage_level;
+        the_damage->damage_level += pMagnitude;
+        if (the_damage->damage_level >= 99) {
+            if (pMagnitude < 10) {
+                the_damage->damage_level = last_level;
+            } else {
+                the_damage->damage_level = 99;
+            }
+        }
+        if (!SetKnackeredFlag(pCar)
+                && (pCar == NULL || pCar->driver != eDriver_oppo)
+                && gNet_mode == eNet_mode_none
+                && ((pCar->damage_units[eDamage_engine].damage_level >= 99
+                        && pCar->damage_units[eDamage_engine].last_level < 99
+                        && pCar->damage_units[eDamage_transmission].last_level < 99)
+                    || (pCar->damage_units[eDamage_transmission].damage_level >= 99
+                        && pCar->damage_units[eDamage_engine].last_level < 99
+                        && pCar->damage_units[eDamage_transmission].last_level < 99))) {
+            QueueOilSpill(pCar);
+        }
+    }
+}
 
 // RecordLastDamage
 
