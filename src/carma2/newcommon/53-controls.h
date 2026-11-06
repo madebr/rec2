@@ -186,7 +186,7 @@ extern void C2_HOOK_FASTCALL UserSendMessage(void);
 
 // EnterUserMessage
 
-// DisplayUserMessage
+extern void C2_HOOK_FASTCALL DisplayUserMessage(void);
 
 extern void C2_HOOK_FASTCALL InitAbuseomatic(void);
 

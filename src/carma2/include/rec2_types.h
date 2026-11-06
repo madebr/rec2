@@ -5550,7 +5550,7 @@ enum {
     eMiscString_watching = 217,
     eMiscString_race_leader = 218,
     eMiscString_message_sent = 226,
-    eMiscString_enter_message = 226,
+    eMiscString_enter_message = 227,
     eMiscString_too_late_to_cancel = 242,
     eMiscString_could_not_find_carmageddon_cd = 243,
     eMiscString_no_target_to_lock_onto = 250,
