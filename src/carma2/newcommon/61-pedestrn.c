@@ -13,6 +13,7 @@
 #include "21-mainloop.h"
 #include "22-replay.h"
 #include "27-powerup.h"
+#include "28-world3.h"
 #include "30-opponent.h"
 #include "41-utility.h"
 #include "42-input.h"
@@ -306,7 +307,18 @@ FILE* C2_HOOK_FASTCALL BonerOpenRemaps(const char* pFile_name) {
     return DRfopen(path, "rb");
 }
 
-// BonerReadPersonalityModels
+// FUNCTION: CARMA2_HW 0x004cbc10
+// FUNCTION: CARMA2_SW 0x004c8310
+void C2_HOOK_FASTCALL BonerReadPersonalityModels(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, gApplication_path, gPedsFolder);
+    PathCat(path, path, "PEEPS");
+    PathCat(path, path, pName);
+    DisallowDuplicates();
+    LoadAllStuffInDirectory(&gPedStorage, path, kRendererShadingType_Diffuse1);
+    AllowDuplicates();
+}
 
 // FUNCTION: CARMA2_HW 0x004cbc70
 // FUNCTION: CARMA2_SW 0x004c8370
