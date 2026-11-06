@@ -291,7 +291,7 @@ extern void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_
 
 // ReinitSmashing
 
-// LinkSmashies
+extern void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data);
 
 extern intptr_t C2_HOOK_CDECL RepairModels(br_actor* pActor, void* pUser);
 

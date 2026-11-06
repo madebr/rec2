@@ -1203,7 +1203,11 @@ void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_materia
 
 // ReinitSmashing
 
-// LinkSmashies
+// STUB: CARMA2_HW 0x004f57c0
+// STUB: CARMA2_SW 0x004f1420
+void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004f5a00
 // FUNCTION: CARMA2_SW 0x004f1660

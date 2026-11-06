@@ -103,11 +103,11 @@ extern intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* pActor, void* pData
 
 // PointEdgeDistSq
 
-// SetFlapCheckVertices
+extern void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data* pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data);
 
-// InitModelVertexData
+extern void C2_HOOK_FASTCALL InitModelVertexData(tModel_detail_vertex_data* pVertex_data, br_model* pModel, int pDetail_level, tCar_crush_buffer_entry* pCrush_data, tCar_crush_spec* pCar_crush_spec);
 
-// InitVertexDataCB
+extern intptr_t C2_HOOK_CDECL InitVertexDataCB(br_actor* pActor, void* pData);
 
 // InitVertexData
 
