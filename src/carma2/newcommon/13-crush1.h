@@ -253,9 +253,9 @@ extern void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec
 
 // DoFlapping
 
-// ToggleFlapsCB2
+extern intptr_t C2_HOOK_CDECL ToggleFlapsCB2(br_actor* pActor, void* pCar);
 
-// ToggleFlapsCB
+extern int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, tCar_spec* pCar);
 
 // SendToggleFlaps
 
