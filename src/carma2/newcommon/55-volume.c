@@ -12,6 +12,7 @@
 #include "08-loading1.h"
 #include "34-finteray.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
@@ -33,6 +34,15 @@ tSpecial_volume* gDefault_water_spec_vol_real;
 const char* gSoundType_choices[2] = {
     "SATURATED",
     "SCATTERED"
+};
+
+// GLOBAL: CARMA2_HW 0x00660258
+// GLOBAL: CARMA2_SW 0x0065ab38
+const char* gSpecial_effects_boundary_choices[4] = {
+    "BOX",
+    "PLANE",
+    "DEFAULT",
+    "NEW",
 };
 
 // FUNCTION: CARMA2_HW 0x004ff110
@@ -184,13 +194,70 @@ void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
 
 // FUNCTION: CARMA2_HW 0x004ffd20
 // FUNCTION: CARMA2_SW 0x004fb600
-void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
+void C2_HOOK_FASTCALL FindInverseAndWorlBox(tSpecial_volume* pSpec) {
     br_bounds bnds;
 
-    BrVector3Set(&bnds.min, -1.f, -1.f, -1.f);
-    BrVector3Set(&bnds.max, 1.f, 1.f, 1.f);
+    BrVector3Set(&bnds.min, -1.0f, -1.0f, -1.0f);
+    BrVector3Set(&bnds.max, 1.0f, 1.0f, 1.0f);
     GetNewBoundingBox(&pSpec->boundary.box.bounds, &bnds, &pSpec->boundary.box.mat);
     BrMatrix34Inverse(&pSpec->boundary.box.inv_mat, &pSpec->boundary.box.mat);
 }
 
-// ReadSpecialVolumes
+// FUNCTION: CARMA2_HW 0x004ffd80
+// FUNCTION: CARMA2_SW 0x004fb660
+void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
+    int i;
+    int j;
+    tSpecial_volume* spec;
+    tSpecial_volume_boundary_type boundary_type;
+
+    C2_HOOK_BUG_ON(sizeof(tSpecial_volume) != 0xdc);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSpecial_effects_boundary_choices) != 4);
+
+    gDefault_engine_noise_index = GetAnInt(pF);
+    gDefault_water_spec_vol_real = &gDefault_default_water_spec_vol;
+    gProgram_state.special_volume_count = GetAnInt(pF);
+    if (gProgram_state.special_volume_count != 0) {
+        gProgram_state.special_volumes = BrMemAllocate(gProgram_state.special_volume_count * sizeof(tSpecial_volume), kMem_special_volume);
+        for (i = 0, spec = gProgram_state.special_volumes; i < gProgram_state.special_volume_count; i++, spec++) {
+            PossibleService();
+            boundary_type = GetALineAndInterpretCommand(pF, gSpecial_effects_boundary_choices, REC2_ASIZE(gSpecial_effects_boundary_choices));
+            spec->boundary_type = boundary_type;
+            if (spec->boundary_type == eFx_boundary_new) {
+                spec->boundary_type = eFx_boundary_box;
+            }
+            switch (spec->boundary_type) {
+            case eFx_boundary_box:
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[0][0], &spec->boundary.box.mat.m[0][1], &spec->boundary.box.mat.m[0][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[1][0], &spec->boundary.box.mat.m[1][1], &spec->boundary.box.mat.m[1][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[2][0], &spec->boundary.box.mat.m[2][1], &spec->boundary.box.mat.m[2][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[3][0], &spec->boundary.box.mat.m[3][1], &spec->boundary.box.mat.m[3][2]);
+                FindInverseAndWorlBox(spec);
+                spec->boundary.box.axis_length.v[0] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[0]);
+                spec->boundary.box.axis_length.v[1] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[1]);
+                spec->boundary.box.axis_length.v[2] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[2]);
+                ParseSpecialVolume(pF, spec, NULL, boundary_type == eFx_boundary_box);
+                if (spec->soundfx_type != kSoundFx_None) {
+                    for (j = 0; j < REC2_ASIZE(spec->boundary.box.bounds.min.v); j++) {
+                        spec->boundary.box.bounds.min.v[j] -= 10.0f;
+                    }
+                    for (j = 0; j < REC2_ASIZE(spec->boundary.box.bounds.max.v); j++) {
+                        spec->boundary.box.bounds.max.v[j] += 10.0f;
+                    }
+                }
+                break;
+            case eFx_boundary_plane:
+                GetFourScalars(pF, &spec->boundary.plane.v[0], &spec->boundary.plane.v[1], &spec->boundary.plane.v[2], &spec->boundary.plane.v[3]);
+                ParseSpecialVolume(pF, spec, NULL, 1);
+                break;
+            case eFx_boundary_default:
+                ParseSpecialVolume(pF, spec, NULL, 0);
+                gDefault_water_spec_vol_real = spec;
+                break;
+            default:
+                FatalError(kFatalError_ProblemWithSpecialVolumeNumber_I);
+                break;
+            }
+        }
+    }
+}

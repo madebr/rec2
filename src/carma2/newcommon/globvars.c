@@ -33,6 +33,10 @@ const char* gDir_separator;
 // GLOBAL: CARMA2_SW 0x00685ddc
 int gAusterity_mode;
 
+// GLOBAL: CARMA2_HW 0x0068b878
+// GLOBAL: CARMA2_SW 0x00685dd8
+int gDefault_engine_noise_index;
+
 // GLOBAL: CARMA2_HW 0x0068b884
 // GLOBAL: CARMA2_SW 0x00685de4
 int gAustere_override;
