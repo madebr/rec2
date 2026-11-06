@@ -196,7 +196,7 @@ extern void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle p
 
 // AddModelMashToPipingSession
 
-// AddRepulseRayToPipingSession
+extern void C2_HOOK_FASTCALL AddRepulseRayToPipingSession(int pIndex, br_vector3* pOrigin, br_vector3* pVictim, tU32 pTime);
 
 extern void C2_HOOK_FASTCALL AddNapalmBoltToPipingSession(int pIndex, tPedestrian* pPed, br_vector3* pPositions);
 

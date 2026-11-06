@@ -546,7 +546,20 @@ void C2_HOOK_FASTCALL AddFlapToPipingSession(br_actor* pActor, br_angle pAngle) 
 
 // AddModelMashToPipingSession
 
-// AddRepulseRayToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7940
+// FUNCTION: CARMA2_SW 0x004c4070
+void C2_HOOK_FASTCALL AddRepulseRayToPipingSession(int pIndex, br_vector3* pOrigin, br_vector3* pVictim, tU32 pTime) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_repulse_ray, origin, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_repulse_ray, victim, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_repulse_ray, victim, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_repulse_ray, time, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_repulse_ray, time, 0x4);
+
+    ARAddVariedDataToSession(ePipe_chunk_repulse_ray, pIndex, 3,
+        SIZE_OFFSET_PIPING(tPipe_chunk_repulse_ray, origin), pOrigin,
+        SIZE_OFFSET_PIPING(tPipe_chunk_repulse_ray, victim), pVictim,
+        SIZE_OFFSET_PIPING(tPipe_chunk_repulse_ray, time), pTime);
+}
 
 // FUNCTION: CARMA2_HW 0x004c7e70
 // FUNCTION: CARMA2_SW 0x004c45a0
