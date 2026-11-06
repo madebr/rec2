@@ -339,7 +339,7 @@ extern void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk);
 
 // ApplySpecial
 
-// ApplyProxRay
+extern void C2_HOOK_FASTCALL ApplyProxRay(tPipe_chunk** pChunk);
 
 // ApplySkidAdjustment
 

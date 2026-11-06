@@ -1083,7 +1083,15 @@ void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk) {
 
 // ApplySpecial
 
-// ApplyProxRay
+// FUNCTION: CARMA2_HW 0x004c97f0
+// FUNCTION: CARMA2_SW 0x004c5f20
+void C2_HOOK_FASTCALL ApplyProxRay(tPipe_chunk** pChunk) {
+
+    AdjustProxRay((*pChunk)->subject_index,
+        (*pChunk)->data.prox_ray.car_ID,
+        (*pChunk)->data.prox_ray.ped_index,
+        (*pChunk)->data.prox_ray.time);
+}
 
 // ApplySkidAdjustment
 

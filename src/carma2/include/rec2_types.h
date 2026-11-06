@@ -607,6 +607,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_powerup_respawn powerup_respawn;
         tPipe_chunk_shit_mine shit_mine;
         tPipe_chunk_end_shit_mine end_shit_mine;
+        tPipe_chunk_prox_ray prox_ray;
         tPipe_smudge_data smudge;
         tPipe_model_mash model_mash;
         tPipe_chunk_bend bend;
