@@ -135,6 +135,18 @@ tTranslation_record* gTranslations;
 // GLOBAL: CARMA2_SW 0x00680958
 tFlic_descriptor gPanel_flic[2];
 
+// GLOBAL: CARMA2_HW 0x006861d0
+// GLOBAL: CARMA2_SW 0x00680910
+tU8* gPanel_flic_data[2];
+
+// GLOBAL: CARMA2_HW 0x006861f8
+// GLOBAL: CARMA2_SW 0x00680938
+tU32 gPanel_flic_data_length[2];
+
+// GLOBAL: CARMA2_HW 0x006862f8
+// GLOBAL: CARMA2_SW 0x00680a38
+tU32 gLast_panel_frame_time[2];
+
 // GLOBAL: CARMA2_HW 0x00686320
 // GLOBAL: CARMA2_SW 0x00680a60
 br_pixelmap* gPanel_buffer[2];
@@ -593,7 +605,19 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
 
 // AssertFlicPixelmap
 
-// StartFlic
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00461ad0
+// STUB: CARMA2_SW 0x00461560
+int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_ptr pFlic_info, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, int pFrame_rate) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x00461d60
 // FUNCTION: CARMA2_SW 0x004617f0
@@ -1061,6 +1085,33 @@ void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex) {
 br_pixelmap* C2_HOOK_FASTCALL GetPanelPixelmap(int pPanel_index) {
 
     return gPanel_buffer[pPanel_index];
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00463130
+// STUB: CARMA2_SW 0x00462bc0
+void C2_HOOK_FASTCALL ServicePanelFlics(int pCopy_to_buffer) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00463270
+// FUNCTION: CARMA2_SW 0x00462d00
+void C2_HOOK_FASTCALL ChangePanelFlic(int pIndex, tU8* pData, tU32 pData_length) {
+
+    EndFlic(&gPanel_flic[pIndex]);
+    gPanel_flic_data_length[pIndex] = pData_length;
+    gPanel_flic_data[pIndex] = pData;
+    BrPixelmapFill(gPanel_buffer[pIndex], 0);
+    StartFlic(gPanel_flic[pIndex].file_name, pIndex, &gPanel_flic[pIndex], gPanel_flic_data_length[pIndex], (tS8*)gPanel_flic_data[pIndex], gPanel_buffer[pIndex], 0, 0, 0);
+    gLast_panel_frame_time[pIndex] = 0;
+    ServicePanelFlics(0);
 }
 
 // FUNCTION: CARMA2_HW 0x00463340
