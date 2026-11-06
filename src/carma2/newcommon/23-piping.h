@@ -115,7 +115,7 @@ extern tU32 C2_HOOK_FASTCALL ARGetStartTime(void);
 
 extern void C2_HOOK_FASTCALL ARDisableAdvance(void);
 
-// AREnableAdvance
+extern void C2_HOOK_FASTCALL AREnableAdvance(void);
 
 // FindNextChunk
 

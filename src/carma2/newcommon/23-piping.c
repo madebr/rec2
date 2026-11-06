@@ -356,7 +356,11 @@ void C2_HOOK_FASTCALL ARDisableAdvance(void) {
     gDisable_advance = 1;
 }
 
-// AREnableAdvance
+// FUNCTION: CARMA2_HW 0x004030e0
+// FUNCTION: CARMA2_SW 0x004030e0
+void C2_HOOK_FASTCALL AREnableAdvance(void) {
+    gDisable_advance = 0;
+}
 
 // FindNextChunk
 
