@@ -138,6 +138,15 @@ tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF) {
     return raw_short;
 }
 
+// FUNCTION: CARMA2_HW 0x0048f8f0
+// FUNCTION: CARMA2_SW 0x0048cb60
+tS8 C2_HOOK_FASTCALL ReadS8(FILE* pF) {
+    tS8 raw_byte;
+
+    PFfread(&raw_byte, sizeof(raw_byte), 1, pF);
+    return raw_byte;
+}
+
 // FUNCTION: CARMA2_HW 0x0048f910
 void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
     tU32 raw_long;
