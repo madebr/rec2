@@ -372,7 +372,7 @@ extern void C2_HOOK_FASTCALL ApplySmashDecal(tPipe_chunk** pChunk);
 
 extern void C2_HOOK_FASTCALL ApplySmashTextureChange(tPipe_chunk** pChunk);
 
-// ApplyRepulseRay
+extern void C2_HOOK_FASTCALL ApplyRepulseRay(tPipe_chunk** pChunk);
 
 // ApplyActorTrans
 

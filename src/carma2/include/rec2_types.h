@@ -616,6 +616,7 @@ typedef struct tPipe_chunk {
         tPipe_single_vanished_dismembered vanished_dismembered;
         tPipe_chunk_napalm_bolt napalm_bolt;
         tPipe_ped_dir_data ped_dir;
+        tPipe_chunk_repulse_ray repulse_ray;
         char raw_data[0];
     } data;
 } tPipe_chunk;
