@@ -879,7 +879,11 @@ void C2_HOOK_FASTCALL PipeSingleDroneRender(tDrone_spec* pDrone_spec, int pRende
         SIZE_OFFSET_PIPING(tPipe_drone_render, render), pRender);
 }
 
-// PipeSingleDroneCornerPos
+// STUB: CARMA2_HW 0x004c8ec0
+// STUB: CARMA2_SW 0x004c55f0
+void C2_HOOK_FASTCALL PipeSingleDroneCornerPos(tDrone_spec* pDrone, tU16 pField_0x48, tU16 pField_0x74, tU16 pRadius, tCompressed_matrix34* pMat) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004c8f30
 // FUNCTION: CARMA2_SW 0x004c5660

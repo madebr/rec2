@@ -10,8 +10,8 @@
 
 #include "08-loading1.h"
 #include "15-displays.h"
+#include "23-piping.h"
 #include "28-world3.h"
-
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
@@ -19,9 +19,9 @@
 #include "60-phil.h"
 #include "c2_string.h"
 #include "globvars.h"
-#include "platform.h"
-
 #include "c2_stdio.h"
+#include "platform.h"
+#include "rec2_macros.h"
 
 #include <math.h>
 
@@ -293,7 +293,34 @@ int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3* pPos) 
 
 // MoveThisDroneCar
 
-// PipeDroneMatrix
+// FUNCTION: CARMA2_HW 0x0044cfd0
+// FUNCTION: CARMA2_SW 0x0044cd80
+void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone) {
+    tCompressed_matrix34 compressed_mat;
+    br_scalar radius;
+    br_scalar speed;
+
+    BrVector3Set(&compressed_mat.m[0],
+        DRScalarToU16(pDrone->actor->t.t.mat.m[0][0], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[0][1], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[0][2], -1.f, 1.f));
+    BrVector3Set(&compressed_mat.m[1],
+        DRScalarToU16(pDrone->actor->t.t.mat.m[1][0], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[1][1], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[1][2], -1.f, 1.f));
+    BrVector3Set(&compressed_mat.m[2],
+        DRScalarToU16(pDrone->actor->t.t.mat.m[2][0], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[2][1], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[2][2], -1.f, 1.f));
+    BrVector3Set(&compressed_mat.m[3],
+        DRScalarToU16(pDrone->actor->t.t.mat.m[3][0], -1000.f, 1000.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[3][1], -1000.f, 1000.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[3][2], -1000.f, 1000.f));
+
+    radius = MIN(pDrone->h_radius, 100.f);
+    speed = pDrone->left_turn ? pDrone->field_0x48 : -pDrone->field_0x48;
+    PipeSingleDroneCornerPos(pDrone, DRScalarToU16(speed, -500.f, 500.f), DRScalarToU16(pDrone->field_0x74, 0.f, 1.f), DRScalarToU16(radius, 0.f, 100.f), &compressed_mat);
+}
 
 // PossiblyPipeDroneMovement
 
