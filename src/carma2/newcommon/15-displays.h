@@ -54,6 +54,8 @@ extern int gQueued_headup_count;
 
 // static void C2_HOOK_FASTCALL LoadHeadupMessageFile(void);
 
+extern void C2_HOOK_FASTCALL GetTimerString(char* pStr, undefined4 pArg3);
+
 extern void C2_HOOK_FASTCALL InitHeadups(void);
 
 extern void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
@@ -92,6 +94,8 @@ extern void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text
 
 extern void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont);
 
+extern void C2_HOOK_FASTCALL ChangeHeadupImage(int pHeadup_index, int pImage_index);
+
 extern void C2_HOOK_FASTCALL ChangeHeadupColour(int pHeadup_index, int pNew_colour);
 
 extern void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
@@ -104,7 +108,7 @@ extern void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text)
 
 extern void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
-// EarnCredits100
+extern void C2_HOOK_FASTCALL EarnCredits100(int pAmount);
 
 extern int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
@@ -113,6 +117,8 @@ extern void C2_HOOK_FASTCALL AwardTime(tU32 pTime);
 // AwardTime5
 
 extern void C2_HOOK_FASTCALL AwardTime5(tU32 pTime);
+
+extern void C2_HOOK_FASTCALL FullScreenTimedMessage(const char* pText);
 
 #ifdef REC2_HW
 extern void C2_HOOK_FASTCALL DoTestHeadup(void);

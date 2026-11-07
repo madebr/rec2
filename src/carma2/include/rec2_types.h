@@ -1959,14 +1959,7 @@ typedef struct tHeadup {
             tU32 start_time;
         } fancy_info;
         struct {
-            char text[252];
-            tDR_font* font;
-            tU32 font_index;
-            undefined4 field_0x104;
-            undefined4 field_0x108;
-            undefined4 field_0x10c;
-            undefined4 field_0x110;
-            undefined4 field_0x114;
+            br_pixelmap* image;
         } image_info;
         struct {
             char text[252];

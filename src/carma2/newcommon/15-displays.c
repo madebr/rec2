@@ -9,6 +9,7 @@
 #include "15-displays.h"
 
 #include "08-loading1.h"
+#include "10-loading2.h"
 #include "16-graphics1.h"
 #include "18-graphics2.h"
 #include "18b-graphics2.h"
@@ -218,6 +219,13 @@ static void C2_HOOK_FASTCALL LoadHeadupMessageFile(void) {
         }
     }
     PFfclose(f);
+}
+
+// FUNCTION: CARMA2_HW 0x00449070
+// FUNCTION: CARMA2_SW 0x00449490
+void C2_HOOK_FASTCALL GetTimerString(char* pStr, undefined4 pArg3) {
+
+    TimerString(gTimer, pStr, pArg3, 0, 0);
 }
 
 // FUNCTION: CARMA2_HW 0x00449090
@@ -532,25 +540,25 @@ int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pL
         } else {
             the_headup->end_time = 0;
         }
-        strcpy(the_headup->data.image_info.text, gHud_messages[pImage_index].message);
-        the_headup->data.image_info.font_index = gHud_messages[pImage_index].font2;
-        the_headup->data.image_info.font = &gFonts[gHud_messages[pImage_index].font1];
+        strcpy(the_headup->data.fancy_info.text, gHud_messages[pImage_index].message);
+        the_headup->data.fancy_info.font_index = gHud_messages[pImage_index].font2;
+        the_headup->data.fancy_info.font = &gFonts[gHud_messages[pImage_index].font1];
         switch (the_headup->justification) {
         case eJust_left:
-            the_headup->data.image_info.field_0x104 = 0;
-            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
-            the_headup->data.image_info.field_0x10c = -width;
+            the_headup->data.fancy_info.offset = 0;
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.end_offset = -width;
             break;
         case eJust_right:
-            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
-            the_headup->data.image_info.field_0x104 = width;
-            the_headup->data.image_info.field_0x10c = 0;
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.offset = width;
+            the_headup->data.fancy_info.end_offset = 0;
             break;
         case eJust_centre:
-            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
-            the_headup->data.image_info.field_0x104 = width / 2;
-            width = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
-            the_headup->data.image_info.field_0x10c = -(width / 2);
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.offset = width / 2;
+            width = DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.end_offset = -(width / 2);
             break;
         }
     }
@@ -636,7 +644,33 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
 void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont) {
 
     if (pHeadup_index >= 0) {
-        gHeadups[pHeadup_index].data.image_info.font = &gFonts[-pFont];
+        gHeadups[pHeadup_index].data.fancy_info.font = &gFonts[-pFont];
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0044a950
+// FUNCTION: CARMA2_SW 0x0044aae0
+void C2_HOOK_FASTCALL ChangeHeadupImage(int pHeadup_index, int pImage_index) {
+    tHeadup* headup;
+    br_pixelmap* image;
+
+    if (pHeadup_index >= 0) {
+        image = gHeadup_images[pImage_index];
+        headup = &gHeadups[pHeadup_index];
+        headup->data.image_info.image = image;
+        switch (headup->justification) {
+        case eJust_left:
+            headup->x = headup->original_x;
+            break;
+        case eJust_right:
+            headup->x = headup->original_x - image->width;
+            return;
+        case eJust_centre:
+            headup->x = headup->original_x - (image->width >> 1);
+            return;
+        default:
+            return;
+        }
     }
 }
 
@@ -806,7 +840,11 @@ void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
     EarnCredits2(pAmount, "");
 }
 
-// EarnCredits100
+// FUNCTION: CARMA2_HW 0x0044b450
+// FUNCTION: CARMA2_SW 0x0044b5e0
+void C2_HOOK_FASTCALL EarnCredits100(int pAmount) {
+    EarnCredits(pAmount - (pAmount + 50) % 100 + 50);
+}
 
 // FUNCTION: CARMA2_HW 0x0044b470
 // FUNCTION: CARMA2_SW 0x0044b600
@@ -890,6 +928,17 @@ void C2_HOOK_FASTCALL AwardTime5(tU32 pTime) {
 #endif
 }
 
+// FUNCTION: CARMA2_HW 0x0044ba10
+// FUNCTION: CARMA2_SW 0x0044b830
+void C2_HOOK_FASTCALL FullScreenTimedMessage(const char* pText) {
+    LoadFont(1);
+    ClearEntireScreen();
+    DRPixelmapText(gBack_screen, 20, 50, &gFonts[1], pText, 600);
+    PDScreenBufferSwap(0);
+    WaitFor(500);
+}
+
+// DoTestHeadup
 #ifdef REC2_HW
 // FUNCTION: CARMA2_HW 0x0044b6a0
 void C2_HOOK_FASTCALL DoTestHeadup(void) {
