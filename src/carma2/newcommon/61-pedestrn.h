@@ -16,6 +16,10 @@ extern int gPed_count_limbed_actors;
 extern br_actor* gLimbs_actor;
 
 extern int gPed_retain_root_mode;
+
+extern tPed_remap* gPed_remaps[10];
+
+extern tPed_personality* gPed_personalities[50];
 extern float gPedestrian_speed_factor;
 extern int gSelected_ped;
 extern int gPeds_suicidal;
@@ -413,7 +417,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 extern void C2_HOOK_FASTCALL DisposeRemap(tPed_remap* pRemap);
 
-// DisposeAllLoadedRemaps
+extern void C2_HOOK_FASTCALL DisposeAllLoadedRemaps(void);
 
 // FindOrOpenRemap
 

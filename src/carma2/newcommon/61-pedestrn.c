@@ -65,6 +65,14 @@ int gExplosives_on = 1;
 // GLOBAL: CARMA2_SW 0x006719a4
 int gPed_retain_root_mode = 0;
 
+// GLOBAL: CARMA2_HW 0x00677238
+// GLOBAL: CARMA2_SW 0x006719a8
+tPed_remap* gPed_remaps[10] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x00677260
+// GLOBAL: CARMA2_SW 0x006719d0
+tPed_personality* gPed_personalities[50] = { 0 };
+
 // GLOBAL: CARMA2_HW 0x007447e0
 // GLOBAL: CARMA2_SW 0x0073b2a0
 float gPedestrian_speed_factor;
@@ -1143,7 +1151,18 @@ void C2_HOOK_FASTCALL DisposeRemap(tPed_remap* pRemap) {
     }
 }
 
-// DisposeAllLoadedRemaps
+// FUNCTION: CARMA2_HW 0x00404700
+// FUNCTION: CARMA2_SW 0x00404700
+void C2_HOOK_FASTCALL DisposeAllLoadedRemaps(void) {
+    int i;
+
+    for (i = 0; i < 10; i++) {
+        if (gPed_remaps[i] != NULL) {
+            DisposeRemap(gPed_remaps[i]);
+            gPed_remaps[i] = NULL;
+        }
+    }
+}
 
 // FindOrOpenRemap
 
