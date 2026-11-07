@@ -552,10 +552,35 @@ void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU16 pFie
     DoDroneFunkyGroovyThings(drone);
 }
 
-// STUB: CARMA2_HW 0x00452f40
+// FUNCTION: CARMA2_HW 0x00452f40
+// FUNCTION: CARMA2_SW 0x00452cd0
 void C2_HOOK_FASTCALL ReallocModelFacesAndVertices(br_model* pModel, int pCount_faces, int pCount_vertices) {
-    BrBlockFill(NULL, 0, 0);
-    NOT_IMPLEMENTED();
+    int i;
+    br_vertex* vertices;
+    br_face* faces;
+
+    vertices = BrResAllocate(pModel, pCount_vertices * sizeof(br_vertex), BR_MEMORY_VERTICES);
+    BrBlockFill(vertices, 0, pCount_vertices * sizeof(br_vertex) / sizeof(br_uint_32));
+    if (pModel->nvertices != 0) {
+        for (i = 0; i < (pModel->nvertices < pCount_vertices ? pModel->nvertices : pCount_vertices); i++) {
+            vertices[i] = pModel->vertices[i];
+        }
+        BrResRemove(pModel->vertices);
+        BrResFree(pModel->vertices);
+    }
+    pModel->nvertices = pCount_vertices;
+    pModel->vertices = vertices;
+    faces = BrResAllocate(pModel, pCount_faces * sizeof(br_face), BR_MEMORY_FACES);
+    BrBlockFill(faces, 0, pCount_faces * sizeof(br_face) / sizeof(br_uint_32));
+    if (pModel->nfaces != 0) {
+        for (i = 0; i < (pModel->nfaces < pCount_faces ? pModel->nfaces : pCount_faces); i++) {
+            faces[i] = pModel->faces[i];
+        }
+        BrResRemove(pModel->faces);
+        BrResFree(pModel->faces);
+    }
+    pModel->nfaces = pCount_faces;
+    pModel->faces = faces;
 }
 
 // CalcNFacesAndVerticesInEditModel

@@ -27,6 +27,7 @@ br_resource_class* C2_HOOK_CDECL BrResClassAdd(br_resource_class* rclass) {
 }
 
 // FUNCTION: CARMA2_HW 0x00528000
+// FUNCTION: CARMA2_SW 0x005236a0
 br_resource_class* C2_HOOK_CDECL BrResClassRemove(br_resource_class* rclass) {
     br_resource_class* r;
 
@@ -38,12 +39,14 @@ br_resource_class* C2_HOOK_CDECL BrResClassRemove(br_resource_class* rclass) {
 }
 
 // FUNCTION: CARMA2_HW 0x00528030
+// FUNCTION: CARMA2_SW 0x005236d0
 br_resource_class* C2_HOOK_CDECL BrResClassFind(char* pattern) {
 
     return BrRegistryFind(&fw.reg_resource_classes, pattern);
 }
 
 // FUNCTION: CARMA2_HW 0x00528040
+// FUNCTION: CARMA2_SW 0x005236e0
 br_resclass_find_cbfn* C2_HOOK_CDECL BrResClassFindHook(br_resclass_find_cbfn* hook) {
     br_resclass_find_cbfn* old;
 
@@ -53,6 +56,7 @@ br_resclass_find_cbfn* C2_HOOK_CDECL BrResClassFindHook(br_resclass_find_cbfn* h
 }
 
 // FUNCTION: CARMA2_HW 0x00528050
+// FUNCTION: CARMA2_SW 0x005236f0
 br_uint_32 C2_HOOK_CDECL BrResClassAddMany(br_resource_class** items, int n) {
     int i;
 
@@ -63,6 +67,7 @@ br_uint_32 C2_HOOK_CDECL BrResClassAddMany(br_resource_class** items, int n) {
 }
 
 // FUNCTION: CARMA2_HW 0x00528090
+// FUNCTION: CARMA2_SW 0x00523730
 br_uint_32 C2_HOOK_CDECL BrResClassRemoveMany(br_resource_class** items, int n) {
     int i;
     int r;
@@ -77,18 +82,21 @@ br_uint_32 C2_HOOK_CDECL BrResClassRemoveMany(br_resource_class** items, int n) 
 }
 
 // FUNCTION: CARMA2_HW 0x005280e0
+// FUNCTION: CARMA2_SW 0x00523780
 br_uint_32 C2_HOOK_CDECL BrResClassFindMany(char* pattern, br_resource_class** items, int max) {
 
     return BrRegistryFindMany(&fw.reg_resource_classes, pattern, (void**)items, max);
 }
 
 // FUNCTION: CARMA2_HW 0x00528100
+// FUNCTION: CARMA2_SW 0x005237a0
 br_uint_32 C2_HOOK_CDECL BrResClassCount(char* pattern) {
 
     return BrRegistryCount(&fw.reg_resource_classes, pattern);
 }
 
 // FUNCTION: CARMA2_HW 0x00528110
+// FUNCTION: CARMA2_SW 0x005237b0
 br_uint_32 C2_HOOK_CDECL BrResClassEnum(char* pattern, br_resclass_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&fw.reg_resource_classes, pattern, (br_enum_cbfn*)callback, arg);
