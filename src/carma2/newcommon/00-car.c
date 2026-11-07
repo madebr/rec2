@@ -665,7 +665,7 @@ void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
                 car->end_steering_damage_effect = 0;
             }
         } else {
-            if (PercentageChance((int)(pTime_difference * (car->damage_units[eDamage_steering].damage_level - 40) * 0.0045)) && fabs(car->collision_info->velocity_car_space.v[2]) > 1. / (10000. * 6.9f)) {
+            if (PercentageChance((int)(pTime_difference * (car->damage_units[eDamage_steering].damage_level - 40) * 0.0045)) && fabs(car->collision_info->velocity_car_space.v[2]) > 1. / (10000. * WORLD_SCALE_D)) {
                 if (car->keys.left || car->keys.right) {
                     car->false_key_left = !car->keys.left;
                     car->false_key_right = !car->keys.right;
