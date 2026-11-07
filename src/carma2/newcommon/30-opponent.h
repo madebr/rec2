@@ -29,6 +29,8 @@ extern int gRoute_search_calls;
 extern int gRoute_search_last_target_count;
 extern int gRoute_search_target_count;
 extern float gShortest_route_length;
+extern int gStart_jumped;
+extern int gAcknowledged_start;
 extern tCar_spec* gActive_car_list[139];
 extern int gNum_active_cars;
 extern int gNum_of_opponents_pursuing;
@@ -83,9 +85,9 @@ extern int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOppone
 
 extern int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection);
 
-// StunTheBugger
+extern void C2_HOOK_FASTCALL StunTheBugger(tOpponent_spec* pOpponent, int pMilliseconds);
 
-// UnStunTheBugger
+extern void C2_HOOK_FASTCALL UnStunTheBugger(tOpponent_spec* pOpponent);
 
 // ProcessCompleteRace
 

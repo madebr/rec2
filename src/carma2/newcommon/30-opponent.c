@@ -90,6 +90,14 @@ int gRoute_search_target_count;
 // GLOBAL: CARMA2_SW 0x0068b774
 float gShortest_route_length;
 
+// GLOBAL: CARMA2_HW 0x00691720
+// GLOBAL: CARMA2_SW 0x0068b778
+int gStart_jumped;
+
+// GLOBAL: CARMA2_HW 0x00691750
+// GLOBAL: CARMA2_SW 0x0068b7a8
+int gAcknowledged_start;
+
 // GLOBAL: CARMA2_HW 0x0074c7c0
 // GLOBAL: CARMA2_SW 0x00742e80
 tCar_spec* gActive_car_list[139];
@@ -326,9 +334,18 @@ int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
     }
 }
 
-// StunTheBugger
+void C2_HOOK_FASTCALL StunTheBugger(tOpponent_spec* pOpponent, int pMilliseconds) {
 
-// UnStunTheBugger
+    pOpponent->car_spec->acc_force = 0.0f;
+    pOpponent->car_spec->brake_force = 0.0f;
+    pOpponent->car_spec->curvature = 0.0f;
+    pOpponent->stun_time_ends = MAX(pOpponent->stun_time_ends, gTime_stamp_for_this_munging + pMilliseconds);
+}
+
+void C2_HOOK_FASTCALL UnStunTheBugger(tOpponent_spec* pOpponent) {
+
+    pOpponent->stun_time_ends = 0;
+}
 
 // ProcessCompleteRace
 
@@ -587,10 +604,24 @@ void C2_HOOK_FASTCALL DisposeOpponents(void) {
     }
 }
 
-// STUB: CARMA2_HW 0x004ae620
-// STUB: CARMA2_SW 0x004aa790
+// FUNCTION: CARMA2_HW 0x004ae620
+// FUNCTION: CARMA2_SW 0x004aa790
 void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was) {
-    NOT_IMPLEMENTED();
+    int i;
+    tOpponent_spec* opponent;
+
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++) {
+        opponent = &gProgram_state.AI_vehicles.opponents[i];
+        UnStunTheBugger(opponent);
+        StunTheBugger(opponent, MIN(IRandomBetween(1000, 2500), 1000 * pWhat_the_countdown_was));
+    }
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_cops; i++) {
+        opponent = &gProgram_state.AI_vehicles.cops[i];
+        UnStunTheBugger(opponent);
+        StunTheBugger(opponent, MIN(IRandomBetween(1000, 2500), 1000 * pWhat_the_countdown_was));
+    }
+    gAcknowledged_start = 1;
+    gStart_jumped = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x004ae750
