@@ -32,6 +32,7 @@
 
 #include "c2_string.h"
 
+#include <s3/internal/audio.h>
 #include <stdio.h>
 
 // GLOBAL: CARMA2_HW 0x00659b28
@@ -383,7 +384,24 @@ int C2_HOOK_FASTCALL HasCarFallenOffWorld(tCar_spec* pCar) {
 
 // CheckHornLocal
 
-// CheckHorn3D
+// FUNCTION: CARMA2_HW 0x00443ba0
+// FUNCTION: CARMA2_SW 0x00443c80
+void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar) {
+
+    if (pCar->keys.horn && pCar->horn_sound_tag == 0) {
+        pCar->horn_sound_tag = DRS3StartSound3D(gEffects_outlet, 5209,
+            &pCar->car_master_actor->t.t.translate.t, &pCar->vel,
+            0, 255, ((pCar->car_ID & 0x7) + 12) * 0x1000, 0x10000);
+    } else if (!pCar->keys.horn && pCar->horn_sound_tag != 0) {
+        while (S3SoundStillPlaying(pCar->horn_sound_tag)) {
+            DRS3StopSound(pCar->horn_sound_tag);
+            DRS3StopOutletSound(gEffects_outlet);
+        }
+        if (!S3SoundStillPlaying(pCar->horn_sound_tag)) {
+            pCar->horn_sound_tag = 0;
+        }
+    }
+}
 
 // CheckHorns
 
