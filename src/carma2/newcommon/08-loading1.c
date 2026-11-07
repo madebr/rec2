@@ -148,6 +148,7 @@ tS8 C2_HOOK_FASTCALL ReadS8(FILE* pF) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f910
+// FUNCTION: CARMA2_SW 0x0048cb80
 void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
     tU32 raw_long;
 
@@ -157,6 +158,7 @@ void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f930
+// FUNCTION: CARMA2_SW 0x0048cba0
 void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber) {
     tU16 raw_short;
 
@@ -166,6 +168,7 @@ void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f960
+// FUNCTION: CARMA2_SW 0x0048cbd0
 void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
     tU8 raw_byte;
 
