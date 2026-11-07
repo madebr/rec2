@@ -637,10 +637,10 @@ void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
     if (pCar->brake_force != 0.0f) {
         pCar->revs = pCar->target_revs;
     } else if (pCar->revs - 1.0f > pCar->target_revs || pCar->revs + 1.f < pCar->target_revs) {
-        br_scalar lt = 0.0f / (pCar->speed_revs_ratio * pCar->collision_info->M) / (float)pCar->gear;
-        pCar->acc_force = (br_scalar)(pCar->acc_force +
-            (pCar->torque * pDt * 5000.0 + (pCar->revs - pCar->target_revs)) /
-            ((lt + (float)pCar->gear * (0.0f / (pCar->force_torque_ratio * 0.0002))) * pDt));
+        br_scalar lt = (br_scalar)(1.0 / (pCar->speed_revs_ratio * pCar->collision_info->M) / (float)pCar->gear);
+        br_scalar numerator = (br_scalar)(pCar->torque * pDt * 5000.0 + (pCar->revs - pCar->target_revs));
+        br_scalar denominator = (br_scalar)((lt + (float)pCar->gear * (1.0 / (pCar->force_torque_ratio * 0.0002))) * pDt);
+        pCar->acc_force += numerator / denominator;
     }
 }
 
