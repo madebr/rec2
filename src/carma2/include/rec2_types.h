@@ -3842,7 +3842,7 @@ typedef struct  {
     tU8 field_0x0;
     undefined field_0x1;
     tU16 field_0x2;
-    tU16 field_0x4;
+    br_angle field_0x4;
     tU16 field_0x6;
     tU16 field_0x8;
     tU16 hinge0;

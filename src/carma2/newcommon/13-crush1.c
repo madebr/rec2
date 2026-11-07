@@ -1528,10 +1528,39 @@ void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSr
     SetModelForUpdate(pModel);
 }
 
-// STUB: CARMA2_HW 0x0043c0e0
-// STUB: CARMA2_SW 0x0043c130
+// FUNCTION: CARMA2_HW 0x0043c0e0
+// FUNCTION: CARMA2_SW 0x0043c130
 void C2_HOOK_FASTCALL ARApplyFlap(br_actor* pActor, br_angle pAngle) {
-    NOT_IMPLEMENTED();
+    tUser_crush_data* user;
+    tUser_crush_data* parent_user;
+    br_model* parent_model;
+    tCar_crush_flap_data* flap;
+    const br_vector3* hinge;
+    br_vector3 axis;
+
+    user = pActor->user;
+    if (user == NULL || user->crush_data == NULL) {
+        return;
+    }
+    flap = user->crush_data->flap_data;
+    if (flap == NULL) {
+        return;
+    }
+    flap->field_0x4 = (tU16)(flap->field_0x4 + pAngle);
+    hinge = &user->models[0]->vertices[flap->hinge0].p;
+    BrVector3Sub(&axis, &user->models[0]->vertices[flap->hinge1].p, hinge);
+    BrVector3Normalise(&axis, &axis);
+    BrMatrix34Translate(&pActor->t.t.mat,
+        -hinge->v[0],
+        -hinge->v[1],
+        -hinge->v[2]);
+    BrMatrix34PostRotate(&pActor->t.t.mat, flap->field_0x4, &axis);
+    parent_user = (tUser_crush_data*)pActor->parent->user;
+    parent_model = parent_user->models[0];
+    BrMatrix34PostTranslate(&pActor->t.t.mat,
+        parent_model->vertices[flap->field_0xc].p.v[0],
+        parent_model->vertices[flap->field_0xc].p.v[1],
+        parent_model->vertices[flap->field_0xc].p.v[2]);
 }
 
 // ARApplySplitWeld

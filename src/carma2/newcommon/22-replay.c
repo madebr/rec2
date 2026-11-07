@@ -121,4 +121,3 @@ void C2_HOOK_FASTCALL ApplyTime(tU32 pTime) {
 void C2_HOOK_FASTCALL ARSetPause(int pPause) {
     gPaused = pPause;
 }
-
