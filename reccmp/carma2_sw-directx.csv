@@ -1,0 +1,5 @@
+address,type,name
+0x005486d6,library,_DirectDrawCreate@12
+0x005486dc,library,_DirectSoundCreate@12
+0x005486e2,library,_DirectInputCreateA@16
+0x00586568,global,IID_IDirectDraw2
