@@ -16,6 +16,7 @@
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "27-powerup.h"
+#include "29-raycast.h"
 #include "37-brucetrk.h"
 #include "41-utility.h"
 #include "43-pratcam.h"
@@ -317,9 +318,65 @@ void C2_HOOK_FASTCALL TDamageRRWheel(void) {
 
 // CheckToggles
 
-// CarWorldOffFallenCheckThingy
+// FUNCTION: CARMA2_HW 0x00442140
+// FUNCTION: CARMA2_SW 0x00442220
+int C2_HOOK_FASTCALL CarWorldOffFallenCheckThingy(tCar_spec* pCar, int pCheck_around) {
+    br_vector3 car_pos;
+    br_vector3 offset_c;
+    br_vector3 offset_w;
+    int result;
+    int i;
 
-// HasCarFallenOffWorld
+    if (gCar_flying && pCar != NULL && pCar->driver == eDriver_local_human) {
+        return 0;
+    }
+    if (gAction_replay_mode) {
+        return 0;
+    }
+    if (pCar->number_of_wheels_on_ground != 0) {
+        for (i = pCar->collision_info->box_face_start; i < pCar->collision_info->box_face_end; i++) {
+            if (gFace_list__car[i].material != NULL
+                    && gFace_list__car[i].material->identifier != NULL
+                    && gFace_list__car[i].material->identifier[0] == '^') {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    BrVector3Copy(&car_pos, &pCar->car_master_actor->t.t.translate.t);
+    car_pos.v[1] += 0.5f;
+    if (FindYVerticallyBelow2(&car_pos) < -100.f) {
+        BrVector3Set(&offset_c, 0.f, 1.f, 0.f);
+        BrMatrix34ApplyV(&offset_w, &offset_c, &pCar->car_master_actor->t.t.mat);
+        BrVector3Add(&car_pos, &pCar->car_master_actor->t.t.translate.t, &offset_w);
+        if (FindYVerticallyBelow2(&car_pos) < -100.f) {
+            if (pCheck_around) {
+                pCar->car_master_actor->t.t.translate.t.v[0] += 0.05f;
+                result = CarWorldOffFallenCheckThingy(pCar, 0);
+                pCar->car_master_actor->t.t.translate.t.v[0] -= 0.05f;
+                if (!result) {
+                    return 0;
+                }
+                pCar->car_master_actor->t.t.translate.t.v[2] += 0.05f;
+                result = CarWorldOffFallenCheckThingy(pCar, 0);
+                pCar->car_master_actor->t.t.translate.t.v[2] -= 0.05f;
+                return result;
+            } else {
+                return 1;
+            }
+        }
+    } else if (gMaterial_below->identifier != NULL && gMaterial_below->identifier[0] == '^') {
+        return 1;
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00442130
+// FUNCTION: CARMA2_SW 0x00442210
+int C2_HOOK_FASTCALL HasCarFallenOffWorld(tCar_spec* pCar) {
+
+    return CarWorldOffFallenCheckThingy(pCar, 1);
+}
 
 // CheckForBeingOutOfThisWorld
 
