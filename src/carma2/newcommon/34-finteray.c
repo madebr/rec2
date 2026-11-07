@@ -251,7 +251,22 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
     gPling_materials = 0;
 }
 
-// StationarySphereSphereCollide
+// FUNCTION: CARMA2_HW 0x0045d860
+// FUNCTION: CARMA2_SW 0x0045d2a0
+void C2_HOOK_FASTCALL StationarySphereSphereCollide(const br_vector3* pPoint, const br_vector3* pSphere_center, br_scalar pRadius, br_vector3* pNormal, br_scalar* pCollision_t) {
+    br_vector3 dp;
+    br_scalar distance_squared;
+    br_scalar scale;
+
+    BrVector3Sub(&dp, pPoint, pSphere_center);
+    distance_squared = BrVector3LengthSquared(&dp);
+    if (distance_squared < REC2_SQR(pRadius + 0.002f)
+            && distance_squared > REC2_SQR(pRadius)) {
+        scale = (br_scalar)(1.0 / sqrt(distance_squared));
+        BrVector3Scale(pNormal, &dp, scale);
+        *pCollision_t = 1.0f;
+    }
+}
 
 // SphereSphereCollide
 
@@ -330,6 +345,7 @@ int C2_HOOK_FASTCALL LineBoxColl(br_vector3* pStart, br_vector3* pEnd, br_bounds
 }
 
 // FUNCTION: CARMA2_HW 0x00460da0
+// FUNCTION: CARMA2_SW 0x00460810
 int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_vector3* pCenter, br_scalar pRadius_squared, br_vector3* pClosest) {
     int axis;
     br_scalar closest;
@@ -350,11 +366,35 @@ int C2_HOOK_FASTCALL SphereBoxIntersection(const br_bounds* pBounds, const br_ve
     return distance <= pRadius_squared;
 }
 
-// LineBoxCollWithSphere
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00460e10
+// STUB: CARMA2_SW 0x00460880
+int C2_HOOK_FASTCALL LineBoxCollWithSphere(br_vector3* pStart, br_vector3* pEnd, br_bounds* pBounds, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // LineSphereColl
 
-// LineSphereCollWithSphere
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004611b0
+// STUB: CARMA2_SW 0x00460c40
+int C2_HOOK_FASTCALL LineSphereCollWithSphere(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_sphere_data* pSphere, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x00461310
 // STUB: CARMA2_SW 0x00460db0
@@ -364,11 +404,39 @@ int C2_HOOK_FASTCALL LinePolyColl(br_vector3* pStart, br_vector3* pEnd, tCollisi
 
 // SpherePolyIntersection
 
-// LinePolyCollWithSphere
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00461520
+// STUB: CARMA2_SW 0x00460fc0
+int C2_HOOK_FASTCALL LinePolyCollWithSphere(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_polyhedron* pShape, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // ShapeRayCast
 
-// ShapeRayCastWithSphere
+// FUNCTION: CARMA2_HW 0x00461850
+// FUNCTION: CARMA2_SW 0x004612f0
+int C2_HOOK_FASTCALL ShapeRayCastWithSphere(br_vector3* pStart, br_vector3* pEnd, tPhysics_shape* pShape, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        return LineBoxCollWithSphere(pStart, pEnd, &pShape->common.bb, pPoint, pNormal, pT);
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        return LinePolyCollWithSphere(pStart, pEnd, &pShape->polyhedron, pPoint, pNormal, pT);
+    case kCollisionShapeType_Sphere:
+        return LineSphereCollWithSphere(pStart, pEnd, &pShape->sphere.sphere, pPoint, pNormal, pT);
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType, "");
+    case kCollisionShapeType_Wireframe:
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004618e0
 // FUNCTION: CARMA2_SW 0x00461380
