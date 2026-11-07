@@ -110,6 +110,14 @@ br_vector3 gBatty_gravity;
 // GLOBAL: CARMA2_SW 0x00674900
 undefined4 gCrush_array_0067a190[10];
 
+// GLOBAL: CARMA2_HW 0x0067b7c8
+// GLOBAL: CARMA2_SW 0x00675f38
+int gCount_net_crush_reattach_bit_list;
+
+// GLOBAL: CARMA2_HW 0x0067be10
+// GLOBAL: CARMA2_SW 0x00676580
+tCrush_net_reattach_bit_list_item gNet_crush_reattach_bit_list[8];
+
 // GLOBAL: CARMA2_HW 0x00679440
 // GLOBAL: CARMA2_SW 0x00673bb0
 undefined4 gDAT_00679440;
@@ -1550,7 +1558,23 @@ void C2_HOOK_FASTCALL ARApplyFlap(br_actor* pActor, br_angle pAngle) {
 
 // ReceivedReAttachBit
 
-// ReceivedReAttachAllBits
+// FUNCTION: CARMA2_HW 0x0043ce60
+// FUNCTION: CARMA2_SW 0x0043ceb0
+void C2_HOOK_FASTCALL ReceivedReAttachAllBits(tNet_message_chunk* pContents) {
+    tCar_spec* car;
+
+    if (gCount_net_crush_reattach_bit_list == REC2_ASIZE(gNet_crush_reattach_bit_list)) {
+        return;
+    }
+    car = NetCarFromPlayerID(pContents->reattach_all_bits.player);
+    if (car == NULL) {
+        return;
+    }
+    gNet_crush_reattach_bit_list[gCount_net_crush_reattach_bit_list].car = car;
+    gNet_crush_reattach_bit_list[gCount_net_crush_reattach_bit_list].actor = NULL;
+    gNet_crush_reattach_bit_list[gCount_net_crush_reattach_bit_list].time = pContents->reattach_all_bits.time;
+    gCount_net_crush_reattach_bit_list += 1;
+}
 
 // DoQueuedNetDetaching
 
