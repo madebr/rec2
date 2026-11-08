@@ -301,7 +301,7 @@ extern void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects);
 
 // ApplyGravity
 
-// SetGravityDeltaV
+extern void C2_HOOK_FASTCALL SetGravityDeltaV(tPhysics_object* pObject, br_vector3* pImpulse);
 
 // TrialPositionChildren
 

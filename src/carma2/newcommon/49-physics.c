@@ -855,11 +855,21 @@ void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects) {
 
 // ApplyGravity
 
-// SetGravityDeltaV
+// FUNCTION: CARMA2_HW 0x004c29d0
+// FUNCTION: CARMA2_SW 0x004bf100
+void C2_HOOK_FASTCALL SetGravityDeltaV(tPhysics_object* pObject, br_vector3* pImpulse) {
+    tPhysics_object* pChild;
+
+    pObject->field_0x54 = *pImpulse;
+    for (pChild = pObject->child; pChild != NULL; pChild = pChild->next) {
+        SetGravityDeltaV(pChild, pImpulse);
+    }
+}
 
 // TrialPositionChildren
 
 // FUNCTION: CARMA2_HW 0x004c2b20
+// FUNCTION: CARMA2_SW 0x004bf250
 void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysics_object* pRoot) {
     tPhysics_object* child;
     br_vector3 parent_point;
@@ -885,6 +895,7 @@ void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysic
 }
 
 // FUNCTION: CARMA2_HW 0x004c2b10
+// FUNCTION: CARMA2_SW 0x004bf240
 void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
 
     InternalPositionChildren(pCollision_info, pCollision_info);
