@@ -9,6 +9,8 @@
 #ifndef GUARD_52_ERRORS_H
 #define GUARD_52_ERRORS_H
 
+#include <brender/brender.h>
+
 #include "c2_hooks.h"
 
 extern void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
@@ -20,5 +22,9 @@ extern void C2_HOOK_FASTCALL CloseDiagnostics(void);
 extern void C2_HOOK_FASTCALL OpenDiagnostics(void);
 
 extern void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...);
+
+extern void C2_HOOK_FASTCALL TraceVector3(const char* pName, const br_vector3* pVec);
+
+extern void C2_HOOK_FASTCALL TraceMatrix34(const char* pName, const br_matrix34* pMat);
 
 #endif // GUARD_52_ERRORS_H
