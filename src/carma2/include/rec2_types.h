@@ -240,6 +240,10 @@ typedef struct {
 } tCompressed_vector3;
 
 typedef struct {
+    tU16 v[4];
+} tCompressed_vector4;
+
+typedef struct {
     tCompressed_vector3 m0;
     tCompressed_vector3 m1;
     tCompressed_vector3 p;
