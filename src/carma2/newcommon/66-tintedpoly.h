@@ -26,7 +26,7 @@ extern br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width
 
 extern int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
 
-// static void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex);
+extern void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex);
 
 extern void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void);
 

@@ -396,7 +396,7 @@ br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int h
 
 // FUNCTION: CARMA2_HW 0x004d7c80
 // FUNCTION: CARMA2_SW 0x004d4190
-static void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
+inline void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
     if (!gTintedPolys[pTintedIndex].used) {
         return;
     }
