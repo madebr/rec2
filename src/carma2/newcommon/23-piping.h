@@ -225,6 +225,8 @@ extern void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
 
 extern void C2_HOOK_FASTCALL PipeSingleWallIncident(float pSeverity, br_vector3* pImpact_point);
 
+extern void C2_HOOK_FASTCALL PipeSingleProxRay(int pRay_index, tCar_spec* pCar, tU16 pPed_index, tU32 pTime);
+
 extern void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle);
@@ -248,6 +250,8 @@ extern void C2_HOOK_FASTCALL PipeSingleSmashModelChange(br_actor* pActor, br_mod
 extern void C2_HOOK_FASTCALL PipeSingleSmashDecal(int pIndex);
 
 extern void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture);
+
+extern void C2_HOOK_FASTCALL PipeSingleRepulseRay(int pIndex, br_vector3* pOrigin, br_vector3* pVictim, tU32 pTime);
 
 // PipeSinglePedStatus
 
@@ -282,6 +286,8 @@ extern void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, tU16 pFlags);
 extern void C2_HOOK_FASTCALL PipeSingleVanishedDismembered(const tPedestrian* pPed, tU32 pOld_value, tU32 pNew_value);
 
 extern void C2_HOOK_FASTCALL PipeSingleDSModel(int pDouble_sided, void* pThing);
+
+extern void C2_HOOK_FASTCALL PipeSinglePedDiagnostic(tPedestrian* pPed);
 
 extern void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue);
 

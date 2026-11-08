@@ -813,14 +813,14 @@ void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, void* pThing) {
      *         0 | tCar_spec*
      *         1 | br_model*
      */
-    ARDoSingleVariedSession(ePipe_single_ds_model, (uintptr_t)pThing, 1,
+    ARDoSingleVariedSession(ePipe_chunk_ds_model, (uintptr_t)pThing, 1,
         SIZE_OFFSET_PIPING(tPipe_single_ds_model, field_0x0), pArg1);
 }
 
 // FUNCTION: CARMA2_HW 0x004c8e80
 void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
 
-    ARDoSingleVariedSession(ePipe_single_vector3, (uintptr_t)pDest, 1,
+    ARDoSingleVariedSession(ePipe_chunk_vector3, (uintptr_t)pDest, 1,
         SIZE_OFFSET_PIPING(tPipe_single_vector, vector), pValue);
 }
 
@@ -835,7 +835,7 @@ void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor *pActor, int pBloc
 // FUNCTION: CARMA2_HW 0x004c8ff0
 void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_type) {
 
-    ARDoSingleVariedSession(ePipe_single_transform_type, (uintptr_t)pActor, 2,
+    ARDoSingleVariedSession(ePipe_chunk_transform_type, (uintptr_t)pActor, 2,
         SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_from), pActor->t.type,
         SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_to), pTransform_type);
 }
@@ -909,7 +909,7 @@ void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec *pOpponent_spec, in
 // FUNCTION: CARMA2_HW 0x004c8a90
 void C2_HOOK_FASTCALL PipeSinglePedStatus(const tPedestrian* pPed, undefined pArg2, undefined pArg3, undefined pArg4, undefined pArg5, tS8 pArg6, tU8 pArg7, undefined pArg8, tU8 pArg9, const br_vector3* pArg10, const br_vector3* pArg11, const br_matrix34* pArg12) {
 
-    ARDoSingleVariedSession(ePipe_chunk_single_ped_status, (uintptr_t)pPed, 11,
+    ARDoSingleVariedSession(ePipe_chunk_ped_status, (uintptr_t)pPed, 11,
         SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x00), pArg2,
         SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x01), pArg3,
         SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x02), pArg4,
@@ -934,7 +934,7 @@ void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3
 // FUNCTION: CARMA2_HW 0x004c8e10
 void C2_HOOK_FASTCALL PipeSingleVanishedDismembered(const tPedestrian* pPed, undefined4 pArg2, undefined4 pArg3) {
 
-    ARDoSingleVariedSession(ePipe_chunk_single_vanished_dismembered, (uintptr_t)pPed, 2,
+    ARDoSingleVariedSession(ePipe_chunk_vanished_dismembered, (uintptr_t)pPed, 2,
         SIZE_OFFSET_PIPING(tPipe_single_vanished_dismembered, field_0x0), pArg2,
         SIZE_OFFSET_PIPING(tPipe_single_vanished_dismembered, field_0x4), pArg2);
 }
