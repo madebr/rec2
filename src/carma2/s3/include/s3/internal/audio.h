@@ -88,6 +88,10 @@ extern int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soun
 
 extern void C2_HOOK_FASTCALL S3StopMidi(void);
 
+extern void C2_HOOK_FASTCALL S3ToggleMidi(void);
+
+extern int C2_HOOK_FASTCALL S3IsMidiEnabled(void);
+
 extern void C2_HOOK_FASTCALL S3StopCDA(void);
 
 extern void C2_HOOK_FASTCALL S3StopMidiInternal(void);
@@ -135,6 +139,8 @@ extern tS3_error_codes C2_HOOK_FASTCALL S3UpdateFrequencySampleChannel(tS3_sound
 extern int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel *pChannel);
 
 extern int C2_HOOK_FASTCALL S3ServiceSpatialSound(tS3_channel* pChannel);
+
+extern void C2_HOOK_FASTCALL S3EnableMidi(void);
 
 extern tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pVelocity, tS3_outlet* pBound_outlet);
 

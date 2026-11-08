@@ -954,6 +954,26 @@ void C2_HOOK_FASTCALL S3StopMidi(void) {
     gS3_enable_midi = 0;
 }
 
+// FUNCTION: CARMA2_HW 0x0056a433
+void C2_HOOK_FASTCALL S3ToggleMidi(void) {
+
+    if (gS3_enable_midi) {
+        S3StopMidiInternal();
+        gS3_enable_midi = 0;
+    } else {
+        gS3_enable_midi = 1;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0056a45c
+int C2_HOOK_FASTCALL S3IsMidiEnabled(void) {
+
+    if (gS3_enable_midi) {
+        return 1;
+    }
+    return 0;
+}
+
 
 // FUNCTION: CARMA2_HW 0x00565b7f
 // FUNCTION: CARMA2_SW 0x0056121f
@@ -1340,6 +1360,12 @@ int C2_HOOK_FASTCALL S3ServiceSpatialSound(tS3_channel* pChannel) {
 
     (void) pChannel;
     return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0056a410
+void C2_HOOK_FASTCALL S3EnableMidi(void) {
+
+    gS3_enable_midi = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x005665d4
