@@ -118,7 +118,15 @@ extern int C2_HOOK_FASTCALL S3IRandomBetweenLog(int pMin, int pMax, int pDefault
 
 extern int C2_HOOK_FASTCALL S3FreeUnboundChannels(void);
 
+extern int C2_HOOK_FASTCALL S3GetTerminationReason(tS3_channel* pChannel);
+
+extern int C2_HOOK_FASTCALL S3GetRepetitions(tS3_channel* pChannel);
+
+extern int C2_HOOK_FASTCALL S3CountActiveChannels(tS3_outlet* pOutlet);
+
 extern int C2_HOOK_FASTCALL S3SoundStillPlaying(int pTag);
+
+extern int C2_HOOK_FASTCALL S3GetLastError(void);
 
 extern int C2_HOOK_FASTCALL S3SetVolume(int pVolume);
 
