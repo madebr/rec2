@@ -261,6 +261,11 @@ int gCount_smashable_race_targets;
 // GLOBAL: CARMA2_SW 0x006868f0
 tSmashable_race_target gSmashable_race_targets[300];
 
+#ifdef REC2_HW
+// GLOBAL: CARMA2_HW 0x0068d8c0
+br_actor* gLit_op_stat_actor;
+#endif
+
 // CarArrowColour
 
 // FUNCTION: CARMA2_HW 0x004945f0
@@ -607,7 +612,51 @@ void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pT
 
 // DoOpponentStatusHeadup
 
-// AllocateOppoBarActor
+#ifdef REC2_HW
+// FUNCTION: CARMA2_HW 0x00494f40
+void C2_HOOK_FASTCALL AllocateOppoBarActor(int pX, int pY) {
+    br_material* material;
+    br_model* model;
+    br_actor* actor;
+    int x;
+
+    x = pX;
+    material = BrMaterialAllocate("OppoBar Material");
+    if (material == NULL) {
+        return;
+    }
+    material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE;
+    model = BrModelAllocate("OppoBar Model", 4, 2);
+    if (model == NULL) {
+        return;
+    }
+    model->faces[0].vertices[0] = 0;
+    model->faces[0].vertices[1] = 1;
+    model->faces[0].vertices[2] = 2;
+    model->faces[1].vertices[0] = 1;
+    model->faces[1].vertices[1] = 3;
+    model->faces[1].vertices[2] = 2;
+    BrVector3Set(&model->vertices[0].p, (br_scalar)x, (br_scalar)-pY, -1.5f);
+    BrVector3Set(&model->vertices[1].p, (br_scalar)(x + 20), (br_scalar)-pY, -1.5f);
+    BrVector3Set(&model->vertices[2].p, (br_scalar)x, (br_scalar)(-7 - pY), -1.5f);
+    BrVector3Set(&model->vertices[3].p, (br_scalar)(x + 20), (br_scalar)(-7 - pY), -1.5f);
+    model->vertices[0].red = 0xff;
+    model->vertices[0].grn = 0;
+    model->vertices[0].blu = 0;
+    model->vertices[2].red = 0xff;
+    model->vertices[2].grn = 0;
+    model->vertices[2].blu = 0;
+    model->flags |= BR_MODF_KEEP_ORIGINAL;
+    BrModelAdd(model);
+    BrMaterialAdd(material);
+    actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    gLit_op_stat_actor = actor;
+    if (actor != NULL) {
+        actor->material = material;
+        gLit_op_stat_actor->model = model;
+    }
+}
+#endif
 
 // DoNearestOpponentRelativeHeightMarkerStuff
 
