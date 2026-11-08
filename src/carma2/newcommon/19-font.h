@@ -100,4 +100,6 @@ extern br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName);
 
 extern int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont);
 
+extern br_model* C2_HOOK_FASTCALL CloneModel(const br_model* pModel);
+
 #endif // GUARD_19_FONT_H
