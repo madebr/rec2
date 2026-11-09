@@ -11,6 +11,7 @@
 #include "00-car.h"
 #include "01-network.h"
 #include "13-crush1.h"
+#include "15-displays.h"
 
 #include "16-graphics1.h"
 #include "18-graphics2.h"
@@ -196,7 +197,19 @@ char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index) {
 
 // ExcludedPowerup
 
-// GotPowerupX
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004d9150
+// STUB: CARMA2_SW 0x004d5680
+int C2_HOOK_FASTCALL GotPowerupX(tCar_spec* pCar, int pIndex, int pArg3, int pMessage, tU32 pTime) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // GotPowerupXX
 
@@ -416,7 +429,20 @@ void C2_HOOK_FASTCALL GotPowerup9(void) {
 
 // GainAPO
 
-// GotTimeOrPower
+// FUNCTION: CARMA2_HW 0x004dc470
+// FUNCTION: CARMA2_SW 0x004d8970
+int C2_HOOK_FASTCALL GotTimeOrPower(tPowerup* pPowerup, tCar_spec* pCar) {
+    int time;
+
+    if (gNet_mode != eNet_mode_none) {
+        return GotPowerupX(pCar, gNet_powerup_time_replacement, 1, 1, 0);
+    }
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        time = IRandomBetween(pPowerup->integer_params[0], pPowerup->integer_params[1]);
+        AwardTime(time);
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // GainAPOPotential
 
@@ -1248,7 +1274,18 @@ void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity) {
 
 // SetChangingPowerup
 
-// PedValium
+// FUNCTION: CARMA2_HW 0x004dfec0
+// FUNCTION: CARMA2_SW 0x004dc3c0
+int C2_HOOK_FASTCALL PedValium(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (CalmDownAllPeds()) {
+        NewTextHeadupSlot(4, 0, 3000, -4, GetMiscString(eMiscString_pedestrians_are_calm_now));
+        DRS3StartSound2(gCar_outlet, eSoundId_PedValium, 1, 0xff, 0xff, -1, -1);
+        return pPowerup - gPowerup_array;
+    } else {
+        return -1;
+    }
+}
 
 // PowerupCancel
 

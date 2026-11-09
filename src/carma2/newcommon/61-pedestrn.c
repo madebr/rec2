@@ -1025,7 +1025,11 @@ void C2_HOOK_FASTCALL AdjustPedDiagnostics(tU32 pSubject_index, void* pUnused2, 
     (void)pUnused4;
 }
 
-// CalmDownAllPeds
+// STUB: CARMA2_HW 0x004d6dc0
+// STUB: CARMA2_SW 0x004d33c0
+int C2_HOOK_FASTCALL CalmDownAllPeds(void) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004d6f10
 // FUNCTION: CARMA2_SW 0x004d3510

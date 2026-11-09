@@ -371,7 +371,7 @@ extern void C2_HOOK_FASTCALL ComparePedStuff(void);
 
 extern void C2_HOOK_FASTCALL AdjustPedDiagnostics(tU32 pSubject_index, void* pUnused2, void* pUnused3, void* pUnused4);
 
-// CalmDownAllPeds
+extern int C2_HOOK_FASTCALL CalmDownAllPeds(void);
 
 extern void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void);
 
