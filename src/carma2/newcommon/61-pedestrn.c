@@ -138,9 +138,33 @@ int gPed_cache_sizes_1[4] = { 40, 25, 15, 5 };
 // GLOBAL: CARMA2_SW 0x00695cb0
 tPed_face_cache_0x34* gPed_face_cache_heads[4];
 
+// GLOBAL: CARMA2_HW 0x00694134
+// GLOBAL: CARMA2_SW 0x0068e18c
+int gPed_groups_count;
+
+// GLOBAL: CARMA2_HW 0x00694138
+// GLOBAL: CARMA2_SW 0x0068e190
+tRace_ped_spec* gRace_pedestrian_specs;
+
+// GLOBAL: CARMA2_HW 0x0069bc14
+// GLOBAL: CARMA2_SW 0x00695c6c
+tPed_group_spec* gPed_groups;
+
 // GLOBAL: CARMA2_HW 0x00694124
 // GLOBAL: CARMA2_SW 0x0068e17c
 int gPed_cache_notify_flags;
+
+// GLOBAL: CARMA2_HW 0x0069bce8
+// GLOBAL: CARMA2_SW 0x00695d40
+int gCount_race_pedestrian_specs;
+
+// GLOBAL: CARMA2_HW 0x0069bcec
+// GLOBAL: CARMA2_SW 0x00695d44
+int gPed_movements_count;
+
+// GLOBAL: CARMA2_HW 0x0069bcf0
+// GLOBAL: CARMA2_SW 0x00695d48
+tPed_movement_spec* gPed_movements;
 
 // OrientationChanged
 
@@ -234,7 +258,98 @@ void C2_HOOK_FASTCALL PedUndoDismember(tPedestrian* pPed, int pBone_index, tS8 p
     StopActorBeingRenderable(actor_set->actors[pBone_index]);
 }
 
-// ReadPedSpecs
+// FUNCTION: CARMA2_HW 0x004ca9f0
+// FUNCTION: CARMA2_SW 0x004c7120
+void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
+    int i;
+    int j;
+    int index;
+    int len;
+    int exclusions_ok_when_scared;
+    char s[256];
+    char s2[32];
+
+    C2_HOOK_BUG_ON(sizeof(tRace_ped_spec) != 0x20);
+    C2_HOOK_BUG_ON(sizeof(tRace_spec_exclusion_material) != 8);
+    C2_HOOK_BUG_ON(sizeof(tPed_movement_spec) != 0x14);
+    C2_HOOK_BUG_ON(sizeof(tPed_group_spec) != 8);
+    C2_HOOK_BUG_ON(sizeof(tPedestrian) != 0x54);
+
+    /* Number of ped spawn sets */
+    gCount_race_pedestrian_specs = GetAnInt(pF);
+    gRace_pedestrian_specs = BrMemAllocate(gCount_race_pedestrian_specs * sizeof(tRace_ped_spec), kMem_misc_poly_ped);
+    for (i = 0; i < gCount_race_pedestrian_specs; i++) {
+        /* Material name */
+        GetAString(pF, s);
+        gRace_pedestrian_specs[i].spawn_material = BrMaterialFind(s);
+        if (gRace_pedestrian_specs[i].spawn_material == NULL) {
+            FatalError(kFatalError_CannotFindPedSpawnMaterial_S, s);
+        }
+
+        /* Movement index */
+        index = GetAnInt(pF);
+        if (index < 0 || index >= gPed_movements_count) {
+            FatalError(kFatalError_CannotMovePedIndexOutOfRangeForMaterial_S, s);
+        }
+        gRace_pedestrian_specs[i].movement = &gPed_movements[index];
+
+        /* Group index */
+        index = GetAnInt(pF);
+        if (index < 0 || index >= gPed_groups_count) {
+            FatalError(kFatalError_CannotGroupPedIndexOutOfRangeForMaterial_S, s);
+        }
+        gRace_pedestrian_specs[i].group = &gPed_groups[index];
+
+        /* Peds per 100 square metres */
+        gRace_pedestrian_specs[i].density = GetAScalar(pF);
+        gRace_pedestrian_specs[i].field_0x10 = 0;
+
+        /* Number of exclusion materials */
+        gRace_pedestrian_specs[i].exclusion.count_exclusion_materials = (tU8)GetAnInt(pF);
+        gRace_pedestrian_specs[i].exclusion.exclusion_materials = BrMemAllocate(gRace_pedestrian_specs[i].exclusion.count_exclusion_materials * sizeof(tRace_spec_exclusion_material), kMem_misc_poly_ped);
+        exclusions_ok_when_scared = 0x1;
+        for (j = 0; j < gRace_pedestrian_specs[i].exclusion.count_exclusion_materials; j++) {
+            /* Exclusion flags (1 = OK when scared) */
+            gRace_pedestrian_specs[i].exclusion.exclusion_materials[j].flags = (tU8)GetAnInt(pF);
+            exclusions_ok_when_scared &= gRace_pedestrian_specs[i].exclusion.exclusion_materials[j].flags;
+
+            /* Exclusion material #1 name */
+            GetAString(pF, s2);
+            gRace_pedestrian_specs[i].exclusion.exclusion_materials[j].material = BrMaterialFind(s2);
+            if (gRace_pedestrian_specs[i].exclusion.exclusion_materials[j].material == NULL) {
+                FatalError(kFatalError_CannotFindPedSpawnMaterial_S, s2);
+            }
+        }
+        if (exclusions_ok_when_scared & 0x1) {
+            gRace_pedestrian_specs[i].exclusion.exclusions_ok_when_scared = 1;
+        }
+
+        /* Number of exception materials */
+        gRace_pedestrian_specs[i].exclusion.count_exception_materials = (tU8)GetAnInt(pF);
+        gRace_pedestrian_specs[i].exclusion.exception_materials = BrMemAllocate(gRace_pedestrian_specs[i].exclusion.count_exception_materials * sizeof(br_material*), kMem_misc_poly_ped);
+        for (j = 0; j < gRace_pedestrian_specs[i].exclusion.count_exception_materials; j++) {
+            GetAString(pF, s2);
+            gRace_pedestrian_specs[i].exclusion.exception_materials[j] = BrMaterialFind(s2);
+            if (gRace_pedestrian_specs[i].exclusion.exception_materials[j] == NULL) {
+                FatalError(kFatalError_CannotFindPedSpawnMaterial_S, s2);
+            }
+        }
+    }
+    for (i = 0; i < gCount_race_pedestrian_specs; i++) {
+        len = strlen(gRace_pedestrian_specs[i].spawn_material->identifier);
+        if (len < 4) {
+            len = 4;
+        }
+        if (len - 4 <= 7) {
+            strcpy(s2, gRace_pedestrian_specs[i].spawn_material->identifier);
+            strcpy(&s2[len - 4], "xxxxxxxx.MAT");
+            BrResFree(gRace_pedestrian_specs[i].spawn_material->identifier);
+            gRace_pedestrian_specs[i].spawn_material->identifier = BrResStrDup(gRace_pedestrian_specs[i].spawn_material, s2);
+        }
+        gRace_pedestrian_specs[i].spawn_material->identifier[7] = '?';
+    }
+    gPedestrian_array = BrMemAllocate(PEDESTRIAN_MAX_COUNT * sizeof(tPedestrian), kMem_ped_array);
+}
 
 // FUNCTION: CARMA2_HW 0x004cadb0
 // FUNCTION: CARMA2_SW 0x004c74e0

@@ -37,6 +37,12 @@ extern int gPeds_already_munged;
 extern int gPed_cache_sizes_1[4];
 extern tPed_face_cache_0x34* gPed_face_cache_heads[4];
 extern int gPed_cache_notify_flags;
+extern int gCount_race_pedestrian_specs;
+extern tPed_group_spec* gPed_groups;
+extern int gPed_groups_count;
+extern tPed_movement_spec* gPed_movements;
+extern int gPed_movements_count;
+extern tRace_ped_spec* gRace_pedestrian_specs;
 
 // OrientationChanged
 
@@ -90,7 +96,7 @@ extern void C2_HOOK_FASTCALL PedApplyVanishDismembered(tPedestrian* pPedestrian,
 
 extern void C2_HOOK_FASTCALL PedUndoDismember(tPedestrian* pPed, int pBone_index, tS8 pValue);
 
-// ReadPedSpecs
+extern void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF);
 
 extern br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed);
 
