@@ -14,6 +14,7 @@
 
 extern int gAllow_car_flying;
 extern int gEntering_message;
+extern tU32 gToo_poor_for_recovery_timeout;
 extern int gCheckpoint_finder_enabled;
 extern float gMap_render_x;
 extern float gMap_render_y;
