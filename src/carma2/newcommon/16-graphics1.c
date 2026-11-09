@@ -138,6 +138,10 @@ br_actor* gHud_actor_storage[128];
 // GLOBAL: CARMA2_SW 0x0069c31c
 int gNumber_of_lollipops;
 
+// GLOBAL: CARMA2_HW 0x00762100
+// GLOBAL: CARMA2_SW 0x00758660
+br_scalar gYon_squared;
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -309,7 +313,19 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
 
 // ShadowMode
 
-// LollipopizeActor
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004e4650
+// STUB: CARMA2_SW 0x004e09e0
+void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* ref_to_world, tLollipop_mode pWhich_axis) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004e4900
 // FUNCTION: CARMA2_SW 0x004e0c90

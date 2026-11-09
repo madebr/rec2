@@ -1050,6 +1050,7 @@ br_actor* C2_HOOK_FASTCALL CloneActor(br_actor* pActor) {
 }
 
 // FUNCTION: CARMA2_HW 0x00515b80
+// FUNCTION: CARMA2_SW 0x00510ff0
 void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) {
     br_vector3 tv;
 
@@ -1065,12 +1066,14 @@ void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) 
 }
 
 // FUNCTION: CARMA2_HW 0x00515c20
+// FUNCTION: CARMA2_SW 0x00511090
 float C2_HOOK_STDCALL frac(float pN) {
 
     return pN - (float)(int)pN;
 }
 
 // FUNCTION: CARMA2_HW 0x00515d90
+// FUNCTION: CARMA2_SW 0x00511200
 intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data) {
     const char* name = data;
     br_model* model = pActor->model;
@@ -1093,6 +1096,7 @@ intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data) {
 }
 
 // FUNCTION: CARMA2_HW 0x00515c40
+// FUNCTION: CARMA2_SW 0x005110b0
 br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive) {
 
     if (pRecursive) {

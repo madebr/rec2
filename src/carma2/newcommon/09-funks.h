@@ -63,9 +63,9 @@ extern void C2_HOOK_FASTCALL KillFunkotronic(int pOwner);
 
 // FunkThoseTronics
 
-// PathGrooveBastard
+extern void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it);
 
-// ObjectGrooveBastard
+extern void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it);
 
 extern void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it);
 

@@ -34,6 +34,7 @@ extern br_actor* gHud_actor_storage[128];
 extern int gSaved_table_count;
 extern tSaved_table gSaved_shade_tables[100];
 extern int gNumber_of_lollipops;
+extern br_scalar gYon_squared;
 extern int gHud_tinted4;
 
 // MungeClipPlane
@@ -60,7 +61,7 @@ extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
 // ShadowMode
 
-// LollipopizeActor
+extern void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* ref_to_world, tLollipop_mode pWhich_axis);
 
 extern void C2_HOOK_FASTCALL ResetLollipopQueue(void);
 
