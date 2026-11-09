@@ -19,6 +19,7 @@ extern int INT_00659d34;
 extern int rr_min;
 extern int rr_mid;
 extern int rr_max;
+extern int gInitialised_grid;
 
 extern int C2_HOOK_FASTCALL NetInitialise(void);
 

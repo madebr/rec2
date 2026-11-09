@@ -10,12 +10,14 @@
 
 #include "00-car.h"
 #include "01-network.h"
+#include "03-racestrt.h"
 #include "07-structur.h"
 #include "13-crush1.h"
 #include "27-powerup.h"
 #include "30-opponent.h"
 #include "32-spark.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "60-phil.h"
 #include "63-loading3.h"
 #include "72-interface.h"
@@ -23,6 +25,8 @@
 #include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
+
+#include <stdlib.h>
 
 // GLOBAL: CARMA2_HW 0x0075b8f8
 // GLOBAL: CARMA2_SW 0x00751e58
@@ -182,10 +186,74 @@ void C2_HOOK_FASTCALL SignalToStartRace(void) {
 
 // SignalToRepositionCar
 
-// STUB: CARMA2_HW 0x00499000
-// STUB: CARMA2_SW 0x00495c30
+// FUNCTION: CARMA2_HW 0x00499000
+// FUNCTION: CARMA2_SW 0x00495c30
 void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
-    NOT_IMPLEMENTED();
+    int i;
+    int j;
+    int k;
+    int grid_index;
+    int racer_count;
+
+    C2_HOOK_BUG_ON(sizeof(tOpp_spec) != 0x10);
+
+    DisableNetService();
+    if (!gInitialised_grid) {
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            gNet_players[i].grid_position_set = 0;
+            gNet_players[i].last_waste_message = 0;
+            gNet_players[i].wasteage_attributed = 0;
+        }
+    }
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        gCurrent_race.opponent_list[i].index = -1;
+        gCurrent_race.opponent_list[i].ranking = IRandomBetween(0, 99);
+        gCurrent_race.opponent_list[i].car_spec = gNet_players[i].car;
+        gCurrent_race.opponent_list[i].net_player_index = i;
+        gNet_players[i].opponent_list_index = i;
+    }
+    racer_count = gNumber_of_net_players;
+    if (!gInitialised_grid && gCurrent_net_game->options.grid_start) {
+        qsort(gCurrent_race.opponent_list, gNumber_of_net_players, sizeof(tOpp_spec), SortGridFunction);
+    }
+    gCurrent_race.number_of_racers = 0;
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        gNet_players[gCurrent_race.opponent_list[i].net_player_index].opponent_list_index = i;
+    }
+    for (i = 0; i < racer_count; i++) {
+        if ((gCurrent_race.opponent_list[i].car_spec != NULL
+                && gCurrent_race.opponent_list[i].car_spec->driver == eDriver_oppo && !gInitialised_grid)
+            || (gCurrent_race.opponent_list[i].car_spec != NULL
+                && gCurrent_race.opponent_list[i].car_spec->driver >= eDriver_net_human
+                && !gNet_players[gCurrent_race.opponent_list[i].net_player_index].grid_position_set)) {
+            grid_index = -1;
+            for (j = 0; j < kMax_netplayers && grid_index < 0; j++) {
+                grid_index = j;
+                for (k = 0; k < racer_count; k++) {
+                    if (k != i
+                        && gNet_players[gCurrent_race.opponent_list[k].net_player_index].grid_position_set
+                        && gNet_players[gCurrent_race.opponent_list[k].net_player_index].grid_index == j) {
+                        grid_index = -1;
+                        break;
+                    }
+                }
+            }
+            if (grid_index < 0) {
+                FatalError(kFatalError_NetworkCodeSelfCheck);
+            }
+            SetInitialPosition(&gCurrent_race, i, grid_index);
+            gNet_players[gCurrent_race.opponent_list[i].net_player_index].grid_index = grid_index;
+            if (!gInitialised_grid) {
+                gCurrent_race.number_of_racers = i + 1;
+            } else {
+                InitialiseCar2(gCurrent_race.opponent_list[i].car_spec, 0);
+            }
+            gNet_players[gCurrent_race.opponent_list[i].net_player_index].grid_position_set = 1;
+        }
+    }
+    gCurrent_race.number_of_racers = racer_count;
+    gInitialised_grid = 1;
+    ReenableNetService();
 }
 
 // FUNCTION: CARMA2_HW 0x00499220
