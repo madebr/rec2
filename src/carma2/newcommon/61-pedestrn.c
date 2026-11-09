@@ -126,6 +126,7 @@ tMovement_spec gPed_spurt_initial_speed;
 // GLOBAL: CARMA2_HW 0x0069fda8
 // GLOBAL: CARMA2_SW 0x00699e00
 tSmashable_initial_position_spec gPed_spurt_initial_position;
+
 // GLOBAL: CARMA2_HW 0x0069bc30
 // GLOBAL: CARMA2_SW 0x00695c88
 int gPed_recent_points;
@@ -686,13 +687,7 @@ void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType)
 
 // DoGiblets
 
-// DoBloodSpurt
-
-// DoSpurt
-
-// FUNCTION: CARMA2_HW 0x004cccc0
-// FUNCTION: CARMA2_SW 0x004c93c0
-void C2_HOOK_FASTCALL PedApplyBloodSpurt(tU32 pId, tU32 pTime, unsigned int pSeed, br_vector3* pPosition, br_vector3* pImpactee_velocity, br_vector3* pNormal) {
+void C2_HOOK_FASTCALL DoBloodSpurt(tU32 pId, tU32 pTime, unsigned int pSeed, br_vector3* pPosition, br_vector3* pImpactee_velocity, br_vector3* pNormal) {
     int seed;
     int i;
     tSmash_vertex* fragment;
@@ -709,6 +704,15 @@ void C2_HOOK_FASTCALL PedApplyBloodSpurt(tU32 pId, tU32 pTime, unsigned int pSee
         SetShrapnelFragment(fragment, &gPed_spurt_initial_speed, pImpactee_velocity, scale, &gPed_spurt_min_max_time, pTime, pNormal, NULL, NULL);
     }
     srand(seed);
+}
+
+// DoSpurt
+
+// FUNCTION: CARMA2_HW 0x004cccc0
+// FUNCTION: CARMA2_SW 0x004c93c0
+void C2_HOOK_FASTCALL PedApplyBloodSpurt(tU32 pId, tU32 pTime, unsigned int pSeed, br_vector3* pPosition, br_vector3* pImpactee_velocity, br_vector3* pNormal) {
+
+    DoBloodSpurt(pId, pTime, pSeed, pPosition, pImpactee_velocity, pNormal);
 }
 
 // PedUndoBloodSpurt

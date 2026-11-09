@@ -191,7 +191,7 @@ extern void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4
 
 // DoGiblets
 
-// DoBloodSpurt
+extern void C2_HOOK_FASTCALL DoBloodSpurt(tU32 pId, tU32 pTime, unsigned int pSeed, br_vector3* pPosition, br_vector3* pImpactee_velocity, br_vector3* pNormal);
 
 // DoSpurt
 
