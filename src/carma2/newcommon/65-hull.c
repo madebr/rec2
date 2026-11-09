@@ -97,6 +97,15 @@ int C2_HOOK_FASTCALL Collinear(const br_vector3* pV1, const br_vector3* pV2, con
 
 // AddPointToPolyhedron
 
+#ifdef REC2_MATCHING
+// STUB: CARMA2_HW 0x00421fd0
+// STUB: CARMA2_SW 0x00422050
+undefined4* C2_HOOK_FASTCALL FUN_00421fd0(int pCount_points) {
+    NOT_IMPLEMENTED();
+    /* Unused */
+}
+#endif
+
 // AdjustEdges
 
 // PointOnShape
