@@ -22,6 +22,7 @@ extern tPed_remap* gPed_remaps[10];
 extern tPed_personality* gPed_personalities[50];
 extern float gPedestrian_speed_factor;
 extern int gSelected_ped;
+extern int gCount_active_peds;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
@@ -335,6 +336,8 @@ extern void C2_HOOK_FASTCALL ResetPedNearness(void);
 
 extern void C2_HOOK_FASTCALL GetPedestrianDebugInfo(char* pBuffer, int pPed_index);
 
+extern void C2_HOOK_FASTCALL ShowActivePedCount(void);
+
 // PedPreCollisionStuff
 
 // UpdateIfBackwardsAR
@@ -357,7 +360,7 @@ extern void C2_HOOK_FASTCALL ModelUpdatePrimitiveMaterials(br_model* pModel);
 
 // UpdateModels
 
-// TurnOnGhostPeds
+extern void C2_HOOK_FASTCALL TurnOnGhostPeds(void);
 
 // TurnOffGhostPeds
 
