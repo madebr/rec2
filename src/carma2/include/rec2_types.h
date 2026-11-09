@@ -405,6 +405,11 @@ typedef struct {
 } tPipe_ped_dir_data;
 
 typedef struct {
+    float old_speed;
+    float new_speed;
+} tPipe_ped_fp_change_data;
+
+typedef struct {
     tU16 render;
 } tPipe_drone_render;
 
@@ -687,6 +692,7 @@ typedef enum {
     ePipe_chunk_ped_move = 42,
     ePipe_chunk_ped_physics = 43,
     ePipe_chunk_single_ped_dismember = 44,
+    ePipe_chunk_single_ped_fp_change = 45,
     ePipe_chunk_single_ped_pos = 46,
     ePipe_chunk_single_ped_model_change = 47,
     ePipe_chunk_phil_object = 48,
@@ -744,12 +750,14 @@ typedef struct tPipe_chunk {
         tPipe_model_mash model_mash;
         tPipe_chunk_bend bend;
         tPipe_chunk_screen_wobble wobble;
+        tPipe_chunk_skid_adjustment skid_adjustment;
         tPipe_chunk_smoke_column smoke_column;
         tPipe_chunk_explosion explosion;
         tPipe_single_groove_on_of groove;
         tPipe_single_vanished_dismembered vanished_dismembered;
         tPipe_chunk_napalm_bolt napalm_bolt;
         tPipe_ped_dir_data ped_dir;
+        tPipe_ped_fp_change_data ped_fp_change;
         tPipe_chunk_repulse_ray repulse_ray;
         char raw_data[0];
     } data;
