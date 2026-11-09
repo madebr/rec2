@@ -193,6 +193,30 @@ int gPicked_wreck;
 // GLOBAL: CARMA2_SW 0x0075a0bc
 tWreck_gallery_car_info gWreck_gallery_car_infos[30];
 
+// GLOBAL: CARMA2_HW 0x00688aec
+// GLOBAL: CARMA2_SW 0x0068304c
+br_actor* gFrontend_wrecks_actor;
+
+// GLOBAL: CARMA2_HW 0x00688af0
+// GLOBAL: CARMA2_SW 0x00683050
+br_actor* gFrontend_wrecks_camera;
+
+// GLOBAL: CARMA2_HW 0x00688afc
+// GLOBAL: CARMA2_SW 0x0068305c
+int gFrontend_wrecks_hscroll;
+
+// GLOBAL: CARMA2_HW 0x007635e4
+// GLOBAL: CARMA2_SW 0x00759b44
+br_pixelmap* gFrontend_wrecks_pixelmap;
+
+// GLOBAL: CARMA2_HW 0x007635ec
+// GLOBAL: CARMA2_SW 0x00759b4c
+tU32 gFrontend_wrecks_previous_update;
+
+// GLOBAL: CARMA2_HW 0x00763844
+// GLOBAL: CARMA2_SW 0x00759da4
+br_actor* gFrontend_wrecks_light;
+
 // GLOBAL: CARMA2_HW 0x00686834
 // GLOBAL: CARMA2_SW 0x00680f74
 tU32 gCredits_scroll_start;
@@ -1947,7 +1971,32 @@ int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size) {
     return 1;
 }
 
-// DisposeWrecksGallery
+// FUNCTION: CARMA2_HW 0x0046e620
+// FUNCTION: CARMA2_SW 0x0046dcc0
+void C2_HOOK_FASTCALL DisposeWrecksGallery(void) {
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tWreck_gallery_car_info, actor, 0x10);
+    C2_HOOK_BUG_ON(sizeof(tWreck_gallery_car_info) != 0xa4);
+
+    for (i = 0; i < gFrontend_wrecks_car_count; i++) {
+        BrActorRemove(gWreck_gallery_car_infos[i].actor);
+    }
+    if (gFrontend_wrecks_camera != NULL) {
+        if (gFrontend_wrecks_camera->parent != NULL) {
+            BrActorRemove(gFrontend_wrecks_camera);
+        }
+        BrActorFree(gFrontend_wrecks_camera);
+    }
+    if (gFrontend_wrecks_actor != NULL) {
+        if (gFrontend_wrecks_actor->parent != NULL) {
+            BrActorRemove(gFrontend_wrecks_actor);
+        }
+        BrActorFree(gFrontend_wrecks_actor);
+    }
+    gFrontend_wrecks_actor = NULL;
+    gFrontend_wrecks_camera = NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x0046e6c0
 // FUNCTION: CARMA2_SW 0x0046dd60
@@ -2002,7 +2051,80 @@ int C2_HOOK_FASTCALL BuyCurrentCar(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// WrecksInFunc
+// FUNCTION: CARMA2_HW 0x0046e830
+// FUNCTION: CARMA2_SW 0x0046ded0
+int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend) {
+    int car_count;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(gWreck_gallery_sell_infos) != 0x100);
+    C2_HOOK_BUG_ON(sizeof(tWreck_gallery_car_info) != 0xa4);
+
+    gCurrent_frontend_spec = pFrontend;
+    DRS3StartSound(gEffects_outlet, eSoundId_Swingin);
+    if (!pFrontend->loaded) {
+        LoadMenuSettings(pFrontend);
+    }
+    gFrontend_wrecks_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    gFrontend_wrecks_camera = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+    gFrontend_wrecks_light = BrActorAllocate(BR_ACTOR_LIGHT, NULL);
+
+    ((br_camera*)gFrontend_wrecks_camera->type_data)->aspect = 1.6346154f;
+    ((br_camera*)gFrontend_wrecks_camera->type_data)->field_of_view = BR_ANGLE_DEG(55);
+    ((br_camera*)gFrontend_wrecks_camera->type_data)->hither_z = 1.f;
+    ((br_camera*)gFrontend_wrecks_camera->type_data)->yon_z = 100.f;
+    ((br_camera*)gFrontend_wrecks_camera->type_data)->type = BR_CAMERA_PERSPECTIVE_FOV;
+    ((br_camera*)gFrontend_wrecks_camera->type_data)->width = 640.f;
+    ((br_camera*)gFrontend_wrecks_camera->type_data)->height = 480.f;
+    BrActorAdd(gFrontend_wrecks_actor, gFrontend_wrecks_camera);
+
+    gFrontend_wrecks_pixelmap = BrPixelmapAllocateSub(gBack_screen, 65, 55, 510, 312);
+    gFrontend_wrecks_pixelmap->origin_x = 255;
+    gFrontend_wrecks_pixelmap->origin_y = 120;
+
+    BrMatrix34RotateY(&gFrontend_wrecks_camera->t.t.mat, BR_ANGLE_DEG(180));
+    BrMatrix34PostTranslate(&gFrontend_wrecks_camera->t.t.mat, 0.f, 0.f, -3.f);
+
+    car_count = GetCarCount(eVehicle_opponent);
+    gFrontend_wrecks_car_count = 0;
+    for (i = 0; i < car_count; i++) {
+        tCar_spec* car;
+        br_actor* actor;
+
+        car = GetCarSpec(eVehicle_opponent, i);
+        actor = car->car_master_actor;
+        actor->render_style = BR_RSTYLE_FACES;
+        if (actor->parent != NULL) {
+            BrActorRemove(actor);
+        }
+        BrActorAdd(gFrontend_wrecks_actor, actor);
+        gWreck_gallery_car_infos[gFrontend_wrecks_car_count].original_matrix = actor->t.t.mat;
+        BrMatrix34Identity(&actor->t.t.mat);
+        BrMatrix34Identity(&gWreck_gallery_car_infos[gFrontend_wrecks_car_count].field_0x14);
+        BrMatrix34Identity(&gWreck_gallery_car_infos[gFrontend_wrecks_car_count].field_0x74);
+        gWreck_gallery_car_infos[gFrontend_wrecks_car_count].actor = actor;
+        gFrontend_wrecks_car_count++;
+    }
+    memset(gWreck_gallery_sell_infos, 0, sizeof(gWreck_gallery_sell_infos));
+    gFrontend_wreck_bought_car_dz = 0;
+
+    gFrontend_selected_item_index = 0;
+    gFrontend_wrecks_current = 0;
+    gFrontend_wrecks_hscroll = 0;
+    gFrontend_wrecks_pending_hscroll = 0;
+    gFrontend_wrecks_previous_update = PDGetTotalTime();
+    gFrontend_wrecks_rotate_prev_x = -1;
+    gFrontend_wrecks_rotate_prev_y = -1;
+    FuckWithWidths(pFrontend);
+    gFrontend_opponent_profile_pic_needs_update = 1;
+#ifdef REC2_SW
+    pFrontend->items[1].visible = 0;
+    pFrontend->items[11].visible = 0;
+    pFrontend->items[1].enabled = kFrontendItemEnabled_default;
+    pFrontend->items[11].enabled = kFrontendItemEnabled_default;
+#endif
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x0046eab0
 // FUNCTION: CARMA2_SW 0x0046e170

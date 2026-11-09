@@ -24,6 +24,12 @@ extern tWreck_gallery_car_info gWreck_gallery_car_infos[30];
 extern tNet_game_type gFrontend_game_type;
 extern tStruct_00686508 gUNK_006883b0;
 extern tStruct_00686508 gUNK_006886e8;
+extern br_actor* gFrontend_wrecks_actor;
+extern br_actor* gFrontend_wrecks_camera;
+extern int gFrontend_wrecks_hscroll;
+extern br_pixelmap* gFrontend_wrecks_pixelmap;
+extern tU32 gFrontend_wrecks_previous_update;
+extern br_actor* gFrontend_wrecks_light;
 
 extern tU32 gFrontend_last_scroll;
 extern tU32 gNet_synch_start;
@@ -264,7 +270,7 @@ extern int C2_HOOK_FASTCALL StopGettingInputString(void);
 
 extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size);
 
-// DisposeWrecksGallery
+extern void C2_HOOK_FASTCALL DisposeWrecksGallery(void);
 
 extern int C2_HOOK_FASTCALL ScrollToNextCar(tFrontend_spec* pFrontend);
 
@@ -272,7 +278,7 @@ extern int C2_HOOK_FASTCALL ScrollToPrevCar(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL BuyCurrentCar(tFrontend_spec* pFrontend);
 
-// WrecksInFunc
+extern int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange);
 
