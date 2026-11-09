@@ -314,7 +314,7 @@ int gCursor_line_width = 5;
 
 
 // GLOBAL: CARMA2_HW 0x0067be94
-int gTransient_bitmap_index;
+int gCursor_transient_index;
 
 // GLOBAL: CARMA2_HW 0x0079ecb0
 tMouse_coord gMouse_last_pos;
@@ -739,8 +739,8 @@ void C2_HOOK_FASTCALL StartMouseCursor(void) {
         AllocateCursorActors();
     }
     gNext_transient = 0;
-    gTransient_bitmap_index = 0;
-    GetMousePosition(&gMouse_last_pos.x, &gMouse_last_pos.y);
+    gCursor_transient_index = 0;
+    GetMousePosition(&gMouse_last_x_coord, &gMouse_last_y_coord);
     gMouse_in_use = 0;
     gCurrent_cursor_index = 2;
     gMouse_started = 1;
@@ -943,18 +943,18 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
         }
     } while (delta_time <= 20);
     GetMousePosition(&pos_x, &pos_y);
-    mouse_moved = pos_x != gMouse_last_pos.x || pos_y != gMouse_last_pos.y;
+    mouse_moved = pos_x != gMouse_last_x_coord || pos_y != gMouse_last_y_coord;
     button_down = EitherMouseButtonDown();
     if (gMouse_in_use || mouse_moved) {
         gMouse_in_use = 1;
-        if (pos_x == gMouse_last_pos.x) {
+        if (pos_x == gMouse_last_x_coord) {
             if (zero_count > 4) {
                 delta_x = 0;
             }
             zero_count += 1;
         } else {
             zero_count = 0;
-            delta_x = 1000 * (pos_x - gMouse_last_pos.x) / delta_time;
+            delta_x = 1000 * (pos_x - gMouse_last_x_coord) / delta_time;
         }
         if (delta_x < -10) {
             new_required = 0;
@@ -970,7 +970,7 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
         gCurrent_cursor_index = 2;
         if (!gNoTransients) {
             br_pixelmap *map;
-            int idx = gTransient_bitmap_index;
+            int idx = gCursor_transient_index;
 
             gTransient_bitmaps[idx].x_coord = (pos_x - 7) & ~3;
             gTransient_bitmaps[idx].y_coord = pos_y - 7;
@@ -1022,8 +1022,8 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
         }
     }
     last_call_time = time_now;
-    gMouse_last_pos.y = pos_y;
-    gMouse_last_pos.x = pos_x;
+    gMouse_last_y_coord = pos_y;
+    gMouse_last_x_coord = pos_x;
     button_was_down = button_down;
     return mouse_moved;
 }

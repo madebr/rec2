@@ -84,7 +84,7 @@ extern int gCursor_tinted_right;
 extern int gCursor_tinted_cent;
 extern int gCursor_line_width;
 
-extern int gTransient_bitmap_index;
+extern int gCursor_transient_index;
 extern tMouse_coord gMouse_last_pos;
 extern int gMouse_in_use;
 extern int gCurrent_cursor_index;

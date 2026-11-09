@@ -5764,6 +5764,7 @@ enum {
     kFatalError_CouldNotOpenFlicFile_S = 0x0d,
     kFatalError_FlicFileWasNot8BitsDeep_S = 0x0f,
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
+    kFatalError_CouldNotFindASpareTransientBitmap = 0x12,
     kFatalError_CannotLoadFontImage_S = 0x14,
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
     kFatalError_CannotLoadCursorImage = 0x16,

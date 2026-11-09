@@ -41,6 +41,10 @@ extern void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int 
 extern void C2_HOOK_FASTCALL RectangleFill_LeftRightLine(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_colour pColour);
 
 extern br_pixelmap* gBlend75_table;
+extern int gCurrent_cursor_index;
+extern tMouse_coord gMouse_last_pos;
+extern int gNext_transient;
+extern int gCursor_transient_index;
 
 extern void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount);
 
@@ -76,6 +80,10 @@ extern void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
 extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 
+#ifdef REC2_SW
+extern int AllocateTransientBitmap(int pWidth, int pHeight, int pUser_data);
+#endif
+
 extern void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex);
 
 extern void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void);
@@ -86,9 +94,9 @@ extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them
 
 extern int C2_HOOK_FASTCALL DoMouseCursor(void);
 
-extern void C2_HOOK_FASTCALL AllocateCursorTransient(void);
+extern int C2_HOOK_FASTCALL AllocateCursorTransient(void);
 
-// InitMouseTargetLines
+extern void C2_HOOK_FASTCALL InitMouseTargetLines(void);
 
 extern void C2_HOOK_FASTCALL StartMouseCursor(void);
 
