@@ -505,9 +505,9 @@ extern void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vecto
 
 extern void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pCharacter);
 
-// BonerActiveHalted2
+extern int C2_HOOK_FASTCALL BonerActiveHalted2(tPed_character_instance* pCharacter, undefined4 pArg2);
 
-// CharacterNoLongerPhysicworthy
+extern int C2_HOOK_FASTCALL CharacterNoLongerPhysicworthy(tPed_character_instance* pCharacter);
 
 // SetCharacterPhysicsLevel
 
@@ -549,7 +549,7 @@ extern int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pChara
 
 // BonerPassiveCollision
 
-// BonerActiveHalted
+extern int C2_HOOK_FASTCALL BonerActiveHalted(tPed_character_instance* pCharacter);
 
 // BonerPedMovedByPhysics
 

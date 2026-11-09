@@ -1361,6 +1361,8 @@ void C2_HOOK_FASTCALL SetObjectV(tPhysics_object* pObject, const br_vector3* pV)
 
 // MakeCharacterPhysicworthy
 
+// FUNCTION: CARMA2_HW 0x00409340
+// FUNCTION: CARMA2_SW 0x00409340
 void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pCharacter) {
     tPed_form* form;
     br_matrix34* character_matrix;
@@ -1373,9 +1375,30 @@ void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pCha
     BrVector3Set((br_vector3*)pCharacter->field_0x8c.m[3], 0.0f, 0.0f, 0.0f);
 }
 
-// BonerActiveHalted2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// CharacterNoLongerPhysicworthy
+// STUB: CARMA2_HW 0x00409400
+// STUB: CARMA2_SW 0x00409400
+int C2_HOOK_FASTCALL BonerActiveHalted2(tPed_character_instance* pCharacter, undefined4 pArg2) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004093e0
+// FUNCTION: CARMA2_SW 0x004093e0
+int C2_HOOK_FASTCALL CharacterNoLongerPhysicworthy(tPed_character_instance* pCharacter) {
+
+    if ((pCharacter->field_0x14 & 4) == 0) {
+        return 0x1f;
+    }
+    BonerActiveHalted2(pCharacter, 1);
+    return 0;
+}
 
 // SetCharacterPhysicsLevel
 
@@ -1521,7 +1544,12 @@ int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter) {
 
 // BonerPassiveCollision
 
-// BonerActiveHalted
+// FUNCTION: CARMA2_HW 0x0040b760
+// FUNCTION: CARMA2_SW 0x0040b750
+int C2_HOOK_FASTCALL BonerActiveHalted(tPed_character_instance* pCharacter) {
+
+    return BonerActiveHalted2(pCharacter, 0);
+}
 
 // BonerPedMovedByPhysics
 
