@@ -166,7 +166,17 @@ int gPed_movements_count;
 // GLOBAL: CARMA2_SW 0x00695d48
 tPed_movement_spec* gPed_movements;
 
-// OrientationChanged
+// FUNCTION: CARMA2_HW 0x004d5730
+// FUNCTION: CARMA2_SW 0x004d1e20
+int C2_HOOK_FASTCALL OrientationChanged(const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2, float pCos_angle) {
+    if (BrVector3Dot((br_vector3*)pOrientation_1->m[0], (br_vector3*)pOrientation_2->m[0]) < pCos_angle
+        || BrVector3Dot((br_vector3*)pOrientation_1->m[1], (br_vector3*)pOrientation_2->m[1]) < pCos_angle
+        || BrVector3Dot((br_vector3*)pOrientation_1->m[2], (br_vector3*)pOrientation_2->m[2]) < pCos_angle) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // AssertRootObjectsMatrix
 

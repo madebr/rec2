@@ -44,7 +44,7 @@ extern tPed_movement_spec* gPed_movements;
 extern int gPed_movements_count;
 extern tRace_ped_spec* gRace_pedestrian_specs;
 
-// OrientationChanged
+extern int C2_HOOK_FASTCALL OrientationChanged(const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2, float pCos_angle);
 
 // AssertRootObjectsMatrix
 
