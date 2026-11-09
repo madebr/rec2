@@ -961,19 +961,46 @@ int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, b
     return 0;
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x0042dab0
-// STUB: CARMA2_SW 0x0042db20
+// FUNCTION: CARMA2_HW 0x0042dab0
+// FUNCTION: CARMA2_SW 0x0042db20
 void C2_HOOK_FASTCALL SendSemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, tNet_game_player_info* pPlayer) {
-    NOT_IMPLEMENTED();
-}
+    tNet_message* message;
+    tUser_crush_data* user_crush;
+    br_vector3 p1;
+    br_vector3 p2;
+    br_vector3 p3;
+    br_bounds3 bounds;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, player, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, id, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, time, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, point_1, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, point_2, 0x16);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, point_3, 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, bounds_min, 0x22);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, bounds_max, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_semi_detach_bit, value, 0x2e);
+    C2_HOOK_BUG_ON(sizeof(tNet_message_chunk_semi_detach_bit) != 0x30);
+
+    message = NetBuildGuaranteedMessage(eNet_message_chunk_type_semi_detach_bit, 0);
+    message->contents.semi_detach_bit.player = NetPlayerFromCar(pCar)->ID;
+    user_crush = pActor->user;
+    message->contents.semi_detach_bit.id = user_crush->crush_data->id;
+    message->contents.semi_detach_bit.time = gPHIL_last_physics_tick + 120;
+    if (GetSDBJointPosAndBounds(&p1, &p2, &p3, &bounds, pActor) == 0) {
+        CompressVector3(&message->contents.semi_detach_bit.point_1, &p1, -10.0f, 10.0f);
+        CompressVector3(&message->contents.semi_detach_bit.point_2, &p2, -10.0f, 10.0f);
+        CompressVector3(&message->contents.semi_detach_bit.point_3, &p3, -10.0f, 10.0f);
+        CompressVector3(&message->contents.semi_detach_bit.bounds_min, &bounds.min, -10.0f, 10.0f);
+        CompressVector3(&message->contents.semi_detach_bit.bounds_max, &bounds.max, -10.0f, 10.0f);
+        message->contents.semi_detach_bit.value = DRScalarToU16(pArg3, 0.0f, 40.0f);
+        if (pPlayer != NULL) {
+            NetGuaranteedSendMessageToPlayer(gCurrent_net_game, message, pPlayer->ID, NULL);
+        } else {
+            NetGuaranteedSendMessageToEverybody(gCurrent_net_game, message, NULL);
+        }
+    }
+}
 
 // SendDetachBit
 
