@@ -602,4 +602,3 @@ void C2_HOOK_FASTCALL SetSkyColour(br_colour c) {
 
     gHorizon_material->colour = c;
 }
-
