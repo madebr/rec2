@@ -100,6 +100,10 @@ int gEntering_message;
 // GLOBAL: CARMA2_SW 0x00676bf4
 tU32 gToo_poor_for_recovery_timeout;
 
+// GLOBAL: CARMA2_HW 0x0079efa4
+// GLOBAL: CARMA2_SW 0x00795544
+tCamera_key_flags gCamera_key_flags;
+
 // GLOBAL: CARMA2_HW 0x006b781c
 // GLOBAL: CARMA2_SW 0x006ae4fc
 tRace_over_reason gRace_over_reason;
@@ -489,7 +493,28 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum) {
 
 // PollCarControls
 
-// PollCameraControls
+// FUNCTION: CARMA2_HW 0x00444270
+// FUNCTION: CARMA2_SW 0x00444350
+void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
+    int left;
+    int right;
+
+    left = PDKeyDown(0);
+    right = PDKeyDown(1);
+    if (left || right) {
+        CheckMapMoveKeys(left, right);
+        gCamera_key_flags.field_0x0_bit1 = 0;
+        gCamera_key_flags.field_0x0_bit2 = 0;
+        gCamera_key_flags.field_0x0_bit3 = 0;
+        gCamera_key_flags.field_0x0_bit4 = 0;
+    } else {
+        gCamera_key_flags.field_0x0_bit1 = KeyIsDownNoMouldiness(31);
+        gCamera_key_flags.field_0x0_bit2 = KeyIsDownNoMouldiness(32);
+        gCamera_key_flags.field_0x0_bit3 = KeyIsDownNoMouldiness(33);
+        gCamera_key_flags.field_0x0_bit4 = KeyIsDownNoMouldiness(34);
+        gCamera_key_flags.field_0x0_bit0 = PDKeyDown(2);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00444350
 // FUNCTION: CARMA2_SW 0x00444430

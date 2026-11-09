@@ -115,7 +115,7 @@ extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 
 extern void C2_HOOK_FASTCALL MapChanged(void);
 
-// CheckMapMoveKeys
+extern void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0, int pKey1);
 
 extern void C2_HOOK_FASTCALL InitSmashTargets(void);
 

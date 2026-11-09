@@ -15,6 +15,7 @@
 extern int gAllow_car_flying;
 extern int gEntering_message;
 extern tU32 gToo_poor_for_recovery_timeout;
+extern tCamera_key_flags gCamera_key_flags;
 extern int gCheckpoint_finder_enabled;
 extern float gMap_render_x;
 extern float gMap_render_y;
@@ -163,7 +164,7 @@ extern void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 // PollCarControls
 
-// PollCameraControls
+extern void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period);
 
 extern void C2_HOOK_FASTCALL SetFlag2(int pArg);
 
