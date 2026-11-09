@@ -344,7 +344,7 @@ extern void C2_HOOK_FASTCALL GetPedestrianDebugInfo(char* pBuffer, int pPed_inde
 
 extern void C2_HOOK_FASTCALL ShowActivePedCount(void);
 
-// PedPreCollisionStuff
+extern void C2_HOOK_FASTCALL PedPreCollisionStuff(void);
 
 // UpdateIfBackwardsAR
 

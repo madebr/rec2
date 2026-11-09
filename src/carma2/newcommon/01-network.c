@@ -260,8 +260,8 @@ void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void) {
     }
 }
 
-// STUB: CARMA2_HW 0x0049ec70
-// STUB: CARMA2_SW 0x0049adf0
+// FUNCTION: CARMA2_HW 0x0049ec70
+// FUNCTION: CARMA2_SW 0x0049adf0
 void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
 
     if (gTime_for_next_one) {
@@ -1012,4 +1012,3 @@ void C2_HOOK_FASTCALL GetCheckSum(tNet_message* pMessage) {
 // StatReceivePacket
 
 // StatSendPacket
-

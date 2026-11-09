@@ -788,7 +788,11 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // SendMines
 
-// MinePreCollisionStuff
+// STUB: CARMA2_HW 0x004dd1b0
+// STUB: CARMA2_SW 0x004d96b0
+void C2_HOOK_FASTCALL MinePreCollisionStuff(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ActivateMine
 

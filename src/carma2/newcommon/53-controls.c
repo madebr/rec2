@@ -99,6 +99,10 @@ int gEntering_message;
 // GLOBAL: CARMA2_SW 0x006ae4fc
 tRace_over_reason gRace_over_reason;
 
+// GLOBAL: CARMA2_HW 0x0067c478
+// GLOBAL: CARMA2_SW 0x00676bf0
+tU32 gPalette_fade_time;
+
 void C2_HOOK_FASTCALL CompleteRace(void) {
     gRace_over_reason = eRace_over_0;
     gAbandon_game = 2;

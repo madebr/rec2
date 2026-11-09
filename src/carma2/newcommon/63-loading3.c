@@ -134,8 +134,8 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap2(const char* pPath_name) {
     return pm;
 }
 
-// STUB: CARMA2_HW 0x0048eec0
-// STUB: CARMA2_SW 0x0048c160
+// FUNCTION: CARMA2_HW 0x0048eec0
+// FUNCTION: CARMA2_SW 0x0048c160
 int C2_HOOK_FASTCALL LoadInterfacePixelmaps(const char *pPath_name, br_pixelmap** pMaps, int pCapacity) {
     tPath_name path;
     size_t count;
@@ -412,4 +412,3 @@ void C2_HOOK_FASTCALL ConfigureZombiePedTexturePath(void) {
 void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void) {
     gPedTexturePath = "ALPIXELMAP";
 }
-

@@ -4483,7 +4483,9 @@ typedef struct tPhysics_object {
     undefined field_0x261;
     undefined field_0x262[6];
     tU32 message_time; // 0x268
-    undefined field_0x26c[560];
+    undefined field_0x26c[0x278 - 0x26c];
+    tS16 field_0x278;
+    undefined field_0x27a[0x49c - 0x27a];
     undefined4 field_0x49c; /* tU32 last_car_car_collision: */
     undefined field_0x4a0[52];
     tU8 drivable_on;
@@ -4761,16 +4763,21 @@ typedef struct tNon_car_spec {
     undefined field_0x4[4];
     tPhysics_object* collision_info;
     tDriver driver;
-    br_actor* actor;
+    br_actor* car_master_actor;
     undefined field_0x14[4];
     br_scalar break_off_radians_squared;
-    undefined field_0x1c[80];
+    undefined field_0x1c[0x4c - 0x1c];
+    br_vector3 pos;
+    br_vector3 centre_of_mass_world_scale;
+    undefined field_0x64[0x6c - 0x64];
     int count_shrapnel_materials;
     undefined field_0x70[16];
     tS16 car_ID;
     undefined field_0x82[2];
     br_material* shrapnel_materials[3];
-    undefined field_0x90[60];
+    undefined field_0x90[0xc4 - 0x90];
+    float field_0xc4;
+    undefined field_0xc8[0xcc - 0xc8];
     float free_mass;
     float attached_mass;
     float min_torque_squared;
@@ -4780,7 +4787,7 @@ typedef struct tNon_car_spec {
     br_vector3 I_over_M;
     tPhysics_joint* field_0xf0;
     tJoint_translation_params* translation_parameters;
-    tU8 field_0xf8[4];
+    tU32 field_0xf8;
     tU8 field_0xfc;
     tU8 number_of_pushes;
     tU32 flags;
@@ -5336,7 +5343,7 @@ typedef struct {
 
 typedef struct tWorld_callbacks {
     int (C2_HOOK_FASTCALL * process_forces)(void*, float*, int arg3);
-    int (C2_HOOK_FASTCALL * process_joint_forces)(undefined4, undefined4, undefined4);
+    int (C2_HOOK_FASTCALL * process_joint_forces)(void*, void*, void*);
     void (C2_HOOK_FASTCALL * new_face_list)(tPhysics_object*, undefined4 *);
     int (C2_HOOK_FASTCALL * find_faces_in_box)(tBounds*, tFace_ref*, int, struct tWorld_callbacks*);
     tNon_car_spec* (C2_HOOK_FASTCALL * pull_actor_from_world)(br_actor*);

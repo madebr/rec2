@@ -1052,7 +1052,11 @@ void C2_HOOK_FASTCALL ShowActivePedCount(void) {
     NewTextHeadupSlot2(4, 0, 1000, -4, text, 0);
 }
 
-// PedPreCollisionStuff
+// STUB: CARMA2_HW 0x004d6880
+// STUB: CARMA2_SW 0x004d2e80
+void C2_HOOK_FASTCALL PedPreCollisionStuff(void) {
+    NOT_IMPLEMENTED();
+}
 
 // UpdateIfBackwardsAR
 
@@ -1741,4 +1745,3 @@ void C2_HOOK_FASTCALL EnableRetainRootMode(void) {
 void C2_HOOK_FASTCALL DisableRetainRootMode(void) {
     gPed_retain_root_mode = 0;
 }
-
