@@ -28,6 +28,10 @@
 // GLOBAL: CARMA2_SW 0x00751e58
 br_pixelmap* gDigits_pix;
 
+// GLOBAL: CARMA2_HW 0x0068d920
+// GLOBAL: CARMA2_SW 0x00687978
+int gINT_0068d920;
+
 // GLOBAL: CARMA2_HW 0x0068d924
 // GLOBAL: CARMA2_SW 0x0068797c
 tNet_game_player_info* gLast_lepper;
@@ -358,11 +362,67 @@ void C2_HOOK_FASTCALL PlayerIsIt(tNet_game_player_info* pPlayer) {
 
 // SelectRandomFox
 
-// CalcPlayerScores
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// SendPlayerScores
+// STUB: CARMA2_HW 0x0049abf0
+// STUB: CARMA2_SW 0x00496d70
+void C2_HOOK_FASTCALL CalcPlayerScores(void) {
+    NOT_IMPLEMENTED();
+}
 
-// DoNetGameManagement
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+inline void C2_HOOK_FASTCALL SendPlayerScores(void) {
+    tNet_message_chunk* the_contents;
+    int i;
+
+    the_contents = NetStartBroadcastContents(eNet_message_chunk_type_player_scores, 0);
+    if (the_contents == NULL) {
+        return;
+    }
+    switch (gCurrent_net_game->type) {
+    case eNet_game_type_2:
+        the_contents->scores.general_score = gINT_0068d920;
+        break;
+    case eNet_game_type_6:
+        the_contents->scores.general_score = 0;
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            if (gNet_players[i].field_0x80) {
+                the_contents->scores.general_score |= 1 << i;
+            }
+        }
+        break;
+    case eNet_game_type_foxy:
+        the_contents->scores.general_score = gNet_players[gIt_or_fox].ID;
+        break;
+    default:
+        break;
+    }
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        the_contents->scores.scores[i] = gNet_players[i].score2;
+    }
+    NetBroadcastContents(the_contents);
+}
+
+// FUNCTION: CARMA2_HW 0x0049ab00
+// FUNCTION: CARMA2_SW 0x00496c80
+void C2_HOOK_FASTCALL DoNetGameManagement(void) {
+    // GLOBAL: CARMA2_HW 0x00659c34
+    // GLOBAL: CARMA2_SW 0x006545cc
+    static tU32 last_playerscores_sent = (tU32)-1;
+
+    if (gNet_mode == eNet_mode_host) {
+        CalcPlayerScores();
+        if (gPHIL_last_physics_tick <= last_playerscores_sent || gPHIL_last_physics_tick >= last_playerscores_sent + 80) {
+            last_playerscores_sent = gPHIL_last_physics_tick;
+            SendPlayerScores();
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0049b690
 // FUNCTION: CARMA2_SW 0x00497810
