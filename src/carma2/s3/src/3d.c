@@ -288,12 +288,28 @@ void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pPos) {
     S3CopyBrVector3(&gS3_listener_position_old, pPos);
 }
 
+// FUNCTION: CARMA2_HW 0x00565fd4
+// FUNCTION: CARMA2_SW 0x00561674
+void C2_HOOK_FASTCALL S3BindListenerVelocity(br_vector3* vel) {
+
+    gS3_listener_vel_ptr = vel;
+    gS3_listener_vel_is_brender = 0;
+}
+
 // FUNCTION: CARMA2_HW 0x00565ff1
 // FUNCTION: CARMA2_SW 0x00561691
 void C2_HOOK_FASTCALL S3BindListenerVelocityBRender(br_vector3* vel) {
 
     gS3_listener_vel_ptr = vel;
     gS3_listener_vel_is_brender = 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0056600e
+// FUNCTION: CARMA2_SW 0x005616ae
+void C2_HOOK_FASTCALL S3BindListenerLeft(br_vector3* left) {
+
+    gS3_listener_left_ptr = left;
+    gS3_listener_left_is_brender = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0056602b
