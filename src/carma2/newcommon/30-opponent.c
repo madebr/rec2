@@ -106,6 +106,18 @@ tCar_spec* gActive_car_list[139];
 // GLOBAL: CARMA2_SW 0x007430ac
 int gNum_active_cars;
 
+// GLOBAL: CARMA2_HW 0x00691770
+// GLOBAL: CARMA2_SW 0x0068b7c8
+int gRoute_search_attempts;
+
+// GLOBAL: CARMA2_HW 0x00691778
+// GLOBAL: CARMA2_SW 0x0068b7d0
+int gRoute_search_max_calls;
+
+// GLOBAL: CARMA2_HW 0x00691774
+// GLOBAL: CARMA2_SW 0x0068b7cc
+int gRoute_search_total_calls;
+
 // FUNCTION: CARMA2_HW 0x004a8160
 // FUNCTION: CARMA2_SW 0x004a42d0
 void C2_HOOK_CDECL DoNotDprintf(const char* pMessage, ...) {
@@ -153,9 +165,24 @@ int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo) {
 
 // WeightedFindNearestNodeAndSection
 
-// FindNearestGeneralSection
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// FindNearestPathSection
+// STUB: CARMA2_HW 0x004a82d0
+// STUB: CARMA2_SW 0x004a4440
+tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, const br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+tS16 C2_HOOK_FASTCALL FindNearestPathSection(const br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
+
+    return FindNearestGeneralSection(NULL, pActor_coords, pPath_direction, pIntersect, pDistance);
+}
 
 // DeadStopCar
 
@@ -201,7 +228,19 @@ void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_object
 
 // CalcRaceRoute
 
-// TopUpRandomRoute
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004a93c0
+// STUB: CARMA2_SW 0x004a5530
+void C2_HOOK_FASTCALL TopUpRandomRoute(tOpponent_spec* pOpponent_spec, int pSections_to_add) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004a9550
 // FUNCTION: CARMA2_SW 0x004a56c0
@@ -314,9 +353,56 @@ int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
 
 // NewCalcGetNearPlayerRoute
 
-// CalcReturnToStartPointRoute
+// FUNCTION: CARMA2_HW 0x004abf60
+// FUNCTION: CARMA2_SW 0x004a80d0
+void C2_HOOK_FASTCALL CalcReturnToStartPointRoute(tOpponent_spec* pOpponent_spec) {
+    br_vector3 direction;
+    br_vector3 intersect;
+    br_scalar distance;
+    tRoute_section route[10];
+    tRoute_section best[10];
+    tS16 section;
+    int best_count;
+    int count;
 
-// ClearOpponentsProjectedRoute
+    C2_HOOK_BUG_ON(REC2_ASIZE(pOpponent_spec->next_sections) != 12);
+    C2_HOOK_BUG_ON(sizeof(tRoute_section) != 4);
+
+    ClearOpponentsProjectedRoute(pOpponent_spec);
+    section = FindNearestPathSection(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &direction, &intersect, &distance);
+    BrVector3Normalise(&direction, &direction);
+    if (BrVector3Dot(&pOpponent_spec->car_spec->direction, &direction) > 0.f) {
+        AddToOpponentsProjectedRoute(pOpponent_spec, section, 1);
+    } else {
+        AddToOpponentsProjectedRoute(pOpponent_spec, section, 0);
+    }
+    route[0].section_no = pOpponent_spec->next_sections[pOpponent_spec->nnext_sections - 1].section_no;
+    route[0].direction = pOpponent_spec->next_sections[pOpponent_spec->nnext_sections - 1].direction;
+    gRoute_search_calls = 0;
+    gRoute_search_attempts++;
+    SearchForSection(route, best, &best_count, pOpponent_spec->return_to_start_data.section_no, 1, 0.f, pOpponent_spec);
+    gRoute_search_total_calls += gRoute_search_calls;
+    if (gRoute_search_calls > gRoute_search_max_calls) {
+        gRoute_search_max_calls = gRoute_search_calls;
+    }
+    DoNotDprintf(">>>SearchForSection() - max %d, avg %.1f", gRoute_search_max_calls, (double)gRoute_search_total_calls / (double)gRoute_search_attempts);
+    if (best_count > 1) {
+        count = MIN(best_count - 1, (int)REC2_ASIZE(pOpponent_spec->next_sections) - pOpponent_spec->nnext_sections);
+        memcpy(&pOpponent_spec->next_sections[pOpponent_spec->nnext_sections], &best[1], count * sizeof(tRoute_section));
+        pOpponent_spec->nnext_sections += count;
+        TopUpRandomRoute(pOpponent_spec, 2);
+    } else {
+        DoNotDprintf("%s: CalcReturnToStartPointRoute() - SearchForSection() produced bugger all", pOpponent_spec->car_spec->driver_name);
+        if (pOpponent_spec->nnext_sections <= (int)REC2_ASIZE(pOpponent_spec->next_sections)) {
+            TopUpRandomRoute(pOpponent_spec, (int)REC2_ASIZE(pOpponent_spec->next_sections) + 2 - pOpponent_spec->nnext_sections);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL ClearOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec) {
+
+    pOpponent_spec->nnext_sections = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004ab150
 // FUNCTION: CARMA2_SW 0x004a72c0
