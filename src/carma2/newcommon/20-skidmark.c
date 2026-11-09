@@ -48,9 +48,41 @@ const char* gExplosion_rotate_names[2] = {
 tSkid gSkids[100];
 
 // GLOBAL: CARMA2_HW 0x006a27e8
+// GLOBAL: CARMA2_SW 0x0069c840
 int gCurrent_skid;
 
-// StretchMark
+// FUNCTION: CARMA2_HW 0x004ea2c0
+// FUNCTION: CARMA2_SW 0x004e6060
+void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* pTo, br_scalar pTexture_start, br_scalar pTexture_step) {
+    br_vector3 temp;
+    br_vector3* rows;
+    br_scalar len;
+    br_scalar delta;
+    br_model* model;
+
+    rows = (br_vector3*)&pMark->actor->t.t.mat.m;
+    BrVector3Sub(&temp, pTo, pFrom);
+    len = BrVector3Length(&temp);
+    if (len < 0.001f) {
+        BrMatrix34Scale(&pMark->actor->t.t.mat, 0.001f, 1.0f, 0.001f);
+    } else {
+        delta = pTexture_step / len;
+        BrVector3Copy(&rows[1], &pMark->normal);
+        BrVector3Cross(&rows[2], &temp, &pMark->normal);
+        BrVector3Scale(&rows[2], &rows[2], delta);
+        BrVector3Scale(&rows[0], &temp, len / len);
+        BrVector3Add(&pMark->pos, pFrom, pTo);
+        BrVector3Scale(&pMark->pos, &pMark->pos, 0.5f);
+        rows[3] = pMark->pos;
+
+        model = pMark->actor->model;
+        model->vertices[1].map.v[0] = pTexture_start / pTexture_step;
+        model->vertices[0].map.v[0] = model->vertices[1].map.v[0];
+        model->vertices[3].map.v[0] = (pTexture_start + len) / pTexture_step;
+        model->vertices[2].map.v[0] = model->vertices[3].map.v[0];
+        BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
+    }
+}
 
 // MaterialFromIndex
 
