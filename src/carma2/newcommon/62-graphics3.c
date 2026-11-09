@@ -913,7 +913,9 @@ void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
 }
 #endif
 
-static void C2_HOOK_FASTCALL MapChanged(void) {
+// FUNCTION: CARMA2_HW 0x00497610
+// FUNCTION: CARMA2_SW 0x00494240
+void C2_HOOK_FASTCALL MapChanged(void) {
 
     InitMap();
     SaveOptions();

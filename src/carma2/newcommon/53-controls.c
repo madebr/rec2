@@ -22,6 +22,7 @@
 #include "42-input.h"
 #include "43-pratcam.h"
 #include "59-camera.h"
+#include "62-graphics3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
@@ -324,7 +325,20 @@ void C2_HOOK_FASTCALL TDamageRRWheel(void) {
     DamageRRWheel(21);
 }
 
-// ToggleMiniMap
+// FUNCTION: CARMA2_HW 0x004420e0
+// FUNCTION: CARMA2_SW 0x004421c0
+void C2_HOOK_FASTCALL ToggleMiniMap(void) {
+
+    if (gMap_view != 2) {
+        gMini_map_visible = !gMini_map_visible;
+        if (!gMini_map_visible) {
+            NewTextHeadupSlot(4, 0, 500, -4, GetMiscString(eMiscString_minimap_off));
+        } else {
+            NewTextHeadupSlot(4, 0, 500, -4, GetMiscString(eMiscString_minimap_on));
+        }
+        MapChanged();
+    }
+}
 
 // CheckToggles
 

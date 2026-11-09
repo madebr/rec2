@@ -113,7 +113,7 @@ extern void C2_HOOK_FASTCALL InitMap(void);
 extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 #endif
 
-// static void C2_HOOK_FASTCALL MapChanged(void);
+extern void C2_HOOK_FASTCALL MapChanged(void);
 
 // CheckMapMoveKeys
 

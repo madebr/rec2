@@ -109,7 +109,7 @@ extern void C2_HOOK_FASTCALL TDamageRRBrake(void);
 
 extern void C2_HOOK_FASTCALL TDamageRRWheel(void);
 
-// ToggleMiniMap
+extern void C2_HOOK_FASTCALL ToggleMiniMap(void);
 
 // CheckToggles
 
