@@ -18,6 +18,7 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00691b40
+// GLOBAL: CARMA2_SW 0x0068bb98
 tTwatVfsMountPoint gTwatVfsMountPoints[5];
 
 // GLOBAL: CARMA2_HW 0x00692070
@@ -423,8 +424,8 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
     return res;
 }
 
-// STUB: CARMA2_HW 0x004b4e20
-// STUB: CARMA2_SW 0x004b0f90
+// FUNCTION: CARMA2_HW 0x004b4e20
+// FUNCTION: CARMA2_SW 0x004b0f90
 void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
 
     if (twt >= 0) {
