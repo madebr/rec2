@@ -13,13 +13,16 @@
 #include "15-displays.h"
 #include "21-mainloop.h"
 #include "22-replay.h"
+#include "23-piping.h"
 #include "27-powerup.h"
 #include "28-world3.h"
 #include "30-opponent.h"
 
 #include "41-utility.h"
 #include "42-input.h"
+#include "43-pratcam.h"
 #include "49-physics.h"
+#include "51-smash.h"
 #include "52-errors.h"
 #include "62-graphics3.h"
 
@@ -33,7 +36,9 @@
 #include "globvrkm.h"
 #include "rec2_macros.h"
 
+#include "c2_math.h"
 #include "c2_stdio.h"
+#include "c2_stdlib.h"
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a0414
@@ -114,6 +119,29 @@ int gPed_nearness;
 // GLOBAL: CARMA2_SW 0x0068e4f0
 tTWTVFS gTwtPeds;
 
+// GLOBAL: CARMA2_HW 0x006944a0
+// GLOBAL: CARMA2_SW 0x0068e4f8
+tMovement_spec gPed_spurt_initial_speed;
+
+// GLOBAL: CARMA2_HW 0x0069fda8
+// GLOBAL: CARMA2_SW 0x00699e00
+tSmashable_initial_position_spec gPed_spurt_initial_position;
+// GLOBAL: CARMA2_HW 0x0069bc30
+// GLOBAL: CARMA2_SW 0x00695c88
+int gPed_recent_points;
+
+// GLOBAL: CARMA2_HW 0x0069bce4
+// GLOBAL: CARMA2_SW 0x00695d3c
+int gPed_score_multiplier;
+
+// GLOBAL: CARMA2_HW 0x0069bcf8
+// GLOBAL: CARMA2_SW 0x00695d50
+int gPed_points[3];
+
+// GLOBAL: CARMA2_HW 0x006a0418
+// GLOBAL: CARMA2_SW 0x0069a470
+tU32 DAT_006a0418;
+
 // GLOBAL: CARMA2_HW 0x007447a4
 // GLOBAL: CARMA2_SW 0x0073b264
 float gMutant_speed;
@@ -133,6 +161,10 @@ int gPeds_already_munged;
 // GLOBAL: CARMA2_HW 0x0065d7b8
 // GLOBAL: CARMA2_SW 0x006580f0
 int gPed_cache_sizes_1[4] = { 40, 25, 15, 5 };
+
+// GLOBAL: CARMA2_HW 0x00694120
+// GLOBAL: CARMA2_SW 0x0068e178
+tPedestrian* PTR_00694120;
 
 // GLOBAL: CARMA2_HW 0x0069bc58
 // GLOBAL: CARMA2_SW 0x00695cb0
@@ -658,13 +690,136 @@ void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType)
 
 // DoSpurt
 
-// PedApplyBloodSpurt
+// FUNCTION: CARMA2_HW 0x004cccc0
+// FUNCTION: CARMA2_SW 0x004c93c0
+void C2_HOOK_FASTCALL PedApplyBloodSpurt(tU32 pId, tU32 pTime, unsigned int pSeed, br_vector3* pPosition, br_vector3* pImpactee_velocity, br_vector3* pNormal) {
+    int seed;
+    int i;
+    tSmash_vertex* fragment;
+    br_scalar scale;
+
+    seed = rand();
+    srand(pSeed);
+    for (i = 0; i < gPed_spurty_lumps_count; i++) {
+        fragment = FindShrapnelFragment(gPed_spurt_model, pId, 1);
+        if (fragment == NULL) {
+            break;
+        }
+        scale = SetInitPosition(fragment->actor, &gPed_spurt_initial_position, NULL, pPosition, pPosition, NULL, NULL, NULL);
+        SetShrapnelFragment(fragment, &gPed_spurt_initial_speed, pImpactee_velocity, scale, &gPed_spurt_min_max_time, pTime, pNormal, NULL, NULL);
+    }
+    srand(seed);
+}
 
 // PedUndoBloodSpurt
 
 // OneLessPed
 
-// ScoreForKilledPedestrian
+// FUNCTION: CARMA2_HW 0x004cd260
+// FUNCTION: CARMA2_SW 0x004c9960
+void C2_HOOK_FASTCALL ScoreForKilledPedestrian(tPedestrian* pPed, float pHeight) {
+    tU32 the_time;
+    tCar_spec* car;
+    tPhysics_object* ped_object;
+    br_vector3 offset;
+    br_vector3 local_offset;
+    tU16 flags;
+    int amount;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, field_0x30, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x1b4, 0x1b4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPhysics_object, field_0x1b4, 12);
+
+    the_time = GetTotalTime();
+    pPed->hit_points = 0;
+    if (pPed->action != ePed_action_dead) {
+        PipeSinglePedMove(pPed, -1, -1, -1, 0.0f, 0.0f, 0, 0, NULL, NULL, pPed->action, ePed_action_dead, NULL);
+        pPed->action = ePed_action_dead;
+    }
+    pPed->field_0x30 = the_time;
+    if (pPed->field_0x0c == NULL) {
+        return;
+    }
+    car = pPed->field_0x0c->field_0xc0;
+    if (car == NULL || car->driver != eDriver_local_human) {
+        return;
+    }
+    if (the_time - DAT_006a0418 <= 1000) {
+        if (gPed_score_multiplier < 10) {
+            gPed_score_multiplier++;
+        }
+    } else {
+        gPed_score_multiplier = 1;
+    }
+    amount = gPed_points[gProgram_state.skill_level] * gPed_score_multiplier;
+    DAT_006a0418 = the_time;
+    ped_object = pPed->character->personality->form->simple_physicing[(tS8)pPed->character->field_0x5].collision_info;
+    BrVector3Sub(&offset, &pPed->pos, &car->pos);
+    BrMatrix34TApplyV(&local_offset, &offset, &car->collision_info->actor->t.t.mat);
+    flags = pPed->field_0x0c->field_0x2e;
+    if (flags & 0x10) {
+        amount *= 20;
+        PratcamEvent(30);
+        DoFancyHeadup(32);
+    } else if (flags & 0x8) {
+        amount *= 5;
+        PratcamEvent(30);
+        DoFancyHeadup(31);
+    } else if (flags & 0x40) {
+        amount *= 2;
+        PratcamEvent(30);
+        DoFancyHeadup(2);
+    } else if (flags & 0x1) {
+        amount *= 4;
+        PratcamEvent(30);
+        DoFancyHeadup(17);
+    } else if (flags & 0x20) {
+        amount *= 2;
+        PratcamEvent(30);
+        DoFancyHeadup(30);
+    } else if ((pHeight == 0.0f
+                    && ((float)fabs(car->collision_info->omega.v[0]) > 5.0f
+                        || (float)fabs(car->collision_info->omega.v[2]) > 5.0f
+                        || car->collision_info->actor->t.t.mat.m[1][1] < 0.1f
+                        || car->collision_info->actor->t.t.mat.m[3][1] - pPed->pos.v[1] > 0.05f))
+            || pPed->field_0x0c->field_0x98 > 0) {
+        amount *= 4;
+        PratcamEvent(30);
+        DoFancyHeadup(3);
+    } else if (pHeight > 1.0) {
+        amount *= 2;
+        DoFancyHeadup(6);
+        PratcamEvent(30);
+    } else {
+        if (ped_object == NULL
+                || (BrVector3LengthSquared(&ped_object->v) < 2.0
+                    && BrVector3LengthSquared(&ped_object->field_0x1b4) < 2.0)) {
+            if (pHeight == 0.0f
+                    && (((float)fabs(local_offset.v[0]) / (float)fabs(local_offset.v[2]) >= 0.5
+                            && ((float)fabs(car->collision_info->velocity_car_space.v[0]) > (float)fabs(car->collision_info->velocity_car_space.v[2])
+                                || (float)fabs(car->collision_info->omega.v[1] / car->collision_info->velocity_car_space.v[2]) > 600.0f))
+                        || (local_offset.v[2] > 0.0f && car->collision_info->velocity_car_space.v[2] > 0.0f))) {
+                amount *= 2;
+                DoFancyHeadup(2);
+            } else if (gPed_score_multiplier > 1) {
+                DoFancyHeadup(gPed_score_multiplier + 6);
+                PratcamEvent(30);
+            } else if (flags & 0x2) {
+                amount *= 2;
+                DoFancyHeadup(0);
+                PratcamEvent(30);
+            }
+        } else {
+            amount *= 4;
+            DoFancyHeadup(5);
+            PratcamEvent(30);
+        }
+    }
+    EarnCredits(amount);
+    PTR_00694120 = pPed;
+    gPed_recent_points = amount;
+    AwardTime(gPed_times[gProgram_state.skill_level]);
+}
 
 // KillPedestrian
 

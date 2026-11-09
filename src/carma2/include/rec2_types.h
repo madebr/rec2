@@ -264,7 +264,9 @@ typedef struct tPedestrian {
     tRace_ped_exclusion_spec* exclusion_spec;
     br_vector3 pos;
     tU32 field_0x28;
-    undefined field_0x2c[0x4c - 0x2c];
+    undefined field_0x2c[0x30 - 0x2c];
+    tU32 field_0x30;
+    undefined field_0x34[0x4c - 0x34];
     float speed_factor;
     tPedestrian* next;
 } tPedestrian;
@@ -4451,7 +4453,7 @@ typedef struct tPhysics_object {
     int field_0x1a0;
     undefined4 field_0x1a4;
     br_vector3 velocity_car_space;
-    undefined field_0x1b4[12];
+    br_vector3 field_0x1b4;
     br_vector3 rotate_omega;
     undefined field_0x1cc[12];
     undefined4 field183_0x1d8;

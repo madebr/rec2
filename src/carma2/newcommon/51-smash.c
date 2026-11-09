@@ -325,7 +325,11 @@ void C2_HOOK_FASTCALL SetShrapnelFragment(tSmash_vertex* pFragment, tMovement_sp
 
 // Random34Matrix
 
-// SetInitPosition
+// STUB: CARMA2_HW 0x004eb4a0
+// STUB: CARMA2_SW 0x004e7170
+br_scalar C2_HOOK_FASTCALL SetInitPosition(br_actor* pActor, tSmashable_initial_position_spec* pInitial_position, br_actor* pSource_actor, br_vector3* pPosition, br_vector3* pAlternate_position, br_actor* pReference_actor, br_bounds3* pBounds, br_matrix34* pMatrix) {
+    NOT_IMPLEMENTED();
+}
 
 // DoGhostPartShrapnel
 

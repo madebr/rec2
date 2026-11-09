@@ -74,9 +74,25 @@ int gPhysics_other_buffer_capacity;
 // GLOBAL: CARMA2_SW 0x0068e198
 tProximity_ray gProximity_rays[20];
 
+// GLOBAL: CARMA2_HW 0x00694278
+// GLOBAL: CARMA2_SW 0x0068e2d0
+br_model* gPed_spurt_model;
+
+// GLOBAL: CARMA2_HW 0x0069427c
+// GLOBAL: CARMA2_SW 0x0068e2d4
+int gPed_spurty_lumps_count;
+
+// GLOBAL: CARMA2_HW 0x00694268
+// GLOBAL: CARMA2_SW 0x0068e2c0
+int gPed_times[3];
+
 // GLOBAL: CARMA2_HW 0x00694280
 // GLOBAL: CARMA2_SW 0x0068e2d8
 br_actor* gPed_limbed_actors[30];
+
+// GLOBAL: CARMA2_HW 0x006942f8
+// GLOBAL: CARMA2_SW 0x0068e350
+tShrapnel_time_info gPed_spurt_min_max_time;
 
 // GLOBAL: CARMA2_HW 0x006940c4
 // GLOBAL: CARMA2_SW 0x0068e11c
