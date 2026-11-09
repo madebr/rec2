@@ -466,7 +466,7 @@ typedef struct {
 
 typedef struct {
     tU8 type_from;
-    tS8 type_to;
+    tU8 type_to;
 } tPipe_single_transform_type;
 
 typedef struct {

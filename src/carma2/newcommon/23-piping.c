@@ -1441,7 +1441,17 @@ void C2_HOOK_FASTCALL ApplyEndShitMine(tPipe_chunk** pChunk) {
     ARUndoShitMine((br_actor*)(*pChunk)->subject_index, &(*pChunk)->data.end_shit_mine.m);
 }
 
-// ApplyTransformType
+// FUNCTION: CARMA2_HW 0x004c9d70
+// FUNCTION: CARMA2_SW 0x004c64a0
+void C2_HOOK_FASTCALL ApplyTransformType(tPipe_chunk** pChunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk, data, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_single_transform_type, type_to, 0x1);
+
+    chunk = *pChunk;
+    ((br_actor*)chunk->subject_index)->t.type = chunk->data.transform_type.type_to;
+}
 
 // ApplyOppoRenderage
 
