@@ -10,6 +10,7 @@
 
 #include "00-car.h"
 #include "08-loading1.h"
+#include "32-spark.h"
 #include "34-finteray.h"
 #include "41-utility.h"
 #include "52-errors.h"
@@ -50,12 +51,54 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
     return gDefault_water_spec_vol_real;
 }
 
-// FindSpecialVolume
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// STUB: CARMA2_HW 0x004ff410
-// STUB: CARMA2_SW 0x004facf0
-void C2_HOOK_FASTCALL MungeSpecialVolume(tPhysics_object* pObject) {
+// STUB: CARMA2_HW 0x004ff120
+// STUB: CARMA2_SW 0x004faa00
+tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) {
     NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004ff410
+// FUNCTION: CARMA2_SW 0x004facf0
+void C2_HOOK_FASTCALL MungeSpecialVolume(tPhysics_object* pObject) {
+    tSpecial_volume* new_special_volume;
+    tCar_spec* car;
+
+    new_special_volume = FindSpecialVolume(&pObject->pos, pObject->last_special_volume, 0);
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        car = pObject->owner;
+    } else {
+        car = NULL;
+    }
+    if (pObject->auto_special_volume != NULL
+        && (new_special_volume == NULL || new_special_volume->gravity_multiplier == 1.f)) {
+        if (pObject->water_d == 10000.f && pObject->water_depth_factor != 1.f) {
+            pObject->auto_special_volume = NULL;
+        } else {
+            new_special_volume = pObject->auto_special_volume;
+        }
+    }
+    if (new_special_volume != pObject->last_special_volume && car != NULL && car->driver == eDriver_local_human) {
+        if (pObject->last_special_volume != NULL && pObject->last_special_volume->exit_noise >= 0
+            && (new_special_volume == NULL || new_special_volume->exit_noise != pObject->last_special_volume->exit_noise)) {
+            DRS3StartSound(gCar_outlet, pObject->last_special_volume->exit_noise);
+        }
+        if (new_special_volume != NULL && new_special_volume->entry_noise >= 0
+            && (pObject->last_special_volume == NULL || pObject->last_special_volume->entry_noise != new_special_volume->entry_noise)) {
+            DRS3StartSound(gCar_outlet, new_special_volume->entry_noise);
+        }
+    }
+    pObject->last_special_volume = new_special_volume;
+    if (car != NULL && new_special_volume != NULL && new_special_volume->gravity_multiplier < 1.f && IsCarSmoking(car)) {
+        StopCarSmoking(car);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004ff530

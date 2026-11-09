@@ -20,7 +20,7 @@ extern const char* gSpecial_effects_boundary_choices[4];
 
 extern tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
 
-// FindSpecialVolume
+extern tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
 
 extern void C2_HOOK_FASTCALL MungeSpecialVolume(tPhysics_object* pObject);
 
