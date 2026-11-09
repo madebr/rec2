@@ -43,6 +43,12 @@ extern int gFrontend_wrecks_rotate_prev_y;
 
 extern int gFrontend_controls_count_keys;
 extern int gINT_00688748;
+extern br_material* gFrontend_backdrop_materials[3];
+extern br_token_value gFrontend_backdrop1_material_prims[3];
+extern br_token_value gFrontend_backdrop2_material_prims[3];
+extern br_token_value gFrontend_backdrop0_material_prims[3];
+extern br_actor* gFrontend_camera;
+extern br_actor* gFrontend_backdrop_actors[3];
 
 // SetGameTarget
 
@@ -240,7 +246,7 @@ extern void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void);
 
 // FRONTEND_DrawMenu
 
-// FRONTEND_Setup2D
+extern void C2_HOOK_FASTCALL FRONTEND_Setup2D(void);
 
 // FRONTEND_Setup
 
