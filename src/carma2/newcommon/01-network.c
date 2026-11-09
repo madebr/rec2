@@ -9,6 +9,7 @@
 #include "01-network.h"
 
 #include "04-netgame.h"
+#include "15-displays.h"
 #include "32-spark.h"
 #include "53-controls.h"
 #include "platform.h"
@@ -237,9 +238,23 @@ void C2_HOOK_FASTCALL HaltNetServiceReentrancy(void) {
 // STUB: CARMA2_SW 0x00499900
 // NetSendHeadupToEverybody
 
-// STUB: CARMA2_HW 0x0049daf0
-// STUB: CARMA2_SW 0x00499c70
-// NetSendHeadupToPlayer
+// FUNCTION: CARMA2_HW 0x0049daf0
+// FUNCTION: CARMA2_SW 0x00499c70
+void C2_HOOK_FASTCALL NetSendHeadupToPlayer(char* pMessage, tPlayer_ID pPlayer) {
+    tNet_message* message;
+
+    if (gNet_mode != eNet_mode_none) {
+        if (pPlayer == gLocal_net_ID) {
+            if (gProgram_state.racing) {
+                NewTextHeadupSlot(4, 0, 3000, -4, pMessage);
+            }
+        } else {
+            message = NetBuildGuaranteedMessage(eNet_message_chunk_type_headup, 0);
+            strcpy((char*)message->contents.raw.data, pMessage);
+            NetGuaranteedSendMessageToPlayer(gCurrent_net_game, message, pPlayer, NULL);
+        }
+    }
+}
 
 // InitialisePlayerStati
 

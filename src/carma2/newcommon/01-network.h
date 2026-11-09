@@ -38,7 +38,7 @@ extern void C2_HOOK_FASTCALL HaltNetServiceReentrancy(void);
 
 // NetSendHeadupToEverybody
 
-// NetSendHeadupToPlayer
+extern void C2_HOOK_FASTCALL NetSendHeadupToPlayer(char* pMessage, tPlayer_ID pPlayer);
 
 // InitialisePlayerStati
 

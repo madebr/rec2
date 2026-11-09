@@ -5233,6 +5233,7 @@ typedef enum {
     eNet_message_chunk_type_5 = 0x5,
     eNet_message_chunk_poll_car_details = 0x6,
     eNet_message_chunk_type_start_race = 0xc,
+    eNet_message_chunk_type_headup = 0xd,
     eNet_message_chunk_type_netsynch = 0xe,
     eNet_message_chunk_type_player_scores = 0x18,
     eNet_message_chunk_type_gameplay = 0x1b,
