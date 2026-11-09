@@ -338,11 +338,19 @@ int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, 
 
 // BoundsTransformTest
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // STUB: CARMA2_HW 0x00460bd0
 // STUB: CARMA2_SW 0x00460640
 int C2_HOOK_FASTCALL LineBoxColl(br_vector3* pStart, br_vector3* pEnd, br_bounds* pBounds, br_vector3* pPoint, br_scalar* pT) {
     NOT_IMPLEMENTED();
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x00460da0
 // FUNCTION: CARMA2_SW 0x00460810
@@ -380,7 +388,19 @@ int C2_HOOK_FASTCALL LineBoxCollWithSphere(br_vector3* pStart, br_vector3* pEnd,
 #pragma auto_inline(on)
 #endif
 
-// LineSphereColl
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00460f60
+// STUB: CARMA2_SW 0x004609e0
+int C2_HOOK_FASTCALL LineSphereColl(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_sphere_data* pSphere, br_vector3* pPoint, br_vector3* pNormal, br_scalar* pT) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -396,11 +416,19 @@ int C2_HOOK_FASTCALL LineSphereCollWithSphere(br_vector3* pStart, br_vector3* pE
 #pragma auto_inline(on)
 #endif
 
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
 // STUB: CARMA2_HW 0x00461310
 // STUB: CARMA2_SW 0x00460db0
 int C2_HOOK_FASTCALL LinePolyColl(br_vector3* pStart, br_vector3* pEnd, tCollision_shape_polyhedron_data* pPoly, br_vector3* pPoint, br_scalar pRadius, br_scalar* pT) {
     NOT_IMPLEMENTED();
 }
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // SpherePolyIntersection
 
@@ -418,7 +446,39 @@ int C2_HOOK_FASTCALL LinePolyCollWithSphere(br_vector3* pStart, br_vector3* pEnd
 #pragma auto_inline(on)
 #endif
 
-// ShapeRayCast
+// FUNCTION: CARMA2_HW 0x00461740
+// FUNCTION: CARMA2_SW 0x004611e0
+int C2_HOOK_FASTCALL ShapeRayCast(br_vector3* pStart, br_vector3* pEnd, tPhysics_shape* pShape, br_vector3* pPoint, br_scalar* pT, br_vector3* pNormal) {
+    int result;
+    int axis;
+    int plane_index;
+
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        result = LineBoxColl(pStart, pEnd, &pShape->common.bb, pPoint, pT);
+        if (pNormal != NULL && result > 0) {
+            axis = (result - 1) & 0x3;
+            BrVector3Set(pNormal, 0.f, 0.f, 0.f);
+            pNormal->v[axis] = (result & 0x4) ? 1.0f : -1.0f;
+        }
+        return result;
+    case kCollisionShapeType_Polyhedron:
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        result = LinePolyColl(pStart, pEnd, &pShape->polyhedron.polyhedron, pPoint, 0.0f, pT);
+        if (pNormal != NULL && result > 0) {
+            plane_index = result & 0x3f;
+            plane_index--;
+            BrVector3Copy(pNormal, &pShape->polyhedron.polyhedron.planes[plane_index]);
+        }
+        return result;
+    case kCollisionShapeType_Sphere:
+        return LineSphereColl(pStart, pEnd, &pShape->sphere.sphere, pPoint, pNormal, pT);
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType, "");
+    case kCollisionShapeType_Wireframe:
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00461850
 // FUNCTION: CARMA2_SW 0x004612f0
