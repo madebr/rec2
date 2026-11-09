@@ -159,6 +159,15 @@ void C2_HOOK_FASTCALL UpdateFramePeriod(tU32* pCamera_period) {
     }
 }
 
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x00492830
+// FUNCTION: CARMA2_SW 0x0048fa50
+tU32 C2_HOOK_FASTCALL GetLastTickCount(void) {
+
+    return gLast_tick_count;
+}
+#endif
+
 // CheckTimer
 
 // MungeRaceFinished
