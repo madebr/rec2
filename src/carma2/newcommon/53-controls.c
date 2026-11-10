@@ -127,9 +127,32 @@ int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend) {
     return gRace_finished;
 }
 
-// F4Key
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// SetFlag
+// STUB: CARMA2_HW 0x004414b0
+// STUB: CARMA2_SW 0x00441590
+void C2_HOOK_FASTCALL F4Key(void) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x00441580
+// FUNCTION: CARMA2_SW 0x00441660
+void C2_HOOK_FASTCALL SetFlag(tU32 pFlag) {
+
+    if (gI_am_cheating == pFlag) {
+        gI_am_cheating = 0;
+        NewTextHeadupSlot(4, 0, 3000, -4, "Cheating Off");
+    } else {
+        gI_am_cheating = pFlag;
+    }
+    F4Key();
+}
 
 // FUNCTION: CARMA2_HW 0x004415c0
 // FUNCTION: CARMA2_SW 0x004416a0

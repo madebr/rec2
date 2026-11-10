@@ -34,9 +34,9 @@ extern void C2_HOOK_FASTCALL CompleteRace(void);
 
 extern int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend);
 
-// F4Key
+extern void C2_HOOK_FASTCALL F4Key(void);
 
-// SetFlag
+extern void C2_HOOK_FASTCALL SetFlag(tU32 pFlag);
 
 extern void C2_HOOK_FASTCALL FinishRace(int pArg);
 
