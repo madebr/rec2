@@ -172,6 +172,8 @@ extern int C2_HOOK_FASTCALL PDDisableJoysticks(void);
 
 extern int C2_HOOK_FASTCALL PDS3Init(void);
 
+extern int C2_HOOK_FASTCALL FUN_00569f85(tS3_channel* pChannel);
+
 extern void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
 
 extern void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath);

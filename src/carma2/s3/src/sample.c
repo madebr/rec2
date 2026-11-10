@@ -112,6 +112,7 @@ void C2_HOOK_CDECL s3_debug_disable_sound(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565b39
+// FUNCTION: CARMA2_SW 0x005611d9
 void C2_HOOK_CDECL s3_debug_init(void) {
     tPath_name path;
     int result;

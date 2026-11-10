@@ -555,6 +555,7 @@ int C2_HOOK_FASTCALL S3DisableSound(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565b70
+// FUNCTION: CARMA2_SW 0x00561210
 void C2_HOOK_FASTCALL S3EnableCDA(void) {
 
     gS3_CDA_enabled = 1;
@@ -1119,7 +1120,7 @@ tS3_error_codes C2_HOOK_FASTCALL S3ClearBufferOfMidiChannel(int pTag) {
             return eS3_error_bad_stag;
         }
         if (channel->type == 1) {
-            /* nop0_FUN_00569f85(); */
+            FUN_00569f85(channel);
             channel->descriptor->buffer_description = NULL;
         }
     }

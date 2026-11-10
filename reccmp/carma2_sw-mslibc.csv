@@ -73,6 +73,7 @@ address,type,name
 0x00575240,library,_ldexp
 0x005755a4,library,_sqrt
 0x00575650,library,_memchr
+0x00575714,library,_log10
 0x00575f30,library,__input
 0x00576d50,library,__flsbuf
 0x00576e80,library,__output
