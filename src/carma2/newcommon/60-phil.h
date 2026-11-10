@@ -50,7 +50,7 @@ extern int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, t
 
 extern int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tPhysics_object* pObject);
 
-// GetNetworkDataSize
+extern int C2_HOOK_FASTCALL GetNetworkDataSize(tU8* pNet_data);
 
 // GetSingleMatrixFromNetworkData
 

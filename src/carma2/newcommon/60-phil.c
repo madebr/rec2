@@ -184,7 +184,22 @@ int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tPhysics_object* pObject) {
     return size;
 }
 
-// GetNetworkDataSize
+// FUNCTION: CARMA2_HW 0x0049cee0
+// FUNCTION: CARMA2_SW 0x00499060
+int C2_HOOK_FASTCALL GetNetworkDataSize(tU8* pNet_data) {
+    int size;
+    tU8* next;
+    tU8 more;
+
+    size = SizeOfObjectNetworkStuff(*pNet_data);
+    more = *pNet_data & 0x80;
+    while (more != 0) {
+        next = pNet_data + size;
+        size += GetNetworkDataSize(next);
+        more = *next & 0x40;
+    }
+    return size;
+}
 
 // GetSingleMatrixFromNetworkData
 
