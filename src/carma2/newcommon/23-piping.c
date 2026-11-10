@@ -1587,7 +1587,17 @@ void C2_HOOK_FASTCALL UndoSkidAdjustment(tPipe_chunk** pChunk, tPipe_chunk* pPre
     AREnableAdvance();
 }
 
-// UndoFlap
+// FUNCTION: CARMA2_HW 0x004c9f60
+// FUNCTION: CARMA2_SW 0x004c6690
+void C2_HOOK_FASTCALL UndoFlap(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
+    tPipe_chunk* chunk;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flap, angle, 0x4);
+
+    (void)pPrev_chunk;
+    chunk = *pChunk;
+    ARApplyFlap(chunk->data.flap.actor, (br_angle)-chunk->data.flap.angle);
+}
 
 // FUNCTION: CARMA2_HW 0x004c9f80
 // FUNCTION: CARMA2_SW 0x004c66b0
