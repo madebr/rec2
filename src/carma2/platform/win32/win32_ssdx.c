@@ -91,6 +91,7 @@ MCI_OPEN_PARMS mci_open_params;
 MCI_PLAY_PARMS mci_play_parms;
 
 // GLOBAL: CARMA2_HW 0x007a04e0
+// GLOBAL: CARMA2_SW 0x00796a80
 MCI_PLAY_PARMS gPDS3_cda_play_parms;
 
 // GLOBAL: CARMA2_HW 0x006aaa10
