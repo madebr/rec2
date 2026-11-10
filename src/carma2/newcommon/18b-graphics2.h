@@ -23,6 +23,8 @@ extern void DRPixelmapDoubledCopy(br_pixelmap* pDestn, br_pixelmap* pSource, int
 
 // PoshDrawLine
 
+extern void C2_HOOK_FASTCALL DrawRectangle(br_pixelmap* pMap, int pLeft, int pTop, int pRight, int pBottom, br_uint_32 pColour);
+
 extern void C2_HOOK_FASTCALL DrawRRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, br_uint_32 pColour);
 
 extern void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners);

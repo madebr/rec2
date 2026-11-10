@@ -4,6 +4,7 @@
 #include "18-graphics2.h"
 #include "25-grafdata.h"
 #include "33-depth.h"
+#include "41-utility.h"
 #include "globvars.h"
 #include "platform.h"
 
@@ -99,6 +100,21 @@ void DRPixelmapDoubledCopy(br_pixelmap* pDestn, br_pixelmap* pSource, int pSourc
 #endif
 
 // PoshDrawLine
+
+// FUNCTION: CARMA2_HW 0x0047c9c0
+// FUNCTION: CARMA2_SW 0x0047bca0
+void C2_HOOK_FASTCALL DrawRectangle(br_pixelmap* pMap, int pLeft, int pTop, int pRight, int pBottom, br_uint_32 pColour) {
+
+#ifdef REC2_HW
+    if (gBack_screen->type != BR_PMT_INDEX_8) {
+        pColour = PaletteEntry16Bit(gRender_palette, pColour);
+    }
+#endif
+    BrPixelmapLine(pMap, pLeft, pTop, pRight, pTop, pColour);
+    BrPixelmapLine(pMap, pLeft, pBottom, pRight, pBottom, pColour);
+    BrPixelmapLine(pMap, pLeft, pTop, pLeft, pBottom, pColour);
+    BrPixelmapLine(pMap, pRight, pTop, pRight, pBottom, pColour);
+}
 
 // FUNCTION: CARMA2_HW 0x0047ca50
 // FUNCTION: CARMA2_SW 0x0047bd10
