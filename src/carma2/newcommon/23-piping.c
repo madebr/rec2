@@ -243,7 +243,11 @@ int C2_HOOK_FASTCALL ARSomeReplayLeft(void) {
 
 // StartPipingSession2
 
-// ARStartPipingSession
+// STUB: CARMA2_HW 0x004025e0
+// STUB: CARMA2_SW 0x004025e0
+void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) {
+    NOT_IMPLEMENTED();
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -610,9 +614,17 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
 
 // AddFlameToPipingSession
 
-// AddSplashToPipingSession
+// STUB: CARMA2_HW 0x004c7130
+// STUB: CARMA2_SW 0x004c3860
+void C2_HOOK_FASTCALL AddSplashToPipingSession(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
 
-// AddExtendedSplashToPipingSession
+// STUB: CARMA2_HW 0x004c7160
+// STUB: CARMA2_SW 0x004c3890
+void C2_HOOK_FASTCALL AddExtendedSplashToPipingSession(tPhysics_object* pObject, void* pSubject) {
+    NOT_IMPLEMENTED();
+}
 
 // AddCarToPipingSession
 

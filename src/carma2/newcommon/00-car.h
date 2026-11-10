@@ -24,7 +24,7 @@ extern int gFreeze_mechanics;
 extern int gNum_active_non_cars;
 extern tNon_car_spec* gActive_non_car_list[99];
 extern int gEliminate_faces;
-extern int gInTheSea;
+extern int gIn_the_sea;
 extern int gFace_num__car;
 extern tFace_ref gFace_list__car[300];
 extern br_scalar gMin_world_y;
@@ -67,7 +67,7 @@ extern void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
 
 // InitialiseNonCar
 
-extern void C2_HOOK_FASTCALL NewFaceListCallBack(tPhysics_object* pObject, undefined4 *pArg2);
+extern void C2_HOOK_FASTCALL NewFaceListCallBack(tPhysics_object* pObject, tFace_ref* pFace);
 
 extern int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
@@ -91,7 +91,7 @@ extern void C2_HOOK_FASTCALL GetNetPos(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL MungeCarsMass(tCar_spec* pCar, br_scalar pFactor);
 
-extern void C2_HOOK_FASTCALL AddDrag(tCar_spec* pCar, tPhysics_object* pObject, float pDelta_time);
+extern void C2_HOOK_FASTCALL AddDrag(const tCar_spec* pCar, tPhysics_object* pObject, br_scalar pDelta_time);
 
 extern void C2_HOOK_FASTCALL DragChildren(tCar_spec* pCar, tPhysics_object* pObject);
 

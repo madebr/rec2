@@ -99,7 +99,7 @@ int gEliminate_faces;
 
 // GLOBAL: CARMA2_HW 0x00679364
 // GLOBAL: CARMA2_SW 0x00673ad4
-int gInTheSea;
+int gIn_the_sea;
 
 // GLOBAL: CARMA2_HW 0x0065d010
 // GLOBAL: CARMA2_SW 0x00657948
@@ -116,6 +116,10 @@ br_scalar gMin_world_y;
 // GLOBAL: CARMA2_HW 0x006793e4
 // GLOBAL: CARMA2_SW 0x00673b54
 tPhysics_object* gUnknown_car_collision_info;
+
+// GLOBAL: CARMA2_HW 0x006793d4
+// GLOBAL: CARMA2_SW 0x00673b44
+int gDouble_pling_water;
 
 // GLOBAL: CARMA2_HW 0x0079ed88
 // GLOBAL: CARMA2_SW 0x00795328
@@ -546,17 +550,95 @@ void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
 
 // InitialiseNonCar
 
-// STUB: CARMA2_HW 0x00414910
-// STUB: CARMA2_SW 0x00414940
-void C2_HOOK_FASTCALL NewFaceListCallBack(tPhysics_object* pObject, undefined4 *pArg2) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x00414910
+// FUNCTION: CARMA2_SW 0x00414940
+void C2_HOOK_FASTCALL NewFaceListCallBack(tPhysics_object* pObject, tFace_ref* pFace) {
+    br_bounds3 current_bounds;
+    br_scalar old_d;
+    float prop7;
+
+    old_d = pObject->water_d;
+    if (pObject->owner == NULL) {
+        return;
+    }
+    prop7 = PHILGetObjectProperty(pObject, 7);
+    if (pObject->flags_0x238 != 1 && prop7 == 0.0f) {
+        return;
+    }
+    if (pObject != NULL
+            && pObject->owner != NULL
+            && pObject->flags_0x238 == 1
+            && ((tCar_spec*)pObject->owner)->driver == eDriver_local_human
+            && pObject->water_d != 10000.0f
+            && gDouble_pling_water
+            && BrVector3Dot(&pObject->water_normal, &pObject->field_0xf4.max) - pObject->water_d <= 0.0f) {
+        gIn_the_sea = 1;
+        FreezeCamera();
+    }
+    if (pFace != NULL && (float)fabs(pFace->normal.v[1]) > 0.9f) {
+        BrVector3Copy(&pObject->water_normal, &pFace->normal);
+        if (pObject->water_normal.v[1] < 0.0f) {
+            BrVector3Negate(&pObject->water_normal, &pObject->water_normal);
+        }
+        pObject->water_d = BrVector3Dot(&pFace->v[0], &pObject->water_normal);
+        if (pObject != NULL
+            && pObject->owner != NULL
+            && pObject->flags_0x238 == 1
+            && ((tCar_spec*)pObject->owner)->driver == eDriver_local_human) {
+            if (pFace->material->identifier[1] == '!') {
+                if (BrVector3Dot(&pObject->field_0xf4.min, &pObject->water_normal) - pObject->water_d < 0.0f) {
+                    GetNewBoundingBox(&current_bounds, &pObject->bb1, &pObject->actor->t.t.mat);
+                    if (BrVector3Dot(&current_bounds.min, &pObject->water_normal) - pObject->water_d < 0.0f) {
+                        gIn_the_sea = 1;
+                        FreezeCamera();
+                    }
+                }
+                gDouble_pling_water = 1;
+            } else {
+                gDouble_pling_water = 0;
+            }
+        }
+    } else {
+        pObject->water_d = 10000.f;
+        if (pObject != NULL
+                && pObject->owner != NULL
+                && pObject->flags_0x238 == 1
+                && ((tCar_spec*)pObject->owner)->driver == eDriver_local_human) {
+            gIn_the_sea = gIn_the_sea == 1 ? 2 : 0;
+        }
+    }
+    if (fabs(old_d - pObject->water_d) > 1e-05) {
+        if (PHILGetObjectProperty(pObject, 6) != 0.f) {
+            ARStartPipingSession(ePipe_extended_splash);
+            AddExtendedSplashToPipingSession(pObject, pObject);
+            AREndPipingSession();
+        }
+        if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+            tCar_spec* owner = (tCar_spec*)pObject->owner;
+            if (owner != NULL && owner->driver > 5) {
+                ARStartPipingSession(ePipe_chunk_splash);
+                AddSplashToPipingSession(pObject);
+                AREndPipingSession();
+                return;
+            }
+            ARStartPipingSession(ePipe_extended_splash);
+            AddExtendedSplashToPipingSession(pObject, pObject->actor);
+            AREndPipingSession();
+            return;
+        }
+        if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 >= 2 && pObject->flags_0x238 <= 4) {
+            ARStartPipingSession(ePipe_extended_splash);
+            AddExtendedSplashToPipingSession(pObject, pObject->owner);
+            AREndPipingSession();
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00414ca0
 // FUNCTION: CARMA2_SW 0x00414cd0
 int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
-    return gInTheSea;
+    return gIn_the_sea;
 }
 
 // RememberSafePosition
@@ -607,22 +689,28 @@ void C2_HOOK_FASTCALL MungeCarsMass(tCar_spec* pCar, br_scalar pFactor) {
 
 // FUNCTION: CARMA2_HW 0x00415ef0
 // FUNCTION: CARMA2_SW 0x00415f20
-void C2_HOOK_FASTCALL AddDrag(tCar_spec* pCar, tPhysics_object* pObject, float pDelta_time) {
-    br_scalar drag_factor;
-    br_scalar ts;
-    br_vector3 drag;
+void C2_HOOK_FASTCALL AddDrag(const tCar_spec* pCar, tPhysics_object* pObject, br_scalar pDelta_time) {
+    br_scalar drag;
+    br_scalar k;
+    br_vector3 v;
 
-    drag_factor = pDelta_time * 0.0005f;
+    drag = pDelta_time * 0.0005f;
     if (pObject->last_special_volume != NULL) {
-
-        drag_factor = (br_scalar)((pCar->underwater_ability ? 0.6 * pObject->last_special_volume->viscosity_multiplier : pObject->last_special_volume->viscosity_multiplier) * drag_factor * pObject->water_depth_factor);
+        k = pObject->last_special_volume->viscosity_multiplier;
+        if (pCar->underwater_ability) {
+            k = (br_scalar)(k * 0.6);
+        }
+        drag *= k;
+        drag *= pObject->water_depth_factor;
     }
-    ts = (br_scalar)(BrVector3Length(&pObject->v) * drag_factor * WORLD_SCALE_D / pObject->M);
-    BrVector3Scale(&drag, &pObject->v, ts);
-    DRVector3Diminish(&pObject->v, &drag);
-    ts = BrVector3Length(&pObject->omega) * drag_factor;
-    BrVector3Scale(&drag, &pObject->omega, ts);
-    ApplyDiminishingTorque(pObject, &drag);
+
+    k = (br_scalar)(BrVector3Length(&pObject->v) * drag * WORLD_SCALE_D / pObject->M);
+    BrVector3Scale(&v, &pObject->v, k);
+    DRVector3Diminish(&pObject->v, &v);
+
+    k = BrVector3Length(&pObject->omega) * drag;
+    BrVector3Scale(&v, &pObject->omega, k);
+    ApplyDiminishingTorque(pObject, &v);
 }
 
 // FUNCTION: CARMA2_HW 0x00416030

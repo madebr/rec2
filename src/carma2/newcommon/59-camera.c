@@ -36,6 +36,7 @@ int gAction_replay_manual_camera_target_type;
 br_actor* gPed_actor;
 
 // GLOBAL: CARMA2_HW 0x006792b8
+// GLOBAL: CARMA2_SW 0x00673a28
 int gCamera_frozen;
 
 // GLOBAL: CARMA2_HW 0x006792bc
@@ -456,6 +457,7 @@ void C2_HOOK_FASTCALL InitialiseExternalCamera(void) {
 #endif
 
 // FUNCTION: CARMA2_HW 0x00413770
+// FUNCTION: CARMA2_SW 0x004137a0
 void C2_HOOK_FASTCALL FreezeCamera(void) {
 
     gCamera_frozen = 1;

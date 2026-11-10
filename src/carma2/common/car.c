@@ -166,7 +166,7 @@ int gCamera_has_collided;
 br_angle gOld_zoom;
 
 // GLOBAL: CARMA2_HW 0x00679364
-int gInTheSea;
+int gIn_the_sea;
 
 // GLOBAL: CARMA2_HW 0x006793a8
 tU32 gWild_start;
@@ -2345,7 +2345,7 @@ void C2_HOOK_FASTCALL PointCameraAtCar(br_vector3* pPos, br_matrix34* pMat, floa
 // FUNCTION: CARMA2_HW 0x00414ca0
 int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
-    return gInTheSea;
+    return gIn_the_sea;
 }
 
 // FUNCTION: CARMA2_HW 0x0043b840
