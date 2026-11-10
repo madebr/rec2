@@ -423,7 +423,11 @@ int C2_HOOK_FASTCALL AnyKeyDown(void) {
     return (the_key != -1 && the_key != 4) || EitherMouseButtonDown();
 }
 
-// KevKeyService
+// STUB: CARMA2_HW 0x00482f10
+// STUB: CARMA2_SW 0x00480050
+tU32* C2_HOOK_FASTCALL KevKeyService(void) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x00483040
 // FUNCTION: CARMA2_SW 0x00480180
