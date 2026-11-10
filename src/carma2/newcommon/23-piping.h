@@ -145,6 +145,8 @@ extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 // InitLastDamageArrayEtc
 
+extern void C2_HOOK_FASTCALL ResetCars(void);
+
 // PipeObjectPosition
 
 // PipeCarPositions

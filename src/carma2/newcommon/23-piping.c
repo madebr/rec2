@@ -495,6 +495,31 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
 
 // InitLastDamageArrayEtc
 
+// FUNCTION: CARMA2_HW 0x004c65f0
+// FUNCTION: CARMA2_SW 0x004c2d20
+void C2_HOOK_FASTCALL ResetCars(void) {
+    tCar_spec* car;
+    int cat;
+    int i;
+    int car_count;
+
+    for (cat = eVehicle_self; cat <= eVehicle_drone; cat++) {
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (i = 0; i < car_count; i++) {
+            if (cat == eVehicle_self) {
+                car = &gProgram_state.current_car;
+            } else {
+                car = GetCarSpec(cat, i);
+            }
+            car->active = 0;
+        }
+    }
+}
+
 // PipeObjectPosition
 
 // PipeCarPositions
