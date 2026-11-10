@@ -228,6 +228,27 @@ void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name) {
     BrTableAddMany(table_array, number_of_tables);
 }
 
+void C2_HOOK_FASTCALL RezeroPixelmaps(br_pixelmap** pPixelmap_array, int pCount) {
+    int i;
+
+    for (i = pCount - 1; i >= 0; i--) {
+        pPixelmap_array[i]->origin_x = 0;
+        pPixelmap_array[i]->origin_y = 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0048f170
+// FUNCTION: CARMA2_SW 0x0048c410
+void C2_HOOK_FASTCALL DRLoadPixelmaps(const char* pPath_name) {
+    br_pixelmap* pixelmaps[100];
+    int number_of_pixelmaps;
+
+    PossibleService();
+    number_of_pixelmaps = DRPixelmapLoadMany(pPath_name, pixelmaps, REC2_ASIZE(pixelmaps));
+    RezeroPixelmaps(pixelmaps, number_of_pixelmaps);
+    BrMapAddMany(pixelmaps, number_of_pixelmaps);
+}
+
 // FUNCTION: CARMA2_HW 0x0048f1d0
 // FUNCTION: CARMA2_SW 0x0048c470
 void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name) {
