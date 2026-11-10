@@ -36,6 +36,7 @@ int gPathNetworkIniValid;
 tU16 gIpx_sock_addr;
 
 // GLOBAL: CARMA2_HW 0x006ac310
+// GLOBAL: CARMA2_SW 0x006a5860
 struct sockaddr gLocal_address;
 
 // GLOBAL: CARMA2_HW 0x006abf08
