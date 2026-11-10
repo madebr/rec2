@@ -1156,6 +1156,21 @@ void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info) {
     // empty
 }
 
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x0044bf80
+// FUNCTION: CARMA2_SW 0x0044bd30
+void C2_HOOK_FASTCALL FUN_0044bf80(void) {
+    /* Unused */
+}
+
+// FUNCTION: CARMA2_HW 0x0044bf90
+// FUNCTION: CARMA2_SW 0x0044bd40
+void C2_HOOK_FASTCALL FUN_0044bf90(br_pixelmap* pMap) {
+    /* Unused */
+    BrPixelmapFree(pMap);
+}
+#endif
+
 // FUNCTION: CARMA2_HW 0x0044bfa0
 // FUNCTION: CARMA2_SW 0x0044bd50
 void C2_HOOK_FASTCALL DisposeOpponentsCars(tRace_info* pRace_info) {
