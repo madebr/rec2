@@ -114,7 +114,7 @@ extern int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollisio
 
 // TestObjectOverlapRecurse
 
-// TestForObjectInSensiblePlace
+extern int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks);
 
 // HierarchyCalcEnergy
 

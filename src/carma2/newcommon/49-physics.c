@@ -403,7 +403,11 @@ int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_
 
 // TestObjectOverlapRecurse
 
-// TestForObjectInSensiblePlace
+// STUB: CARMA2_HW 0x00429070
+// STUB: CARMA2_SW 0x00429100
+int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
+    NOT_IMPLEMENTED();
+}
 
 // HierarchyCalcEnergy
 

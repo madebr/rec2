@@ -1396,7 +1396,22 @@ void C2_HOOK_FASTCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, float pFront_give
 #pragma auto_inline(on)
 #endif
 
-// TestForCarInSensiblePlace
+// FUNCTION: CARMA2_HW 0x0041fe50
+// FUNCTION: CARMA2_SW 0x0041fed0
+int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec* pCar_spec, br_vector3* pVec3) {
+    int r;
+
+    if (!gProgram_state.racing) {
+        return 1;
+    }
+    gTesting_car_for_sensible_place = 1;
+    r = TestForObjectInSensiblePlace(pCar_spec->collision_info,
+        gPHIL_list_collision_infos,
+        pVec3,
+        &gWorld_callbacks);
+    gTesting_car_for_sensible_place = 0;
+    return r;
+}
 
 // FUNCTION: CARMA2_HW 0x0041ff00
 // FUNCTION: CARMA2_SW 0x0041ff80
