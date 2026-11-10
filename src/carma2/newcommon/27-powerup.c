@@ -16,6 +16,7 @@
 #include "16-graphics1.h"
 #include "18-graphics2.h"
 #include "32-spark.h"
+#include "39-oil.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "43-pratcam.h"
@@ -839,7 +840,15 @@ void C2_HOOK_FASTCALL ARUndoShitMine(br_actor* pActor, br_matrix34* pMatrix) {
     pActor->render_style = BR_RSTYLE_NONE;
 }
 
-// PissOutOil
+// FUNCTION: CARMA2_HW 0x004de040
+// FUNCTION: CARMA2_SW 0x004da540
+int C2_HOOK_FASTCALL PissOutOil(tPowerup* pPowerup, tCar_spec* pCar) {
+    PlayExclusiveFFBEffect("Oil_Slick", 0);
+    QueueOilSpill2(NULL, pCar->car_master_actor, pCar->car_actor->model, 0,
+        0.35f, 0.6f, 0.00009f, 0.0003f, 0.2f, 1.5f, 2.5f, 0.01f, 0.15f,
+        oily_material, NULL);
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004de0c0
 // FUNCTION: CARMA2_SW 0x004da5c0
