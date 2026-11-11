@@ -37,12 +37,23 @@ void C2_HOOK_CDECL BrAddHead(br_list* list, br_node* node) {
 
 // FUNCTION: CARMA2_HW 0x005299a0
 // FUNCTION: CARMA2_SW 0x00524510
-void C2_HOOK_CDECL BrAddTail(br_list* list, br_node* node) {
-
+void C2_MATCHING_NAKED C2_HOOK_CDECL BrAddTail(br_list* list, br_node* node) {
+#ifndef REC2_MATCHING
     node->next = (br_node*)list;
     node->prev = (br_node*)list;
     node->next->prev = node;
     list->tail = node;
+#else
+    __asm {
+        mov ecx, dword ptr [esp + 4]
+        mov eax, dword ptr [esp + 8]
+        lea edx, [ecx + 4]
+        mov dword ptr [eax], edx
+        mov edx, dword ptr [ecx + 8]
+        mov dword ptr [eax + 4], edx
+        ret
+    }
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005299c0
