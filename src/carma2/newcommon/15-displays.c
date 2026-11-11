@@ -234,6 +234,7 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     int i;
 
     C2_HOOK_BUG_ON(REC2_ASIZE(gHeadups) != 37);
+    C2_HOOK_BUG_ON(BR_MODU_VERTEX_POSITIONS != 1);
     for (i = 0; i < (int)REC2_ASIZE(gHeadups); i++) {
         gHeadups[i].type = eHeadup_unused;
     }
@@ -308,7 +309,7 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     gTimerLeftHUD_model->vertices[2].p.v[0] = gTimerLeftHUD_model->vertices[3].p.v[0];
     gTimerLeftHUD_model->vertices[2].p.v[1] = gTimerLeftHUD_model->vertices[3].p.v[1] - (float)gTimerLeftHUD_dim_h;
     gTimerLeftHUD_model->vertices[1].p.v[1] = gTimerLeftHUD_model->vertices[2].p.v[1];
-    BrModelUpdate(gTimerLeftHUD_model, BR_MODU_VERTEX_POSITIONS);
+    BrModelUpdate(gTimerLeftHUD_model, 1);
 
     gHud_timer_rhs = LoadPixelmap("timerrhs.tif");
     BrMapAdd(gHud_timer_rhs);
@@ -323,7 +324,7 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     gTimerRightHUD_model->vertices[2].p.v[0] = gTimerRightHUD_model->vertices[3].p.v[0];
     gTimerRightHUD_model->vertices[2].p.v[1] = gTimerRightHUD_model->vertices[3].p.v[1] - (float)gTimerRightHUD_dim_h;
     gTimerRightHUD_model->vertices[1].p.v[1] = gTimerRightHUD_model->vertices[2].p.v[1];
-    BrModelUpdate(gTimerRightHUD_model, BR_MODU_VERTEX_POSITIONS);
+    BrModelUpdate(gTimerRightHUD_model, 1);
 #endif
 
     gIcon_armour = LoadPixelmap("iconarmour.tif");
