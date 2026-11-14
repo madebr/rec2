@@ -249,10 +249,21 @@ void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {
 
 // AdjustSpark
 
-// STUB: CARMA2_HW 0x004f86f0
-// STUB: CARMA2_SW 0x004f3d70
+// FUNCTION: CARMA2_HW 0x004f86f0
+// FUNCTION: CARMA2_SW 0x004f3d70
 void C2_HOOK_FASTCALL AdjustShrapnel(int pShrapnel_num, br_vector3* pPos, tU16 pAge, br_material* pMaterial) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    i = pShrapnel_num & 0x7fff;
+    if (!(gShrapnel_flags & (1 << i))) {
+        BrActorAdd(gNon_track_actor, gShrapnel[i].actor);
+    }
+    gShrapnel_flags |= 1 << i;
+    BrVector3Copy(&gShrapnel[i].actor->t.t.translate.t, pPos);
+    if (pShrapnel_num & 0x8000) {
+        gShrapnel[i].age = pAge;
+        gShrapnel[i].actor->material = pMaterial;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004f87a0
