@@ -32,6 +32,11 @@ extern int gCount_active_peds;
 extern int gPeds_suicidal;
 extern int gExploding_pedestrians;
 extern tNapalm_bolt gNapalm_bolts[5];
+extern int gPed_severing_chance;
+extern br_material* gPed_slick_material;
+extern br_material* gNapalm_bolt_materials[7];
+extern br_model* gNapalm_bolt_models[7];
+extern const char* gNapalm_bolt_texture_names[7];
 extern int gCount_changed_points;
 extern br_vector3 gChanged_points[10];
 extern int gPed_dismember_spurting_member_count;
@@ -122,7 +127,7 @@ extern br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed);
 
 // InitOtherPedStuff
 
-// InitNapalmNolts
+extern void C2_HOOK_FASTCALL InitNapalmNolts(void);
 
 extern void C2_HOOK_FASTCALL InitPolyPedSystem(void);
 

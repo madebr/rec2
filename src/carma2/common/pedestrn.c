@@ -255,16 +255,16 @@ tExplosion_animation gNapalmed_ped_animation;
 
 
 // GLOBAL: CARMA2_HW 0x0069fd88
-br_material* gBurning_ped_materials[7];
+br_material* gNapalm_bolt_materials[7];
 
 // GLOBAL: CARMA2_HW 0x00694308
-br_model* gBurning_ped_models[7];
+br_model* gNapalm_bolt_models[7];
 
 // GLOBAL: CARMA2_HW 0x0069b9f0
 tNapalm_bolt gNapalm_bolts[5];
 
 // GLOBAL: CARMA2_HW 0x0065e598
-const char* gBurning_ped_map_names[7] = {
+const char* gNapalm_bolt_texture_names[7] = {
     "Ex00006",
     "Ex00006",
     "Ex00006",
@@ -1008,9 +1008,9 @@ void C2_HOOK_FASTCALL InitNapalmNolts(void) {
     int j;
     br_model* model;
 
-    for (i = 0; i < REC2_ASIZE(gBurning_ped_materials); i++) {
+    for (i = 0; i < REC2_ASIZE(gNapalm_bolt_materials); i++) {
         model = BrModelAllocate(NULL, 4, 2);
-        gBurning_ped_models[i] = model;
+        gNapalm_bolt_models[i] = model;
         model->faces[0].vertices[0] = 0;
         model->faces[0].vertices[1] = 2;
         model->faces[0].vertices[2] = 1;
@@ -1033,27 +1033,27 @@ void C2_HOOK_FASTCALL InitNapalmNolts(void) {
 
         BrModelAdd(model);
 
-        gBurning_ped_materials[i] = BrMaterialAllocate("BURN!");
-        gBurning_ped_materials[i]->flags &= ~BR_MATF_LIGHT;
-        gBurning_ped_materials[i]->flags |= BR_MATF_ALWAYS_VISIBLE;
-        gBurning_ped_materials[i]->colour_map = BrMapFind(gBurning_ped_map_names[i]);
-        if (gBurning_ped_materials[i]->colour_map == NULL) {
-            FatalError(kFatalError_CantFindPedTexture_S, gBurning_ped_map_names[i]);
+        gNapalm_bolt_materials[i] = BrMaterialAllocate("BURN!");
+        gNapalm_bolt_materials[i]->flags &= ~BR_MATF_LIGHT;
+        gNapalm_bolt_materials[i]->flags |= BR_MATF_ALWAYS_VISIBLE;
+        gNapalm_bolt_materials[i]->colour_map = BrMapFind(gNapalm_bolt_texture_names[i]);
+        if (gNapalm_bolt_materials[i]->colour_map == NULL) {
+            FatalError(kFatalError_CantFindPedTexture_S, gNapalm_bolt_texture_names[i]);
         }
-        GlorifyMaterial(&gBurning_ped_materials[i], 1, kRendererShadingType_Diffuse2);
-        BrMaterialAdd(gBurning_ped_materials[i]);
+        GlorifyMaterial(&gNapalm_bolt_materials[i], 1, kRendererShadingType_Diffuse2);
+        BrMaterialAdd(gNapalm_bolt_materials[i]);
     }
 
     C2_HOOK_BUG_ON(sizeof(tNapalm_bolt) != 0x6c);
     for (i = 0; i < REC2_ASIZE(gNapalm_bolts); i++) {
         gNapalm_bolts[i].ped = NULL;
-        for (j = 0; j < REC2_ASIZE(gBurning_ped_materials); j++) {
+        for (j = 0; j < REC2_ASIZE(gNapalm_bolt_materials); j++) {
             br_actor* actor;
 
             actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
             gNapalm_bolts[i].actors[j] = actor;
-            actor->material = gBurning_ped_materials[j];
-            actor->model = gBurning_ped_models[j];
+            actor->material = gNapalm_bolt_materials[j];
+            actor->model = gNapalm_bolt_models[j];
             actor->render_style = BR_RSTYLE_NONE;
             BrActorAdd(gNon_track_actor, actor);
         }
