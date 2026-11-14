@@ -373,7 +373,40 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
     NOT_IMPLEMENTED();
 }
 
-// NewRepulseRay
+// FUNCTION: CARMA2_HW 0x004da870
+// FUNCTION: CARMA2_SW 0x004d6d40
+void C2_HOOK_FASTCALL NewRepulseRay(tU32 pTime, tCar_spec* pCar, tCar_spec* pVictim_car, br_vector3* pPos_origin, br_vector3* pPos_victim, float pRadius1, float pRadius2) {
+    int i;
+    int link_index;
+    int oldest_link;
+    tU32 oldest_time;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRepulse_link, field_0x24, 0x24);
+
+    link_index = -1;
+    oldest_time = 0x7fffffff;
+    for (i = 0; i < (int)REC2_ASIZE(gRepulse_links); i++) {
+        if (gRepulse_links[i].time == 0) {
+            link_index = i;
+            break;
+        }
+        if (gRepulse_links[i].time < oldest_time) {
+            oldest_time = gRepulse_links[i].time;
+            oldest_link = i;
+        }
+    }
+    if (link_index < 0) {
+        link_index = oldest_link;
+    }
+    gRepulse_links[link_index].pos_origin = pPos_origin;
+    gRepulse_links[link_index].pos_victim = pPos_victim;
+    gRepulse_links[link_index].time = pTime;
+    gRepulse_links[link_index].field_0x10 = -1;
+    gRepulse_links[link_index].field_0x18 = pRadius1;
+    gRepulse_links[link_index].field_0x1c = pRadius2;
+    gRepulse_links[link_index].car = pCar;
+    gRepulse_links[link_index].field_0x24 = pVictim_car;
+}
 
 // RemoveRepulsiveReferences
 

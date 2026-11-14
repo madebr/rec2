@@ -4658,7 +4658,7 @@ typedef struct {
     float field_0x18;
     float field_0x1c;
     tCar_spec* car;
-    undefined4 field_0x24;
+    tCar_spec* field_0x24;
 } tRepulse_link;
 
 typedef struct tPed_movement_spec{
