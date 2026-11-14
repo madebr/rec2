@@ -17,6 +17,7 @@ extern tU32 gDAT_006a2364;
 extern int gKey_down;
 extern float gPending_replay_rate;
 extern tU32 gUINT_006a237c;
+extern tU32 gLast_replay_zappy_screen;
 extern int gSingle_frame_mode;
 extern tU32 gCam_change_time;
 extern tU32 gLast_synch_time;
@@ -39,7 +40,7 @@ extern void C2_HOOK_FASTCALL ActualActionReplayHeadups(int pSpecial_zappy_bastar
 
 extern void C2_HOOK_FASTCALL DoActionReplayPostSwap(void);
 
-// DoZappyActionReplayHeadups
+extern void C2_HOOK_FASTCALL DoZappyActionReplayHeadups(int pSpecial_zappy_bastard);
 
 extern void C2_HOOK_FASTCALL DoActionReplayHeadups(void);
 
