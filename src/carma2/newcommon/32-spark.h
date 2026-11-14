@@ -74,7 +74,7 @@ extern void C2_HOOK_FASTCALL AdjustShrapnel(int pShrapnel_num, br_vector3* pPos,
 
 extern void C2_HOOK_FASTCALL ResetSparks(void);
 
-// ResetShrapnel
+extern void C2_HOOK_FASTCALL ResetShrapnel(void);
 
 // CreateShrapnelShower2
 
