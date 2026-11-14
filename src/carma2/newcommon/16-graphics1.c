@@ -25,6 +25,7 @@
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
+#include <limits.h>
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00703e24
@@ -517,10 +518,28 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
     gEvalu = LoadPixelmap("Evalu01.PIX");
 }
 
-// STUB: CARMA2_HW 0x004e4db0
-// STUB: CARMA2_SW 0x004e1110
+// FUNCTION: CARMA2_HW 0x004e4db0
+// FUNCTION: CARMA2_SW 0x004e1110
 void C2_HOOK_FASTCALL NewScreenWobble(double pAmplitude_x, double pAmplitude_y, double pPeriod) {
-    NOT_IMPLEMENTED();
+    int i;
+    int oldest_time;
+    int oldest_index;
+
+    oldest_index = -1;
+    oldest_time = INT_MAX;
+    for (i = 0; i < (int)REC2_ASIZE(gWobble_array); i++) {
+        if (gWobble_array[i].time_started == 0) {
+            oldest_index = i;
+            break;
+        } else if (gWobble_array[i].time_started < oldest_time) {
+            oldest_time = gWobble_array[i].time_started;
+            oldest_index = i;
+        }
+    }
+    gWobble_array[oldest_index].time_started = (int)GetTotalTime();
+    gWobble_array[oldest_index].amplitude_x = (float)pAmplitude_x;
+    gWobble_array[oldest_index].amplitude_y = (float)pAmplitude_y;
+    gWobble_array[oldest_index].period = (float)pPeriod;
 }
 
 // FUNCTION: CARMA2_HW 0x004e4e20
