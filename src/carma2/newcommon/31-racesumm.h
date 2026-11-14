@@ -21,7 +21,7 @@
 
 extern int C2_HOOK_FASTCALL AnyBuyableCars(void);
 
-// RecordAPOAndCredits
+extern void C2_HOOK_FASTCALL RecordAPOAndCredits(void);
 
 // PickRaceWhenGameCompleted
 

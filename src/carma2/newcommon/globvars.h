@@ -56,6 +56,8 @@ extern int gAuto_load;
 extern int gRussels_fannies;
 
 extern char gQuick_time_quality[32];
+extern int gAPO_pre_race[3];
+extern int gMoney_pre_race;
 extern char gQuick_time_compressor[32];
 extern int gQuick_time_banner_number;
 

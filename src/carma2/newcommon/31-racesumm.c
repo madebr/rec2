@@ -10,6 +10,8 @@
 
 #include "30-opponent.h"
 
+#include "globvars.h"
+
 // SortScores
 
 // SortGameScores
@@ -33,7 +35,17 @@ int C2_HOOK_FASTCALL AnyBuyableCars(void) {
     return 0;
 }
 
-// RecordAPOAndCredits
+// FUNCTION: CARMA2_HW 0x004e3410
+// FUNCTION: CARMA2_SW 0x004df7a0
+void C2_HOOK_FASTCALL RecordAPOAndCredits(void) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, power_up_levels, 0x18a8);
+
+    gMoney_pre_race = gProgram_state.credits;
+    gAPO_pre_race[0] = gProgram_state.current_car.power_up_levels[0];
+    gAPO_pre_race[1] = gProgram_state.current_car.power_up_levels[1];
+    gAPO_pre_race[2] = gProgram_state.current_car.power_up_levels[2];
+}
 
 // PickRaceWhenGameCompleted
 
