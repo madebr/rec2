@@ -29,6 +29,7 @@ extern tRepair_animation gRepair_animations[25];
 extern br_vector3 gZero_vector__smash;
 extern tDecal gDecals[50];
 extern int gCount_queued_smashes;
+extern tSmash_explosion gSmash_explosions[20];
 
 typedef struct {
     br_vector3 origin;
@@ -64,7 +65,7 @@ extern void C2_HOOK_FASTCALL RemoveMaterialFromFogification(br_material* pMateri
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 
-// ResetExplosions
+extern void C2_HOOK_FASTCALL ResetExplosions(void);
 
 extern void C2_HOOK_FASTCALL RemoveAllExplosionettes(void);
 

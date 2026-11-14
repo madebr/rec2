@@ -32,10 +32,6 @@
 
 #include <stdio.h>
 
-// GLOBAL: CARMA2_HW 0x006a6d38
-// GLOBAL: CARMA2_SW 0x006a0d98
-int gMaterials_to_adapt_count;
-
 // GLOBAL: CARMA2_HW 0x006a8298
 // GLOBAL: CARMA2_SW 0x006a22f8
 int gAllow_material_adapt;
@@ -89,7 +85,23 @@ tStored_smash* gNet_host_smashes;
 
 // GLOBAL: CARMA2_HW 0x006a55c8
 // GLOBAL: CARMA2_SW 0x0069f628
-tExplosion gExplosions[50];
+tExplosion gExplosions[50] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a6d38
+// GLOBAL: CARMA2_SW 0x006a0d98
+int gMaterials_to_adapt_count = 0;
+
+// GLOBAL: CARMA2_HW 0x006a6d3c
+// GLOBAL: CARMA2_SW 0x006a0d9c
+int gCount_host_smashes = 0;
+
+// GLOBAL: CARMA2_HW 0x006a6d40
+// GLOBAL: CARMA2_SW 0x006a0da0
+tSmash_explosion gSmash_explosions[20] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a7ce0
+// GLOBAL: CARMA2_SW 0x006a1d40
+tSmashable_item_spec gPowerup_respawn_smashable = { 0 };
 
 // GLOBAL: CARMA2_HW 0x006a7fc8
 // GLOBAL: CARMA2_SW 0x006a2028
@@ -221,7 +233,24 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
     }
 }
 
-// ResetExplosions
+// FUNCTION: CARMA2_HW 0x004eaac0
+// FUNCTION: CARMA2_SW 0x004e6790
+void C2_HOOK_FASTCALL ResetExplosions(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gExplosions) != 50);
+    C2_HOOK_BUG_ON(sizeof(gExplosions[0]) != 0x78);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmash_explosions) != 20);
+    C2_HOOK_BUG_ON(sizeof(gSmash_explosions[0]) != 0xc8);
+
+    for (i = 0; i < (int)REC2_ASIZE(gExplosions); i++) {
+        gExplosions[i].start = 0;
+        gExplosions[i].finished = 0;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gSmash_explosions); i++) {
+        gSmash_explosions[i].active = 0;
+    }
+}
 
 void C2_HOOK_FASTCALL RemoveAllExplosionettes(void) {
     int i;
