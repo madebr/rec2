@@ -606,6 +606,14 @@ typedef struct {
 } tPipe_chunk_smoke_column;
 
 typedef struct {
+    tS16 frame_count;
+    br_scalar scale_x;
+    br_scalar scale_y;
+    br_scalar offset_x;
+    br_scalar offset_z;
+} tPipe_chunk_flame;
+
+typedef struct {
     tCar_spec* car;
 } tPipe_chunk_powerup_lose;
 
@@ -702,6 +710,7 @@ typedef enum {
     ePipe_chunk_smoke = 15,
     ePipe_chunk_oil_spill = 16,
     ePipe_chunk_smoke_column = 17,
+    ePipe_chunk_flame = 18,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_splash = 20,
     ePipe_chunk_prox_ray = 21,

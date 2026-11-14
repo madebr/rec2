@@ -164,9 +164,9 @@ extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
 extern void C2_HOOK_FASTCALL AdjustFlame(int pIndex, int pFrame_count, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z);
 
-// ReplayFlame
+extern void C2_HOOK_FASTCALL ReplayFlame(tSmoke_column* pColumn, br_actor* pActor);
 
-// FlameAnimate
+extern void C2_HOOK_FASTCALL FlameAnimate(int pColumn, const br_vector3* pPos, tU32 pTime);
 
 // DoSmokeColumn
 

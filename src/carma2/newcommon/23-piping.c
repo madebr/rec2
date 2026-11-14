@@ -765,7 +765,31 @@ void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, const tSmoke_col
         SIZE_OFFSET_PIPING(tPipe_chunk_smoke_column, vertex), pVertex);
 }
 
-// AddFlameToPipingSession
+// FUNCTION: CARMA2_HW 0x004c70f0
+// FUNCTION: CARMA2_SW 0x004c3820
+void C2_HOOK_FASTCALL AddFlameToPipingSession(int pIndex, int pFrame, br_scalar pScale_x, br_scalar pScale_y, br_scalar pOffset_x, br_scalar pOffset_z) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flame, frame_count, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flame, scale_x, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flame, scale_x, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flame, scale_y, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flame, scale_y, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flame, offset_x, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flame, offset_x, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_flame, offset_z, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_flame, offset_z, 0x4);
+
+    (void)pScale_y;
+    (void)pOffset_x;
+    (void)pOffset_z;
+
+    gFloat_pipe_union.f = pScale_x;
+    ARAddVariedDataToSession(ePipe_chunk_flame, pIndex, 5,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flame, frame_count), pFrame,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flame, scale_x), gFloat_pipe_union.u32,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flame, scale_y), gFloat_pipe_union.u32,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flame, offset_x), gFloat_pipe_union.u32,
+        SIZE_OFFSET_PIPING(tPipe_chunk_flame, offset_z), gFloat_pipe_union.u32);
+}
 
 // STUB: CARMA2_HW 0x004c7130
 // STUB: CARMA2_SW 0x004c3860
