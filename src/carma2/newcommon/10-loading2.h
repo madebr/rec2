@@ -20,6 +20,8 @@ extern int gGroove_funk_offset;
 extern const char* gNet_avail_names[4];
 extern tHeadup_info gHeadup_image_info[45];
 extern br_pixelmap* gHeadup_images[45];
+extern br_material* gSimple_materials[32];
+extern tU32 gSimple_material_colours[12];
 extern tActionReplayCameraMode gAction_replay_camera_mode_00679324;
 extern const char* gDamage_names[12];
 
