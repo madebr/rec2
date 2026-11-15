@@ -1453,7 +1453,18 @@ void C2_HOOK_FASTCALL ResetGhostPeds(tPowerup* pPowerup, tCar_spec* pCar) {
 
 // HitMine
 
-// SetMassMultiplier
+// FUNCTION: CARMA2_HW 0x004debb0
+// FUNCTION: CARMA2_SW 0x004db0b0
+int C2_HOOK_FASTCALL SetMassMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, field_0x4c8, 0x4c8);
+
+    pCar->field_0x4c8 = pPowerup->float_params[0];
+    if (gNet_mode != eNet_mode_none) {
+        DoSolidGraniteThing(pCar);
+    }
+    return pPowerup - gPowerup_array;
+}
 
 // FUNCTION: CARMA2_HW 0x004debf0
 // FUNCTION: CARMA2_SW 0x004db0f0

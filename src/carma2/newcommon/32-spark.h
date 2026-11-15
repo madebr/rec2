@@ -109,7 +109,7 @@ extern int C2_HOOK_FASTCALL SetPixelmap(br_material* pMaterial);
 
 extern void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar);
 
-// DoSolidGraniteThing
+extern void C2_HOOK_FASTCALL DoSolidGraniteThing(tCar_spec* pCar);
 
 // DoTrueColModelThing
 

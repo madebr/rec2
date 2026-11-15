@@ -439,7 +439,11 @@ void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar) {
     }
 }
 
-// DoSolidGraniteThing
+// STUB: CARMA2_HW 0x004f9020
+// STUB: CARMA2_SW 0x004f46a0
+void C2_HOOK_FASTCALL DoSolidGraniteThing(tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
 
 // DoTrueColModelThing
 
