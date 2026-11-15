@@ -11,6 +11,7 @@
 #include "tokenval.h"
 
 // FUNCTION: CARMA2_HW 0x0052d060
+// FUNCTION: CARMA2_SW 0x00528700
 br_error C2_HOOK_CDECL _M_br_object_query(br_object* self, br_uint_32* pvalue, br_token t) {
 
     return BrTokenValueQuery(pvalue, NULL, 0, t, self, self->dispatch->_templateQuery(self));
