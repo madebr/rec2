@@ -636,7 +636,15 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
 
 // GetReducedPos
 
-// SaveReducedPos
+inline void C2_HOOK_FASTCALL SaveReducedPos(tReduced_pos* pReduced_pos, br_vector3* pPos) {
+    br_vector3 tv;
+
+    BrVector3Sub(&tv, pPos, &gProgram_state.current_car.car_master_actor->t.t.translate.t);
+    BrVector3Set(pReduced_pos,
+        (tS16)(tv.v[0] * 800.0f),
+        (tS16)(tv.v[1] * 800.0f),
+        (tS16)(tv.v[2] * 800.0f));
+}
 
 // InitLastDamageArrayEtc
 
@@ -776,7 +784,26 @@ void C2_HOOK_FASTCALL AddNonCarToPipingSession(int pIndex, br_actor* pActor) {
         SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
 }
 
-// AddSmokeToPipingSession
+// FUNCTION: CARMA2_HW 0x004c7010
+// FUNCTION: CARMA2_SW 0x004c3740
+void C2_HOOK_FASTCALL AddSmokeToPipingSession(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength) {
+    tReduced_pos reduced_pos;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke, pos, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke, radius, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke, radius, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke, strength, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke, strength, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke, type, 0x9);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke, type, 0x1);
+
+    SaveReducedPos(&reduced_pos, pPos);
+    ARAddVariedDataToSession(ePipe_chunk_smoke, pIndex, 4,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke, pos), &reduced_pos,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke, radius), (int)(pRadius * 1024.0f),
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke, strength), (int)(pStrength * 255.0f),
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke, type), pType);
+}
 
 // FUNCTION: CARMA2_HW 0x004c70c0
 // FUNCTION: CARMA2_SW 0x004c37f0
