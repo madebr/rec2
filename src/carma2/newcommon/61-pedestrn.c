@@ -1892,7 +1892,19 @@ void C2_HOOK_FASTCALL DisposeAllLoadedRemaps(void) {
 
 // RemapModelAxis
 
-// SetUpCharacterForm
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x00404f60
+// STUB: CARMA2_SW 0x00404f60
+tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma inline_depth(0)
@@ -1991,7 +2003,21 @@ void C2_HOOK_FASTCALL DisposeCharacterInstance(tPed_character_instance* pCharact
     }
 }
 
-// FindOrOpenForm
+// FUNCTION: CARMA2_HW 0x00406a40
+// FUNCTION: CARMA2_SW 0x00406a40
+tPed_form* C2_HOOK_FASTCALL FindOrOpenForm(const char* pName) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPed_forms) != 20);
+    for (i = 0; i < (int)REC2_ASIZE(gPed_forms); i++) {
+        if (gPed_forms[i] != NULL) {
+            if (strcmp(pName, gPed_forms[i]->name) == 0) {
+                return gPed_forms[i];
+            }
+        }
+    }
+    return SetUpCharacterForm(pName);
+}
 
 // MakeRotationMatrix
 

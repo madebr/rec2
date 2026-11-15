@@ -458,6 +458,10 @@ int gDisallow_abandon_race;
 // GLOBAL: CARMA2_SW 0x00671084
 int gAction_replay_mode = 0;
 
+// GLOBAL: CARMA2_HW 0x00676928
+// GLOBAL: CARMA2_SW 0x00671098
+tPed_form* gPed_forms[20] = { 0 };
+
 // GLOBAL: CARMA2_HW 0x00676978
 // GLOBAL: CARMA2_SW 0x006710e8
 int gPed_overall_movement_disabled = 0;
