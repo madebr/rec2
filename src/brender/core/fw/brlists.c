@@ -75,9 +75,11 @@ br_node* C2_HOOK_CDECL BrRemTail(br_list* list) {
 // FUNCTION: CARMA2_HW 0x00529a00
 // FUNCTION: CARMA2_SW 0x00524570
 void C2_HOOK_CDECL BrInsert(br_list* list, br_node* here, br_node* node) {
+    br_node* next;
 
+    next = here->next;
     node->prev = here;
-    node->next = here->next;
+    node->next = next;
     here->next->prev = node;
     here->next = node;
 }
