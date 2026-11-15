@@ -70,7 +70,7 @@ extern tS16 C2_HOOK_FASTCALL FindNearestPathSection(const br_vector3* pActor_coo
 
 extern void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_objective_type pObjective_type, ...);
 
-// CalcRaceRoute
+extern void C2_HOOK_FASTCALL CalcRaceRoute(tOpponent_spec* pOpponent_spec);
 
 extern void C2_HOOK_FASTCALL TopUpRandomRoute(tOpponent_spec* pOpponent_spec, int pSections_to_add);
 
@@ -166,9 +166,9 @@ extern void C2_HOOK_FASTCALL CalcDistanceFromHome(tOpponent_spec* pOpponent_spec
 
 // RematerialiseOpponentOnThisSection
 
-// RematerialiseOpponentOnNearestSection
+extern int C2_HOOK_FASTCALL RematerialiseOpponentOnNearestSection(tOpponent_spec* pOpponent_spec, br_scalar pSpeed);
 
-// RematerialiseOpponent
+extern int C2_HOOK_FASTCALL RematerialiseOpponent(tOpponent_spec* pOpponent_spec, br_scalar pSpeed);
 
 // CalcPlayerConspicuousness
 
