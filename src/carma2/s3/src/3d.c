@@ -431,32 +431,34 @@ int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound,
             if ((desc->buffer_description == NULL || (desc->flags & 2) != 0) && S3LoadSample(pSound) == eS3_error_none) {
                 return eS3_error_load_sound;
             }
-            if (pVolume > 255) {
-                pVolume = 255;
-            }
-            if (pVolume < 0) {
-                pVolume = 128;
-            }
-            if (pPitch < 0) {
-                pPitch = BR_FIXED_INT(1);
-            }
-            if (pSpeed < 0) {
-                pSpeed = BR_FIXED_INT(1);
-            }
-            source->bound_outlet = pOutlet;
-            source->sound_id = pSound;
-            source->volume = pVolume;
-            source->max_distance_sq = pMax_distance;
-            source->period = pPeriod;
-            source->pitch = pPitch;
-            source->speed = pSpeed;
-            source->ambient = 1;
-
-            source->ambient_repeats = pRepeats <= 0 ? 0 : pRepeats;
-            source->time_since_last_played = pPeriod;
-            source->channel = NULL;
-            source->tag = 0;
+        } else {
+            return eS3_error_none;
         }
+        if (pVolume > 255) {
+            pVolume = 255;
+        }
+        if (pVolume < 0) {
+            pVolume = 128;
+        }
+        if (pPitch < 0) {
+            pPitch = BR_FIXED_INT(1);
+        }
+        if (pSpeed < 0) {
+            pSpeed = BR_FIXED_INT(1);
+        }
+        source->bound_outlet = pOutlet;
+        source->sound_id = pSound;
+        source->volume = pVolume;
+        source->max_distance_sq = pMax_distance;
+        source->period = pPeriod;
+        source->pitch = pPitch;
+        source->speed = pSpeed;
+        source->ambient = 1;
+
+        source->ambient_repeats = pRepeats <= 0 ? 0 : pRepeats;
+        source->time_since_last_played = pPeriod;
+        source->channel = NULL;
+        source->tag = 0;
     }
     return eS3_error_none;
 }
