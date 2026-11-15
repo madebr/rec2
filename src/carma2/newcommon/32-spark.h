@@ -181,7 +181,7 @@ extern void C2_HOOK_FASTCALL FlameAnimate(int pColumn, const br_vector3* pPos, t
 
 // MungeSmokeColumn
 
-// DisposeFlame
+extern void C2_HOOK_FASTCALL DisposeFlame(void);
 
 extern void C2_HOOK_FASTCALL InitFlame(void);
 
