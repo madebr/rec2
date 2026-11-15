@@ -35,6 +35,8 @@ extern void C2_HOOK_FASTCALL DRPixelmapRectangleVScaledCopy(br_pixelmap* pDest, 
 
 extern void C2_HOOK_FASTCALL DropInImageFromTop(br_pixelmap* pImage, int pLeft, int pTop, int pTop_clip, int pBottom_clip);
 
+extern void C2_HOOK_FASTCALL DropInImageFromBottom(br_pixelmap* pImage, int pLeft, int pTop, int pTop_clip, int pBottom_clip);
+
 extern void C2_HOOK_FASTCALL DropOutImageThruBottom(br_pixelmap* pImage, int pLeft, int pTop, int pTop_clip, int pBottom_clip);
 
 extern void C2_HOOK_FASTCALL DropOutImageThruTop(br_pixelmap* pImage, int pLeft, int pTop, int pTop_clip, int pBottom_clip);
