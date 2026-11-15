@@ -141,7 +141,7 @@ br_simple_node* C2_HOOK_CDECL BrSimpleRemove(br_simple_node* node) {
     if (node->next != NULL) {
         node->next->prev = node->prev;
     }
-    node->next = NULL;
     node->prev = NULL;
+    node->next = NULL;
     return node;
 }
