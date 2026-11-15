@@ -99,7 +99,7 @@ extern void C2_HOOK_FASTCALL DisposeShrapnel(void);
 
 // ReplayShrapnel
 
-// ActorFunks
+extern intptr_t C2_HOOK_CDECL ActorFunks(br_actor* pActor, void* pContext);
 
 extern void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar);
 

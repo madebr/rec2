@@ -364,7 +364,27 @@ void C2_HOOK_FASTCALL DisposeShrapnel(void) {
 
 // ReplayShrapnel
 
-// ActorFunks
+// FUNCTION: CARMA2_HW 0x004f8dc0
+// FUNCTION: CARMA2_SW 0x004f4440
+intptr_t C2_HOOK_CDECL ActorFunks(br_actor* pActor, void* pContext) {
+    tFunk_index_cbfn* funk_index_callback = pContext;
+    tUser_crush_data* user_crush_data = pActor->user;
+    tCar_crush_buffer_entry* crush_data;
+    int i;
+
+    if (user_crush_data != NULL) {
+        crush_data = user_crush_data->crush_data;
+        if (crush_data != NULL && crush_data->smashables != NULL) {
+            for (i = 0; i < crush_data->count_smashables; i++) {
+                int funk_index = crush_data->smashables[i].funk;
+                if (funk_index >= 0) {
+                    funk_index_callback(funk_index);
+                }
+            }
+        }
+    }
+    return 0;
+}
 
 // STUB: CARMA2_HW 0x004f8ca0
 void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar) {
