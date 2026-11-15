@@ -251,10 +251,12 @@ const char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void) {
 // FUNCTION: CARMA2_HW 0x00569cb1
 // FUNCTION: CARMA2_SW 0x00565351
 int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel) {
+    MCIDEVICEID device;
 
+    device = pChannel->mciDevice;
     if (gPDS3_midi_playing) {
         gPDS3_midi_playing = 0;
-        mciSendCommandA(pChannel->mciDevice, MCI_CLOSE, 0, 0);
+        mciSendCommandA(device, MCI_CLOSE, 0, 0);
     }
     if (pChannel->active) {
         pChannel->needs_service = 1;
