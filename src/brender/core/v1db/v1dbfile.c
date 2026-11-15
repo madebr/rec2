@@ -779,7 +779,6 @@ int C2_HOOK_STDCALL FopRead_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 len
     br_model* mp;
 
     mp = BrModelAllocate(NULL, 0, 0);
-    mp->identifier = NULL;
     df->res = mp;
     df->prims->struct_read(df, &br_model_F, mp);
     df->res = NULL;
