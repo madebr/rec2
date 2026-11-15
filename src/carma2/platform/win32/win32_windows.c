@@ -80,6 +80,10 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
 }
 
 
+#ifdef REC2_MATCHING
+#pragma optimize("g", on)
+#endif
+
 // FUNCTION: CARMA2_HW 0x0044c830
 // FUNCTION: CARMA2_SW 0x0044c5e0
 void C2_HOOK_FASTCALL PDCloseReplayFile(void) {
@@ -88,3 +92,7 @@ void C2_HOOK_FASTCALL PDCloseReplayFile(void) {
         gAction_replay_buffer_file = NULL;
     }
 }
+
+#ifdef REC2_MATCHING
+#pragma optimize("g", off)
+#endif
