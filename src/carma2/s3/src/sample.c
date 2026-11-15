@@ -90,13 +90,15 @@ tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, next, 0x2c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, low_memory_alternative, 0x3c);
 
-    for (desc = gS3_state.descriptors; desc != NULL; desc = desc->next) {
+    desc = gS3_state.descriptors;
+    while (desc != NULL) {
         if (desc->sample_id == pSample_id) {
             if (desc->low_memory_alternative >= 0) {
                 return S3GetDescriptorByID(desc->low_memory_alternative);
             }
             return desc;
         }
+        desc = desc->next;
     }
     return NULL;
 }
