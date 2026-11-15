@@ -92,7 +92,7 @@ extern void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex);
 
 // PointCameraAtCar
 
-// PointCamera
+extern void C2_HOOK_FASTCALL PointCamera(br_vector3* pPos, br_matrix34* pMat);
 
 // CollideCamera2
 
