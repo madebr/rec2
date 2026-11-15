@@ -13,6 +13,16 @@
 #include "rec2_types.h"
 
 extern int gNet_storage_space_initialized;
+extern int gOrig_key_map_index;
+extern int gBackup_key_mappings[4][77];
+extern int gOrig_joystick_index;
+extern float gOriginal_joystick_x;
+extern float gOriginal_joystick_y;
+extern int gOriginal_joystick_fbb;
+extern int gOriginal_joystick_dpad;
+extern tFrontend_slider gControls_slider_1;
+extern tFrontend_slider gControls_slider_2;
+extern tFrontend_slider gControls_slider_3;
 extern tNet_mode gFrontend_net_mode;
 extern int gFrontend_stuff_not_loaded;
 extern tNet_game_options gNet_settings[9];
@@ -388,9 +398,9 @@ extern int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL StripControls(char* pStr);
 
-// BackupKeyMappings
+extern void C2_HOOK_FASTCALL BackupKeyMappings(void);
 
-// LoadKeyNames
+extern void C2_HOOK_FASTCALL LoadKeyNames(void);
 
 extern void C2_HOOK_FASTCALL DisposeKeyNames(void);
 
@@ -404,7 +414,7 @@ extern void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 // DetermineKeyArrayIndex
 
-// Joystick_BackupSettings
+extern void C2_HOOK_FASTCALL Joystick_BackupSettings(void);
 
 extern int C2_HOOK_FASTCALL Controls_JoystickToggle(tFrontend_spec* pFrontend);
 
@@ -426,7 +436,7 @@ extern int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend);
 
-// Controls_Infunc
+extern int C2_HOOK_FASTCALL Controls_Infunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Controls_Outfunc(tFrontend_spec* pFrontend);
 

@@ -141,6 +141,50 @@ int gFrontend_scrollbars_updated;
 // GLOBAL: CARMA2_SW 0x00680c38
 int gFrontend_controls_count_keys;
 
+// GLOBAL: CARMA2_HW 0x00688440
+// GLOBAL: CARMA2_SW 0x006829a0
+int gOrig_key_map_index;
+
+// GLOBAL: CARMA2_HW 0x006869e0
+// GLOBAL: CARMA2_SW 0x00681120
+int gBackup_key_mappings[4][77] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x00686eb0
+// GLOBAL: CARMA2_SW 0x006815f0
+int gINT_00686eb0 = 0;
+
+// GLOBAL: CARMA2_HW 0x00688700
+// GLOBAL: CARMA2_SW 0x00682c60
+int gOrig_joystick_index;
+
+// GLOBAL: CARMA2_HW 0x00688704
+// GLOBAL: CARMA2_SW 0x00682c64
+float gOriginal_joystick_x;
+
+// GLOBAL: CARMA2_HW 0x00688708
+// GLOBAL: CARMA2_SW 0x00682c68
+float gOriginal_joystick_y;
+
+// GLOBAL: CARMA2_HW 0x0068870c
+// GLOBAL: CARMA2_SW 0x00682c6c
+int gOriginal_joystick_fbb;
+
+// GLOBAL: CARMA2_HW 0x00688710
+// GLOBAL: CARMA2_SW 0x00682c70
+int gOriginal_joystick_dpad;
+
+// GLOBAL: CARMA2_HW 0x00686f68
+// GLOBAL: CARMA2_SW 0x006816a8
+tFrontend_slider gControls_slider_1;
+
+// GLOBAL: CARMA2_HW 0x006883c8
+// GLOBAL: CARMA2_SW 0x00682928
+tFrontend_slider gControls_slider_2;
+
+// GLOBAL: CARMA2_HW 0x00688ac0
+// GLOBAL: CARMA2_SW 0x00683020
+tFrontend_slider gControls_slider_3;
+
 // GLOBAL: CARMA2_HW 0x006864fc
 // GLOBAL: CARMA2_SW 0x00680c3c
 int gFrontend_netsummary_first_iteration;
@@ -3201,9 +3245,41 @@ void C2_HOOK_FASTCALL StripControls(char* pStr) {
     }
 }
 
-// BackupKeyMappings
+inline void C2_HOOK_FASTCALL BackupKeyMappings(void) {
+    int i;
 
-// LoadKeyNames
+    C2_HOOK_BUG_ON(REC2_ASIZE(gBackup_key_mappings) != 4);
+    C2_HOOK_BUG_ON(sizeof(gKey_mapping) != 4 * 77);
+
+    gOrig_key_map_index = gKey_map_index;
+    for (i = 0; i < (int)REC2_ASIZE(gBackup_key_mappings); i++) {
+        gKey_map_index = i;
+        LoadKeyMapping();
+        memcpy(gBackup_key_mappings[i], gKey_mapping, sizeof(gKey_mapping));
+    }
+    gKey_map_index = gOrig_key_map_index;
+    memcpy(gKey_mapping, gBackup_key_mappings[gKey_map_index], sizeof(gKey_mapping));
+}
+
+inline void C2_HOOK_FASTCALL LoadKeyNames(void) {
+    int i;
+    FILE* f;
+    tPath_name the_path;
+    char s[256];
+
+    PathCat(the_path, gApplication_path, "KEYNAMES.TXT");
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CantOpenKeyNamesFile);
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gKey_names); i++) {
+        PFfgets(s, sizeof(s), f);
+        StripControls(s);
+        gKey_names[i] = BrMemAllocate(strlen(s) + 1, kMem_misc);
+        strcpy(gKey_names[i], s);
+    }
+    PFfclose(f);
+}
 
 void C2_HOOK_FASTCALL DisposeKeyNames(void) {
     int i;
@@ -3286,7 +3362,16 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
 
 // DetermineKeyArrayIndex
 
-// Joystick_BackupSettings
+inline void C2_HOOK_FASTCALL Joystick_BackupSettings(void) {
+
+    gOrig_joystick_index = gJoystick_index;
+    gJoystick_index = 0;
+    gOriginal_joystick_x = GetJoystickX();
+    gOriginal_joystick_y = GetJoystickY();
+    gOriginal_joystick_fbb = GetJoystickFBBGain();
+    gOriginal_joystick_dpad = PDIsJoystickDPadEnabled();
+    gJoystick_index = gOrig_joystick_index;
+}
 
 // FUNCTION: CARMA2_HW 0x004721e0
 // FUNCTION: CARMA2_SW 0x00471770
@@ -3384,7 +3469,58 @@ int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// Controls_Infunc
+// FUNCTION: CARMA2_HW 0x004725f0
+// FUNCTION: CARMA2_SW 0x00471b80
+int C2_HOOK_FASTCALL Controls_Infunc(tFrontend_spec* pFrontend) {
+
+    Generic_Infunc(pFrontend);
+    LoadKeyNames();
+    gFrontend_controls_count_keys = REC2_ASIZE(gControls_frontend_to_key_mapping_lut);
+    BackupKeyMappings();
+    Joystick_BackupSettings();
+    SelectThisItemIn(pFrontend, 1, 39 + gKey_map_index);
+
+    gControls_scroller.field_0x0 = gFrontend_controls_count_keys;
+    gControls_scroller.range_length = 10;
+    gControls_scroller.field_0x8 = 0;
+    gControls_scroller.count_ranges = 2;
+    gControls_scroller.range_starts[0] = 43;
+    gControls_scroller.range_starts[1] = 53;
+    gControls_scroller.next = NULL;
+    gConnected_items = &gControls_scroller;
+
+    gControls_slider_1.flags = 0;
+    gControls_slider_1.itemid_left_reference = 14;
+    gControls_slider_1.itemid_start = 1;
+    gControls_slider_1.width = 236;
+    gControls_slider_1.callback = Slider_XProc;
+    gControls_slider_1.field_0x14 = 0.f;
+    gControls_slider_1.field_0x18 = 2.f;
+
+    gControls_slider_2.flags = 0;
+    gControls_slider_2.itemid_left_reference = 19;
+    gControls_slider_2.itemid_start = 4;
+    gControls_slider_2.width = 236;
+    gControls_slider_2.callback = Slider_YProc;
+    gControls_slider_2.field_0x14 = 0.f;
+    gControls_slider_2.field_0x18 = 2.f;
+
+    gControls_slider_3.flags = 0;
+    gControls_slider_3.itemid_left_reference = 23;
+    gControls_slider_3.itemid_start = 7;
+    gControls_slider_3.width = 236;
+    gControls_slider_3.callback = Slider_ForceProc;
+    gControls_slider_3.field_0x14 = 0.f;
+    gControls_slider_3.field_0x18 = 1.f;
+
+    gControls_slider_1.next = &gControls_slider_2;
+    gControls_slider_2.next = &gControls_slider_3;
+    gControls_slider_3.next = NULL;
+    gCurrent_frontend_scrollbars = &gControls_slider_1;
+    DisplayJoystickSettings(pFrontend);
+    RefreshScrollSet(pFrontend);
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00472a30
 // FUNCTION: CARMA2_SW 0x00471fc0
