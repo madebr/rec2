@@ -368,6 +368,10 @@ tRace_group_spec* gCurrent_race_group;
 // GLOBAL: CARMA2_SW 0x00757fc0
 int gIs_boundary_race;
 
+// GLOBAL: CARMA2_HW 0x00761a80
+// GLOBAL: CARMA2_SW 0x00757fe0
+char gCurrent_load_name[256];
+
 // GLOBAL: CARMA2_HW 0x0074d1ac
 // GLOBAL: CARMA2_SW 0x0074370c
 int gNumber_of_racers;

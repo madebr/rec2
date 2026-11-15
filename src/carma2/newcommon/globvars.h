@@ -21,6 +21,8 @@ extern tPath_name gApplication_path;
 extern char gRace_path[256];
 extern const char* gDir_separator;
 
+extern char gCurrent_load_name[256];
+
 //extern br_font* gBig_font;
 extern int gAusterity_mode;
 extern int gAustere_override;

@@ -98,9 +98,9 @@ extern void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath);
 
 extern void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath);
 
-extern int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList);
+extern int C2_HOOK_FASTCALL GetFileName(const char *pPath, void *pContext);
 
-extern int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList);
+extern int C2_HOOK_FASTCALL GetAdditionalFileName(const char* pPath, void* pContext);
 
 extern void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path);
 

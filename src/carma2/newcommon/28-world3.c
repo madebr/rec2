@@ -673,38 +673,42 @@ void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, co
 
 // FUNCTION: CARMA2_HW 0x005026b0
 // FUNCTION: CARMA2_SW 0x004fe000
-int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList) {
-    tPath_name pathCopy;
+int C2_HOOK_FASTCALL GetFileName(const char *pPath, void* pContext) {
+    tPath_name path;
     tPath_name pathUpper;
     tPath_name dir_path;
     tPath_name stem_path;
+    tName_list *list;
 
-    strcpy(pathCopy, path);
-    Uppercaseificate(pathUpper, pathCopy);
+    list = pContext;
+    strcpy(path, pPath);
+    Uppercaseificate(pathUpper, path);
     if (strstr(pathUpper, ".PIX") == NULL
             && strstr(pathUpper, ".TIF") == NULL) {
         return 0;
     }
     SepDirAndFilename(pathUpper, dir_path, stem_path);
-    strcpy(pList->items[pList->size], stem_path);
-    if (pList->size < (int)REC2_ASIZE(pList->items)) {
-        pList->size += 1;
+    strcpy(list->items[list->size], stem_path);
+    if (list->size < (int)REC2_ASIZE(list->items)) {
+        list->size += 1;
     }
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00502780
 // FUNCTION: CARMA2_SW 0x004fe0d0
-int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) {
-    tPath_name pathCopy;
+int C2_HOOK_FASTCALL GetAdditionalFileName(const char* pPath, void* pContext) {
+    tPath_name path;
     tPath_name upperPath;
     tPath_name dir_path;
     tPath_name stem_path;
     int alreadyInList;
     int i;
+    tName_list* list;
 
-    strcpy(pathCopy, path);
-    Uppercaseificate(upperPath, pathCopy);
+    list = pContext;
+    strcpy(path, pPath);
+    Uppercaseificate(upperPath, path);
 
     if (strstr(upperPath, ".PIX") == NULL
             && strstr(upperPath, ".P16") == NULL
@@ -714,16 +718,16 @@ int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) 
     }
     SepDirAndFilename(upperPath, dir_path, stem_path);
 
-    for (i = 0, alreadyInList = 0; i < pList->size; i++) {
-        if (strcmp(pList->items[i], stem_path) == 0) {
+    for (i = 0, alreadyInList = 0; i < list->size; i++) {
+        if (strcmp(list->items[i], stem_path) == 0) {
             alreadyInList = 1;
             break;
         }
     }
     if (!alreadyInList) {
-        strcpy(pList->items[pList->size], stem_path);
-        if (pList->size < (int)REC2_ASIZE(pList->items)) {
-            pList->size += 1;
+        strcpy(list->items[list->size], stem_path);
+        if (list->size < (int)REC2_ASIZE(list->items)) {
+            list->size += 1;
         }
     }
     return 0;
@@ -745,20 +749,20 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     list.size = 0;
     strcpy(pathCopy, path);
     if (gDisableTiffConversion) {
-        PFForEveryFile2(pathCopy, (tEnumPathCallback)GetAdditionalFileName, &list);
+        PFForEveryFile2(pathCopy, GetAdditionalFileName, &list);
     }
     if (!gDisableTiffConversion) {
         PathCat(tifPath, pathCopy, "TIFFX");
-        PFForEveryFile2(tifPath, (tEnumPathCallback)GetFileName, &list);
+        PFForEveryFile2(tifPath, GetFileName, &list);
     }
     PathCat(pixPath, pathCopy, "PIX8");
-    PFForEveryFile2(pixPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+    PFForEveryFile2(pixPath, GetAdditionalFileName, &list);
     if (!gDisableTiffConversion) {
         PathCat(tifPath, pathCopy, "TIFFRGB");
-        PFForEveryFile2(tifPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+        PFForEveryFile2(tifPath, GetAdditionalFileName, &list);
     }
     PathCat(pixPath, pathCopy, "PIX16");
-    PFForEveryFile2(pixPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+    PFForEveryFile2(pixPath, GetAdditionalFileName, &list);
     for (i = 0; i < list.size; i++) {
         PathCat(pathCopy, path, list.items[i]);
         AddPixelmaps(gStorage_for_callbacks, pathCopy);
