@@ -54,6 +54,7 @@ int gPDS3_midi_playing;
 int gPDS3_cda_media_present;
 
 // GLOBAL: CARMA2_HW 0x006b2db0
+// GLOBAL: CARMA2_SW 0x006ac538
 int gPDS3_cda_is_playing;
 
 // GLOBAL: CARMA2_HW 0x006b2db4
@@ -431,7 +432,10 @@ int C2_HOOK_FASTCALL FUN_00569f85(tS3_channel* pChannel) {
 // FUNCTION: CARMA2_SW 0x00565900
 int C2_HOOK_FASTCALL PDS3IsCDAPlaying(void) {
 
-    return gS3_CDA_enabled && gPDS3_cda_is_playing && gPDS3_cda_media_present;
+    if (gS3_CDA_enabled && gPDS3_cda_media_present) {
+        return gPDS3_cda_is_playing;
+    }
+    return 0;
 }
 
 int C2_HOOK_FASTCALL PDS3IsSamplePlaying(tS3_channel* pChannel) {
