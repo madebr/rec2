@@ -1300,6 +1300,7 @@ int C2_HOOK_FASTCALL S3SoundStillPlaying(int pTag) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056583f
+// FUNCTION: CARMA2_SW 0x00560edf
 int C2_HOOK_FASTCALL S3GetLastError(void) {
 
     return gS3_last_error;
