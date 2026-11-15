@@ -23,6 +23,7 @@
 #include "43-pratcam.h"
 
 #include "49-physics.h"
+#include "51-smash.h"
 #include "53-controls.h"
 #include "60-phil.h"
 #include "61-pedestrn.h"
@@ -410,7 +411,19 @@ void C2_HOOK_FASTCALL NewRepulseRay(tU32 pTime, tCar_spec* pCar, tCar_spec* pVic
 
 // RemoveRepulsiveReferences
 
-// MungeRepulseRays
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004db8e0
+// STUB: CARMA2_SW 0x004d7de0
+void C2_HOOK_FASTCALL MungeRepulseRays(tU32 pTime) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004da960
 // FUNCTION: CARMA2_SW 0x004d6e30
@@ -464,9 +477,34 @@ void C2_HOOK_FASTCALL ToggleInventory(void) {
 
 // DoPowerupPeriodics
 
-// CheckRespawnQueue
+inline void C2_HOOK_FASTCALL CheckRespawnQueue(tU32 pTime) {
+    int i;
 
-// MungePowerupStuff
+    for (i = 0; i < (int)REC2_ASIZE(gRespawn_powerups); i++) {
+        tRespawn_powerup* respawn_powerup = &gRespawn_powerups[i];
+
+        if (respawn_powerup->actor == NULL || (tS32)pTime < (tS32)respawn_powerup->respawn_time) {
+            continue;
+        }
+        if (respawn_powerup->actor->render_style != BR_RSTYLE_FACES) {
+            respawn_powerup->actor->render_style = BR_RSTYLE_FACES;
+        }
+        PipeSinglePowerupRespawn(respawn_powerup->actor, respawn_powerup->index);
+        DoPowerupRespawnSmash(respawn_powerup->actor);
+        respawn_powerup->actor = NULL;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004db880
+// FUNCTION: CARMA2_SW 0x004d7d80
+void C2_HOOK_FASTCALL MungePowerupStuff(tU32 pFrame_period) {
+    tU32 time;
+
+    (void)pFrame_period;
+    time = GetTotalTime();
+    MungeRepulseRays(time);
+    CheckRespawnQueue(time);
+}
 
 void C2_HOOK_FASTCALL GotPowerupN(int pN) {
     int modifiers;

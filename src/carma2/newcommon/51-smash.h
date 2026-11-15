@@ -135,7 +135,7 @@ extern void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor);
 
 // DoConnotations
 
-// DoPowerupRespawnSmash
+extern void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor* pActor);
 
 // DoConnotationsMultiLevel
 

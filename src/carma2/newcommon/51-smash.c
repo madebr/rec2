@@ -497,7 +497,11 @@ void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor) {
 
 // DoConnotations
 
-// DoPowerupRespawnSmash
+// STUB: CARMA2_HW 0x004ecea0
+// STUB: CARMA2_SW 0x004e8b70
+void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor* pActor) {
+    NOT_IMPLEMENTED();
+}
 
 // DoConnotationsMultiLevel
 
