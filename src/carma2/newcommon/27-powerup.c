@@ -12,10 +12,12 @@
 #include "01-network.h"
 #include "13-crush1.h"
 #include "15-displays.h"
-
 #include "16-graphics1.h"
 #include "18-graphics2.h"
+#include "18b-graphics2.h"
+#include "19-font.h"
 #include "23-piping.h"
+#include "25-grafdata.h"
 #include "32-spark.h"
 #include "39-oil.h"
 #include "41-utility.h"
@@ -33,6 +35,7 @@
 #include "joystick.h"
 #include "rec2_macros.h"
 
+#include "c2_stdio.h"
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a0a70
@@ -62,6 +65,10 @@ int gInventory_selected = 0;
 // GLOBAL: CARMA2_HW 0x006a0a5c
 // GLOBAL: CARMA2_SW 0x0069aab4
 int gINT_006a0a5c = 0;
+
+// GLOBAL: CARMA2_HW 0x006a0ac0
+// GLOBAL: CARMA2_SW 0x0069ab18
+br_pixelmap* gFizzle_in[3];
 
 // GLOBAL: CARMA2_HW 0x006a0ad4
 // GLOBAL: CARMA2_SW 0x0069ab2c
@@ -185,6 +192,10 @@ tCar_spec* gCloaked_cars[12];
 // GLOBAL: CARMA2_HW 0x006a0940
 // GLOBAL: CARMA2_SW 0x0069a998
 int gInventory_cycling;
+
+// GLOBAL: CARMA2_HW 0x006a0950
+// GLOBAL: CARMA2_SW 0x0069a9a8
+int gFizzle_height;
 
 // GLOBAL: CARMA2_HW 0x006a0954
 // GLOBAL: CARMA2_SW 0x0069a9ac
@@ -455,7 +466,101 @@ void C2_HOOK_FASTCALL ResetRepulseRay(void) {
     }
 }
 
-// DrawSinglePowerupIcon
+// FUNCTION: CARMA2_HW 0x004daff0
+// FUNCTION: CARMA2_SW 0x004d74c0
+int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowerup, tHeadup_icon* pIcon, int pX, int pY, int pUpdate_x) {
+    br_pixelmap* fizzle_pix;
+    char s[8];
+    int timer;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, power_up_space_between_icon_text_dx, 0x294);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, power_up_space_between_icon_text_dy, 0x2a0);
+
+    if (pIcon != NULL && pIcon->fizzle_stage < 4) {
+        fizzle_pix = gFizzle_in[pPowerup->fizzle_type];
+        if (pDraw) {
+#ifdef REC2_HW
+            PrintPowerupIconIn3D(pX, pY, pIcon, pPowerup, 1, pTime);
+#endif
+#ifdef REC2_SW
+            DRPixelmapRectangleMaskedCopy(gBack_screen, pX, pY,
+                fizzle_pix, 0, gFizzle_height * pIcon->fizzle_stage,
+                fizzle_pix->width, gFizzle_height);
+#endif
+        }
+        if (pUpdate_x) {
+            return pX + fizzle_pix->width;
+        }
+        return 0;
+    }
+    if (pDraw) {
+#ifdef REC2_HW
+        PrintPowerupIconIn3D(pX, pY, pIcon, pPowerup, 0, pTime);
+#endif
+#ifdef REC2_SW
+        DRPixelmapRectangleMaskedCopy(gBack_screen, pX, pY,
+            pPowerup->icon, 0, 0,
+            pPowerup->icon->width, pPowerup->icon->height);
+#endif
+    }
+    if (pPowerup->initial_value < 0) {
+        sprintf(s, "%d", -pPowerup->value);
+        if (pDraw) {
+            DRPixelmapText(gBack_screen,
+                pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
+                pY + gCurrent_graf_data->power_up_space_between_icon_text_dy,
+                &gFonts[2],
+                s,
+                pX + gCurrent_graf_data->power_up_space_between_icon_text_dx + 30);
+        }
+        if (pUpdate_x) {
+            return pX + gCurrent_graf_data->power_up_space_between_icon_text_dx + DRTextWidth(&gFonts[2], s);
+        }
+    } else if (pPowerup->initial_value > 0) {
+        TimerString(pPowerup->value, s, 0, 0, 1);
+        if (pDraw) {
+            DRPixelmapText(gBack_screen,
+                pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
+                pY + gCurrent_graf_data->power_up_space_between_icon_text_dy,
+                &gFonts[2],
+                s,
+                pX + gCurrent_graf_data->power_up_space_between_icon_text_dx + 30);
+        }
+        if (pUpdate_x) {
+            return pX + gCurrent_graf_data->power_up_space_between_icon_text_dx + DRTextWidth(&gFonts[2], s);
+        }
+    } else if (pPowerup->type == ePowerup_timed) {
+
+        timer = pPowerup->lose_time - pTime;
+        TimerString(MAX(0, timer), s, 0, 0, 1);
+        if (pDraw) {
+            DRPixelmapText(gBack_screen,
+                pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
+                pY + gCurrent_graf_data->power_up_space_between_icon_text_dy,
+                &gFonts[1],
+                s,
+                pX + gCurrent_graf_data->power_up_space_between_icon_text_dx + 30);
+        }
+        if (pUpdate_x) {
+            return pX + gCurrent_graf_data->power_up_space_between_icon_text_dx + DRTextWidth(&gFonts[1], s);
+        }
+    } else if (pPowerup->current_value > 0) {
+
+        sprintf(s, "%d", pPowerup->current_value);
+        if (pDraw) {
+            DRPixelmapText(gBack_screen,
+                pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
+                pY + gCurrent_graf_data->power_up_space_between_icon_text_dy,
+                &gFonts[2],
+                s,
+                pX + gCurrent_graf_data->power_up_space_between_icon_text_dx + 30);
+        }
+        if (pUpdate_x) {
+            return pX + gCurrent_graf_data->power_up_space_between_icon_text_dx + DRTextWidth(&gFonts[2], s);
+        }
+    }
+    return 0;
+}
 
 // DrawPowerupIcons2
 

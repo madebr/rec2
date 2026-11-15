@@ -22,6 +22,7 @@ extern int gInventory_selected;
 
 extern tRepulse_link gRepulse_links[6];
 extern tHeadup_icon gPickedup_powerups[20];
+extern br_pixelmap* gFizzle_in[3];
 extern tSlot_info gCost_APO;
 extern tSlot_info gTrade_in_value_APO;
 extern tSlot_info gSubstitution_value_APO;
@@ -120,7 +121,7 @@ extern void C2_HOOK_FASTCALL AdjustRepulseRay(int pIndex, br_vector3* pOrigin, b
 
 extern void C2_HOOK_FASTCALL ResetRepulseRay(void);
 
-// DrawSinglePowerupIcon
+extern int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowerup, tHeadup_icon* pIcon, int pX, int pY, int pUpdate_x);
 
 // DrawPowerupIcons2
 
