@@ -18,6 +18,7 @@
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
+#include "59-camera.h"
 #include "60-phil.h"
 #include "63-loading3.h"
 
@@ -99,7 +100,7 @@ tSpark gSparks[32] = { 0 };
 
 // GLOBAL: CARMA2_HW 0x006aa380
 // GLOBAL: CARMA2_SW 0x006a3dd0
-br_model* gLollipop_model;
+br_model* gLollipop_model = NULL;
 
 // GLOBAL: CARMA2_HW 0x006aa59c
 // GLOBAL: CARMA2_SW 0x006a3fec
@@ -1124,7 +1125,35 @@ void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 
 // DisposeKevStuff
 
-// DisposeKevStuffCar
+// FUNCTION: CARMA2_HW 0x004fe2c0
+// FUNCTION: CARMA2_SW 0x004f9860
+void C2_HOOK_FASTCALL DisposeKevStuffCar(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.car == pCar) {
+            gSmoke_column[i].lifetime = 0;
+            gSmoke_column[i].core.car = NULL;
+            gSmoke_column[i].core.car_actor = NULL;
+        }
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gSparks); i++) {
+        if (!(gSpark_flags & (1 << i))) {
+            continue;
+        }
+        if (gSparks[i].car == pCar) {
+            gSparks[i].count = 0;
+            gSpark_flags &= ~(1 << i);
+        }
+    }
+    if (pCar == gCar_to_view) {
+        gCamera_yaw = 0;
+        gCar_to_view = &gProgram_state.current_car;
+        InitialiseExternalCamera();
+        PositionExternalCamera(gCar_to_view, 200);
+        gCar_to_view = &gProgram_state.current_car;
+    }
+}
 
 // STUB: CARMA2_HW 0x004fe360
 // STUB: CARMA2_SW 0x004f9900
