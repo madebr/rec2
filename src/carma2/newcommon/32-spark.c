@@ -116,6 +116,10 @@ br_model* gLollipop_model = NULL;
 // GLOBAL: CARMA2_SW 0x006a3fec
 int gColumn_flags;
 
+// GLOBAL: CARMA2_HW 0x006aa5a0
+// GLOBAL: CARMA2_SW 0x006a3ff0
+int gNext_column;
+
 // GLOBAL: CARMA2_HW 0x006aa584
 // GLOBAL: CARMA2_SW 0x006a3fd0
 int gShrapnel_flags;
@@ -695,7 +699,74 @@ void C2_HOOK_FASTCALL AdjustSmokeColumn(int pIndex, const tSmoke_column_core* pC
     }
 }
 
-// CreateSmokeColumn2
+// FUNCTION: CARMA2_HW 0x004fb630
+// FUNCTION: CARMA2_SW 0x004f6b70
+void C2_HOOK_FASTCALL CreateSmokeColumn2(int pType, br_actor* pActor, tCar_spec* pCar, tPhysics_object* pObject, int pColour, int pVertex_index, tU32 pLifetime) {
+    int i;
+    br_actor* actor;
+    tSmoke_column* col;
+    tSmoke_column_core core;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmoke_column) != 10);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmoke_column[0].frame_count) != 3);
+
+    col = &gSmoke_column[gNext_column];
+    if (pObject == NULL) {
+        if (pCar != NULL) {
+            pObject = pCar->collision_info;
+        } else {
+            pObject = NULL;
+        }
+    }
+    core.field_0x0 = pType;
+    core.car = pCar;
+    core.collision_info = pObject;
+    core.car_actor = pActor;
+    if (!gSmoke_on) {
+        return;
+    }
+    if (gColumn_flags & (1 << gNext_column)) {
+        ARStartPipingSession(ePipe_chunk_smoke_column);
+        AddSmokeColumnToPipingSession(gNext_column, &gSmoke_column[gNext_column].core, gSmoke_column[gNext_column].vertex_index, gSmoke_column[gNext_column].colour);
+        AREndPipingSession();
+        if (gSmoke_column[gNext_column].colour == 0) {
+            ARStartPipingSession(ePipe_chunk_flame);
+            actor = col->flame_actor->children;
+            for (i = 0; i < (int)REC2_ASIZE(col->frame_count); i++) {
+                if (actor->type == BR_ACTOR_MODEL) {
+                    AddFlameToPipingSession(i + 16 * gNext_column, col->frame_count[i], col->scale_x[i], col->scale_y[i], col->offset_x[i], col->offset_z[i]);
+                }
+                actor->type = BR_ACTOR_NONE;
+                actor = actor->next;
+            }
+            AREndPipingSession();
+        }
+    }
+    if (pColour == 0 && (!(gColumn_flags & (1 << gNext_column)) || gSmoke_column[gNext_column].colour != 0)) {
+        BrActorAdd(gNon_track_actor, gSmoke_column[gNext_column].flame_actor);
+    }
+    if (pColour != 0 && (gColumn_flags & (1 << gNext_column)) && gSmoke_column[gNext_column].colour == 0) {
+        BrActorRemove(gSmoke_column[gNext_column].flame_actor);
+    }
+    ARStartPipingSession(ePipe_chunk_smoke_column);
+    AddSmokeColumnToPipingSession(gNext_column, &core, pVertex_index, pColour);
+    AREndPipingSession();
+    gSmoke_column[gNext_column].core = core;
+    gSmoke_column[gNext_column].colour = pColour;
+    gSmoke_column[gNext_column].lifetime = pLifetime;
+    gSmoke_column[gNext_column].time = 0;
+    gSmoke_column[gNext_column].smudge_timer = 1000;
+    gSmoke_column[gNext_column].vertex_index = pVertex_index;
+    gSmoke_column[gNext_column].upright = 1;
+    gColumn_flags |= 1 << gNext_column;
+    for (i = 0; i < (int)REC2_ASIZE(gSmoke_column[gNext_column].frame_count); i++) {
+        gSmoke_column[gNext_column].frame_count[i] = 100;
+    }
+    gNext_column++;
+    if (gNext_column >= (int)REC2_ASIZE(gSmoke_column)) {
+        gNext_column = 0;
+    }
+}
 
 // STUB: CARMA2_HW 0x004fb890
 // STUB: CARMA2_SW 0x004f6dd0
