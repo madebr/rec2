@@ -395,7 +395,7 @@ br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* rend
         scalar_is_valid = 1;
         break;
     default:
-        abort();
+        break;
     }
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_dispatch, _query, 0x2c);
@@ -423,7 +423,7 @@ br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* rend
             return 0;
         }
     }
-    r = BrDevContainedFind((br_object**)&gf, format_type, object_name, NULL);
+    r = BrDevContainedFind((br_object**)&gf, format_type, "Default-Format", NULL);
     if (r == 0) {
         *pgf = gf;
         return 0;
@@ -437,7 +437,7 @@ br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* rend
         }
     }
     BrDevCheckAdd(0, "softform", 0);
-    r = BrDevContainedFind((br_object**)&gf, format_type, object_name, NULL);
+    r = BrDevContainedFind((br_object**)&gf, format_type, "Default-Format", NULL);
     if (r == 0) {
         *pgf = gf;
         return 0;
