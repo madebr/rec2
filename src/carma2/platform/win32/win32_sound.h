@@ -61,7 +61,7 @@ extern const char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
 
 extern int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
 
-extern void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel);
+extern void C2_HOOK_FASTCALL PDS3CheckCDAMedia(void);
 
 extern int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel);
 
