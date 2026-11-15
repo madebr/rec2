@@ -68,7 +68,9 @@ br_node* C2_HOOK_CDECL BrRemTail(br_list* list) {
         return NULL;
     }
     list->tail = n->prev;
+#ifdef BRENDER_FIX_BUGS
     n->prev->next = (br_node*)&list->_null;
+#endif
     return n;
 }
 
