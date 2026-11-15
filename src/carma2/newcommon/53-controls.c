@@ -313,6 +313,13 @@ void C2_HOOK_FASTCALL TDamageTrans(void) {
     DamageTrans(21);
 }
 
+// FUNCTION: CARMA2_HW 0x00442040
+// FUNCTION: CARMA2_SW 0x00442120
+void C2_HOOK_FASTCALL TDamageSteering(void) {
+
+    DamageSteering(21);
+}
+
 // FUNCTION: CARMA2_HW 0x00442050
 // FUNCTION: CARMA2_SW 0x00442130
 void C2_HOOK_FASTCALL TDamageLFWheel(void) {

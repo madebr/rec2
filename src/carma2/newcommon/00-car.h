@@ -35,6 +35,8 @@ extern void C2_HOOK_FASTCALL DamageEngine(int pDamage_amount);
 
 extern void C2_HOOK_FASTCALL DamageTrans(int pAmount);
 
+extern void C2_HOOK_FASTCALL DamageSteering(int pDamage_amount);
+
 extern void C2_HOOK_FASTCALL DamageLFWheel(int pDamage_amount);
 
 extern void C2_HOOK_FASTCALL DamageLFBrake(int pDamage_amount);
