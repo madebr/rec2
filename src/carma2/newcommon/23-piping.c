@@ -665,7 +665,32 @@ void C2_HOOK_FASTCALL ResetCars(void) {
     }
 }
 
-// PipeObjectPosition
+// FUNCTION: CARMA2_HW 0x004c68a0
+// FUNCTION: CARMA2_SW 0x004c2fd0
+int C2_HOOK_FASTCALL PipeObjectPosition(tPhysics_object* pObject, void* pContext) {
+    br_actor* actor;
+    tNon_car_spec* non_car;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, car_ID, 0x80);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tNon_car_spec, car_ID, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_non_car, matrix, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_non_car, matrix, 0x30);
+
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 0x1) {
+        actor = pObject->actor;
+        non_car = actor->type_data;
+        ARAddVariedDataToSession(ePipe_chunk_non_car, (tU16)non_car->car_ID, 2,
+            SIZE_OFFSET_PIPING(tPipe_chunk_non_car, actor), actor,
+            SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &actor->t.t.mat);
+    } else if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 0x20) {
+        actor = pObject->actor;
+        ARAddVariedDataToSession(ePipe_chunk_non_car, (uintptr_t)pObject, 2,
+            SIZE_OFFSET_PIPING(tPipe_chunk_non_car, actor), actor,
+            SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &actor->t.t.mat);
+    }
+    return 0;
+}
 
 // PipeCarPositions
 

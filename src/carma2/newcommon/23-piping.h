@@ -149,7 +149,7 @@ extern void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 extern void C2_HOOK_FASTCALL ResetCars(void);
 
-// PipeObjectPosition
+extern int C2_HOOK_FASTCALL PipeObjectPosition(tPhysics_object* pObject, void* pContext);
 
 // PipeCarPositions
 
