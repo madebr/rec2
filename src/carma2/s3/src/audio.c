@@ -729,6 +729,7 @@ int C2_HOOK_FASTCALL S3LoadSoundbank(const char* pPath, int pLow_memory_mode) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056818f
+// FUNCTION: CARMA2_SW 0x0056382f
 void C2_HOOK_FASTCALL S3SoundBankReaderSkipWhitespace(tS3_soundbank_read_ctx* pContext) {
 
     while (pContext->data_len != 0) {
@@ -875,6 +876,7 @@ int C2_HOOK_FASTCALL S3SoundBankReadEntry(tS3_soundbank_read_ctx *pContext, cons
 }
 
 // FUNCTION: CARMA2_HW 0x005686e9
+// FUNCTION: CARMA2_SW 0x00563d89
 void C2_HOOK_FASTCALL S3SoundBankReaderNextLine(tS3_soundbank_read_ctx* pContext) {
 
     S3SoundBankReaderSkipToNewline(pContext);
@@ -882,6 +884,7 @@ void C2_HOOK_FASTCALL S3SoundBankReaderNextLine(tS3_soundbank_read_ctx* pContext
 }
 
 // FUNCTION: CARMA2_HW 0x00568205
+// FUNCTION: CARMA2_SW 0x005638a5
 void C2_HOOK_FASTCALL S3SoundBankReaderSkipToNewline(tS3_soundbank_read_ctx* pContext) {
     char* newline_ptr;
 
@@ -895,6 +898,7 @@ void C2_HOOK_FASTCALL S3SoundBankReaderSkipToNewline(tS3_soundbank_read_ctx* pCo
 }
 
 // FUNCTION: CARMA2_HW 0x00568260
+// FUNCTION: CARMA2_SW 0x00563900
 void C2_HOOK_FASTCALL S3SoundBankReaderAdvance(tS3_soundbank_read_ctx* pContext, int pAmount) {
 
     pContext->data += pAmount;
