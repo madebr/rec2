@@ -267,9 +267,22 @@ void C2_HOOK_FASTCALL HaltNetServiceReentrancy(void) {
 // STUB: CARMA2_SW 0x004995b0
 // NetSendHeadupToAllPlayers
 
-// STUB: CARMA2_HW 0x0049d780
-// STUB: CARMA2_SW 0x00499900
-// NetSendHeadupToEverybody
+// FUNCTION: CARMA2_HW 0x0049d780
+// FUNCTION: CARMA2_SW 0x00499900
+void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage) {
+    tNet_message_chunk* the_contents;
+
+    if (gNet_mode != eNet_mode_none) {
+        if (gProgram_state.racing) {
+            NewTextHeadupSlot(4, 0, 3000, -4, pMessage);
+        }
+        the_contents = NetStartBroadcastContents(eNet_message_chunk_type_headup, 0);
+        if (the_contents != NULL) {
+            strcpy(the_contents->headup.text, pMessage);
+            NetBroadcastContents(the_contents);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0049daf0
 // FUNCTION: CARMA2_SW 0x00499c70
@@ -604,7 +617,8 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player
     message = pPlayer->field_0xcc;
     if (message != NULL && (tS32)(message->header.field_0x16 + pContents_size) > (tS32)(sizeof(tMax_message) - sizeof(void*))) {
         NetReallySendMessageToPlayer(gCurrent_net_game, message, pPlayer->ID);
-        pPlayer->field_0xcc = message = NULL;
+        pPlayer->field_0xcc = NULL;
+        message = NULL;
     }
     if (message == NULL) {
         message = pPlayer->field_0xcc = NetAllocateMessage(sizeof(tMax_message) - sizeof(void*));
@@ -1101,19 +1115,44 @@ void C2_HOOK_FASTCALL AddToGuaranteeList(tNet_message* pMessage, void* pAddress,
     }
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x004a5e20
-// STUB: CARMA2_SW 0x004a1fa0
+// FUNCTION: CARMA2_HW 0x004a5e20
+// FUNCTION: CARMA2_SW 0x004a1fa0
 int C2_HOOK_FASTCALL NetGuaranteedSendMessageToPlayer(tNet_game_details* pDetails, tNet_message* pMessage, tPlayer_ID pPlayer, void* pNotifyFail) {
-    NOT_IMPLEMENTED();
-}
+    int i;
+    int j;
+    int size;
+    tNet_message_chunk* contents;
+    tNet_message_chunk* dest;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    if (pMessage->header.field_0x14 != 0xff) {
+        PDFatalError("Guaranteed message not built properly");
+    }
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        if (gNet_players[i].ID == pPlayer) {
+            if (pPlayer == gLocal_net_ID) {
+                pMessage->header.field_0x8 = gLocal_net_ID;
+                pMessage->header.field_0x10 = PDGetTotalTime();
+                pMessage->header.field_0x14 = 1;
+                ReceivedMessage(pMessage, &gNet_players[i], GetRaceTime());
+                NetDisposeMessage(pDetails, pMessage);
+                return 0;
+            } else {
+                AddToGuaranteeList(pMessage, NULL, pPlayer, pNotifyFail);
+                size = 0;
+                contents = &pMessage->contents;
+                for (j = 0; j < 2; j++) {
+                    size += contents->raw.header.size;
+                    contents = (tNet_message_chunk*)((tU8*)contents + contents->raw.header.size);
+                }
+                dest = NetGetToPlayerContentsSize(&gNet_players[i], size);
+                gNet_players[i].field_0xcc->header.field_0x14++;
+                memcpy(dest, &pMessage->contents, size);
+                return 0;
+            }
+        }
+    }
+    return -1;
+}
 
 // FUNCTION: CARMA2_HW 0x004a6020
 // FUNCTION: CARMA2_SW 0x004a21a0
