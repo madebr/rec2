@@ -321,14 +321,13 @@ br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_dev
 // FUNCTION: CARMA2_HW 0x005294d0
 // FUNCTION: CARMA2_SW 0x00528230
 br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_device_pixelmap* destination, br_token scalar_type) {
-    br_primitive_library* primitive_library;
+    br_primitive_library* primitive_library = NULL;
     br_error r;
     br_output_facility* ot;
     char object_name[25] = "Default-Primitives-00000";
     char image_name[9] = "softprm0";
     br_boolean scalar_is_valid;
 
-    primitive_library = NULL;
     scalar_is_valid = 0;
     switch (scalar_type) {
     case BRT_FIXED:
@@ -342,7 +341,7 @@ br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_dev
         scalar_is_valid = 1;
         break;
     default:
-        abort();
+        break;
     }
     if (primitive_library == NULL && destination != NULL) {
         destination->dispatch->_query((br_object*)destination, &primitive_library, BRT_PRIMITIVE_LIBRARY_O);
