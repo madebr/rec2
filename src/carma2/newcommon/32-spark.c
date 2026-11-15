@@ -11,6 +11,7 @@
 #include "00-car.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "15-displays.h"
 #include "18-graphics2.h"
 #include "23-piping.h"
 #include "36-trig.h"
@@ -77,11 +78,12 @@ tSmoke gSmoke[25];
 // GLOBAL: CARMA2_HW 0x006a8760
 tBRender_smoke* gBR_smoke_pointers[35];
 
+// GLOBAL: CARMA2_HW 0x006aa568
+// GLOBAL: CARMA2_SW 0x006a3fb8
+int gDust_rotate = 0;
+
 // GLOBAL: CARMA2_HW 0x006aa56c
 int gN_BR_smoke_structs;
-
-// GLOBAL: CARMA2_HW 0x006a8638
-br_pixelmap* gFlame_map[20];
 
 // GLOBAL: CARMA2_HW 0x006a9180
 // GLOBAL: CARMA2_SW 0x006a2bd0
@@ -141,6 +143,30 @@ static tU8 gFlame_frame_size[20][2] = {
     { 24, 70 }, { 20, 65 }, { 20, 64 }, { 20, 74 }, { 28, 55 },
     { 24, 62 }, { 28, 47 }, { 20, 51 }, { 20, 45 }, { 20, 45 },
 };
+
+// GLOBAL: CARMA2_HW 0x006aa5a4
+// GLOBAL: CARMA2_SW 0x006a3ff4
+int gNum_splash_types;
+
+// GLOBAL: CARMA2_HW 0x006a82b8
+// GLOBAL: CARMA2_SW 0x006a2318
+tSplash gSplash[32] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a8638
+// GLOBAL: CARMA2_SW 0x006a2698
+br_pixelmap* gFlame_map[20] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006aa570
+// GLOBAL: CARMA2_SW 0x006a3fbc
+int gSplash_flags;
+
+// GLOBAL: CARMA2_HW 0x006a9130
+// GLOBAL: CARMA2_SW 0x006a2b80
+br_material* gSplash_material[20];
+
+// GLOBAL: CARMA2_HW 0x006a8758
+// GLOBAL: CARMA2_SW 0x006a2728
+br_model* gSplash_model;
 
 // GLOBAL: CARMA2_SW 0x00795198
 br_pixelmap* gFog_shade_table;
@@ -459,6 +485,17 @@ int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2) {
 // STUB: CARMA2_HW 0x004f9fc0
 void C2_HOOK_FASTCALL InitSmokeStuff(void) {
     NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004fa8d0
+// FUNCTION: CARMA2_SW 0x004f5960
+void C2_HOOK_FASTCALL DustRotate(void) {
+
+    gDust_rotate += 1;
+    if (gDust_rotate >= gNum_dust_tables) {
+        gDust_rotate = 0;
+    }
+    NewTextHeadupSlot(4, 0, 1000, -4, "Dust colour rotated");
 }
 
 // FUNCTION: CARMA2_HW 0x004fb1b0
@@ -844,7 +881,85 @@ void C2_HOOK_FASTCALL InitFlame(void) {
     BrModelAdd(gLollipop_model);
 }
 
-// InitSplash
+// FUNCTION: CARMA2_HW 0x004fdde0
+// FUNCTION: CARMA2_SW 0x004f9380
+void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
+    int i;
+    int num_files;
+    int num;
+    br_scalar direction;
+    br_actor* actor;
+    br_material* material;
+    char the_path[256];
+    char s[256];
+    br_pixelmap* splash_maps[20];
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSplash) != 32);
+    C2_HOOK_BUG_ON(sizeof(tSplash) != 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSplash, scale_x, 0x18);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlame_map) != 20);
+
+    gSplash_flags = 0;
+    gSplash_model = BrModelAllocate("Splash", 4, 2);
+    strcpy(gCurrent_load_directory, "COMMON");
+    if (pF != NULL) {
+        num_files = GetAnInt(pF);
+        gNum_splash_types = 0;
+        for (i = 0; i < num_files; i++) {
+            GetAString(pF, s);
+            PathCat(the_path, the_path, s);
+            strcpy(the_path, s);
+            num = DRLoadMultiplePix(the_path, &splash_maps[gNum_splash_types], REC2_ASIZE(splash_maps) - gNum_splash_types);
+            if (num == 0) {
+                FatalError(kFatalError_CantLoadPixelmapFile_S, the_path);
+            }
+            gNum_splash_types += num;
+        }
+    } else {
+        strcpy(the_path, "SPLSHBLU.PIX");
+        gNum_splash_types = DRLoadMultiplePix(the_path, splash_maps, REC2_ASIZE(splash_maps));
+    }
+    BrMapAddMany(splash_maps, gNum_splash_types);
+    for (i = 0; i < gNum_splash_types; i++) {
+        gSplash_material[i] = BrMaterialAllocate(NULL);
+        gSplash_material[i]->flags &= ~BR_MATF_LIGHT;
+        gSplash_material[i]->flags |= BR_MATF_ALWAYS_VISIBLE;
+        gSplash_material[i]->colour_map = splash_maps[i];
+        BrMaterialAdd(gSplash_material[i]);
+    }
+    gSplash_model->nvertices = 4;
+    BrVector3SetFloat(&gSplash_model->vertices[0].p, -.5f, 0.f, 0.f);
+    BrVector3SetFloat(&gSplash_model->vertices[1].p, .5f, 0.f, 0.f);
+    BrVector3SetFloat(&gSplash_model->vertices[2].p, .5f, 1.f, 0.f);
+    BrVector3SetFloat(&gSplash_model->vertices[3].p, -.5f, 1.f, 0.f);
+    BrVector2Set(&gSplash_model->vertices[0].map, 0.f, 1.f);
+    BrVector2Set(&gSplash_model->vertices[1].map, 1.f, 1.f);
+    BrVector2Set(&gSplash_model->vertices[2].map, 1.f, 0.f);
+    BrVector2Set(&gSplash_model->vertices[3].map, 0.f, 0.f);
+    gSplash_model->nfaces = 2;
+    gSplash_model->faces[0].vertices[0] = 0;
+    gSplash_model->faces[0].vertices[1] = 1;
+    gSplash_model->faces[0].vertices[2] = 2;
+    gSplash_model->faces[1].vertices[0] = 0;
+    gSplash_model->faces[1].vertices[1] = 2;
+    gSplash_model->faces[1].vertices[2] = 3;
+    gSplash_model->faces[0].smoothing = 1;
+    gSplash_model->faces[1].smoothing = 1;
+    BrModelAdd(gSplash_model);
+    for (i = 0; i < (int)REC2_ASIZE(gSplash); i++) {
+        gSplash[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        actor = gSplash[i].actor;
+        actor->model = gSplash_model;
+        if (gNum_splash_types != 0) {
+            material = gSplash_material[IRandomBetween(0, gNum_splash_types - 1)];
+        } else {
+            material = NULL;
+        }
+        actor->material = material;
+        direction = (br_scalar)(2 * IRandomBetween(0, 1) - 1);
+        gSplash[i].scale_x = direction * SRandomBetween(0.9f, 1.1f);
+    }
+}
 
 // DisposeSplash
 

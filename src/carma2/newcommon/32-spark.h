@@ -43,6 +43,11 @@ extern tSpark gSparks[32];
 extern br_matrix4 gCameraToScreen;
 extern br_camera* gSpark_cam;
 extern tCar_spec* gCar_of_material;
+extern int gNum_splash_types;
+extern tSplash gSplash[32];
+extern int gSplash_flags;
+extern br_material* gSplash_material[20];
+extern br_model* gSplash_model;
 extern br_pixelmap* gFog_shade_table;
 extern br_pixelmap* gAcid_shade_table;
 
@@ -132,6 +137,8 @@ extern int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
 
 extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
+extern void C2_HOOK_FASTCALL DustRotate(void);
+
 extern void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
 
 // RecordSmokeCircle
@@ -178,7 +185,7 @@ extern void C2_HOOK_FASTCALL FlameAnimate(int pColumn, const br_vector3* pPos, t
 
 extern void C2_HOOK_FASTCALL InitFlame(void);
 
-// InitSplash
+extern void C2_HOOK_FASTCALL InitSplash(FILE* pF);
 
 // DisposeSplash
 

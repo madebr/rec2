@@ -432,7 +432,7 @@ void C2_HOOK_FASTCALL RestoreCameraPosition(int pIndex) {
 
 // FUNCTION: CARMA2_HW 0x004121b0
 // FUNCTION: CARMA2_SW 0x00412190
-void C2_HOOK_FASTCALL PointCamera(br_vector3* pPos, br_matrix34* pMat) {
+void C2_HOOK_FASTCALL PointCamera(const br_vector3* pPos, br_matrix34* pMat) {
     br_vector3 vn;
     br_scalar dist;
     br_angle theta;
@@ -440,16 +440,16 @@ void C2_HOOK_FASTCALL PointCamera(br_vector3* pPos, br_matrix34* pMat) {
 
     camera_ptr = gCamera->type_data;
     BrVector3Sub(&vn, pPos, (br_vector3*)pMat->m[3]);
-    vn.v[1] = 0.f;
+    vn.v[1] = 0.0f;
     BrVector3Normalise(&vn, &vn);
     pMat->m[0][0] = -vn.v[2];
-    pMat->m[0][1] = 0.f;
+    pMat->m[0][1] = 0.0f;
     pMat->m[0][2] = vn.v[0];
-    pMat->m[1][0] = 0.f;
-    pMat->m[1][1] = 1.f;
-    pMat->m[1][2] = 0.f;
+    pMat->m[1][0] = 0.0f;
+    pMat->m[1][1] = 1.0f;
+    pMat->m[1][2] = 0.0f;
     pMat->m[2][0] = -vn.v[0];
-    pMat->m[2][1] = 0.f;
+    pMat->m[2][1] = 0.0f;
     pMat->m[2][2] = -vn.v[2];
     dist = BR_LENGTH2(pMat->m[3][0] - pPos->v[0], pMat->m[3][2] - pPos->v[2]);
     theta = BR_ATAN2(pMat->m[3][1] - pPos->v[1], dist);
