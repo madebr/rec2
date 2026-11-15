@@ -125,12 +125,14 @@ int gMouseRButtonDown;
 int gMouseCaptured;
 
 // GLOBAL: CARMA2_HW 0x006621d4
+// GLOBAL: CARMA2_SW 0x0065cac4
 POINT gCursorPos_LastClick = {-1, -1};
 
 // GLOBAL: CARMA2_HW 0x006ad458
 POINT gPD_mouse_position;
 
 // GLOBAL: CARMA2_HW 0x006ad454
+// GLOBAL: CARMA2_SW 0x006a6bfc
 int gCursorPos_LastClick_Valid;
 
 // GLOBAL: CARMA2_HW 0x006ad468
@@ -1014,14 +1016,14 @@ void C2_HOOK_FASTCALL PDGetCurrentTime(char *pTimeStr) {
 // FUNCTION: CARMA2_HW 0x0051db00
 // FUNCTION: CARMA2_SW 0x005191a0
 int C2_HOOK_FASTCALL PDGetMouseClickPosition(int *pX_coord, int *pY_coord) {
-    if (!gCursorPos_LastClick_Valid) {
+    if (gCursorPos_LastClick_Valid) {
+        *pX_coord = gCursorPos_LastClick.x;
+        *pY_coord = gCursorPos_LastClick.y;
         gCursorPos_LastClick_Valid = 0;
-        return 0;
+        return 1;
     }
-    *pX_coord = gCursorPos_LastClick.x;
-    *pY_coord = gCursorPos_LastClick.y;
     gCursorPos_LastClick_Valid = 0;
-    return 1;
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0051c5f0
