@@ -41,6 +41,7 @@ br_error C2_HOOK_CDECL _M_br_object_queryAll(br_object* self, br_token_value* bu
 }
 
 // FUNCTION: CARMA2_HW 0x0052d150
+// FUNCTION: CARMA2_SW 0x005287f0
 br_error C2_HOOK_CDECL _M_br_object_queryAllSize(br_object* self, br_size_t* psize) {
 
     return BrTokenValueQueryAllSize(psize, self, self->dispatch->_templateQuery(self));
