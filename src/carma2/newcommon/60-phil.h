@@ -12,6 +12,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+#define NET_OBJECT_HIERARCHY_DEFAULT_SIZE 72
+
 extern int gPHIL_disabled;
 extern tPhysics_object* gPHIL_list_collision_infos;
 extern tU32 gPHIL_last_physics_tick;

@@ -75,6 +75,10 @@ tU32* gReal_render_palette;
 // GLOBAL: CARMA2_SW 0x0069ab34
 int gCollision_info_uid_counter;
 
+// GLOBAL: CARMA2_HW 0x00705560
+// GLOBAL: CARMA2_SW 0x006fc020
+tShit_mine gShit_mines[20];
+
 // GLOBAL: CARMA2_HW 0x006a0ae0
 // GLOBAL: CARMA2_SW 0x0069ab38
 br_model* gModel_powerup_armor;
@@ -982,7 +986,23 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// FillInMine
+inline void C2_HOOK_FASTCALL FillInMine(tNet_message_chunk* pChunk, tShit_mine* pMine, int pArg3) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_mine_explode, mine_index, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_mine_explode, field_0x3, 0x3);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_mine_explode, field_0x4, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_mine_explode, field_0x5, 0x5);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_mine_explode, field_0x8, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk_mine_explode, object_hierarchy, 0xc);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gShit_mines) != 20);
+
+    pChunk->mine_explode.mine_index = (tS8)(pMine - gShit_mines);
+    pChunk->mine_explode.field_0x3 = pMine->field_0x35;
+    pChunk->mine_explode.field_0x4 = pMine->field_0x34;
+    pChunk->mine_explode.field_0x5 = (tU8)(NetPlayerFromCar(pMine->field_0x30) - gNet_players);
+    pChunk->mine_explode.field_0x8 = pArg3;
+    GetHierarchyNetworkStuff(pMine->collision_info, pChunk->mine_explode.object_hierarchy, NET_OBJECT_HIERARCHY_DEFAULT_SIZE);
+}
 
 // SendMines
 
@@ -1002,7 +1022,35 @@ void C2_HOOK_FASTCALL MinePreCollisionStuff(void) {
 
 // ShitMine
 
-// MineExplode
+// FUNCTION: CARMA2_HW 0x004ddab0
+// FUNCTION: CARMA2_SW 0x004d9fb0
+int C2_HOOK_FASTCALL MineExplode(tShit_mine* pMine) {
+    tNet_message* message;
+    br_vector3 offset;
+    int size;
+
+    if (pMine->flags & 0x2) {
+        return 0;
+    }
+    pMine->flags |= 0x2;
+    if (gNet_mode == eNet_mode_host) {
+        size = GetHierarchyNetworkSize(pMine->collision_info);
+        message = NetBuildGuaranteedMessage(eNet_message_chunk_type_mine_explosion, size + (int)offsetof(tNet_message_chunk_mine_explode, object_hierarchy));
+        FillInMine(&message->contents, pMine, -1);
+        NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, message, NULL);
+    }
+    PHILRemoveObject(pMine->collision_info);
+    pMine->next_think_time = GetTotalTime() + 1600;
+    BrVector3Negate(&offset, &gExplosion_pix_animation_groups.groups[0].offset);
+    Explode(&gExplosion_pix_animation_groups, pMine->collision_info->actor, &pMine->collision_info->actor->model->bounds, &offset);
+    DRS3StartSound3D(gCar_outlet, eSoundId_Explosion, &pMine->collision_info->actor->t.t.translate.t, &gZero_v__car, 1, 255, BR_FIXED_INT(1), BR_FIXED_INT(1));
+    PipeSingleEndShitMine(pMine->collision_info->actor);
+    if (pMine->collision_info->actor->parent != NULL) {
+        BrActorRemove(pMine->collision_info->actor);
+    }
+    pMine->collision_info->actor->render_style = BR_RSTYLE_NONE;
+    return 1;
+}
 
 // FUNCTION: CARMA2_HW 0x004ddc10
 // FUNCTION: CARMA2_SW 0x004da110

@@ -48,6 +48,7 @@ extern int gInventory_cycling;
 extern tU32 gInventory_timeout;
 extern tU32* gReal_render_palette;
 extern int gCollision_info_uid_counter;
+extern tShit_mine gShit_mines[20];
 
 extern char* C2_HOOK_FASTCALL GetPowerupMessage(int pPowerup_index);
 
@@ -251,7 +252,7 @@ extern void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* pPowerup, tCar_spec* pC
 
 extern int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* pPowerup, tCar_spec* pCar);
 
-// FillInMine
+extern void C2_HOOK_FASTCALL FillInMine(tNet_message_chunk* pChunk, tShit_mine* pMine, int pArg3);
 
 // SendMines
 
@@ -267,7 +268,7 @@ extern void C2_HOOK_FASTCALL MinePreCollisionStuff(void);
 
 // ShitMine
 
-// MineExplode
+extern int C2_HOOK_FASTCALL MineExplode(tShit_mine* pMine);
 
 extern void C2_HOOK_FASTCALL TiggerMineToExplode(tCar_spec* pCar);
 
