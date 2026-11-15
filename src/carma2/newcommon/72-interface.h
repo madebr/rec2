@@ -63,6 +63,7 @@ extern int gFrontend_controls_count_keys;
 extern int gINT_00688748;
 extern tJoinable_game gGames_to_join[6];
 extern int gLast_graph_sel;
+extern tSave_game gStashed_save_game;
 extern br_material* gFrontend_backdrop_materials[3];
 extern br_token_value gFrontend_backdrop1_material_prims[3];
 extern br_token_value gFrontend_backdrop2_material_prims[3];
@@ -146,9 +147,9 @@ extern void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend);
 
 // SaveSinglePlayerState
 
-// RestoreSinglePlayerState
+extern void C2_HOOK_FASTCALL RestoreSinglePlayerState(void);
 
-// MaybeRestoreSavedGame
+extern void C2_HOOK_FASTCALL MaybeRestoreSavedGame(void);
 
 // NetworkJoinUpdateScroller
 
@@ -208,7 +209,7 @@ extern void C2_HOOK_FASTCALL InitNetStorageSpace(void);
 
 // NetHostChooseThisRace
 
-// NetCancel
+extern int C2_HOOK_FASTCALL NetCancel(tFrontend_spec* pFrontend);
 
 // FRONTEND_NetworkJoinMenuHandler
 
