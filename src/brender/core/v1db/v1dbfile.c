@@ -805,7 +805,8 @@ int C2_HOOK_STDCALL FopRead_OLD_MODEL_1(br_datafile* df, br_uint_32 id, br_uint_
     mp = BrModelAllocate(NULL, 0, 0);
     df->res = mp;
     df->prims->struct_read(df, &br_old_model_1_F, mp);
-    DfPush(DF_MODEL, df->res, 1);
+    df->res = NULL;
+    DfPush(DF_MODEL, mp, 1);
     return 0;
 }
 
