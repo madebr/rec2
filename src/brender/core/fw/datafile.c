@@ -1402,7 +1402,7 @@ void* C2_HOOK_STDCALL DfBlockReadBinary(br_datafile* df, void* base, int* count,
 // FUNCTION: CARMA2_SW 0x00527310
 int C2_HOOK_STDCALL DfBlockSizeText(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
 
-    return ((size * block_count * block_size + (32 - 1)) >> 5) + 2;
+    return ((size * block_count * block_size + (32 - 1)) / 32) + 2;
 }
 
 // FUNCTION: CARMA2_HW 0x0052c7a0
