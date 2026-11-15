@@ -66,6 +66,7 @@ address,type,name
 0x00574140,library,_getenv
 0x005741d0,library,_strtod
 0x00574290,library,_strtol
+0x00574560,library,_vsprintf
 0x005745d0,library,_longjmp
 0x00574650,library,__filbuf
 0x00574a80,library,_memset
