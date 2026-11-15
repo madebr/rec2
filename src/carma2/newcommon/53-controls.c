@@ -807,12 +807,36 @@ void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg) {
 
 }
 
-// HackyMapFixForMac3dfx
+inline void C2_HOOK_FASTCALL HackyMapFixForMac3dfx(void) {
 
-// STUB: CARMA2_HW 0x00444610
-// STUB: CARMA2_SW 0x004446f0
+    if (gCurrent_race.map_image != NULL) {
+        PixelmapSwapByteOrder(gCurrent_race.map_image);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00444610
+// FUNCTION: CARMA2_SW 0x004446f0
 void C2_HOOK_FASTCALL ToggleMap(void) {
-    NOT_IMPLEMENTED();
+    // GLOBAL: CARMA2_HW 0x0067c458
+    // GLOBAL: CARMA2_SW 0x00676bd0
+    static int old_indent;
+
+    if (gMap_view == 2) {
+        gMap_view = 1;
+        gRender_indent = old_indent;
+        HackyMapFixForMac3dfx();
+    } else if (!gAction_replay_mode) {
+        if (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_foxy && gThis_net_player_index == gIt_or_fox) {
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_fox_cant_do_that));
+        } else {
+            old_indent = gRender_indent;
+            gRender_indent = 0;
+            gMap_view = 2;
+            gMap_time = PDGetTotalTime();
+            HackyMapFixForMac3dfx();
+        }
+    }
+    AdjustRenderScreenSize();
 }
 
 // FUNCTION: CARMA2_HW 0x004446f0

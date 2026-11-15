@@ -181,7 +181,7 @@ extern void C2_HOOK_FASTCALL LoseDosh(void);
 
 extern void C2_HOOK_FASTCALL ToggleHeadupMap(int pArg);
 
-// HackyMapFixForMac3dfx
+extern void C2_HOOK_FASTCALL HackyMapFixForMac3dfx(void);
 
 extern void C2_HOOK_FASTCALL ToggleMap(void);
 
