@@ -3728,7 +3728,12 @@ void C2_HOOK_FASTCALL BackupNetworkOptions(void) {
     gFrontend_backup_net_options = gFrontend_net_options;
 }
 
-// RestoreNetworkOptions
+inline void C2_HOOK_FASTCALL RestoreNetworkOptions(void) {
+
+    C2_HOOK_BUG_ON(sizeof(tNet_game_options) != 0x30);
+
+    gFrontend_net_options = gFrontend_backup_net_options;
+}
 
 // FUNCTION: CARMA2_HW 0x00472ed0
 // FUNCTION: CARMA2_SW 0x00472440
@@ -3784,7 +3789,13 @@ int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend) {
 
 // NetOptions_Ok
 
-// NetOptions_Cancel
+// FUNCTION: CARMA2_HW 0x00473550
+// FUNCTION: CARMA2_SW 0x00472ac0
+int C2_HOOK_FASTCALL NetOptions_Cancel(tFrontend_spec* pFrontend) {
+
+    RestoreNetworkOptions();
+    return 0;
+}
 
 void C2_HOOK_FASTCALL CheckPlayersAreResponding2(tU32 pDeadline) {
     tU32 now;

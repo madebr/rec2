@@ -449,7 +449,7 @@ extern void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL BackupNetworkOptions(void);
 
-// RestoreNetworkOptions
+extern void C2_HOOK_FASTCALL RestoreNetworkOptions(void);
 
 extern int C2_HOOK_FASTCALL NetOptions_Infunc(tFrontend_spec* pFrontend);
 
@@ -461,7 +461,7 @@ extern int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend);
 
 // NetOptions_Ok
 
-// NetOptions_Cancel
+extern int C2_HOOK_FASTCALL NetOptions_Cancel(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL CheckPlayersAreResponding2(tU32 pDeadline);
 
