@@ -211,10 +211,30 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector
     }
 }
 
-// STUB: CARMA2_HW 0x004226d0
-// STUB: CARMA2_SW 0x00422750
+// FUNCTION: CARMA2_HW 0x004226d0
+// FUNCTION: CARMA2_SW 0x00422750
 tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount) {
-    NOT_IMPLEMENTED();
+    br_vector3 normal;
+    br_vector3 collision_position;
+    br_scalar t;
+    tFace_ref* best;
+    int i;
+
+    *pT = 2.0f;
+    for (i = 0; i < pCount; i++, pFaces++) {
+        CheckSingleFace(pFaces, pPosition, pDirection, &normal, &t, &collision_position);
+        if (t < *pT) {
+            *pT = t;
+            BrVector3Copy(pNormal, &normal);
+            best = pFaces;
+            BrVector3Copy(pCollision_position, &collision_position);
+        }
+    }
+    if (*pT < 2.0f) {
+        return best;
+    } else {
+        return NULL;
+    }
 }
 
 // RayCastInBox
