@@ -24,6 +24,8 @@
 #include "globvrpb.h"
 #include "platform.h"
 
+#include "rec2_macros.h"
+
 #include <math.h>
 #include <stdlib.h>
 
@@ -50,6 +52,16 @@ tU32 gUINT_006a237c;
 // GLOBAL: CARMA2_HW 0x006a2380
 // GLOBAL: CARMA2_SW 0x0069c3d8
 tU32 gLast_replay_zappy_screen;
+
+// GLOBAL: CARMA2_HW 0x006a2388
+// GLOBAL: CARMA2_SW 0x0069c3e0
+br_pixelmap* gReplay_pixies[11] = { NULL };
+
+#ifdef REC2_MATCHING
+// GLOBAL: CARMA2_HW 0x006a23b4
+// GLOBAL: CARMA2_SW 0x0069c40c
+int gINT_006a23b4 = 0;
+#endif
 
 // GLOBAL: CARMA2_HW 0x006a23c4
 // GLOBAL: CARMA2_SW 0x0069c41c
@@ -171,7 +183,21 @@ void C2_HOOK_FASTCALL DoActionReplayHeadups(void) {
 
 // InitializeActionReplayPix
 
-// FreeActionReplayPix
+// FUNCTION: CARMA2_HW 0x004e70d0
+// FUNCTION: CARMA2_SW 0x004e2f10
+void C2_HOOK_FASTCALL FreeActionReplayPix(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gReplay_pixies) != 11);
+
+    for (i = 0; i < (int)REC2_ASIZE(gReplay_pixies); i++) {
+        if (gReplay_pixies[i] != NULL) {
+            BrMapRemove(gReplay_pixies[i]);
+            BrPixelmapFree(gReplay_pixies[i]);
+            gReplay_pixies[i] = NULL;
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e7110
 // FUNCTION: CARMA2_SW 0x004e2f50
