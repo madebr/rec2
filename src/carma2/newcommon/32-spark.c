@@ -1166,6 +1166,7 @@ void C2_HOOK_FASTCALL MakeCarIt(tCar_spec* pCar) {
 #endif
 
 // STUB: CARMA2_HW 0x004fe570
+// STUB: CARMA2_SW 0x004f9d90
 void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar) {
     NOT_IMPLEMENTED();
 }

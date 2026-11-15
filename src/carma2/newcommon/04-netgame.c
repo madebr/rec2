@@ -638,7 +638,39 @@ void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
 
 // InitPlayers
 
-// UseGeneralScore
+// FUNCTION: CARMA2_HW 0x0049b7e0
+// FUNCTION: CARMA2_SW 0x00497960
+void C2_HOOK_FASTCALL UseGeneralScore(int pScore) {
+    int i;
+
+    switch (gCurrent_net_game->type) {
+    case eNet_game_type_2:
+        gINT_0068d920 = pScore;
+        break;
+    case eNet_game_type_6:
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            if (!gNet_players[i].field_0x80 && (pScore & (1 << i))) {
+                PlayerIsInfected(&gNet_players[i]);
+            }
+        }
+        break;
+    case eNet_game_type_foxy:
+        if (gNet_players[gIt_or_fox].ID != (tPlayer_ID)pScore) {
+            for (i = 0; i < gNumber_of_net_players; i++) {
+                StopCarBeingIt(gNet_players[i].car);
+            }
+            for (i = 0; i < gNumber_of_net_players; i++) {
+                if (gNet_players[i].ID == (tPlayer_ID)pScore) {
+                    MakeCarIt(gNet_players[i].car);
+                    gIt_or_fox = i;
+                }
+            }
+        }
+        break;
+    default:
+        break;
+    }
+}
 
 // NetSendEnvironmentChanges
 
