@@ -275,7 +275,7 @@ extern void C2_HOOK_FASTCALL ExtrapolateGeometryCoordinates(tSmash_quad_mapping*
 
 // ExtractDeTiledFaces
 
-// AddDecal
+extern br_actor* C2_HOOK_FASTCALL AddDecal(tFace_ref* pFace, br_vertex* pVertices, br_material* pMaterial, tU16* pFace_points, tU16* pPoint_indices);
 
 extern int C2_HOOK_FASTCALL InsertQuad(tSmash_quad_mapping* pMapping, br_actor* pActor, br_vertex* pVertices, tU8* pOn_edge, br_vertex** pCorners, br_material* pMaterial, tU16* pFace_points, tU16* pPoint_indices);
 

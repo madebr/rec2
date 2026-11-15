@@ -1231,7 +1231,65 @@ void C2_HOOK_FASTCALL ExtrapolateGeometryCoordinates(tSmash_quad_mapping* pMappi
 
 // ExtractDeTiledFaces
 
-// AddDecal
+// FUNCTION: CARMA2_HW 0x004f3820
+// FUNCTION: CARMA2_SW 0x004ef480
+br_actor* C2_HOOK_FASTCALL AddDecal(tFace_ref* pFace, br_vertex* pVertices, br_material* pMaterial, tU16* pFace_points, tU16* pPoint_indices) {
+    int i;
+    int temp;
+    int changed;
+    tU32 oldest_time;
+    tDecal* decal;
+    tDecal* oldest_decal;
+    br_model* model;
+
+    changed = 0;
+    oldest_time = GetTotalTime();
+    oldest_decal = gDecals;
+    for (i = 0, decal = gDecals; i < (int)REC2_ASIZE(gDecals); i++, decal++) {
+        if (decal->time == 0) {
+            break;
+        }
+        if (decal->time < oldest_time) {
+            oldest_time = decal->time;
+            oldest_decal = decal;
+        }
+    }
+    if (i >= (int)REC2_ASIZE(gDecals)) {
+        decal = oldest_decal;
+    }
+    model = decal->actor->model;
+    model->faces[0].material = pMaterial;
+    model->faces[1].material = pMaterial;
+    for (i = 0; i < 4; i++) {
+        model->vertices[i] = pVertices[i];
+        model->vertices[i].p.v[1] -= -10.0f;
+    }
+    BrModelUpdate(model, BR_MODU_ALL);
+    BrActorAdd(gOther_selfs[0], decal->actor);
+    for (i = 0; i < 2; i++) {
+        if (BrVector3Dot(&pFace->normal, &model->faces[i].n) <= 0.0f) {
+            temp = model->faces[i].vertices[0];
+            model->faces[i].vertices[0] = model->faces[i].vertices[1];
+            model->faces[i].vertices[1] = temp;
+            changed = 1;
+        }
+    }
+    if (changed) {
+        BrModelUpdate(model, BR_MODU_ALL);
+    }
+    decal->time = GetTotalTime();
+    for (i = 0; i < 4; i++) {
+        pPoint_indices[i] = i;
+    }
+    pFace_points[0] = 0;
+    pFace_points[1] = 1;
+    pFace_points[2] = 3;
+    pFace_points[3] = 0;
+    pFace_points[4] = 2;
+    pFace_points[5] = 3;
+    PipeSingleSmashDecal(2);
+    return decal->actor;
+}
 
 // FUNCTION: CARMA2_HW 0x004f39a0
 // FUNCTION: CARMA2_SW 0x004ef600
