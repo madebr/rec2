@@ -9,6 +9,7 @@
 #include "24-loadsave.h"
 
 #include "globvars.h"
+#include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
@@ -32,7 +33,35 @@ int gCount_saved_games;
 
 // Encryptificate
 
-// MakeSavedGame
+// FUNCTION: CARMA2_HW 0x004919a0
+// FUNCTION: CARMA2_SW 0x0048ec10
+void C2_HOOK_FASTCALL MakeSavedGame(tSave_game* pSave_game) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gProgram_state.cars_available) != 60);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCurrent_APO_levels) != 3);
+
+    pSave_game->skill_level = gProgram_state.skill_level;
+    pSave_game->magic = 0x12345678;
+    pSave_game->game_completed = gProgram_state.game_completed;
+    pSave_game->current_race_index = gProgram_state.current_race_index;
+    pSave_game->is_boundary_race = gIs_boundary_race;
+    pSave_game->credits = gProgram_state.credits;
+    strcpy(pSave_game->car_name, gProgram_state.car_name);
+    strcpy(pSave_game->player_name, gProgram_state.player_name);
+    PDGetCurrentTime(pSave_game->time);
+    PDGetCurrentDate(pSave_game->date);
+    for (i = 0; i < gNumber_of_races; i++) {
+        pSave_game->races_finished[i] = gRace_list[i].count_opponents;
+    }
+    pSave_game->number_of_cars = gProgram_state.number_of_cars;
+    pSave_game->current_car_index = gProgram_state.current_car_index;
+    memcpy(pSave_game->cars, gProgram_state.cars_available, sizeof(pSave_game->cars));
+    for (i = 0; i < (int)REC2_ASIZE(gCurrent_APO_levels); i++) {
+        pSave_game->apo_levels[i] = gCurrent_APO_levels[i];
+        pSave_game->apo_potential[i] = gCurrent_APO_potential_levels[i];
+    }
+}
 
 // STUB: CARMA2_HW 0x00491ac0
 // STUB: CARMA2_SW 0x0048ed30

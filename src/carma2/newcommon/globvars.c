@@ -147,7 +147,11 @@ int gDev_initial_race;
 
 // GLOBAL: CARMA2_HW 0x0074d460
 // GLOBAL: CARMA2_SW 0x007439c0
-br_matrix34 gCamera_to_world;
+br_matrix34 gCamera_to_world = { 0 };
+
+// GLOBAL: CARMA2_HW 0x0074d490
+// GLOBAL: CARMA2_SW 0x007439f0
+int gCurrent_APO_potential_levels[3] = { 0 };
 
 // GLOBAL: CARMA2_HW 0x0074d560
 // GLOBAL: CARMA2_SW 0x00743ac0
@@ -383,10 +387,6 @@ tOpponent* gOpponents;
 // GLOBAL: CARMA2_HW 0x00761f50
 // GLOBAL: CARMA2_SW 0x007584b0
 int gCurrent_APO_levels[3];
-
-// GLOBAL: CARMA2_HW 0x0074d490
-// GLOBAL: CARMA2_SW 0x007439f0
-int gCurrent_APO_potential_levels[3];
 
 // GLOBAL: CARMA2_HW 0x0074b784
 // GLOBAL: CARMA2_SW 0x00741e44

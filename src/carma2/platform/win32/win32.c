@@ -991,6 +991,7 @@ void C2_HOOK_FASTCALL PDForEveryFile(const char *pThe_path, tPDForEveryFile_cbfn
 }
 
 // FUNCTION: CARMA2_HW 0x0051da20
+// FUNCTION: CARMA2_SW 0x005190c0
 void C2_HOOK_FASTCALL PDGetCurrentDate(char *pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
@@ -1001,6 +1002,7 @@ void C2_HOOK_FASTCALL PDGetCurrentDate(char *pTimeStr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051da90
+// FUNCTION: CARMA2_SW 0x00519130
 void C2_HOOK_FASTCALL PDGetCurrentTime(char *pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
