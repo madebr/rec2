@@ -24,6 +24,7 @@ br_error C2_HOOK_CDECL _M_br_object_queryBuffer(br_object* self, br_uint_32* pva
 }
 
 // FUNCTION: CARMA2_HW 0x0052d0c0
+// FUNCTION: CARMA2_SW 0x00528760
 br_error C2_HOOK_CDECL _M_br_object_queryMany(br_object* self, br_token_value* tv, void* extra, br_size_t extra_size, br_int_32* pcount) {
 
     return BrTokenValueQueryMany(tv, extra, extra_size, pcount, self, self->dispatch->_templateQuery(self));
