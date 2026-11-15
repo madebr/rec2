@@ -280,7 +280,25 @@ void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {
 
 // CreateSparkShower
 
-// AdjustSpark
+// FUNCTION: CARMA2_HW 0x004f8630
+// FUNCTION: CARMA2_SW 0x004f3cb0
+void C2_HOOK_FASTCALL AdjustSpark(int pSpark_num, br_vector3* pPos, br_vector3* pLength) {
+    br_vector3 tv;
+    br_matrix34* mat;
+    int i;
+
+    i = pSpark_num & 0xff;
+    gSpark_flags |= 1 << pSpark_num;
+    if (gSparks[i].car != NULL) {
+        mat = &gSparks[i].car->car_master_actor->t.t.mat;
+        BrVector3Sub(&tv, pPos, (br_vector3*)mat->m[3]);
+        BrMatrix34TApplyV(&gSparks[i].pos, &tv, mat);
+    } else {
+        BrVector3Copy(&gSparks[i].pos, pPos);
+    }
+    BrVector3Copy(&gSparks[i].length, pLength);
+    gSparks[i].colour = (tU8)(pSpark_num >> 8);
+}
 
 // FUNCTION: CARMA2_HW 0x004f86f0
 // FUNCTION: CARMA2_SW 0x004f3d70
@@ -823,7 +841,7 @@ void C2_HOOK_FASTCALL FlameAnimate(int pColumn, const br_vector3* pPos, tU32 pTi
             col->scale_x[i] = (2 * IRandomBetween(0, 1) - 1) * scale;
             col->scale_y[i] = SRandomBetween(0.5f, 1.0f) * 0.003f;
             col->offset_x[i] = SRandomPosNeg(0.03f);
-            col->offset_z[i] = SRandomBetween(-0.03f, 0.f);
+            col->offset_z[i] = SRandomBetween(-0.03f, 0.0f);
             actor->type = BR_ACTOR_NONE;
         }
         if (col->frame_count[i] == 0) {
