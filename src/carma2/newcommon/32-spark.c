@@ -339,9 +339,25 @@ void C2_HOOK_FASTCALL ResetShrapnel(void) {
     gShrapnel_flags = 0;
 }
 
-// CreateShrapnelShower2
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// CreateShrapnelShowerWorld
+// STUB: CARMA2_HW 0x004f8800
+// STUB: CARMA2_SW 0x004f3e80
+void C2_HOOK_FASTCALL CreateShrapnelShower2(const br_vector3* pPosition, const br_vector3* pVelocity, const br_vector3* pDirection, br_scalar pStrength, tCar_spec* pCar1, tCar_spec* pCar2, int pMaterialCount, br_material** pMaterials) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004f8b50
+// FUNCTION: CARMA2_SW 0x004f41d0
+void C2_HOOK_FASTCALL CreateShrapnelShowerWorld(const br_vector3* pPosition, const br_vector3* pVelocity, const br_vector3* pDirection, br_scalar pStrength, int pMaterialCount, br_material** pMaterials) {
+    CreateShrapnelShower2(pPosition, pVelocity, pDirection, pStrength, NULL, NULL, pMaterialCount, pMaterials);
+}
 
 // CreateShrapnelShower
 
