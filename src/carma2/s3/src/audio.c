@@ -399,16 +399,18 @@ int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src) {
 
 // FUNCTION: CARMA2_HW 0x005657bd
 // FUNCTION: CARMA2_SW 0x00560e5d
-void C2_HOOK_FASTCALL S3StopAllOutletSounds(void) {
+int C2_HOOK_FASTCALL S3StopAllOutletSounds(void) {
     tS3_outlet* o;
 
-    if (!gS3_enabled) {
-        return;
+    if (gS3_enabled) {
+        o = gS3_state.outlets;
+        while (o != NULL) {
+            S3StopOutletSound(o);
+            o = o->next;
+        }
+        return 0;
     }
-
-    for (o = gS3_state.outlets; o != NULL; o = o->next) {
-        S3StopOutletSound(o);
-    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00564ae2

@@ -50,7 +50,7 @@ extern tS3_error_codes C2_HOOK_FASTCALL S3ReleaseOutlet(tS3_outlet* pOutlet);
 
 extern int C2_HOOK_FASTCALL S3SetOutletVolume(tS3_outlet* pOutlet, int pVolume);
 
-extern void C2_HOOK_FASTCALL S3StopAllOutletSounds(void);
+extern int C2_HOOK_FASTCALL S3StopAllOutletSounds(void);
 
 extern int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
 
