@@ -326,12 +326,15 @@ int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel) {
 // FUNCTION: CARMA2_HW 0x005697ef
 // FUNCTION: CARMA2_SW 0x00564e8f
 int C2_HOOK_FASTCALL PDS3StopSampleChannel(tS3_channel* pChannel) {
+    LPDIRECTSOUNDBUFFER buffer;
 
-    if (pChannel->descriptor != NULL && pChannel->descriptor->type == pChannel->type && pChannel->descriptor->pd_handle != NULL) {
-        LPDIRECTSOUNDBUFFER buffer = pChannel->descriptor->pd_handle;
-        IDirectSoundBuffer_Stop(buffer);
-        if (gS3_callbacks.on_sample_channel_stop != NULL && pChannel->active) {
-            gS3_callbacks.on_sample_channel_stop(pChannel);
+    if (pChannel->descriptor != NULL && pChannel->descriptor->type == pChannel->type) {
+        buffer = pChannel->descriptor->pd_handle;
+        if (buffer != NULL) {
+            IDirectSoundBuffer_Stop(buffer);
+            if (gS3_callbacks.on_sample_channel_stop != NULL && pChannel->active) {
+                gS3_callbacks.on_sample_channel_stop(pChannel);
+            }
         }
     }
     if (pChannel->active) {

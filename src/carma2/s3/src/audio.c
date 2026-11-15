@@ -53,6 +53,7 @@ int gS3_soundbank_buffer_len;
 char* gS3_soundbank_buffer;
 
 // GLOBAL: CARMA2_HW 0x006b2dc8
+// GLOBAL: CARMA2_SW 0x006ac550
 tS3_callbacks gS3_callbacks;
 
 // GLOBAL: CARMA2_HW 0x007a0758
