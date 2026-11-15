@@ -690,16 +690,17 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32
     br_face* fp;
     br_material** mip;
     int mi_count;
-    int i;
+    br_uint_32 i;
+    br_uint_32 nfaces;
     void* ptr;
 
+    nfaces = length / df->prims->struct_size(df, &br_old_face_F, NULL);
     ptr = DfPop(DF_VERTEX, (int*)&i);
     mip = DfPop(DF_MATERIAL_INDEX, &mi_count);
     DfPush(DF_VERTEX, ptr, i);
-    mi_count = length / df->prims->struct_size(df, &br_old_face_F, NULL);
-    fp = BrResAllocate(v1db.res, sizeof(br_face) * mi_count, BR_MEMORY_FACES);
-    DfStructReadArray(df, &br_old_face_F, fp, mi_count);
-    for (i = 0; i < mi_count; i++) {
+    fp = BrResAllocate(v1db.res, sizeof(br_face) * nfaces, BR_MEMORY_FACES);
+    DfStructReadArray(df, &br_old_face_F, fp, nfaces);
+    for (i = 0; i < nfaces; i++) {
         union u_mat_u16 {
             br_material mat;
             br_uint_16 u16;
@@ -710,7 +711,7 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32
         }
     }
     BrResFree(mip);
-    DfPush(DF_FACE, fp, mi_count);
+    DfPush(DF_FACE, fp, nfaces);
     return 0;
 }
 
