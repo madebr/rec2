@@ -582,8 +582,7 @@ int C2_HOOK_STDCALL FopRead_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, br_ui
     mip = (br_material**)BrResAllocate(v1db.res, sizeof(intptr_t) * (count + 1), BR_MEMORY_MATERIAL_INDEX);
     mip[0] = NULL;
     for (i = 1; i < count + 1; i++) {
-        df->prims->name_read(df, name);
-        mip[i] = BrMaterialFind(name);
+        mip[i] = BrMaterialFind(df->prims->name_read(df, name));
     }
     DfPush(DF_MATERIAL_INDEX, mip, count + 1);
     return 0;
