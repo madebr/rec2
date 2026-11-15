@@ -487,7 +487,9 @@ void C2_HOOK_FASTCALL S3UpdateListenerVectors(void) {
         gS3_listener_vel_now.v[0] = (gS3_listener_position_now.v[0] - gS3_listener_position_old.v[0]) * (float)gS3_delta_time / 1000.f;
         gS3_listener_vel_now.v[1] = (gS3_listener_position_now.v[1] - gS3_listener_position_old.v[1]) * (float)gS3_delta_time / 1000.f;
         gS3_listener_vel_now.v[2] = (gS3_listener_position_now.v[2] - gS3_listener_position_old.v[2]) * (float)gS3_delta_time / 1000.f;
-        BrVector3Copy(&gS3_listener_position_old, &gS3_listener_position_now);
+        gS3_listener_position_old.v[0] = gS3_listener_position_now.v[0];
+        gS3_listener_position_old.v[1] = gS3_listener_position_now.v[1];
+        gS3_listener_position_old.v[2] = gS3_listener_position_now.v[2];
     }
     if (gS3_listener_left_ptr != NULL) {
         S3CopyVector3(&gS3_listener_left_now, gS3_listener_left_ptr, gS3_listener_left_is_brender);
