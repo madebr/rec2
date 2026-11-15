@@ -124,6 +124,7 @@ int C2_HOOK_CDECL BrFileGetLine(char* buf, br_size_t buf_len, void* f) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cea0
+// FUNCTION: CARMA2_SW 0x00527a30
 void C2_HOOK_CDECL BrFilePutLine(char* buf, void* f) {
     fw.fsys->putline(buf, ((br_file*)f)->raw_file);
 }
