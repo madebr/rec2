@@ -14,6 +14,10 @@
 
 extern int gPed_count_limbed_actors;
 extern br_actor* gLimbs_actor;
+extern tSmashable_initial_position_spec gGiblet_initial_position;
+extern tMovement_spec gGiblet_initial_speed;
+extern tShrapnel_time_info gGiblet_min_max_time;
+extern int gGiblet_size_count;
 
 extern tPedForms_vtable* gPed_vtable;
 
@@ -195,7 +199,7 @@ extern void C2_HOOK_FASTCALL CBDisposePersonality(tPed_personality* pPersonality
 
 extern void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType);
 
-// DoGibShower
+extern void C2_HOOK_FASTCALL DoGibShower(tU32 pId, tU32 pTime, unsigned int pSeed, float pForce, int pStart_size, br_vector3* pPosition, br_vector3* pAlternate_position, br_vector3* pImpactee_velocity);
 
 // PedApplyGibShower
 

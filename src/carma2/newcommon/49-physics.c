@@ -82,6 +82,10 @@ int gPhysics_other_buffer_capacity;
 // GLOBAL: CARMA2_SW 0x0068e198
 tProximity_ray gProximity_rays[20];
 
+// GLOBAL: CARMA2_HW 0x00694274
+// GLOBAL: CARMA2_SW 0x0068e2cc
+tPed_giblet_size_spec* gGiblet_sizes;
+
 // GLOBAL: CARMA2_HW 0x00694278
 // GLOBAL: CARMA2_SW 0x0068e2d0
 br_model* gPed_spurt_model;

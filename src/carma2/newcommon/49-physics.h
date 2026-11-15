@@ -26,6 +26,7 @@ extern int gPHIL_mechanics_time_sync;
 extern int gPHIL_munging_objects;
 extern int gPhysics_other_buffer_capacity;
 extern tProximity_ray gProximity_rays[20];
+extern tPed_giblet_size_spec* gGiblet_sizes;
 extern br_model* gPed_spurt_model;
 extern int gPed_spurty_lumps_count;
 extern int gPed_times[3];

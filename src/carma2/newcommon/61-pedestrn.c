@@ -56,6 +56,22 @@ int gPed_count_limbed_actors;
 // GLOBAL: CARMA2_SW 0x0069a47c
 br_actor* gLimbs_actor;
 
+// GLOBAL: CARMA2_HW 0x00694468
+// GLOBAL: CARMA2_SW 0x0068e4c0
+tSmashable_initial_position_spec gGiblet_initial_position;
+
+// GLOBAL: CARMA2_HW 0x0069bc38
+// GLOBAL: CARMA2_SW 0x00695c90
+tMovement_spec gGiblet_initial_speed;
+
+// GLOBAL: CARMA2_HW 0x006a0408
+// GLOBAL: CARMA2_SW 0x0069a460
+tShrapnel_time_info gGiblet_min_max_time;
+
+// GLOBAL: CARMA2_HW 0x0069bc18
+// GLOBAL: CARMA2_SW 0x00695c70
+int gGiblet_size_count;
+
 // GLOBAL: CARMA2_HW 0x0065d7d4
 // GLOBAL: CARMA2_SW 0x0065810c
 int gGoreLevel = 1;
@@ -807,7 +823,37 @@ void C2_HOOK_FASTCALL CBFillInObject(tPhysics_object* pObject, undefined4 pType)
     }
 }
 
-// DoGibShower
+// FUNCTION: CARMA2_HW 0x004ccb10
+// FUNCTION: CARMA2_SW 0x004c9210
+void C2_HOOK_FASTCALL DoGibShower(tU32 pId, tU32 pTime, unsigned int pSeed, float pForce, int pStart_size, br_vector3* pPosition, br_vector3* pAlternate_position, br_vector3* pImpactee_velocity) {
+    int seed;
+    int count;
+    int i;
+    int j;
+    tPed_giblet_size_spec* size;
+    tSmash_vertex* fragment;
+    br_scalar scale;
+
+    seed = rand();
+    srand(pSeed);
+    for (j = pStart_size, size = &gGiblet_sizes[pStart_size]; j < gGiblet_size_count; j++, size++) {
+        if (pForce >= size->min_force) {
+            count = (int)((pForce - size->min_force) / size->instance_force + 1.f);
+            if (count > size->max_count) {
+                count = size->max_count;
+            }
+            for (i = 0; i < count; i++) {
+                fragment = FindShrapnelFragment(size->models[IRandomBetween(0, size->model_count - 1)], pId, 2);
+                if (fragment == NULL) {
+                    break;
+                }
+                scale = SetInitPosition(fragment->actor, &gGiblet_initial_position, NULL, pPosition, pAlternate_position, NULL, NULL, NULL);
+                SetShrapnelFragment(fragment, &gGiblet_initial_speed, pImpactee_velocity, scale, &gGiblet_min_max_time, pTime, &gZero_vector__smash, NULL, NULL);
+            }
+        }
+    }
+    srand(seed);
+}
 
 // PedApplyGibShower
 
