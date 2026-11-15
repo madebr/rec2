@@ -105,6 +105,10 @@ int gRecovery_voucher_count;
 // GLOBAL: CARMA2_SW 0x00676be4
 int gAllow_car_flying;
 
+// GLOBAL: CARMA2_HW 0x0067c470
+// GLOBAL: CARMA2_SW 0x00676be8
+int gINT_0067c470;
+
 // GLOBAL: CARMA2_HW 0x0067c474
 // GLOBAL: CARMA2_SW 0x00676bec
 int gEntering_message;
@@ -479,11 +483,52 @@ void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar) {
 
 // CheckRecoveryOfCars
 
-// TradeInAPO
+inline int C2_HOOK_FASTCALL TradeInAPO(int pCost) {
+    int type;
+
+    while (pCost > 0
+        && (gProgram_state.current_car.power_up_levels[0] != 0
+            || gProgram_state.current_car.power_up_levels[1] != 0
+            || gProgram_state.current_car.power_up_levels[2] != 0)) {
+        type = IRandomBetween(0, (int)REC2_ASIZE(gProgram_state.current_car.power_up_levels) - 1);
+        if (gProgram_state.current_car.power_up_levels[type] != 0) {
+            gProgram_state.current_car.power_up_levels[type]--;
+            pCost -= gNet_mode != eNet_mode_none ? gTrade_in_value_APO.initial_network[gCurrent_net_game->type] : gTrade_in_value_APO.initial[gProgram_state.skill_level];
+            gProgram_state.credits += gNet_mode != eNet_mode_none ? gTrade_in_value_APO.initial_network[gCurrent_net_game->type] : gTrade_in_value_APO.initial[gProgram_state.skill_level];
+        }
+    }
+    if (pCost < 0) {
+        pCost = 0;
+    }
+    return pCost;
+}
 
 // CheckOtherRacingKeys
 
-// CheckRecoverCost
+// FUNCTION: CARMA2_HW 0x00442750
+// FUNCTION: CARMA2_SW 0x00442830
+int C2_HOOK_FASTCALL CheckRecoverCost(void) {
+
+    if (gNet_mode != eNet_mode_none) {
+        if (gProgram_state.current_car.knackered
+            || gRecovery_voucher_count != 0
+            || (NetPlayerFromCar(&gProgram_state.current_car) != NULL && NetPlayerFromCar(&gProgram_state.current_car)->field_0x80 != 0)) {
+            gINT_0067c470 = 1;
+        } else {
+            gINT_0067c470 = 0;
+            if (gProgram_state.credits < (gNet_mode != eNet_mode_none ? gRecovery_cost.initial_network[gCurrent_net_game->type] : gRecovery_cost.initial[gProgram_state.skill_level])) {
+                TradeInAPO((int)(gNet_mode != eNet_mode_none ? gRecovery_cost.initial_network[gCurrent_net_game->type] : gRecovery_cost.initial[gProgram_state.skill_level]));
+            }
+            if (gProgram_state.credits < (gNet_mode != eNet_mode_none ? gRecovery_cost.initial_network[gCurrent_net_game->type] : gRecovery_cost.initial[gProgram_state.skill_level])) {
+                gToo_poor_for_recovery_timeout = PDGetTotalTime() + 2000;
+                NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_press_return_to_commit_suicide));
+                return 0;
+            }
+            SpendCredits((int)(gNet_mode != eNet_mode_none ? gRecovery_cost.initial_network[gCurrent_net_game->type] : gRecovery_cost.initial[gProgram_state.skill_level]));
+        }
+    }
+    return 1;
+}
 
 // SortOutRecover
 

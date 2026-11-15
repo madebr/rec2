@@ -13,6 +13,7 @@
 #include "rec2_types.h"
 
 extern int gAllow_car_flying;
+extern int gINT_0067c470;
 extern int gEntering_message;
 extern int gInvulnerability;
 extern tU32 gToo_poor_for_recovery_timeout;
@@ -139,11 +140,11 @@ extern void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar);
 
 // CheckRecoveryOfCars
 
-// TradeInAPO
+extern int C2_HOOK_FASTCALL TradeInAPO(int pCost);
 
 // CheckOtherRacingKeys
 
-// CheckRecoverCost
+extern int C2_HOOK_FASTCALL CheckRecoverCost(void);
 
 // SortOutRecover
 
