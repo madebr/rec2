@@ -344,16 +344,18 @@ int C2_HOOK_FASTCALL S3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
 int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet) {
     tS3_channel* c;
 
-    if (!gS3_enabled) {
-        return 0;
-    }
-    for (c = pOutlet->channel_list; c != NULL; c = c->next) {
-        // FUN_006a280(c);
-        if (c->active) {
-            c->spatial_sound = 0;
-            S3StopChannel(c);
-            c->needs_service = 1;
+    if (gS3_enabled) {
+        c = pOutlet->channel_list;
+        while (c != NULL) {
+            S3ServiceSpatialSound(c);
+            if (c->active) {
+                c->spatial_sound = 0;
+                S3StopChannel(c);
+                c->needs_service = 1;
+            }
+            c = c->next;
         }
+        return 0;
     }
     return 0;
 }
