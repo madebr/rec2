@@ -1530,7 +1530,11 @@ void C2_HOOK_FASTCALL TurnOnGhostPeds(void) {
     NOT_IMPLEMENTED();
 }
 
-// TurnOffGhostPeds
+// STUB: CARMA2_HW 0x004d6bb0
+// STUB: CARMA2_SW 0x004d31b0
+void C2_HOOK_FASTCALL TurnOffGhostPeds(void) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004d6c10
 // FUNCTION: CARMA2_SW 0x004d3210

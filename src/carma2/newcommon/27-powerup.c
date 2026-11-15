@@ -1251,7 +1251,11 @@ void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* pPowerup, tCar_spec* pCar) {
     gDrunk_pedestrians = 0;
 }
 
-// ResetGhostPeds
+// FUNCTION: CARMA2_HW 0x004de9a0
+// FUNCTION: CARMA2_SW 0x004daea0
+void C2_HOOK_FASTCALL ResetGhostPeds(tPowerup* pPowerup, tCar_spec* pCar) {
+    TurnOffGhostPeds();
+}
 
 // DoBouncey
 
