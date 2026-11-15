@@ -23,13 +23,13 @@ extern tPHIL_queued_objects gPhil_queued_objects;
 extern int gPHIL_count_queued_objects_for_removal;
 extern int gPHIL_count_queued_objects;
 
-// ScalarToFraction
+extern tU16 C2_HOOK_FASTCALL ScalarToFraction(br_scalar pMin, br_scalar pMax, br_scalar pValue);
 
-// FractionToScalar
+extern br_scalar C2_HOOK_FASTCALL FractionToScalar(br_scalar pMin, br_scalar pMax, tU16 pFixed);
 
 extern void C2_HOOK_FASTCALL GetOrientationFromMatrix(tFixed_quat* pOrientation, const br_matrix34* pMatrix);
 
-// GetMatrixFromOrientation
+extern void C2_HOOK_FASTCALL GetMatrixFromOrientation(br_matrix34* pMatrix, const tFixed_quat* pOrientation);
 
 // OmegaCompScalarTo16
 

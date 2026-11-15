@@ -5843,6 +5843,7 @@ typedef enum {
     ePhysicsError_PolyhedronHasNoPoints = 3,
     ePhysicsError_UnknownHingeType = 5,
     ePhysicsError_OutOfMemory = 6,
+    ePhysicsError_error9 = 9,
     ePhysicsError_InsufficientSizedBuffer = 12
 } tPhysicsError;
 
