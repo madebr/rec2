@@ -235,7 +235,7 @@ extern void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34
 
 extern void C2_HOOK_FASTCALL PipeSingleFlap(br_actor* pActor, br_angle pAngle);
 
-// PipeSingleRelink
+extern void C2_HOOK_FASTCALL PipeSingleRelink(br_actor* pParent, br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL PipeSingleIdentity(br_actor* pActor);
 
@@ -465,7 +465,7 @@ extern void C2_HOOK_FASTCALL UndoFlap(tPipe_chunk** pChunk, tPipe_chunk* pPrev_c
 
 extern void C2_HOOK_FASTCALL UndoModelMash(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
-// UndoRelink
+extern void C2_HOOK_FASTCALL UndoRelink(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
 
 // UndoSplitWeld
 

@@ -717,6 +717,7 @@ typedef enum {
     ePipe_chunk_skid_adjustment = 22,
     ePipe_chunk_flap = 23,
     ePipe_model_mash = 24,
+    ePipe_chunk_relink = 25,
     ePipe_chunk_identity = 26,
     ePipe_chunk_explosion = 31,
     ePipe_chunk_non_car_creation = 32,
@@ -752,6 +753,12 @@ typedef enum {
 } tPipe_chunk_type;
 
 typedef struct {
+    br_actor* actor;
+    br_actor* old_parent;
+    br_actor* new_parent;
+} tPipe_chunk_relink;
+
+typedef struct {
     br_model* old_model;
     br_model* new_model;
 } tPipe_chunk_smash_model_change;
@@ -776,6 +783,7 @@ typedef struct tPipe_chunk {
         tPipe_chunk_shrapnel shrapnel;
         tPipe_chunk_identity identity;
         tPipe_chunk_flap flap;
+        tPipe_chunk_relink relink;
         tPipe_chunk_smash_model_change smash_model_change;
         tPipe_smash_texture_change smash_texture_change;
         tPipe_single_transform_type transform_type;
