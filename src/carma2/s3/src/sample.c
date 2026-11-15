@@ -121,6 +121,7 @@ void C2_HOOK_CDECL s3_debug_init(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565b46
+// FUNCTION: CARMA2_SW 0x005611e6
 void C2_HOOK_CDECL s3_dprintf(const char* pFormat, ...) {
 
 }
