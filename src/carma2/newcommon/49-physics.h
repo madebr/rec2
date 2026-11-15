@@ -20,6 +20,7 @@ extern void* gPhysics_buffer2_ptr;
 extern int gImmortal_peds;
 extern int gTotal_count_smash_peds;
 extern int gBOOL_00744804;
+extern float gPed_head_scale;
 extern tPedestrian* gPedestrian_array;
 extern void* gPhysics_buffer3_ptr;
 extern int gPHIL_mechanics_time_sync;

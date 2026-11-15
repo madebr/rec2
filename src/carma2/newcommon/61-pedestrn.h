@@ -66,6 +66,12 @@ extern int gPed_groups_count;
 extern tPed_movement_spec* gPed_movements;
 extern int gPed_movements_count;
 extern tRace_ped_spec* gRace_pedestrian_specs;
+extern br_vector3 gPed_scale;
+extern float gAverage_ped_scale;
+extern tPed_cache_006944c0 gPed_cache_006944c0[100];
+extern tPed_face_cache_0x34* gPed_face_caches[4];
+extern int gPipe_halted_ped_status;
+extern int gPed_valium_left;
 
 extern int C2_HOOK_FASTCALL OrientationChanged(const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2, float pCos_angle);
 
@@ -73,7 +79,7 @@ extern int C2_HOOK_FASTCALL OrientationChanged(const br_matrix34* pOrientation_1
 
 // InitFaceCaches
 
-// ResetPedFaceCache
+extern void C2_HOOK_FASTCALL ResetPedFaceCache(void);
 
 // SetPedCurrentFace
 
@@ -337,15 +343,15 @@ extern void C2_HOOK_FASTCALL RenderLimbs(void);
 
 // LastChanceForPedEffects
 
-// ResetPedSystem
+extern void C2_HOOK_FASTCALL ResetPedSystem(void);
 
-// ResetNapalmBolts
+extern void C2_HOOK_FASTCALL ResetNapalmBolts(void);
 
 // ARResetNapalmBolts
 
 extern void C2_HOOK_FASTCALL AdjustNapalmBolt(int pIndex, tPedestrian* pPed, br_vector3* pPositions);
 
-// InitPedsForRace
+extern void C2_HOOK_FASTCALL InitPedsForRace(void);
 
 // RenderElectroBastardRays
 

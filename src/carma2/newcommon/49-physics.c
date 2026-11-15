@@ -58,6 +58,10 @@ int gImmortal_peds;
 // GLOBAL: CARMA2_SW 0x0073b2c4
 int gBOOL_00744804;
 
+// GLOBAL: CARMA2_HW 0x00744800
+// GLOBAL: CARMA2_SW 0x0073b2c0
+float gPed_head_scale;
+
 // GLOBAL: CARMA2_HW 0x00744808
 // GLOBAL: CARMA2_SW 0x0073b2c8
 tPedestrian* gPedestrian_array;
