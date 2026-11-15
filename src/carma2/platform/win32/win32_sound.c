@@ -410,9 +410,11 @@ int C2_HOOK_FASTCALL FUN_00569b29(void) {
 // FUNCTION: CARMA2_HW 0x00569f1b
 // FUNCTION: CARMA2_SW 0x005655bb
 int C2_HOOK_FASTCALL PDS3IsMIDIStopped(tS3_channel *pChannel) {
+    MCIDEVICEID device;
 
+    device = pChannel->mciDevice;
     gPDS3_mci_midi_status_parms.dwItem = MCI_STATUS_MODE;
-    mciSendCommandA(pChannel->mciDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&gPDS3_mci_midi_status_parms);
+    mciSendCommandA(device, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&gPDS3_mci_midi_status_parms);
     if (gPDS3_mci_midi_status_parms.dwReturn == MCI_MODE_PLAY) {
         return 0;
     }
