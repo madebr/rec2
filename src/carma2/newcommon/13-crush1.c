@@ -8,9 +8,11 @@
 
 #include "13-crush1.h"
 
+#include "00-car.h"
 #include "01-network.h"
 #include "08-loading1.h"
 #include "09-funks.h"
+#include "18-graphics2.h"
 #include "23-piping.h"
 #include "30-opponent.h"
 #include "41-utility.h"
@@ -1432,7 +1434,17 @@ void C2_HOOK_FASTCALL SendAllSemiDetachedBits(tNet_game_player_info* pPlayer) {
     }
 }
 
-// AddNonCar
+void C2_HOOK_FASTCALL AddNonCar(tNon_car_spec* pNon_car, const tDriver* pDriver) {
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gActive_non_car_list) != 99);
+    // FIXME: pDriver should be passed by argument, not pointer
+
+    if (gNum_active_non_cars != REC2_ASIZE(gActive_non_car_list)) {
+        pNon_car->driver = *pDriver;
+        gActive_non_car_list[gNum_active_non_cars++] = pNon_car;
+        PHILAddActiveObjectImmediately(pNon_car->collision_info, NULL, NULL, NULL);
+    }
+}
 
 // DetachBit
 
@@ -1556,7 +1568,34 @@ int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_ob
     return 0;
 }
 
-// FullyDetachBit
+// FUNCTION: CARMA2_HW 0x0042f4e0
+// FUNCTION: CARMA2_SW 0x0042f530
+void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) {
+    br_actor* actor;
+    tUser_crush_data* user_crush;
+    tCar_crush_detach_data* detach_data;
+    tNon_car_spec* non_car;
+
+    actor = pObject->actor;
+    if (actor != NULL && (user_crush = actor->user) != NULL && user_crush->crush_data != NULL
+            && (detach_data = user_crush->crush_data->detach_data) != NULL && detach_data->field_0x28 == 1) {
+        PhysicsRemoveObject(pObject);
+        if (pObject->physics_joint1 != NULL) {
+            pObject->physics_joint1->type = eJoint_none;
+            pObject->physics_joint1 = NULL;
+        }
+        if (gPHIL_doing_physics) {
+            TellPhysicsJointsHaveChanged(pCar->collision_info);
+        }
+        pObject->flags |= 0x100;
+        non_car = actor->type_data;
+        AddNonCar(non_car, &gDetached_bit_driver);
+        PipeSingleNonCar((tU16)non_car->car_ID, actor);
+        actor->identifier[3] = '!';
+        detach_data->field_0x28 = 2;
+        pCar->use_shell_model = 0;
+    }
+}
 
 // SendFullyDetachBit
 

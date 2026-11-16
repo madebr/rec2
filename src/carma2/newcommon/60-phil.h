@@ -85,7 +85,7 @@ extern int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* pInfo, const br
 
 // PHILAddObjectImmediately
 
-// PHILAddActiveObjectImmediately
+extern int C2_HOOK_FASTCALL PHILAddActiveObjectImmediately(tPhysics_object* pObject, const br_matrix34* pMatrix, const br_vector3* pVelocity, const br_vector3* pOmega);
 
 extern int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pCollision_info, int pParam, ...);
 
