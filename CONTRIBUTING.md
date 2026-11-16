@@ -33,7 +33,7 @@ This collection of tools allows writing equivalent C code for every function.
 To give the rec2 project full flexibility to choose whatever license is best to protect the project,
 new contributors must add the following message in their commit message or pull request:
 (**Replace `[full name or GitHub username]` and `[YYYY-MM-DD]` with your name and actual date**)
-```
+```txt
 Contributor License Authorization
 
 I grant madebr <anonymous.maarten@gmail.com> a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to use, reproduce, modify, distribute, sublicense, and relicense my contributions to rec2 under any license, including proprietary and open-source licenses, subject to applicable law.
@@ -45,6 +45,11 @@ Date: [YYYY-MM-DD]
 Name: [full name or GitHub username]
 ```
 
+The preferred method to do this is to create a pull request without any code change, but only a commit message containing the message above:
+```sh
+git commit --allow-empty
+```
+Adding the text to your commit message is also fine.
 
 # Hints
 
