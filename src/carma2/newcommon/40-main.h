@@ -17,7 +17,7 @@ extern C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void);
 
 extern void C2_HOOK_FASTCALL ServiceGame(void);
 
-// ServiceGameInRace
+extern void C2_HOOK_FASTCALL ServiceGameInRace(void);
 
 C2_NORETURN void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv);
 

@@ -38,10 +38,9 @@ void C2_HOOK_CDECL BrAddHead(br_list* list, br_node* node) {
 // FUNCTION: CARMA2_HW 0x005299a0
 // FUNCTION: CARMA2_SW 0x00524510
 void C2_HOOK_CDECL BrAddTail(br_list* list, br_node* node) {
-
-    node->next = (br_node*)list;
-    node->prev = (br_node*)list;
-    node->next->prev = node;
+    node->next = (struct br_node *)&(list->_null);
+    node->prev = list->tail;
+    node->prev->next = node;
     list->tail = node;
 }
 
@@ -55,7 +54,9 @@ br_node* C2_HOOK_CDECL BrRemHead(br_list* list) {
         return NULL;
     }
     list->head = n->next;
+#ifdef BRENDER_FIX_BUGS
     n->next->prev = (br_node*)&list->head;
+#endif
     return n;
 }
 
@@ -69,16 +70,20 @@ br_node* C2_HOOK_CDECL BrRemTail(br_list* list) {
         return NULL;
     }
     list->tail = n->prev;
+#ifdef BRENDER_FIX_BUGS
     n->prev->next = (br_node*)&list->_null;
+#endif
     return n;
 }
 
 // FUNCTION: CARMA2_HW 0x00529a00
 // FUNCTION: CARMA2_SW 0x00524570
 void C2_HOOK_CDECL BrInsert(br_list* list, br_node* here, br_node* node) {
+    br_node* next;
 
+    next = here->next;
     node->prev = here;
-    node->next = here->next;
+    node->next = next;
     here->next->prev = node;
     here->next = node;
 }
@@ -124,12 +129,15 @@ br_simple_node* C2_HOOK_CDECL BrSimpleRemHead(br_simple_list* list) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529aa0
+// FUNCTION: CARMA2_SW 0x00524610
 void C2_HOOK_CDECL BrSimpleInsert(br_simple_list* list, br_simple_node* here, br_simple_node* node) {
+    br_simple_node* next;
 
+    next = here->next;
     node->prev = &here->next;
-    node->next = here->next;
-    if (here->next != NULL) {
-        here->next->prev = &node->next;
+    node->next = next;
+    if (next != NULL) {
+        next->prev = &node->next;
     }
     here->next = node;
 }
@@ -142,7 +150,7 @@ br_simple_node* C2_HOOK_CDECL BrSimpleRemove(br_simple_node* node) {
     if (node->next != NULL) {
         node->next->prev = node->prev;
     }
-    node->next = NULL;
     node->prev = NULL;
+    node->next = NULL;
     return node;
 }

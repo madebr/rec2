@@ -25,7 +25,7 @@
 #include "60-phil.h"
 #include "28-world3.h"
 #include "11-world1.h"
-#include "18-graphics2.h"
+#include "18b-graphics2.h"
 
 #include <string.h>
 
@@ -75,7 +75,11 @@ void C2_HOOK_FASTCALL ServiceGame(void) {
     NOT_IMPLEMENTED();
 }
 
-// ServiceGameInRace
+// STUB: CARMA2_HW 0x004922a0
+// STUB: CARMA2_SW 0x0048f4e0
+void C2_HOOK_FASTCALL ServiceGameInRace(void) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004924a0
 // FUNCTION: CARMA2_SW 0x0048f6d0

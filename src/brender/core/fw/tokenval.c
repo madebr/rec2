@@ -518,6 +518,7 @@ copy_integers:
 }
 
 // FUNCTION: CARMA2_HW 0x0052e300
+// FUNCTION: CARMA2_SW 0x005299a0
 br_size_t C2_HOOK_STDCALL ValueExtraSize(void* block, br_tv_template_entry* tep) {
     void* mem;
     br_uint_32* lp;
@@ -642,6 +643,7 @@ br_error C2_HOOK_CDECL BrTokenValueQueryMany(br_token_value* tv, void* extra, br
 }
 
 // FUNCTION: CARMA2_HW 0x0052e2a0
+// FUNCTION: CARMA2_SW 0x00529940
 br_error C2_HOOK_CDECL BrTokenValueQueryManySize(br_size_t* psize, br_token_value* tv, void* block, br_tv_template* template) {
     br_int_32 o;
     br_size_t extra_size;

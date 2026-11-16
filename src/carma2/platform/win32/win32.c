@@ -125,12 +125,14 @@ int gMouseRButtonDown;
 int gMouseCaptured;
 
 // GLOBAL: CARMA2_HW 0x006621d4
+// GLOBAL: CARMA2_SW 0x0065cac4
 POINT gCursorPos_LastClick = {-1, -1};
 
 // GLOBAL: CARMA2_HW 0x006ad458
 POINT gPD_mouse_position;
 
 // GLOBAL: CARMA2_HW 0x006ad454
+// GLOBAL: CARMA2_SW 0x006a6bfc
 int gCursorPos_LastClick_Valid;
 
 // GLOBAL: CARMA2_HW 0x006ad468
@@ -769,6 +771,7 @@ void C2_HOOK_FASTCALL PDInitTimer(void) {
 // FUNCTION: CARMA2_HW 0x0051d410
 // FUNCTION: CARMA2_SW 0x00518cb0
 tU32 C2_HOOK_FASTCALL PDGetTotalTime(void) {
+#ifdef REC2_HW
     LARGE_INTEGER perfCountValue;
     LARGE_INTEGER delta;
 
@@ -778,6 +781,10 @@ tU32 C2_HOOK_FASTCALL PDGetTotalTime(void) {
         return (tU32) (delta.QuadPart / gPerformanceCounterFrequency_ms.QuadPart);
     }
     return 0;
+#endif
+#ifdef REC2_SW
+    return timeGetTime();
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0051d990
@@ -803,6 +810,46 @@ void C2_HOOK_FASTCALL PDEnterDebugger(const char *pStr) {
 #endif
     ShowCursor(FALSE);
 }
+
+#ifdef REC2_HW
+#define MISSING_CALL C2_HOOK_CDECL
+#elif defined(REC2_SW)
+#define MISSING_CALL C2_HOOK_FASTCALL
+#endif
+
+// FUNCTION: CARMA2_HW 0x0051a7d0
+// FUNCTION: CARMA2_SW 0x00514500
+int MISSING_CALL PDMissingMaterial(const char* pName) {
+
+    dr_dprintf("SOMETHING MISSING WARNING - Can't find material '%s'", pName);
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0051a7f0
+// FUNCTION: CARMA2_SW 0x00514520
+int MISSING_CALL PDMissingTable(const char* pName) {
+
+    dr_dprintf("SOMETHING MISSING WARNING - Can't find shade table '%s'", pName);
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0051a810
+// FUNCTION: CARMA2_SW 0x00514540
+int MISSING_CALL PDMissingModel(const char* pName) {
+
+    dr_dprintf("SOMETHING MISSING WARNING - Can't find model '%s'", pName);
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0051a830
+// FUNCTION: CARMA2_SW 0x00514560
+int MISSING_CALL PDMissingMap(const char* pName) {
+
+    dr_dprintf("SOMETHING MISSING WARNING - Can't find pixelmap '%s'", pName);
+    return 0;
+}
+
+#undef MISSING_CALL
 
 // FUNCTION: CARMA2_HW 0x0051d4b0
 // FUNCTION: CARMA2_SW 0x00518cd0
@@ -944,6 +991,7 @@ void C2_HOOK_FASTCALL PDForEveryFile(const char *pThe_path, tPDForEveryFile_cbfn
 }
 
 // FUNCTION: CARMA2_HW 0x0051da20
+// FUNCTION: CARMA2_SW 0x005190c0
 void C2_HOOK_FASTCALL PDGetCurrentDate(char *pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
@@ -954,6 +1002,7 @@ void C2_HOOK_FASTCALL PDGetCurrentDate(char *pTimeStr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051da90
+// FUNCTION: CARMA2_SW 0x00519130
 void C2_HOOK_FASTCALL PDGetCurrentTime(char *pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
@@ -969,14 +1018,14 @@ void C2_HOOK_FASTCALL PDGetCurrentTime(char *pTimeStr) {
 // FUNCTION: CARMA2_HW 0x0051db00
 // FUNCTION: CARMA2_SW 0x005191a0
 int C2_HOOK_FASTCALL PDGetMouseClickPosition(int *pX_coord, int *pY_coord) {
-    if (!gCursorPos_LastClick_Valid) {
+    if (gCursorPos_LastClick_Valid) {
+        *pX_coord = gCursorPos_LastClick.x;
+        *pY_coord = gCursorPos_LastClick.y;
         gCursorPos_LastClick_Valid = 0;
-        return 0;
+        return 1;
     }
-    *pX_coord = gCursorPos_LastClick.x;
-    *pY_coord = gCursorPos_LastClick.y;
     gCursorPos_LastClick_Valid = 0;
-    return 1;
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0051c5f0
@@ -1263,21 +1312,22 @@ void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only) {
 #endif
 }
 
-#ifdef REC2_SW
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x0051c540
 // FUNCTION: CARMA2_SW 0x00517560
-void C2_HOOK_FASTCALL PDPixelmapRectangleCopy(br_pixelmap* pDest, int pDst_x, int pDst_y, br_pixelmap* pSrc, int pSrc_x, int pSrc_y, int width, int height) {
-    if (pSrc != pDest) {
-        BrPixelmapRectangleCopy(pDest, pDst_x, pDst_y, pSrc, pSrc_x, pSrc_y, width, height);
+void C2_HOOK_FASTCALL PDPixelmapToScreenRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h) {
+    if (src != dst) {
+        BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
     }
 }
 
 // FUNCTION: CARMA2_SW 0x005175b0
-void C2_HOOK_FASTCALL DPixelmapLine(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour) {
+void C2_HOOK_FASTCALL PDPixelmapLine(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour) {
     BrPixelmapLine(pDst, pX1, pY1, pX2, pY2, pColour);
 }
 
 // FUNCTION: CARMA2_SW 0x005175e0
-void C2_HOOK_FASTCALL DPixelmapLine2(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour) {
+void C2_HOOK_FASTCALL PDPixelmapLine2(br_pixelmap* pDst, int pX1, int pY1, int pX2, int pY2, br_colour pColour) {
     BrPixelmapLine(pDst, pX1, pY1, pX2, pY2, pColour);
 }
 #endif

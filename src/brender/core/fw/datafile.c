@@ -1104,13 +1104,11 @@ br_uint_32 C2_HOOK_STDCALL DfStructReadArray(br_datafile* df, br_file_struct* st
     char* cp;
     int i;
 
-    cp = (char*)base;
-    for (i = 0; i < n; i++) {
+    for (cp = base, i = 0; i < n; i++, cp += str->mem_size) {
         if (BrFileEof(df->h) != 0) {
             break;
         }
         df->prims->struct_read(df, str, cp);
-        cp += str->mem_size;
     }
     return i;
 }
@@ -1385,12 +1383,10 @@ void* C2_HOOK_STDCALL DfBlockReadBinary(br_datafile* df, void* base, int* count,
     if (s != size) {
         BrFailure("block size mismatch");
     }
-    if (base != NULL) {
-        if (l > *count) {
-            BrFailure("DfBlockReadBinary: block too long: %d", l);
-        }
-    } else {
+    if (base == NULL) {
         base = BrResAllocate(df->res != NULL ? df->res : fw.res, size * l, mtype);
+    } else if (*count < l) {
+        BrFailure("DfBlockReadBinary: block too long: %d", l);
     }
     *count = l;
     BrFileRead(base, l, size, df->h);
@@ -1402,7 +1398,7 @@ void* C2_HOOK_STDCALL DfBlockReadBinary(br_datafile* df, void* base, int* count,
 // FUNCTION: CARMA2_SW 0x00527310
 int C2_HOOK_STDCALL DfBlockSizeText(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
 
-    return ((size * block_count * block_size + (32 - 1)) >> 5) + 2;
+    return ((size * block_count * block_size + (32 - 1)) / 32) + 2;
 }
 
 // FUNCTION: CARMA2_HW 0x0052c7a0
@@ -1415,20 +1411,19 @@ int C2_HOOK_STDCALL DfBlockSizeBinary(br_datafile* df, void* base, int block_siz
 // FUNCTION: CARMA2_HW 0x0052c7c0
 // FUNCTION: CARMA2_SW 0x00527350
 char* C2_HOOK_STDCALL DfNameReadText(br_datafile* df, char* name) {
-    char* id;
     char* data;
+    char* id;
 
     TextReadLine(df, &id, &data);
     if (BrStrCmp(id, "name") != 0) {
         BrFailure("no name");
     }
-    if ((data != NULL) && (*data == '\"')) {
-        BrStrNCpy(name, data + 1, 0xff);
-        name[0xff] = '\0';
-        return data;
+    if (data == NULL || *data != '"') {
+        BrFailure("no name string");
     }
-    BrFailure("no name string");
-    return NULL;
+    BrStrNCpy(name, data + 1, 0xff);
+    name[0xff] = '\0';
+    return name;
 }
 
 // FUNCTION: CARMA2_HW 0x0052c840
@@ -1555,13 +1550,17 @@ void C2_HOOK_STDCALL BrNullOther(void) {
 // FUNCTION: CARMA2_HW 0x0052cb40
 // FUNCTION: CARMA2_SW 0x005276d0
 int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics) {
-    static char text_magics[8] = { '*', 'F', 'I', 'L', 'E', '_', 'I', 'N' };
-    static char binary_magics[8] = { '\0', '\0', '\0', '\x12', '\0', '\0', '\0', '\b' };
+    // GLOBAL: CARMA2_HW 0x00667508
+    // GLOBAL: CARMA2_SW 0x00661ae8
+    static const char text_magics[8] = { '*', 'F', 'I', 'L', 'E', '_', 'I', 'N' };
+    // GLOBAL: CARMA2_HW 0x00667510
+    // GLOBAL: CARMA2_SW 0x00661af0
+    static const char binary_magics[8] = { '\0', '\0', '\0', '\x12', '\0', '\0', '\0', '\b' };
 
-    if (BrMemCmp(magics, text_magics, sizeof(magics)) == 0) {
+    if (BrMemCmp(magics, text_magics, sizeof(text_magics)) == 0) {
         return BR_FS_MODE_TEXT;
     }
-    if (BrMemCmp(magics, binary_magics, sizeof(magics)) == 0) {
+    if (BrMemCmp(magics, binary_magics, sizeof(binary_magics)) == 0) {
         return BR_FS_MODE_BINARY;
     }
     // file does not match magics

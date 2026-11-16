@@ -15,6 +15,7 @@
 #include "rec2_types.h"
 
 extern tNet_mode gNet_mode;
+extern tU16 gScreen_row_buffer[640];
 extern int gNumber_of_net_players;
 extern tNet_game_player_info gNet_players[12];
 extern int gThis_net_player_index;

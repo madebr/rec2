@@ -18,11 +18,11 @@ extern int gCount_saved_games;
 
 // Encryptificate
 
-// MakeSavedGame
+extern void C2_HOOK_FASTCALL MakeSavedGame(tSave_game* pSave_game);
 
 extern void C2_HOOK_FASTCALL DoSaveGame(void);
 
-// StartSavedGamesList
+extern int C2_HOOK_FASTCALL StartSavedGamesList(void);
 
 extern void C2_HOOK_FASTCALL EndSavedGamesList(void);
 

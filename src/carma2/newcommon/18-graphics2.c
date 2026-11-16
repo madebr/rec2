@@ -8,10 +8,13 @@
 
 #include "18-graphics2.h"
 
+#include "08-loading1.h"
 #include "16-graphics1.h"
 #include "25-grafdata.h"
 #include "33-depth.h"
+#include "35-intrface.h"
 #include "41-utility.h"
+#include "42-input.h"
 #include "52-errors.h"
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
@@ -22,6 +25,14 @@
 
 #include <limits.h>
 #include <string.h>
+
+// GLOBAL: CARMA2_HW 0x00656998
+// GLOBAL: CARMA2_SW 0x006517a8
+int gFancy_line_center_palette_indexes[5] = { 1, 2, 3, 2, 1 };
+
+// GLOBAL: CARMA2_HW 0x006569b0
+// GLOBAL: CARMA2_SW 0x006517c0
+int gFancy_line_side_palette_indexes[5] = { 1, 2, 3, 2, 1 };
 
 // GLOBAL: CARMA2_HW 0x0058fdc8
 int gCursor_tinted_top = -1;
@@ -43,11 +54,29 @@ int gCursor_line_width = 5;
 
 // GLOBAL: CARMA2_HW 0x0067be98
 // GLOBAL: CARMA2_SW 0x00676608
-tTransient_bm gTransient_bitmaps[50];
+tTransient_bm gTransient_bitmaps[50] = { 0 };
 
 // GLOBAL: CARMA2_HW 0x0067c348
 // GLOBAL: CARMA2_SW 0x00676ab8
-int gNext_transient;
+int gNext_transient = 0;
+
+#ifdef REC2_MATCHING
+// GLOBAL: CARMA2_HW 0x0067c34c
+// GLOBAL: CARMA2_SW 0x00676abc
+int gINT_0067c34c = 0;
+
+// GLOBAL: CARMA2_HW 0x0067c350
+// GLOBAL: CARMA2_SW 0x00676ac0
+int gINT_0067c350 = 0;
+
+// GLOBAL: CARMA2_HW 0x0067c354
+// GLOBAL: CARMA2_SW 0x00676ac4
+int gINT_0067c354 = 0;
+
+// GLOBAL: CARMA2_HW 0x0067c358
+// GLOBAL: CARMA2_SW 0x00676ac8
+int gINT_0067c358 = 0;
+#endif
 
 // GLOBAL: CARMA2_HW 0x0067c390
 // GLOBAL: CARMA2_SW 0x00676b04
@@ -138,9 +167,25 @@ br_pixelmap* gBlend_palettes[4];
 // GLOBAL: CARMA2_SW 0x00685e64
 br_pixelmap* gCurrent_splash;
 
+// GLOBAL: CARMA2_HW 0x0067be90
+// GLOBAL: CARMA2_SW 0x00676600
+int gCurrent_cursor_index;
+
+// GLOBAL: CARMA2_HW 0x0079ecb0
+// GLOBAL: CARMA2_SW 0x00795210
+int gMouse_last_x_coord;
+
+// GLOBAL: CARMA2_HW 0x0079ecb4
+// GLOBAL: CARMA2_SW 0x00795240
+int gMouse_last_y_coord;
+
+// GLOBAL: CARMA2_HW 0x0067be94
+// GLOBAL: CARMA2_SW 0x00676604
+int gCursor_transient_index;
+
 // FUNCTION: CARMA2_HW 0x0047d470
 // FUNCTION: CARMA2_SW 0x0047d7a0
-void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour) {
+void C2_HOOK_FASTCALL DRPixelmapShadedHRectFill(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour) {
 
 #ifdef REC2_HW
     if (gBack_screen->type != BR_PMT_INDEX_8) {
@@ -150,6 +195,20 @@ void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int pX, int
     BrPixelmapRectangleFill(pMap, pX, pY + 1, pWidth, pHeight - 2, pColour);
     BrPixelmapLine(pMap, pX, pY, pX + pWidth - 1, pY, pColour + 2);
     BrPixelmapLine(pMap, pX, pY + pHeight - 1, pX + pWidth - 1, pY + pHeight - 1, pColour - 2);
+}
+
+// FUNCTION: CARMA2_HW 0x0047d510
+// FUNCTION: CARMA2_SW 0x0047d810
+void C2_HOOK_FASTCALL DRPixelmapShadedVRectFill(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_colour pColour) {
+
+#ifdef REC2_HW
+    if (gBack_screen->type != BR_PMT_INDEX_8) {
+        pColour = PaletteEntry16Bit(gRender_palette, pColour);
+    }
+#endif
+    BrPixelmapRectangleFill(pMap, pX + 1, pY, pWidth - 2, pHeight, pColour);
+    BrPixelmapLine(pMap, pX, pY, pX, pY + pHeight - 1, pColour + 2);
+    BrPixelmapLine(pMap, pX + pWidth - 1, pY, pX + pWidth - 1, pY + pHeight - 1, pColour - 2);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4fd0
@@ -289,7 +348,7 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
         PDSetPalette(render_palette);
     }
     gPalette_munged |= render_palette != gRender_palette;
-    gScratch_pixels = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
+    gScratch_pixels = BrMemAllocate(256 * sizeof(br_colour), kMem_misc);
     gScratch_palette = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, gScratch_pixels, 0);
 #ifdef REC2_SW
     gBlend25_table = BrTableFind("BLEND25.TAB");
@@ -366,30 +425,59 @@ void C2_HOOK_FASTCALL ResetPalette(void) {
     DRSetPalette(gRender_palette);
 }
 
-// Darken
+void C2_HOOK_FASTCALL Darken(tU8 *pPtr, tU32 pDarken_amount) {
+    unsigned int value;
 
-// SetFadedPalette
+    value = *pPtr;
+    *pPtr = (value * pDarken_amount) / 256;
+}
+
+// FUNCTION: CARMA2_HW 0x004b5390
+// FUNCTION: CARMA2_SW 0x004b1ae0
+void C2_HOOK_FASTCALL SetFadedPalette(tU32 pDegree) {
+    int i;
+
+    memcpy(gScratch_pixels, gCurrent_palette->pixels, 256 * sizeof(br_colour));
+    for (i = 0; i < 256; i++) {
+        Darken(&((tU8*)gScratch_pixels)[4 * i + 0], pDegree);
+        Darken(&((tU8*)gScratch_pixels)[4 * i + 1], pDegree);
+        Darken(&((tU8*)gScratch_pixels)[4 * i + 2], pDegree);
+        Darken(&((tU8*)gScratch_pixels)[4 * i + 3], pDegree);
+    }
+    DRSetPalette2(gScratch_palette, 0);
+}
 
 // FUNCTION: CARMA2_HW 0x004b5460
 // FUNCTION: CARMA2_SW 0x004b1ba0
 void C2_HOOK_FASTCALL FadePaletteDown(void) {
 }
 
-#if defined(REC2_MATCHING) && defined(_MSC_VER)
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x004b5470
-// STUB: CARMA2_SW 0x004b1bb0
+// FUNCTION: CARMA2_HW 0x004b5470
+// FUNCTION: CARMA2_SW 0x004b1bb0
 void C2_HOOK_FASTCALL FadePaletteUp(void) {
-    NOT_IMPLEMENTED();
+    int start_time;
+    int the_time;
+
+    if (!gFaded_palette) {
+        return;
+    }
+
+    gFaded_palette = 0;
+    start_time = PDGetTotalTime();
+    while ((the_time = PDGetTotalTime() - start_time) < 500) {
+        SetFadedPalette((the_time * 256) / 500);
+    }
+    DRSetPalette(gCurrent_palette);
 }
 
-#if defined(REC2_MATCHING) && defined(_MSC_VER)
-#pragma auto_inline(on)
-#endif
+// FUNCTION: CARMA2_HW 0x004b55f0
+// FUNCTION: CARMA2_SW 0x004b1d20
+void C2_HOOK_FASTCALL EnsurePaletteUp(void) {
 
-// EnsurePaletteUp
+    if (gFaded_palette) {
+        FadePaletteUp();
+    }
+}
 
 #if defined(REC2_MATCHING) && defined(_MSC_VER)
 #pragma auto_inline(off)
@@ -419,6 +507,23 @@ void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
         gTransient_bitmaps[i].in_use = 0;
     }
 }
+
+#ifdef REC2_SW
+int C2_HOOK_FASTCALL AllocateTransientBitmap(int pWidth, int pHeight, int pUser_data) {
+    int bm_index;
+
+    for (bm_index = 0; bm_index < (int)REC2_ASIZE(gTransient_bitmaps); bm_index++) {
+        if (gTransient_bitmaps[bm_index].pixmap == NULL) {
+            gTransient_bitmaps[bm_index].pixmap = DRPixelmapAllocate(gBack_screen->type, pWidth + 8, pHeight, NULL, 0);
+            gTransient_bitmaps[bm_index].in_use = 0;
+            gTransient_bitmaps[bm_index].user_data = pUser_data;
+            return bm_index;
+        }
+    }
+    FatalError(kFatalError_CouldNotFindASpareTransientBitmap);
+    return -1;
+}
+#endif
 
 void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex) {
 
@@ -479,8 +584,31 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
     NOT_IMPLEMENTED();
 }
 
+int C2_HOOK_FASTCALL AllocateCursorTransient(void) {
+#ifdef REC2_HW
+    return 0;
+#endif
+#ifdef REC2_SW
+    int i;
+    int largest_width;
+    int largest_height;
+
+    largest_width = 0;
+    largest_height = 0;
+    for (i = 0; i < (int)REC2_ASIZE(gCursors); i++) {
+        if (gCursors[i]->width > largest_width) {
+            largest_width = gCursors[i]->width;
+        }
+        if (gCursors[i]->height > largest_height) {
+            largest_height = gCursors[i]->height;
+        }
+    }
+    return AllocateTransientBitmap(largest_width, largest_height, 0);
+#endif
+}
+
 // FUNCTION: CARMA2_HW 0x0043e3f0
-void C2_HOOK_FASTCALL AllocateCursorTransient(void) {
+void C2_HOOK_FASTCALL InitMouseTargetLines(void) {
     br_pixelmap* cross;
     br_pixelmap* line;
 
@@ -511,11 +639,20 @@ void C2_HOOK_FASTCALL AllocateCursorTransient(void) {
     }
 }
 
-// InitMouseTargetLines
-
-// STUB: CARMA2_HW 0x0043e6c0
+// FUNCTION: CARMA2_HW 0x0043e6c0
+// FUNCTION: CARMA2_SW 0x0043e750
 void C2_HOOK_FASTCALL StartMouseCursor(void) {
-    NOT_IMPLEMENTED();
+#ifdef REC2_HW
+    if (gCursor_tinted_top == -1) {
+        InitMouseTargetLines();
+    }
+#endif
+    gNext_transient = 0;
+    gCursor_transient_index = AllocateCursorTransient();
+    GetMousePosition(&gMouse_last_x_coord, &gMouse_last_y_coord);
+    gMouse_in_use = 0;
+    gCurrent_cursor_index = 2;
+    gMouse_started = 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0043e710
@@ -525,229 +662,4 @@ void C2_HOOK_FASTCALL EndMouseCursor(void) {
     RemoveTransientBitmaps(1);
     DeallocateAllTransientBitmaps();
     gMouse_started = 0;
-}
-
-// FUNCTION: CARMA2_HW 0x0047b450
-void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2, int pY2, int pColour) {
-
-    if (gBack_screen->type != BR_PMT_INDEX_8) {
-        pColour = PaletteEntry16Bit(gRender_palette, pColour);
-    }
-    BrPixelmapLine(pDestn, pX1, pY1, pX2, pY2, pColour);
-}
-
-// FUNCTION: CARMA2_HW 0x0047b880
-// FUNCTION: CARMA2_SW 0x0047aba0
-void C2_HOOK_FASTCALL ClearEntireScreen(void) {
-
-    if (gScreen != NULL) {
-        BrPixelmapFill(gScreen, gGraf_specs[gGraf_spec_index].black_value);
-    }
-    BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
-    BrPixelmapFill(gDepth_buffer, 0xffffffff);
-    PDScreenBufferSwap(0);
-#ifdef REC2_HW
-    BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
-#endif
-}
-
-// DistanceFromPlane
-
-// FUNCTION: CARMA2_HW 0x0047b960
-// FUNCTION: CARMA2_SW 0x0047ac50
-void C2_HOOK_FASTCALL KillSplashScreen(void) {
-
-    if (gCurrent_splash != NULL) {
-        BrMapRemove(gCurrent_splash);
-        BrPixelmapFree(gCurrent_splash);
-        gCurrent_splash = NULL;
-    }
-}
-
-// FUNCTION: CARMA2_HW 0x0047b990
-// FUNCTION: CARMA2_SW 0x0047ac80
-void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
-    br_pixelmap* map;
-    tPixelFlags flags;
-
-    map = BrMapFind(pPixmap_name);
-    if (gCurrent_splash != NULL && map == gCurrent_splash) {
-        return;
-    }
-    if (gCurrent_splash != NULL) {
-        KillSplashScreen();
-    }
-    flags = gPixelFlags;
-#ifdef REC2_SW
-    gPixelFlags |= 0x8;
-#endif
-    gCurrent_splash = map;
-    if (map == NULL) {
-        gCurrent_splash = LoadPixelmap(pPixmap_name);
-        BRPM_convert(gCurrent_splash, gBack_screen->type);
-        if (gCurrent_splash != NULL) {
-            BrMapAdd(gCurrent_splash);
-        }
-    }
-    gPixelFlags = flags;
-#ifdef REC2_SW
-    if (gCurrent_splash == NULL || gCurrent_splash->map == NULL) {
-        EnsureRenderPalette();
-    } else {
-        if (gScreen != NULL) {
-            BrPixelmapFill(gScreen, gGraf_specs[gGraf_spec_index].black_value);
-        }
-        BrPixelmapFill(gBack_screen, gGraf_specs[gGraf_spec_index].black_value);
-        BrPixelmapFill(gDepth_buffer, 0xffffffff);
-        PDScreenBufferSwap(0);
-        FadePaletteUp();
-        PDSetPalette(gCurrent_splash->map);
-    }
-#endif
-    if (gCurrent_splash != NULL) {
-        PixelmapSwapByteOrder(gCurrent_splash);
-        DrPixelmapRectangleCopyPossibleLock(gBack_screen, 0, 0, gCurrent_splash, 0, 0,
-            (br_int_16)gCurrent_splash->width, (br_int_16)gCurrent_splash->height);
-        PDScreenBufferSwap(0);
-        BrMapRemove(gCurrent_splash);
-        BrPixelmapFree(gCurrent_splash);
-        gCurrent_splash = NULL;
-    }
-}
-
-// FUNCTION: CARMA2_HW 0x0047ba80
-// FUNCTION: CARMA2_SW 0x0047ae00
-void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_16 pDest_x, br_int_16 pDest_y, const br_pixelmap* pSource, br_int_16 pSource_x, br_int_16 pSource_y, br_int_16 pWidth, br_int_16 pHeight) {
-#ifdef REC2_SW
-    int y_count;
-    int x_count;
-    int dest_row_wrap;
-    int source_row_wrap;
-    int x_delta;
-    tU8 the_byte;
-    tU8* source_ptr;
-    tU8* dest_ptr;
-
-    source_ptr = (tU8*)pSource->pixels + pSource->row_bytes * pSource_y + pSource_x;
-    dest_ptr = (tU8*)pDest->pixels + pDest->row_bytes * pDest_y + pDest_x;
-    source_row_wrap = pSource->row_bytes - pWidth;
-    dest_row_wrap = pDest->row_bytes - pWidth;
-
-    if (pDest_y < 0) {
-        pHeight += pDest_y;
-        if (pHeight <= 0) {
-            return;
-        }
-        source_ptr -= pDest_y * pSource->row_bytes;
-        dest_ptr -= pDest_y * pDest->row_bytes;
-        pDest_y = 0;
-    }
-    if (pDest_y >= pDest->height) {
-        return;
-    }
-    if (pDest_y + pHeight > pDest->height) {
-        pHeight = pDest->height - pDest_y;
-    }
-    if (pDest_x < 0) {
-        pWidth += pDest_x;
-        if (pWidth <= 0) {
-            return;
-        }
-        source_ptr -= pDest_x;
-        dest_ptr -= pDest_x;
-        source_row_wrap -= pDest_x;
-        dest_row_wrap -= pDest_x;
-        pDest_x = 0;
-    }
-    if (pDest_x >= pDest->width) {
-        return;
-    }
-    if (pDest_x + pWidth > pDest->width) {
-        x_delta = pDest_x + pWidth - pDest->width;
-        pWidth -= x_delta;
-        source_row_wrap += x_delta;
-        dest_row_wrap += x_delta;
-    }
-    for (y_count = 0; y_count < pHeight; y_count++) {
-        for (x_count = 0; x_count < pWidth; x_count++) {
-            the_byte = *source_ptr;
-            if (the_byte != 0) {
-                *dest_ptr = the_byte;
-            }
-            source_ptr++;
-            dest_ptr++;
-        }
-        source_ptr += source_row_wrap;
-        dest_ptr += dest_row_wrap;
-    }
-#else
-    int y;
-    int x;
-    int dest_row_wrap;
-    int source_row_wrap;
-    tU16 the_byte;
-    tU16* source_ptr;
-    tU16* dest_ptr;
-    int dest_x;
-    int dest_y;
-
-    source_ptr = (tU16*)pSource->pixels + pSource->row_bytes * pSource_y / sizeof(tU16) + pSource_x;
-    dest_x = pDest_x;
-    dest_y = pDest_y;
-    dest_ptr = (tU16*)pDest->pixels + dest_y * pDest->row_bytes / sizeof(tU16) + pDest->base_x / sizeof(tU16) + dest_x;
-    source_row_wrap = pSource->row_bytes / sizeof(tU16) - pWidth;
-    dest_row_wrap = pDest->row_bytes / sizeof(tU16) - pWidth;
-
-    if (dest_y < 0) {
-        pHeight += dest_y;
-        if (pHeight <= 0) {
-            return;
-        }
-        source_ptr -= dest_y * pSource->row_bytes / sizeof(tU16);
-        dest_ptr -= dest_y * pDest->row_bytes / sizeof(tU16);
-        dest_y = 0;
-    }
-    if (dest_y < pDest->height) {
-        if (pDest->height < dest_y + pHeight) {
-            pHeight = pDest->height - dest_y;
-        }
-        if (dest_x < 0) {
-            pWidth += dest_x;
-            if (pWidth <= 0) {
-                return;
-            }
-            dest_x = 0;
-            source_ptr -= dest_x;
-            dest_ptr -= dest_x;
-            source_row_wrap -= dest_x;
-            dest_row_wrap -= dest_x;
-        }
-        if (dest_x < pDest->width) {
-            if (dest_x + pWidth > pDest->width) {
-                pWidth -= pWidth + dest_x - pDest->width;
-                source_row_wrap += pWidth + dest_x - pDest->width;
-                dest_row_wrap += pWidth + dest_x - pDest->width;
-            }
-            for (y = 0; y < pHeight; y++) {
-                for (x = 0; x < pWidth; x++) {
-                    the_byte = *source_ptr;
-                    if (the_byte != 0) {
-                        *dest_ptr = the_byte;
-                    }
-                    source_ptr++;
-                    dest_ptr++;
-                }
-                source_ptr += source_row_wrap;
-                dest_ptr += dest_row_wrap;
-            }
-        }
-    }
-#endif
-}
-
-// FUNCTION: CARMA2_HW 0x0047bc40
-// FUNCTION: CARMA2_SW 0x0047af60
-void C2_HOOK_FASTCALL DRMaskedStamp(br_int_16 pDest_x, br_int_16 pDest_y, br_pixelmap* pSource) {
-
-    DRPixelmapRectangleMaskedCopy(gBack_screen, pDest_x, pDest_y, pSource, 0, 0, pSource->width, pSource->height);
 }

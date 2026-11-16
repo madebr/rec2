@@ -11,6 +11,7 @@
 #include "72-interface.h"
 
 // GLOBAL: CARMA2_HW 0x00627398
+// GLOBAL: CARMA2_SW 0x006222c8
 tFrontend_spec gFrontend_NETWORK_SUMMARY = {
 #if 0 // FIXME: enable this
     "NetworkSummary",

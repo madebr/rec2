@@ -264,14 +264,13 @@ void C2_HOOK_CDECL BrDevPaletteSetEntryOld(int i, br_colour colour) {
 // FUNCTION: CARMA2_HW 0x00529320
 // FUNCTION: CARMA2_SW 0x00528080
 br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_device_pixelmap* destination, br_token scalar_type) {
-    br_renderer_facility* renderer_facility;
+    br_renderer_facility* renderer_facility = NULL;
     br_error r;
     br_output_facility* ot;
     char object_name[23] = "Default-Renderer-00000";
     char image_name[9] = "softrnd0";
     br_boolean scalar_is_valid;
 
-    renderer_facility = NULL;
     scalar_is_valid = 0;
     switch (scalar_type) {
     case BRT_FIXED:
@@ -285,7 +284,7 @@ br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_dev
         scalar_is_valid = 1;
         break;
     default:
-        abort();
+        break;
     }
     if (renderer_facility == NULL && destination != NULL) {
         destination->dispatch->_query((br_object*)destination, &renderer_facility, BRT_RENDERER_FACILITY_O);
@@ -321,14 +320,13 @@ br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_dev
 // FUNCTION: CARMA2_HW 0x005294d0
 // FUNCTION: CARMA2_SW 0x00528230
 br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_device_pixelmap* destination, br_token scalar_type) {
-    br_primitive_library* primitive_library;
+    br_primitive_library* primitive_library = NULL;
     br_error r;
     br_output_facility* ot;
     char object_name[25] = "Default-Primitives-00000";
     char image_name[9] = "softprm0";
     br_boolean scalar_is_valid;
 
-    primitive_library = NULL;
     scalar_is_valid = 0;
     switch (scalar_type) {
     case BRT_FIXED:
@@ -342,7 +340,7 @@ br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_dev
         scalar_is_valid = 1;
         break;
     default:
-        abort();
+        break;
     }
     if (primitive_library == NULL && destination != NULL) {
         destination->dispatch->_query((br_object*)destination, &primitive_library, BRT_PRIMITIVE_LIBRARY_O);
@@ -397,7 +395,7 @@ br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* rend
         scalar_is_valid = 1;
         break;
     default:
-        abort();
+        break;
     }
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_dispatch, _query, 0x2c);
@@ -425,7 +423,7 @@ br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* rend
             return 0;
         }
     }
-    r = BrDevContainedFind((br_object**)&gf, format_type, object_name, NULL);
+    r = BrDevContainedFind((br_object**)&gf, format_type, "Default-Format", NULL);
     if (r == 0) {
         *pgf = gf;
         return 0;
@@ -439,7 +437,7 @@ br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* rend
         }
     }
     BrDevCheckAdd(0, "softform", 0);
-    r = BrDevContainedFind((br_object**)&gf, format_type, object_name, NULL);
+    r = BrDevContainedFind((br_object**)&gf, format_type, "Default-Format", NULL);
     if (r == 0) {
         *pgf = gf;
         return 0;

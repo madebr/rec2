@@ -23,7 +23,11 @@ extern int gSound_detail_level;
 
 extern tS3_outlet* gEffects_outlet;
 
+extern tS3_outlet* gCar_outlet;
+
 extern tS3_outlet* gPedestrians_outlet;
+
+extern tS3_outlet* gCar_outlet;
 
 extern int gCD_fully_installed;
 

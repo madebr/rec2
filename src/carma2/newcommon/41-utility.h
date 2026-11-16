@@ -80,7 +80,9 @@ extern FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension);
 
 extern void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF);
 
+#ifdef REC2_HW
 extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
+#endif
 
 extern tU32 C2_HOOK_FASTCALL GetTotalTime(void);
 
@@ -97,6 +99,8 @@ extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 extern void C2_HOOK_FASTCALL CopyMiscString(int pIndex, char* pDestination);
 
 extern int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state);
+
+extern void C2_HOOK_FASTCALL MaterialCopy(br_material* pDestination, const br_material* pSource);
 
 extern double C2_HOOK_FASTCALL RGBDifferenceSqr(tRGB_colour* pColour_1, tRGB_colour* pColour_2);
 
@@ -162,6 +166,8 @@ extern int C2_HOOK_FASTCALL DRVector2TestForNan(const br_vector2* pVector);
 
 extern int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
+extern int C2_HOOK_FASTCALL DRVector4TestForNan(const float* pV);
+
 extern void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale);
 
 extern float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF);
@@ -206,6 +212,10 @@ extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCoun
 
 extern int C2_HOOK_FASTCALL FindBestColourMatch(br_colour pColour);
 
+extern br_actor* C2_HOOK_FASTCALL CreateBoundsActor(br_actor* pParent, const br_bounds* pBounds);
+
+extern void C2_HOOK_FASTCALL DisposeActorAndModel(br_actor* pActor);
+
 extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
 extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
@@ -214,7 +224,7 @@ extern void C2_HOOK_FASTCALL PrintScreen(void);
 
 extern intptr_t C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
 
-// FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
+extern tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp);
 
 // GetBlenficatiousnessOfMaterialTablishly
 
@@ -232,7 +242,13 @@ extern void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int
 
 extern void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h);
 
+extern void C2_HOOK_FASTCALL DRPixelmapRectangleFill(br_pixelmap* dst, br_int_16 x, br_int_16 y, br_uint_16 w, br_uint_16 h, br_uint_32 colour);
+
 extern void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap);
+
+extern void C2_HOOK_FASTCALL ConvertRGB565ToARGB1555(br_uint_16* pPixel);
+
+extern void C2_HOOK_FASTCALL ConvertARGB4444ToARGB1555(br_uint_16* pPixel);
 
 extern void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2);
 

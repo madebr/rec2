@@ -14,9 +14,9 @@
 
 extern tS8 gRace_memory[1000];
 
-// GetRuntimeVariable
+extern int C2_HOOK_FASTCALL GetRuntimeVariable(int pAddress);
 
-// AccumulateRuntimeVariable
+extern int C2_HOOK_FASTCALL AccumulateRuntimeVariable(int pAddress, int pDelta);
 
 // ToggleRuntimeVariable
 

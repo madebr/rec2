@@ -33,6 +33,10 @@ const char* gDir_separator;
 // GLOBAL: CARMA2_SW 0x00685ddc
 int gAusterity_mode;
 
+// GLOBAL: CARMA2_HW 0x0068b878
+// GLOBAL: CARMA2_SW 0x00685dd8
+int gDefault_engine_noise_index;
+
 // GLOBAL: CARMA2_HW 0x0068b884
 // GLOBAL: CARMA2_SW 0x00685de4
 int gAustere_override;
@@ -143,7 +147,11 @@ int gDev_initial_race;
 
 // GLOBAL: CARMA2_HW 0x0074d460
 // GLOBAL: CARMA2_SW 0x007439c0
-br_matrix34 gCamera_to_world;
+br_matrix34 gCamera_to_world = { 0 };
+
+// GLOBAL: CARMA2_HW 0x0074d490
+// GLOBAL: CARMA2_SW 0x007439f0
+int gCurrent_APO_potential_levels[3] = { 0 };
 
 // GLOBAL: CARMA2_HW 0x0074d560
 // GLOBAL: CARMA2_SW 0x00743ac0
@@ -153,6 +161,10 @@ br_matrix34 gRearview_camera_to_world;
 // GLOBAL: CARMA2_HW 0x00705b80
 // GLOBAL: CARMA2_SW 0x006fc640
 undefined4 gUnknown_00705b80[20];
+
+// GLOBAL: CARMA2_HW 0x00705be0
+// GLOBAL: CARMA2_SW 0x006fc6a0
+int gCredit_multiplier;
 
 
 // GLOBAL: CARMA2_HW 0x0074d44c
@@ -179,6 +191,14 @@ int gAuto_load;
 // GLOBAL: CARMA2_HW 0x006aa5c4
 // GLOBAL: CARMA2_SW 0x006a4014
 int gRussels_fannies;
+
+// GLOBAL: CARMA2_HW 0x007051e0
+// GLOBAL: CARMA2_SW 0x006fbca0
+int gAPO_pre_race[3];
+
+// GLOBAL: CARMA2_HW 0x007051f8
+// GLOBAL: CARMA2_SW 0x006fbcb8
+int gMoney_pre_race;
 
 // GLOBAL: CARMA2_HW 0x00705220
 // GLOBAL: CARMA2_SW 0x006fbce0
@@ -352,6 +372,10 @@ tRace_group_spec* gCurrent_race_group;
 // GLOBAL: CARMA2_SW 0x00757fc0
 int gIs_boundary_race;
 
+// GLOBAL: CARMA2_HW 0x00761a80
+// GLOBAL: CARMA2_SW 0x00757fe0
+char gCurrent_load_name[256];
+
 // GLOBAL: CARMA2_HW 0x0074d1ac
 // GLOBAL: CARMA2_SW 0x0074370c
 int gNumber_of_racers;
@@ -363,10 +387,6 @@ tOpponent* gOpponents;
 // GLOBAL: CARMA2_HW 0x00761f50
 // GLOBAL: CARMA2_SW 0x007584b0
 int gCurrent_APO_levels[3];
-
-// GLOBAL: CARMA2_HW 0x0074d490
-// GLOBAL: CARMA2_SW 0x007439f0
-int gCurrent_APO_potential_levels[3];
 
 // GLOBAL: CARMA2_HW 0x0074b784
 // GLOBAL: CARMA2_SW 0x00741e44
@@ -437,6 +457,10 @@ int gDisallow_abandon_race;
 // GLOBAL: CARMA2_HW 0x00676914
 // GLOBAL: CARMA2_SW 0x00671084
 int gAction_replay_mode = 0;
+
+// GLOBAL: CARMA2_HW 0x00676928
+// GLOBAL: CARMA2_SW 0x00671098
+tPed_form* gPed_forms[20] = { 0 };
 
 // GLOBAL: CARMA2_HW 0x00676978
 // GLOBAL: CARMA2_SW 0x006710e8

@@ -36,11 +36,7 @@ tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, buffer_description, 0x40);
 
-    if (!gS3_enabled) {
-        return NULL;
-    }
-    descriptor = S3GetDescriptorByID(pSample_id);
-    if (descriptor == NULL) {
+    if (!gS3_enabled || (descriptor = S3GetDescriptorByID(pSample_id)) == NULL) {
         return NULL;
     }
     return descriptor->buffer_description;
@@ -94,13 +90,15 @@ tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, next, 0x2c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, low_memory_alternative, 0x3c);
 
-    for (desc = gS3_state.descriptors; desc != NULL; desc = desc->next) {
+    desc = gS3_state.descriptors;
+    while (desc != NULL) {
         if (desc->sample_id == pSample_id) {
             if (desc->low_memory_alternative >= 0) {
                 return S3GetDescriptorByID(desc->low_memory_alternative);
             }
             return desc;
         }
+        desc = desc->next;
     }
     return NULL;
 }
@@ -112,6 +110,7 @@ void C2_HOOK_CDECL s3_debug_disable_sound(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565b39
+// FUNCTION: CARMA2_SW 0x005611d9
 void C2_HOOK_CDECL s3_debug_init(void) {
     tPath_name path;
     int result;
@@ -122,6 +121,7 @@ void C2_HOOK_CDECL s3_debug_init(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565b46
+// FUNCTION: CARMA2_SW 0x005611e6
 void C2_HOOK_CDECL s3_dprintf(const char* pFormat, ...) {
 
 }

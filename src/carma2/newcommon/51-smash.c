@@ -9,14 +9,17 @@
 #include "51-smash.h"
 
 #include "08-loading1.h"
+#include "09-funks.h"
 #include "17-world2.h"
 #include "20-skidmark.h"
+#include "23-piping.h"
 #include "28-world3.h"
 #include "32-spark.h"
 #include "33-depth.h"
 #include "39-oil.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "59-camera.h"
 #include "62-graphics3.h"
 
 #include "globvars.h"
@@ -29,16 +32,28 @@
 
 #include <stdio.h>
 
-// GLOBAL: CARMA2_HW 0x006a6d38
-// GLOBAL: CARMA2_SW 0x006a0d98
-int gMaterials_to_adapt_count;
-
 // GLOBAL: CARMA2_HW 0x006a8298
 // GLOBAL: CARMA2_SW 0x006a22f8
 int gAllow_material_adapt;
 
 // GLOBAL: CARMA2_HW 0x006a3340
 br_material* gMaterials_to_adapt[200];
+
+// GLOBAL: CARMA2_HW 0x006a3334
+// GLOBAL: CARMA2_SW 0x0069d394
+int gINT_006a3334;
+
+// GLOBAL: CARMA2_HW 0x006a4688
+// GLOBAL: CARMA2_SW 0x0069e6e8
+br_vector3 gVector3_006a4688;
+
+// GLOBAL: CARMA2_HW 0x006b78a0
+// GLOBAL: CARMA2_SW 0x006ae580
+br_vector3 gVector3_006b78a0[4] = { { { 0.f } } };
+
+// GLOBAL: CARMA2_HW 0x006b78d0
+// GLOBAL: CARMA2_SW 0x006ae5b0
+int gINT_006b78d0 = 0;
 
 // GLOBAL: CARMA2_HW 0x006a3338
 // GLOBAL: CARMA2_SW 0x0069d398
@@ -70,7 +85,31 @@ tStored_smash* gNet_host_smashes;
 
 // GLOBAL: CARMA2_HW 0x006a55c8
 // GLOBAL: CARMA2_SW 0x0069f628
-tExplosion gExplosions[50];
+tExplosion gExplosions[50] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a6d38
+// GLOBAL: CARMA2_SW 0x006a0d98
+int gMaterials_to_adapt_count = 0;
+
+// GLOBAL: CARMA2_HW 0x006a6d3c
+// GLOBAL: CARMA2_SW 0x006a0d9c
+int gCount_host_smashes = 0;
+
+// GLOBAL: CARMA2_HW 0x006a6d40
+// GLOBAL: CARMA2_SW 0x006a0da0
+tSmash_explosion gSmash_explosions[20] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a7ce0
+// GLOBAL: CARMA2_SW 0x006a1d40
+tSmashable_item_spec gPowerup_respawn_smashable = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a7fc8
+// GLOBAL: CARMA2_SW 0x006a2028
+tRepair_animation gRepair_animations[25] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x006a80f4
+// GLOBAL: CARMA2_SW 0x006a2154
+int gINT_006a80f4 = 0;
 
 // GLOBAL: CARMA2_HW 0x006a80f8
 // GLOBAL: CARMA2_SW 0x006a2158
@@ -194,7 +233,24 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
     }
 }
 
-// ResetExplosions
+// FUNCTION: CARMA2_HW 0x004eaac0
+// FUNCTION: CARMA2_SW 0x004e6790
+void C2_HOOK_FASTCALL ResetExplosions(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gExplosions) != 50);
+    C2_HOOK_BUG_ON(sizeof(gExplosions[0]) != 0x78);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmash_explosions) != 20);
+    C2_HOOK_BUG_ON(sizeof(gSmash_explosions[0]) != 0xc8);
+
+    for (i = 0; i < (int)REC2_ASIZE(gExplosions); i++) {
+        gExplosions[i].start = 0;
+        gExplosions[i].finished = 0;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gSmash_explosions); i++) {
+        gSmash_explosions[i].active = 0;
+    }
+}
 
 void C2_HOOK_FASTCALL RemoveAllExplosionettes(void) {
     int i;
@@ -315,9 +371,80 @@ void C2_HOOK_FASTCALL SetShrapnelFragment(tSmash_vertex* pFragment, tMovement_sp
 
 // ShatterObject
 
-// MungeInternalCarGlass
+void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec) {
 
-// ActuallySmashPart
+    if (pCar_spec == &gProgram_state.current_car && gAction_replay_camera_mode == kActionReplayCameraMode_Internal) {
+        MungeCarMaterials(pCar_spec, 1);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004ed2b0
+// FUNCTION: CARMA2_SW 0x004e8f80
+void C2_HOOK_FASTCALL ActuallySmashPart(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmash, int pLevel) {
+    int i;
+    int flags;
+    br_pixelmap* texture;
+    br_scalar temp;
+
+    texture = NULL;
+    if (pCar_spec != NULL) {
+        for (i = 0; i < (int)REC2_ASIZE(gRepair_animations); i++) {
+            if (gRepair_animations[i].field_0x0 == pSmash) {
+                gRepair_animations[i].field_0x0 = NULL;
+                break;
+            }
+        }
+    }
+    if (pSmash->levels[pLevel].count_pixelmaps != 0) {
+        texture = pSmash->levels[pLevel].pixelmaps[IRandomBetween(0, pSmash->levels[pLevel].count_pixelmaps - 1)];
+    }
+    PipeSingleSmashTextureChange(pCar_spec, pSmash->funk_material, texture);
+    pSmash->funk_material->user = texture;
+    if (pCar_spec == NULL || pCar_spec->field_0x1960 == NULL) {
+        pSmash->funk_material->colour_map = texture;
+    }
+    pSmash->field_0x4c = pLevel;
+    flags = pSmash->levels[pLevel].flags;
+    if (pCar_spec == NULL || (flags & 0x1c)) {
+        if ((flags & 0x4) && PercentageChance(50)) {
+            pSmash->funk_material->map_transform.m[0][0] *= -1.0f;
+        }
+        if ((flags & 0x8) && PercentageChance(50)) {
+            pSmash->funk_material->map_transform.m[1][1] *= -1.0f;
+        }
+        if (flags & 0x10) {
+            switch (IRandomBetween(0, 3)) {
+            case 0:
+                pSmash->funk_material->map_transform.m[0][0] *= -1.0f;
+                pSmash->funk_material->map_transform.m[1][1] *= -1.0f;
+                break;
+            case 1:
+                temp = pSmash->funk_material->map_transform.m[0][0];
+                pSmash->funk_material->map_transform.m[0][0] = pSmash->funk_material->map_transform.m[0][1];
+                pSmash->funk_material->map_transform.m[0][1] = temp;
+                temp = pSmash->funk_material->map_transform.m[1][0];
+                pSmash->funk_material->map_transform.m[1][0] = -pSmash->funk_material->map_transform.m[0][1];
+                pSmash->funk_material->map_transform.m[1][1] = -temp;
+                break;
+            case 2:
+                temp = pSmash->funk_material->map_transform.m[0][0];
+                pSmash->funk_material->map_transform.m[0][0] = -pSmash->funk_material->map_transform.m[0][1];
+                pSmash->funk_material->map_transform.m[0][1] = -temp;
+                temp = pSmash->funk_material->map_transform.m[1][0];
+                pSmash->funk_material->map_transform.m[1][0] = pSmash->funk_material->map_transform.m[0][1];
+                pSmash->funk_material->map_transform.m[1][1] = temp;
+                break;
+            }
+        }
+    } else {
+        BrMatrix23Identity(&pSmash->funk_material->map_transform);
+    }
+    BrMaterialUpdate(pSmash->funk_material, BR_MATU_ALL);
+    MungeInternalCarGlass(pCar_spec);
+    if (pSmash->funk >= 0) {
+        DisableFunkotronic(pSmash->funk);
+    }
+}
 
 // MakeSmashSound
 
@@ -325,7 +452,11 @@ void C2_HOOK_FASTCALL SetShrapnelFragment(tSmash_vertex* pFragment, tMovement_sp
 
 // Random34Matrix
 
-// SetInitPosition
+// STUB: CARMA2_HW 0x004eb4a0
+// STUB: CARMA2_SW 0x004e7170
+br_scalar C2_HOOK_FASTCALL SetInitPosition(br_actor* pActor, tSmashable_initial_position_spec* pInitial_position, br_actor* pSource_actor, br_vector3* pPosition, br_vector3* pAlternate_position, br_actor* pReference_actor, br_bounds3* pBounds, br_matrix34* pMatrix) {
+    NOT_IMPLEMENTED();
+}
 
 // DoGhostPartShrapnel
 
@@ -366,7 +497,11 @@ void C2_HOOK_FASTCALL DoSpillage(tSlick_spec* pSlick, br_actor* pActor) {
 
 // DoConnotations
 
-// DoPowerupRespawnSmash
+// STUB: CARMA2_HW 0x004ecea0
+// STUB: CARMA2_SW 0x004e8b70
+void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor* pActor) {
+    NOT_IMPLEMENTED();
+}
 
 // DoConnotationsMultiLevel
 
@@ -707,6 +842,16 @@ void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
     pBounds->max.v[2] = MAX(z1, z2);
 }
 
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x004ef830
+// FUNCTION: CARMA2_SW 0x004eb490
+void C2_HOOK_FASTCALL FUN_004ef830(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, undefined4 pArg3, int pLevel) {
+
+    /* Unused */
+    ActuallyRepairSmash(pCar_spec, pSmashable, pLevel);
+}
+#endif
+
 // FreeExplosion
 
 // ReadSpecialEffectsSpec
@@ -762,6 +907,7 @@ void C2_HOOK_FASTCALL ReadSmashableData(FILE* pF, tCar_crush_buffer_entry* pCar_
 #endif
 
 // STUB: CARMA2_HW 0x004ef840
+// STUB: CARMA2_SW 0x004eb4a0
 void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel) {
     NOT_IMPLEMENTED();
 }
@@ -777,7 +923,7 @@ void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smash
 // RepairSmash
 
 // FUNCTION: CARMA2_HW 0x004ef9c0
-// FUNCTION: CARMA2_SW 0x004eb4a0
+// FUNCTION: CARMA2_SW 0x004eb620
 void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec* pCar_Spec, tCar_crush_buffer_entry* pSmash_data) {
     tCar_crush_smashable_part* smashable = pSmash_data->smashables;
     int i;
@@ -858,7 +1004,11 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 
 // VerySimpleRotate
 
-// DoFragMovement
+// STUB: CARMA2_HW 0x004eff30
+// STUB: CARMA2_SW 0x004ebb90
+void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32 pTime, float pDelta_time) {
+    NOT_IMPLEMENTED();
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)
@@ -914,7 +1064,18 @@ void C2_HOOK_FASTCALL DisposeSmashData(tCar_crush_buffer_entry* pCrush_data) {
 
 // DoBackwardShrapnel
 
-// InitRepairAnimations
+// FUNCTION: CARMA2_HW 0x004f0430
+// FUNCTION: CARMA2_SW 0x004ec090
+void C2_HOOK_FASTCALL InitRepairAnimations(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tRepair_animation) != 0xc);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gRepair_animations) != 25);
+
+    for (i = 0; i < (int)REC2_ASIZE(gRepair_animations); i++) {
+        gRepair_animations[i].field_0x0 = NULL;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004f3560
 // FUNCTION: CARMA2_SW 0x004ef1c0
@@ -1054,13 +1215,395 @@ void C2_HOOK_FASTCALL FreeConnotations(tConnotations* pConnotations, int pKeep_a
 
 // ExtrapolateGeometryCoordinates2
 
-// ExtrapolateGeometryCoordinates
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004f36c0
+// STUB: CARMA2_SW 0x004ef320
+void C2_HOOK_FASTCALL ExtrapolateGeometryCoordinates(tSmash_quad_mapping* pMapping, br_vector2* pMap, br_vertex* pVertex) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // ExtractDeTiledFaces
 
-// AddDecal
+// FUNCTION: CARMA2_HW 0x004f3820
+// FUNCTION: CARMA2_SW 0x004ef480
+br_actor* C2_HOOK_FASTCALL AddDecal(tFace_ref* pFace, br_vertex* pVertices, br_material* pMaterial, tU16* pFace_points, tU16* pPoint_indices) {
+    int i;
+    int temp;
+    int changed;
+    tU32 oldest_time;
+    tDecal* decal;
+    tDecal* oldest_decal;
+    br_model* model;
 
-// InsertQuad
+    changed = 0;
+    oldest_time = GetTotalTime();
+    oldest_decal = gDecals;
+    for (i = 0, decal = gDecals; i < (int)REC2_ASIZE(gDecals); i++, decal++) {
+        if (decal->time == 0) {
+            break;
+        }
+        if (decal->time < oldest_time) {
+            oldest_time = decal->time;
+            oldest_decal = decal;
+        }
+    }
+    if (i >= (int)REC2_ASIZE(gDecals)) {
+        decal = oldest_decal;
+    }
+    model = decal->actor->model;
+    model->faces[0].material = pMaterial;
+    model->faces[1].material = pMaterial;
+    for (i = 0; i < 4; i++) {
+        model->vertices[i] = pVertices[i];
+        model->vertices[i].p.v[1] -= -10.0f;
+    }
+    BrModelUpdate(model, BR_MODU_ALL);
+    BrActorAdd(gOther_selfs[0], decal->actor);
+    for (i = 0; i < 2; i++) {
+        if (BrVector3Dot(&pFace->normal, &model->faces[i].n) <= 0.0f) {
+            temp = model->faces[i].vertices[0];
+            model->faces[i].vertices[0] = model->faces[i].vertices[1];
+            model->faces[i].vertices[1] = temp;
+            changed = 1;
+        }
+    }
+    if (changed) {
+        BrModelUpdate(model, BR_MODU_ALL);
+    }
+    decal->time = GetTotalTime();
+    for (i = 0; i < 4; i++) {
+        pPoint_indices[i] = i;
+    }
+    pFace_points[0] = 0;
+    pFace_points[1] = 1;
+    pFace_points[2] = 3;
+    pFace_points[3] = 0;
+    pFace_points[4] = 2;
+    pFace_points[5] = 3;
+    PipeSingleSmashDecal(2);
+    return decal->actor;
+}
+
+// FUNCTION: CARMA2_HW 0x004f39a0
+// FUNCTION: CARMA2_SW 0x004ef600
+int C2_HOOK_FASTCALL InsertQuad(tSmash_quad_mapping* pMapping, br_actor* pActor, br_vertex* pVertices, tU8* pOn_edge, br_vertex** pCorners, br_material* pMaterial, tU16* pFace_points, tU16* pPoint_indices) {
+    br_model* model;
+    br_vertex* v[12];
+    br_vertex temp;
+    int max_vertices;
+    int max_faces;
+    int i;
+    int index;
+    br_scalar mid_u;
+    br_scalar mid_v;
+    br_material* old_material;
+    br_scalar d1;
+    br_scalar d2;
+    br_face* face1;
+    br_face* face2;
+
+    model = pActor->model;
+    pFace_points[0] = 0;
+    pFace_points[1] = 1;
+    pFace_points[2] = 3;
+    pFace_points[3] = 0;
+    pFace_points[4] = 3;
+    pFace_points[5] = 2;
+    memset(v, 0, sizeof(v));
+    max_vertices = BrResSize(model->vertices) / sizeof(br_vertex);
+    max_faces = BrResSize(model->faces) / sizeof(br_face);
+    mid_u = (((pCorners[1]->map.v[0] + pCorners[3]->map.v[0]) + pCorners[2]->map.v[0]) + pCorners[0]->map.v[0]) / 4.0f;
+    mid_v = (((pCorners[2]->map.v[1] + pCorners[3]->map.v[1]) + pCorners[1]->map.v[1]) + pCorners[0]->map.v[1]) / 4.0f;
+    for (i = 0; i < 4; i++) {
+        if (pCorners[i]->map.v[0] < mid_u) {
+            index = 0;
+        } else {
+            index = 1;
+        }
+        if (pCorners[i]->map.v[1] > mid_v) {
+            index |= 0x2;
+        }
+        v[index] = pCorners[i];
+    }
+    for (i = 0; i < 4; i++) {
+        if (v[i] == NULL) {
+            return 0;
+        }
+    }
+    if (pOn_edge[0] & pOn_edge[1] & pOn_edge[2] & pOn_edge[3]) {
+        for (i = 0; i < 4; i++) {
+            gVector3_006b78a0[i] = v[i]->p;
+        }
+        gVector3_006a4688 = pMapping->normal;
+        gINT_006a3334 = 1;
+        for (i = 0; i < 4; i++) {
+            pPoint_indices[i] = v[i] - model->vertices;
+        }
+        pMapping->triangles[0].face->material = pMaterial;
+        pMapping->triangles[0].face->flags = 0x0;
+        pMapping->triangles[0].face->vertices[0] = v[0] - model->vertices;
+        pMapping->triangles[0].face->vertices[1] = v[1] - model->vertices;
+        pMapping->triangles[0].face->vertices[2] = v[3] - model->vertices;
+        pMapping->triangles[1].face->material = pMaterial;
+        pMapping->triangles[1].face->flags = 0x0;
+        pMapping->triangles[1].face->vertices[0] = v[0] - model->vertices;
+        pMapping->triangles[1].face->vertices[1] = v[3] - model->vertices;
+        pMapping->triangles[1].face->vertices[2] = v[2] - model->vertices;
+        pMapping->triangles[0].face->flags = BR_FACEF_COPLANAR_2;
+        pMapping->triangles[1].face->flags = BR_FACEF_COPLANAR_0;
+        return 1;
+    }
+
+    if (pOn_edge[0] && pOn_edge[1]) {
+        v[4] = v[0];
+    } else {
+        if (model->nvertices >= max_vertices) {
+            return 0;
+        }
+        v[4] = &model->vertices[model->nvertices++];
+        *v[4] = pVertices[0];
+    }
+    if (pOn_edge[2] && pOn_edge[1]) {
+        v[5] = v[1];
+    } else {
+        if (model->nvertices >= max_vertices) {
+            return 0;
+        }
+        v[5] = &model->vertices[model->nvertices++];
+        *v[5] = pVertices[1];
+    }
+    if (pOn_edge[3] && pOn_edge[0]) {
+        v[6] = v[2];
+    } else {
+        if (model->nvertices >= max_vertices) {
+            return 0;
+        }
+        v[6] = &model->vertices[model->nvertices++];
+        *v[6] = pVertices[2];
+    }
+    if (pOn_edge[2] && pOn_edge[3]) {
+        v[7] = v[3];
+    } else {
+        if (model->nvertices >= max_vertices) {
+            return 0;
+        }
+        v[7] = &model->vertices[model->nvertices++];
+        *v[7] = pVertices[3];
+    }
+    if (pOn_edge[1]) {
+        v[8] = v[5];
+    } else {
+        temp = *v[5];
+        temp.map.v[1] = (temp.map.v[0] - v[0]->map.v[0]) / (v[1]->map.v[0] - v[0]->map.v[0]) * (v[1]->map.v[1] - v[0]->map.v[1]) + v[0]->map.v[1];
+        ExtrapolateGeometryCoordinates(pMapping, &temp.map, &temp);
+        if (model->nvertices >= max_vertices) {
+            return 0;
+        }
+        v[8] = &model->vertices[model->nvertices++];
+        *v[8] = temp;
+    }
+    if (pOn_edge[2]) {
+        v[9] = v[7];
+    } else {
+        temp = *v[7];
+        temp.map.v[0] = (temp.map.v[1] - v[1]->map.v[1]) / (v[3]->map.v[1] - v[1]->map.v[1]) * (v[3]->map.v[0] - v[1]->map.v[0]) + v[1]->map.v[0];
+        ExtrapolateGeometryCoordinates(pMapping, &temp.map, &temp);
+        if (model->nvertices >= max_vertices) {
+            return 0;
+        }
+        v[9] = &model->vertices[model->nvertices++];
+        *v[9] = temp;
+    }
+    if (pOn_edge[3]) {
+        v[10] = v[6];
+    } else {
+        temp = *v[6];
+        temp.map.v[1] = (temp.map.v[0] - v[3]->map.v[0]) / (v[2]->map.v[0] - v[3]->map.v[0]) * (v[2]->map.v[1] - v[3]->map.v[1]) + v[3]->map.v[1];
+        ExtrapolateGeometryCoordinates(pMapping, &temp.map, &temp);
+        if (model->nvertices >= max_vertices) {
+            return 0;
+        }
+        v[10] = &model->vertices[model->nvertices++];
+        *v[10] = temp;
+    }
+    if (pOn_edge[0]) {
+        v[11] = v[4];
+    } else {
+        temp = *v[4];
+        temp.map.v[0] = (temp.map.v[1] - v[2]->map.v[1]) / (v[0]->map.v[1] - v[2]->map.v[1]) * (v[0]->map.v[0] - v[2]->map.v[0]) + v[2]->map.v[0];
+        ExtrapolateGeometryCoordinates(pMapping, &temp.map, &temp);
+        if (model->nvertices >= max_vertices) {
+            return 0;
+        }
+        v[11] = &model->vertices[model->nvertices++];
+        *v[11] = temp;
+    }
+    old_material = pMapping->triangles[0].face->material;
+    pMapping->triangles[0].face->material = pMaterial;
+    pMapping->triangles[0].face->flags = 0x0;
+    pMapping->triangles[0].face->vertices[0] = v[4] - model->vertices;
+    pMapping->triangles[0].face->vertices[1] = v[5] - model->vertices;
+    pMapping->triangles[0].face->vertices[2] = v[7] - model->vertices;
+    pMapping->triangles[1].face->material = pMaterial;
+    pMapping->triangles[1].face->flags = 0x0;
+    pMapping->triangles[1].face->vertices[0] = v[4] - model->vertices;
+    pMapping->triangles[1].face->vertices[1] = v[7] - model->vertices;
+    pMapping->triangles[1].face->vertices[2] = v[6] - model->vertices;
+    pMapping->triangles[0].face->flags = BR_FACEF_COPLANAR_2;
+    pMapping->triangles[1].face->flags = BR_FACEF_COPLANAR_0;
+    for (i = 0; i < 4; i++) {
+        gVector3_006b78a0[i] = v[i + 4]->p;
+    }
+    gVector3_006a4688 = pMapping->normal;
+    gINT_006a3334 = 1;
+    if (!pOn_edge[0]) {
+        if (model->nfaces + 1 >= max_faces) {
+            return 0;
+        }
+        face1 = &model->faces[model->nfaces++];
+        face2 = &model->faces[model->nfaces++];
+        *face1 = model->faces[0];
+        *face2 = model->faces[0];
+        d1 = (v[11]->p.v[0] - v[10]->p.v[0]) * (v[11]->p.v[0] - v[10]->p.v[0]) + (v[11]->p.v[1] - v[10]->p.v[1]) * (v[11]->p.v[1] - v[10]->p.v[1]) + (v[11]->p.v[2] - v[10]->p.v[2]) * (v[11]->p.v[2] - v[10]->p.v[2]);
+        d2 = (v[4]->p.v[0] - v[2]->p.v[0]) * (v[4]->p.v[0] - v[2]->p.v[0]) + (v[4]->p.v[1] - v[2]->p.v[1]) * (v[4]->p.v[1] - v[2]->p.v[1]) + (v[4]->p.v[2] - v[2]->p.v[2]) * (v[4]->p.v[2] - v[2]->p.v[2]);
+        if (d1 > d2) {
+            face1->flags = 0x0;
+            face1->material = old_material;
+            face1->vertices[0] = v[11] - model->vertices;
+            face1->vertices[1] = v[4] - model->vertices;
+            face1->vertices[2] = v[10] - model->vertices;
+            face2->material = old_material;
+            face2->flags = 0x0;
+            face2->vertices[0] = v[11] - model->vertices;
+            face2->vertices[1] = v[10] - model->vertices;
+            face2->vertices[2] = v[2] - model->vertices;
+        } else {
+            face1->flags = 0x0;
+            face1->material = old_material;
+            face1->vertices[0] = v[4] - model->vertices;
+            face1->vertices[1] = v[10] - model->vertices;
+            face1->vertices[2] = v[2] - model->vertices;
+            face2->material = old_material;
+            face2->flags = 0x0;
+            face2->vertices[0] = v[4] - model->vertices;
+            face2->vertices[1] = v[2] - model->vertices;
+            face2->vertices[2] = v[11] - model->vertices;
+        }
+    }
+    if (!pOn_edge[1]) {
+        if (model->nfaces + 1 >= max_faces) {
+            return 0;
+        }
+        face1 = &model->faces[model->nfaces++];
+        face2 = &model->faces[model->nfaces++];
+        *face1 = model->faces[0];
+        *face2 = model->faces[0];
+        d1 = (v[0]->p.v[0] - v[5]->p.v[0]) * (v[0]->p.v[0] - v[5]->p.v[0]) + (v[0]->p.v[1] - v[5]->p.v[1]) * (v[0]->p.v[1] - v[5]->p.v[1]) + (v[0]->p.v[2] - v[5]->p.v[2]) * (v[0]->p.v[2] - v[5]->p.v[2]);
+        d2 = (v[8]->p.v[0] - v[11]->p.v[0]) * (v[8]->p.v[0] - v[11]->p.v[0]) + (v[8]->p.v[1] - v[11]->p.v[1]) * (v[8]->p.v[1] - v[11]->p.v[1]) + (v[8]->p.v[2] - v[11]->p.v[2]) * (v[8]->p.v[2] - v[11]->p.v[2]);
+        if (d1 > d2) {
+            face1->flags = 0x0;
+            face1->material = old_material;
+            face1->vertices[0] = v[0] - model->vertices;
+            face1->vertices[1] = v[8] - model->vertices;
+            face1->vertices[2] = v[5] - model->vertices;
+            face2->material = old_material;
+            face2->flags = 0x0;
+            face2->vertices[0] = v[0] - model->vertices;
+            face2->vertices[1] = v[5] - model->vertices;
+            face2->vertices[2] = v[11] - model->vertices;
+        } else {
+            face1->flags = 0x0;
+            face1->material = old_material;
+            face1->vertices[0] = v[8] - model->vertices;
+            face1->vertices[1] = v[5] - model->vertices;
+            face1->vertices[2] = v[11] - model->vertices;
+            face2->material = old_material;
+            face2->flags = 0x0;
+            face2->vertices[0] = v[8] - model->vertices;
+            face2->vertices[1] = v[11] - model->vertices;
+            face2->vertices[2] = v[0] - model->vertices;
+        }
+    }
+    if (!pOn_edge[2]) {
+        if (model->nfaces + 1 >= max_faces) {
+            return 0;
+        }
+        face1 = &model->faces[model->nfaces++];
+        face2 = &model->faces[model->nfaces++];
+        *face1 = model->faces[0];
+        *face2 = model->faces[0];
+        d1 = (v[8]->p.v[0] - v[9]->p.v[0]) * (v[8]->p.v[0] - v[9]->p.v[0]) + (v[8]->p.v[1] - v[9]->p.v[1]) * (v[8]->p.v[1] - v[9]->p.v[1]) + (v[8]->p.v[2] - v[9]->p.v[2]) * (v[8]->p.v[2] - v[9]->p.v[2]);
+        d2 = (v[1]->p.v[0] - v[7]->p.v[0]) * (v[1]->p.v[0] - v[7]->p.v[0]) + (v[1]->p.v[1] - v[7]->p.v[1]) * (v[1]->p.v[1] - v[7]->p.v[1]) + (v[1]->p.v[2] - v[7]->p.v[2]) * (v[1]->p.v[2] - v[7]->p.v[2]);
+        if (d1 > d2) {
+            face1->flags = 0x0;
+            face1->material = old_material;
+            face1->vertices[0] = v[8] - model->vertices;
+            face1->vertices[1] = v[1] - model->vertices;
+            face1->vertices[2] = v[9] - model->vertices;
+            face2->material = old_material;
+            face2->flags = 0x0;
+            face2->vertices[0] = v[8] - model->vertices;
+            face2->vertices[1] = v[9] - model->vertices;
+            face2->vertices[2] = v[7] - model->vertices;
+        } else {
+            face1->flags = 0x0;
+            face1->material = old_material;
+            face1->vertices[0] = v[1] - model->vertices;
+            face1->vertices[1] = v[9] - model->vertices;
+            face1->vertices[2] = v[7] - model->vertices;
+            face2->material = old_material;
+            face2->flags = 0x0;
+            face2->vertices[0] = v[1] - model->vertices;
+            face2->vertices[1] = v[7] - model->vertices;
+            face2->vertices[2] = v[8] - model->vertices;
+        }
+    }
+    if (!pOn_edge[3]) {
+        if (model->nfaces + 1 >= max_faces) {
+            return 0;
+        }
+        face1 = &model->faces[model->nfaces++];
+        face2 = &model->faces[model->nfaces++];
+        *face1 = model->faces[0];
+        *face2 = model->faces[0];
+        d1 = (v[6]->p.v[0] - v[3]->p.v[0]) * (v[6]->p.v[0] - v[3]->p.v[0]) + (v[6]->p.v[1] - v[3]->p.v[1]) * (v[6]->p.v[1] - v[3]->p.v[1]) + (v[6]->p.v[2] - v[3]->p.v[2]) * (v[6]->p.v[2] - v[3]->p.v[2]);
+        d2 = (v[9]->p.v[0] - v[10]->p.v[0]) * (v[9]->p.v[0] - v[10]->p.v[0]) + (v[9]->p.v[1] - v[10]->p.v[1]) * (v[9]->p.v[1] - v[10]->p.v[1]) + (v[9]->p.v[2] - v[10]->p.v[2]) * (v[9]->p.v[2] - v[10]->p.v[2]);
+        if (d1 > d2) {
+            face1->flags = 0x0;
+            face1->material = old_material;
+            face1->vertices[0] = v[6] - model->vertices;
+            face1->vertices[1] = v[9] - model->vertices;
+            face1->vertices[2] = v[3] - model->vertices;
+            face2->material = old_material;
+            face2->flags = 0x0;
+            face2->vertices[0] = v[6] - model->vertices;
+            face2->vertices[1] = v[3] - model->vertices;
+            face2->vertices[2] = v[10] - model->vertices;
+        } else {
+            face1->flags = 0x0;
+            face1->material = old_material;
+            face1->vertices[0] = v[9] - model->vertices;
+            face1->vertices[1] = v[3] - model->vertices;
+            face1->vertices[2] = v[10] - model->vertices;
+            face2->material = old_material;
+            face2->flags = 0x0;
+            face2->vertices[0] = v[9] - model->vertices;
+            face2->vertices[1] = v[10] - model->vertices;
+            face2->vertices[2] = v[6] - model->vertices;
+        }
+    }
+    for (i = 4; i < 8; i++) {
+        pPoint_indices[i - 4] = v[i] - model->vertices;
+    }
+    return 1;
+}
 
 // SpawnSmashAndMungeFaces
 
@@ -1203,7 +1746,11 @@ void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_materia
 
 // ReinitSmashing
 
-// LinkSmashies
+// STUB: CARMA2_HW 0x004f57c0
+// STUB: CARMA2_SW 0x004f1420
+void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004f5a00
 // FUNCTION: CARMA2_SW 0x004f1660
@@ -1389,7 +1936,25 @@ void C2_HOOK_FASTCALL SmashRemoveSomeFaces(br_model* pModel, tS16 pCount) {
     DRModelUpdateAndKevificateMaterials(pModel, BR_MODU_ALL);
 }
 
-// SmashRestoreSomeFaces
+// FUNCTION: CARMA2_HW 0x004f5fa0
+// FUNCTION: CARMA2_SW 0x004f1c00
+void C2_HOOK_FASTCALL SmashRestoreSomeFaces(br_model* pModel, int pFace_count, const tU16* pFace_data, br_material* pMaterial) {
+    br_face* face;
+    int i;
+
+    face = &pModel->faces[pModel->nfaces];
+    for (i = 0; i < pFace_count; i++) {
+        face->material = pMaterial;
+        face->vertices[0] = pFace_data[4 * i + 0];
+        face->vertices[1] = pFace_data[4 * i + 1];
+        face->vertices[2] = pFace_data[4 * i + 2];
+        face->smoothing = pFace_data[4 * i + 3];
+        face->flags = 0;
+        face++;
+    }
+    pModel->nfaces += (br_int_16)pFace_count;
+    DRModelUpdateAndKevificateMaterials(pModel, BR_MODU_ALL);
+}
 
 // FUNCTION: CARMA2_HW 0x004f6020
 // FUNCTION: CARMA2_SW 0x004f1c80

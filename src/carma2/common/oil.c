@@ -23,23 +23,29 @@
 
 
 // GLOBAL: CARMA2_HW 0x0065a398
+// GLOBAL: CARMA2_SW 0x00654cb0
 const char* gOil_pixie_names[1] = {
     "OIL.PIX",
 };
 
 // GLOBAL: CARMA2_HW 0x00690c88
+// GLOBAL: CARMA2_SW 0x0068ace0
 br_pixelmap* gOil_pixies[1];
 
 // GLOBAL: CARMA2_HW 0x00690c90
+// GLOBAL: CARMA2_SW 0x0068ace8
 tOil_spill_info gOily_spills[32];
 
 // GLOBAL: CARMA2_HW 0x0074a68c
+// GLOBAL: CARMA2_SW 0x0074114c
 br_material* oily_material;
 
 // GLOBAL: CARMA2_HW 0x00691710
+// GLOBAL: CARMA2_SW 0x0068b768
 int gNext_oil_pixie;
 
 // FUNCTION: CARMA2_HW 0x004a6a10
+// FUNCTION: CARMA2_SW 0x004a2b90
 void C2_HOOK_FASTCALL InitOilSpills(void) {
     int i;
     br_model* the_model;
@@ -100,6 +106,7 @@ void C2_HOOK_FASTCALL InitOilSpills(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004a6c50
+// FUNCTION: CARMA2_SW 0x004a2dc0
 void C2_HOOK_FASTCALL ResetOilSpills(void) {
     int i;
 
@@ -112,6 +119,7 @@ void C2_HOOK_FASTCALL ResetOilSpills(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004a7460
+// FUNCTION: CARMA2_SW 0x004a35d0
 void C2_HOOK_FASTCALL  SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel) {
 
     BrVector2Set(&pModel->vertices[0].p, -pOil->field_0x20, -pOil->field_0x20);
@@ -210,6 +218,7 @@ void C2_HOOK_FASTCALL MungeOilsHeightAboveGround(tOil_spill_info* pOil) {
 }
 
 // FUNCTION: CARMA2_HW 0x004a6e50
+// FUNCTION: CARMA2_SW 0x004a2fc0
 void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
     int i;
     tU32 time;
@@ -331,12 +340,14 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
 }
 
 // FUNCTION: CARMA2_HW 0x004a74e0
+// FUNCTION: CARMA2_SW 0x004a3650
 int C2_HOOK_FASTCALL GetOilSpillCount(void) {
 
     return REC2_ASIZE(gOily_spills);
 }
 
 // FUNCTION: CARMA2_HW 0x004a74f0
+// FUNCTION: CARMA2_SW 0x004a3660
 void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize) {
 
     if (gOily_spills[pIndex].car != NULL) {

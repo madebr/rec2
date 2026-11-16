@@ -20,7 +20,11 @@
 
 // GLOBAL: CARMA2_HW 0x0074b5e0
 // GLOBAL: CARMA2_SW 0x00741ca0
-int gKey_mapping[77];
+int gKey_mapping[77] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x0074b714
+// GLOBAL: CARMA2_SW 0x00741dd4
+int gINT_0074b714 = 0;
 
 // GLOBAL: CARMA2_HW 0x0068c1c4
 // GLOBAL: CARMA2_SW 0x0068620c
@@ -31,6 +35,7 @@ int gEdge_trigger_mode;
 int gGo_ahead_keys[3] = { 51, 52, 106 };
 
 // GLOBAL: CARMA2_HW 0x0074b5c0
+// GLOBAL: CARMA2_SW 0x00741c80
 tJoy_array gJoy_array;
 
 // GLOBAL: CARMA2_HW 0x0068bee0
@@ -423,7 +428,11 @@ int C2_HOOK_FASTCALL AnyKeyDown(void) {
     return (the_key != -1 && the_key != 4) || EitherMouseButtonDown();
 }
 
-// KevKeyService
+// STUB: CARMA2_HW 0x00482f10
+// STUB: CARMA2_SW 0x00480050
+tU32* C2_HOOK_FASTCALL KevKeyService(void) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x00483040
 // FUNCTION: CARMA2_SW 0x00480180
@@ -558,6 +567,13 @@ void C2_HOOK_FASTCALL AddRollingString(char* pStr, int pX, int pY, tRolling_type
         AddRollingLetter(pStr[i], pX + gCurrent_graf_data->rolling_letter_x_pitch * i, pY, pRolling_type);
     }
 }
+
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x00483e90
+void C2_HOOK_FASTCALL FUN_00483e90(void) {
+    /* Unused */
+}
+#endif
 
 // FUNCTION: CARMA2_HW 0x00483fd0
 void C2_HOOK_FASTCALL BlankSlot(int pIndex, int pName_length, int pVisible_length) {

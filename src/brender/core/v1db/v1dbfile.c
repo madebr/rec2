@@ -582,8 +582,7 @@ int C2_HOOK_STDCALL FopRead_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, br_ui
     mip = (br_material**)BrResAllocate(v1db.res, sizeof(intptr_t) * (count + 1), BR_MEMORY_MATERIAL_INDEX);
     mip[0] = NULL;
     for (i = 1; i < count + 1; i++) {
-        df->prims->name_read(df, name);
-        mip[i] = BrMaterialFind(name);
+        mip[i] = BrMaterialFind(df->prims->name_read(df, name));
     }
     DfPush(DF_MATERIAL_INDEX, mip, count + 1);
     return 0;
@@ -625,13 +624,13 @@ int C2_HOOK_STDCALL FopRead_OLD_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, b
     }
     mip = BrResAllocate(v1db.res, num_materials * sizeof(*mip), BR_MEMORY_MATERIAL_INDEX);
     cp = mblock;
-    for (i = 0; i < (int)length; i++) {
+    for (i = 0; i < num_materials; i++) {
         mip[i] = BrMaterialFind(cp);
         while (*cp++ != '\0') {
         }
     }
     BrScratchFree(mblock);
-    DfPush(DF_MATERIAL_INDEX, mip, count);
+    DfPush(DF_MATERIAL_INDEX, mip, num_materials);
     return 0;
 }
 
@@ -691,16 +690,17 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32
     br_face* fp;
     br_material** mip;
     int mi_count;
-    int i;
+    br_uint_32 i;
+    br_uint_32 nfaces;
     void* ptr;
 
+    nfaces = length / df->prims->struct_size(df, &br_old_face_F, NULL);
     ptr = DfPop(DF_VERTEX, (int*)&i);
     mip = DfPop(DF_MATERIAL_INDEX, &mi_count);
     DfPush(DF_VERTEX, ptr, i);
-    mi_count = length / df->prims->struct_size(df, &br_old_face_F, NULL);
-    fp = BrResAllocate(v1db.res, sizeof(br_face) * mi_count, BR_MEMORY_FACES);
-    DfStructReadArray(df, &br_old_face_F, fp, mi_count);
-    for (i = 0; i < mi_count; i++) {
+    fp = BrResAllocate(v1db.res, sizeof(br_face) * nfaces, BR_MEMORY_FACES);
+    DfStructReadArray(df, &br_old_face_F, fp, nfaces);
+    for (i = 0; i < nfaces; i++) {
         union u_mat_u16 {
             br_material mat;
             br_uint_16 u16;
@@ -711,7 +711,7 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32
         }
     }
     BrResFree(mip);
-    DfPush(DF_FACE, fp, mi_count);
+    DfPush(DF_FACE, fp, nfaces);
     return 0;
 }
 
@@ -779,7 +779,6 @@ int C2_HOOK_STDCALL FopRead_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 len
     br_model* mp;
 
     mp = BrModelAllocate(NULL, 0, 0);
-    mp->identifier = NULL;
     df->res = mp;
     df->prims->struct_read(df, &br_model_F, mp);
     df->res = NULL;
@@ -805,7 +804,8 @@ int C2_HOOK_STDCALL FopRead_OLD_MODEL_1(br_datafile* df, br_uint_32 id, br_uint_
     mp = BrModelAllocate(NULL, 0, 0);
     df->res = mp;
     df->prims->struct_read(df, &br_old_model_1_F, mp);
-    DfPush(DF_MODEL, df->res, 1);
+    df->res = NULL;
+    DfPush(DF_MODEL, mp, 1);
     return 0;
 }
 
@@ -1100,13 +1100,15 @@ int C2_HOOK_STDCALL FopRead_TRANSFORM(br_datafile* df, br_uint_32 id, br_uint_32
     br_transform* tp;
 
     for (t = 0; t < BR_ASIZE(TransformTypes); t++) {
-        if (id == TransformTypes[t].id) {
+        if (TransformTypes[t].id == id) {
             break;
         }
     }
+#ifdef BRENDER_FIX_BUGS
     if (t >= BR_ASIZE(TransformTypes)) {
         abort(); // FIXME: LOG_PANIC("transform type not found!");
     }
+#endif
     tp = (br_transform*)BrResAllocate(v1db.res, sizeof(br_transform), BR_MEMORY_TRANSFORM);
     tp->type = t;
     df->res = tp;

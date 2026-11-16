@@ -184,14 +184,14 @@ int C2_HOOK_CDECL BrVSprintf(char* buf, const char* fmt, va_list args) {
 }
 
 // FUNCTION: CARMA2_HW 0x0053f3b0
+// FUNCTION: CARMA2_SW 0x0053aa50
 br_int_32 C2_HOOK_CDECL BrVSprintfN(char* buf, br_size_t buf_size, const char* fmt, va_list args) {
-    // Most C libs have vsnprintf these days that can replace this.
     unsigned int n;
     char tmp[512];
 
     n = vsprintf(tmp, fmt, args);
 
-    if (buf_size - 1 < n) {
+    if (n > buf_size - 1) {
         n = buf_size - 1;
     }
 

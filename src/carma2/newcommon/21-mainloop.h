@@ -35,6 +35,10 @@ extern void C2_HOOK_FASTCALL QueueWastedMassage(int pIndex);
 
 extern void C2_HOOK_FASTCALL UpdateFramePeriod(tU32* pCamera_period);
 
+#ifdef REC2_MATCHING
+extern tU32 C2_HOOK_FASTCALL GetLastTickCount(void);
+#endif
+
 // CheckTimer
 
 // MungeRaceFinished

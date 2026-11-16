@@ -13,6 +13,9 @@
 // GLOBAL: CARMA2_SW 0x00685e60
 tNet_mode gNet_mode;
 
+// GLOBAL: CARMA2_HW 0x0068b920
+tU16 gScreen_row_buffer[640];
+
 // GLOBAL: CARMA2_HW 0x0074b7d4
 // GLOBAL: CARMA2_SW 0x00741e94
 int gNumber_of_net_players;

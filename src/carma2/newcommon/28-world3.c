@@ -9,6 +9,7 @@
 #include "28-world3.h"
 
 #include "08-loading1.h"
+#include "37-brucetrk.h"
 #include "41-utility.h"
 #include "51-smash.h"
 #include "52-errors.h"
@@ -96,7 +97,20 @@ void C2_HOOK_FASTCALL InitTreeSurgery(void) {
 
 // LoadTrack
 
-// RemoveBounds
+// FUNCTION: CARMA2_HW 0x00506e20
+// FUNCTION: CARMA2_SW 0x00502270
+intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_actor, type, 0x12);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_actor, type_data, 0x5c);
+    (void)pArg;
+
+    if (pActor->type == BR_ACTOR_BOUNDS || pActor->type == BR_ACTOR_BOUNDS_CORRECT) {
+        BrResFree(pActor->type_data);
+        pActor->type_data = NULL;
+    }
+    return 0;
+}
 
 // RemoveBoundsStructures
 
@@ -106,7 +120,15 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
     NOT_IMPLEMENTED();
 }
 
-// ProcessTrack
+// FUNCTION: CARMA2_HW 0x00506e50
+// FUNCTION: CARMA2_SW 0x005022a0
+void C2_HOOK_FASTCALL ProcessTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world) {
+
+    RenderTrack(pWorld, pTrack_spec, pCamera, pCamera_to_world);
+    if (gAdditional_actors != NULL) {
+        BrZbsSceneRenderAdd(gAdditional_actors);
+    }
+}
 
 // AnimateSky
 
@@ -512,6 +534,21 @@ int C2_HOOK_FASTCALL AddShadeTables(tBrender_storage* pStorage_space, const char
     return total;
 }
 
+// FUNCTION: CARMA2_HW 0x00501dd0
+// FUNCTION: CARMA2_SW 0x004fd730
+void C2_HOOK_FASTCALL LoadModelsFromLineInto(tBrender_storage* pStorage_space, FILE* pF) {
+    tPath_name the_path;
+    char s[256];
+    char* str;
+
+    PossibleService();
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    PathCat(the_path, gApplication_path, "MODELS");
+    PathCat(the_path, the_path, str);
+    AddModels(pStorage_space, the_path);
+}
+
 // FUNCTION: CARMA2_HW 0x00501e40
 // FUNCTION: CARMA2_SW 0x004fd7a0
 int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath) {
@@ -549,6 +586,21 @@ int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPa
         }
     }
     return new_ones;
+}
+
+// FUNCTION: CARMA2_HW 0x00501fe0
+// FUNCTION: CARMA2_SW 0x004fd930
+void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage* pStorage, FILE* pFile, tRendererShadingType pShading) {
+    tPath_name the_path;
+    char s[256];
+    char* str;
+
+    PossibleService();
+    GetALineAndDontArgue(pFile, s);
+    str = strtok(s, "\t ,/");
+    PathCat(the_path, gApplication_path, "MATERIAL");
+    PathCat(the_path, the_path, str);
+    AddMaterials(pStorage, the_path, pShading);
 }
 
 // FUNCTION: CARMA2_HW 0x00502060
@@ -621,38 +673,42 @@ void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, co
 
 // FUNCTION: CARMA2_HW 0x005026b0
 // FUNCTION: CARMA2_SW 0x004fe000
-int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList) {
-    tPath_name pathCopy;
+int C2_HOOK_FASTCALL GetFileName(const char *pPath, void* pContext) {
+    tPath_name path;
     tPath_name pathUpper;
     tPath_name dir_path;
     tPath_name stem_path;
+    tName_list *list;
 
-    strcpy(pathCopy, path);
-    Uppercaseificate(pathUpper, pathCopy);
+    list = pContext;
+    strcpy(path, pPath);
+    Uppercaseificate(pathUpper, path);
     if (strstr(pathUpper, ".PIX") == NULL
             && strstr(pathUpper, ".TIF") == NULL) {
         return 0;
     }
     SepDirAndFilename(pathUpper, dir_path, stem_path);
-    strcpy(pList->items[pList->size], stem_path);
-    if (pList->size < (int)REC2_ASIZE(pList->items)) {
-        pList->size += 1;
+    strcpy(list->items[list->size], stem_path);
+    if (list->size < (int)REC2_ASIZE(list->items)) {
+        list->size += 1;
     }
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00502780
 // FUNCTION: CARMA2_SW 0x004fe0d0
-int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) {
-    tPath_name pathCopy;
+int C2_HOOK_FASTCALL GetAdditionalFileName(const char* pPath, void* pContext) {
+    tPath_name path;
     tPath_name upperPath;
     tPath_name dir_path;
     tPath_name stem_path;
     int alreadyInList;
     int i;
+    tName_list* list;
 
-    strcpy(pathCopy, path);
-    Uppercaseificate(upperPath, pathCopy);
+    list = pContext;
+    strcpy(path, pPath);
+    Uppercaseificate(upperPath, path);
 
     if (strstr(upperPath, ".PIX") == NULL
             && strstr(upperPath, ".P16") == NULL
@@ -662,16 +718,16 @@ int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) 
     }
     SepDirAndFilename(upperPath, dir_path, stem_path);
 
-    for (i = 0, alreadyInList = 0; i < pList->size; i++) {
-        if (strcmp(pList->items[i], stem_path) == 0) {
+    for (i = 0, alreadyInList = 0; i < list->size; i++) {
+        if (strcmp(list->items[i], stem_path) == 0) {
             alreadyInList = 1;
             break;
         }
     }
     if (!alreadyInList) {
-        strcpy(pList->items[pList->size], stem_path);
-        if (pList->size < (int)REC2_ASIZE(pList->items)) {
-            pList->size += 1;
+        strcpy(list->items[list->size], stem_path);
+        if (list->size < (int)REC2_ASIZE(list->items)) {
+            list->size += 1;
         }
     }
     return 0;
@@ -693,20 +749,20 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     list.size = 0;
     strcpy(pathCopy, path);
     if (gDisableTiffConversion) {
-        PFForEveryFile2(pathCopy, (tEnumPathCallback)GetAdditionalFileName, &list);
+        PFForEveryFile2(pathCopy, GetAdditionalFileName, &list);
     }
     if (!gDisableTiffConversion) {
         PathCat(tifPath, pathCopy, "TIFFX");
-        PFForEveryFile2(tifPath, (tEnumPathCallback)GetFileName, &list);
+        PFForEveryFile2(tifPath, GetFileName, &list);
     }
     PathCat(pixPath, pathCopy, "PIX8");
-    PFForEveryFile2(pixPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+    PFForEveryFile2(pixPath, GetAdditionalFileName, &list);
     if (!gDisableTiffConversion) {
         PathCat(tifPath, pathCopy, "TIFFRGB");
-        PFForEveryFile2(tifPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+        PFForEveryFile2(tifPath, GetAdditionalFileName, &list);
     }
     PathCat(pixPath, pathCopy, "PIX16");
-    PFForEveryFile2(pixPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+    PFForEveryFile2(pixPath, GetAdditionalFileName, &list);
     for (i = 0; i < list.size; i++) {
         PathCat(pathCopy, path, list.items[i]);
         AddPixelmaps(gStorage_for_callbacks, pathCopy);

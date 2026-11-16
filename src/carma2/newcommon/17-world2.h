@@ -91,6 +91,10 @@ extern void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
 extern int C2_HOOK_FASTCALL GetCarSimplificationLevel(void);
 
+extern void C2_HOOK_FASTCALL ToggleEdges(void);
+
+extern intptr_t C2_HOOK_CDECL ToggleEdgesCB(br_actor* pActor, void* pData);
+
 extern intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, void* pContext);
 
 extern void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette);

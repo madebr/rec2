@@ -539,7 +539,7 @@ void C2_HOOK_FASTCALL ReadSmashableData(FILE* pF, tCar_crush_buffer_entry* pCar_
 }
 
 // FUNCTION: CARMA2_HW 0x0042a550
-void C2_HOOK_FASTCALL LoadCarCrushDataEntry(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry,tBrender_storage *pBrender_storage) {
+void C2_HOOK_FASTCALL ReadCrushData(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry,tBrender_storage *pBrender_storage) {
     int i;
 
     /* Actor */
@@ -775,7 +775,7 @@ int C2_HOOK_FASTCALL LoadCarCrush(tCar_crush_buffer* pCar_crush_buffer, const ch
     gCrush_data_entry_counter = 1;
     for (i = 0; i < pCar_crush_buffer->count_entries; i++) {
         pCar_crush_buffer->entries[i] = BrMemAllocate(sizeof(tCar_crush_buffer_entry), kMem_crush_data);
-        LoadCarCrushDataEntry(f, pCar_crush_buffer->entries[i], pBrender_storage);
+        ReadCrushData(f, pCar_crush_buffer->entries[i], pBrender_storage);
     }
     PFfclose(f);
     return 0;

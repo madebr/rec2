@@ -26,14 +26,19 @@ br_pixelmap* gOil_pixies[1];
 
 // GLOBAL: CARMA2_HW 0x00690c90
 // GLOBAL: CARMA2_SW 0x0068ace8
-tOil_spill_info gOily_spills[32];
+tOil_spill_info gOily_spills[32] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x00691710
+// GLOBAL: CARMA2_SW 0x0068b768
+int gNext_oil_pixie = 0;
+
+// GLOBAL: CARMA2_HW 0x00691714
+// GLOBAL: CARMA2_SW 0x0068b76c
+int gBig_bang = 0;
 
 // GLOBAL: CARMA2_HW 0x0074a68c
 // GLOBAL: CARMA2_SW 0x0074114c
 br_material* oily_material;
-
-// GLOBAL: CARMA2_HW 0x00691710
-int gNext_oil_pixie;
 
 // FUNCTION: CARMA2_HW 0x004a6a10
 // FUNCTION: CARMA2_SW 0x004a2b90
@@ -110,19 +115,57 @@ void C2_HOOK_FASTCALL ResetOilSpills(void) {
     }
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x004a6c80
-// STUB: CARMA2_SW 0x004a2df0
+// FUNCTION: CARMA2_HW 0x004a6c80
+// FUNCTION: CARMA2_SW 0x004a2df0
 void C2_HOOK_FASTCALL QueueOilSpill2(tCar_spec* pCar, br_actor* pCar_actor, br_model* pCar_model, tU32 pTime_delay, br_scalar pMin_size, br_scalar pMax_size, br_scalar pMin_grow_rate, br_scalar pMax_grow_rate, br_scalar pInitial_size, br_scalar pField_0x48, br_scalar pField_0x4c, br_scalar pField_0x40, br_scalar pField_0x44, br_material* pMaterial, br_material* pField_0x50) {
-    NOT_IMPLEMENTED();
-}
+    int i;
+    int oily_index;
+    int oldest_one;
+    tU32 the_time;
+    tU32 oldest_time;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    oldest_one = 0;
+    oily_index = -1;
+    the_time = GetTotalTime();
+    oldest_time = GetTotalTime();
+
+    for (i = 0; i < (int)REC2_ASIZE(gOily_spills); i++) {
+        if (pCar != NULL && gOily_spills[i].car_actor == pCar_actor && the_time < gOily_spills[i].spill_time + 5000) {
+            return;
+        }
+    }
+
+    for (i = 0; i < (int)REC2_ASIZE(gOily_spills); i++) {
+        if (gOily_spills[i].car_actor != NULL) {
+            if (gOily_spills[i].spill_time < oldest_time) {
+                oldest_time = gOily_spills[i].spill_time;
+                oldest_one = i;
+            }
+        } else {
+            oily_index = i;
+            break;
+        }
+    }
+
+    if (oily_index < 0) {
+        oily_index = oldest_one;
+    }
+    gOily_spills[oily_index].actor->material = pMaterial;
+    gOily_spills[oily_index].car = pCar;
+    gOily_spills[oily_index].car_actor = pCar_actor;
+    gOily_spills[oily_index].car_model = pCar_model;
+    gOily_spills[oily_index].spill_time = the_time + pTime_delay;
+    gOily_spills[oily_index].field_0x20 = pInitial_size;
+    gOily_spills[oily_index].full_size = SRandomBetween(pMin_size, pMax_size);
+    gOily_spills[oily_index].grow_rate = SRandomBetween(pMin_grow_rate, pMax_grow_rate);
+    gOily_spills[oily_index].current_size = pInitial_size;
+    gOily_spills[oily_index].actor->render_style = BR_RSTYLE_NONE;
+    gOily_spills[oily_index].field_0x40 = pField_0x40;
+    gOily_spills[oily_index].field_0x44 = pField_0x44;
+    gOily_spills[oily_index].field_0x48 = pField_0x48;
+    gOily_spills[oily_index].field_0x4c = pField_0x4c;
+    gOily_spills[oily_index].field_0x50 = pField_0x50;
+}
 
 // FUNCTION: CARMA2_HW 0x004a6dd0
 // FUNCTION: CARMA2_SW 0x004a2f40
@@ -134,9 +177,24 @@ void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar) {
 
 // OKToSpillOil
 
-// MungeOilsHeightAboveGround
+void C2_HOOK_FASTCALL MungeOilsHeightAboveGround(tOil_spill_info* pOil) {
 
-// MungeIndexedOilsHeightAboveGround
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tOil_spill_info, actor, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tOil_spill_info, position, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_actor, t, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_transform, t, 0x4);
+
+    pOil->actor->t.t.translate.t = pOil->position;
+}
+
+// FUNCTION: CARMA2_HW 0x004a6e20
+// FUNCTION: CARMA2_SW 0x004a2f90
+void C2_HOOK_FASTCALL MungeIndexedOilsHeightAboveGround(int pIndex) {
+
+    C2_HOOK_BUG_ON(sizeof(tOil_spill_info) != 0x54);
+
+    MungeOilsHeightAboveGround(&gOily_spills[pIndex]);
+}
 
 // FUNCTION: CARMA2_HW 0x004a7460
 void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel) {
@@ -173,9 +231,81 @@ void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scala
     }
 }
 
-// PointInSpill
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// GetOilFrictionFactors
+// STUB: CARMA2_HW 0x004a77d0
+// STUB: CARMA2_SW 0x004a3940
+int C2_HOOK_FASTCALL PointInSpill(const br_vector3* pPoint, int pIndex) {
+
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004a7530
+// FUNCTION: CARMA2_SW 0x004a36a0
+void C2_HOOK_FASTCALL GetOilFrictionFactors(tCar_spec* pCar, br_scalar* pFl_factor, br_scalar* pFr_factor, br_scalar* pRl_factor, br_scalar* pRr_factor) {
+    int i;
+    br_vector3 wheel_world;
+
+    *pFl_factor = 1.0f;
+    *pFr_factor = 1.0f;
+    *pRl_factor = 1.0f;
+    *pRr_factor = 1.0f;
+
+    if (pCar != NULL && pCar->driver > eDriver_5) {
+        if (pCar->shadow_intersection_flags != 0) {
+            for (i = 0; i < (int)REC2_ASIZE(gOily_spills); i++) {
+                float oil_min = gOily_spills[i].field_0x48;
+                float oil_max = gOily_spills[i].field_0x4c;
+                if (oil_max != 0.0f && ((1 << i) & pCar->shadow_intersection_flags)) {
+                    float friction_min = gOily_spills[i].field_0x40;
+                    float friction_max = gOily_spills[i].field_0x44;
+                    BrMatrix34ApplyP(&wheel_world, &pCar->wpos[2], &pCar->car_master_actor->t.t.mat);
+                    if (PointInSpill(&wheel_world, i)) {
+                        pCar->oil_remaining[2] = SRandomBetween(oil_min, oil_max);
+                        pCar->oil_wheel_friction[2] = SRandomBetween(friction_min, friction_max);
+                        pCar->field_0x16fc[2] = gOily_spills[i].field_0x50;
+                    }
+                    BrMatrix34ApplyP(&wheel_world, &pCar->wpos[3], &pCar->car_master_actor->t.t.mat);
+                    if (PointInSpill(&wheel_world, i)) {
+                        pCar->oil_remaining[3] = SRandomBetween(oil_min, oil_max);
+                        pCar->oil_wheel_friction[3] = SRandomBetween(friction_min, friction_max);
+                        pCar->field_0x16fc[3] = gOily_spills[i].field_0x50;
+                    }
+                    BrMatrix34ApplyP(&wheel_world, &pCar->wpos[0], &pCar->car_master_actor->t.t.mat);
+                    if (PointInSpill(&wheel_world, i)) {
+                        pCar->oil_remaining[0] = SRandomBetween(oil_min, oil_max);
+                        pCar->oil_wheel_friction[0] = SRandomBetween(friction_min, friction_max);
+                        pCar->field_0x16fc[0] = gOily_spills[i].field_0x50;
+                    }
+                    BrMatrix34ApplyP(&wheel_world, &pCar->wpos[1], &pCar->car_master_actor->t.t.mat);
+                    if (PointInSpill(&wheel_world, i)) {
+                        pCar->oil_remaining[1] = SRandomBetween(oil_min, oil_max);
+                        pCar->oil_wheel_friction[1] = SRandomBetween(friction_min, friction_max);
+                        pCar->field_0x16fc[1] = gOily_spills[i].field_0x50;
+                    }
+                }
+            }
+        }
+        if (pCar->oil_remaining[2] != 0.0f) {
+            *pFl_factor = pCar->oil_wheel_friction[2];
+        }
+        if (pCar->oil_remaining[3] != 0.0f) {
+            *pFr_factor = pCar->oil_wheel_friction[3];
+        }
+        if (pCar->oil_remaining[0] != 0.0f) {
+            *pRl_factor = pCar->oil_wheel_friction[0];
+        }
+        if (pCar->oil_remaining[1] != 0.0f) {
+            *pRr_factor = pCar->oil_wheel_friction[1];
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004a7860
 void C2_HOOK_FASTCALL AdjustOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap) {
@@ -204,5 +334,20 @@ void C2_HOOK_FASTCALL ReceivedOilSpill(tNet_message_chunk* pContents) {
         oily_material, NULL);
 }
 
-// RemoveCarsOilSlicks
+// FUNCTION: CARMA2_HW 0x004a7940
+// FUNCTION: CARMA2_SW 0x004a3ab0
+void C2_HOOK_FASTCALL RemoveCarsOilSlicks(tCar_spec* pCar) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tOil_spill_info) != 0x54);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tOil_spill_info, car_actor, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tOil_spill_info, car, 0xc);
+
+    for (i = 0; i < (int)REC2_ASIZE(gOily_spills); i++) {
+        if (gOily_spills[i].car_actor != NULL && gOily_spills[i].car == pCar) {
+            gOily_spills[i].car = NULL;
+            gOily_spills[i].car_actor = NULL;
+        }
+    }
+}
 

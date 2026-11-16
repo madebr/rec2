@@ -62,7 +62,11 @@ void C2_HOOK_CDECL DoNotDprintf_oppoproc(const char* pMessage, ...) {
 
 // SetCurvature
 
-// ProcessFollowPath
+// STUB: CARMA2_HW 0x004af960
+// STUB: CARMA2_SW 0x004abad0
+tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle) {
+    NOT_IMPLEMENTED();
+}
 
 // FollowCheatyPath
 

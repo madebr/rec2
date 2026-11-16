@@ -43,6 +43,10 @@ enum tSSDXFlags {
 
 extern int C2_HOOK_FASTCALL PDS3Init(void);
 
+extern int C2_HOOK_FASTCALL FUN_005699a3(void);
+
+extern int C2_HOOK_FASTCALL FUN_00569f85(tS3_channel* pChannel);
+
 extern int C2_HOOK_FASTCALL PDS3DDXInit(void);
 
 extern int C2_HOOK_FASTCALL PDS3InitCDA(void);
@@ -57,7 +61,7 @@ extern const char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
 
 extern int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
 
-extern void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel);
+extern void C2_HOOK_FASTCALL PDS3CheckCDAMedia(void);
 
 extern int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel);
 

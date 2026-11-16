@@ -4753,7 +4753,7 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x004ffd20
-void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
+void C2_HOOK_FASTCALL FindInverseAndWorlBox(tSpecial_volume* pSpec) {
     br_bounds bnds;
 
     BrVector3Set(&bnds.min, -1.f, -1.f, -1.f);
@@ -4986,7 +4986,7 @@ void C2_HOOK_FASTCALL UpdateSpecVol(void) {
 
         v = &gProgram_state.special_volumes[index];
         BrMatrix34Copy(&v->boundary.box.mat, &gLast_actor->t.t.mat);
-        FindInverseAndWorldBox(v);
+        FindInverseAndWorlBox(v);
         SetSpecVolMatSize(gLast_actor);
     }
 }

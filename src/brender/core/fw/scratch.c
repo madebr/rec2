@@ -44,6 +44,7 @@ void C2_HOOK_CDECL BrScratchFree(void* scratch) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529f00
+// FUNCTION: CARMA2_SW 0x00524a70
 void C2_HOOK_CDECL BrScratchFlush(void) {
 
     if (fw.scratch_inuse != 0) {
@@ -57,6 +58,7 @@ void C2_HOOK_CDECL BrScratchFlush(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00529f40
+// FUNCTION: CARMA2_SW 0x00524ab0
 br_size_t C2_HOOK_CDECL BrScratchInquire(void) {
 
     return fw.scratch_size;

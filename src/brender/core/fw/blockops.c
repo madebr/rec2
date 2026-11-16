@@ -13,6 +13,7 @@
 
 
 // FUNCTION: CARMA2_HW 0x00528130
+// FUNCTION: CARMA2_SW 0x005237d0
 C2_MATCHING_NAKED void C2_HOOK_CDECL BrBlockFill(void* pDestination, int pValue, int pCount_dwords) {
 #ifdef REC2_MATCHING
     __asm {
@@ -41,6 +42,7 @@ C2_MATCHING_NAKED void C2_HOOK_CDECL BrBlockFill(void* pDestination, int pValue,
 }
 
 // FUNCTION: CARMA2_HW 0x0052814e
+// FUNCTION: CARMA2_SW 0x005237ee
 C2_MATCHING_NAKED void C2_HOOK_CDECL BrBlockCopy(void* pDestination, const void* pSource, int pCount_dwords) {
 #ifdef REC2_MATCHING
     __asm {
@@ -69,6 +71,7 @@ C2_MATCHING_NAKED void C2_HOOK_CDECL BrBlockCopy(void* pDestination, const void*
 }
 
 // FUNCTION: CARMA2_HW 0x0052816c
+// FUNCTION: CARMA2_SW 0x0052380c
 C2_MATCHING_NAKED void C2_HOOK_CDECL BrFarBlockCopy(void *pDestination, const void *pSource, int pCount_dwords) {
 #ifdef REC2_MATCHING
     __asm {

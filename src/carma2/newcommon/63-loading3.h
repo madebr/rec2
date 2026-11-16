@@ -23,6 +23,8 @@ extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
 
 extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap2(const char* pPath_name);
 
+extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmapForcedSize(const char* pName, int pWidth, int pHeight);
+
 extern int C2_HOOK_FASTCALL LoadInterfacePixelmaps(const char *pPath_name, br_pixelmap** pMaps, int pCapacity);
 
 extern br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName);
@@ -36,6 +38,10 @@ extern br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName);
 extern void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name);
 
 extern void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name);
+
+extern void C2_HOOK_FASTCALL RezeroPixelmaps(br_pixelmap** pPixelmap_array, int pCount);
+
+extern void C2_HOOK_FASTCALL DRLoadPixelmaps(const char* pPath_name);
 
 extern void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name);
 

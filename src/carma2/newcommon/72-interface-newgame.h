@@ -12,5 +12,6 @@
 #include "rec2_types.h"
 
 extern tFrontend_spec gFrontend_NEWGAME;
+extern tFrontend_spec gFrontend_CREDITS;
 
 #endif /* GUARD_72_NEWGAME_H */

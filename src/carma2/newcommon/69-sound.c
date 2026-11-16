@@ -143,7 +143,11 @@ tS3_outlet* gXXX_outlet;
 
 // GLOBAL: CARMA2_HW 0x0079e160
 // GLOBAL: CARMA2_SW 0x007946c0
-tS3_outlet* gIndexed_outlets[6];
+tS3_outlet* gIndexed_outlets[7] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x0079e17c
+// GLOBAL: CARMA2_SW 0x007946dc
+int gEnvironmental_sound_sources_buffer_index = 0;
 
 // GLOBAL: CARMA2_HW 0x00595c38
 // GLOBAL: CARMA2_SW 0x00590b98
@@ -184,10 +188,6 @@ tU32 gNext_sound_generator_munging;
 // GLOBAL: CARMA2_HW 0x0079e18c
 // GLOBAL: CARMA2_SW 0x007946ec
 int gCount_environmental_sound_sources;
-
-// GLOBAL: CARMA2_HW 0x0079e17c
-// GLOBAL: CARMA2_SW 0x007946dc
-int gEnvironmental_sound_sources_buffer_index;
 
 // FUNCTION: CARMA2_HW 0x00500060
 // FUNCTION: CARMA2_SW 0x004fb940
@@ -358,6 +358,8 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id 
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004556f0
+// FUNCTION: CARMA2_SW 0x00455480
 int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound) {
 
     if (gSound_enabled) {

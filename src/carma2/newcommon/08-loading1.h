@@ -31,11 +31,21 @@ extern tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF);
 
 extern tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF);
 
+extern tS8 C2_HOOK_FASTCALL ReadS8(FILE* pF);
+
 extern void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber);
 
 extern void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber);
 
 extern void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber);
+
+extern void C2_HOOK_FASTCALL WriteS32L(FILE* pF, tS32 pNumber);
+
+extern void C2_HOOK_FASTCALL WriteS16L(FILE* pF, tS16 pNumber);
+
+extern void C2_HOOK_FASTCALL WriteS8L(FILE* pF, tS8 pNumber);
+
+extern void C2_HOOK_FASTCALL SkipBytes(FILE* pF, int pBytes_to_skip);
 
 extern tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr);
 
@@ -55,6 +65,8 @@ extern int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** p
 
 extern int C2_HOOK_FASTCALL GetAnInt(FILE* pF);
 
+extern unsigned int C2_HOOK_FASTCALL BinIntegerToInteger(unsigned int pValue);
+
 extern float C2_HOOK_FASTCALL GetAFloat(FILE* pF);
 
 void C2_HOOK_FASTCALL GetPairOfFloats(FILE* pF, float* pF1, float* pF2);
@@ -67,6 +79,10 @@ extern void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2);
 
 extern void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3);
 
+extern void C2_HOOK_FASTCALL GetThreeIntsAndAString(FILE* pF, int* pF1, int* pF2, int* pF3, char* pS);
+
+extern void C2_HOOK_FASTCALL GetIntAndAString(FILE* pF, int* pF1, char* pS);
+
 extern void C2_HOOK_FASTCALL GetFourInts(FILE* pF, int* pF1, int* pF2, int* pF3, int* pF4);
 
 extern br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF);
@@ -76,6 +92,8 @@ extern void GetPairOfScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2);
 extern void C2_HOOK_FASTCALL GetThreeScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3);
 
 extern void C2_HOOK_FASTCALL GetFourScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3, br_scalar* pS4);
+
+extern void C2_HOOK_FASTCALL GetFiveScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3, br_scalar* pS4, br_scalar* pS5);
 
 extern void C2_HOOK_FASTCALL GetNScalars(FILE* pF, int n, br_scalar* pS);
 
@@ -94,6 +112,8 @@ extern void C2_HOOK_FASTCALL EncodeLine_DEMO(char* pS);
 extern void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
 
 extern void C2_HOOK_FASTCALL SkipNLines(FILE* pF);
+
+extern void C2_HOOK_FASTCALL EncodeFileWrapper(char* pThe_path);
 
 extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 

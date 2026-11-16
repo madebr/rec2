@@ -178,6 +178,7 @@ void* C2_HOOK_CDECL BrResRemove(void* vres) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527970
+// FUNCTION: CARMA2_SW 0x00523010
 br_uint_8 C2_HOOK_CDECL BrResClass(void* vres) {
     resource_header* res;
 
@@ -215,6 +216,7 @@ br_uint_32 C2_HOOK_CDECL BrResSize(void* vres) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527ad0
+// FUNCTION: CARMA2_SW 0x00523170
 br_uint_32 C2_HOOK_CDECL ResSizeTotal(void* vres, br_uint_32* ptotal) {
 
     *ptotal += BrResSize(vres);
@@ -233,23 +235,24 @@ br_uint_32 C2_HOOK_CDECL BrResSizeTotal(void* vres) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527b60
+// FUNCTION: CARMA2_SW 0x00523200
 br_uint_32 C2_HOOK_CDECL BrResChildEnum(void* vres, br_resenum_cbfn* callback, void* arg) {
     resource_header* res;
     resource_header* rp;
     br_uint_32 r;
 
     res = UserToRes(vres);
-    r = 0;
     for (rp = (resource_header*)res->children.head; rp != NULL; rp = (resource_header*)rp->node.next) {
         r = callback(ResToUser(rp), arg);
         if (r != 0) {
-            break;
+            return r;
         }
     }
-    return r;
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00527bd0
+// FUNCTION: CARMA2_SW 0x00523270
 br_uint_32 C2_HOOK_CDECL BrResCheck(void* vres, int no_tag) {
     resource_header* res;
 
@@ -292,6 +295,7 @@ void C2_HOOK_CDECL InternalResourceDump(resource_header* res, br_putline_cbfn* p
 }
 
 // FUNCTION: CARMA2_HW 0x00527c50
+// FUNCTION: CARMA2_SW 0x005232f0
 void C2_HOOK_CDECL BrResDump(void* vres, br_putline_cbfn* putline, void* arg) {
     resource_header* res;
 
@@ -303,12 +307,13 @@ void C2_HOOK_CDECL BrResDump(void* vres, br_putline_cbfn* putline, void* arg) {
 }
 
 // FUNCTION: CARMA2_HW 0x00527c60
+// FUNCTION: CARMA2_SW 0x00523300
 char* C2_HOOK_CDECL BrResClassIdentifier(br_uint_8 res_class) {
     br_resource_class* rclass;
 
     rclass = fw.resource_class_index[res_class];
-    if (rclass == NULL) {
-        return "<NULL>";
+    if (rclass != NULL) {
+        return rclass->identifier;
     }
-    return rclass->identifier;
+    return "<NULL>";
 }

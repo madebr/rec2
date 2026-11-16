@@ -15,6 +15,8 @@
 #include <stdio.h>
 
 extern undefined4 gCrush_array_0067a190[10];
+extern int gCount_net_crush_reattach_bit_list;
+extern tCrush_net_reattach_bit_list_item gNet_crush_reattach_bit_list[8];
 extern undefined4 gDAT_00679440;
 extern tCrush_info_buffer gDetached_bit_crush_info_buffer;
 extern tPhysics_object* gDetached_bit_collision_infos;
@@ -24,18 +26,31 @@ extern tCrush_info_buffer gSplit_car_crush_info_buffer;
 extern tPhysics_object* gSplit_car_collision_infos;
 extern tDriver gSplit_car_driver;
 extern tPhysics_shape* gGonad_sphere_collision_shape;
+extern int gCount_toggled_doors;
+extern tCrush_list_item gCrush_lists[8];
+extern int gCount_queued_drone_crushes;
+extern int gCount_crush_detach_list;
+extern int gINT_0067bdfc;
+extern tU8 gCrush_data_entry_counter;
+extern int gCount_net_crush_detach_list;
+extern int gCount_net_crush_semi_detach_bit_list;
+extern int gCount_net_crush_full_detach_bit_list;
+extern int gCount_car_damage_crush_list;
+extern tToggled_door gToggled_doors[16];
+extern tCrush_detach_list_item gCrush_detach_list[16];
+extern tU32 gUINT_0067be84;
 
 extern void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF);
 
-// ClearCrushLists
+extern void C2_HOOK_FASTCALL ClearCrushLists(void);
 
-// RemoveCarFromCrushLists
+extern void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec);
 
 extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
-// ResetCrushSystems
+extern void C2_HOOK_FASTCALL ResetCrushSystems(void);
 
-// ReadCrushData
+extern void C2_HOOK_FASTCALL ReadCrushData(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage);
 
 extern intptr_t C2_HOOK_CDECL CreateDefaultCrushDataCB(br_actor* pActor, void* pData);
 
@@ -57,7 +72,7 @@ extern intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* pActor, void* p
 
 // InitModelMasterCrushData
 
-// InitNetworkShapesStuff
+extern void C2_HOOK_FASTCALL InitNetworkShapesStuff(tCar_crush_spec* pCar_crush);
 
 extern int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2);
 
@@ -101,11 +116,11 @@ extern intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* pActor, void* pData
 
 // PointEdgeDistSq
 
-// SetFlapCheckVertices
+extern void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data* pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data);
 
-// InitModelVertexData
+extern void C2_HOOK_FASTCALL InitModelVertexData(tModel_detail_vertex_data* pVertex_data, br_model* pModel, int pDetail_level, tCar_crush_buffer_entry* pCrush_data, tCar_crush_spec* pCar_crush_spec);
 
-// InitVertexDataCB
+extern intptr_t C2_HOOK_CDECL InitVertexDataCB(br_actor* pActor, void* pData);
 
 // InitVertexData
 
@@ -183,9 +198,9 @@ extern void C2_HOOK_FASTCALL SetCrush(tCar_crush* pCrush, int pCount_vectors, br
 
 // QueueCarCrush
 
-// SetBitForDetachment
+extern void C2_HOOK_FASTCALL SetBitForDetachment(br_actor* pActor, tCar_spec* pCar, float pArg3, int pArg4);
 
-// SetFlappage
+extern void C2_HOOK_FASTCALL SetFlappage(br_actor* pActor, tCar_spec* pCar, int pFlags, float pScalar);
 
 // GetUniqueID
 
@@ -231,7 +246,7 @@ extern void C2_HOOK_FASTCALL SendSemiDetachBit(tCar_spec* pCar, br_actor* pActor
 
 extern void C2_HOOK_FASTCALL SendAllSemiDetachedBits(tNet_game_player_info* pPlayer);
 
-// AddNonCar
+extern void C2_HOOK_FASTCALL AddNonCar(tNon_car_spec* pNon_car, const tDriver* pDriver);
 
 // DetachBit
 
@@ -251,17 +266,17 @@ extern void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec
 
 // DoFlapping
 
-// ToggleFlapsCB2
+extern intptr_t C2_HOOK_CDECL ToggleFlapsCB2(br_actor* pActor, void* pCar);
 
-// ToggleFlapsCB
+extern int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, void* pCar);
 
-// SendToggleFlaps
+extern void C2_HOOK_FASTCALL SendToggleFlaps(tCar_spec* pCar);
 
-// ToggleFlaps
+extern void C2_HOOK_FASTCALL ToggleFlaps(void);
 
 extern int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_object* pObject);
 
-// FullyDetachBit
+extern void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject);
 
 // SendFullyDetachBit
 
@@ -333,7 +348,7 @@ extern intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor
 
 // DoShapeSwapping
 
-// BendPoint
+extern void C2_HOOK_FASTCALL BendPoint(br_vector3* pPoint, const tBend_point_context* pContext);
 
 // EdgeCrossesZPlane
 
@@ -371,7 +386,7 @@ extern void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
 
 // RandomlyBendCar
 
-// TotallySpamTheCar
+extern void C2_HOOK_FASTCALL TotallySpamTheCar(tCar_spec* pCar, br_scalar pDamage);
 
 extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, br_actor_enum_cbfn* pCallback, void* pArg);
 
@@ -387,7 +402,7 @@ extern intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseUltraPlus(br_actor* pActor, b
 
 // SphericizePhysics
 
-// SphericizeCar
+extern void C2_HOOK_FASTCALL SphericizeCar(tCar_spec* pCar);
 
 extern intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser);
 
@@ -433,7 +448,7 @@ extern void C2_HOOK_FASTCALL TotallyRepairCar(void);
 
 // UnBendActor
 
-// UnBendCollisionShape
+extern void C2_HOOK_FASTCALL UnBendCollisionShape(tCar_crush_shape_info* pShape, const tBend_point_context* pContext);
 
 // UnBendCollisionShapes
 
@@ -475,7 +490,7 @@ extern void C2_HOOK_FASTCALL ARApplyModelMash(br_model* pModel, tCompressed_vect
 
 extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vector3* pSrc);
 
-// ARApplyFlap
+extern void C2_HOOK_FASTCALL ARApplyFlap(br_actor* pActor, br_angle pAngle);
 
 // ARApplySplitWeld
 
@@ -501,7 +516,7 @@ extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vecto
 
 // ReceivedReAttachBit
 
-// ReceivedReAttachAllBits
+extern void C2_HOOK_FASTCALL ReceivedReAttachAllBits(tNet_message_chunk* pContents);
 
 // DoQueuedNetDetaching
 
@@ -515,7 +530,7 @@ extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vecto
 
 // ReceivedDBNonCarPosition
 
-// ReceivedToggleFlaps
+extern void C2_HOOK_FASTCALL ReceivedToggleFlaps(tNet_message_chunk* pContents);
 
 // SHNonCarOwner
 
@@ -525,7 +540,7 @@ extern void C2_HOOK_FASTCALL ARUndoModelMash(br_model* pModel, tCompressed_vecto
 
 // ReceivedSHNonCar
 
-// GetNetShapeDataLengthFromShape
+extern int C2_HOOK_FASTCALL GetNetShapeDataLengthFromShape(tCar_spec* pCar);
 
 // GetNetShapeDataLengthFromData
 
@@ -537,9 +552,9 @@ extern void C2_HOOK_FASTCALL EncodeNetShapeData(tU8* pData, tCar_spec* pCar);
 
 // Vector4Equal
 
-// CompressPlane
+extern void C2_HOOK_FASTCALL CompressPlane(tCompressed_vector4* pDest, const br_vector4* pSrc);
 
-// ExpandPlane
+extern void C2_HOOK_FASTCALL ExpandPlane(br_vector4* pDest, const tCompressed_vector4* pSrc);
 
 // CopySplitInMessage
 

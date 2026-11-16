@@ -36,8 +36,15 @@ extern int gPalette_changed;
 extern br_pixelmap* gCurrent_palette;
 extern br_pixelmap* gCurrent_splash;
 
-extern void C2_HOOK_FASTCALL RectangleFill_TopBottomLine(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour);
+extern void C2_HOOK_FASTCALL DRPixelmapShadedHRectFill(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_uint_32 pColour);
+
+extern void C2_HOOK_FASTCALL DRPixelmapShadedVRectFill(br_pixelmap* pMap, int pX, int pY, int pWidth, int pHeight, br_colour pColour);
+
 extern br_pixelmap* gBlend75_table;
+extern int gCurrent_cursor_index;
+extern tMouse_coord gMouse_last_pos;
+extern int gNext_transient;
+extern int gCursor_transient_index;
 
 extern void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount);
 
@@ -59,19 +66,23 @@ extern void C2_HOOK_FASTCALL MungePalette(void);
 
 extern void C2_HOOK_FASTCALL ResetPalette(void);
 
-// Darken
+extern void C2_HOOK_FASTCALL Darken(tU8 *pPtr, tU32 pDarken_amount);
 
-// SetFadedPalette
+extern void C2_HOOK_FASTCALL SetFadedPalette(tU32 pDegree);
 
 extern void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 extern void C2_HOOK_FASTCALL FadePaletteUp(void);
 
-// EnsurePaletteUp
+extern void C2_HOOK_FASTCALL EnsurePaletteUp(void);
 
 extern void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
 extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
+
+#ifdef REC2_SW
+extern int AllocateTransientBitmap(int pWidth, int pHeight, int pUser_data);
+#endif
 
 extern void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex);
 
@@ -83,26 +94,12 @@ extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them
 
 extern int C2_HOOK_FASTCALL DoMouseCursor(void);
 
-extern void C2_HOOK_FASTCALL AllocateCursorTransient(void);
+extern int C2_HOOK_FASTCALL AllocateCursorTransient(void);
 
-// InitMouseTargetLines
+extern void C2_HOOK_FASTCALL InitMouseTargetLines(void);
 
 extern void C2_HOOK_FASTCALL StartMouseCursor(void);
 
 extern void C2_HOOK_FASTCALL EndMouseCursor(void);
-
-extern void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2, int pY2, int pColour);
-
-extern void C2_HOOK_FASTCALL ClearEntireScreen(void);
-
-// DistanceFromPlane
-
-extern void C2_HOOK_FASTCALL KillSplashScreen(void);
-
-extern void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
-
-extern void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_16 pDest_x, br_int_16 pDest_y, const br_pixelmap* pSource, br_int_16 pSource_x, br_int_16 pSource_y, br_int_16 pWidth, br_int_16 pHeight);
-
-extern void C2_HOOK_FASTCALL DRMaskedStamp(br_int_16 pDest_x, br_int_16 pDest_y, br_pixelmap* pSource);
 
 #endif // GUARD_18_GRAPHICS2_H

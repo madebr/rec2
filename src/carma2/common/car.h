@@ -36,7 +36,7 @@ extern int gCamera_frozen;
 extern int gOpponent_viewing_mode;
 extern int gNet_player_to_view_index;
 extern br_vector3 gZero_v__car;
-extern int gInTheSea;
+extern int gIn_the_sea;
 extern int gStop_opponents_moving;
 extern int gSkid_tag[2];
 extern tCar_spec* gLast_car_to_skid[2];

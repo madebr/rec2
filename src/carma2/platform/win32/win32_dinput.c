@@ -384,6 +384,31 @@ BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, 
     return DIENUM_CONTINUE;
 }
 
+// FUNCTION: CARMA2_HW 0x00459ed0
+// FUNCTION: CARMA2_SW 0x00459c60
+tButtonJoystickInfo* C2_HOOK_FASTCALL AllocateCurrentJoystickData(size_t pSize) {
+
+    if (pSize != 0 && gJoystick_index != -1 && gDirectInputJoystickInfos[gJoystick_index].data == NULL) {
+        gDirectInputJoystickInfos[gJoystick_index].data = malloc(pSize);
+        if (gDirectInputJoystickInfos[gJoystick_index].data != NULL) {
+            gDirectInputJoystickInfos[gJoystick_index].sizeData = pSize;
+            return gDirectInputJoystickInfos[gJoystick_index].data;
+        }
+    }
+    return NULL;
+}
+
+// FUNCTION: CARMA2_HW 0x00459f30
+// FUNCTION: CARMA2_SW 0x00459cc0
+void C2_HOOK_FASTCALL DisposeCurrentJoystickData(void) {
+
+    if (gJoystick_index != -1 && gDirectInputJoystickInfos[gJoystick_index].data != NULL) {
+        BrMemFree(gDirectInputJoystickInfos[gJoystick_index].data);
+        gDirectInputJoystickInfos[gJoystick_index].data = NULL;
+        gDirectInputJoystickInfos[gJoystick_index].sizeData = 0;
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00459fe0
 // FUNCTION: CARMA2_SW 0x00459d70
 void C2_HOOK_FASTCALL AttachJoystickButtonInfos(size_t pSize, tWin32_void_voidptr_cbfn pCallback) {
@@ -807,6 +832,24 @@ void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void) {
     description.field_0x44 = -1;
     description.field_0x4c = 0x5a;
     gCollision_force_joystick_effect_index = CreateDinputEffect(gJoystick_index, &description, "Collision Force");
+}
+
+// FUNCTION: CARMA2_HW 0x00458610
+// FUNCTION: CARMA2_SW 0x004583a0
+int C2_HOOK_FASTCALL SetDinputEffectGain(int pIndex, int pGain) {
+    IDirectInputEffect* effect;
+
+    if (!gForceFeedbackAvailable) {
+        return 0;
+    }
+    if (gJoystick_effects[pIndex].di_effect.dwGain != pGain) {
+        gJoystick_effects[pIndex].di_effect.dwGain = pGain;
+    }
+    effect = gDirectInputEffects[pIndex];
+    if (effect != NULL) {
+        IDirectInputEffect_SetParameters(effect, &gJoystick_effects[pIndex].di_effect, DIEP_GAIN);
+    }
+    return 1;
 }
 
 // FUNCTION: CARMA2_HW 0x00458860
@@ -1483,12 +1526,25 @@ void C2_HOOK_FASTCALL PDInitJoysticks(void) {
     ResetForceFeedback();
 }
 
-void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index) {
+// FUNCTION: CARMA2_HW 0x00457eb0
+// FUNCTION: CARMA2_SW 0x00457c40
+void C2_HOOK_FASTCALL StartDinputEffect(int pIndex) {
     IDirectInputEffect* effect;
 
-    effect = gDirectInputEffects[index];
+    effect = gDirectInputEffects[pIndex];
     if (effect != NULL) {
         IDirectInputEffect_Start(effect, 1, DIES_NODOWNLOAD);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00457ed0
+// FUNCTION: CARMA2_SW 0x00457c60
+void C2_HOOK_FASTCALL StopDinputEffect(int pIndex) {
+    IDirectInputEffect* effect;
+
+    effect = gDirectInputEffects[pIndex];
+    if (effect != NULL) {
+        IDirectInputEffect_Stop(effect);
     }
 }
 
@@ -1538,7 +1594,7 @@ void C2_HOOK_FASTCALL PDPlayFFBEffect(const char* effectName) {
     if (gForceFeedbackAvailable) {
         int index = PDFindJoystickEffect(effectName);
         if (index != -1) {
-            PDPlayFFBEffectIndex(index);
+            StartDinputEffect(index);
         }
     }
 }

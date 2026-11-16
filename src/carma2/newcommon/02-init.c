@@ -20,6 +20,7 @@
 #include "15-displays.h"
 #include "16-graphics1.h"
 #include "18-graphics2.h"
+#include "18b-graphics2.h"
 #include "19-font.h"
 #include "20-skidmark.h"
 #include "25-grafdata.h"
@@ -45,6 +46,7 @@
 #include "63-loading3.h"
 #include "66-tintedpoly.h"
 #include "67-lighting.h"
+#include "72-interface.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrbm.h"
@@ -381,13 +383,13 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     // GLOBAL: CARMA2_HW 0x006569c8
     static br_token_value fadealpha_opacity0x80[3] = {
         { BRT_BLEND_B , {1}},
-        { BRT_OPACITY_X, {0x800000} },
+        { BRT_OPACITY_X, {BR_FIXED_INT(0x80)} },
         { 0 },
     };
     // GLOBAL: CARMA2_HW 0x006569e0
     static br_token_value fadealpha_opacity0x70[3] = {
         { BRT_BLEND_B , {1}},
-        { BRT_OPACITY_X, {0x700000} },
+        { BRT_OPACITY_X, {BR_FIXED_INT(0x70)} },
         { 0 },
     };
     tPath_name the_path;
@@ -395,7 +397,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     float w, h, w_fixed, h_fixed;
 
     gHUD_root_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
-    BrMatrix34Translate(&gHUD_root_actor->t.t.mat, 0.0f, 0.0f, 2.f);
+    BrMatrix34Translate(&gHUD_root_actor->t.t.mat, 0.0f, 0.0f, 2.0f);
     g2d_camera = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
     gDim_model = BrModelAllocate("gDim_model", 4, 2);
     gDim_material = BrMaterialAllocate("gDim_material");

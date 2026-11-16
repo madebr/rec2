@@ -134,8 +134,30 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap2(const char* pPath_name) {
     return pm;
 }
 
-// STUB: CARMA2_HW 0x0048eec0
-// STUB: CARMA2_SW 0x0048c160
+// FUNCTION: CARMA2_HW 0x0048ee20
+// FUNCTION: CARMA2_SW 0x0048c0c0
+br_pixelmap* C2_HOOK_FASTCALL LoadPixelmapForcedSize(const char* pName, int pWidth, int pHeight) {
+    br_pixelmap* src;
+    br_pixelmap* dst;
+
+    src = LoadPixelmap(pName);
+    if (src == NULL) {
+        return NULL;
+    }
+    if (src->width > pWidth || src->height > pHeight) {
+        PDFatalError("Bugger - LoadPixelmapForcedSize() needs size to be bigger than original\n");
+    }
+    dst = BrPixelmapAllocate(src->type, pWidth, pHeight, NULL, 0);
+    if (dst == NULL) {
+        PDFatalError("Bugger - LoadPixelmapForcedSize() could not clone pixelmap\n");
+    }
+    BrPixelmapRectangleCopy(dst, 0, 0, src, 0, 0, src->width, src->height);
+    BrPixelmapFree(src);
+    return dst;
+}
+
+// FUNCTION: CARMA2_HW 0x0048eec0
+// FUNCTION: CARMA2_SW 0x0048c160
 int C2_HOOK_FASTCALL LoadInterfacePixelmaps(const char *pPath_name, br_pixelmap** pMaps, int pCapacity) {
     tPath_name path;
     size_t count;
@@ -226,6 +248,27 @@ void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name) {
         table_array[i]->base_y = 0;
     }
     BrTableAddMany(table_array, number_of_tables);
+}
+
+void C2_HOOK_FASTCALL RezeroPixelmaps(br_pixelmap** pPixelmap_array, int pCount) {
+    int i;
+
+    for (i = pCount - 1; i >= 0; i--) {
+        pPixelmap_array[i]->origin_x = 0;
+        pPixelmap_array[i]->origin_y = 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0048f170
+// FUNCTION: CARMA2_SW 0x0048c410
+void C2_HOOK_FASTCALL DRLoadPixelmaps(const char* pPath_name) {
+    br_pixelmap* pixelmaps[100];
+    int number_of_pixelmaps;
+
+    PossibleService();
+    number_of_pixelmaps = DRPixelmapLoadMany(pPath_name, pixelmaps, REC2_ASIZE(pixelmaps));
+    RezeroPixelmaps(pixelmaps, number_of_pixelmaps);
+    BrMapAddMany(pixelmaps, number_of_pixelmaps);
 }
 
 // FUNCTION: CARMA2_HW 0x0048f1d0
@@ -412,4 +455,3 @@ void C2_HOOK_FASTCALL ConfigureZombiePedTexturePath(void) {
 void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void) {
     gPedTexturePath = "ALPIXELMAP";
 }
-

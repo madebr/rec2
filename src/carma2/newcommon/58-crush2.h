@@ -22,6 +22,7 @@ extern int gTime_per_ped_kill[3];
 extern float gWobble_spam_y[8];
 extern float gWobble_spam_z[8];
 extern float gWheel_circ_to_width;
+extern const tU8 gSmoke_steps[12];
 
 extern void C2_HOOK_FASTCALL CheckLastCar(void);
 
@@ -35,13 +36,13 @@ extern void C2_HOOK_FASTCALL DamageUnit2(tCar_spec *pCar, tDamage_type pDamage_t
 
 // RecordLastDamage
 
-// DoDamage
+extern void C2_HOOK_FASTCALL DoDamage(tCar_spec* pCar, tDamage_type pDamage_type, float pMagnitude, float pNastiness);
 
 extern void C2_HOOK_FASTCALL CalcModifiedLocation(tCar_spec* pCar);
 
 extern void C2_HOOK_FASTCALL DoPratcamHit(br_vector3* pVelocity);
 
-// DamageSystems
+extern void C2_HOOK_FASTCALL DamageSystems(tCar_spec* pCar, br_vector3* pImpact_point, br_vector3* pEnergy_vector, int pWas_hitting_a_car);
 
 // GetDirection
 

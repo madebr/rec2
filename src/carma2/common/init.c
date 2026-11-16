@@ -128,7 +128,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2_HOOK_BUG_ON(offsetof(tCar_spec, no_of_processes_recording_my_trail) != 5108);
     C2_HOOK_BUG_ON(offsetof(tCar_spec, my_trail) != 5112);
     C2_HOOK_BUG_ON(offsetof(tCar_spec, last_person_we_hit) != 5476);
-    C2_HOOK_BUG_ON(offsetof(tCar_spec, maybe_blood_remaining) != 5852);
+    C2_HOOK_BUG_ON(offsetof(tCar_spec, oil_wheel_friction) != 5852);
     C2_HOOK_BUG_ON(offsetof(tCar_spec, softness_factor) != 0x18d0);
     C2_HOOK_BUG_ON(sizeof(tCar_spec) != 6500);
 

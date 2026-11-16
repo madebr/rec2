@@ -147,10 +147,9 @@ void C2_HOOK_CDECL ZlibFsPutLine(char* line, void* context) {
 // FUNCTION: CARMA2_HW 0x0051db60
 // FUNCTION: CARMA2_SW 0x00519200
 void C2_HOOK_CDECL ZlibFsAdvance(br_size_t advance, void* context) {
-    size_t i;
     char buffer[1];
 
-    for (i = 0; i != advance; i++) {
+    while (advance-- != 0) {
         gzread(context, buffer, sizeof(buffer));
     }
 }

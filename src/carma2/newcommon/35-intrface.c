@@ -11,6 +11,7 @@
 #include "08-loading1.h"
 #include "10-loading2.h"
 #include "18-graphics2.h"
+#include "18b-graphics2.h"
 #include "19-font.h"
 #include "38-flicplay.h"
 #include "42-input.h"

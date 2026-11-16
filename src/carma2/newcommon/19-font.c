@@ -11,10 +11,11 @@
 #include "05-drmem.h"
 #include "08-loading1.h"
 #include "16-graphics1.h"
-#include "18-graphics2.h"
+#include "18b-graphics2.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "62-graphics3.h"
+#include "63-loading3.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
@@ -23,13 +24,13 @@
 
 #include <string.h>
 
-// GLOBAL: CARMA2_HW 0x0076c960
-// GLOBAL: CARMA2_SW 0x00762ec0
-br_pixelmap* gTexture_maps[1024];
-
 // GLOBAL: CARMA2_HW 0x007663e0
 // GLOBAL: CARMA2_SW 0x0075c940
-tDR_font gFonts[24];
+tDR_font gFonts[28] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x0076c960
+// GLOBAL: CARMA2_SW 0x00762ec0
+br_pixelmap* gTexture_maps[1024] = { 0 };
 
 // GLOBAL: CARMA2_HW 0x0059ad30
 // GLOBAL: CARMA2_SW 0x00595c78
@@ -85,6 +86,10 @@ int gInitial_count_font_texture_pages;
 
 // GLOBAL: CARMA2_HW 0x00686494
 int gInterface_polyfont_texture_pages;
+
+// GLOBAL: CARMA2_HW 0x006864a0
+// GLOBAL: CARMA2_SW 0x00680be0
+tNet_game_options gFrontend_backup_net_options;
 
 // GLOBAL: CARMA2_HW 0x00686340
 br_material* gPoly_font_materials[80];
@@ -1333,9 +1338,39 @@ br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
     return the_font;
 }
 
+// FUNCTION: CARMA2_HW 0x004661f0
+// FUNCTION: CARMA2_SW 0x00465f80
+br_pixelmap* C2_HOOK_FASTCALL LoadChromeFont(void) {
+    br_pixelmap* result;
+
+    result = LoadPixelmap("CHRMFONT.PIX");
+    if (result == NULL) {
+        FatalError(kFatalError_CannotLoadChromeFontFile);
+    }
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x00466210
 // FUNCTION: CARMA2_SW 0x00465fa0
 int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont) {
 
     return gDRFont_to_polyfont_mapping[pFont->id];
+}
+
+// FUNCTION: CARMA2_HW 0x00466220
+// FUNCTION: CARMA2_SW 0x00465fb0
+br_model* C2_HOOK_FASTCALL CloneModel(const br_model* pModel) {
+    br_model* new_model;
+    br_face* face;
+    int i;
+
+    new_model = BrModelAllocate(pModel->identifier, pModel->nvertices, pModel->nfaces);
+    memcpy(new_model->vertices, pModel->vertices, pModel->nvertices * sizeof(br_vertex));
+    memcpy(new_model->faces, pModel->faces, pModel->nfaces * sizeof(br_face));
+    for (i = 0, face = new_model->faces; i < new_model->nfaces; i++, face++) {
+        face->material = NULL;
+    }
+    new_model->flags = pModel->flags;
+    BrModelAdd(new_model);
+    return new_model;
 }

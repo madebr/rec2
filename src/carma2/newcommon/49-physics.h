@@ -18,16 +18,25 @@ extern tPhysicsError_cbfn* gPhysics_error_cb;
 extern void* gPhysics_buffer1_ptr;
 extern void* gPhysics_buffer2_ptr;
 extern int gImmortal_peds;
+extern int gTotal_count_smash_peds;
 extern int gBOOL_00744804;
+extern float gPed_head_scale;
 extern tPedestrian* gPedestrian_array;
 extern void* gPhysics_buffer3_ptr;
 extern int gPHIL_mechanics_time_sync;
+extern int gPHIL_munging_objects;
 extern int gPhysics_other_buffer_capacity;
 extern tProximity_ray gProximity_rays[20];
+extern tPed_giblet_size_spec* gGiblet_sizes;
+extern br_model* gPed_spurt_model;
+extern int gPed_spurty_lumps_count;
+extern int gPed_times[3];
 extern br_actor* gPed_limbed_actors[30];
+extern tShrapnel_time_info gPed_spurt_min_max_time;
 extern void* gPhysics_other_buffer;
 extern void* gPhysics_scratch_ptr;
 extern int gFace_count;
+extern tWorld_callbacks gWorld_callbacks;
 
 // count
 
@@ -109,7 +118,7 @@ extern int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollisio
 
 // TestObjectOverlapRecurse
 
-// TestForObjectInSensiblePlace
+extern int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks);
 
 // HierarchyCalcEnergy
 
@@ -165,7 +174,7 @@ extern void C2_HOOK_FASTCALL PositionWorldJointedObject(tPhysics_object* pObject
 
 // MoveJointedObject
 
-// TellPhysicsJointsHaveChanged
+extern void C2_HOOK_FASTCALL TellPhysicsJointsHaveChanged(tPhysics_object* pCollision_info);
 
 // CombineBounds
 
@@ -283,7 +292,7 @@ extern void C2_HOOK_FASTCALL RotateObjectFirstOrder(tPhysics_object* pObject, br
 
 extern void C2_HOOK_FASTCALL TranslateObject(tPhysics_object* pObject, br_scalar pDelta_time);
 
-// GetFacesNearObject
+extern void C2_HOOK_FASTCALL GetFacesNearObject(tPhysics_object *pObject, tWorld_callbacks *pCallbacks);
 
 extern void C2_HOOK_FASTCALL ResetObjectAndChildren(tPhysics_object* pObject);
 
@@ -297,11 +306,11 @@ extern void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects);
 
 // InterpolateObjects
 
-// ApplyGravitySingleObject
+extern void C2_HOOK_FASTCALL ApplyGravitySingleObject(tPhysics_object* pObject);
 
-// ApplyGravity
+extern void C2_HOOK_FASTCALL ApplyGravity(tPhysics_object* pObject);
 
-// SetGravityDeltaV
+extern void C2_HOOK_FASTCALL SetGravityDeltaV(tPhysics_object* pObject, br_vector3* pImpulse);
 
 // TrialPositionChildren
 
@@ -311,7 +320,7 @@ extern void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info);
 
 extern void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pTorque);
 
-// ApplyDiminishingTorque
+extern void C2_HOOK_FASTCALL ApplyDiminishingTorque(tPhysics_object* pObject, const br_vector3 *pTorque);
 
 // OrderObjectListOnX
 
@@ -383,7 +392,7 @@ extern void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices,
 
 extern void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape);
 
-// UpdateCollisionObject
+extern void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info);
 
 extern void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char* pMessage);
 

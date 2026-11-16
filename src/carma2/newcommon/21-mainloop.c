@@ -46,7 +46,11 @@ int gPed_count;
 
 // GLOBAL: CARMA2_HW 0x0068c748
 // GLOBAL: CARMA2_SW 0x00686798
-int gQueued_wasted_messages[5];
+int gQueued_wasted_messages[5] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x0068c75c
+// GLOBAL: CARMA2_SW 0x006867ac
+int gCompletion_bonus_post_race = 0;
 
 // GLOBAL: CARMA2_HW 0x0068c760
 // GLOBAL: CARMA2_SW 0x006867b0
@@ -158,6 +162,15 @@ void C2_HOOK_FASTCALL UpdateFramePeriod(tU32* pCamera_period) {
         *pCamera_period = 1000;
     }
 }
+
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x00492830
+// FUNCTION: CARMA2_SW 0x0048fa50
+tU32 C2_HOOK_FASTCALL GetLastTickCount(void) {
+
+    return gLast_tick_count;
+}
+#endif
 
 // CheckTimer
 

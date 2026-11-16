@@ -10,6 +10,10 @@ targets:
       - external/dummyqt
     data-sources:
       - reccmp/carma2_hw-ascii.csv
+      - reccmp/carma2_hw-directx.csv
+      - reccmp/carma2_hw-libtiff.csv
+      - reccmp/carma2_hw-mslibc.csv
+      - reccmp/carma2_hw-zlib.csv
     hash:
       sha256: 9b896c2cbb170c01b3e9f904ce5e1808db29fe5b51184a5d55a6d19b1799b58d
     report:
@@ -25,6 +29,10 @@ targets:
       - external/dummyqt
     data-sources:
       - reccmp/carma2_sw-ascii.csv
+      - reccmp/carma2_sw-directx.csv
+      - reccmp/carma2_sw-libtiff.csv
+      - reccmp/carma2_sw-mslibc.csv
+      - reccmp/carma2_sw-zlib.csv
     hash:
       sha256: ef260578158ed2d82ac1428f84b94c37d246d06e0863ab53c748965696b53d3f
     report:

@@ -84,6 +84,7 @@ br_error C2_HOOK_STDCALL BrAssociativeArraySetEntry(br_associative_array* pArray
 }
 
 // FUNCTION: CARMA2_HW 0x00531750
+// FUNCTION: CARMA2_SW 0x0052cdf0
 br_error C2_HOOK_STDCALL BrAssociativeArrayRemoveEntry(br_associative_array* pArray, br_token t) {
     br_uint_16 i;
     br_boolean bFound;
@@ -109,6 +110,7 @@ br_error C2_HOOK_STDCALL BrAssociativeArrayRemoveEntry(br_associative_array* pAr
 }
 
 // FUNCTION: CARMA2_HW 0x00531810
+// FUNCTION: CARMA2_SW 0x0052ceb0
 br_error C2_HOOK_STDCALL BrAssociativeArrayQuery(br_associative_array* pArray, br_token t, br_value* pValue) {
     br_uint_16 i;
 

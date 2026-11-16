@@ -66,7 +66,7 @@ extern int C2_HOOK_FASTCALL PDAnyKeyDown(void);
 
 extern int C2_HOOK_FASTCALL AnyKeyDown(void);
 
-// KevKeyService
+extern tU32* C2_HOOK_FASTCALL KevKeyService(void);
 
 extern int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
 

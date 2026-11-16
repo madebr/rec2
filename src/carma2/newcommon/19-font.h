@@ -17,9 +17,10 @@ extern br_pixelmap* gTexture_maps[1024];
 extern int gSize_font_texture_pages;
 extern br_actor* gPolyfont_glyph_actors[256];
 extern int gCount_polyfont_glyph_actors;
-extern tDR_font gFonts[24];
+extern tDR_font gFonts[28];
 extern int gRender_poly_text;
 extern br_actor* gString_root_actor;
+extern tNet_game_options gFrontend_backup_net_options;
 
 extern int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index);
 
@@ -97,6 +98,10 @@ extern void C2_HOOK_FASTCALL OoerrIveGotTextInMeBoxMissus(int pFont_index, const
 
 extern br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName);
 
+extern br_pixelmap* C2_HOOK_FASTCALL LoadChromeFont(void);
+
 extern int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont);
+
+extern br_model* C2_HOOK_FASTCALL CloneModel(const br_model* pModel);
 
 #endif // GUARD_19_FONT_H

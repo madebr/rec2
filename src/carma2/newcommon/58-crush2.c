@@ -12,6 +12,7 @@
 #include "07-structur.h"
 #include "09-funks.h"
 #include "15-displays.h"
+#include "16-graphics1.h"
 #include "17-world2.h"
 #include "21-mainloop.h"
 #include "23-piping.h"
@@ -66,6 +67,10 @@ float gWobble_spam_z[8] = { 0.4f, -0.25f, 0.0f, 0.25f, 0.0f, 0.15f, -0.4f, -0.15
 // GLOBAL: CARMA2_HW 0x00590060
 // GLOBAL: CARMA2_SW 0x0058b058
 float gWheel_circ_to_width = 0.16f;
+
+// GLOBAL: CARMA2_HW 0x00590068
+// GLOBAL: CARMA2_SW 0x0058b060
+const tU8 gSmoke_steps[12] = { 20, 20, 0, 10, 10, 10, 10, 10, 10, 10, 10, 10 };
 
 void C2_HOOK_FASTCALL CheckLastCar(void) {
     if (gNet_mode == eNet_mode_none && GetCarCount(eVehicle_opponent) != 0 && NumberOfOpponentsLeft() == 0) {
@@ -141,23 +146,55 @@ int C2_HOOK_FASTCALL SetKnackeredFlag(tCar_spec* pCar) {
     return 1;
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x0043f930
-// STUB: CARMA2_SW 0x0043fa10
+// FUNCTION: CARMA2_HW 0x0043f930
+// FUNCTION: CARMA2_SW 0x0043fa10
 void C2_HOOK_FASTCALL DamageUnit2(tCar_spec *pCar, tDamage_type pDamage_type, int pMagnitude) {
-    NOT_IMPLEMENTED();
-}
+    tDamage_unit* the_damage;
+    int last_level;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    if (pCar != NULL && pCar->driver >= eDriver_net_human && pDamage_type == eDamage_driver) {
+        return;
+    }
+
+    if (!pCar->invulnerable_no_damage && pMagnitude >= 5) {
+        the_damage = &pCar->damage_units[pDamage_type];
+        last_level = the_damage->damage_level;
+        the_damage->damage_level += pMagnitude;
+        if (the_damage->damage_level >= 99) {
+            if (pMagnitude < 10) {
+                the_damage->damage_level = last_level;
+            } else {
+                the_damage->damage_level = 99;
+            }
+        }
+        if (!SetKnackeredFlag(pCar)
+                && (pCar == NULL || pCar->driver != eDriver_oppo)
+                && gNet_mode == eNet_mode_none
+                && ((pCar->damage_units[eDamage_engine].damage_level >= 99
+                        && pCar->damage_units[eDamage_engine].last_level < 99
+                        && pCar->damage_units[eDamage_transmission].last_level < 99)
+                    || (pCar->damage_units[eDamage_transmission].damage_level >= 99
+                        && pCar->damage_units[eDamage_engine].last_level < 99
+                        && pCar->damage_units[eDamage_transmission].last_level < 99))) {
+            QueueOilSpill(pCar);
+        }
+    }
+}
 
 // RecordLastDamage
 
-// DoDamage
+inline void C2_HOOK_FASTCALL DoDamage(tCar_spec* pCar, tDamage_type pDamage_type, float pMagnitude, float pNastiness) {
+
+    if (pCar != NULL && pCar->driver >= eDriver_net_human) {
+        if (gNet_mode != eNet_mode_none) {
+            DamageUnit2(pCar, pDamage_type, (int)(pNastiness * pMagnitude * 15.0f));
+        } else if (PercentageChance((int)(pNastiness * pMagnitude * 1500.0f))) {
+            DamageUnit2(pCar, pDamage_type, (int)(pNastiness * pMagnitude * 30.0f));
+        }
+    } else {
+        DamageUnit2(pCar, pDamage_type, (int)(pNastiness * pMagnitude * 10.0f * (((1.0 - (double)gCurrent_race.index / (double)gNumber_of_races) * 99.0) / 20.0 + 1.0)));
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0043f9f0
 // FUNCTION: CARMA2_SW 0x0043fad0
@@ -214,7 +251,166 @@ void C2_HOOK_FASTCALL DoPratcamHit(br_vector3* pVelocity) {
     }
 }
 
-// DamageSystems
+// FUNCTION: CARMA2_HW 0x0043fb70
+// FUNCTION: CARMA2_SW 0x0043fc50
+void C2_HOOK_FASTCALL DamageSystems(tCar_spec* pCar, br_vector3* pImpact_point, br_vector3* pEnergy_vector, int pWas_hitting_a_car) {
+    int i;
+    int j;
+    int result;
+    br_bounds3 crushed_car_bounds;
+    float proportion_x;
+    float proportion_y;
+    float proportion_z;
+    float energy_magnitude;
+    float pure_energy_magnitude;
+    br_scalar x;
+    br_scalar y;
+    br_scalar z;
+    br_scalar x1;
+    br_scalar x2;
+    br_scalar y1;
+    br_scalar y2;
+    br_scalar z1;
+    br_scalar z2;
+    tImpact_location impact_location;
+    tDamage_program* the_program;
+    tDamage_clause* the_clause;
+    tDamage_condition* the_condition;
+    tDamage_effect* the_effect;
+
+    pure_energy_magnitude = BrVector3Length(pEnergy_vector);
+    if (pure_energy_magnitude == 0.0f && !pWas_hitting_a_car) {
+        return;
+    }
+
+    energy_magnitude = (float)(pCar->softness_factor * pure_energy_magnitude / 0.7);
+    crushed_car_bounds = pCar->collision_info->bb1;
+
+    x1 = pImpact_point->v[0] - crushed_car_bounds.min.v[0];
+    x2 = crushed_car_bounds.max.v[0] - pImpact_point->v[0];
+    if (x1 < x2) {
+        x = x1;
+    } else {
+        x = x2;
+    }
+    y1 = pImpact_point->v[1] - crushed_car_bounds.min.v[1];
+    y2 = crushed_car_bounds.max.v[1] - pImpact_point->v[1];
+    if (y1 < y2) {
+        y = y1;
+    } else {
+        y = y2;
+    }
+    z1 = pImpact_point->v[2] - crushed_car_bounds.min.v[2];
+    z2 = crushed_car_bounds.max.v[2] - pImpact_point->v[2];
+    if (z1 < z2) {
+        z = z1;
+    } else {
+        z = z2;
+    }
+    if (z <= x && z <= y) {
+        impact_location = z1 < z2 ? eImpact_front : eImpact_back;
+        proportion_x = x1 / (crushed_car_bounds.max.v[0] - crushed_car_bounds.min.v[0]);
+        proportion_y = y1 / (crushed_car_bounds.max.v[1] - crushed_car_bounds.min.v[1]);
+    } else if (x <= y && x <= z) {
+        impact_location = x1 < x2 ? eImpact_left : eImpact_right;
+        proportion_y = y1 / (crushed_car_bounds.max.v[1] - crushed_car_bounds.min.v[1]);
+        proportion_z = z1 / (crushed_car_bounds.max.v[2] - crushed_car_bounds.min.v[2]);
+    } else {
+        impact_location = y1 < y2 ? eImpact_bottom : eImpact_top;
+        proportion_x = x1 / (crushed_car_bounds.max.v[0] - crushed_car_bounds.min.v[0]);
+        proportion_z = z1 / (crushed_car_bounds.max.v[2] - crushed_car_bounds.min.v[2]);
+    }
+    if (pWas_hitting_a_car && pCar->last_impact_location == eImpact_unknown) {
+        pCar->last_impact_location = impact_location;
+        pCar->last_col_prop_x = proportion_x;
+        pCar->last_col_prop_y = proportion_y;
+        pCar->last_col_prop_z = proportion_z;
+    }
+
+    if (energy_magnitude == 0.0f || pCar->invulnerable_no_damage) {
+        return;
+    }
+    if (!pWas_hitting_a_car && impact_location == eImpact_bottom) {
+        energy_magnitude = energy_magnitude / 2.0f;
+    }
+
+    the_program = &pCar->damage_programs[impact_location];
+    for (i = 0, the_clause = the_program->clauses; i < the_program->clause_count; i++, the_clause++) {
+        result = 1;
+        for (j = 0, the_condition = the_clause->conditions; j < the_clause->condition_count && result; j++, the_condition++) {
+            switch (the_condition->axis_comp) {
+            case eAxis_x:
+                if (the_condition->condition_operator == eCondition_less_than) {
+                    result &= proportion_x < the_condition->comparitor;
+                } else {
+                    result &= proportion_x > the_condition->comparitor;
+                }
+                break;
+            case eAxis_y:
+                if (the_condition->condition_operator == eCondition_less_than) {
+                    result &= proportion_y < the_condition->comparitor;
+                } else {
+                    result &= proportion_y > the_condition->comparitor;
+                }
+                break;
+            case eAxis_z:
+                if (the_condition->condition_operator == eCondition_less_than) {
+                    result &= proportion_z < the_condition->comparitor;
+                } else {
+                    result &= proportion_z > the_condition->comparitor;
+                }
+                break;
+            }
+        }
+        if (result) {
+            for (j = 0, the_effect = the_clause->effects; j < the_clause->effect_count; j++, the_effect++) {
+                DoDamage(pCar, the_effect->type, energy_magnitude, the_effect->weakness_factor);
+            }
+        }
+    }
+    if (pCar != NULL && pCar->driver == eDriver_local_human) {
+        switch (impact_location) {
+        case eImpact_left:
+            NewScreenWobble(
+                FRandomBetween(energy_magnitude * 50.0f, energy_magnitude * 100.0f),
+                FRandomBetween(energy_magnitude * 5.0f, energy_magnitude * 20.0f),
+                FRandomBetween(4.0f / energy_magnitude, 7.0f / energy_magnitude));
+            break;
+        case eImpact_right:
+            NewScreenWobble(
+                -FRandomBetween(energy_magnitude * 50.0f, energy_magnitude * 100.0f),
+                FRandomBetween(energy_magnitude * 5.0f, energy_magnitude * 20.0f),
+                FRandomBetween(4.0f / energy_magnitude, 7.0f / energy_magnitude));
+            break;
+        case eImpact_bottom:
+            NewScreenWobble(
+                FRandomBetween(energy_magnitude * 5.0f, energy_magnitude * 20.0f),
+                FRandomBetween(energy_magnitude * 30.0f, energy_magnitude * 60.0f),
+                FRandomBetween(1.0f / energy_magnitude, 5.0f / energy_magnitude));
+            break;
+        case eImpact_top:
+            NewScreenWobble(
+                FRandomBetween(energy_magnitude * 5.0f, energy_magnitude * 20.0f),
+                FRandomBetween(energy_magnitude * 30.0f, energy_magnitude * 60.0f),
+                FRandomBetween(1.0f / energy_magnitude, 5.0f / energy_magnitude));
+            break;
+        case eImpact_front:
+            NewScreenWobble(
+                FRandomBetween(energy_magnitude * 5.0f, energy_magnitude * 20.0f),
+                FRandomBetween(energy_magnitude * 50.0f, energy_magnitude * 150.0f),
+                FRandomBetween(7.0f / energy_magnitude, 25.0f / energy_magnitude));
+            break;
+        case eImpact_back:
+            NewScreenWobble(
+                FRandomBetween(energy_magnitude * 5.0f, energy_magnitude * 20.0f),
+                FRandomBetween(-energy_magnitude * 50.0f, energy_magnitude * 150.0f),
+                FRandomBetween(7.0f / energy_magnitude, 25.0f / energy_magnitude));
+            break;
+        default:
+            break;
+        }
+    }
+}
 
 // GetDirection
 
@@ -227,19 +423,44 @@ void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
     }
 }
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(off)
-#endif
-
-// STUB: CARMA2_HW 0x00440230
-// STUB: CARMA2_SW 0x00440310
+// FUNCTION: CARMA2_HW 0x00440230
+// FUNCTION: CARMA2_SW 0x00440310
 void C2_HOOK_FASTCALL SortOutSmoke(tCar_spec* pCar) {
-    NOT_IMPLEMENTED();
-}
+    int i;
+    int colour;
+    int old_colour;
+    int step;
+    int smoking;
 
-#ifdef REC2_MATCHING
-#pragma auto_inline(on)
-#endif
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmoke_steps) != 12);
+
+    smoking = 0;
+    if (pCar != NULL && pCar->driver > eDriver_5) {
+        for (i = 0; i < (int)REC2_ASIZE(pCar->damage_units); i++) {
+            step = gSmoke_steps[i];
+            if (step != 0) {
+                colour = (99 - pCar->damage_units[i].damage_level) / step;
+                if (colour <= 2) {
+                    smoking = 1;
+                }
+                if (pCar->damage_units[i].damage_level == pCar->damage_units[i].smoke_last_level) {
+                    continue;
+                }
+                step = gSmoke_steps[i];
+                if (step != 0 && pCar->damage_units[i].damage_level > pCar->damage_units[i].smoke_last_level) {
+                    old_colour = (99 - pCar->damage_units[i].smoke_last_level) / step;
+                    if (step > 0 && colour != old_colour && colour <= 2) {
+                        ConditionalSmokeColumn(pCar, i, colour);
+                    }
+                }
+            }
+        }
+        if (!smoking && IsCarSmoking(pCar)) {
+            StopCarSmoking(pCar);
+        }
+        SetSmokeLastDamageLevel(pCar);
+    }
+}
 
 #ifdef REC2_MATCHING
 #pragma auto_inline(off)

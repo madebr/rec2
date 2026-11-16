@@ -21,9 +21,9 @@ extern tU32 gPrevious_groove_times[2];
 extern tGroove_funk_binding gGroove_funk_bindings[1440];
 extern int gFunkotronics_array_size;
 
-// CalculateTextureBitsValue
+extern int C2_HOOK_FASTCALL CalculateTextureBitsValue(tFunk_texturebits* pTexturebits);
 
-// MapSawToTriangle
+extern float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber);
 
 extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
@@ -63,9 +63,9 @@ extern void C2_HOOK_FASTCALL KillFunkotronic(int pOwner);
 
 // FunkThoseTronics
 
-// PathGrooveBastard
+extern void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it);
 
-// ObjectGrooveBastard
+extern void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it);
 
 extern void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it);
 

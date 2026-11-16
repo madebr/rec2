@@ -47,7 +47,7 @@ extern void C2_HOOK_CDECL DoNotDprintf_oppoproc(const char* pMessage, ...);
 
 // SetCurvature
 
-// ProcessFollowPath
+extern tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle);
 
 // FollowCheatyPath
 

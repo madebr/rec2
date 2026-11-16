@@ -8,8 +8,10 @@
 
 #include "60-phil.h"
 
+#include "18-graphics2.h"
 #include "49-physics.h"
 #include "55-volume.h"
+#include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x0065d004
 // GLOBAL: CARMA2_SW 0x0065793c
@@ -23,60 +25,72 @@ tPhysics_object* gPHIL_list_collision_infos;
 // GLOBAL: CARMA2_SW 0x007410ac
 tU32 gPHIL_last_physics_tick;
 
-// ScalarToFraction
+// GLOBAL: CARMA2_HW 0x006923e0
+// GLOBAL: CARMA2_SW 0x0068c438
+int gPHIL_count_list_collision_infos;
 
-// FractionToScalar
+// GLOBAL: CARMA2_HW 0x006923e4
+// GLOBAL: CARMA2_SW 0x0068c43c
+int gPHIL_object_added;
+
+// GLOBAL: CARMA2_HW 0x006923f0
+// GLOBAL: CARMA2_SW 0x0068c448
+tPHIL_queued_objects gPhil_queued_objects = { 0 };
+
+// GLOBAL: CARMA2_HW 0x00692db8
+// GLOBAL: CARMA2_SW 0x0068ce10
+tWorld_callback_active_passive_cbfn* gPHIL_original_activate_passive = NULL;
+
+// GLOBAL: CARMA2_HW 0x00692dbc
+// GLOBAL: CARMA2_SW 0x0068ce14
+int gPHIL_count_queued_objects_for_removal;
+
+// GLOBAL: CARMA2_HW 0x00692dc0
+// GLOBAL: CARMA2_SW 0x0068ce18
+int gPHIL_count_queued_objects;
+
+tU16 C2_HOOK_FASTCALL ScalarToFraction(br_scalar pMin, br_scalar pMax, br_scalar pValue) {
+
+    if (pValue > pMax) {
+        pValue = pMax;
+    }
+    if (pValue < pMin) {
+        pValue = pMin;
+    }
+    pValue = (((pValue - pMin) / (pMax - pMin)) * 65534.0f);
+    return (tU16)(pValue + 0.5f);
+}
+
+br_scalar C2_HOOK_FASTCALL FractionToScalar(br_scalar pMin, br_scalar pMax, tU16 pFixed) {
+
+    return ((pMax - pMin) * (((br_scalar)pFixed / 65534.0f))) + pMin;
+}
 
 // FUNCTION: CARMA2_HW 0x0049be90
 // FUNCTION: CARMA2_SW 0x00498010
 void C2_HOOK_FASTCALL GetOrientationFromMatrix(tFixed_quat* pOrientation, const br_matrix34* pMatrix) {
     br_quat quaternion;
-    br_scalar value;
 
     BrMatrix34ToQuat(&quaternion, pMatrix);
-    value = quaternion.x;
-    if (value > 1.f) {
-        value = 1.f;
-    }
-    if (value < -1.f) {
-        value = -1.f;
-    }
-    value = (value + 1.f) * .5f;
-    value *= 65534.f;
-    pOrientation->v[0] = (tU16)(value + .5f);
-    value = quaternion.y;
-    if (value > 1.f) {
-        value = 1.f;
-    }
-    if (value < -1.f) {
-        value = -1.f;
-    }
-    value = (value + 1.f) * .5f;
-    value *= 65534.f;
-    pOrientation->v[1] = (tU16)(value + .5f);
-    value = quaternion.z;
-    if (value > 1.f) {
-        value = 1.f;
-    }
-    if (value < -1.f) {
-        value = -1.f;
-    }
-    value = (value + 1.f) * .5f;
-    value *= 65534.f;
-    pOrientation->v[2] = (tU16)(value + .5f);
-    value = quaternion.w;
-    if (value > 1.f) {
-        value = 1.f;
-    }
-    if (value < -1.f) {
-        value = -1.f;
-    }
-    value = (value + 1.f) * .5f;
-    value *= 65534.f;
-    pOrientation->v[3] = (tU16)(value + .5f);
+
+    pOrientation->v[0] = ScalarToFraction(-1.0f, 1.0f, quaternion.x);
+    pOrientation->v[1] = ScalarToFraction(-1.0f, 1.0f, quaternion.y);
+    pOrientation->v[2] = ScalarToFraction(-1.0f, 1.0f, quaternion.z);
+    pOrientation->v[3] = ScalarToFraction(-1.0f, 1.0f, quaternion.w);
 }
 
-// GetMatrixFromOrientation
+// FUNCTION: CARMA2_HW 0x0049c000
+// FUNCTION: CARMA2_SW 0x00498180
+void C2_HOOK_FASTCALL GetMatrixFromOrientation(br_matrix34* pMatrix, const tFixed_quat* pOrientation) {
+    br_quat quaternion;
+
+    quaternion.x = FractionToScalar(-1.0f, 1.0f, pOrientation->v[0]);
+    quaternion.y = FractionToScalar(-1.0f, 1.0f, pOrientation->v[1]);
+    quaternion.z = FractionToScalar(-1.0f, 1.0f, pOrientation->v[2]);
+    quaternion.w = FractionToScalar(-1.0f, 1.0f, pOrientation->v[3]);
+    BrQuatNormalise(&quaternion, &quaternion);
+    BrQuatToMatrix34(pMatrix, &quaternion);
+}
 
 // OmegaCompScalarTo16
 
@@ -116,7 +130,7 @@ int C2_HOOK_FASTCALL SizeOfObjectNetworkStuff(tPhysics_joint_type pType) {
     case eJoint_ball_n_socket:
         return 0x10;
     default:
-        PhysicsError(9, "netphys got messed up");
+        PhysicsError(ePhysicsError_error9, "netphys got messed up");
         return 0;
     }
 }
@@ -131,7 +145,7 @@ int C2_HOOK_STDCALL FloatToFixedFraction(float pValue, float pMin, float pMax) {
         pValue = pMin;
     }
     pValue = ((pValue - pMin) / (pMax - pMin)) * 65534.f;
-    return (int)(pValue + .5f);
+    return (int)(pValue + 0.5f);
 }
 
 // WriteObjectNetworkStuff
@@ -184,11 +198,49 @@ int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tPhysics_object* pObject) {
     return size;
 }
 
-// GetNetworkDataSize
+// FUNCTION: CARMA2_HW 0x0049cee0
+// FUNCTION: CARMA2_SW 0x00499060
+int C2_HOOK_FASTCALL GetNetworkDataSize(tU8* pNet_data) {
+    int size;
+    tU8* next;
+    tU8 more;
+
+    size = SizeOfObjectNetworkStuff(*pNet_data);
+    more = *pNet_data & 0x80;
+    while (more != 0) {
+        next = pNet_data + size;
+        size += GetNetworkDataSize(next);
+        more = *next & 0x40;
+    }
+    return size;
+}
 
 // GetSingleMatrixFromNetworkData
 
-// PHILInit
+// FUNCTION: CARMA2_HW 0x004b5cc0
+// FUNCTION: CARMA2_SW 0x004b23e0
+int C2_HOOK_FASTCALL PHILInit(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPhil_queued_objects.headers) != 100);
+    C2_HOOK_BUG_ON(sizeof(gPhil_queued_objects.headers[0]) != 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPHIL_queued_objects, headers, 0x68);
+
+    for (i = 0; i < (int)REC2_ASIZE(gPhil_queued_objects.headers); i++) {
+        gPhil_queued_objects.headers[i].collision_info = NULL;
+    }
+    gPHIL_count_list_collision_infos = 0;
+    gPHIL_count_queued_objects = 0;
+    gPHIL_count_queued_objects_for_removal = 0;
+    gPHIL_list_collision_infos = NULL;
+    gPHIL_munging_objects = 0;
+    gPHIL_doing_physics = 0;
+    gPHIL_object_added = 0;
+    gPHIL_last_physics_tick = 0;
+    gPHIL_mechanics_time_sync = 1;
+    gPHIL_disabled = 0;
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004b5d20
 // FUNCTION: CARMA2_SW 0x004b2440
@@ -196,7 +248,19 @@ void C2_HOOK_FASTCALL PHILDisable(void) {
     gPHIL_disabled = 1;
 }
 
-// PHILAddObject
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004b5d40
+// STUB: CARMA2_SW 0x004b2460
+int C2_HOOK_FASTCALL PHILAddObject(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // STUB: CARMA2_HW 0x004b5ea0
 // STUB: CARMA2_SW 0x004b25c0
@@ -226,7 +290,29 @@ tPhysics_object* C2_HOOK_FASTCALL PHILGetNextObject(tPhysics_object* pObject) {
     }
 }
 
-// PHILReturnObjectStatus
+// FUNCTION: CARMA2_HW 0x004b6010
+// FUNCTION: CARMA2_SW 0x004b2730
+tU32 C2_HOOK_FASTCALL PHILReturnObjectStatus(tPhysics_object* pObject) {
+    tPHIL_queued_header* info;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x239, 0x239);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x240, 0x240);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPHIL_queued_header, field_0x8, 0x8);
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    if (pObject->field_0x239 == 2) {
+        info = pObject->field_0x240;
+        return info->field_0x8;
+    }
+    info = pObject->field_0x240;
+    if (info != NULL) {
+        return info->field_0x8;
+    } else {
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004b6040
 // FUNCTION: CARMA2_SW 0x004b2760
@@ -326,13 +412,34 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, const
     }
 }
 
-// PHILAddActiveObject
+// FUNCTION: CARMA2_HW 0x004b6210
+// FUNCTION: CARMA2_SW 0x004b2930
+int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* pInfo, const br_matrix34* pArg2, const br_vector3* pArg3, const br_vector3* pArg4) {
+    int result;
+
+    if (gPHIL_disabled) {
+        return 0;
+    }
+    result = PHILAddObject(pInfo);
+    if (result == 0 && (pArg2 == NULL || (result = PHILSetPassiveObjectsMatrix(pInfo, pArg2)) == 0)) {
+        result = PHILMakeObjectActive(pInfo, pArg3, pArg4, 0);
+    }
+    return result;
+}
 
 // PHILAddObjectImmediately
 
-// PHILAddActiveObjectImmediately
+// STUB: CARMA2_HW 0x004b62e0
+// STUB: CARMA2_SW 0x004b2a00
+int C2_HOOK_FASTCALL PHILAddActiveObjectImmediately(tPhysics_object* pObject, const br_matrix34* pMatrix, const br_vector3* pVelocity, const br_vector3* pOmega) {
+    NOT_IMPLEMENTED();
+}
 
-// PHILSetObjectProperty
+// STUB: CARMA2_HW 0x004b63b0
+// STUB: CARMA2_SW 0x004b2ad0
+int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object* pCollision_info, int pParam, ...) {
+    NOT_IMPLEMENTED();
+}
 
 // STUB: CARMA2_HW 0x004b6530
 // STUB: CARMA2_SW 0x004b2c50
@@ -374,5 +481,16 @@ void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tPhysics_object* pObject) {
 
 // PHILDoPhysics
 
-// PHILApplyPHILObject
+// FUNCTION: CARMA2_HW 0x004b7220
+// FUNCTION: CARMA2_SW 0x004b3940
+void C2_HOOK_FASTCALL PHILApplyPHILObject(tPhysics_object* pObject, const br_matrix34* pMatrix) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, actor, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, transform_matrix, 0x8c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_actor, t, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_transform, t, 0x4);
+
+    BrMatrix34Copy(&pObject->transform_matrix, pMatrix);
+    BrMatrix34Copy(&pObject->actor->t.t.mat, pMatrix);
+}
 

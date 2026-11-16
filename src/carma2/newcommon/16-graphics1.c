@@ -25,6 +25,7 @@
 #include "rec2_types.h"
 #include "rec2_macros.h"
 
+#include <limits.h>
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00703e24
@@ -51,14 +52,36 @@ int gBrZb_initialized;
 br_pixelmap* gRear_pixelmap;
 
 // GLOBAL: CARMA2_HW 0x006a22b8
+// GLOBAL: CARMA2_SW 0x0069c310
 br_pixelmap* gEvalu;
 
 // GLOBAL: CARMA2_HW 0x006a22f8
-tWobble_spec gWobble_array[5];
+// GLOBAL: CARMA2_SW 0x0069c350
+tWobble_spec gWobble_array[5] = { 0 };
+
+#ifdef REC2_MATCHING
+// GLOBAL: CARMA2_HW 0x006a2348
+// GLOBAL: CARMA2_SW 0x0069c3a0
+int gINT_006a2348 = 0;
+#endif
+
+// GLOBAL: CARMA2_HW 0x006a234c
+// GLOBAL: CARMA2_SW 0x0069c3a4
+float gPrevious_rear_yon = 0.0f;
+
+#ifdef REC2_MATCHING
+// GLOBAL: CARMA2_HW 0x006a2350
+// GLOBAL: CARMA2_SW 0x0069c3a8
+int gINT_006a2350[2] = { 0 };
+#endif
 
 // GLOBAL: CARMA2_HW 0x00705080
 // GLOBAL: CARMA2_SW 0x006fbb40
-float gCosine_array[64];
+float gCosine_array[65] = { 0 };
+
+// GLOBAL: CARMA2_HW 0x00705184
+// GLOBAL: CARMA2_SW 0x006fbc44
+int gScreen_wobble_y = 0;
 
 // GLOBAL: CARMA2_HW 0x0065fdc8
 // GLOBAL: CARMA2_SW 0x0065a708
@@ -108,10 +131,6 @@ br_actor* gShadow_actor;
 // GLOBAL: CARMA2_SW 0x006fbc48
 int gScreen_wobble_x;
 
-// GLOBAL: CARMA2_HW 0x00705184
-// GLOBAL: CARMA2_SW 0x006fbc44
-int gScreen_wobble_y;
-
 // GLOBAL: CARMA2_HW 0x0070518c
 // GLOBAL: CARMA2_SW 0x006fbc4c
 br_material* gMaterial_below;
@@ -137,6 +156,10 @@ br_actor* gHud_actor_storage[128];
 // GLOBAL: CARMA2_HW 0x006a22c4
 // GLOBAL: CARMA2_SW 0x0069c31c
 int gNumber_of_lollipops;
+
+// GLOBAL: CARMA2_HW 0x00762100
+// GLOBAL: CARMA2_SW 0x00758660
+br_scalar gYon_squared;
 
 // MungeClipPlane
 
@@ -228,16 +251,16 @@ void C2_HOOK_FASTCALL ToggleShadow(void) {
     }
     switch (gShadow_level) {
     case eShadow_none:
-        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowNone));
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_ShadowNone));
         break;
     case eShadow_us_only:
-        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsOnly));
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_ShadowUsOnly));
         break;
     case eShadow_us_and_opponents:
-        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsAndOpponents));
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_ShadowUsAndOpponents));
         break;
     case eShadow_everyone:
-        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowEveryone));
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_ShadowEveryone));
         break;
     }
 }
@@ -307,9 +330,31 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
     }
 }
 
-// ShadowMode
+// FUNCTION: CARMA2_HW 0x004e9b90
+// FUNCTION: CARMA2_SW 0x004e5950
+void C2_HOOK_FASTCALL ShadowMode(void) {
 
-// LollipopizeActor
+    gFancy_shadow = !gFancy_shadow;
+    if (gFancy_shadow) {
+        NewTextHeadupSlot(4, 0, 2000, -4, "Translucent shadow");
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, "Solid shadow");
+    }
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
+
+// STUB: CARMA2_HW 0x004e4650
+// STUB: CARMA2_SW 0x004e09e0
+void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* ref_to_world, tLollipop_mode pWhich_axis) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
 
 // FUNCTION: CARMA2_HW 0x004e4900
 // FUNCTION: CARMA2_SW 0x004e0c90
@@ -473,7 +518,29 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
     gEvalu = LoadPixelmap("Evalu01.PIX");
 }
 
-// NewScreenWobble
+// FUNCTION: CARMA2_HW 0x004e4db0
+// FUNCTION: CARMA2_SW 0x004e1110
+void C2_HOOK_FASTCALL NewScreenWobble(double pAmplitude_x, double pAmplitude_y, double pPeriod) {
+    int i;
+    int oldest_time;
+    int oldest_index;
+
+    oldest_index = -1;
+    oldest_time = INT_MAX;
+    for (i = 0; i < (int)REC2_ASIZE(gWobble_array); i++) {
+        if (gWobble_array[i].time_started == 0) {
+            oldest_index = i;
+            break;
+        } else if (gWobble_array[i].time_started < oldest_time) {
+            oldest_time = gWobble_array[i].time_started;
+            oldest_index = i;
+        }
+    }
+    gWobble_array[oldest_index].time_started = (int)GetTotalTime();
+    gWobble_array[oldest_index].amplitude_x = (float)pAmplitude_x;
+    gWobble_array[oldest_index].amplitude_y = (float)pAmplitude_y;
+    gWobble_array[oldest_index].period = (float)pPeriod;
+}
 
 // FUNCTION: CARMA2_HW 0x004e4e20
 // FUNCTION: CARMA2_SW 0x004e1180

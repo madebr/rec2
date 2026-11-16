@@ -1,0 +1,3 @@
+address,type,name
+0x0054d036,library,_DirectSoundCreate@12
+0x0054d03c,library,_DirectInputCreateA@16

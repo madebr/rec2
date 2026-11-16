@@ -164,6 +164,7 @@ int C2_HOOK_FASTCALL NetworkJoinMenuInfunc(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x00468260
+// FUNCTION: CARMA2_SW 0x00467fe0
 int C2_HOOK_FASTCALL NetworkJoinMenuOutfunc(tFrontend_spec* pFrontend) {
 
     StopAllThatJoinyStuffThisInstant();

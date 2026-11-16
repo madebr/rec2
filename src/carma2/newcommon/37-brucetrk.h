@@ -26,6 +26,10 @@ extern br_vector3 gAverage_grid_position;
 
 // DisposeRuntimeBuiltModels
 
+extern br_uint_8 C2_HOOK_CDECL ActorToActorMatrix34(br_matrix34* m, br_actor* a, br_actor* b);
+
+extern void C2_HOOK_CDECL ActorRelink(br_actor* parent, br_actor* a);
+
 extern void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec);
 
 extern void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX, br_scalar pZ, tTrack_spec* pTrack_spec);

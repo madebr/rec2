@@ -12,6 +12,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gINT_0068d920;
 extern tNet_game_player_info* gLast_lepper;
 extern int gLast_it_change;
 
@@ -31,7 +32,7 @@ extern int C2_HOOK_FASTCALL CarShapeNeedsSendingToPlayer(tCar_crush_network_shap
 
 // AddShapeStuffToMechanicsMessage
 
-// TimeToSendData
+extern int C2_HOOK_FASTCALL TimeToSendData(void);
 
 // SendCarData
 
@@ -77,7 +78,9 @@ extern void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar);
 
 // ClipName
 
-// CreateBoxes
+#ifdef REC2_HW
+extern void C2_HOOK_FASTCALL CreateBoxes(void);
+#endif
 
 // DrawScoreBoxes
 
@@ -95,7 +98,7 @@ extern void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index);
 
 extern void C2_HOOK_FASTCALL CheckForVampireWinner(void);
 
-// PlayerIsInfected
+extern void C2_HOOK_FASTCALL PlayerIsInfected(tNet_game_player_info* pPlayer);
 
 // FarEnoughAway
 
@@ -105,25 +108,25 @@ extern void C2_HOOK_FASTCALL PlayerIsIt(tNet_game_player_info* pPlayer);
 
 // SelectRandomFox
 
-// CalcPlayerScores
+extern void C2_HOOK_FASTCALL CalcPlayerScores(void);
 
-// SendPlayerScores
+extern void C2_HOOK_FASTCALL SendPlayerScores(void);
 
-// DoNetGameManagement
+extern void C2_HOOK_FASTCALL DoNetGameManagement(void);
 
 extern void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer);
 
 // InitPlayers
 
-// UseGeneralScore
+extern void C2_HOOK_FASTCALL UseGeneralScore(int pScore);
 
 // NetSendEnvironmentChanges
 
 extern void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
 
-// ReceivedGameplay
+extern void C2_HOOK_FASTCALL ReceivedGameplay(tNet_message_chunk* pContents, tNet_message* pMessage, tU32 pReceive_time);
 
-// SendGameplay
+extern void C2_HOOK_FASTCALL SendGameplay(tPlayer_ID pPlayer, tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
 
 extern void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
 

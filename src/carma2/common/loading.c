@@ -2026,7 +2026,7 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     }
 
     for (i = 0; i < REC2_ASIZE(gKey_mapping); i++) {
-        fscanf((FILE*)f, "%d", &gKey_mapping[i]);
+        fscanf(f, "%d", &gKey_mapping[i]);
     }
     PFfclose(f);
 }

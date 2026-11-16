@@ -22,7 +22,7 @@ extern br_material* gMaterial[2];
 extern tSkid gSkids[100];
 extern int gCurrent_skid;
 
-// StretchMark
+extern void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* pTo, br_scalar pTexture_start, br_scalar pTexture_step);
 
 // MaterialFromIndex
 
@@ -50,6 +50,6 @@ extern void C2_HOOK_FASTCALL SkidMark(tCar_spec* pCar_spec, int pWheel_num);
 
 extern void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar);
 
-// SkidsPerFrame
+extern void C2_HOOK_FASTCALL SkidsPerFrame(void);
 
 #endif // GUARD_20_SKIDMARK_H

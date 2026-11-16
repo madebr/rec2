@@ -458,6 +458,7 @@ void C2_HOOK_FASTCALL DisposeOpponentPaths(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004a7ea0
+// FUNCTION: CARMA2_SW 0x004a4010
 void C2_HOOK_FASTCALL AddIfNotInList(tPhysics_object* pObject, tPhysics_object** pList, int pCount) {
     int i;
 

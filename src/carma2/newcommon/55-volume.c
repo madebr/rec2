@@ -10,8 +10,10 @@
 
 #include "00-car.h"
 #include "08-loading1.h"
+#include "32-spark.h"
 #include "34-finteray.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
@@ -35,14 +37,69 @@ const char* gSoundType_choices[2] = {
     "SCATTERED"
 };
 
+// GLOBAL: CARMA2_HW 0x00660258
+// GLOBAL: CARMA2_SW 0x0065ab38
+const char* gSpecial_effects_boundary_choices[4] = {
+    "BOX",
+    "PLANE",
+    "DEFAULT",
+    "NEW",
+};
+
 // FUNCTION: CARMA2_HW 0x004ff110
 tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
     return gDefault_water_spec_vol_real;
 }
 
-// FindSpecialVolume
+#ifdef REC2_MATCHING
+#pragma auto_inline(off)
+#endif
 
-// MungeSpecialVolume
+// STUB: CARMA2_HW 0x004ff120
+// STUB: CARMA2_SW 0x004faa00
+tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) {
+    NOT_IMPLEMENTED();
+}
+
+#ifdef REC2_MATCHING
+#pragma auto_inline(on)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004ff410
+// FUNCTION: CARMA2_SW 0x004facf0
+void C2_HOOK_FASTCALL MungeSpecialVolume(tPhysics_object* pObject) {
+    tSpecial_volume* new_special_volume;
+    tCar_spec* car;
+
+    new_special_volume = FindSpecialVolume(&pObject->pos, pObject->last_special_volume, 0);
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        car = pObject->owner;
+    } else {
+        car = NULL;
+    }
+    if (pObject->auto_special_volume != NULL
+        && (new_special_volume == NULL || new_special_volume->gravity_multiplier == 1.f)) {
+        if (pObject->water_d == 10000.f && pObject->water_depth_factor != 1.f) {
+            pObject->auto_special_volume = NULL;
+        } else {
+            new_special_volume = pObject->auto_special_volume;
+        }
+    }
+    if (new_special_volume != pObject->last_special_volume && car != NULL && car->driver == eDriver_local_human) {
+        if (pObject->last_special_volume != NULL && pObject->last_special_volume->exit_noise >= 0
+            && (new_special_volume == NULL || new_special_volume->exit_noise != pObject->last_special_volume->exit_noise)) {
+            DRS3StartSound(gCar_outlet, pObject->last_special_volume->exit_noise);
+        }
+        if (new_special_volume != NULL && new_special_volume->entry_noise >= 0
+            && (pObject->last_special_volume == NULL || pObject->last_special_volume->entry_noise != new_special_volume->entry_noise)) {
+            DRS3StartSound(gCar_outlet, new_special_volume->entry_noise);
+        }
+    }
+    pObject->last_special_volume = new_special_volume;
+    if (car != NULL && new_special_volume != NULL && new_special_volume->gravity_multiplier < 1.f && IsCarSmoking(car)) {
+        StopCarSmoking(car);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004ff530
 // FUNCTION: CARMA2_SW 0x004fae10
@@ -71,7 +128,11 @@ void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pObject) {
     pObject->water_depth_factor = 1.f;
 }
 
-// TestAutoSpecialVolume
+// STUB: CARMA2_HW 0x004ff5d0
+// STUB: CARMA2_SW 0x004faeb0
+void C2_HOOK_FASTCALL TestAutoSpecialVolume(tPhysics_object* pObject) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004ff8d0
 // FUNCTION: CARMA2_SW 0x004fb1b0
@@ -184,13 +245,70 @@ void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
 
 // FUNCTION: CARMA2_HW 0x004ffd20
 // FUNCTION: CARMA2_SW 0x004fb600
-void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
+void C2_HOOK_FASTCALL FindInverseAndWorlBox(tSpecial_volume* pSpec) {
     br_bounds bnds;
 
-    BrVector3Set(&bnds.min, -1.f, -1.f, -1.f);
-    BrVector3Set(&bnds.max, 1.f, 1.f, 1.f);
+    BrVector3Set(&bnds.min, -1.0f, -1.0f, -1.0f);
+    BrVector3Set(&bnds.max, 1.0f, 1.0f, 1.0f);
     GetNewBoundingBox(&pSpec->boundary.box.bounds, &bnds, &pSpec->boundary.box.mat);
     BrMatrix34Inverse(&pSpec->boundary.box.inv_mat, &pSpec->boundary.box.mat);
 }
 
-// ReadSpecialVolumes
+// FUNCTION: CARMA2_HW 0x004ffd80
+// FUNCTION: CARMA2_SW 0x004fb660
+void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
+    int i;
+    int j;
+    tSpecial_volume* spec;
+    tSpecial_volume_boundary_type boundary_type;
+
+    C2_HOOK_BUG_ON(sizeof(tSpecial_volume) != 0xdc);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSpecial_effects_boundary_choices) != 4);
+
+    gDefault_engine_noise_index = GetAnInt(pF);
+    gDefault_water_spec_vol_real = &gDefault_default_water_spec_vol;
+    gProgram_state.special_volume_count = GetAnInt(pF);
+    if (gProgram_state.special_volume_count != 0) {
+        gProgram_state.special_volumes = BrMemAllocate(gProgram_state.special_volume_count * sizeof(tSpecial_volume), kMem_special_volume);
+        for (i = 0, spec = gProgram_state.special_volumes; i < gProgram_state.special_volume_count; i++, spec++) {
+            PossibleService();
+            boundary_type = GetALineAndInterpretCommand(pF, gSpecial_effects_boundary_choices, REC2_ASIZE(gSpecial_effects_boundary_choices));
+            spec->boundary_type = boundary_type;
+            if (spec->boundary_type == eFx_boundary_new) {
+                spec->boundary_type = eFx_boundary_box;
+            }
+            switch (spec->boundary_type) {
+            case eFx_boundary_box:
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[0][0], &spec->boundary.box.mat.m[0][1], &spec->boundary.box.mat.m[0][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[1][0], &spec->boundary.box.mat.m[1][1], &spec->boundary.box.mat.m[1][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[2][0], &spec->boundary.box.mat.m[2][1], &spec->boundary.box.mat.m[2][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[3][0], &spec->boundary.box.mat.m[3][1], &spec->boundary.box.mat.m[3][2]);
+                FindInverseAndWorlBox(spec);
+                spec->boundary.box.axis_length.v[0] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[0]);
+                spec->boundary.box.axis_length.v[1] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[1]);
+                spec->boundary.box.axis_length.v[2] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[2]);
+                ParseSpecialVolume(pF, spec, NULL, boundary_type == eFx_boundary_box);
+                if (spec->soundfx_type != kSoundFx_None) {
+                    for (j = 0; j < REC2_ASIZE(spec->boundary.box.bounds.min.v); j++) {
+                        spec->boundary.box.bounds.min.v[j] -= 10.0f;
+                    }
+                    for (j = 0; j < REC2_ASIZE(spec->boundary.box.bounds.max.v); j++) {
+                        spec->boundary.box.bounds.max.v[j] += 10.0f;
+                    }
+                }
+                break;
+            case eFx_boundary_plane:
+                GetFourScalars(pF, &spec->boundary.plane.v[0], &spec->boundary.plane.v[1], &spec->boundary.plane.v[2], &spec->boundary.plane.v[3]);
+                ParseSpecialVolume(pF, spec, NULL, 1);
+                break;
+            case eFx_boundary_default:
+                ParseSpecialVolume(pF, spec, NULL, 0);
+                gDefault_water_spec_vol_real = spec;
+                break;
+            default:
+                FatalError(kFatalError_ProblemWithSpecialVolumeNumber_I);
+                break;
+            }
+        }
+    }
+}

@@ -133,6 +133,7 @@ extern void C2_HOOK_CDECL BrMatrix34PreRotateY(br_matrix34* mat, br_angle ry);
 extern void C2_HOOK_CDECL BrMatrix34PreRotateZ(br_matrix34* mat, br_angle rz);
 extern void C2_HOOK_CDECL BrMatrix34RollingBall(br_matrix34 *mat, int dx,int dy, int radius);
 extern br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* mat);
+extern void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, const br_matrix34* mat);
 
 // BrMatrix4
 extern void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, const br_matrix4* B);
@@ -145,9 +146,11 @@ extern void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, const br_matrix4* B, const
 extern void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, const br_matrix34* B, const br_matrix4* C);
 
 // BrQuaternion
+extern br_matrix34* C2_HOOK_CDECL BrQuatToMatrix34(br_matrix34* mat, const br_quat* q);
 extern br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, const br_matrix34* mat);
 extern br_quat* C2_HOOK_CDECL BrQuatInvert(br_quat* q, const br_quat* qq);
 extern br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, const br_quat* l, const br_quat* r);
+extern br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, const br_quat* qq);
 
 // BrMem
 extern void C2_HOOK_CDECL BrMemFree(void* block);

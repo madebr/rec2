@@ -25,6 +25,10 @@ extern tDrone_path_node* gDrone_path_nodes;
 extern int gCount_drones;
 extern int gCurrent_selected_drone;
 
+extern int gCount_drones;
+
+extern int gCurrent_selected_drone;
+
 // DoNotDprintf
 
 // CrappyLittleVector3DPrintf
@@ -43,7 +47,7 @@ extern void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone);
 
 // InitDroneCollisionObject
 
-// ReallyAddDroneToPHIL
+extern int C2_HOOK_FASTCALL ReallyAddDroneToPHIL(tDrone_spec* pDrone);
 
 // AddDroneToPHIL
 
@@ -135,7 +139,7 @@ extern int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3*
 
 // MoveThisDroneCar
 
-// PipeDroneMatrix
+extern void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone);
 
 // PossiblyPipeDroneMovement
 
@@ -182,6 +186,8 @@ extern void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec* pDrone);
 extern void C2_HOOK_FASTCALL DroneLookWhereYoureGoingYouBlindCunt(void);
 
 extern void C2_HOOK_FASTCALL SelectNextDrone(void);
+
+extern void C2_HOOK_FASTCALL SelectPreviousDrone(void);
 
 extern int C2_HOOK_FASTCALL OKToViewDrones(void);
 

@@ -9,6 +9,7 @@
 #include "49-physics.h"
 
 #include "00-car.h"
+#include "09-funks.h"
 #include "16-graphics1.h"
 #include "22-replay.h"
 #include "28-world3.h"
@@ -45,6 +46,10 @@ void* gPhysics_buffer1_ptr;
 // GLOBAL: CARMA2_SW 0x0073b2d4
 void* gPhysics_buffer2_ptr;
 
+// GLOBAL: CARMA2_HW 0x0074480c
+// GLOBAL: CARMA2_SW 0x0073b2cc
+int gTotal_count_smash_peds;
+
 // GLOBAL: CARMA2_HW 0x00744810
 // GLOBAL: CARMA2_SW 0x0073b2d0
 int gImmortal_peds;
@@ -52,6 +57,10 @@ int gImmortal_peds;
 // GLOBAL: CARMA2_HW 0x00744804
 // GLOBAL: CARMA2_SW 0x0073b2c4
 int gBOOL_00744804;
+
+// GLOBAL: CARMA2_HW 0x00744800
+// GLOBAL: CARMA2_SW 0x0073b2c0
+float gPed_head_scale;
 
 // GLOBAL: CARMA2_HW 0x00744808
 // GLOBAL: CARMA2_SW 0x0073b2c8
@@ -65,6 +74,10 @@ void* gPhysics_buffer3_ptr;
 // GLOBAL: CARMA2_SW 0x007410a4
 int gPHIL_mechanics_time_sync;
 
+// GLOBAL: CARMA2_HW 0x0074a5e8
+// GLOBAL: CARMA2_SW 0x007410a8
+int gPHIL_munging_objects;
+
 // GLOBAL: CARMA2_HW 0x006940c8
 // GLOBAL: CARMA2_SW 0x0068e120
 int gPhysics_other_buffer_capacity;
@@ -73,9 +86,29 @@ int gPhysics_other_buffer_capacity;
 // GLOBAL: CARMA2_SW 0x0068e198
 tProximity_ray gProximity_rays[20];
 
+// GLOBAL: CARMA2_HW 0x00694274
+// GLOBAL: CARMA2_SW 0x0068e2cc
+tPed_giblet_size_spec* gGiblet_sizes;
+
+// GLOBAL: CARMA2_HW 0x00694278
+// GLOBAL: CARMA2_SW 0x0068e2d0
+br_model* gPed_spurt_model;
+
+// GLOBAL: CARMA2_HW 0x0069427c
+// GLOBAL: CARMA2_SW 0x0068e2d4
+int gPed_spurty_lumps_count;
+
+// GLOBAL: CARMA2_HW 0x00694268
+// GLOBAL: CARMA2_SW 0x0068e2c0
+int gPed_times[3];
+
 // GLOBAL: CARMA2_HW 0x00694280
 // GLOBAL: CARMA2_SW 0x0068e2d8
 br_actor* gPed_limbed_actors[30];
+
+// GLOBAL: CARMA2_HW 0x006942f8
+// GLOBAL: CARMA2_SW 0x0068e350
+tShrapnel_time_info gPed_spurt_min_max_time;
 
 // GLOBAL: CARMA2_HW 0x006940c4
 // GLOBAL: CARMA2_SW 0x0068e11c
@@ -88,6 +121,19 @@ void* gPhysics_scratch_ptr;
 // GLOBAL: CARMA2_HW 0x006940b0
 // GLOBAL: CARMA2_SW 0x0068e108
 int gFace_count;
+
+// GLOBAL: CARMA2_HW 0x0065cf78
+// GLOBAL: CARMA2_SW 0x006578b0
+tWorld_callbacks gWorld_callbacks = {
+    ProcessForcesCallback,
+    ProcessJointForcesCallBack,
+    NewFaceListCallBack,
+    FindFacesInBox,
+    PullActorFromWorld,
+    StopGroovidelic,
+    GetFrictionFromFace,
+    NULL,
+};
 
 // count
 
@@ -165,10 +211,30 @@ tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList(br_vector3* pPosition, br_vector
     }
 }
 
-// STUB: CARMA2_HW 0x004226d0
-// STUB: CARMA2_SW 0x00422750
+// FUNCTION: CARMA2_HW 0x004226d0
+// FUNCTION: CARMA2_SW 0x00422750
 tFace_ref* C2_HOOK_FASTCALL RayCastThruFaceList2(br_vector3* pPosition, br_vector3* pDirection, br_vector3* pNormal, br_scalar* pT, br_vector3* pCollision_position, tFace_ref* pFaces, int pCount) {
-    NOT_IMPLEMENTED();
+    br_vector3 normal;
+    br_vector3 collision_position;
+    br_scalar t;
+    tFace_ref* best;
+    int i;
+
+    *pT = 2.0f;
+    for (i = 0; i < pCount; i++, pFaces++) {
+        CheckSingleFace(pFaces, pPosition, pDirection, &normal, &t, &collision_position);
+        if (t < *pT) {
+            *pT = t;
+            BrVector3Copy(pNormal, &normal);
+            best = pFaces;
+            BrVector3Copy(pCollision_position, &collision_position);
+        }
+    }
+    if (*pT < 2.0f) {
+        return best;
+    } else {
+        return NULL;
+    }
 }
 
 // RayCastInBox
@@ -373,7 +439,11 @@ int C2_HOOK_FASTCALL TestShapeEdgeIntersection(tPhysics_object* pCollision_info_
 
 // TestObjectOverlapRecurse
 
-// TestForObjectInSensiblePlace
+// STUB: CARMA2_HW 0x00429070
+// STUB: CARMA2_SW 0x00429100
+int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
+    NOT_IMPLEMENTED();
+}
 
 // HierarchyCalcEnergy
 
@@ -500,7 +570,11 @@ void C2_HOOK_FASTCALL PositionWorldJointedObject(tPhysics_object* pObject, br_sc
 
 // MoveJointedObject
 
-// TellPhysicsJointsHaveChanged
+// STUB: CARMA2_HW 0x004b9750
+// STUB: CARMA2_SW 0x004b5e70
+void C2_HOOK_FASTCALL TellPhysicsJointsHaveChanged(tPhysics_object* pCollision_info) {
+    NOT_IMPLEMENTED();
+}
 
 // CombineBounds
 
@@ -813,7 +887,11 @@ void C2_HOOK_FASTCALL TranslateObject(tPhysics_object* pObject, br_scalar pDelta
     BrVector3Accumulate(&pObject->actor->t.t.translate.t, &tv);
 }
 
-// GetFacesNearObject
+// STUB: CARMA2_HW 0x004c2060
+// STUB: CARMA2_SW 0x004be790
+void C2_HOOK_FASTCALL GetFacesNearObject(tPhysics_object *pObject, tWorld_callbacks *pCallbacks) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004c25a0
 // FUNCTION: CARMA2_SW 0x004becd0
@@ -851,15 +929,42 @@ void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects) {
 
 // InterpolateObjects
 
-// ApplyGravitySingleObject
+// FUNCTION: CARMA2_HW 0x004c2910
+// FUNCTION: CARMA2_SW 0x004bf040
+void C2_HOOK_FASTCALL ApplyGravitySingleObject(tPhysics_object* pObject) {
 
-// ApplyGravity
+    if (!pObject->disable_move_rotate) {
+        BrVector3Accumulate(&pObject->v, &pObject->field_0x54);
+    }
+    if (pObject->child != NULL) {
+        ApplyGravity(pObject->child);
+    }
+}
 
-// SetGravityDeltaV
+// FUNCTION: CARMA2_HW 0x004c2970
+// FUNCTION: CARMA2_SW 0x004bf0a0
+void C2_HOOK_FASTCALL ApplyGravity(tPhysics_object* pObject) {
+
+    for (; pObject != NULL; pObject = pObject->next) {
+        ApplyGravitySingleObject(pObject);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004c29d0
+// FUNCTION: CARMA2_SW 0x004bf100
+void C2_HOOK_FASTCALL SetGravityDeltaV(tPhysics_object* pObject, br_vector3* pImpulse) {
+    tPhysics_object* pChild;
+
+    pObject->field_0x54 = *pImpulse;
+    for (pChild = pObject->child; pChild != NULL; pChild = pChild->next) {
+        SetGravityDeltaV(pChild, pImpulse);
+    }
+}
 
 // TrialPositionChildren
 
 // FUNCTION: CARMA2_HW 0x004c2b20
+// FUNCTION: CARMA2_SW 0x004bf250
 void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysics_object* pRoot) {
     tPhysics_object* child;
     br_vector3 parent_point;
@@ -885,6 +990,7 @@ void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object* pParent, tPhysic
 }
 
 // FUNCTION: CARMA2_HW 0x004c2b10
+// FUNCTION: CARMA2_SW 0x004bf240
 void C2_HOOK_FASTCALL PositionChildren(tPhysics_object* pCollision_info) {
 
     InternalPositionChildren(pCollision_info, pCollision_info);
@@ -896,14 +1002,36 @@ void C2_HOOK_FASTCALL ApplyTorque(tPhysics_object* pObject, const br_vector3* pT
     br_vector3 torque;
     br_vector3 inertia;
 
-    BrVector3Scale(&torque, pTorque, 1.0f / (WORLD_SCALE * WORLD_SCALE));
+    BrVector3Scale(&torque, pTorque, 1.0f / REC2_SQR(WORLD_SCALE));
     BrVector3Copy(&inertia, &pObject->I);
     pObject->omega.v[0] += torque.v[0] / inertia.v[0];
     pObject->omega.v[1] += torque.v[1] / inertia.v[1];
     pObject->omega.v[2] += torque.v[2] / inertia.v[2];
 }
 
-// ApplyDiminishingTorque
+// FUNCTION: CARMA2_HW 0x004c2c90
+// FUNCTION: CARMA2_SW 0x004bf3c0
+void C2_HOOK_FASTCALL ApplyDiminishingTorque(tPhysics_object* pObject, const br_vector3* pV) {
+    br_vector3 original_omega;
+    br_vector3 tv;
+    br_vector3 inertia;
+
+    original_omega = pObject->omega;
+    BrVector3Scale(&tv, pV, (br_scalar)(1.0 / REC2_SQR(WORLD_SCALE_D)));
+    BrVector3Copy(&inertia, &pObject->I);
+    pObject->omega.v[0] -= tv.v[0] / inertia.v[0];
+    pObject->omega.v[1] -= tv.v[1] / inertia.v[1];
+    pObject->omega.v[2] -= tv.v[2] / inertia.v[2];
+    if (original_omega.v[0] * pObject->omega.v[0] <= 0.0f) {
+        pObject->omega.v[0] = 0.0f;
+    }
+    if (original_omega.v[1] * pObject->omega.v[1] <= 0.0f) {
+        pObject->omega.v[1] = 0.0f;
+    }
+    if (original_omega.v[2] * pObject->omega.v[2] <= 0.0f) {
+        pObject->omega.v[2] = 0.0f;
+    }
+}
 
 // OrderObjectListOnX
 
@@ -1274,7 +1402,11 @@ void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape) {
     }
 }
 
-// UpdateCollisionObject
+// STUB: CARMA2_HW 0x004c60a0
+// STUB: CARMA2_SW 0x004c27d0
+void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004c61c0
 // FUNCTION: CARMA2_SW 0x004c28f0
@@ -1551,4 +1683,3 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 // GetCarSpecFromCollObjID
 
 // GetCollObjFromID
-

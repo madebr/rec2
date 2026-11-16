@@ -10,8 +10,8 @@
 
 #include "08-loading1.h"
 #include "15-displays.h"
+#include "23-piping.h"
 #include "28-world3.h"
-
 #include "41-utility.h"
 #include "49-physics.h"
 #include "52-errors.h"
@@ -19,9 +19,9 @@
 #include "60-phil.h"
 #include "c2_string.h"
 #include "globvars.h"
-#include "platform.h"
-
 #include "c2_stdio.h"
+#include "platform.h"
+#include "rec2_macros.h"
 
 #include <math.h>
 
@@ -107,7 +107,19 @@ void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone) {
 
 // InitDroneCollisionObject
 
-// ReallyAddDroneToPHIL
+// FUNCTION: CARMA2_HW 0x00451650
+// FUNCTION: CARMA2_SW 0x004513e0
+int C2_HOOK_FASTCALL ReallyAddDroneToPHIL(tDrone_spec* pDrone) {
+
+    if (PHILAddObject(&pDrone->collision_info)) {
+        return 0;
+    }
+    PHILSetObjectProperty(&pDrone->collision_info, 0, 1.0);
+    PHILSetObjectProperty(&pDrone->collision_info, 3, 1);
+    PHILSetObjectProperty(&pDrone->collision_info, 7, 1);
+    PHILSetObjectProperty(&pDrone->collision_info, 6, 1);
+    return 1;
+}
 
 // AddDroneToPHIL
 
@@ -293,7 +305,34 @@ int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3* pPos) 
 
 // MoveThisDroneCar
 
-// PipeDroneMatrix
+// FUNCTION: CARMA2_HW 0x0044cfd0
+// FUNCTION: CARMA2_SW 0x0044cd80
+void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone) {
+    tCompressed_matrix34 compressed_mat;
+    br_scalar radius;
+    br_scalar speed;
+
+    BrVector3Set(&compressed_mat.m[0],
+        DRScalarToU16(pDrone->actor->t.t.mat.m[0][0], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[0][1], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[0][2], -1.f, 1.f));
+    BrVector3Set(&compressed_mat.m[1],
+        DRScalarToU16(pDrone->actor->t.t.mat.m[1][0], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[1][1], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[1][2], -1.f, 1.f));
+    BrVector3Set(&compressed_mat.m[2],
+        DRScalarToU16(pDrone->actor->t.t.mat.m[2][0], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[2][1], -1.f, 1.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[2][2], -1.f, 1.f));
+    BrVector3Set(&compressed_mat.m[3],
+        DRScalarToU16(pDrone->actor->t.t.mat.m[3][0], -1000.f, 1000.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[3][1], -1000.f, 1000.f),
+        DRScalarToU16(pDrone->actor->t.t.mat.m[3][2], -1000.f, 1000.f));
+
+    radius = MIN(pDrone->h_radius, 100.f);
+    speed = pDrone->left_turn ? pDrone->field_0x48 : -pDrone->field_0x48;
+    PipeSingleDroneCornerPos(pDrone, DRScalarToU16(speed, -500.f, 500.f), DRScalarToU16(pDrone->field_0x74, 0.f, 1.f), DRScalarToU16(radius, 0.f, 100.f), &compressed_mat);
+}
 
 // PossiblyPipeDroneMovement
 
@@ -446,6 +485,21 @@ void C2_HOOK_FASTCALL SelectNextDrone(void) {
     NewTextHeadupSlot(4, 0, 3000, -1, s);
 }
 
+// FUNCTION: CARMA2_HW 0x00452620
+// FUNCTION: CARMA2_SW 0x004523b0
+void C2_HOOK_FASTCALL SelectPreviousDrone(void) {
+    char s[64];
+
+    if (gCount_drones != 0) {
+        gCurrent_selected_drone--;
+        if (gCurrent_selected_drone < 0) {
+            gCurrent_selected_drone = gCount_drones - 1;
+        }
+    }
+    sprintf(s, "Drone %d", gCurrent_selected_drone);
+    NewTextHeadupSlot(4, 0, 3000, -1, s);
+}
+
 // FUNCTION: CARMA2_HW 0x00452680
 // FUNCTION: CARMA2_SW 0x00452410
 int C2_HOOK_FASTCALL OKToViewDrones(void) {
@@ -510,10 +564,35 @@ void C2_HOOK_FASTCALL ApplyDroneCornerPos2(int pDrone_id, tU16 pSpeed, tU16 pFie
     DoDroneFunkyGroovyThings(drone);
 }
 
-// STUB: CARMA2_HW 0x00452f40
+// FUNCTION: CARMA2_HW 0x00452f40
+// FUNCTION: CARMA2_SW 0x00452cd0
 void C2_HOOK_FASTCALL ReallocModelFacesAndVertices(br_model* pModel, int pCount_faces, int pCount_vertices) {
-    BrBlockFill(NULL, 0, 0);
-    NOT_IMPLEMENTED();
+    int i;
+    br_vertex* vertices;
+    br_face* faces;
+
+    vertices = BrResAllocate(pModel, pCount_vertices * sizeof(br_vertex), BR_MEMORY_VERTICES);
+    BrBlockFill(vertices, 0, pCount_vertices * sizeof(br_vertex) / sizeof(br_uint_32));
+    if (pModel->nvertices != 0) {
+        for (i = 0; i < (pModel->nvertices < pCount_vertices ? pModel->nvertices : pCount_vertices); i++) {
+            vertices[i] = pModel->vertices[i];
+        }
+        BrResRemove(pModel->vertices);
+        BrResFree(pModel->vertices);
+    }
+    pModel->nvertices = pCount_vertices;
+    pModel->vertices = vertices;
+    faces = BrResAllocate(pModel, pCount_faces * sizeof(br_face), BR_MEMORY_FACES);
+    BrBlockFill(faces, 0, pCount_faces * sizeof(br_face) / sizeof(br_uint_32));
+    if (pModel->nfaces != 0) {
+        for (i = 0; i < (pModel->nfaces < pCount_faces ? pModel->nfaces : pCount_faces); i++) {
+            faces[i] = pModel->faces[i];
+        }
+        BrResRemove(pModel->faces);
+        BrResFree(pModel->faces);
+    }
+    pModel->nfaces = pCount_faces;
+    pModel->faces = faces;
 }
 
 // CalcNFacesAndVerticesInEditModel

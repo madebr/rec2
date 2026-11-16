@@ -138,7 +138,17 @@ tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF) {
     return raw_short;
 }
 
+// FUNCTION: CARMA2_HW 0x0048f8f0
+// FUNCTION: CARMA2_SW 0x0048cb60
+tS8 C2_HOOK_FASTCALL ReadS8(FILE* pF) {
+    tS8 raw_byte;
+
+    PFfread(&raw_byte, sizeof(raw_byte), 1, pF);
+    return raw_byte;
+}
+
 // FUNCTION: CARMA2_HW 0x0048f910
+// FUNCTION: CARMA2_SW 0x0048cb80
 void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
     tU32 raw_long;
 
@@ -148,6 +158,7 @@ void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f930
+// FUNCTION: CARMA2_SW 0x0048cba0
 void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber) {
     tU16 raw_short;
 
@@ -157,11 +168,48 @@ void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber) {
 }
 
 // FUNCTION: CARMA2_HW 0x0048f960
+// FUNCTION: CARMA2_SW 0x0048cbd0
 void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
     tU8 raw_byte;
 
     raw_byte = pNumber;
     PFfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
+}
+
+// FUNCTION: CARMA2_HW 0x0048f980
+// FUNCTION: CARMA2_SW 0x0048cbf0
+void C2_HOOK_FASTCALL WriteS32L(FILE* pF, tS32 pNumber) {
+    tS32 raw_long;
+
+    raw_long = pNumber;
+    PFfwrite(&raw_long, sizeof(raw_long), 1, pF);
+    // FIXME: byteswap for BE
+}
+
+// FUNCTION: CARMA2_HW 0x0048f9a0
+// FUNCTION: CARMA2_SW 0x0048cc10
+void C2_HOOK_FASTCALL WriteS16L(FILE* pF, tS16 pNumber) {
+    tS16 raw_short;
+
+    raw_short = pNumber;
+    PFfwrite(&raw_short, sizeof(raw_short), 1, pF);
+    // FIXME: byteswap for BE
+}
+
+// FUNCTION: CARMA2_HW 0x0048f9d0
+// FUNCTION: CARMA2_SW 0x0048cc40
+void C2_HOOK_FASTCALL WriteS8L(FILE* pF, tS8 pNumber) {
+    tS8 raw_byte;
+
+    raw_byte = pNumber;
+    PFfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
+}
+
+// FUNCTION: CARMA2_HW 0x0048f9f0
+// FUNCTION: CARMA2_SW 0x0048cc60
+void C2_HOOK_FASTCALL SkipBytes(FILE* pF, int pBytes_to_skip) {
+
+    PFfseek(pF, pBytes_to_skip, SEEK_CUR);
 }
 
 // FUNCTION: CARMA2_HW 0x0048fa00
@@ -264,6 +312,18 @@ int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
     return value;
 }
 
+// FUNCTION: CARMA2_HW 0x0048fb50
+// FUNCTION: CARMA2_SW 0x0048cdc0
+unsigned int C2_HOOK_FASTCALL BinIntegerToInteger(unsigned int pValue) {
+    unsigned int result;
+
+    result = 0;
+    for (; pValue != 0; pValue /= 10) {
+        result = (result << 1) | (pValue % 10);
+    }
+    return result;
+}
+
 // FUNCTION: CARMA2_HW 0x004900e0
 // FUNCTION: CARMA2_SW 0x0048d350
 float C2_HOOK_FASTCALL GetAFloat(FILE* pF) {
@@ -341,6 +401,36 @@ void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
     sscanf(str, "%d", pF3);
 }
 
+// FUNCTION: CARMA2_HW 0x0048fed0
+// FUNCTION: CARMA2_SW 0x0048d140
+void C2_HOOK_FASTCALL GetThreeIntsAndAString(FILE* pF, int* pF1, int* pF2, int* pF3, char* pS) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF3);
+    str = strtok(NULL, "\t ,/");
+    strcpy(pS, str);
+}
+
+// FUNCTION: CARMA2_HW 0x0048ffa0
+// FUNCTION: CARMA2_SW 0x0048d210
+void C2_HOOK_FASTCALL GetIntAndAString(FILE* pF, int* pF1, char* pS) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    strcpy(pS, str);
+}
+
 // FUNCTION: CARMA2_HW 0x00490020
 // FUNCTION: CARMA2_SW 0x0048d290
 void C2_HOOK_FASTCALL GetFourInts(FILE* pF, int* pF1, int* pF2, int* pF3, int* pF4) {
@@ -412,6 +502,35 @@ void C2_HOOK_FASTCALL GetFourScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, b
     *pS2 = f2;
     *pS3 = f3;
     *pS4 = f4;
+}
+
+// FUNCTION: CARMA2_HW 0x00490350
+// FUNCTION: CARMA2_SW 0x0048d5c0
+void C2_HOOK_FASTCALL GetFiveScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3, br_scalar* pS4, br_scalar* pS5) {
+    char s[256];
+    char* str;
+    float f1;
+    float f2;
+    float f3;
+    float f4;
+    float f5;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", &f1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f3);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f4);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f5);
+    *pS1 = f1;
+    *pS2 = f2;
+    *pS3 = f3;
+    *pS4 = f4;
+    *pS5 = f5;
 }
 
 // FUNCTION: CARMA2_HW 0x00490460
@@ -711,6 +830,29 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     PDFileUnlock(pThe_path);
     remove(pThe_path);
     rename(new_file, pThe_path);
+}
+
+// FUNCTION: CARMA2_HW 0x00490bc0
+// FUNCTION: CARMA2_SW 0x0048de30
+void C2_HOOK_FASTCALL EncodeFileWrapper(char* pThe_path) {
+    int len;
+
+    len = strlen(pThe_path);
+    if (strcmp(pThe_path + len - 4, ".TXT") == 0
+            && strcmp(pThe_path + len - 12, "DKEYMAP0.TXT") != 0
+            && strcmp(pThe_path + len - 12, "DKEYMAP1.TXT") != 0
+            && strcmp(pThe_path + len - 12, "DKEYMAP2.TXT") != 0
+            && strcmp(pThe_path + len - 12, "DKEYMAP3.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYMAP_0.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYMAP_1.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYMAP_2.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYMAP_3.TXT") != 0
+            && strcmp(pThe_path + len - 11, "OPTIONS.TXT") != 0
+            && strcmp(pThe_path + len - 12, "KEYNAMES.TXT") != 0
+            && strcmp(pThe_path + len - 10, "KEYMAP.TXT") != 0
+            && strcmp(pThe_path + len - 9, "PATHS.TXT") != 0) {
+        EncodeFile(pThe_path);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00490ec0
@@ -1108,6 +1250,21 @@ void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info) {
 
     // empty
 }
+
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x0044bf80
+// FUNCTION: CARMA2_SW 0x0044bd30
+void C2_HOOK_FASTCALL FUN_0044bf80(void) {
+    /* Unused */
+}
+
+// FUNCTION: CARMA2_HW 0x0044bf90
+// FUNCTION: CARMA2_SW 0x0044bd40
+void C2_HOOK_FASTCALL FUN_0044bf90(br_pixelmap* pMap) {
+    /* Unused */
+    BrPixelmapFree(pMap);
+}
+#endif
 
 // FUNCTION: CARMA2_HW 0x0044bfa0
 // FUNCTION: CARMA2_SW 0x0044bd50

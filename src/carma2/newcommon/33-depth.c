@@ -305,6 +305,19 @@ void C2_HOOK_FASTCALL IncreaseDepthStart(void) {
     gProgram_state.default_depth_effect.start = gProgram_state.current_depth_effect.start;
 }
 
+// FUNCTION: CARMA2_HW 0x00446950
+// FUNCTION: CARMA2_SW 0x004469d0
+void C2_HOOK_FASTCALL ReduceDepthEnd(void) {
+    char s[256];
+
+    if (gProgram_state.current_depth_effect.end < 13) {
+        gProgram_state.current_depth_effect.end++;
+    }
+    sprintf(s, "Depth end reduced to %d", gProgram_state.current_depth_effect.end);
+    NewTextHeadupSlot(4, 0, 500, -1, s);
+    gProgram_state.default_depth_effect.end = gProgram_state.current_depth_effect.end;
+}
+
 // FUNCTION: CARMA2_HW 0x004469b0
 // FUNCTION: CARMA2_SW 0x00446a30
 void C2_HOOK_FASTCALL IncreaseDepthEnd(void) {
@@ -589,4 +602,3 @@ void C2_HOOK_FASTCALL SetSkyColour(br_colour c) {
 
     gHorizon_material->colour = c;
 }
-

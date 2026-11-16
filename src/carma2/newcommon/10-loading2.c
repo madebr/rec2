@@ -132,6 +132,28 @@ const char* gNet_avail_names[4] = {
     "all",
 };
 
+// GLOBAL: CARMA2_HW 0x0074b500
+// GLOBAL: CARMA2_SW 0x00741bc0
+br_material* gSimple_materials[32];
+
+// GLOBAL: CARMA2_HW 0x006572f0
+// GLOBAL: CARMA2_SW 0x00651ca0
+tU32 gSimple_material_colours[12] = {
+    /* Material number is in MSB */
+    (0x00 << 24) | 0x5d0303,
+    (0x02 << 24) | 0xa56e04,
+    (0x03 << 24) | 0xa9a905,
+    (0x08 << 24) | 0x006868,
+    (0x0d << 24) | 0x3c3626,
+    (0x0e << 24) | 0x212121,
+    (0x15 << 24) | 0x284c21,
+    (0x19 << 24) | 0x00326a,
+    (0x1a << 24) | 0x93491d,
+    (0x1e << 24) | 0xc0bfc0,
+    (0x23 << 24) | 0x141414,
+    0,
+};
+
 // GLOBAL: CARMA2_HW 0x00657320
 // GLOBAL: CARMA2_SW 0x00651cd0
 tHeadup_info gHeadup_image_info[45] = {
@@ -182,9 +204,52 @@ tHeadup_info gHeadup_image_info[45] = {
     { "MISSIONDONE.PIX", eNet_or_otherwise },
 };
 
+#ifdef REC2_MATCHING
+// GLOBAL: CARMA2_HW 0x00657488
+// GLOBAL: CARMA2_SW 0x00651e38
+const char* gDev_car_pix_names[2][6] = {
+    { "CARFRANK.PIX", "CARANNIE.PIX", "CARFR2.PIX", "CARFR3.PIX", "CARFR4.PIX", "CARFR5.PIX" },
+    { "CARFRANK.PIX", "CARANNIE.PIX", "CARAN2.PIX", "CARAN3.PIX", "CARAN4.PIX", "CARAN5.PIX" },
+};
+
+// GLOBAL: CARMA2_HW 0x006574b8
+// GLOBAL: CARMA2_SW 0x00651e68
+const char* gDev_car_names[6] = {
+    "BLKEAGLE.TXT", "ANNIE.TXT", "ED101.TXT", "OFFROAD.TXT", "APC.TXT", "YANK.TXT"
+};
+#endif
+
 // GLOBAL: CARMA2_HW 0x0079eb60
 // GLOBAL: CARMA2_SW 0x007950c0
 br_pixelmap* gHeadup_images[45];
+
+// GLOBAL: CARMA2_HW 0x006574d0
+// GLOBAL: CARMA2_SW 0x00651e80
+const char* gDamage_names[12] = {
+    "engine",
+    "transmission",
+    "driver",
+    "steering",
+    "lf_brake",
+    "rf_brake",
+    "lr_brake",
+    "rr_brake",
+    "lf_wheel",
+    "rf_wheel",
+    "lr_wheel",
+    "rr_wheel",
+};
+
+// GLOBAL: CARMA2_HW 0x00657500
+// GLOBAL: CARMA2_SW 0x00651eb0
+const char* gWheel_actor_names[6] = {
+    "FLWHEEL.ACT",
+    "FRWHEEL.ACT",
+    "RLWHEEL.ACT",
+    "RRWHEEL.ACT",
+    "IRLWHEEL.ACT",
+    "IRRWHEEL.ACT",
+};
 
 void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes) {
     tPath_name the_path;
@@ -550,25 +615,7 @@ void C2_HOOK_FASTCALL FinishLoadingGeneral(void) {
     PFfclose(gTempFile);
 }
 
-// FUNCTION: CARMA2_HW 0x00487e10
-// FUNCTION: CARMA2_SW 0x00484f40
-void C2_HOOK_FASTCALL LoadKeyMapping(void) {
-    FILE* f;
-    tPath_name the_path;
-    int i;
-
-    PathCat(the_path, gApplication_path, "KEYMAP_X.TXT");
-    the_path[strlen(the_path) - 5] = '0' + gKey_map_index;
-    f = DRfopen(the_path, "rt");
-    if (f == NULL) {
-        FatalError(kFatalError_CouldNotOpenKeyMapFile);
-    }
-
-    for (i = 0; i < (int)REC2_ASIZE(gKey_mapping); i++) {
-        fscanf((FILE*)f, "%d", &gKey_mapping[i]);
-    }
-    PFfclose(f);
-}
+// LoadKeyMapping (see 72-interface)
 
 // FUNCTION: CARMA2_HW 0x00487ea0
 // FUNCTION: CARMA2_SW 0x00484fd0
@@ -772,7 +819,75 @@ void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 
 // AddRefOffset
 
-// GetDamageProgram
+// FUNCTION: CARMA2_HW 0x0048bca0
+// FUNCTION: CARMA2_SW 0x00488ee0
+void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_location pImpact_location) {
+    tDamage_clause* the_clause;
+    int i;
+    int j;
+    int k;
+    int count;
+    char s[256];
+    char delim[64];
+    char* str;
+
+    C2_HOOK_BUG_ON(sizeof(tDamage_clause) != 0x40);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gDamage_names) != 12);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gWheel_actor_names) != 6);
+    C2_HOOK_BUG_ON(REC2_ASIZE(the_clause->conditions) != 2);
+
+    PossibleService();
+    count = GetAnInt(pF);
+    pCar_spec->damage_programs[pImpact_location].clause_count = count;
+    pCar_spec->damage_programs[pImpact_location].clauses = BrMemAllocate(count * sizeof(tDamage_clause), kMem_damage_clauses);
+    strcpy(delim, "\t ,/");
+    strcat(delim, "&");
+
+    for (i = 0, the_clause = pCar_spec->damage_programs[pImpact_location].clauses; i < count; i++, the_clause++) {
+        the_clause->condition_count = 0;
+        GetALineAndDontArgue(pF, s);
+        str = strtok(s, delim);
+        do {
+            if (str[0] == 'x') {
+                the_clause->conditions[the_clause->condition_count].axis_comp = eAxis_x;
+            } else if (str[0] == 'y') {
+                the_clause->conditions[the_clause->condition_count].axis_comp = eAxis_y;
+            } else if (str[0] == 'z') {
+                the_clause->conditions[the_clause->condition_count].axis_comp = eAxis_z;
+            } else {
+                break;
+            }
+            if (str[1] == '>') {
+                the_clause->conditions[the_clause->condition_count].condition_operator = eCondition_greater_than;
+            } else if (str[1] == '<') {
+                the_clause->conditions[the_clause->condition_count].condition_operator = eCondition_less_than;
+            } else {
+                FatalError(kFatalError_ConfusedByFormatOfConditionalDamageInCarFile);
+            }
+            sscanf(str + 2, "%f", &the_clause->conditions[the_clause->condition_count].comparitor);
+            the_clause->condition_count++;
+            str = strtok(NULL, delim);
+        } while (the_clause->condition_count < (int)REC2_ASIZE(the_clause->conditions));
+
+        the_clause->effect_count = GetAnInt(pF);
+        for (j = 0; j < the_clause->effect_count; j++) {
+            the_clause->effects[j].type = (tDamage_type)-1;
+            GetALineAndDontArgue(pF, s);
+            str = strtok(s, "\t ,/");
+            for (k = 0; k < (int)REC2_ASIZE(gDamage_names); k++) {
+                if (strcmp(str, gDamage_names[k]) == 0) {
+                    the_clause->effects[j].type = (tDamage_type)k;
+                    break;
+                }
+            }
+            if ((int)the_clause->effects[j].type < 0) {
+                FatalError(kFatalError_UnknownDamageType_S, str);
+            }
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%f", &the_clause->effects[j].weakness_factor);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0048bf20
 // FUNCTION: CARMA2_SW 0x00489160
@@ -815,10 +930,48 @@ intptr_t C2_HOOK_CDECL AllocateCarModelData(br_actor* pActor, void* pData) {
 
 // LinkCarModelsToActor
 
-// STUB: CARMA2_HW 0x00488dd0
-// STUB: CARMA2_SW 0x00486010
+// FUNCTION: CARMA2_HW 0x00488dd0
+// FUNCTION: CARMA2_SW 0x00486010
 br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type) {
-    NOT_IMPLEMENTED();
+    int i;
+    int material_number;
+    int r, g, b;
+    br_colour colour;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSimple_material_colours) != 12);
+
+    if (pName[0] == 'M') {
+        strtok(pName, "\t ,/");
+        material_number = 10 * (pName[1] - '0') + pName[2] - '0';
+        for (i = 0; gSimple_material_colours[i] != 0; i++) {
+            if ((int)(gSimple_material_colours[i] >> 24) == material_number) {
+                break;
+            }
+        }
+        if (gSimple_material_colours[i] == 0) {
+            PDFatalError("Obsolete simple material");
+        }
+        colour = gSimple_material_colours[i] & 0xffffff;
+    } else {
+        sscanf(pName, "%d,%d,%d", &r, &g, &b);
+        colour = (r << 16) | (g << 8) | (b << 0);
+    }
+    for (i = 0; gSimple_materials[i] != NULL; i++) {
+        if (gSimple_materials[i]->colour == colour) {
+            return gSimple_materials[i];
+        }
+    }
+    if (i < (int)REC2_ASIZE(gSimple_materials)) {
+        gSimple_materials[i] = BrMaterialAllocate("Simple");
+        gSimple_materials[i]->colour = colour;
+#ifdef REC2_HW
+        gSimple_materials[i]->index_base = (br_uint_8)FindBestColourMatch(gSimple_materials[i]->colour);
+        gSimple_materials[i]->index_range = 0;
+#endif
+        GlorifyMaterial(&gSimple_materials[i], 1, pShading_type);
+        BrMaterialAdd(gSimple_materials[i]);
+    }
+    return gSimple_materials[i];
 }
 
 // ReadShrapnelMaterials
@@ -910,6 +1063,12 @@ void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
         pRace_info->completion_bonus_peds[i] = pRace_info->race_spec->completion_bonus_peds[i];
         pRace_info->completion_bonus_opponents[i] = pRace_info->race_spec->completion_bonus_opponents[i];
     }
+}
+
+// FUNCTION: CARMA2_HW 0x0048c920
+// FUNCTION: CARMA2_SW 0x00489b60
+void C2_HOOK_FASTCALL FUN_0048c920(void) {
+    /* Unused */
 }
 
 // FUNCTION: CARMA2_HW 0x0048c930

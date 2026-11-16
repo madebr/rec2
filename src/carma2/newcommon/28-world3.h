@@ -40,13 +40,13 @@ extern void C2_HOOK_FASTCALL InitTreeSurgery(void);
 
 // LoadTrack
 
-// RemoveBounds
+extern intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg);
 
 // RemoveBoundsStructures
 
 extern void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec);
 
-// ProcessTrack
+extern void C2_HOOK_FASTCALL ProcessTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world);
 
 // AnimateSky
 
@@ -84,7 +84,11 @@ extern tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage*
 
 extern int C2_HOOK_FASTCALL AddShadeTables(tBrender_storage* pStorage_space, const char* pPath);
 
+extern void C2_HOOK_FASTCALL LoadModelsFromLineInto(tBrender_storage* pStorage_space, FILE* pF);
+
 extern int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath);
+
+extern void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage* pStorage, FILE* pFile, tRendererShadingType pShading);
 
 extern int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading);
 
@@ -94,9 +98,9 @@ extern void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath);
 
 extern void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath);
 
-extern int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList);
+extern int C2_HOOK_FASTCALL GetFileName(const char *pPath, void *pContext);
 
-extern int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList);
+extern int C2_HOOK_FASTCALL GetAdditionalFileName(const char* pPath, void* pContext);
 
 extern void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path);
 

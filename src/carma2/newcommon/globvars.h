@@ -21,6 +21,8 @@ extern tPath_name gApplication_path;
 extern char gRace_path[256];
 extern const char* gDir_separator;
 
+extern char gCurrent_load_name[256];
+
 //extern br_font* gBig_font;
 extern int gAusterity_mode;
 extern int gAustere_override;
@@ -56,6 +58,8 @@ extern int gAuto_load;
 extern int gRussels_fannies;
 
 extern char gQuick_time_quality[32];
+extern int gAPO_pre_race[3];
+extern int gMoney_pre_race;
 extern char gQuick_time_compressor[32];
 extern int gQuick_time_banner_number;
 
@@ -140,8 +144,9 @@ extern int gDisallow_abandon_race;
 //extern int gPipe_reg_snap_before_our_car;
 //extern int gPipe_reg_snap_after_our_car;
 extern int gAction_replay_mode;
+extern tPed_form* gPed_forms[20];
 extern int gPed_overall_movement_disabled;
-//extern int gDefault_engine_noise_index;
+extern int gDefault_engine_noise_index;
 //extern int gSausage_override;
 //extern int gAustere_override;
 extern int gSound_override;
@@ -169,6 +174,7 @@ extern int gINT_0068b8e4;
 //extern br_matrix34 gCamera_to_world;
 //extern tRace_list_spec gRace_list[100];
 extern float gPinball_factor;
+extern int gCredit_multiplier;
 extern float gOpponent_speed_factor;
 //extern float gCar_crush_min_fold;
 //extern float gNet_recovery_cost[7];

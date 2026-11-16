@@ -36,6 +36,7 @@ int gPathNetworkIniValid;
 tU16 gIpx_sock_addr;
 
 // GLOBAL: CARMA2_HW 0x006ac310
+// GLOBAL: CARMA2_SW 0x006a5860
 struct sockaddr gLocal_address;
 
 // GLOBAL: CARMA2_HW 0x006abf08
@@ -526,6 +527,13 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
     return NULL;
 }
 
+// FUNCTION: CARMA2_HW 0x0051a620
+// FUNCTION: CARMA2_SW 0x00514100
+void C2_HOOK_FASTCALL PDNetDisposePlayer(void) {
+
+    dr_dprintf("PDNetDisposePlayer()");
+}
+
 // FUNCTION: CARMA2_HW 0x0051a630
 // FUNCTION: CARMA2_SW 0x00514110
 int C2_HOOK_FASTCALL PDNetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress) {
@@ -538,5 +546,13 @@ int C2_HOOK_FASTCALL PDNetSendMessageToAddress(tNet_game_details* pDetails, tNet
         return 1;
     }
     NetDisposeMessage(pDetails,(tNet_message *)pMessage);
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0051a690
+// FUNCTION: CARMA2_SW 0x00514170
+int C2_HOOK_FASTCALL PDNetInitClient(void) {
+
+    dr_dprintf("PDNetInitClient()");
     return 0;
 }

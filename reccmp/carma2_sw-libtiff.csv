@@ -1,0 +1,11 @@
+address,type,name
+0x00549dcb,library,_TIFFmalloc
+0x00549de2,library,_TIFFfree
+0x00549f20,library,TIFFReadScanline
+0x00549fc0,library,TIFFSeek
+0x0054ae5b,library,TIFFCheckRead
+0x0054afc0,library,TIFFClose
+0x0054b375,library,TIFFScanlineSize
+0x0054bc04,library,TIFFGetFieldDefaulted
+0x0054be5f,library,TIFFGetField
+0x0054be8b,library,TIFFVGetField

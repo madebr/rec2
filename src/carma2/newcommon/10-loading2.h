@@ -13,13 +13,17 @@
 #include "rec2_types.h"
 
 extern int gCamera_type;
+extern int gKey_map_index;
 
 extern const char* gPedTextTxtPath;
 extern int gGroove_funk_offset;
 extern const char* gNet_avail_names[4];
 extern tHeadup_info gHeadup_image_info[45];
 extern br_pixelmap* gHeadup_images[45];
+extern br_material* gSimple_materials[32];
+extern tU32 gSimple_material_colours[12];
 extern tActionReplayCameraMode gAction_replay_camera_mode_00679324;
+extern const char* gDamage_names[12];
 
 extern void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
 
@@ -35,7 +39,7 @@ extern void C2_HOOK_FASTCALL LoadGeneralParameters(void);
 
 extern void C2_HOOK_FASTCALL FinishLoadingGeneral(void);
 
-extern void C2_HOOK_FASTCALL LoadKeyMapping(void);
+// LoadKeyMapping (see 72-interface)
 
 extern void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race);
 
@@ -65,7 +69,7 @@ extern void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_s
 
 // AddRefOffset
 
-// GetDamageProgram
+extern void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_location pImpact_location);
 
 extern intptr_t C2_HOOK_CDECL AllocateCarActorData(br_actor* pActor, void* pData);
 

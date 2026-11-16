@@ -22,7 +22,7 @@
 
 // SaveOrigKeyMapping
 
-// SaveKeyMapping
+// SaveKeyMapping (see 72-interface)
 
 // ChangeKeyMapIndex
 

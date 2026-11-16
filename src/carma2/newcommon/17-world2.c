@@ -8,7 +8,9 @@
 
 #include "17-world2.h"
 
+#include "37-brucetrk.h"
 #include "41-utility.h"
+#include "42-input.h"
 #include "globvars.h"
 #include "rec2_macros.h"
 
@@ -560,6 +562,34 @@ void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {
 int C2_HOOK_FASTCALL GetCarSimplificationLevel(void) {
 
     return gCar_simplification_level;
+}
+
+// FUNCTION: CARMA2_HW 0x00448f30
+// FUNCTION: CARMA2_SW 0x00449350
+void C2_HOOK_FASTCALL ToggleEdges(void) {
+    br_actor* track;
+
+    if (KeyIsDown(0)) {
+        gRender_alternative_track_actors = !gRender_alternative_track_actors;
+    } else {
+        track = gTrack_actor;
+        if (track->render_style == BR_RSTYLE_DEFAULT) {
+            track->render_style = BR_RSTYLE_FACES;
+        }
+        DRActorEnumRecurse(track, ToggleEdgesCB, NULL);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00448f70
+// FUNCTION: CARMA2_SW 0x00449390
+intptr_t C2_HOOK_CDECL ToggleEdgesCB(br_actor* pActor, void* pData) {
+
+    if (pActor->render_style == BR_RSTYLE_FACES) {
+        pActor->render_style = BR_RSTYLE_EDGES;
+    } else if (pActor->render_style == BR_RSTYLE_EDGES) {
+        pActor->render_style = BR_RSTYLE_FACES;
+    }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00448f90

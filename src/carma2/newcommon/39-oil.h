@@ -28,9 +28,9 @@ extern void C2_HOOK_FASTCALL QueueOilSpill(tCar_spec* pCar);
 
 // OKToSpillOil
 
-// MungeOilsHeightAboveGround
+extern void C2_HOOK_FASTCALL MungeOilsHeightAboveGround(tOil_spill_info* pOil);
 
-// MungeIndexedOilsHeightAboveGround
+extern void C2_HOOK_FASTCALL MungeIndexedOilsHeightAboveGround(int pIndex);
 
 extern void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel);
 
@@ -40,14 +40,14 @@ extern int C2_HOOK_FASTCALL GetOilSpillCount(void);
 
 extern void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize);
 
-// PointInSpill
+extern int C2_HOOK_FASTCALL PointInSpill(const br_vector3* pPoint, int pIndex);
 
-// GetOilFrictionFactors
+extern void C2_HOOK_FASTCALL GetOilFrictionFactors(tCar_spec* pCar, br_scalar* pFl_factor, br_scalar* pFr_factor, br_scalar* pRl_factor, br_scalar* pRr_factor);
 
 extern void C2_HOOK_FASTCALL AdjustOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap);
 
 extern void C2_HOOK_FASTCALL ReceivedOilSpill(tNet_message_chunk* pContents);
 
-// RemoveCarsOilSlicks
+extern void C2_HOOK_FASTCALL RemoveCarsOilSlicks(tCar_spec* pCar);
 
 #endif // GUARD_39_OIL_H

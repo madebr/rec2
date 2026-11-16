@@ -8,6 +8,7 @@
 
 #include "72-interface-newgame.h"
 
+#include "72-interface-main.h"
 #include "72-interface.h"
 
 
@@ -39,4 +40,25 @@ tFrontend_spec gFrontend_NEWGAME = {
 #else
     0
 #endif
+};
+
+// GLOBAL: CARMA2_HW 0x005cab48
+// GLOBAL: CARMA2_SW 0x005c5a78
+tFrontend_spec gFrontend_CREDITS = {
+    "Credits",
+    0,
+    1,
+    CreditsScreenInfunc,
+    CreditsScreenOutfunc,
+    NULL,
+    &gFrontend_MAIN,
+    0,
+    0,
+    0,
+    11,
+    0,
+    0,
+    {
+        { 0x401, temp, &gFrontend_MAIN, 0, 17, 18, 0, 0, 0, 0, 1, 1 },
+    },
 };
