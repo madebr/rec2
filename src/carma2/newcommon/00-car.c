@@ -549,6 +549,7 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // FUNCTION: CARMA2_HW 0x00415300
 // FUNCTION: CARMA2_SW 0x00415330
+// FUNCTION: CARMA2_CHEAT 0x00415560
 void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
     br_scalar speed;
     br_scalar factor;
