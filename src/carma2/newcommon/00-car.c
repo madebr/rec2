@@ -712,6 +712,7 @@ inline void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime_dif
 
 // FUNCTION: CARMA2_HW 0x00414cb0
 // FUNCTION: CARMA2_SW 0x00414ce0
+// FUNCTION: CARMA2_CHEAT 0x00414f10
 void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
     // GLOBAL: CARMA2_HW 0x0058f6d8
     // GLOBAL: CARMA2_SW 0x0058a6d8
@@ -721,6 +722,7 @@ void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
     br_vector3 minus_k;
     br_vector3 tmp;
     br_vector3 delta_omega;
+    br_vector3 up;
 
     car = &gProgram_state.current_car;
 
@@ -734,9 +736,8 @@ void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
                     && car->oldd[1] == car->susp_height[0]
                     && (car->frame_collision_flag || car->collision_info->disable_move_rotate)) {
 
-                tmp.v[0] = -car->collision_info->transform_matrix.m[1][2];
-                tmp.v[1] = 0.0f;
-                tmp.v[2] = car->collision_info->transform_matrix.m[1][0];
+                BrVector3Set(&up, 0.f, 1.f, 0.f);
+                BrVector3Cross(&tmp, (br_vector3*)car->collision_info->transform_matrix.m[1], &up);
                 BrVector3Normalise(&tmp, &tmp);
                 BrMatrix34TApplyV(&delta_omega, &tmp, &car->collision_info->transform_matrix);
                 BrVector3Accumulate(&car->collision_info->omega, &delta_omega);
