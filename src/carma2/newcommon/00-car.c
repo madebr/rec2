@@ -549,12 +549,13 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 
 // FUNCTION: CARMA2_HW 0x00415300
 // FUNCTION: CARMA2_SW 0x00415330
+// FUNCTION: CARMA2_CHEAT 0x00415560
 void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
     br_scalar speed;
     br_scalar factor;
     tS32 joy;
 
-    speed = (br_scalar)(-pCar->collision_info->velocity_car_space.v[2] * WORLD_SCALE_D);
+    speed = -pCar->collision_info->velocity_car_space.v[2] * WORLD_SCALE_D;
     pCar->acc_force = 0.0f;
     if (pCar->revs == 0.0f) {
         pCar->gear = 0;
@@ -590,7 +591,7 @@ void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
         pCar->joystick.dec = joy;
     }
 
-    pCar->torque = (br_scalar)(pCar->revs * pCar->revs * -1e-08f - 0.2);
+    pCar->torque = (pCar->revs * pCar->revs * -1e-08f) - 0.2;
     if (pCar->keys.acc || pCar->joystick.acc >= 0) {
         if (fabs(pCar->curvature) > pCar->maxcurve * 0.5f && pCar->gear < 2 &&
             pCar->gear != 0 && pCar->traction_control && pCar->joystick.acc < 0) {
@@ -637,9 +638,15 @@ void C2_HOOK_FASTCALL CalcEngineForce(tCar_spec* pCar, br_scalar pDt) {
     if (pCar->brake_force != 0.0f) {
         pCar->revs = pCar->target_revs;
     } else if (pCar->revs - 1.0f > pCar->target_revs || pCar->revs + 1.f < pCar->target_revs) {
-        br_scalar lt = (br_scalar)(1.0 / (pCar->speed_revs_ratio * pCar->collision_info->M) / (float)pCar->gear);
-        br_scalar numerator = (br_scalar)(pCar->torque * pDt * 5000.0 + (pCar->revs - pCar->target_revs));
-        br_scalar denominator = (br_scalar)((lt + (float)pCar->gear * (1.0 / (pCar->force_torque_ratio * 0.0002))) * pDt);
+        br_scalar lt;
+        br_scalar ts;
+        br_scalar numerator;
+        br_scalar denominator;
+
+        lt = 1.0 / (pCar->speed_revs_ratio * pCar->collision_info->M);
+        ts = 1.0 / (pCar->force_torque_ratio * 0.0002);
+        numerator = (pCar->torque * pDt * 5000.0) + (pCar->revs - pCar->target_revs);
+        denominator = ((lt / (float)pCar->gear) + (ts * (float)pCar->gear)) * pDt;
         pCar->acc_force += numerator / denominator;
     }
 }
