@@ -11,6 +11,9 @@ the loop between two full builds shorter and say where a difference comes from.
 | `permute.py` | Simulated-annealing search over behaviour-preserving rewrites of one function (comparison direction, commutative operands, literal type, declaration order, split/merged locals, statement order, ...), scored by `fastmatch.py`'s scorer. |
 | `objcmp.py` | Prototype: runs reccmp's function comparison on one function of a COFF `.obj` (relocations resolved in memory, nothing linked). Also the scorer used by `fastmatch.py`. |
 | `machelpers.py` | Lists the Mac (debug build, nothing inlined) functions whose bodies are inlined into a given Windows function, with their locals, from a Ghidra export of the Mac executable. |
+| `isolate.py` | Is a function's remaining diff caused by the code before it in the file? Compiles the file with only that function (plus the includes, globals and helpers it needs) and compares the score with the full file; `scan` also keeps the first k functions for a spread of k, to show where it flips. |
+| `annscan.py` | For CARMA2_SW / CARMA2_CHEAT: lists the operands reccmp cannot name on the original side (`<OFFSETn>` against `Name (DATA)`/`(FUNCTION)` on ours), which are callees and globals that lack an annotation line for that target, with the address read from the instruction. `--add` inserts the missing lines. |
+| `targetaddr.py` | Finds a CARMA2_HW function in the SW or CHEAT executable by its bytes, with every link-dependent byte masked. |
 | `rec2cfg.py` | Shared configuration: finds the repository, the original executable, objdump and the compile command. Not run by itself. |
 
 ## Requirements
@@ -134,3 +137,28 @@ an argument.
 - MSVC5's listing attributes the code of an inlined function to the line of the call, so the
   source-line view cannot look inside an inlined helper.
 - `machelpers.py` decides "inlined" from a missing direct call, by name.
+
+```
+python scripts/match/isolate.py BUILD src/carma2/newcommon/51-smash.c ExtrapolateGeometryCoordinates2 ADDR scan
+```
+
+If the isolated score is exact while the full file is not, the source is right and the function
+depends on what is compiled before it. ExtrapolateGeometryCoordinates2, for example, flips between
+80.23% and 75.58% with how many of the 58 functions before it in 51-smash.c are kept. The file is
+restored afterwards.
+
+```
+python scripts/match/annscan.py BUILD CARMA2_CHEAT 0x004ffc60 [--add]
+python scripts/match/targetaddr.py BUILD CARMA2_CHEAT 0x004f9fc0
+```
+
+`annscan.py` needs a finished build of the same source (reccmp matches annotations by line) and
+`reccmp-reccmp` on `PATH` or in `RECCMP`. With `--add` a line is only written for a name that more
+than half of its unresolved operands pair with the same address, because a diff line can pair the
+wrong two instructions. String literals have no annotations, so those operands are listed only.
+On InitSmokeStuff (CHEAT 0x004ffc60) it finds `gBlend_model` 0x007545d0, `gBlend_model2` 0x00754634
+and `gBlend_actor` 0x0075414c; with those lines (and `gBR_smoke_structs`, which it lists but cannot
+add because the operand is a member address) CHEAT goes from 70.93% to 92.80% with no code change.
+
+`targetaddr.py` prints `weak` when fewer than 8 instructions made the hit unique; check those by
+hand (a weak hit can be a look-alike function).

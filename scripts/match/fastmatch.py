@@ -49,6 +49,8 @@ Environment:
   UDIFF=label    print the differing hunks of that variant;  DIFF=label  side-by-side dump
   DUMP=a:b       print our instructions a..b of every variant;  SHOW=1  print the original
   MEASURE=Name:0xADDR   compare another function than the one rewritten
+  NOCUT=1        keep the original's code after its last `ret` (MSVC5 sometimes places a cold block
+                 after the epilogue, e.g. ProcessFollowPath); by default the original is cut there
   STACK=1        keep stack offsets ([esp+N]) in the text comparison instead of normalising them
                  (needed to see the effect of reordering local declarations)
   SCORER=text|reccmp    force the scorer (see above)
@@ -190,6 +192,8 @@ def original_ex():
         raws.append(s)
     # cut after the last ret before padding
     last = max(i for i, x in enumerate(ins) if x.startswith('ret'))
+    if os.environ.get('NOCUT'):
+        last = len(ins) - 1  # keep a cold block placed after the epilogue
     ins, addrs, raws = ins[:last + 1], addrs[:last + 1], raws[:last + 1]
     a2n = call_names()[0] if not LEGACY else {}
     idx = {x: i for i, x in enumerate(addrs)}
